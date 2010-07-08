@@ -33,7 +33,7 @@ public interface iSenseDeviceAsync {
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationHandle</code> for controlling the async operation.
 	 */
-	OperationHandle<Void> program(byte[] binaryImage, Monitor monitor, AsyncCallback<Void> callback);
+	OperationHandle<Void> program(byte[] binaryImage, AsyncCallback<Void> callback);
 	
 	/**
 	 * Remove all data from the flash memory.
@@ -53,7 +53,7 @@ public interface iSenseDeviceAsync {
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationHandle</code> for controlling the async operation.
 	 */
-	OperationHandle<Void> writeFlash(int address, byte[] data, int length, Monitor monitor, AsyncCallback<Void> callback);
+	OperationHandle<Void> writeFlash(int address, byte[] data, int length, AsyncCallback<Void> callback);
 	
 	/**
 	 * Reads a given amount of bytes from the given address.

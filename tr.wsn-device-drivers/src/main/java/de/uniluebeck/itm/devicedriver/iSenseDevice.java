@@ -65,14 +65,14 @@ public interface iSenseDevice {
 	 * 
 	 * @return A <code>MacAddress</code> object representing the mac address of the device.
 	 */
-	MacAddress readMac();
+	MacAddress readMacAddress();
 	
 	/**
 	 * Writes the MAC address to the connected iSense device.
 	 * 
 	 * @param macAddress A <code>MacAddress</code> object representing the new mac address of the device.
 	 */
-	void writeMac(MacAddress macAddress);
+	void writeMacAddress(MacAddress macAddress, Monitor monitor);
 	
 	/**
 	 * Restart the connected iSense device.

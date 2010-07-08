@@ -27,4 +27,11 @@ public interface AsyncCallback<T> {
 	 * @param throwable The catched exception.
 	 */
 	void excepted(Throwable throwable);
+	
+	/**
+	 * Method is called when the progress has changed.
+	 * 
+	 * @param fraction 
+	 */
+	void progress(float fraction);
 }
