@@ -24,7 +24,6 @@
 package de.uniluebeck.itm.devicedriver;
 
 
-
 /**
  * Interface for the default message type.
  * 

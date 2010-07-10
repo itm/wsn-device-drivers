@@ -10,7 +10,7 @@ public interface Monitor {
 	/**
 	 * Method is called on a progress change.
 	 * 
-	 * @param Progress amount done.
+	 * @param fraction Progress amount done.
 	 */
-	void progress(float fraction);
+	void onProgressChange(float fraction);
 }

@@ -1,5 +1,7 @@
 package de.uniluebeck.itm.devicedriver.async;
 
+import de.uniluebeck.itm.devicedriver.Monitor;
+
 /**
  * Callback method for async operations.
  * 
@@ -7,31 +9,24 @@ package de.uniluebeck.itm.devicedriver.async;
  *
  * @param <T> The return type of the value that is returned when the operation is done.
  */
-public interface AsyncCallback<T> {
+public interface AsyncCallback<T> extends Monitor {
 	
 	/**
 	 * Method is called on successfully method execution.
 	 * 
 	 * @param result The result of the operation.
 	 */
-	void done(T result);
+	void onSuccess(T result);
 	
 	/**
 	 * Method is called when the operation was canceled.
 	 */
-	void canceled();
+	void onCancel();
 	
 	/**
 	 * Method is called when an exception occured.
 	 * 
 	 * @param throwable The catched exception.
 	 */
-	void excepted(Throwable throwable);
-	
-	/**
-	 * Method is called when the progress has changed.
-	 * 
-	 * @param fraction 
-	 */
-	void progress(float fraction);
+	void onFailure(Throwable throwable);
 }

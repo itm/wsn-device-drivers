@@ -5,43 +5,44 @@ import java.io.OutputStream;
 
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
-import de.uniluebeck.itm.devicedriver.Monitor;
-import de.uniluebeck.itm.devicedriver.PacketHandler;
+import de.uniluebeck.itm.devicedriver.MessagePacketListener;
 import de.uniluebeck.itm.devicedriver.PacketTypes;
+import de.uniluebeck.itm.devicedriver.metadata.MetaDataService;
 
 
 /**
- * Async definition of the <code>iSenseDevice</code> interface.
+ * Async definition of the <code>Device</code> interface.
  * 
  * @author Malte Legenhausen
  */
-public interface iSenseDeviceAsync {
+public interface DeviceAsync {
 
 	/**
-	 * Returns the wireless channels under which the device is reachable.
-	 * Has to be implemented as short running operation.
+	 * Returns the <code>MetaDataService</code> that is responsible for this device instance.
 	 * 
-	 * @return An array with all channels.
+	 * @return The appropriated <code>MetaDataService</code>.
 	 */
-	int[] getChannels();
+	MetaDataService getMetaDataService();
 	
 	/**
 	 * Programms a iSense device with the given binaryImage without removing the current MAC address.
 	 * 
 	 * @param binaryImage The image that has to be flashed on the device.
 	 * @param monitor A callback interface that is called during the flashing operation.
+	 * @param timeout Maximum operation time before the method will be canceled.
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationHandle</code> for controlling the async operation.
 	 */
-	OperationHandle<Void> program(byte[] binaryImage, AsyncCallback<Void> callback);
+	OperationHandle<Void> program(byte[] binaryImage, int timeout, AsyncCallback<Void> callback);
 	
 	/**
 	 * Remove all data from the flash memory.
 	 * 
+	 * @param timeout Maximum operation time before the method will be canceled.
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationHandle</code> for controlling the async operation.
 	 */
-	OperationHandle<Void> eraseFlash(AsyncCallback<Void> callback);
+	OperationHandle<Void> eraseFlash(int timeout, AsyncCallback<Void> callback);
 	
 	/**
 	 * Write a given amount of bytes to the given address in the flash memory.
@@ -49,62 +50,61 @@ public interface iSenseDeviceAsync {
 	 * @param address The address where the data has to be written.
 	 * @param data The data that has to be written.
 	 * @param length The amount of bytes that has to be wirtten.
+	 * @param timeout Maximum operation time before the method will be canceled.
 	 * @param monitor A callback interface that is called during the flash operation.
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationHandle</code> for controlling the async operation.
 	 */
-	OperationHandle<Void> writeFlash(int address, byte[] data, int length, AsyncCallback<Void> callback);
+	OperationHandle<Void> writeFlash(int address, byte[] data, int length, int timeout, AsyncCallback<Void> callback);
 	
 	/**
 	 * Reads a given amount of bytes from the given address.
 	 * 
 	 * @param address The address from where the bytes has to be read.
 	 * @param length The amount of data that has to be readed.
+	 * @param timeout Maximum operation time before the method will be canceled.
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationHandle</code> for controlling the async operation.
 	 */
-	OperationHandle<byte[]> readFlash(int address, int length, AsyncCallback<byte[]> callback);
+	OperationHandle<byte[]> readFlash(int address, int length, int timeout, AsyncCallback<byte[]> callback);
 	
 	/**
 	 * Read the MAC address from the connected iSense device.
 	 * 
+	 * @param timeout Maximum operation time before the method will be canceled.
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationHandle</code> for controlling the async operation.
 	 */
-	OperationHandle<MacAddress> readMac(AsyncCallback<MacAddress> callback);
+	OperationHandle<MacAddress> readMac(int timeout, AsyncCallback<MacAddress> callback);
 	
 	/**
 	 * Writes the MAC address to the connected iSense device.
 	 * 
 	 * @param macAddress A <code>MacAddress</code> object representing the new mac address of the device.
+	 * @param timeout Maximum operation time before the method will be canceled.
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationHandle</code> for controlling the async operation.
 	 */
-	OperationHandle<Void> writeMac(MacAddress macAddress, AsyncCallback<Void> callback);
+	OperationHandle<Void> writeMac(MacAddress macAddress, int timeout, AsyncCallback<Void> callback);
 	
 	/**
 	 * Restart the connected iSense device.
 	 * 
+	 * @param timeout Maximum operation time before the method will be canceled.
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationHandle</code> for controlling the async operation.
 	 */
-	OperationHandle<Void> reset(AsyncCallback<Void> callback);
+	OperationHandle<Void> reset(int timeout, AsyncCallback<Void> callback);
 	
 	/**
 	 * Sends the <code>MessagePacket</code> to the connected iSense device.
 	 * 
 	 * @param packet The <code>MessagePacket</code> that has to be send to the device.
+	 * @param timeout Maximum operation time before the method will be canceled.
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationHandle</code> for controlling the async operation.
 	 */
-	OperationHandle<Void> send(MessagePacket packet, AsyncCallback<Void> callback);
-	
-	/**
-	 * Receive a <code>MessagePacket</code> from the connected iSense device.
-	 * 
-	 * @param callback Interface that is called on successfully or failed method execution.
-	 */
-	void receive(AsyncCallback<MessagePacket> callback);
+	OperationHandle<Void> send(MessagePacket packet, int timeout, AsyncCallback<Void> callback);
 	
 	/**
 	 * Returns the <code>InputStream</code> of the connected iSense device.
@@ -123,23 +123,23 @@ public interface iSenseDeviceAsync {
 	/**
 	 * Add an handler that will be called when one of the given <code>PacketTypes</code> occure.
 	 * 
-	 * @param types The types that specify when the handler is called.
-	 * @param handler The handler that will be called.
+	 * @param listener The listener that will be called.
+	 * @param types The types that specify when the listener is called.
 	 */
-	void registerPacketHandler(PacketHandler handler, PacketTypes... types);
+	void addPacketListener(MessagePacketListener listener, PacketTypes... types);
 	
 	/**
 	 * Add an handler that will be called when the given byte types occure.
 	 * 
-	 * @param handler
-	 * @param types
+	 * @param listener The listener that will be called.
+	 * @param types The types as byte array that specify when the listener is called.
 	 */
-	void registerPacketHandler(PacketHandler handler, byte... types);
+	void addPacketListener(MessagePacketListener listener, byte... types);
 	
 	/**
 	 * Remove the given handler from the handler list.
 	 * 
-	 * @param handler The handler that has to be removed.
+	 * @param listener The handler that has to be removed.
 	 */
-	void removePacketHandler(PacketHandler handler);
+	void removePacketListener(MessagePacketListener listener);
 }

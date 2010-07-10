@@ -12,7 +12,7 @@ import gnu.io.SerialPort;
  * 
  * @author Malte Legenhausen
  */
-public interface iSenseDevice {
+public interface Device {
 
 	/**
 	 * Returns the wireless channels under which the device is reachable.
@@ -87,13 +87,6 @@ public interface iSenseDevice {
 	void send(MessagePacket packet);
 	
 	/**
-	 * Receive a <code>MessagePacket</code> from the connected iSense device.
-	 * 
-	 * @return The received <code>MessagePacket</code>
-	 */
-	MessagePacket receive();
-	
-	/**
 	 * Returns the <code>InputStream</code> of the connected iSense device.
 	 * 
 	 * @return The <code>InputStream</code> of the connected iSense device.
@@ -111,14 +104,14 @@ public interface iSenseDevice {
 	 * Stores an handler that will be called when a given type occure.
 	 * 
 	 * @param types The types that specify when the handler is called.
-	 * @param handler The handler that will be called.
+	 * @param listener The listener that will be called.
 	 */
-	void registerPacketHandler(PacketTypes[] types, PacketHandler handler);
+	void addMessagePacketListener(PacketTypes[] types, MessagePacketListener listener);
 	
 	/**
 	 * Remove the given handler from the handler list.
 	 * 
-	 * @param handler The handler that has to be removed.
+	 * @param listener The listener that has to be removed.
 	 */
-	void removePacketHandler(PacketHandler handler);
+	void removeMessagePacketListener(MessagePacketListener listener);
 }

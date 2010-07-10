@@ -23,42 +23,30 @@
 
 package de.uniluebeck.itm.devicedriver;
 
-
-
 /**
- * 
+ * Class that represents the message in plain text.
  * 
  * @author Malte Legenhausen
  */
 public class MessagePlainText implements Message {
 
-	/** */
-	private byte[] content = {};
-
-	// -------------------------------------------------------------------------
-	/**
-	 * 
+	/** 
+	 * The content of the message.
 	 */
-	public MessagePlainText(byte[] buffer) {
-		content = new byte[buffer.length];
-		System.arraycopy(buffer, 0, content, 0, buffer.length);
+	private final byte[] content;
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param content The content of the message.
+	 */
+	public MessagePlainText(byte[] content) {
+		this.content = new byte[content.length];
+		System.arraycopy(content, 0, this.content, 0, content.length);
 	}
 
-	// -------------------------------------------------------------------------
-	/**
-	 * 
-	 */
+	
 	public byte[] getContent() {
 		return content;
 	}
-
-	/**
-	 * Sets the message plain text
-	 * 
-	 * @param content
-	 */
-	public void setContent(byte[] content) {
-		this.content = content;
-	}
-
 }
