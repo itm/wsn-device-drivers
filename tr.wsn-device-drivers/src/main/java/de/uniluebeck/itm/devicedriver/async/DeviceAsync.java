@@ -12,6 +12,8 @@ import de.uniluebeck.itm.devicedriver.metadata.MetaDataService;
 
 /**
  * Async definition of the <code>Device</code> interface.
+ * The monitoring of an operation is moved in the <code>AsyncCallback</code>.
+ * Note that an operation timeout will cause a <code>TimeoutException</code>.
  * 
  * @author Malte Legenhausen
  */
