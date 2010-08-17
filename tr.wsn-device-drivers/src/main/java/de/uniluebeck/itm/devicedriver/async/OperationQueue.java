@@ -28,4 +28,13 @@ public interface OperationQueue {
 	 * @return All operations left in the queue.
 	 */
 	List<OperationContainer<?>> getOperations();
+	
+	/**
+	 * Add a listener for the queue. 
+	 * 
+	 * @param listener A listener that handle queue events.
+	 */
+	void addOperationQueueListener(OperationQueueListener listener);
+	
+	void removeOperationQueueListener(OperationQueueListener listener);
 }

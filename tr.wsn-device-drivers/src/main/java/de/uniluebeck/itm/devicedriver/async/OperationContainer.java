@@ -1,5 +1,10 @@
 package de.uniluebeck.itm.devicedriver.async;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import de.uniluebeck.itm.devicedriver.Operation;
 
 /**
@@ -44,6 +49,8 @@ public class OperationContainer<T> implements Runnable {
 		DONE
 	}
 	
+	private final List<OperationContainerListener<T>> listeners = new ArrayList<OperationContainerListener<T>>();
+	
 	/**
 	 * Associated operation with this container.
 	 */
@@ -52,7 +59,7 @@ public class OperationContainer<T> implements Runnable {
 	/**
 	 * The timeout after which the application will be canceled.
 	 */
-	private final int timeout;
+	private final long timeout;
 	
 	/**
 	 * The callback that is called when the operation has finished, canceled or when an exception occured.
@@ -64,6 +71,8 @@ public class OperationContainer<T> implements Runnable {
 	 */
 	private State state = State.WAITING;
 	
+	private final Timer timer = new Timer(); 
+	
 	/**
 	 * Constructor.
 	 * 
@@ -71,15 +80,26 @@ public class OperationContainer<T> implements Runnable {
 	 * @param timeout The timeout after which the operation has to be canceled.
 	 * @param callback The callback method for the result.
 	 */
-	public OperationContainer(Operation<T> operation, int timeout, AsyncCallback<T> callback) {
+	public OperationContainer(Operation<T> operation, long timeout, AsyncCallback<T> callback) {
 		this.operation = operation;
 		this.timeout = timeout;
 		this.callback = callback;
+		
+		timer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				State oldState = state;
+				state = State.CANCELED;
+				fireTimeout();
+				fireStateChanged(oldState, state);
+			}
+		}, timeout);
 	}
 	
 	@Override
 	public void run() {
 		state = State.RUNNING;
+		fireStateChanged(State.WAITING, state);
 		try {
 			operation.run(callback);
 			if (operation.isCanceled()) {
@@ -88,10 +108,29 @@ public class OperationContainer<T> implements Runnable {
 			} else {
 				state = State.DONE;
 				callback.onSuccess(operation.getResult());
-			}			
+			}	
 		} catch (RuntimeException e) {
 			state = State.EXCEPTED;
 			callback.onFailure(e);
+		}
+		fireStateChanged(State.RUNNING, state);
+	}
+	
+	/**
+	 * Notify all listeners that the state has changed.
+	 * 
+	 * @param oldState The old state.
+	 * @param newState The new state.
+	 */
+	private void fireStateChanged(State oldState, State newState) {
+		for (OperationContainerListener<T> listener : listeners.toArray(new OperationContainerListener[listeners.size()])) {
+			listener.onStateChanged(this, oldState, newState);
+		}
+	}
+	
+	private void fireTimeout() {
+		for (OperationContainerListener<T> listener : listeners.toArray(new OperationContainerListener[listeners.size()])) {
+			listener.onTimeout(this, timeout);
 		}
 	}
 	
@@ -118,7 +157,15 @@ public class OperationContainer<T> implements Runnable {
 	 * 
 	 * @return The timeout of the operation.
 	 */
-	public int getTimeout() {
+	public long getTimeout() {
 		return timeout;
+	}
+	
+	public void addOperationContainerListener(OperationContainerListener<T> listener) {
+		listeners.add(listener);
+	}
+	
+	public void removeOperationContainerListener(OperationContainerListener<T> listener) {
+		listeners.remove(listener);
 	}
 }
