@@ -8,45 +8,38 @@ package de.uniluebeck.itm.devicedriver;
  * @param <T> The return type of the operation.
  */
 public abstract class AbstractOperation<T> implements Operation<T> {
-
-	private State state;
 	
-	private int timeout;
-	
+	/**
+	 * The result of the operation.
+	 */
 	private T result;
-
+	
+	/**
+	 * Boolean thats stores if the operatio has to be canceled.
+	 */
+	private boolean canceled;
+	
+	/**
+	 * Sets the result of the operation.
+	 * 
+	 * @param result The result of type T.
+	 */
 	protected void setResult(T result) {
 		this.result = result;
 	}
 	
 	@Override
-	public void cancel() {
-		setState(State.CANCELED);
-	}
-
-	@Override
 	public T getResult() {
 		return result;
 	}
-
+	
 	@Override
-	public State getState() {
-		return state;
+	public void cancel() {
+		canceled = true;
 	}
-
+	
 	@Override
-	public int getTimeout() {
-		return timeout;
+	public boolean isCanceled() {
+		return canceled;
 	}
-
-	@Override
-	public void setState(State state) {
-		this.state = state;
-	}
-
-	@Override
-	public void setTimeout(int timeout) {
-		this.timeout = timeout;
-	}
-
 }

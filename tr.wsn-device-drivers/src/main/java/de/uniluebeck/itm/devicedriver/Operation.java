@@ -9,34 +9,6 @@ package de.uniluebeck.itm.devicedriver;
  * @param <T> The return type of the operation.
  */
 public interface Operation<T> {
-	
-	/**
-	 * Enum for all states of an <code>Operation</code>.
-	 * 
-	 * @author Malte Legenhausen
-	 */
-	public enum State {
-		
-		/**
-		 * The <code>Operation</code> is waiting in the execution queue.
-		 */
-		WAITING,
-		
-		/**
-		 * The <code>Operation</code> is currently running.
-		 */
-		RUNNING,
-		
-		/**
-		 * The <code>Operation</code> has been canceled.
-		 */
-		CANCELED,
-		
-		/**
-		 * The <code>Operation</code> is done.
-		 */
-		DONE
-	}
 
 	/**
 	 * Method that is called when the operation has to be executed.
@@ -58,30 +30,9 @@ public interface Operation<T> {
 	void cancel();
 	
 	/**
-	 * Sets the state of the operation.
+	 * Returns if the operation will be canceled.
 	 * 
-	 * @param state The <code>OperationState</code>.
+	 * @return true if the operation will be canceled else false.
 	 */
-	void setState(State state);
-	
-	/**
-	 * Returns the state of the operation.
-	 * 
-	 * @return The operation state.
-	 */
-	State getState();
-	
-	/**
-	 * Returns the timeout for this operation.
-	 * 
-	 * @return The timeout of the operation.
-	 */
-	int getTimeout();
-	
-	/**
-	 * Sets the timeout for this operation.
-	 * 
-	 * @param timeout The timeout of the operation.
-	 */
-	void setTimeout(int timeout);
+	boolean isCanceled();
 }
