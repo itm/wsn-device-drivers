@@ -3,6 +3,7 @@ package de.uniluebeck.itm.devicedriver.async;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.MessagePacketListener;
@@ -25,6 +26,46 @@ public interface DeviceAsync {
 	 * @return The appropriated <code>MetaDataService</code>.
 	 */
 	MetaDataService getMetaDataService();
+	
+	/**
+	 * Returns all channels on which the device is reachable.
+	 * 
+	 * @return Array with channel numbers.
+	 */
+	int[] getChannels();
+	
+	/**
+	 * Returns the <code>ChipType</code> of the device.
+	 * 
+	 * @return The <code>ChipType</code> of the device.
+	 */
+	ChipType getChipType();
+	
+	/**
+	 * Connect the device with the given portName.
+	 * 
+	 * @param serialPortName The name of the serial port where the device can be found.
+	 * @param timeout Maximum operation time before the method will be canceled.
+	 * @param callback Interface that is called on successfully or failed method execution.
+	 * @return Returns a <code>OperationHandle</code> for controlling the async operation.
+	 */
+	OperationHandle<Boolean> connect(String serialPortName, int timeout, AsyncCallback<Boolean> callback);
+	
+	/**
+	 * Returns a boolean that indicates the connection state.
+	 * 
+	 * @return true if the connection is established else false.
+	 */
+	boolean isConnected();
+	
+	/**
+	 * Disconnect the device from the serial port.
+	 * 
+	 * @param timeout Maximum operation time before the method will be canceled.
+	 * @param callback Interface that is called on successfully or failed method execution.
+	 * @return Returns a <code>OperationHandle</code> for controlling the async operation.
+	 */
+	OperationHandle<Void> disconnect(int timeout, AsyncCallback<Void> callback);
 	
 	/**
 	 * Programms a iSense device with the given binaryImage without removing the current MAC address.
