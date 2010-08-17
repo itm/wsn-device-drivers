@@ -3,7 +3,6 @@ package de.uniluebeck.itm.devicedriver.async;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.MessagePacketListener;
@@ -28,28 +27,14 @@ public interface DeviceAsync {
 	MetaDataService getMetaDataService();
 	
 	/**
-	 * Returns all channels on which the device is reachable.
-	 * 
-	 * @return Array with channel numbers.
-	 */
-	int[] getChannels();
-	
-	/**
-	 * Returns the <code>ChipType</code> of the device.
-	 * 
-	 * @return The <code>ChipType</code> of the device.
-	 */
-	ChipType getChipType();
-	
-	/**
 	 * Connect the device with the given portName.
 	 * 
 	 * @param serialPortName The name of the serial port where the device can be found.
-	 * @param timeout Maximum operation time before the method will be canceled.
+	 * @param timeout Maximum operation time before the method will be canceled in milliseconds.
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationHandle</code> for controlling the async operation.
 	 */
-	OperationHandle<Boolean> connect(String serialPortName, int timeout, AsyncCallback<Boolean> callback);
+	OperationHandle<Boolean> connect(String serialPortName, long timeout, AsyncCallback<Boolean> callback);
 	
 	/**
 	 * Returns a boolean that indicates the connection state.
@@ -61,31 +46,31 @@ public interface DeviceAsync {
 	/**
 	 * Disconnect the device from the serial port.
 	 * 
-	 * @param timeout Maximum operation time before the method will be canceled.
+	 * @param timeout Maximum operation time before the method will be canceled in milliseconds.
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationHandle</code> for controlling the async operation.
 	 */
-	OperationHandle<Void> disconnect(int timeout, AsyncCallback<Void> callback);
+	OperationHandle<Void> disconnect(long timeout, AsyncCallback<Void> callback);
 	
 	/**
 	 * Programms a iSense device with the given binaryImage without removing the current MAC address.
 	 * 
 	 * @param binaryImage The image that has to be flashed on the device.
 	 * @param monitor A callback interface that is called during the flashing operation.
-	 * @param timeout Maximum operation time before the method will be canceled.
+	 * @param timeout Maximum operation time before the method will be canceled in milliseconds.
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationHandle</code> for controlling the async operation.
 	 */
-	OperationHandle<Void> program(byte[] binaryImage, int timeout, AsyncCallback<Void> callback);
+	OperationHandle<Void> program(byte[] binaryImage, long timeout, AsyncCallback<Void> callback);
 	
 	/**
 	 * Remove all data from the flash memory.
 	 * 
-	 * @param timeout Maximum operation time before the method will be canceled.
+	 * @param timeout Maximum operation time before the method will be canceled in milliseconds.
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationHandle</code> for controlling the async operation.
 	 */
-	OperationHandle<Void> eraseFlash(int timeout, AsyncCallback<Void> callback);
+	OperationHandle<Void> eraseFlash(long timeout, AsyncCallback<Void> callback);
 	
 	/**
 	 * Write a given amount of bytes to the given address in the flash memory.
@@ -93,61 +78,61 @@ public interface DeviceAsync {
 	 * @param address The address where the data has to be written.
 	 * @param data The data that has to be written.
 	 * @param length The amount of bytes that has to be wirtten.
-	 * @param timeout Maximum operation time before the method will be canceled.
+	 * @param timeout Maximum operation time before the method will be canceled in milliseconds.
 	 * @param monitor A callback interface that is called during the flash operation.
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationHandle</code> for controlling the async operation.
 	 */
-	OperationHandle<Void> writeFlash(int address, byte[] data, int length, int timeout, AsyncCallback<Void> callback);
+	OperationHandle<Void> writeFlash(int address, byte[] data, int length, long timeout, AsyncCallback<Void> callback);
 	
 	/**
 	 * Reads a given amount of bytes from the given address.
 	 * 
 	 * @param address The address from where the bytes has to be read.
 	 * @param length The amount of data that has to be readed.
-	 * @param timeout Maximum operation time before the method will be canceled.
+	 * @param timeout Maximum operation time before the method will be canceled in milliseconds.
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationHandle</code> for controlling the async operation.
 	 */
-	OperationHandle<byte[]> readFlash(int address, int length, int timeout, AsyncCallback<byte[]> callback);
+	OperationHandle<byte[]> readFlash(int address, int length, long timeout, AsyncCallback<byte[]> callback);
 	
 	/**
 	 * Read the MAC address from the connected iSense device.
 	 * 
-	 * @param timeout Maximum operation time before the method will be canceled.
+	 * @param timeout Maximum operation time before the method will be canceled in milliseconds.
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationHandle</code> for controlling the async operation.
 	 */
-	OperationHandle<MacAddress> readMac(int timeout, AsyncCallback<MacAddress> callback);
+	OperationHandle<MacAddress> readMac(long timeout, AsyncCallback<MacAddress> callback);
 	
 	/**
 	 * Writes the MAC address to the connected iSense device.
 	 * 
 	 * @param macAddress A <code>MacAddress</code> object representing the new mac address of the device.
-	 * @param timeout Maximum operation time before the method will be canceled.
+	 * @param timeout Maximum operation time before the method will be canceled in milliseconds.
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationHandle</code> for controlling the async operation.
 	 */
-	OperationHandle<Void> writeMac(MacAddress macAddress, int timeout, AsyncCallback<Void> callback);
+	OperationHandle<Void> writeMac(MacAddress macAddress, long timeout, AsyncCallback<Void> callback);
 	
 	/**
 	 * Restart the connected iSense device.
 	 * 
-	 * @param timeout Maximum operation time before the method will be canceled.
+	 * @param timeout Maximum operation time before the method will be canceled in milliseconds.
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationHandle</code> for controlling the async operation.
 	 */
-	OperationHandle<Void> reset(int timeout, AsyncCallback<Void> callback);
+	OperationHandle<Void> reset(long timeout, AsyncCallback<Void> callback);
 	
 	/**
 	 * Sends the <code>MessagePacket</code> to the connected iSense device.
 	 * 
 	 * @param packet The <code>MessagePacket</code> that has to be send to the device.
-	 * @param timeout Maximum operation time before the method will be canceled.
+	 * @param timeout Maximum operation time before the method will be canceled milliseconds.
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationHandle</code> for controlling the async operation.
 	 */
-	OperationHandle<Void> send(MessagePacket packet, int timeout, AsyncCallback<Void> callback);
+	OperationHandle<Void> send(MessagePacket packet, long timeout, AsyncCallback<Void> callback);
 	
 	/**
 	 * Returns the <code>InputStream</code> of the connected iSense device.
