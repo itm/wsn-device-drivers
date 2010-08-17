@@ -1,68 +1,87 @@
-/**********************************************************************************************************************
- * Copyright (c) 2010, coalesenses GmbH                                                                               *
- * All rights reserved.                                                                                               *
- *                                                                                                                    *
- * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the   *
- * following conditions are met:                                                                                      *
- *                                                                                                                    *
- * - Redistributions of source code must retain the above copyright notice, this list of conditions and the following *
- *   disclaimer.                                                                                                      *
- * - Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the        *
- *   following disclaimer in the documentation and/or other materials provided with the distribution.                 *
- * - Neither the name of the coalesenses GmbH nor the names of its contributors may be used to endorse or promote     *
- *   products derived from this software without specific prior written permission.                                   *
- *                                                                                                                    *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, *
- * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE      *
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,         *
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE *
- * GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF    *
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY   *
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                                *
- **********************************************************************************************************************/
-
 package de.uniluebeck.itm.devicedriver;
 
 
 /**
- * Enumeration to define the different Operations.
+ * A device operation.
  * 
  * @author Malte Legenhausen
+ *
+ * @param <T> The return type of the operation.
  */
-public enum Operation {
+public interface Operation<T> {
 	
 	/**
-	 * State for NoOP.
+	 * Enum for all states of an <code>Operation</code>.
+	 * 
+	 * @author Malte Legenhausen
 	 */
-	NONE,
+	public enum State {
+		
+		/**
+		 * The <code>Operation</code> is waiting in the execution queue.
+		 */
+		WAITING,
+		
+		/**
+		 * The <code>Operation</code> is currently running.
+		 */
+		RUNNING,
+		
+		/**
+		 * The <code>Operation</code> has been canceled.
+		 */
+		CANCELED,
+		
+		/**
+		 * The <code>Operation</code> is done.
+		 */
+		DONE
+	}
+
+	/**
+	 * Method that is called when the operation has to be executed.
+	 * 
+	 * @param monitor The monitor for this operation.
+	 */
+	void run(Monitor monitor);
 	
 	/**
-	 * State for ReadMac Operation.
+	 * Returns the result of the run operation.
+	 * 
+	 * @return The result of the operation.
 	 */
-	READ_MAC,
+	T getResult();
 	
 	/**
-	 * State for WriteMac Operation.
+	 * Cancel the operation.
 	 */
-	WRITE_MAC,
+	void cancel();
 	
 	/**
-	 * State for Program Operation.
+	 * Sets the state of the operation.
+	 * 
+	 * @param state The <code>OperationState</code>.
 	 */
-	PROGRAM,
+	void setState(State state);
 	
 	/**
-	 * State for ReadFlash Operation.
+	 * Returns the state of the operation.
+	 * 
+	 * @return The operation state.
 	 */
-	READ_FLASH,
+	State getState();
 	
 	/**
-	 * State for WriteFlash Operation.
+	 * Returns the timeout for this operation.
+	 * 
+	 * @return The timeout of the operation.
 	 */
-	WRITE_FLASH,
+	int getTimeout();
 	
 	/**
-	 * State for the Reset Operation.
+	 * Sets the timeout for this operation.
+	 * 
+	 * @param timeout The timeout of the operation.
 	 */
-	RESET
+	void setTimeout(int timeout);
 }

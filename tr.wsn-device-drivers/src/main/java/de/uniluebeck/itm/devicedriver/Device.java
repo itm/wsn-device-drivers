@@ -6,9 +6,9 @@ import java.io.OutputStream;
 import gnu.io.SerialPort;
 
 /**
- * Standard interface for all iSense devices.
- * All method in this interface has to be implemented as blocking. 
- * So the whole device can run in a single thread.
+ * Standard interface for all devices.
+ * All create methods have to return a new operation instance.
+ * 
  * 
  * @author Malte Legenhausen
  */
@@ -29,17 +29,31 @@ public interface Device {
 	SerialPort getSerialPort();
 	
 	/**
-	 * Programms a iSense device with the given binaryImage without removing the current MAC address.
+	 * Create a new connect operation.
 	 * 
-	 * @param binaryImage The image that has to be flashed on the device.
-	 * @param monitor A callback interface that is called during the flashing operation.
+	 * @param serialPortName The name of the port that has to be used for the connecting process.
+	 * @return The operation that can be used for connecting to the device.
 	 */
-	void program(byte[] binaryImage, Monitor monitor);
+	ConnectOperation createConnectOperation(String serialPortName);
 	
 	/**
-	 * Remove all data from the flash memory.
+	 * Returns the state of the connection.
+	 * 
+	 * @return true if the connection is established else false.
 	 */
-	void eraseFlash();
+	boolean isConnected();
+	
+	/**
+	 * Create a program operation for this device with the given binaryImage without removing the current MAC address.
+	 * 
+	 * @param binaryImage The image that has to be flashed on the device.
+	 */
+	ProgramOperation createProgramOperation(byte[] binaryImage);
+	
+	/**
+	 * Create a operation that remove all data from the flash memory of the device.
+	 */
+	EraseFlashOperation createEraseFlashOperation();
 	
 	/**
 	 * Write a given amount of bytes to the given address in the flash memory.
@@ -47,9 +61,8 @@ public interface Device {
 	 * @param address The address where the data has to be written.
 	 * @param data The data that has to be written.
 	 * @param length The amount of bytes that has to be wirtten.
-	 * @param monitor A callback interface that is called during the flash operation.
 	 */
-	void writeFlash(int address, byte[] data, int length, Monitor monitor);
+	WriteFlashOperation createWriteFlashOperation(int address, byte[] data, int length);
 	
 	/**
 	 * Reads a given amount of bytes from the given address.
@@ -58,33 +71,33 @@ public interface Device {
 	 * @param length The amount of data that has to be readed.
 	 * @return The readed bytes.
 	 */
-	byte[] readFlash(int address, int length);
+	ReadFlashOperation createReadFlashOperation(int address, int length);
 	
 	/**
 	 * Read the MAC address from the connected iSense device.
 	 * 
 	 * @return A <code>MacAddress</code> object representing the mac address of the device.
 	 */
-	MacAddress readMacAddress();
+	Operation<MacAddress> createReadMacAddressOperation();
 	
 	/**
 	 * Writes the MAC address to the connected iSense device.
 	 * 
 	 * @param macAddress A <code>MacAddress</code> object representing the new mac address of the device.
 	 */
-	void writeMacAddress(MacAddress macAddress, Monitor monitor);
+	WriteMacAddressOperation createWriteMacAddressOperation(MacAddress macAddress);
 	
 	/**
 	 * Restart the connected iSense device.
 	 */
-	void reset();
+	ResetOperation createResetOperation();
 	
 	/**
 	 * Sends the <code>MessagePacket</code> to the connected iSense device.
 	 * 
 	 * @param packet The <code>MessagePacket</code> that has to be send to the device.
 	 */
-	void send(MessagePacket packet);
+	SendOperation createSendOperation(MessagePacket packet);
 	
 	/**
 	 * Returns the <code>InputStream</code> of the connected iSense device.
