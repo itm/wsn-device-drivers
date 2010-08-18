@@ -27,32 +27,6 @@ public interface DeviceAsync {
 	MetaDataService getMetaDataService();
 	
 	/**
-	 * Connect the device with the given portName.
-	 * 
-	 * @param serialPortName The name of the serial port where the device can be found.
-	 * @param timeout Maximum operation time before the method will be canceled in milliseconds.
-	 * @param callback Interface that is called on successfully or failed method execution.
-	 * @return Returns a <code>OperationHandle</code> for controlling the async operation.
-	 */
-	OperationHandle<Boolean> connect(String serialPortName, long timeout, AsyncCallback<Boolean> callback);
-	
-	/**
-	 * Returns a boolean that indicates the connection state.
-	 * 
-	 * @return true if the connection is established else false.
-	 */
-	boolean isConnected();
-	
-	/**
-	 * Disconnect the device from the serial port.
-	 * 
-	 * @param timeout Maximum operation time before the method will be canceled in milliseconds.
-	 * @param callback Interface that is called on successfully or failed method execution.
-	 * @return Returns a <code>OperationHandle</code> for controlling the async operation.
-	 */
-	OperationHandle<Void> disconnect(long timeout, AsyncCallback<Void> callback);
-	
-	/**
 	 * Programms a iSense device with the given binaryImage without removing the current MAC address.
 	 * 
 	 * @param binaryImage The image that has to be flashed on the device.

@@ -1,14 +1,13 @@
 package de.uniluebeck.itm.devicedriver;
 
+import gnu.io.SerialPort;
+
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import gnu.io.SerialPort;
 
 /**
  * Standard interface for all devices.
  * All create methods have to return a new operation instance.
- * 
  * 
  * @author Malte Legenhausen
  */
@@ -29,19 +28,11 @@ public interface Device {
 	SerialPort getSerialPort();
 	
 	/**
-	 * Create a new connect operation.
+	 * Create a new operation for determining the <code>ChipType</code>.
 	 * 
-	 * @param serialPortName The name of the port that has to be used for the connecting process.
-	 * @return The operation that can be used for connecting to the device.
+	 * @return The operation for determing the <code>ChipType</code>.
 	 */
-	ConnectOperation createConnectOperation(String serialPortName);
-	
-	/**
-	 * Returns the state of the connection.
-	 * 
-	 * @return true if the connection is established else false.
-	 */
-	boolean isConnected();
+	GetChipTypeOperation createGetChipTypeOperation();
 	
 	/**
 	 * Create a program operation for this device with the given binaryImage without removing the current MAC address.
@@ -78,7 +69,7 @@ public interface Device {
 	 * 
 	 * @return A <code>MacAddress</code> object representing the mac address of the device.
 	 */
-	Operation<MacAddress> createReadMacAddressOperation();
+	ReadMacAddressOperation createReadMacAddressOperation();
 	
 	/**
 	 * Writes the MAC address to the connected iSense device.

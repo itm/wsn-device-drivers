@@ -7,11 +7,11 @@ import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 
 public class FutureOperationHandle<T> implements OperationHandle<T> {
 
-	private final Future<?> future;
+	private final Future<T> future;
 	
 	private final Operation<T> operation;
 	
-	public FutureOperationHandle(Future<?> future, Operation<T> operation) {
+	public FutureOperationHandle(Future<T> future, Operation<T> operation) {
 		this.future = future;
 		this.operation = operation;
 	}
@@ -24,11 +24,10 @@ public class FutureOperationHandle<T> implements OperationHandle<T> {
 	@Override
 	public T get() {
 		try {
-			future.get();
+			return future.get();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		return operation.getResult();
 	}
 
 }

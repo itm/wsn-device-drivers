@@ -44,7 +44,7 @@ public class SingleThreadOperationQueue implements OperationQueue {
 				}
 			}
 		});
-		final Future<?> future = executor.submit(container);
+		final Future<T> future = executor.submit(container);
 		container.addOperationContainerListener(new OperationContainerAdapter<T>() {
 			@Override
 			public void onTimeout(OperationContainer<T> container, long timeout) {

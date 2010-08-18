@@ -14,15 +14,9 @@ public interface Operation<T> {
 	 * Method that is called when the operation has to be executed.
 	 * 
 	 * @param monitor The monitor for this operation.
+	 * @return The result of the <code>Operation<code> execution.
 	 */
-	void run(Monitor monitor);
-	
-	/**
-	 * Returns the result of the run operation.
-	 * 
-	 * @return The result of the operation.
-	 */
-	T getResult();
+	T execute(Monitor monitor);
 	
 	/**
 	 * Cancel the operation.

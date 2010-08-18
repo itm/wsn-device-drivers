@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Callable;
 
 import de.uniluebeck.itm.devicedriver.Operation;
 
@@ -14,7 +15,7 @@ import de.uniluebeck.itm.devicedriver.Operation;
  *
  * @param <T> The result type of the operation.
  */
-public class OperationContainer<T> implements Runnable {
+public class OperationContainer<T> implements Callable<T> {
 
 	/**
 	 * Enum for all states of an <code>Operation</code>.
@@ -97,23 +98,26 @@ public class OperationContainer<T> implements Runnable {
 	}
 	
 	@Override
-	public void run() {
+	public T call() {
 		state = State.RUNNING;
 		fireStateChanged(State.WAITING, state);
 		try {
-			operation.run(callback);
+			final T result = operation.execute(callback);
 			if (operation.isCanceled()) {
 				state = State.CANCELED;
 				callback.onCancel();
 			} else {
 				state = State.DONE;
-				callback.onSuccess(operation.getResult());
-			}	
+				callback.onSuccess(result);
+			}
+			fireStateChanged(State.RUNNING, state);
+			return result;
 		} catch (RuntimeException e) {
 			state = State.EXCEPTED;
 			callback.onFailure(e);
 		}
 		fireStateChanged(State.RUNNING, state);
+		return null;
 	}
 	
 	/**
