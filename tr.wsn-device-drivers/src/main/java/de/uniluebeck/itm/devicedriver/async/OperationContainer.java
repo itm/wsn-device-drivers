@@ -72,6 +72,9 @@ public class OperationContainer<T> implements Callable<T> {
 	 */
 	private State state = State.WAITING;
 	
+	/**
+	 * <code>Timer</code> that executes the timeout operation.
+	 */
 	private final Timer timer = new Timer(); 
 	
 	/**
@@ -115,8 +118,8 @@ public class OperationContainer<T> implements Callable<T> {
 		} catch (RuntimeException e) {
 			state = State.EXCEPTED;
 			callback.onFailure(e);
+			fireStateChanged(State.RUNNING, state);
 		}
-		fireStateChanged(State.RUNNING, state);
 		return null;
 	}
 	
@@ -132,6 +135,9 @@ public class OperationContainer<T> implements Callable<T> {
 		}
 	}
 	
+	/**
+	 * Notify all listeners that a timeout occures.
+	 */
 	private void fireTimeout() {
 		for (OperationContainerListener<T> listener : listeners.toArray(new OperationContainerListener[listeners.size()])) {
 			listener.onTimeout(this, timeout);

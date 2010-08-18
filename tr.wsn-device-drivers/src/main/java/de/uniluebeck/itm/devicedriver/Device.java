@@ -1,7 +1,5 @@
 package de.uniluebeck.itm.devicedriver;
 
-import gnu.io.SerialPort;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -21,11 +19,11 @@ public interface Device {
 	int[] getChannels();
 	
 	/**
-	 * Returns the <code>SerialPort</code> instance.
+	 * Returns the <code>Connection</code> object for this device.
 	 * 
-	 * @return SerialPort instance.
+	 * @return
 	 */
-	SerialPort getSerialPort();
+	Connection getConnection();
 	
 	/**
 	 * Create a new operation for determining the <code>ChipType</code>.
