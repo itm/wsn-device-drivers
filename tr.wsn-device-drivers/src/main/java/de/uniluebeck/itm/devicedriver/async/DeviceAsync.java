@@ -6,7 +6,7 @@ import java.io.OutputStream;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.MessagePacketListener;
-import de.uniluebeck.itm.devicedriver.PacketTypes;
+import de.uniluebeck.itm.devicedriver.PacketType;
 import de.uniluebeck.itm.devicedriver.metadata.MetaDataService;
 
 
@@ -128,7 +128,7 @@ public interface DeviceAsync {
 	 * @param listener The listener that will be called.
 	 * @param types The types that specify when the listener is called.
 	 */
-	void addPacketListener(MessagePacketListener listener, PacketTypes... types);
+	void addMessagePacketListener(MessagePacketListener listener, PacketType... types);
 	
 	/**
 	 * Add an handler that will be called when the given byte types occure.
@@ -136,12 +136,12 @@ public interface DeviceAsync {
 	 * @param listener The listener that will be called.
 	 * @param types The types as byte array that specify when the listener is called.
 	 */
-	void addPacketListener(MessagePacketListener listener, byte... types);
+	void addMessagePacketListener(MessagePacketListener listener, int... types);
 	
 	/**
 	 * Remove the given handler from the handler list.
 	 * 
 	 * @param listener The handler that has to be removed.
 	 */
-	void removePacketListener(MessagePacketListener listener);
+	void removeMessagePacketListener(MessagePacketListener listener);
 }

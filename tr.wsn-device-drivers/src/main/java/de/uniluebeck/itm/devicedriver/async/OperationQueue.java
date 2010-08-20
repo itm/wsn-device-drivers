@@ -20,7 +20,7 @@ public interface OperationQueue {
 	 * @param callback The callback interface that is called when the operation is done.
 	 * @return A <code>OperationHandle</code> for controlling the operation.
 	 */
-	<T> OperationHandle<T> addOperation(Operation<T> operation, int timeout, AsyncCallback<T> callback);
+	<T> OperationHandle<T> addOperation(Operation<T> operation, long timeout, AsyncCallback<T> callback);
 	
 	/**
 	 * Returns all operations that are in the queue.

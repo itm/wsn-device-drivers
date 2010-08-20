@@ -5,7 +5,7 @@ package de.uniluebeck.itm.devicedriver;
  * 
  * @author Malte Legenhausen
  */
-public interface WriteMacAddressOperation extends Operation<MacAddress> {
+public interface WriteMacAddressOperation extends Operation<Void> {
 
 	/**
 	 * Sets the <code>MacAddress</code> that has to be written to the device.

@@ -33,7 +33,7 @@ public class SingleThreadOperationQueue implements OperationQueue {
 	private ExecutorService executor = Executors.newSingleThreadExecutor();
 	
 	@Override
-	public synchronized <T> OperationHandle<T> addOperation(Operation<T> operation, int timeout, AsyncCallback<T> callback) {
+	public synchronized <T> OperationHandle<T> addOperation(Operation<T> operation, long timeout, AsyncCallback<T> callback) {
 		OperationContainer<T> container = new OperationContainer<T>(operation, timeout, callback);
 		queue.add(container);
 		container.addOperationContainerListener(new OperationContainerAdapter<T>() {

@@ -37,7 +37,7 @@ public interface Device {
 	 * 
 	 * @param binaryImage The image that has to be flashed on the device.
 	 */
-	ProgramOperation createProgramOperation(byte[] binaryImage);
+	ProgramOperation createProgramOperation();
 	
 	/**
 	 * Create a operation that remove all data from the flash memory of the device.
@@ -47,20 +47,16 @@ public interface Device {
 	/**
 	 * Write a given amount of bytes to the given address in the flash memory.
 	 * 
-	 * @param address The address where the data has to be written.
-	 * @param data The data that has to be written.
-	 * @param length The amount of bytes that has to be wirtten.
+	 * @return 
 	 */
-	WriteFlashOperation createWriteFlashOperation(int address, byte[] data, int length);
+	WriteFlashOperation createWriteFlashOperation();
 	
 	/**
 	 * Reads a given amount of bytes from the given address.
 	 * 
-	 * @param address The address from where the bytes has to be read.
-	 * @param length The amount of data that has to be readed.
 	 * @return The readed bytes.
 	 */
-	ReadFlashOperation createReadFlashOperation(int address, int length);
+	ReadFlashOperation createReadFlashOperation();
 	
 	/**
 	 * Read the MAC address from the connected iSense device.
@@ -74,7 +70,7 @@ public interface Device {
 	 * 
 	 * @param macAddress A <code>MacAddress</code> object representing the new mac address of the device.
 	 */
-	WriteMacAddressOperation createWriteMacAddressOperation(MacAddress macAddress);
+	WriteMacAddressOperation createWriteMacAddressOperation();
 	
 	/**
 	 * Restart the connected iSense device.
@@ -86,7 +82,7 @@ public interface Device {
 	 * 
 	 * @param packet The <code>MessagePacket</code> that has to be send to the device.
 	 */
-	SendOperation createSendOperation(MessagePacket packet);
+	SendOperation createSendOperation();
 	
 	/**
 	 * Returns the <code>InputStream</code> of the connected iSense device.
@@ -105,10 +101,18 @@ public interface Device {
 	/**
 	 * Stores an handler that will be called when a given type occure.
 	 * 
-	 * @param types The types that specify when the handler is called.
 	 * @param listener The listener that will be called.
+	 * @param types The types that specify when the handler is called.
 	 */
-	void addMessagePacketListener(PacketTypes[] types, MessagePacketListener listener);
+	void addMessagePacketListener(MessagePacketListener listener, PacketType... types);
+	
+	/**
+	 * Add an handler that will be called when the given byte types occure.
+	 * 
+	 * @param listener The listener that will be called.
+	 * @param types The types as byte array that specify when the listener is called.
+	 */
+	void addMessagePacketListener(MessagePacketListener listener, int... types);
 	
 	/**
 	 * Remove the given handler from the handler list.

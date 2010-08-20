@@ -26,211 +26,134 @@ package de.uniluebeck.itm.devicedriver;
 /**
  * Contains constants to identify the packet types ({@link de.uniluebeck.itm.wsn.devicedrivers.generic.MessagePacket#getType()}.
  */
-public class PacketTypes {
+public enum PacketType {
+	
+	ISENSE_ISHELL_INTERPRETER(0),
+	
+	RESET(1),
+	
+	SERAERIAL(2),
+	
+	TIMERESPONSE(3),
+	
+	CAMERA_APPLICATION(4),
+	
+	FUNCTIONTEST(4),
+	
+	AMR_APPLICATION(5),
+	
+	ACC_APPLICATION(6),
+	
+	OUT_VIRTUAL_RADIO(7),
+	
+	OUT_RESERVED_2(8),
+	
+	OUT_RESERVED_3(9),
+	
+	CUSTOM_OUT_1(10),
+	
+	CUSTOM_OUT_2(11),
+	
+	CUSTOM_OUT_3(12),
+	
+	HIBERNATION(5),
+	
+	OTAP(6),
+	
+	DATA_EXCHANGER(25),
+	
+	LOG(104),
+	
+	PLOT(105),
+	
+	FLASH_DUMP(106),
+	
+	PLOTX(107),
+	
+	JPEG(108),
 
-
-	// Uart packet types
-
-	/**
-	 *
-	 */
-	public static final int ISENSE_ISHELL_INTERPRETER = 0;
-
-	/**
-	 *
-	 */
-	public static final int RESET = 1;
-
-	/**
-	 *
-	 */
-	public static final int SERAERIAL = 2;
-
-	/**
-	 *
-	 */
-	public static final int TIMERESPONSE = 3;
-
-	/**
-	 *
-	 */
-	public static final int CAMERA_APPLICATION = 4;
-
-	/**
-	 *
-	 */
-	public static final int FUNCTIONTEST = 4;
-
-	/**
-	 *
-	 */
-	public static final int AMR_APPLICATION = 5;
-
-	/**
-	 *
-	 */
-	public static final int ACC_APPLICATION = 6;
-
-	/**
-	 *
-	 */
-	public static final int OUT_VIRTUAL_RADIO = 7;
-
-	/**
-	 *
-	 */
-	public static final int OUT_RESERVED_2 = 8;
-
-	/**
-	 *
-	 */
-	public static final int OUT_RESERVED_3 = 9;
-
-	/**
-	 *
-	 */
-	public static final int CUSTOM_OUT_1 = 10;
-
-	/**
-	 *
-	 */
-	public static final int CUSTOM_OUT_2 = 11;
-
-	/**
-	 *
-	 */
-	public static final int CUSTOM_OUT_3 = 12;
-
-
-	// Radio packet types
-
-	/**
-	 *
-	 */
-	public static final int HIBERNATION = 5;
-
-	/**
-	 *
-	 */
-	public static final int OTAP = 6;
-
-	/**
-	 *
-	 */
-	public static final int DATA_EXCHANGER = 25;
-
-	/**
-	 *
-	 */
-	public static final int LOG = 104;
-
-	/**
-	 * Corresponds to the first byte of the {@link de.uniluebeck.itm.wsn.devicedrivers.generic.MessagePacket#getContent()}
-	 */
-	public static class LogType {
-
-		/**
-		 *
-		 */
-		public final static int DEBUG = 0;
-
-		/**
-		 *
-		 */
-		public final static int FATAL = 1;
-
-	}
-
-	/**
-	 *
-	 */
-	public static final int PLOT = 105;
-
-	/**
-	 *
-	 */
-	public static final int FLASH_DUMP = 106;
-
-	/**
-	 *
-	 */
-	public static final int PLOTX = 107;
-
-	/**
-	 *
-	 */
-	public static final int JPEG = 108;
-
-	/**
-	 *
-	 */
-	public static final int TIMEREQUEST = 109;
-
-	/**
-	 *
-	 */
-	public static final int AUDIO = 110;
-
+	TIMEREQUEST(109),
+	
+	AUDIO(110),
+	
 	/**
 	 * UART Message Type for incoming SpyGlass Packets
 	 */
-	public static final int SPYGLASS = 111;
-
-	/**
-	 *
-	 */
-	public static final int FLOATBUFFER = 112;
-
-	/**
-	 *
-	 */
-	public static final int ISENSE_ISI_PACKET_TYPE_ISENSE_ID = 113;
+	SPYGLASS(111),
+	
+	FLOATBUFFER(112),
+	
+	ISENSE_ISI_PACKET_TYPE_ISENSE_ID(113),
 
 	/**
 	 * UART Message Type for incoming virtual radio communication from the node
 	 */
-	public static final int IN_VIRTUAL_RADIO = 114;
+	IN_VIRTUAL_RADIO(114),
+	
+	TOS_AMTYPE_PRINTF(100);
+	
+	private final int value;
+	
+	private PacketType(int value) {
+		this.value = value;
+	}
 
-	// from tiny os
-
-	/**
-	 *
-	 */
-	public static final int TOS_AMTYPE_PRINTF = 0x64; // = 100
-
-
-	/**
-	 *
-	 */
-	public class ISenseCommands {
-
-		/**
-		 *
-		 */
-		public static final int ISENSE_ISI_COMMAND_SET_CHANNEL = 2;
-
-		/**
-		 *
-		 */
-		public static final int ISENSE_ISI_COMMAND_SEND_ID_TO_ISHELL = 3;
-
-		/**
-		 *
-		 */
-		public static final int ISENSE_ISI_COMMAND_ISHELL_TO_ROUTING = 4;
-
+	public int getValue() {
+		return value;
 	}
 
 	/**
-	 *
+	 * Corresponds to the first byte of the {@link de.uniluebeck.itm.wsn.devicedrivers.generic.MessagePacket#getContent()}
 	 */
-	public class ISenseRoutings {
+	public enum LogType {
 
-		/**
-		 *
-		 */
-		public static final int ISENSE_ISI_ROUTING_TREE_ROUTING = 7;
+		DEBUG(0),
 
+		FATAL(1);
+		
+		private final int value;
+		
+		private LogType(int value) {
+			this.value = value;
+		}
+		
+		public int getValue() {
+			return value;
+		}
 	}
 
+	public enum ISenseCommands {
+
+		ISENSE_ISI_COMMAND_SET_CHANNEL(2),
+
+		ISENSE_ISI_COMMAND_SEND_ID_TO_ISHELL(3),
+
+		ISENSE_ISI_COMMAND_ISHELL_TO_ROUTING(4);
+		
+		
+		private final int value;
+		
+		private ISenseCommands(int value) {
+			this.value = value;
+		}
+
+		public int getValue() {
+			return value;
+		}
+	}
+
+	public enum ISenseRoutings {
+
+		ISENSE_ISI_ROUTING_TREE_ROUTING(7);
+		
+		private final int value;
+		
+		private ISenseRoutings(int value) {
+			this.value = value;
+		}
+		
+		public int getValue() {
+			return value;
+		}
+	}
 }
