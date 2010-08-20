@@ -10,13 +10,6 @@ import java.io.OutputStream;
  * @author Malte Legenhausen
  */
 public interface Device {
-
-	/**
-	 * Returns the wireless channels under which the device is reachable.
-	 * 
-	 * @return An array with all channels.
-	 */
-	int[] getChannels();
 	
 	/**
 	 * Returns the <code>Connection</code> object for this device.
@@ -24,6 +17,13 @@ public interface Device {
 	 * @return
 	 */
 	Connection getConnection();
+
+	/**
+	 * Returns the wireless channels under which the device is reachable.
+	 * 
+	 * @return An array with all channels.
+	 */
+	int[] getChannels();
 	
 	/**
 	 * Create a new operation for determining the <code>ChipType</code>.

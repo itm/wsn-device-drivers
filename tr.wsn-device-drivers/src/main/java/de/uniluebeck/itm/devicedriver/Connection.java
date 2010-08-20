@@ -1,6 +1,5 @@
 package de.uniluebeck.itm.devicedriver;
 
-import gnu.io.SerialPort;
 
 /**
  * Interface that defines how to manage a connection to a device.
@@ -10,18 +9,11 @@ import gnu.io.SerialPort;
 public interface Connection {
 
 	/**
-	 * Returns the <code>SerialPort</code> instance.
-	 * 
-	 * @return SerialPort instance.
-	 */
-	SerialPort getSerialPort();
-	
-	/**
 	 * Establish the connection with the device and return a useable device instance.
 	 * 
-	 * @return A useable device instance.
+	 * @param uri URI that identifies the resource to which a connection has to be established.
 	 */
-	Device connect();
+	void connect(String uri);
 	
 	/**
 	 * Close the connection to the device.
@@ -37,7 +29,17 @@ public interface Connection {
 	 */
 	boolean isConnected();
 	
+	/**
+	 * Adds a listener to the connection to track connection changes.
+	 * 
+	 * @param listener The listener that has to be added.
+	 */
 	void addConnectionListener(ConnectionListener listener);
 	
+	/**
+	 * Removes the given listener from the the internal listener list.
+	 * 
+	 * @param listener The listener that has to be removed.
+	 */
 	void removeConnectionListener(ConnectionListener listener);
 }
