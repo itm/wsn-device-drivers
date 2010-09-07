@@ -26,21 +26,21 @@ public class SingleThreadOperationQueue implements OperationQueue {
 	/**
 	 * List that contains all listeners.
 	 */
-	private List<OperationQueueListener> listeners = new ArrayList<OperationQueueListener>();
+	private final List<OperationQueueListener> listeners = new ArrayList<OperationQueueListener>();
 	
-	private List<OperationContainer<?>> queue = new LinkedList<OperationContainer<?>>();
+	private final List<OperationContainer<?>> operations = new LinkedList<OperationContainer<?>>();
 	
-	private ExecutorService executor = Executors.newSingleThreadExecutor();
+	private final ExecutorService executor = Executors.newSingleThreadExecutor();
 	
 	@Override
 	public synchronized <T> OperationHandle<T> addOperation(Operation<T> operation, long timeout, AsyncCallback<T> callback) {
 		OperationContainer<T> container = new OperationContainer<T>(operation, timeout, callback);
-		queue.add(container);
+		operations.add(container);
 		container.addOperationContainerListener(new OperationContainerAdapter<T>() {
 			@Override
 			public void onStateChanged(OperationContainer<T> container, State oldState, State newState) {
 				if (newState == State.DONE || newState == State.EXCEPTED || newState == State.CANCELED) {
-					queue.remove(container);
+					operations.remove(container);
 				}
 			}
 		});
@@ -57,7 +57,7 @@ public class SingleThreadOperationQueue implements OperationQueue {
 
 	@Override
 	public List<OperationContainer<?>> getOperations() {
-		return queue;
+		return operations;
 	}
 
 	@Override
