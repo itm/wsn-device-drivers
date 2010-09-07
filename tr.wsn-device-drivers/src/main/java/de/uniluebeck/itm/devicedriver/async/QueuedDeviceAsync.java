@@ -16,7 +16,6 @@ import de.uniluebeck.itm.devicedriver.ResetOperation;
 import de.uniluebeck.itm.devicedriver.SendOperation;
 import de.uniluebeck.itm.devicedriver.WriteFlashOperation;
 import de.uniluebeck.itm.devicedriver.WriteMacAddressOperation;
-import de.uniluebeck.itm.devicedriver.metadata.MetaDataService;
 
 public class QueuedDeviceAsync implements DeviceAsync {
 	
@@ -48,11 +47,6 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	@Override
 	public InputStream getInputStream() {
 		return device.getInputStream();
-	}
-
-	@Override
-	public MetaDataService getMetaDataService() {
-		return null;
 	}
 
 	@Override

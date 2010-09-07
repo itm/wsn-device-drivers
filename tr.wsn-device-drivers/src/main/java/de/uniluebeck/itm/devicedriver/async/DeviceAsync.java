@@ -7,7 +7,6 @@ import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.MessagePacketListener;
 import de.uniluebeck.itm.devicedriver.PacketType;
-import de.uniluebeck.itm.devicedriver.metadata.MetaDataService;
 
 
 /**
@@ -18,13 +17,6 @@ import de.uniluebeck.itm.devicedriver.metadata.MetaDataService;
  * @author Malte Legenhausen
  */
 public interface DeviceAsync {
-
-	/**
-	 * Returns the <code>MetaDataService</code> that is responsible for this device instance.
-	 * 
-	 * @return The appropriated <code>MetaDataService</code>.
-	 */
-	MetaDataService getMetaDataService();
 	
 	/**
 	 * Programms a iSense device with the given binaryImage without removing the current MAC address.
