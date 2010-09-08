@@ -7,6 +7,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniluebeck.itm.devicedriver.Operation;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.OperationContainer;
@@ -18,18 +21,30 @@ import de.uniluebeck.itm.devicedriver.async.OperationContainer.State;
 
 /**
  * Class that implements the queue as single thread executor.
+ * Only one <code>Operation</code> is executed at once.
  * 
  * @author Malte Legenhausen
  */
 public class SingleThreadOperationQueue implements OperationQueue {
 	
 	/**
+	 * Logger for this class.
+	 */
+	private static final Logger logger = LoggerFactory.getLogger(SingleThreadOperationQueue.class);
+	
+	/**
 	 * List that contains all listeners.
 	 */
 	private final List<OperationQueueListener> listeners = new ArrayList<OperationQueueListener>();
 	
+	/**
+	 * Queue for all <code>OperationContainer</code> that are in progress.
+	 */
 	private final List<OperationContainer<?>> operations = new LinkedList<OperationContainer<?>>();
 	
+	/**
+	 * The single thread executor that runs the <code>OperationContainer</code>.
+	 */
 	private final ExecutorService executor = Executors.newSingleThreadExecutor();
 	
 	@Override
@@ -44,6 +59,7 @@ public class SingleThreadOperationQueue implements OperationQueue {
 				}
 			}
 		});
+		logger.debug("Submit " + container + " to executor queue.");
 		final Future<T> future = executor.submit(container);
 		container.addOperationContainerListener(new OperationContainerAdapter<T>() {
 			@Override
@@ -52,7 +68,7 @@ public class SingleThreadOperationQueue implements OperationQueue {
 			}
 		});
 		
-		return new FutureOperationHandle<T>(future, operation);
+		return new FutureOperationHandle<T>(future, container);
 	}
 
 	@Override

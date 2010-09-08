@@ -6,6 +6,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Callable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniluebeck.itm.devicedriver.Operation;
 
 /**
@@ -27,29 +30,65 @@ public class OperationContainer<T> implements Callable<T> {
 		/**
 		 * The <code>Operation</code> is waiting in the execution queue.
 		 */
-		WAITING,
+		WAITING("Waiting"),
 		
 		/**
 		 * The <code>Operation</code> is currently running.
 		 */
-		RUNNING,
+		RUNNING("Running"),
 		
 		/**
 		 * The <code>Operation</code> has been canceled.
 		 */
-		CANCELED,
+		CANCELED("Canceled"),
 		
 		/**
 		 * The <code>Operation</code> finsihed with an exception.
 		 */
-		EXCEPTED,
+		EXCEPTED("Excepted"),
 		
 		/**
 		 * The <code>Operation</code> is done.
 		 */
-		DONE
+		DONE("Done");
+		
+		/**
+		 * The name of the state.
+		 */
+		private final String name;
+		
+		/**
+		 * Constructor.
+		 * 
+		 * @param name The name of the state.
+		 */
+		private State(String name) {
+			this.name = name;
+		}
+		
+		/**
+		 * Getter for the state name.
+		 * 
+		 * @return The name as <code>String</code>.
+		 */
+		public String getName() {
+			return name;
+		}
+		
+		@Override
+		public String toString() {
+			return name;
+		}
 	}
 	
+	/**
+	 * Logger for this class.
+	 */
+	private static final Logger logger = LoggerFactory.getLogger(OperationContainer.class);
+	
+	/**
+	 * Listeners for <code>OperationContainer</code> changed.
+	 */
 	private final List<OperationContainerListener<T>> listeners = new ArrayList<OperationContainerListener<T>>();
 	
 	/**
@@ -92,9 +131,11 @@ public class OperationContainer<T> implements Callable<T> {
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
+				logger.debug("Timeout of operation reached");
 				State oldState = state;
 				state = State.CANCELED;
 				fireTimeout();
+				logger.debug("Operation state changed from " + oldState + " to " + state);
 				fireStateChanged(oldState, state);
 			}
 		}, timeout);
@@ -103,6 +144,7 @@ public class OperationContainer<T> implements Callable<T> {
 	@Override
 	public T call() {
 		state = State.RUNNING;
+		logger.debug("Operation state changed from " + State.WAITING + " to " + state);
 		fireStateChanged(State.WAITING, state);
 		try {
 			final T result = operation.execute(callback);
@@ -113,11 +155,13 @@ public class OperationContainer<T> implements Callable<T> {
 				state = State.DONE;
 				callback.onSuccess(result);
 			}
+			logger.debug("Operation state changed from " + State.RUNNING + " to " + state);
 			fireStateChanged(State.RUNNING, state);
 			return result;
 		} catch (RuntimeException e) {
 			state = State.EXCEPTED;
 			callback.onFailure(e);
+			logger.debug("Operation state changed from " + State.RUNNING + " to " + state);
 			fireStateChanged(State.RUNNING, state);
 		}
 		return null;
@@ -171,10 +215,20 @@ public class OperationContainer<T> implements Callable<T> {
 		return timeout;
 	}
 	
+	/**
+	 * Adds an <code>OperationListener</code> to the listener list.
+	 * 
+	 * @param listener The <code>OperationListener</code> that has to be added.
+	 */
 	public void addOperationContainerListener(OperationContainerListener<T> listener) {
 		listeners.add(listener);
 	}
 	
+	/**
+	 * Removes the given <code>OperationListener</code> from the listener list.
+	 * 
+	 * @param listener The <code>OperationListener</code> that has to be removed.
+	 */
 	public void removeOperationContainerListener(OperationContainerListener<T> listener) {
 		listeners.remove(listener);
 	}
