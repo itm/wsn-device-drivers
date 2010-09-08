@@ -1,3 +1,4 @@
 service TestService {
-void getString()
+void sayHello(),
+string getString() 
 }
