@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.devicedriver;
+package de.uniluebeck.itm.devicedriver.operation;
 
 /**
  * Interface that defines a operation that reads data from the device memory.

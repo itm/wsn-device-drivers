@@ -10,14 +10,13 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.devicedriver.Operation;
+import de.uniluebeck.itm.devicedriver.State;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
-import de.uniluebeck.itm.devicedriver.async.OperationContainer;
-import de.uniluebeck.itm.devicedriver.async.OperationContainerAdapter;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 import de.uniluebeck.itm.devicedriver.async.OperationQueue;
 import de.uniluebeck.itm.devicedriver.async.OperationQueueListener;
-import de.uniluebeck.itm.devicedriver.async.OperationContainer.State;
+import de.uniluebeck.itm.devicedriver.operation.Operation;
+import de.uniluebeck.itm.devicedriver.operation.OperationAdapter;
 
 /**
  * Class that implements the queue as single thread executor.
@@ -40,7 +39,7 @@ public class SingleThreadOperationQueue implements OperationQueue {
 	/**
 	 * Queue for all <code>OperationContainer</code> that are in progress.
 	 */
-	private final List<OperationContainer<?>> operations = new LinkedList<OperationContainer<?>>();
+	private final List<Operation<?>> operations = new LinkedList<Operation<?>>();
 	
 	/**
 	 * The single thread executor that runs the <code>OperationContainer</code>.
@@ -49,30 +48,30 @@ public class SingleThreadOperationQueue implements OperationQueue {
 	
 	@Override
 	public synchronized <T> OperationHandle<T> addOperation(Operation<T> operation, long timeout, AsyncCallback<T> callback) {
-		OperationContainer<T> container = new OperationContainer<T>(operation, timeout, callback);
-		operations.add(container);
-		container.addOperationContainerListener(new OperationContainerAdapter<T>() {
+		operations.add(operation);
+		operation.addOperationListener(new OperationAdapter<T>() {
 			@Override
-			public void onStateChanged(OperationContainer<T> container, State oldState, State newState) {
+			public void onStateChanged(Operation<T> operation, State oldState, State newState) {
 				if (newState == State.DONE || newState == State.EXCEPTED || newState == State.CANCELED) {
-					operations.remove(container);
+					operations.remove(operation);
 				}
 			}
 		});
-		logger.debug("Submit " + container + " to executor queue.");
-		final Future<T> future = executor.submit(container);
-		container.addOperationContainerListener(new OperationContainerAdapter<T>() {
+		logger.debug("Init operation " + operation);
+		operation.init(timeout, callback);
+		logger.debug("Submit " + operation + " to executor queue.");
+		final Future<T> future = executor.submit(operation);
+		operation.addOperationListener(new OperationAdapter<T>() {
 			@Override
-			public void onTimeout(OperationContainer<T> container, long timeout) {
+			public void onTimeout(Operation<T> operation, long timeout) {
 				future.cancel(true);
 			}
 		});
-		
-		return new FutureOperationHandle<T>(future, container);
+		return new FutureOperationHandle<T>(future, operation);
 	}
 
 	@Override
-	public List<OperationContainer<?>> getOperations() {
+	public List<Operation<?>> getOperations() {
 		return operations;
 	}
 

@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.devicedriver;
+package de.uniluebeck.itm.devicedriver.operation;
 
 /**
  * An interface for an operation that writes data to the flash memory.

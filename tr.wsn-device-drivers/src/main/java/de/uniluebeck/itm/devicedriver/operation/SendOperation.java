@@ -1,4 +1,6 @@
-package de.uniluebeck.itm.devicedriver;
+package de.uniluebeck.itm.devicedriver.operation;
+
+import de.uniluebeck.itm.devicedriver.MessagePacket;
 
 /**
  * Interface that defines an <code>Operation</code> that sends a <code>MessagePacket</code> to a device.

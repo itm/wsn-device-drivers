@@ -1,4 +1,6 @@
-package de.uniluebeck.itm.devicedriver;
+package de.uniluebeck.itm.devicedriver.operation;
+
+import de.uniluebeck.itm.devicedriver.MacAddress;
 
 /**
  * Interface that defines an <code>Operation</code> that write a <code>MacAddress</code> to the device.

@@ -3,6 +3,16 @@ package de.uniluebeck.itm.devicedriver;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import de.uniluebeck.itm.devicedriver.operation.EraseFlashOperation;
+import de.uniluebeck.itm.devicedriver.operation.GetChipTypeOperation;
+import de.uniluebeck.itm.devicedriver.operation.ProgramOperation;
+import de.uniluebeck.itm.devicedriver.operation.ReadFlashOperation;
+import de.uniluebeck.itm.devicedriver.operation.ReadMacAddressOperation;
+import de.uniluebeck.itm.devicedriver.operation.ResetOperation;
+import de.uniluebeck.itm.devicedriver.operation.SendOperation;
+import de.uniluebeck.itm.devicedriver.operation.WriteFlashOperation;
+import de.uniluebeck.itm.devicedriver.operation.WriteMacAddressOperation;
+
 /**
  * Standard interface for all devices.
  * All create methods have to return a new operation instance.

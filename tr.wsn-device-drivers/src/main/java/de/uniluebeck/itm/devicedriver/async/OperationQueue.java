@@ -2,7 +2,7 @@ package de.uniluebeck.itm.devicedriver.async;
 
 import java.util.List;
 
-import de.uniluebeck.itm.devicedriver.Operation;
+import de.uniluebeck.itm.devicedriver.operation.Operation;
 
 /**
  * Interface that defines a queue thats manages the execution of <code>Operation</code>s.
@@ -16,8 +16,6 @@ public interface OperationQueue {
 	 * 
 	 * @param <T> The return type of the operation.
 	 * @param operation The operation that has to be added to the queue.
-	 * @param timeout The timeout after which the operation has to be canceled.
-	 * @param callback The callback interface that is called when the operation is done.
 	 * @return A <code>OperationHandle</code> for controlling the operation.
 	 */
 	<T> OperationHandle<T> addOperation(Operation<T> operation, long timeout, AsyncCallback<T> callback);
@@ -27,14 +25,19 @@ public interface OperationQueue {
 	 * 
 	 * @return All operations left in the queue.
 	 */
-	List<OperationContainer<?>> getOperations();
+	List<Operation<?>> getOperations();
 	
 	/**
-	 * Add a listener for the queue. 
+	 * Add a listener to the queue. 
 	 * 
 	 * @param listener A listener that handle queue events.
 	 */
 	void addOperationQueueListener(OperationQueueListener listener);
 	
+	/**
+	 * Remove a listener from the queue.
+	 * 
+	 * @param listener The listener that has to be removed.
+	 */
 	void removeOperationQueueListener(OperationQueueListener listener);
 }

@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.devicedriver;
+package de.uniluebeck.itm.devicedriver.operation;
 
 /**
  * An interface that has to be used when implementing a program operation.

@@ -1,5 +1,7 @@
 package de.uniluebeck.itm.devicedriver.async;
 
+import de.uniluebeck.itm.devicedriver.State;
+
 /**
  * Handle that allows the caneling of the operation.
  * 
@@ -20,4 +22,11 @@ public interface OperationHandle<T> {
 	 * Cancel the operation.
 	 */
 	void cancel();
+	
+	/**
+	 * Returns the current state of the operation.
+	 * 
+	 * @return The <code>State</code> of the operation.
+	 */
+	State getState();
 }

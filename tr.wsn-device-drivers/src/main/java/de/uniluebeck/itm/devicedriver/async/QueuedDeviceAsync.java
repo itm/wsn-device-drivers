@@ -9,18 +9,18 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Inject;
 
 import de.uniluebeck.itm.devicedriver.Device;
-import de.uniluebeck.itm.devicedriver.EraseFlashOperation;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.MessagePacketListener;
 import de.uniluebeck.itm.devicedriver.PacketType;
-import de.uniluebeck.itm.devicedriver.ProgramOperation;
-import de.uniluebeck.itm.devicedriver.ReadFlashOperation;
-import de.uniluebeck.itm.devicedriver.ReadMacAddressOperation;
-import de.uniluebeck.itm.devicedriver.ResetOperation;
-import de.uniluebeck.itm.devicedriver.SendOperation;
-import de.uniluebeck.itm.devicedriver.WriteFlashOperation;
-import de.uniluebeck.itm.devicedriver.WriteMacAddressOperation;
+import de.uniluebeck.itm.devicedriver.operation.EraseFlashOperation;
+import de.uniluebeck.itm.devicedriver.operation.ProgramOperation;
+import de.uniluebeck.itm.devicedriver.operation.ReadFlashOperation;
+import de.uniluebeck.itm.devicedriver.operation.ReadMacAddressOperation;
+import de.uniluebeck.itm.devicedriver.operation.ResetOperation;
+import de.uniluebeck.itm.devicedriver.operation.SendOperation;
+import de.uniluebeck.itm.devicedriver.operation.WriteFlashOperation;
+import de.uniluebeck.itm.devicedriver.operation.WriteMacAddressOperation;
 
 /**
  * Class that implements the <code>DeviceAsync</code> interface as a queue.
