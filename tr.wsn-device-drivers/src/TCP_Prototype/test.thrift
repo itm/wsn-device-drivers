@@ -1,0 +1,3 @@
+service TestService {
+void getString()
+}
