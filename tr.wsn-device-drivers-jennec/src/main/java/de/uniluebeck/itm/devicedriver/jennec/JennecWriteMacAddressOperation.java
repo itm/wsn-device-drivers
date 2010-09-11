@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.Monitor;
 import de.uniluebeck.itm.devicedriver.Sector;
+import de.uniluebeck.itm.devicedriver.jennec.exception.EnterProgramModeException;
 import de.uniluebeck.itm.devicedriver.operation.AbstractWriteMacAddressOperation;
 import de.uniluebeck.itm.devicedriver.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.devicedriver.operation.ReadFlashOperation;
@@ -21,7 +22,7 @@ public class JennecWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 	
 	private static final int BLOCKSIZE = 128;
 	
-	private JennecDevice device;
+	private final JennecDevice device;
 	
 	public JennecWriteMacAddressOperation(JennecDevice device) {
 		this.device = device;
@@ -33,7 +34,7 @@ public class JennecWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 		EnterProgramModeOperation enterProgramModeOperation = device.createEnterProgramModeOperation();
 		if (!executeSubOperation(enterProgramModeOperation)) {
 			log.error("Unable to enter programming mode");
-			return null;
+			throw new EnterProgramModeException("Unable to enter programming mode");
 		}
 
 		// Wait for a connection
@@ -64,8 +65,7 @@ public class JennecWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 		byte[][] sector = readSector(monitor, Sector.FIRST);
 
 		// Check if this operation has been cancelled
-		if (sector == null) {
-			log.debug("Read has been cancelled");
+		if (isCanceled()) {
 			return null;
 		}
 
@@ -116,7 +116,7 @@ public class JennecWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 
 			// Check if the user has cancelled the operation
 			if (isCanceled()) {
-				log.debug("Operation has been cancelled");
+				log.debug("Sector read has been cancelled");
 				return null;
 			}
 		}
@@ -140,7 +140,7 @@ public class JennecWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 			executeSubOperation(writeFlashOperation);
 			
 			address += sector[i].length;
-			float progress = 0.5f + ((float) i + 1) / ((float) sector.length * 2);
+			float progress = 0.5f + (i + 1.0f) / (sector.length * 2.0f);
 			monitor.onProgressChange(progress);
 		}
 	}

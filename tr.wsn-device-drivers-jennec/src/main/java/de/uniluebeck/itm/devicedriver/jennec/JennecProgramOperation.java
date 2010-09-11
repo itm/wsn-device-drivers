@@ -28,7 +28,7 @@ public class JennecProgramOperation extends AbstractProgramOperation {
 		JennicBinFile jennicProgram = (JennicBinFile) binaryImage;
 		
 		// Enter programming mode
-		JennecEnterProgramModeOperation enterProgramModeOperation = device.createEnterProgramModeOperation();
+		EnterProgramModeOperation enterProgramModeOperation = device.createEnterProgramModeOperation();
 		if (!executeSubOperation(enterProgramModeOperation)) {
 			return null;
 		}
