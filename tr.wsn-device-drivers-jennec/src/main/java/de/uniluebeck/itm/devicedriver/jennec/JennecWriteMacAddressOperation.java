@@ -30,15 +30,16 @@ public class JennecWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 	@Override
 	public Void execute(Monitor monitor) throws Exception {
 		// Enter programming mode
-		JennecEnterProgramModeOperation enterProgramModeOperation = device.createEnterProgramModeOperation();
+		EnterProgramModeOperation enterProgramModeOperation = device.createEnterProgramModeOperation();
 		if (!executeSubOperation(enterProgramModeOperation)) {
 			log.error("Unable to enter programming mode");
 			return null;
 		}
 
 		// Wait for a connection
-		while (!isCanceled() && !device.waitForConnection())
+		while (!isCanceled() && !device.waitForConnection()) {
 			log.info("Still waiting for a connection");
+		}
 
 		// Return with success if the user has requested to cancel this
 		// operation

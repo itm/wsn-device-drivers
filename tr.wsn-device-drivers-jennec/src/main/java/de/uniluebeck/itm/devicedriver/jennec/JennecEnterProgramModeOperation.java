@@ -8,7 +8,7 @@ import de.uniluebeck.itm.devicedriver.Monitor;
 import de.uniluebeck.itm.devicedriver.SerialPortConnection;
 import de.uniluebeck.itm.devicedriver.operation.AbstractOperation;
 
-public class JennecEnterProgramModeOperation extends AbstractOperation<Boolean> {
+public class JennecEnterProgramModeOperation extends AbstractOperation<Boolean> implements EnterProgramModeOperation {
 
 	/**
 	 * Logger for this class.

@@ -72,7 +72,7 @@ public class JennecDevice extends AbstractDevice implements ConnectionListener, 
 		this.connection.addConnectionListener(this);
 	}
 	
-	public JennecEnterProgramModeOperation createEnterProgramModeOperation() {
+	public EnterProgramModeOperation createEnterProgramModeOperation() {
 		return new JennecEnterProgramModeOperation(connection);
 	}
 	
