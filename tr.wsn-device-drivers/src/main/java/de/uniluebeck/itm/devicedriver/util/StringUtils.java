@@ -6,7 +6,17 @@ package de.uniluebeck.itm.devicedriver.util;
  * @author Malte Legenhausen
  */
 public class StringUtils {
-
+	
+	/**
+	 * Convert a given byte to a <code>String</code>.
+	 * 
+	 * @param tmp The byte that has to be converted.
+	 * @return The byte in <code>String</code> representation.
+	 */
+	public static String toHexString(final byte tmp) {
+		return toHexString(new byte[] {tmp});
+	}
+	
 	/**
 	 * Convert the given bytes to a <code>String</code>.
 	 * 
@@ -28,8 +38,9 @@ public class StringUtils {
 	public static String toHexString(final byte[] tmp, final int offset, final int length) {
 		StringBuffer s = new StringBuffer();
 		for (int i = offset; i < offset + length; ++i) {
-			if (s.length() > 0)
+			if (s.length() > 0) {
 				s.append(' ');
+			}
 			s.append("0x");
 			s.append(Integer.toHexString(tmp[i] & 0xFF));
 		}
@@ -46,11 +57,11 @@ public class StringUtils {
 		StringBuffer sb = new StringBuffer("");
 
 		for (byte b : tmp) {
-			if (b == 0x0D)
+			if (b == 0x0D) {
 				sb.append("<CR>");
-			else if (b == 0x0A)
+			} else if (b == 0x0A) {
 				sb.append("<LF>");
-			else {
+			} else {
 				char chr = (char) b;
 				sb.append(chr);
 			}

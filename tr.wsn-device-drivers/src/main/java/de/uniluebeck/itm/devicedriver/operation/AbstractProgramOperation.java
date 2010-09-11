@@ -1,16 +1,18 @@
 package de.uniluebeck.itm.devicedriver.operation;
 
+import de.uniluebeck.itm.devicedriver.DeviceBinFile;
+
 
 public abstract class AbstractProgramOperation extends AbstractOperation<Void> implements ProgramOperation {
 
-	protected byte[] binaryImage;
+	protected DeviceBinFile binaryImage;
 	
 	@Override
-	public void setBinaryImage(byte[] binaryImage) {
+	public void setBinaryImage(DeviceBinFile binaryImage) {
 		this.binaryImage = binaryImage;
 	}
 	
-	public byte[] getBinaryImage() {
+	public DeviceBinFile getBinaryImage() {
 		return binaryImage;
 	}
 }

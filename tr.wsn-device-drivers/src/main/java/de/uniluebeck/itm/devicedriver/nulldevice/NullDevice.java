@@ -1,8 +1,5 @@
 package de.uniluebeck.itm.devicedriver.nulldevice;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,16 +89,6 @@ public class NullDevice extends AbstractDevice {
 
 	@Override
 	public Connection getConnection() {
-		return null;
-	}
-
-	@Override
-	public InputStream getInputStream() {
-		return null;
-	}
-
-	@Override
-	public OutputStream getOutputStream() {
 		return null;
 	}
 

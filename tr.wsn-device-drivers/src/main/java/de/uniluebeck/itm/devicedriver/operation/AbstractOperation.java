@@ -26,6 +26,11 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	private static final Logger logger = LoggerFactory.getLogger(Operation.class);
 	
 	/**
+	 * Sub <code>Operation</code> that is currently running.
+	 */
+	private Operation<?> subOperation;
+	
+	/**
 	 * Listeners for <code>OperationContainer</code> changed.
 	 */
 	private final List<OperationListener<T>> listeners = new ArrayList<OperationListener<T>>();
@@ -90,13 +95,27 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 			logger.debug("Operation state changed from " + State.RUNNING + " to " + state);
 			fireStateChanged(State.RUNNING, state);
 			return result;
-		} catch (RuntimeException e) {
+		} catch (Exception e) {
 			state = State.EXCEPTED;
 			callback.onFailure(e);
 			logger.debug("Operation state changed from " + State.RUNNING + " to " + state);
 			fireStateChanged(State.RUNNING, state);
 		}
 		return null;
+	}
+	
+	/**
+	 * Call this method when another <code>Operation</code> has to be executed while this <code>Operation</code>.
+	 * 
+	 * @param <R> The return type of the sub <code>Operation</code>.
+	 * @param operation The sub <code>Operation</code> that has to be executed.
+	 * @return The result of the sub <code>Operation</code>.
+	 */
+	protected <R> R executeSubOperation(Operation<R> operation) throws Exception {
+		subOperation = operation;
+		final R result = operation.execute(callback);
+		subOperation = null;
+		return result;
 	}
 	
 	/**
@@ -142,6 +161,9 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 
 	@Override
 	public void cancel() {
+		if (subOperation != null) {
+			subOperation.cancel();
+		}
 		canceled = true;
 	}
 	

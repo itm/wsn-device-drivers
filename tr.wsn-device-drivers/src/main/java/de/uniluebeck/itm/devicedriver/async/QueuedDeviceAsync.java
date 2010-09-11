@@ -1,14 +1,12 @@
 package de.uniluebeck.itm.devicedriver.async;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
 import de.uniluebeck.itm.devicedriver.Device;
+import de.uniluebeck.itm.devicedriver.DeviceBinFile;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.MessagePacketListener;
@@ -75,17 +73,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	}
 
 	@Override
-	public InputStream getInputStream() {
-		return device.getInputStream();
-	}
-
-	@Override
-	public OutputStream getOutputStream() {
-		return device.getOutputStream();
-	}
-
-	@Override
-	public OperationHandle<Void> program(byte[] binaryImage, long timeout, AsyncCallback<Void> callback) {
+	public OperationHandle<Void> program(DeviceBinFile binaryImage, long timeout, AsyncCallback<Void> callback) {
 		logger.debug("Program device (timeout: " + timeout + "ms)");
 		ProgramOperation operation = device.createProgramOperation();
 		operation.setBinaryImage(binaryImage);

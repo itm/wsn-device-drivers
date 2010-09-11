@@ -36,4 +36,12 @@ public abstract class AbstractDevice implements Device {
 			listeners.remove(listener);
 		}
 	}
+	
+	protected void notifyMessagePacketListener(MessagePacket packet) {
+		List<MessagePacketListener> listeners = this.listeners.get(packet.getType());
+		for (MessagePacketListener listener : listeners.toArray(new MessagePacketListener[listeners.size()])) {
+			listener.onMessagePacketReceived(packet);
+			listener.onMessagePlainTextReceived(new MessagePlainText(packet.getContent()));
+		}
+	}
 }

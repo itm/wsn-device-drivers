@@ -30,7 +30,7 @@ public interface Operation<T> extends Callable<T> {
 	 * @param monitor The monitor for this operation.
 	 * @return The result of the <code>Operation<code> execution.
 	 */
-	T execute(Monitor monitor);
+	T execute(Monitor monitor) throws Exception;
 	
 	/**
 	 * Cancel the operation.

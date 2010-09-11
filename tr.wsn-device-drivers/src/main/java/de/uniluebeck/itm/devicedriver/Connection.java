@@ -1,5 +1,8 @@
 package de.uniluebeck.itm.devicedriver;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 
 /**
  * Interface that defines how to manage a connection to a device.
@@ -8,6 +11,20 @@ package de.uniluebeck.itm.devicedriver;
  */
 public interface Connection {
 
+	/**
+	 * Returns the <code>InputStream</code> of the connected iSense device.
+	 * 
+	 * @return The <code>InputStream</code> of the connected iSense device.
+	 */
+	InputStream getInputStream();
+	
+	/**
+	 * Returns the <code>OutputStream</code> of the connected iSense device.
+	 * 
+	 * @return The <code>OutputStream</code> of the connected iSense device.
+	 */
+	OutputStream getOutputStream();
+	
 	/**
 	 * Establish the connection with the device and return a useable device instance.
 	 * 

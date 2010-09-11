@@ -1,8 +1,5 @@
 package de.uniluebeck.itm.devicedriver;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import de.uniluebeck.itm.devicedriver.operation.EraseFlashOperation;
 import de.uniluebeck.itm.devicedriver.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.devicedriver.operation.ProgramOperation;
@@ -93,20 +90,6 @@ public interface Device {
 	 * @param packet The <code>MessagePacket</code> that has to be send to the device.
 	 */
 	SendOperation createSendOperation();
-	
-	/**
-	 * Returns the <code>InputStream</code> of the connected iSense device.
-	 * 
-	 * @return The <code>InputStream</code> of the connected iSense device.
-	 */
-	InputStream getInputStream();
-	
-	/**
-	 * Returns the <code>OutputStream</code> of the connected iSense device.
-	 * 
-	 * @return The <code>OutputStream</code> of the connected iSense device.
-	 */
-	OutputStream getOutputStream();
 	
 	/**
 	 * Stores an handler that will be called when a given type occure.
