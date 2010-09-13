@@ -17,6 +17,7 @@ import thrift.test.files.TestService.AsyncClient.sayHello_call;
 
 public class TCP_Client {
 
+	// Fehlerloses Callback, spart die Implementierung der onError-Methode fuer jede Methode
 	private static abstract class FailureLessCallback<T extends TAsyncMethodCall> implements AsyncMethodCallback<T> {
 	    @Override
 	    public void onError(Throwable throwable) {
@@ -29,18 +30,20 @@ public class TCP_Client {
 		// Erstellen des Clients-Sockets mit IP und port
 		final TNonblockingSocket socket = new TNonblockingSocket("localhost", 50000);
 
+		// Erstellen eines Client-Manager
         final TAsyncClientManager acm = new TAsyncClientManager();
         
-        // Uebergeben an Client
+        // Instanzieren und Initieren eines Cleints
         final TestService.AsyncClient client = new TestService.AsyncClient(new TBinaryProtocol.Factory(),acm,socket);
         
+        // Synchro-Objekt
         final Object o = new Object();
         
         try {
 			// Ein wenig Kommunikation
 			System.out.println("Ich bin der Client!");
 			
-			// Entfernter Methodenaufruf
+			// Entfernter Methodenaufruf ohne De-Serialisierung
 			client.sayHello(new FailureLessCallback<TestService.AsyncClient.sayHello_call>() {
 
 				@Override
@@ -49,19 +52,22 @@ public class TCP_Client {
 						response.getResult();
 					} catch (TException e) {
 						e.printStackTrace();
-					}synchronized(o) {
+					}// benachrichtigen des synchro-objekts
+					synchronized(o) {
 				          o.notifyAll();
 			        }
-					
 				}});
+			/* Thread ein wenig warten lassen, damit server die Moeglichkeit hat 
+			   seine Arbeit zu tun, bevor die naechste Methode des Clients aufgerufen wird*/
 		    synchronized(o) {
 		        o.wait(100000);
 		      }
 			
 			
-			
-			client.getString(new AsyncMethodCallback<TestService.AsyncClient.getString_call>() {
-		            
+			// Entfernter Methodenaufruf mit De-Serialisierung eines komplexen Objekts
+			client.getString(new FailureLessCallback<TestService.AsyncClient.getString_call>() {
+		        
+				// Bei erfolgreicher Uebertragung
 				@Override
 	            public void onComplete(getString_call response) {
 					try {
@@ -70,28 +76,21 @@ public class TCP_Client {
 						System.out.println("Test");
 						
 					} catch (TException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
-					}synchronized(o) {
-						o.notifyAll();
-			        }
-	            }
-	
-				@Override
-				public void onError(Throwable arg0) {
-					System.out.println("Fehler");
+					} // benachrichtigen des synchro-objekts
 					synchronized(o) {
 						o.notifyAll();
 			        }
-				}
+	            }
 			});
 			synchronized(o) {
 		        o.wait(100000);
 		      }
 
-			
-			client.getInt(new AsyncMethodCallback<TestService.AsyncClient.getInt_call>() {
+			// Entfernter Methodenaufruf mit De-Serialisierung eines einfachen Datentyps
+			client.getInt(new FailureLessCallback<TestService.AsyncClient.getInt_call>() {
 	            
+				// Bei erfolgreicher Uebertragung
 				@Override
 	            public void onComplete(getInt_call response) {
 					try {
@@ -101,31 +100,20 @@ public class TCP_Client {
 					} catch (TException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					}synchronized(o) {
+					}// benachrichtigen des synchro-objekts
+					synchronized(o) {
 						o.notifyAll();
 			        }
 	            }
-	
-				@Override
-				public void onError(Throwable arg0) {
-					synchronized(o) {
-				          o.notifyAll();
-			        }
-				}
 			});
 			synchronized(o) {
 		        o.wait(100000);
 		      }
 
-			
 		} catch (TTransportException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (TException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        
 	}
-	
 }

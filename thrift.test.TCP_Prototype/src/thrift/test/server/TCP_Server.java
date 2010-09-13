@@ -14,7 +14,7 @@ import thrift.test.files.TestService;
 
 public class TCP_Server {
 	
-	public static void main(String[] args) throws TTransportException, InterruptedException{
+	public static void main(String[] args) throws TTransportException {
 		
 		
 		   // put up a server
@@ -27,7 +27,6 @@ public class TCP_Server {
 	        s.serve();
 	      }
 	    }).start();
-	    Thread.sleep(1000);
 	}
 	
 	//Implementierung der im Thrift-IDL festgelegten Services
@@ -46,16 +45,13 @@ public class TCP_Server {
 		@Override
 		public Person getString() throws TException {
 			//Ausgabe einer Nachricht auf Client-Seite
-			//String wird zum Client uebertragen
-			
-			System.out.println("Ich bin in getString");
+			//Person wird zum Client uebertragen
 			
 			Person test = new Person();
 			test.alter = 12;
 			test.Name = "Test";
 			
 			return test;
-			//return "Ich bin eine Nachricht vom Server";
 		}
 
 		@Override
