@@ -1,119 +1,76 @@
 package thrift.test.client;
 
-import org.apache.thrift.TException;
-import org.apache.thrift.async.AsyncMethodCallback;
 import org.apache.thrift.async.TAsyncClientManager;
-import org.apache.thrift.async.TAsyncMethodCall;
-import org.apache.thrift.protocol.TBinaryProtocol;
-import org.apache.thrift.transport.TNonblockingSocket;
-import org.apache.thrift.transport.TTransportException;
 
-import thrift.test.files.Person;
-import thrift.test.files.TestService;
-import thrift.test.files.TestService.AsyncClient.getInt_call;
-import thrift.test.files.TestService.AsyncClient.getString_call;
-import thrift.test.files.TestService.AsyncClient.sayHello_call;
-
+import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 
 public class TCP_Client {
 
-	// Fehlerloses Callback, spart die Implementierung der onError-Methode fuer jede Methode
-	private static abstract class FailureLessCallback<T extends TAsyncMethodCall> implements AsyncMethodCallback<T> {
-	    @Override
-	    public void onError(Throwable throwable) {
-	      throwable.printStackTrace();
-	    }
-	  }
-	
-	public static void main (String[] args) throws Exception{
+	public static void main(String[] args) throws Exception {
 		
-		// Erstellen des Clients-Sockets mit IP und port
-		final TNonblockingSocket socket = new TNonblockingSocket("localhost", 50000);
+		TAsyncClientManager acm = new TAsyncClientManager();
+		
+		/* Gemeinsamer ClientManager */
+		TCP_Stub stub1 = new TCP_Stub("localhost", 50000, acm);
+		TCP_Stub stub2 = new TCP_Stub("localhost", 50000, acm);
+		
+		/* jeweils eigene Clients */
+		//TCP_Stub stub1 = new TCP_Stub("localhost", 50000);
+		//TCP_Stub stub2 = new TCP_Stub("localhost", 50000);
+		
+		int i=0;
+		int j=0;
+		
+		while(true){
+			System.out.println("in: ");
+			int input = System.in.read();
+			
+			switch (input){
+			// 1 druecken
+			case 49:
+				stub1.setMessage("Dies ist Nachricht Nr.: "+i+" von Client1");
+				System.out.println(stub1.getMessage());
+				i++;
+				break;
+			// 2 druecken
+			case 50:
+				stub2.setMessage("Dies ist Nachricht Nr.: "+j+" von Client2");
+				System.out.println(stub2.getMessage());
+				j++;
+				break;
+			case 51:
+				// konnte ich nicht sinnvoll testen, da ich keine DeviceBinFile erstellen konnte
+				// vlt ware es sinnvoll hier ein Pfad zu uebergeben, anstatt des DeviceBinFile
+				// sollte aber theoretisch gehen
+				stub1.program(null, 0L, new AsyncCallback<Void>(){
 
-		// Erstellen eines Client-Manager
-        final TAsyncClientManager acm = new TAsyncClientManager();
-        
-        // Instanzieren und Initieren eines Cleints
-        final TestService.AsyncClient client = new TestService.AsyncClient(new TBinaryProtocol.Factory(),acm,socket);
-        
-        // Synchro-Objekt
-        final Object o = new Object();
-        
-        try {
-			// Ein wenig Kommunikation
-			System.out.println("Ich bin der Client!");
-			
-			// Entfernter Methodenaufruf ohne De-Serialisierung
-			client.sayHello(new FailureLessCallback<TestService.AsyncClient.sayHello_call>() {
-
-				@Override
-				public void onComplete(sayHello_call response) {
-					try {
-						response.getResult();
-					} catch (TException e) {
-						e.printStackTrace();
-					}// benachrichtigen des synchro-objekts
-					synchronized(o) {
-				          o.notifyAll();
-			        }
-				}});
-			/* Thread ein wenig warten lassen, damit server die Moeglichkeit hat 
-			   seine Arbeit zu tun, bevor die naechste Methode des Clients aufgerufen wird*/
-		    synchronized(o) {
-		        o.wait(100000);
-		      }
-			
-			
-			// Entfernter Methodenaufruf mit De-Serialisierung eines komplexen Objekts
-			client.getString(new FailureLessCallback<TestService.AsyncClient.getString_call>() {
-		        
-				// Bei erfolgreicher Uebertragung
-				@Override
-	            public void onComplete(getString_call response) {
-					try {
-						Person person = response.getResult();
-						System.out.println("Name: "+person.Name+" ,alter: "+person.alter);
-						System.out.println("Test");
+					@Override
+					public void onCancel() {
+						// TODO Auto-generated method stub
 						
-					} catch (TException e) {
-						e.printStackTrace();
-					} // benachrichtigen des synchro-objekts
-					synchronized(o) {
-						o.notifyAll();
-			        }
-	            }
-			});
-			synchronized(o) {
-		        o.wait(100000);
-		      }
+					}
 
-			// Entfernter Methodenaufruf mit De-Serialisierung eines einfachen Datentyps
-			client.getInt(new FailureLessCallback<TestService.AsyncClient.getInt_call>() {
-	            
-				// Bei erfolgreicher Uebertragung
-				@Override
-	            public void onComplete(getInt_call response) {
-					try {
-						int test = response.getResult();
-						System.out.println(test);
+					@Override
+					public void onFailure(Throwable throwable) {
+						// TODO Auto-generated method stub
 						
-					} catch (TException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}// benachrichtigen des synchro-objekts
-					synchronized(o) {
-						o.notifyAll();
-			        }
-	            }
-			});
-			synchronized(o) {
-		        o.wait(100000);
-		      }
+					}
 
-		} catch (TTransportException e) {
-			e.printStackTrace();
-		} catch (TException e) {
-			e.printStackTrace();
+					@Override
+					public void onSuccess(Void result) {
+						System.out.println("geht");
+						
+					}
+
+					@Override
+					public void onProgressChange(float fraction) {
+						// TODO Auto-generated method stub
+						
+					}});
+				break;
+			}
 		}
+
 	}
+
 }
