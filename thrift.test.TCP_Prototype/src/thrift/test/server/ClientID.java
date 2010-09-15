@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.uniluebeck.itm.devicedriver.BinFileDataBlock;
 import de.uniluebeck.itm.devicedriver.DeviceBinFile;
@@ -14,17 +15,32 @@ import de.uniluebeck.itm.devicedriver.DeviceBinFile;
  *
  */
 public class ClientID {
-	private String Message;
+	private String Message = "init";
+	private AtomicBoolean blocked = new AtomicBoolean();
 	private static List<BinFileDataBlock> blocklist = new  ArrayList<BinFileDataBlock>();
 
 	ClientID(){
 	}
 	
 	public void setMessage(String message){
+		for(int i=0;i<1;i++){
+			try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 		Message = message;
 	}
 	
 	public String getMessage() {
+		for(int i=0;i<1;i++){
+			try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 		return Message;
 	}
 	
@@ -46,6 +62,14 @@ public class ClientID {
 		// TODO DeviceBinFile von Festplatte auslesen und zurueckgeben
 		
 		return null;
+	}
+
+	public void setBlocked(AtomicBoolean blocked) {
+		this.blocked = blocked;
+	}
+
+	public AtomicBoolean getBlocked() {
+		return blocked;
 	}
 	
 }

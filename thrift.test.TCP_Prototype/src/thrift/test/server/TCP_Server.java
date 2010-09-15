@@ -78,7 +78,7 @@ public class TCP_Server {
 
 		@Override
 		public String getMessage(String key) throws TException {
-			
+
 			ClientID clientID = clientIDList.get(key);
 			return clientID.getMessage();
 		}
@@ -86,7 +86,6 @@ public class TCP_Server {
 		@Override
 		public String program(String key, List<ByteBuffer> BinFile,
 				List<Integer> addresses, long timeout) throws TException {
-			
 			Main test = new Main();
 			
 			/* erstmal auskommentiert da ich keine 
@@ -113,15 +112,16 @@ public class TCP_Server {
 				}
 
 				@Override
-				public void onSuccess(Void result) {
-					System.out.println("jup es geht im TCP-Server");
+				public void onProgressChange(float fraction) {
+					System.out.println("change im TCP-Server");
 				}
 
 				@Override
-				public void onProgressChange(float fraction) {
-					System.out.println("change im TCP-Server");
-					
+				public void onSuccess(Void result) {
+					System.out.println("jup es geht im TCP-Server");
 				}});
+			
+			System.out.println("fertig mit program");
 			
 			return "wieder im Client";
 			

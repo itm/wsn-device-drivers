@@ -3,16 +3,15 @@ package thrift.test.client;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.thrift.TException;
 import org.apache.thrift.async.AsyncMethodCallback;
 import org.apache.thrift.async.TAsyncClientManager;
-import org.apache.thrift.async.TAsyncMethodCall;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.transport.TNonblockingSocket;
 import org.apache.thrift.transport.TTransportException;
 
-import de.uniluebeck.itm.devicedriver.BinFileDataBlock;
 import de.uniluebeck.itm.devicedriver.DeviceBinFile;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
@@ -36,18 +35,14 @@ public class TCP_Stub implements DeviceAsync{
 	final TAsyncClientManager acm;
 	final AsyncDevice.AsyncClient client;
 	private String id = "-1";
-	private String message;
+	State state;
+	
+	AtomicBoolean Messageblocked = new AtomicBoolean(false);
+	
+	List<Thread> threads = new ArrayList<Thread>();
 	
     // Synchro-Objekt
     final Object o = new Object();
-	
-	// Fehlerloses Callback, spart die Implementierung der onError-Methode fuer jede Methode
-	private static abstract class FailureLessCallback<T extends TAsyncMethodCall> implements AsyncMethodCallback<T> {
-	    @Override
-	    public void onError(Throwable throwable) {
-	      throwable.printStackTrace();
-	    }
-	  }
 	
 	TCP_Stub (String uri, int port, TAsyncClientManager acm) throws Exception{
 		
@@ -74,7 +69,7 @@ public class TCP_Stub implements DeviceAsync{
         this.acm = new TAsyncClientManager();
         
         // Instanzieren und Initieren eines Cleints
-        client = new AsyncDevice.AsyncClient(new TBinaryProtocol.Factory(),acm,socket);
+        client = new AsyncDevice.AsyncClient(new TBinaryProtocol.Factory(),acm,socket);    
         
         // einleiten der initialen Verbindung
         connect();
@@ -88,21 +83,23 @@ public class TCP_Stub implements DeviceAsync{
 	private void connect() throws InterruptedException{
 		try {
 			// erstellt ein ClientID-Objekt mit id als Key, mit Hilfe dieses
-			client.connect(new FailureLessCallback<AsyncDevice.AsyncClient.connect_call>(){
+			client.connect(new AsyncMethodCallback<AsyncDevice.AsyncClient.connect_call>(){
 				@Override
 				public void onComplete(connect_call response) {
 					try {
 						id = response.getResult();
 					} catch (TException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}synchronized(o) {
 						o.notifyAll();
 			        }
+				}
+				@Override
+				public void onError(Throwable throwable) {
 				}			
 			});
 			synchronized(o) {
-		        o.wait(100000);
+		        o.wait(10000);
 		      }	
 		} catch (TException e) {
 			e.printStackTrace();
@@ -112,45 +109,87 @@ public class TCP_Stub implements DeviceAsync{
 	public String getID(){
 		return id;
 	}
-	
+
 	/**
 	 * Testen der RPC-Verbindung durch setzen einer Nachricht auf dem Server
 	 * @param setMessage
 	 * @return
 	 * @throws InterruptedException
 	 */
-	public String setMessage(String setMessage) throws InterruptedException{
+	public OperationHandle<Void> setMessage(String setMessage, final AsyncCallback<Void> callback) throws InterruptedException{
+
+		state = State.RUNNING;
+		
+		// Abfangen von parallen aufrufen, es scheint als haette thrift probleme mit mehreren calls ueber den selben client
+		if (!Messageblocked.compareAndSet(false, true)){
+			System.out.println("Gerade besetzt");
+			//TODO Warteschlange einfuegen
+			return null;
+		}
 
 		try {
-			// Entfernter Methodenaufruf mit De-Serialisierung eines einfachen Datentyps
-			client.setMessage(id, setMessage, new FailureLessCallback<AsyncDevice.AsyncClient.setMessage_call>() {
+			// Entfernter Methodenaufruf
+			client.setMessage(id, setMessage, new AsyncMethodCallback<AsyncDevice.AsyncClient.setMessage_call>() {
 	            
 				// Bei erfolgreicher Uebertragung
 				@Override
 				public void onComplete(setMessage_call response) {
 					try {
 						response.getResult();
-						//System.out.println(test);
-						
+						state = State.DONE;
+						callback.onSuccess(null);
 					} catch (TException e) {
-						// TODO Auto-generated catch block
+						state = State.EXCEPTED;
 						e.printStackTrace();
 					}// benachrichtigen des synchro-objekts
 					synchronized(o) {
 						o.notifyAll();
+						Messageblocked.set(false);
 			        }
 	            }
+
+				// Bei fehlerhafter Uebertragung
+				@Override
+				public void onError(Throwable throwable) {
+					synchronized(o) {
+						o.notifyAll();
+						Messageblocked.set(false);
+						state = State.EXCEPTED;
+						callback.onFailure(throwable);
+					}
+				}
 			});
-			synchronized(o) {
-		        o.wait(100000);
-		      }
 		} catch (TTransportException e) {
 			e.printStackTrace();
 		} catch (TException e) {
 			e.printStackTrace();
 		}
 		
-		return message;
+		return new OperationHandle<Void>(){
+
+			@Override
+			public void cancel() {
+				//TODO keine Ahnung wie ich eine laufende operation abbrechen soll
+				//TODO oder doch nur aus warteschlange loeschen?
+				state = State.CANCELED;
+			}
+			@Override
+			public Void get() {
+				// TODO warten auch auf warteschlange?
+				synchronized(o) {
+			        try {
+			        	state = State.WAITING;
+			        	o.wait();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+			    }
+			return null;
+			}
+			@Override
+			public State getState() {
+				return state;
+			}};
 	}
 	
 	/**
@@ -158,38 +197,74 @@ public class TCP_Stub implements DeviceAsync{
 	 * @return
 	 * @throws InterruptedException
 	 */
-	public String getMessage() throws InterruptedException{
-
+	public OperationHandle<Void>  getMessage(final AsyncCallback<String> callback) throws InterruptedException{
+															// Hier musste ich das Callback-Element tauschen
+		state = State.RUNNING;
+		
+		if (!Messageblocked.compareAndSet(false, true)){
+			System.out.println("Gerade besetzt");
+			//TODO Warteschlange einfuegen
+			return null;
+		}
+		
 		try {
 			// Entfernter Methodenaufruf mit De-Serialisierung eines einfachen Datentyps
-			client.getMessage(id, new FailureLessCallback<AsyncDevice.AsyncClient.getMessage_call>() {
+			client.getMessage(id, new AsyncMethodCallback<AsyncDevice.AsyncClient.getMessage_call>() {
 	            
 				// Bei erfolgreicher Uebertragung
 				@Override
 				public void onComplete(getMessage_call response) {
 					try {
-						message = response.getResult();
-						//System.out.println(test);
-						
+						String message = response.getResult();
+						state = State.DONE;
+						callback.onSuccess(message);
 					} catch (TException e) {
-						// TODO Auto-generated catch block
+						state = State.EXCEPTED;
 						e.printStackTrace();
 					}// benachrichtigen des synchro-objekts
 					synchronized(o) {
 						o.notifyAll();
+						Messageblocked.set(false);
 			        }
 	            }
+				@Override
+				public void onError(Throwable throwable) {
+					synchronized(o) {
+						o.notifyAll();
+						Messageblocked.set(false);
+						state = State.EXCEPTED;
+						callback.onFailure(throwable);
+					}
+				}
 			});
-			synchronized(o) {
-		        o.wait(100000);
-		      }
 		} catch (TTransportException e) {
 			e.printStackTrace();
 		} catch (TException e) {
 			e.printStackTrace();
 		}
 		
-		return message;
+		return new OperationHandle<Void>(){
+
+			@Override
+			public void cancel() {
+				state = State.CANCELED;
+			}
+			@Override
+			public Void get() {
+				synchronized(o) {
+			        try {
+			        	state = State.WAITING;
+			        	o.wait();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+			    }
+			return null;
+			}
+			@Override
+			public State getState() {
+				return state;
+			}};
 	}
 
 	@Override
@@ -216,13 +291,14 @@ public class TCP_Stub implements DeviceAsync{
 		List<Integer> addresses = null;
 		
 		try {
-			client.program(id, blocks, addresses, timeout, new FailureLessCallback<AsyncDevice.AsyncClient.program_call>() {
+			client.program(id, blocks, addresses, timeout, new AsyncMethodCallback<AsyncDevice.AsyncClient.program_call>() {
 
 				@Override
 				public void onComplete(program_call response) {
 					try {
-						response.getResult();
+						System.out.println("client.programm: on Complete");
 						callback.onSuccess(null);
+						response.getResult();
 					} catch (TException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -231,15 +307,12 @@ public class TCP_Stub implements DeviceAsync{
 						o.notifyAll();
 			        }
 				}
+				@Override
+				public void onError(Throwable throwable) {
+					callback.onFailure(throwable);
+				}
 			});
-			synchronized(o) {
-		        o.wait(100000);
-		      }
 		} catch (TException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -248,19 +321,20 @@ public class TCP_Stub implements DeviceAsync{
 
 			@Override
 			public void cancel() {
-				// TODO Auto-generated method stub
-				
 			}
-
 			@Override
 			public Void get() {
-				// TODO Auto-generated method stub
+				synchronized(o) {
+			        try {
+						o.wait();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+			      }
 				return null;
 			}
-
 			@Override
 			public State getState() {
-				// TODO Auto-generated method stub
 				return null;
 			}};
 	}
