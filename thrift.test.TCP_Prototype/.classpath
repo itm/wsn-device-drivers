@@ -5,6 +5,7 @@
 	<classpathentry kind="lib" path="/home/dark/thrift/thrift-0.4.0/lib/java/libthrift.jar"/>
 	<classpathentry kind="lib" path="/home/dark/thrift/slf4j-1.6.1/slf4j-api-1.6.1.jar"/>
 	<classpathentry kind="lib" path="/home/dark/thrift/slf4j-1.6.1/slf4j-jdk14-1.6.1.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Device-Drivers"/>
+	<classpathentry kind="lib" path="/home/dark/thrift/rxtx-2.1.7.jar"/>
+	<classpathentry kind="lib" path="/home/dark/thrift/guice-2.0-no_aop.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
