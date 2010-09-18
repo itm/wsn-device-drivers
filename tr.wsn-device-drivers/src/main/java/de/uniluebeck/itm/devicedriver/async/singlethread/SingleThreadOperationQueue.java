@@ -15,9 +15,9 @@ import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 import de.uniluebeck.itm.devicedriver.async.OperationQueue;
 import de.uniluebeck.itm.devicedriver.async.OperationQueueListener;
-import de.uniluebeck.itm.devicedriver.exception.TimeoutException;
 import de.uniluebeck.itm.devicedriver.operation.Operation;
 import de.uniluebeck.itm.devicedriver.operation.OperationAdapter;
+import de.uniluebeck.itm.devicedriver.operation.OperationListener;
 
 /**
  * Class that implements the queue as single thread executor.
@@ -50,16 +50,25 @@ public class SingleThreadOperationQueue implements OperationQueue {
 	@Override
 	public synchronized <T> OperationHandle<T> addOperation(Operation<T> operation, long timeout, final AsyncCallback<T> callback) {
 		operations.add(operation);
-		operation.addOperationListener(new OperationAdapter<T>() {
+		notifyAdded(operation);
+		operation.addOperationListener(new OperationListener<T>() {
 			@Override
 			public void onStateChanged(Operation<T> operation, State oldState, State newState) {
+				notifyStateChanged(operation, oldState, newState);
 				if (newState == State.DONE || newState == State.EXCEPTED || newState == State.CANCELED) {
 					operations.remove(operation);
+					notifyRemoved(operation);
 				}
+			}
+
+			@Override
+			public void onTimeout(Operation<T> operation, long timeout) {
+				notifyTimeout(operation, timeout);
 			}
 		});
 		logger.debug("Init operation " + operation);
 		operation.init(timeout, callback);
+		
 		logger.debug("Submit " + operation + " to executor queue.");
 		final Future<T> future = executor.submit(operation);
 		operation.addOperationListener(new OperationAdapter<T>() {
@@ -84,5 +93,29 @@ public class SingleThreadOperationQueue implements OperationQueue {
 	@Override
 	public void removeOperationQueueListener(OperationQueueListener listener) {
 		listeners.remove(listener);
+	}
+	
+	private void notifyStateChanged(Operation<?> operation, State oldState, State newState) {
+		for (OperationQueueListener listener : listeners.toArray(new OperationQueueListener[listeners.size()])) {
+			listener.onStateChanged(operation, oldState, newState);
+		}
+	}
+	
+	private void notifyTimeout(Operation<?> operation, long timeout) {
+		for (OperationQueueListener listener : listeners.toArray(new OperationQueueListener[listeners.size()])) {
+			listener.onTimeout(operation, timeout);
+		}
+	}
+	
+	private void notifyAdded(Operation<?> operation) {
+		for (OperationQueueListener listener : listeners.toArray(new OperationQueueListener[listeners.size()])) {
+			listener.onAdded(operation);
+		}
+	}
+	
+	private void notifyRemoved(Operation<?> operation) {
+		for (OperationQueueListener listener : listeners.toArray(new OperationQueueListener[listeners.size()])) {
+			listener.onRemoved(operation);
+		}
 	}
 }
