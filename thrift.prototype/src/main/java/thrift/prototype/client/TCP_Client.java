@@ -1,23 +1,15 @@
 package thrift.prototype.client;
 
-import org.apache.thrift.async.TAsyncClientManager;
-
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 
 public class TCP_Client {
-
+	
 	public static void main(String[] args) throws Exception {
-		
-		TAsyncClientManager acm = new TAsyncClientManager();
-		
+
 		/* Gemeinsamer ClientManager */
-		TCP_Stub stub1 = new TCP_Stub("localhost", 50000, acm);
-		TCP_Stub stub2 = new TCP_Stub("localhost", 50000, acm);
-		
-		/* jeweils eigene Clients */
-		//TCP_Stub stub1 = new TCP_Stub("localhost", 50000);
-		//TCP_Stub stub2 = new TCP_Stub("localhost", 50000);
+		TCP_Stub stub1 = new TCP_Stub("localhost", 50000);
+		TCP_Stub stub2 = new TCP_Stub("localhost", 50000);
 		
 		int i=0;
 		int j=0;
@@ -56,7 +48,7 @@ public class TCP_Client {
 				
 			// 2 druecken
 			case 50:
-				handle2 = stub1.getMessage(new AsyncCallback<String>(){
+				handle2 = stub1.getMessage(new AsyncCallback<String>(){	
 					@Override
 					public void onCancel() {
 					}
