@@ -130,4 +130,8 @@ public class QueuedDeviceAsync implements DeviceAsync {
 		operation.setMacAddress(macAddress);
 		return queue.addOperation(operation, timeout, callback);
 	}
+	
+	public OperationQueue getOperationQueue() {
+		return queue;
+	}
 }

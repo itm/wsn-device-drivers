@@ -15,6 +15,7 @@ import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 import de.uniluebeck.itm.devicedriver.async.OperationQueue;
 import de.uniluebeck.itm.devicedriver.async.OperationQueueListener;
+import de.uniluebeck.itm.devicedriver.exception.TimeoutException;
 import de.uniluebeck.itm.devicedriver.operation.Operation;
 import de.uniluebeck.itm.devicedriver.operation.OperationAdapter;
 
@@ -47,7 +48,7 @@ public class SingleThreadOperationQueue implements OperationQueue {
 	private final ExecutorService executor = Executors.newSingleThreadExecutor();
 	
 	@Override
-	public synchronized <T> OperationHandle<T> addOperation(Operation<T> operation, long timeout, AsyncCallback<T> callback) {
+	public synchronized <T> OperationHandle<T> addOperation(Operation<T> operation, long timeout, final AsyncCallback<T> callback) {
 		operations.add(operation);
 		operation.addOperationListener(new OperationAdapter<T>() {
 			@Override

@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.devicedriver.State;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
+import de.uniluebeck.itm.devicedriver.exception.TimeoutException;
 
 /**
  * An abstract operation.
@@ -61,19 +62,20 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	private boolean canceled;
 	
 	@Override
-	public void init(long timeout, AsyncCallback<T> callback) {
+	public void init(final long timeout, final AsyncCallback<T> callback) {
 		this.timeout = timeout;
 		this.callback = callback;
 		
-		timer.schedule(new TimerTask() {
+		timer.schedule(new TimerTask() {			
 			@Override
 			public void run() {
 				logger.debug("Timeout of operation reached");
 				State oldState = state;
-				state = State.CANCELED;
+				state = State.EXCEPTED;
 				fireTimeout();
 				logger.debug("Operation state changed from " + oldState + " to " + state);
 				fireStateChanged(oldState, state);
+				callback.onFailure(new TimeoutException("Operation timeout " + timeout + "ms reached."));
 			}
 		}, timeout);
 	}
