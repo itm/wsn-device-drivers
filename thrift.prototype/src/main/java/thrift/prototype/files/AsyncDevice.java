@@ -30,7 +30,7 @@ public class AsyncDevice {
 
   public interface Iface {
 
-    public String connect() throws TException;
+    public String connect(String userName, String passWord) throws LoginFailed, TException;
 
     public void disconnect(String key) throws TException;
 
@@ -44,7 +44,7 @@ public class AsyncDevice {
 
   public interface AsyncIface {
 
-    public void connect(AsyncMethodCallback<AsyncClient.connect_call> resultHandler) throws TException;
+    public void connect(String userName, String passWord, AsyncMethodCallback<AsyncClient.connect_call> resultHandler) throws TException;
 
     public void disconnect(String key, AsyncMethodCallback<AsyncClient.disconnect_call> resultHandler) throws TException;
 
@@ -93,22 +93,24 @@ public class AsyncDevice {
       return this.oprot_;
     }
 
-    public String connect() throws TException
+    public String connect(String userName, String passWord) throws LoginFailed, TException
     {
-      send_connect();
+      send_connect(userName, passWord);
       return recv_connect();
     }
 
-    public void send_connect() throws TException
+    public void send_connect(String userName, String passWord) throws TException
     {
       oprot_.writeMessageBegin(new TMessage("connect", TMessageType.CALL, ++seqid_));
       connect_args args = new connect_args();
+      args.setUserName(userName);
+      args.setPassWord(passWord);
       args.write(oprot_);
       oprot_.writeMessageEnd();
       oprot_.getTransport().flush();
     }
 
-    public String recv_connect() throws TException
+    public String recv_connect() throws LoginFailed, TException
     {
       TMessage msg = iprot_.readMessageBegin();
       if (msg.type == TMessageType.EXCEPTION) {
@@ -124,6 +126,9 @@ public class AsyncDevice {
       iprot_.readMessageEnd();
       if (result.isSetSuccess()) {
         return result.success;
+      }
+      if (result.lf != null) {
+        throw result.lf;
       }
       throw new TApplicationException(TApplicationException.MISSING_RESULT, "connect failed: unknown result");
     }
@@ -270,25 +275,31 @@ public class AsyncDevice {
       super(protocolFactory, clientManager, transport);
     }
 
-    public void connect(AsyncMethodCallback<connect_call> resultHandler) throws TException {
+    public void connect(String userName, String passWord, AsyncMethodCallback<connect_call> resultHandler) throws TException {
       checkReady();
-      connect_call method_call = new connect_call(resultHandler, this, protocolFactory, transport);
+      connect_call method_call = new connect_call(userName, passWord, resultHandler, this, protocolFactory, transport);
       manager.call(method_call);
     }
 
     public static class connect_call extends TAsyncMethodCall {
-      public connect_call(AsyncMethodCallback<connect_call> resultHandler, TAsyncClient client, TProtocolFactory protocolFactory, TNonblockingTransport transport) throws TException {
+      private String userName;
+      private String passWord;
+      public connect_call(String userName, String passWord, AsyncMethodCallback<connect_call> resultHandler, TAsyncClient client, TProtocolFactory protocolFactory, TNonblockingTransport transport) throws TException {
         super(client, protocolFactory, transport, resultHandler, false);
+        this.userName = userName;
+        this.passWord = passWord;
       }
 
       public void write_args(TProtocol prot) throws TException {
         prot.writeMessageBegin(new TMessage("connect", TMessageType.CALL, 0));
         connect_args args = new connect_args();
+        args.setUserName(userName);
+        args.setPassWord(passWord);
         args.write(prot);
         prot.writeMessageEnd();
       }
 
-      public String getResult() throws TException {
+      public String getResult() throws LoginFailed, TException {
         if (getState() != State.RESPONSE_READ) {
           throw new IllegalStateException("Method call not finished!");
         }
@@ -489,7 +500,19 @@ public class AsyncDevice {
         }
         iprot.readMessageEnd();
         connect_result result = new connect_result();
-        result.success = iface_.connect();
+        try {
+          result.success = iface_.connect(args.userName, args.passWord);
+        } catch (LoginFailed lf) {
+          result.lf = lf;
+        } catch (Throwable th) {
+          LOGGER.error("Internal error processing connect", th);
+          TApplicationException x = new TApplicationException(TApplicationException.INTERNAL_ERROR, "Internal error processing connect");
+          oprot.writeMessageBegin(new TMessage("connect", TMessageType.EXCEPTION, seqid));
+          x.write(oprot);
+          oprot.writeMessageEnd();
+          oprot.getTransport().flush();
+          return;
+        }
         oprot.writeMessageBegin(new TMessage("connect", TMessageType.REPLY, seqid));
         result.write(oprot);
         oprot.writeMessageEnd();
@@ -602,11 +625,16 @@ public class AsyncDevice {
   public static class connect_args implements TBase<connect_args, connect_args._Fields>, java.io.Serializable, Cloneable   {
     private static final TStruct STRUCT_DESC = new TStruct("connect_args");
 
+    private static final TField USER_NAME_FIELD_DESC = new TField("userName", TType.STRING, (short)1);
+    private static final TField PASS_WORD_FIELD_DESC = new TField("passWord", TType.STRING, (short)2);
 
+    public String userName;
+    public String passWord;
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements TFieldIdEnum {
-;
+      USER_NAME((short)1, "userName"),
+      PASS_WORD((short)2, "passWord");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -621,6 +649,10 @@ public class AsyncDevice {
        */
       public static _Fields findByThriftId(int fieldId) {
         switch(fieldId) {
+          case 1: // USER_NAME
+            return USER_NAME;
+          case 2: // PASS_WORD
+            return PASS_WORD;
           default:
             return null;
         }
@@ -659,9 +691,16 @@ public class AsyncDevice {
         return _fieldName;
       }
     }
+
+    // isset id assignments
+
     public static final Map<_Fields, FieldMetaData> metaDataMap;
     static {
       Map<_Fields, FieldMetaData> tmpMap = new EnumMap<_Fields, FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.USER_NAME, new FieldMetaData("userName", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
+      tmpMap.put(_Fields.PASS_WORD, new FieldMetaData("passWord", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
       FieldMetaData.addStructMetaDataMap(connect_args.class, metaDataMap);
     }
@@ -669,10 +708,25 @@ public class AsyncDevice {
     public connect_args() {
     }
 
+    public connect_args(
+      String userName,
+      String passWord)
+    {
+      this();
+      this.userName = userName;
+      this.passWord = passWord;
+    }
+
     /**
      * Performs a deep copy on <i>other</i>.
      */
     public connect_args(connect_args other) {
+      if (other.isSetUserName()) {
+        this.userName = other.userName;
+      }
+      if (other.isSetPassWord()) {
+        this.passWord = other.passWord;
+      }
     }
 
     public connect_args deepCopy() {
@@ -686,10 +740,76 @@ public class AsyncDevice {
 
     @Override
     public void clear() {
+      this.userName = null;
+      this.passWord = null;
+    }
+
+    public String getUserName() {
+      return this.userName;
+    }
+
+    public connect_args setUserName(String userName) {
+      this.userName = userName;
+      return this;
+    }
+
+    public void unsetUserName() {
+      this.userName = null;
+    }
+
+    /** Returns true if field userName is set (has been asigned a value) and false otherwise */
+    public boolean isSetUserName() {
+      return this.userName != null;
+    }
+
+    public void setUserNameIsSet(boolean value) {
+      if (!value) {
+        this.userName = null;
+      }
+    }
+
+    public String getPassWord() {
+      return this.passWord;
+    }
+
+    public connect_args setPassWord(String passWord) {
+      this.passWord = passWord;
+      return this;
+    }
+
+    public void unsetPassWord() {
+      this.passWord = null;
+    }
+
+    /** Returns true if field passWord is set (has been asigned a value) and false otherwise */
+    public boolean isSetPassWord() {
+      return this.passWord != null;
+    }
+
+    public void setPassWordIsSet(boolean value) {
+      if (!value) {
+        this.passWord = null;
+      }
     }
 
     public void setFieldValue(_Fields field, Object value) {
       switch (field) {
+      case USER_NAME:
+        if (value == null) {
+          unsetUserName();
+        } else {
+          setUserName((String)value);
+        }
+        break;
+
+      case PASS_WORD:
+        if (value == null) {
+          unsetPassWord();
+        } else {
+          setPassWord((String)value);
+        }
+        break;
+
       }
     }
 
@@ -699,6 +819,12 @@ public class AsyncDevice {
 
     public Object getFieldValue(_Fields field) {
       switch (field) {
+      case USER_NAME:
+        return getUserName();
+
+      case PASS_WORD:
+        return getPassWord();
+
       }
       throw new IllegalStateException();
     }
@@ -710,6 +836,10 @@ public class AsyncDevice {
     /** Returns true if field corresponding to fieldID is set (has been asigned a value) and false otherwise */
     public boolean isSet(_Fields field) {
       switch (field) {
+      case USER_NAME:
+        return isSetUserName();
+      case PASS_WORD:
+        return isSetPassWord();
       }
       throw new IllegalStateException();
     }
@@ -731,6 +861,24 @@ public class AsyncDevice {
       if (that == null)
         return false;
 
+      boolean this_present_userName = true && this.isSetUserName();
+      boolean that_present_userName = true && that.isSetUserName();
+      if (this_present_userName || that_present_userName) {
+        if (!(this_present_userName && that_present_userName))
+          return false;
+        if (!this.userName.equals(that.userName))
+          return false;
+      }
+
+      boolean this_present_passWord = true && this.isSetPassWord();
+      boolean that_present_passWord = true && that.isSetPassWord();
+      if (this_present_passWord || that_present_passWord) {
+        if (!(this_present_passWord && that_present_passWord))
+          return false;
+        if (!this.passWord.equals(that.passWord))
+          return false;
+      }
+
       return true;
     }
 
@@ -747,6 +895,24 @@ public class AsyncDevice {
       int lastComparison = 0;
       connect_args typedOther = (connect_args)other;
 
+      lastComparison = Boolean.valueOf(isSetUserName()).compareTo(typedOther.isSetUserName());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetUserName()) {        lastComparison = TBaseHelper.compareTo(this.userName, typedOther.userName);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetPassWord()).compareTo(typedOther.isSetPassWord());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetPassWord()) {        lastComparison = TBaseHelper.compareTo(this.passWord, typedOther.passWord);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
       return 0;
     }
 
@@ -760,6 +926,20 @@ public class AsyncDevice {
           break;
         }
         switch (field.id) {
+          case 1: // USER_NAME
+            if (field.type == TType.STRING) {
+              this.userName = iprot.readString();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 2: // PASS_WORD
+            if (field.type == TType.STRING) {
+              this.passWord = iprot.readString();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
           default:
             TProtocolUtil.skip(iprot, field.type);
         }
@@ -775,6 +955,16 @@ public class AsyncDevice {
       validate();
 
       oprot.writeStructBegin(STRUCT_DESC);
+      if (this.userName != null) {
+        oprot.writeFieldBegin(USER_NAME_FIELD_DESC);
+        oprot.writeString(this.userName);
+        oprot.writeFieldEnd();
+      }
+      if (this.passWord != null) {
+        oprot.writeFieldBegin(PASS_WORD_FIELD_DESC);
+        oprot.writeString(this.passWord);
+        oprot.writeFieldEnd();
+      }
       oprot.writeFieldStop();
       oprot.writeStructEnd();
     }
@@ -784,6 +974,21 @@ public class AsyncDevice {
       StringBuilder sb = new StringBuilder("connect_args(");
       boolean first = true;
 
+      sb.append("userName:");
+      if (this.userName == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.userName);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("passWord:");
+      if (this.passWord == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.passWord);
+      }
+      first = false;
       sb.append(")");
       return sb.toString();
     }
@@ -798,12 +1003,15 @@ public class AsyncDevice {
     private static final TStruct STRUCT_DESC = new TStruct("connect_result");
 
     private static final TField SUCCESS_FIELD_DESC = new TField("success", TType.STRING, (short)0);
+    private static final TField LF_FIELD_DESC = new TField("lf", TType.STRUCT, (short)1);
 
     public String success;
+    public LoginFailed lf;
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements TFieldIdEnum {
-      SUCCESS((short)0, "success");
+      SUCCESS((short)0, "success"),
+      LF((short)1, "lf");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -820,6 +1028,8 @@ public class AsyncDevice {
         switch(fieldId) {
           case 0: // SUCCESS
             return SUCCESS;
+          case 1: // LF
+            return LF;
           default:
             return null;
         }
@@ -866,6 +1076,8 @@ public class AsyncDevice {
       Map<_Fields, FieldMetaData> tmpMap = new EnumMap<_Fields, FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.SUCCESS, new FieldMetaData("success", TFieldRequirementType.DEFAULT, 
           new FieldValueMetaData(TType.STRING)));
+      tmpMap.put(_Fields.LF, new FieldMetaData("lf", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRUCT)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
       FieldMetaData.addStructMetaDataMap(connect_result.class, metaDataMap);
     }
@@ -874,10 +1086,12 @@ public class AsyncDevice {
     }
 
     public connect_result(
-      String success)
+      String success,
+      LoginFailed lf)
     {
       this();
       this.success = success;
+      this.lf = lf;
     }
 
     /**
@@ -886,6 +1100,9 @@ public class AsyncDevice {
     public connect_result(connect_result other) {
       if (other.isSetSuccess()) {
         this.success = other.success;
+      }
+      if (other.isSetLf()) {
+        this.lf = new LoginFailed(other.lf);
       }
     }
 
@@ -901,6 +1118,7 @@ public class AsyncDevice {
     @Override
     public void clear() {
       this.success = null;
+      this.lf = null;
     }
 
     public String getSuccess() {
@@ -927,6 +1145,30 @@ public class AsyncDevice {
       }
     }
 
+    public LoginFailed getLf() {
+      return this.lf;
+    }
+
+    public connect_result setLf(LoginFailed lf) {
+      this.lf = lf;
+      return this;
+    }
+
+    public void unsetLf() {
+      this.lf = null;
+    }
+
+    /** Returns true if field lf is set (has been asigned a value) and false otherwise */
+    public boolean isSetLf() {
+      return this.lf != null;
+    }
+
+    public void setLfIsSet(boolean value) {
+      if (!value) {
+        this.lf = null;
+      }
+    }
+
     public void setFieldValue(_Fields field, Object value) {
       switch (field) {
       case SUCCESS:
@@ -934,6 +1176,14 @@ public class AsyncDevice {
           unsetSuccess();
         } else {
           setSuccess((String)value);
+        }
+        break;
+
+      case LF:
+        if (value == null) {
+          unsetLf();
+        } else {
+          setLf((LoginFailed)value);
         }
         break;
 
@@ -949,6 +1199,9 @@ public class AsyncDevice {
       case SUCCESS:
         return getSuccess();
 
+      case LF:
+        return getLf();
+
       }
       throw new IllegalStateException();
     }
@@ -962,6 +1215,8 @@ public class AsyncDevice {
       switch (field) {
       case SUCCESS:
         return isSetSuccess();
+      case LF:
+        return isSetLf();
       }
       throw new IllegalStateException();
     }
@@ -992,6 +1247,15 @@ public class AsyncDevice {
           return false;
       }
 
+      boolean this_present_lf = true && this.isSetLf();
+      boolean that_present_lf = true && that.isSetLf();
+      if (this_present_lf || that_present_lf) {
+        if (!(this_present_lf && that_present_lf))
+          return false;
+        if (!this.lf.equals(that.lf))
+          return false;
+      }
+
       return true;
     }
 
@@ -1017,6 +1281,15 @@ public class AsyncDevice {
           return lastComparison;
         }
       }
+      lastComparison = Boolean.valueOf(isSetLf()).compareTo(typedOther.isSetLf());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetLf()) {        lastComparison = TBaseHelper.compareTo(this.lf, typedOther.lf);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
       return 0;
     }
 
@@ -1033,6 +1306,14 @@ public class AsyncDevice {
           case 0: // SUCCESS
             if (field.type == TType.STRING) {
               this.success = iprot.readString();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 1: // LF
+            if (field.type == TType.STRUCT) {
+              this.lf = new LoginFailed();
+              this.lf.read(iprot);
             } else { 
               TProtocolUtil.skip(iprot, field.type);
             }
@@ -1055,6 +1336,10 @@ public class AsyncDevice {
         oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
         oprot.writeString(this.success);
         oprot.writeFieldEnd();
+      } else if (this.isSetLf()) {
+        oprot.writeFieldBegin(LF_FIELD_DESC);
+        this.lf.write(oprot);
+        oprot.writeFieldEnd();
       }
       oprot.writeFieldStop();
       oprot.writeStructEnd();
@@ -1070,6 +1355,14 @@ public class AsyncDevice {
         sb.append("null");
       } else {
         sb.append(this.success);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("lf:");
+      if (this.lf == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.lf);
       }
       first = false;
       sb.append(")");

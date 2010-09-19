@@ -23,10 +23,12 @@ import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 
 import thrift.prototype.files.AsyncDevice;
+import thrift.prototype.files.AsyncDevice.AsyncClient;
 import thrift.prototype.files.AsyncDevice.AsyncClient.connect_call;
 import thrift.prototype.files.AsyncDevice.AsyncClient.getMessage_call;
 import thrift.prototype.files.AsyncDevice.AsyncClient.setMessage_call;
 import thrift.prototype.files.AsyncDevice.AsyncClient.program_call;
+import thrift.prototype.files.LoginFailed;
 
 
 public class TCP_Stub implements DeviceAsync{
@@ -47,14 +49,14 @@ public class TCP_Stub implements DeviceAsync{
     // Synchro-Objekt
     final Object o = new Object();
 	
-    TCP_Stub (String uri, int port) throws Exception{
+    TCP_Stub (String userName, String passWord, String uri, int port) throws Exception{
    
         this.uri = uri;
         
         this.port = port;
         
         // einleiten der initialen Verbindung
-        connect(new AsyncCallback<String>(){
+        connect(userName, passWord, new AsyncCallback<String>(){
 
 			@Override
 			public void onCancel() {
@@ -90,16 +92,19 @@ public class TCP_Stub implements DeviceAsync{
 	 * Erstellt die initiale Verbindung zwischen Client und Server
 	 * @throws InterruptedException
 	 */
-	private void connect(final AsyncCallback<String> callback) throws InterruptedException{
+	private void connect(String userName, String passWord, final AsyncCallback<String> callback) throws InterruptedException{
 		try {
 			// erstellt ein ClientID-Objekt mit id als Key, mit Hilfe dieses
-			new TCP_Stub(uri, port, new TAsyncClientManager(), "-1").client.connect(new AsyncMethodCallback<AsyncDevice.AsyncClient.connect_call>(){
+			new TCP_Stub(uri, port, new TAsyncClientManager(), "-1").client.connect(userName, passWord, new AsyncMethodCallback<AsyncDevice.AsyncClient.connect_call>(){
 				@Override
 				public void onComplete(connect_call response) {
 					try {
 						callback.onSuccess(response.getResult());
 					} catch (TException e) {
+						System.out.println("Point 1");
 						e.printStackTrace();
+					} catch (LoginFailed lf) {
+						lf.printStackTrace();//TODO Fehlgeschlagenen Login besser behandeln!
 					}synchronized(o) {
 						o.notifyAll();
 			        }
