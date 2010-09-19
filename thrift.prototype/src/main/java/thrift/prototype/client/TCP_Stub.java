@@ -23,7 +23,6 @@ import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 
 import thrift.prototype.files.AsyncDevice;
-import thrift.prototype.files.AsyncDevice.AsyncClient;
 import thrift.prototype.files.AsyncDevice.AsyncClient.connect_call;
 import thrift.prototype.files.AsyncDevice.AsyncClient.getMessage_call;
 import thrift.prototype.files.AsyncDevice.AsyncClient.setMessage_call;
@@ -63,11 +62,13 @@ public class TCP_Stub implements DeviceAsync{
 			}
 
 			@Override
-			public void onFailure(Throwable throwable) {	
+			public void onFailure(Throwable throwable) {
+				System.out.println("Authentifizierung felgeschlagen, "+throwable.getMessage());
 			}
 
 			@Override
 			public void onSuccess(String result) {
+				System.out.println("Authentifizierung erfolgreich");
 				id = result;
 			}
 
@@ -104,13 +105,15 @@ public class TCP_Stub implements DeviceAsync{
 						System.out.println("Point 1");
 						e.printStackTrace();
 					} catch (LoginFailed lf) {
-						lf.printStackTrace();//TODO Fehlgeschlagenen Login besser behandeln!
+						//lf.printStackTrace();//TODO Fehlgeschlagenen Login besser behandeln!
+						callback.onFailure(lf);
 					}synchronized(o) {
 						o.notifyAll();
 			        }
 				}
 				@Override
 				public void onError(Throwable throwable) {
+					callback.onFailure(throwable);
 				}			
 			});
 			synchronized(o) {
@@ -138,8 +141,14 @@ public class TCP_Stub implements DeviceAsync{
 	 */
 	public OperationHandle<Void> setMessage(String setMessage, final AsyncCallback<Void> callback) {
 
+		// Abbruch wenn keine id vergeben wurde -> nicht authentifiziert
+		if(id.equalsIgnoreCase("-1")){
+			state = State.EXCEPTED;
+			return null;
+		}
+		
 		state = State.RUNNING;
-
+		
 		try {
 			// Entfernter Methodenaufruf
 			new TCP_Stub(uri, port, acm, id).client.setMessage(id, setMessage, new AsyncMethodCallback<AsyncDevice.AsyncClient.setMessage_call>() {
@@ -213,7 +222,13 @@ public class TCP_Stub implements DeviceAsync{
 	 * @throws InterruptedException
 	 */
 	public OperationHandle<Void>  getMessage(final AsyncCallback<String> callback) throws InterruptedException{
-															
+		
+		// Abbruch wenn keine id vergeben wurde -> nicht authentifiziert
+		if(id.equalsIgnoreCase("-1")){
+			state = State.EXCEPTED;
+			return null;
+		}
+		
 		state = State.RUNNING;
 		
 		try {
@@ -284,6 +299,12 @@ public class TCP_Stub implements DeviceAsync{
 		
 		// TODO Klaeren wozu der Client den OperationHandle braucht
 		// TODO Wer soll Timeout regeln?
+		
+		// Abbruch wenn keine id vergeben wurde -> nicht authentifiziert
+		if(id.equalsIgnoreCase("-1")){
+			state = State.EXCEPTED;
+			return null;
+		}
 		
 		/*
 		binaryImage.resetBlockIterator();
