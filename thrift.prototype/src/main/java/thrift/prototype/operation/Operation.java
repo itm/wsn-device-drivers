@@ -3,8 +3,6 @@ package thrift.prototype.operation;
 import org.apache.thrift.async.TAsyncClientManager;
 import thrift.prototype.client.TCP_Stub;
 import de.uniluebeck.itm.devicedriver.State;
-import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
-import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 
 public abstract class Operation<T> {
 
@@ -31,4 +29,5 @@ public abstract class Operation<T> {
 	// TODO Absract Factory einbauen
 	//public abstract OperationHandle<Void> operate(String setMessage, final AsyncCallback<T> callback);
 	//public abstract OperationHandle<Void> operate(final AsyncCallback<T> callback);
+	
 }

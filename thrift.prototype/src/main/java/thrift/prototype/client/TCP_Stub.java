@@ -19,10 +19,10 @@ import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 
-import thrift.prototype.client.OperationKeys;
 import thrift.prototype.files.AsyncDevice;
 import thrift.prototype.files.AsyncDevice.AsyncClient.connect_call;
 import thrift.prototype.files.LoginFailed;
+import thrift.prototype.operation.OperationKeys;
 import thrift.prototype.operation.getMessageOp;
 import thrift.prototype.operation.programm;
 import thrift.prototype.operation.setMessageOp;

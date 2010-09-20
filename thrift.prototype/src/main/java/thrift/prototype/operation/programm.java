@@ -7,7 +7,6 @@ import org.apache.thrift.TException;
 import org.apache.thrift.async.AsyncMethodCallback;
 import org.apache.thrift.async.TAsyncClientManager;
 
-import thrift.prototype.client.OperationKeys;
 import thrift.prototype.files.AsyncDevice;
 import thrift.prototype.files.AsyncDevice.AsyncClient.HandleCancel_call;
 import thrift.prototype.files.AsyncDevice.AsyncClient.HandleGetState_call;
@@ -145,9 +144,12 @@ public class programm extends Operation<Void> {
 						@Override
 						public void onComplete(HandleGetState_call response) {
 							try {
-								String StateName = response.getResult();
-								// TODO aus StateName wieder ein State machen
-								//state = new State(StateName);
+								String stateName = response.getResult();
+								for(State zwState : State.values()){
+									if(zwState.getName().equalsIgnoreCase(stateName)){
+										state = zwState;
+									}
+								}
 							} catch (TException e) {
 								e.printStackTrace();
 							}

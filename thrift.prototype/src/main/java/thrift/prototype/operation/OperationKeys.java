@@ -1,4 +1,4 @@
-package thrift.prototype.client;
+package thrift.prototype.operation;
 
 import java.util.HashSet;
 import java.util.Set;
