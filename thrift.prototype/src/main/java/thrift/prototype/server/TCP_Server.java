@@ -28,13 +28,11 @@ import org.apache.thrift.transport.TTransportException;
 
 import de.uniluebeck.itm.Impl.Main;
 import de.uniluebeck.itm.devicedriver.DeviceBinFile;
-import de.uniluebeck.itm.devicedriver.State;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 
 import thrift.prototype.files.AsyncDevice;
 import thrift.prototype.files.LoginFailed;
-import thrift.prototype.files.getMessageAnswer;
 
 //TODO entweder Rohdaten direkt per program (list aus binaerdaten) uebertragen oder 
 //TODO die Rohbloecke einzeln per transfer
