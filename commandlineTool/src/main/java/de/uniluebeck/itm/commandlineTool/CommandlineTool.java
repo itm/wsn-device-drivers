@@ -40,7 +40,7 @@ public class CommandlineTool {
 		// for help statement
 		HelpFormatter formatter = new HelpFormatter();
 
-		CommandLineParser parser = new PosixParser();
+		CommandLineParser parser = new GnuParser();
 		
 		BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
 		String last_line = buffer.readLine();
@@ -51,7 +51,6 @@ public class CommandlineTool {
 		} catch (ParseException e) {
 			System.out.println("Diese Option gibt es nicht.");
 		}
-		
 		while(!(last_line.equals("exit"))){
 			
 			if(cmd != null){
