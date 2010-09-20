@@ -25,7 +25,7 @@ public class setMessageOp extends Operation<Void>{
 		
 		try {
 			// Entfernter Methodenaufruf
-			stub.getClient().setMessage(id, OperationHandleKey, setMessage, new AsyncMethodCallback<AsyncDevice.AsyncClient.setMessage_call>() {
+			client.setMessage(id, OperationHandleKey, setMessage, new AsyncMethodCallback<AsyncDevice.AsyncClient.setMessage_call>() {
 	            
 				// Bei erfolgreicher Uebertragung
 				@Override
@@ -33,12 +33,12 @@ public class setMessageOp extends Operation<Void>{
 					try {
 						response.getResult();
 						callback.onSuccess(null);
-						OperationKeys.getInstance().removeKey(OperationHandleKey);
 					} catch (TException e) {
 						e.printStackTrace();
 					}// benachrichtigen des synchro-objekts
 					synchronized(o) {
 						o.notifyAll();
+						OperationKeys.getInstance().removeKey(OperationHandleKey);
 			        }
 	            }
 
@@ -65,7 +65,7 @@ public class setMessageOp extends Operation<Void>{
 			@Override
 			public void cancel() {
 				try {
-					stub.getClient().HandleCancel(id, OperationHandleKey, new AsyncMethodCallback<AsyncDevice.AsyncClient.HandleCancel_call>(){
+					client.HandleCancel(id, OperationHandleKey, new AsyncMethodCallback<AsyncDevice.AsyncClient.HandleCancel_call>(){
 
 						@Override
 						public void onComplete(HandleCancel_call response) {
@@ -86,7 +86,7 @@ public class setMessageOp extends Operation<Void>{
 			public Void get() {
 				
 				try {
-					stub.getClient().HandleGet(id, OperationHandleKey, new AsyncMethodCallback<AsyncDevice.AsyncClient.HandleGet_call>(){
+					client.HandleGet(id, OperationHandleKey, new AsyncMethodCallback<AsyncDevice.AsyncClient.HandleGet_call>(){
 
 						@Override
 						public void onComplete(HandleGet_call response) {
@@ -126,7 +126,7 @@ public class setMessageOp extends Operation<Void>{
 			public State getState() {
 				
 				try {
-					stub.getClient().HandleGetState(id, OperationHandleKey, new AsyncMethodCallback<AsyncDevice.AsyncClient.HandleGetState_call>(){
+					client.HandleGetState(id, OperationHandleKey, new AsyncMethodCallback<AsyncDevice.AsyncClient.HandleGetState_call>(){
 
 						@Override
 						public void onComplete(HandleGetState_call response) {

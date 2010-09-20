@@ -45,19 +45,19 @@ public class programm extends Operation<Void> {
 		String description = "";
 		
 		try {
-			stub.getClient().program(id, OperationHandleKey, blocks, description, timeout, new AsyncMethodCallback<AsyncDevice.AsyncClient.program_call>() {
+			client.program(id, OperationHandleKey, blocks, description, timeout, new AsyncMethodCallback<AsyncDevice.AsyncClient.program_call>() {
 
 				@Override
 				public void onComplete(program_call response) {
 					try {
 						response.getResult();
-						OperationKeys.getInstance().removeKey(OperationHandleKey);
 						callback.onSuccess(null);
 					} catch (TException e) {
 						e.printStackTrace();
 					}
 					synchronized(o) {
 						o.notifyAll();
+						OperationKeys.getInstance().removeKey(OperationHandleKey);
 			        }
 				}
 				@Override
@@ -78,7 +78,7 @@ public class programm extends Operation<Void> {
 			@Override
 			public void cancel() {
 				try {
-					stub.getClient().HandleCancel(id, OperationHandleKey, new AsyncMethodCallback<AsyncDevice.AsyncClient.HandleCancel_call>(){
+					client.HandleCancel(id, OperationHandleKey, new AsyncMethodCallback<AsyncDevice.AsyncClient.HandleCancel_call>(){
 
 						@Override
 						public void onComplete(HandleCancel_call response) {
@@ -99,7 +99,7 @@ public class programm extends Operation<Void> {
 			public Void get() {
 				
 				try {
-					stub.getClient().HandleGet(id, OperationHandleKey, new AsyncMethodCallback<AsyncDevice.AsyncClient.HandleGet_call>(){
+					client.HandleGet(id, OperationHandleKey, new AsyncMethodCallback<AsyncDevice.AsyncClient.HandleGet_call>(){
 
 						@Override
 						public void onComplete(HandleGet_call response) {
@@ -139,7 +139,7 @@ public class programm extends Operation<Void> {
 			public State getState() {
 				
 				try {
-					stub.getClient().HandleGetState(id, OperationHandleKey, new AsyncMethodCallback<AsyncDevice.AsyncClient.HandleGetState_call>(){
+					client.HandleGetState(id, OperationHandleKey, new AsyncMethodCallback<AsyncDevice.AsyncClient.HandleGetState_call>(){
 
 						@Override
 						public void onComplete(HandleGetState_call response) {

@@ -1,17 +1,20 @@
 package thrift.prototype.operation;
 
 import org.apache.thrift.async.TAsyncClientManager;
-import thrift.prototype.client.TCP_Stub;
+
 import de.uniluebeck.itm.devicedriver.State;
+
+import thrift.prototype.client.ConnectionBuilder;
+import thrift.prototype.files.AsyncDevice;
 
 public abstract class Operation<T> {
 
 	String id;
 	String OperationHandleKey;
-	TCP_Stub stub;
+	AsyncDevice.AsyncClient client;
 	
+	State state;
 	Object o = new Object();
-	State state = null;
 	
 	public Operation(String id, String OperationHandleKey, String uri,int port,TAsyncClientManager acm){
 
@@ -19,7 +22,7 @@ public abstract class Operation<T> {
 		this.OperationHandleKey = OperationHandleKey;
 		
 		try {
-			this.stub = new TCP_Stub(uri, port, acm, id);
+			this.client = new ConnectionBuilder(uri, port, acm).getClient();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

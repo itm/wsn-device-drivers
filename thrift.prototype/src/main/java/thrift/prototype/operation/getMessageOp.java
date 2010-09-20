@@ -20,14 +20,13 @@ public class getMessageOp extends Operation<String> {
 	public getMessageOp(String id, String OperationHandleKey, String uri, int port,
 			TAsyncClientManager acm) {
 		super(id, OperationHandleKey, uri, port, acm);
-		// TODO Auto-generated constructor stub
 	}
 
 	public OperationHandle<Void> operate(final AsyncCallback<String> callback) {
 			
 		try {
 				// Entfernter Methodenaufruf
-				stub.getClient().getMessage(id, OperationHandleKey, new AsyncMethodCallback<AsyncDevice.AsyncClient.getMessage_call>() {
+				client.getMessage(id, OperationHandleKey, new AsyncMethodCallback<AsyncDevice.AsyncClient.getMessage_call>() {
 		            
 					// Bei erfolgreicher Uebertragung
 					@Override
@@ -35,11 +34,11 @@ public class getMessageOp extends Operation<String> {
 						try {
 							String message = response.getResult();
 							callback.onSuccess(message);
-							OperationKeys.getInstance().removeKey(OperationHandleKey);
 						} catch (TException e) {
 							e.printStackTrace();
 						}// benachrichtigen des synchro-objekts
 						synchronized(o) {
+							OperationKeys.getInstance().removeKey(OperationHandleKey);
 							o.notifyAll();
 				        }
 		            }
@@ -67,7 +66,7 @@ public class getMessageOp extends Operation<String> {
 				@Override
 				public void cancel() {
 					try {
-						stub.getClient().HandleCancel(id, OperationHandleKey, new AsyncMethodCallback<AsyncDevice.AsyncClient.HandleCancel_call>(){
+						client.HandleCancel(id, OperationHandleKey, new AsyncMethodCallback<AsyncDevice.AsyncClient.HandleCancel_call>(){
 
 							@Override
 							public void onComplete(HandleCancel_call response) {
@@ -88,7 +87,7 @@ public class getMessageOp extends Operation<String> {
 				public Void get() {
 					
 					try {
-						stub.getClient().HandleGet(id, OperationHandleKey, new AsyncMethodCallback<AsyncDevice.AsyncClient.HandleGet_call>(){
+						client.HandleGet(id, OperationHandleKey, new AsyncMethodCallback<AsyncDevice.AsyncClient.HandleGet_call>(){
 
 							@Override
 							public void onComplete(HandleGet_call response) {
@@ -128,7 +127,7 @@ public class getMessageOp extends Operation<String> {
 				public State getState() {
 					
 					try {
-						stub.getClient().HandleGetState(id, OperationHandleKey, new AsyncMethodCallback<AsyncDevice.AsyncClient.HandleGetState_call>(){
+						client.HandleGetState(id, OperationHandleKey, new AsyncMethodCallback<AsyncDevice.AsyncClient.HandleGetState_call>(){
 
 							@Override
 							public void onComplete(HandleGetState_call response) {

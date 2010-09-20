@@ -1,12 +1,7 @@
 package thrift.prototype.server;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PushbackInputStream;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -34,15 +29,15 @@ import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 import thrift.prototype.files.AsyncDevice;
 import thrift.prototype.files.LoginFailed;
 
-//TODO entweder Rohdaten direkt per program (list aus binaerdaten) uebertragen oder 
-//TODO die Rohbloecke einzeln per transfer
+//TODO Rohdaten direkt per program (list aus binaerdaten) uebertragen oder 
 
 public class TCP_Server {
 
 	public static void main(String[] args) throws TTransportException {
 	
 		   // put up a server
-	    final TNonblockingServer s = new TNonblockingServer(new AsyncDevice.Processor(new Handler()), new TNonblockingServerSocket(50001));
+	    final TNonblockingServer s = new TNonblockingServer(new AsyncDevice.Processor(new Handler()), 
+	    		new TNonblockingServerSocket(50000));
 	    new Thread(new Runnable() {
 	      @Override
 	      public void run() {
@@ -81,8 +76,7 @@ public class TCP_Server {
 			/*
 			 * dem Client einen Key zuweisen:
 			 */
-			
-			
+
 			boolean doublekey = false;
 			String key;
 			
