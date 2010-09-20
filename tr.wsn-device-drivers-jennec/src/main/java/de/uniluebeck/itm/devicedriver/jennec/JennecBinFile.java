@@ -38,9 +38,9 @@ import de.uniluebeck.itm.devicedriver.exception.FileLoadException;
 /**
  * @author dp
  */
-public class JennicBinFile implements DeviceBinFile {
+public class JennecBinFile implements DeviceBinFile {
 
-	private static final Logger log = LoggerFactory.getLogger(JennicBinFile.class);
+	private static final Logger log = LoggerFactory.getLogger(JennecBinFile.class);
 
 	private final int blockSize = 128;
 
@@ -52,7 +52,7 @@ public class JennicBinFile implements DeviceBinFile {
 
 	private String description;
 
-	public JennicBinFile(byte[] bytes, String description) {
+	public JennecBinFile(byte[] bytes, String description) {
 		this.bytes = bytes;
 		this.length = bytes.length;
 		this.description = description;
@@ -65,7 +65,7 @@ public class JennicBinFile implements DeviceBinFile {
 	 *
 	 * @throws FileLoadException
 	 */
-	public JennicBinFile(File binFile) throws Exception {
+	public JennecBinFile(File binFile) throws Exception {
 		
 		this.description = binFile.getAbsolutePath();
 
@@ -98,7 +98,7 @@ public class JennicBinFile implements DeviceBinFile {
 	 *
 	 * @throws FileLoadException
 	 */
-	public JennicBinFile(String filename) throws Exception {
+	public JennecBinFile(String filename) throws Exception {
 		this(new File(filename));
 	}
 

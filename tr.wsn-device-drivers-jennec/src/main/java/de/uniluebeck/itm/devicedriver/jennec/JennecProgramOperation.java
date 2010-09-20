@@ -25,7 +25,7 @@ public class JennecProgramOperation extends AbstractProgramOperation {
 	}
 	
 	public Void execute(Monitor monitor) throws Exception {
-		JennicBinFile jennicProgram = (JennicBinFile) binaryImage;
+		JennecBinFile jennicProgram = (JennecBinFile) binaryImage;
 		
 		// Enter programming mode
 		EnterProgramModeOperation enterProgramModeOperation = device.createEnterProgramModeOperation();
