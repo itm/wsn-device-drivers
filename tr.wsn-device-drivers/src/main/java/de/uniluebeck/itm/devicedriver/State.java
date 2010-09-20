@@ -55,8 +55,28 @@ public enum State {
 		return name;
 	}
 	
-	@Override
-	public String toString() {
-		return name;
+	/**
+	 * Determine the State by his name.
+	 * 
+	 * @param name The name of the state that has to be retuned.
+	 * @return The state with the given name or null.
+	 */
+	public static State fromName(String name) {
+		for (State state : State.values()) {
+			if (state.getName().equals(name)) {
+				return state;
+			}
+		}
+		throw new IllegalArgumentException("No constant with name " + name + " found");
+	}
+	
+	/**
+	 * Determine the State by his String representation.
+	 * 
+	 * @param value The string representing the State.
+	 * @return The appropriate String.
+	 */
+	public static State fromString(String value) {
+		return State.valueOf(value);
 	}
 }
