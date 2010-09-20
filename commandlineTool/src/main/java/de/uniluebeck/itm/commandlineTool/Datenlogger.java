@@ -57,6 +57,7 @@ public class Datenlogger {
 	}
 	
 	public  void addfilter(){
-		
+		System.out.println("Parameter:");
+		System.out.println("Port: " + port);
 	}
 }
