@@ -123,7 +123,12 @@ public class CommandlineTool {
 				}else if(args[0].equals("addfilter")) {
 					System.out.println("starte Datenlogger...");
 					
+					String port = cmd.getOptionValue("port");
+					String server = cmd.getOptionValue("server");
+					
 					Datenlogger datenlogger = new Datenlogger();
+					datenlogger.setPort(port);
+					datenlogger.setServer(server);
 					datenlogger.addfilter();
 					
 				}
