@@ -34,11 +34,17 @@ public class AsyncDevice {
 
     public void disconnect(String key) throws TException;
 
-    public void setMessage(String key, String message) throws TException;
+    public void setMessage(String key, String OperationHandleKey, String message) throws TException;
 
-    public String getMessage(String key) throws TException;
+    public String getMessage(String key, String OperationHandleKey) throws TException;
 
-    public String program(String key, List<ByteBuffer> File, List<Integer> address, long timeout) throws TException;
+    public void program(String key, String OperationHandleKey, List<ByteBuffer> bytes, String description, long timeout) throws TException;
+
+    public void HandleCancel(String key, String OperationHandleKey) throws TException;
+
+    public void HandleGet(String key, String OperationHandleKey) throws TException;
+
+    public String HandleGetState(String key, String OperationHandleKey) throws TException;
 
   }
 
@@ -48,11 +54,17 @@ public class AsyncDevice {
 
     public void disconnect(String key, AsyncMethodCallback<AsyncClient.disconnect_call> resultHandler) throws TException;
 
-    public void setMessage(String key, String message, AsyncMethodCallback<AsyncClient.setMessage_call> resultHandler) throws TException;
+    public void setMessage(String key, String OperationHandleKey, String message, AsyncMethodCallback<AsyncClient.setMessage_call> resultHandler) throws TException;
 
-    public void getMessage(String key, AsyncMethodCallback<AsyncClient.getMessage_call> resultHandler) throws TException;
+    public void getMessage(String key, String OperationHandleKey, AsyncMethodCallback<AsyncClient.getMessage_call> resultHandler) throws TException;
 
-    public void program(String key, List<ByteBuffer> File, List<Integer> address, long timeout, AsyncMethodCallback<AsyncClient.program_call> resultHandler) throws TException;
+    public void program(String key, String OperationHandleKey, List<ByteBuffer> bytes, String description, long timeout, AsyncMethodCallback<AsyncClient.program_call> resultHandler) throws TException;
+
+    public void HandleCancel(String key, String OperationHandleKey, AsyncMethodCallback<AsyncClient.HandleCancel_call> resultHandler) throws TException;
+
+    public void HandleGet(String key, String OperationHandleKey, AsyncMethodCallback<AsyncClient.HandleGet_call> resultHandler) throws TException;
+
+    public void HandleGetState(String key, String OperationHandleKey, AsyncMethodCallback<AsyncClient.HandleGetState_call> resultHandler) throws TException;
 
   }
 
@@ -148,17 +160,18 @@ public class AsyncDevice {
       oprot_.getTransport().flush();
     }
 
-    public void setMessage(String key, String message) throws TException
+    public void setMessage(String key, String OperationHandleKey, String message) throws TException
     {
-      send_setMessage(key, message);
+      send_setMessage(key, OperationHandleKey, message);
       recv_setMessage();
     }
 
-    public void send_setMessage(String key, String message) throws TException
+    public void send_setMessage(String key, String OperationHandleKey, String message) throws TException
     {
       oprot_.writeMessageBegin(new TMessage("setMessage", TMessageType.CALL, ++seqid_));
       setMessage_args args = new setMessage_args();
       args.setKey(key);
+      args.setOperationHandleKey(OperationHandleKey);
       args.setMessage(message);
       args.write(oprot_);
       oprot_.writeMessageEnd();
@@ -182,17 +195,18 @@ public class AsyncDevice {
       return;
     }
 
-    public String getMessage(String key) throws TException
+    public String getMessage(String key, String OperationHandleKey) throws TException
     {
-      send_getMessage(key);
+      send_getMessage(key, OperationHandleKey);
       return recv_getMessage();
     }
 
-    public void send_getMessage(String key) throws TException
+    public void send_getMessage(String key, String OperationHandleKey) throws TException
     {
       oprot_.writeMessageBegin(new TMessage("getMessage", TMessageType.CALL, ++seqid_));
       getMessage_args args = new getMessage_args();
       args.setKey(key);
+      args.setOperationHandleKey(OperationHandleKey);
       args.write(oprot_);
       oprot_.writeMessageEnd();
       oprot_.getTransport().flush();
@@ -218,26 +232,27 @@ public class AsyncDevice {
       throw new TApplicationException(TApplicationException.MISSING_RESULT, "getMessage failed: unknown result");
     }
 
-    public String program(String key, List<ByteBuffer> File, List<Integer> address, long timeout) throws TException
+    public void program(String key, String OperationHandleKey, List<ByteBuffer> bytes, String description, long timeout) throws TException
     {
-      send_program(key, File, address, timeout);
-      return recv_program();
+      send_program(key, OperationHandleKey, bytes, description, timeout);
+      recv_program();
     }
 
-    public void send_program(String key, List<ByteBuffer> File, List<Integer> address, long timeout) throws TException
+    public void send_program(String key, String OperationHandleKey, List<ByteBuffer> bytes, String description, long timeout) throws TException
     {
       oprot_.writeMessageBegin(new TMessage("program", TMessageType.CALL, ++seqid_));
       program_args args = new program_args();
       args.setKey(key);
-      args.setFile(File);
-      args.setAddress(address);
+      args.setOperationHandleKey(OperationHandleKey);
+      args.setBytes(bytes);
+      args.setDescription(description);
       args.setTimeout(timeout);
       args.write(oprot_);
       oprot_.writeMessageEnd();
       oprot_.getTransport().flush();
     }
 
-    public String recv_program() throws TException
+    public void recv_program() throws TException
     {
       TMessage msg = iprot_.readMessageBegin();
       if (msg.type == TMessageType.EXCEPTION) {
@@ -251,10 +266,94 @@ public class AsyncDevice {
       program_result result = new program_result();
       result.read(iprot_);
       iprot_.readMessageEnd();
+      return;
+    }
+
+    public void HandleCancel(String key, String OperationHandleKey) throws TException
+    {
+      send_HandleCancel(key, OperationHandleKey);
+    }
+
+    public void send_HandleCancel(String key, String OperationHandleKey) throws TException
+    {
+      oprot_.writeMessageBegin(new TMessage("HandleCancel", TMessageType.CALL, ++seqid_));
+      HandleCancel_args args = new HandleCancel_args();
+      args.setKey(key);
+      args.setOperationHandleKey(OperationHandleKey);
+      args.write(oprot_);
+      oprot_.writeMessageEnd();
+      oprot_.getTransport().flush();
+    }
+
+    public void HandleGet(String key, String OperationHandleKey) throws TException
+    {
+      send_HandleGet(key, OperationHandleKey);
+      recv_HandleGet();
+    }
+
+    public void send_HandleGet(String key, String OperationHandleKey) throws TException
+    {
+      oprot_.writeMessageBegin(new TMessage("HandleGet", TMessageType.CALL, ++seqid_));
+      HandleGet_args args = new HandleGet_args();
+      args.setKey(key);
+      args.setOperationHandleKey(OperationHandleKey);
+      args.write(oprot_);
+      oprot_.writeMessageEnd();
+      oprot_.getTransport().flush();
+    }
+
+    public void recv_HandleGet() throws TException
+    {
+      TMessage msg = iprot_.readMessageBegin();
+      if (msg.type == TMessageType.EXCEPTION) {
+        TApplicationException x = TApplicationException.read(iprot_);
+        iprot_.readMessageEnd();
+        throw x;
+      }
+      if (msg.seqid != seqid_) {
+        throw new TApplicationException(TApplicationException.BAD_SEQUENCE_ID, "HandleGet failed: out of sequence response");
+      }
+      HandleGet_result result = new HandleGet_result();
+      result.read(iprot_);
+      iprot_.readMessageEnd();
+      return;
+    }
+
+    public String HandleGetState(String key, String OperationHandleKey) throws TException
+    {
+      send_HandleGetState(key, OperationHandleKey);
+      return recv_HandleGetState();
+    }
+
+    public void send_HandleGetState(String key, String OperationHandleKey) throws TException
+    {
+      oprot_.writeMessageBegin(new TMessage("HandleGetState", TMessageType.CALL, ++seqid_));
+      HandleGetState_args args = new HandleGetState_args();
+      args.setKey(key);
+      args.setOperationHandleKey(OperationHandleKey);
+      args.write(oprot_);
+      oprot_.writeMessageEnd();
+      oprot_.getTransport().flush();
+    }
+
+    public String recv_HandleGetState() throws TException
+    {
+      TMessage msg = iprot_.readMessageBegin();
+      if (msg.type == TMessageType.EXCEPTION) {
+        TApplicationException x = TApplicationException.read(iprot_);
+        iprot_.readMessageEnd();
+        throw x;
+      }
+      if (msg.seqid != seqid_) {
+        throw new TApplicationException(TApplicationException.BAD_SEQUENCE_ID, "HandleGetState failed: out of sequence response");
+      }
+      HandleGetState_result result = new HandleGetState_result();
+      result.read(iprot_);
+      iprot_.readMessageEnd();
       if (result.isSetSuccess()) {
         return result.success;
       }
-      throw new TApplicationException(TApplicationException.MISSING_RESULT, "program failed: unknown result");
+      throw new TApplicationException(TApplicationException.MISSING_RESULT, "HandleGetState failed: unknown result");
     }
 
   }
@@ -339,18 +438,20 @@ public class AsyncDevice {
       }
     }
 
-    public void setMessage(String key, String message, AsyncMethodCallback<setMessage_call> resultHandler) throws TException {
+    public void setMessage(String key, String OperationHandleKey, String message, AsyncMethodCallback<setMessage_call> resultHandler) throws TException {
       checkReady();
-      setMessage_call method_call = new setMessage_call(key, message, resultHandler, this, protocolFactory, transport);
+      setMessage_call method_call = new setMessage_call(key, OperationHandleKey, message, resultHandler, this, protocolFactory, transport);
       manager.call(method_call);
     }
 
     public static class setMessage_call extends TAsyncMethodCall {
       private String key;
+      private String OperationHandleKey;
       private String message;
-      public setMessage_call(String key, String message, AsyncMethodCallback<setMessage_call> resultHandler, TAsyncClient client, TProtocolFactory protocolFactory, TNonblockingTransport transport) throws TException {
+      public setMessage_call(String key, String OperationHandleKey, String message, AsyncMethodCallback<setMessage_call> resultHandler, TAsyncClient client, TProtocolFactory protocolFactory, TNonblockingTransport transport) throws TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.key = key;
+        this.OperationHandleKey = OperationHandleKey;
         this.message = message;
       }
 
@@ -358,6 +459,7 @@ public class AsyncDevice {
         prot.writeMessageBegin(new TMessage("setMessage", TMessageType.CALL, 0));
         setMessage_args args = new setMessage_args();
         args.setKey(key);
+        args.setOperationHandleKey(OperationHandleKey);
         args.setMessage(message);
         args.write(prot);
         prot.writeMessageEnd();
@@ -373,23 +475,26 @@ public class AsyncDevice {
       }
     }
 
-    public void getMessage(String key, AsyncMethodCallback<getMessage_call> resultHandler) throws TException {
+    public void getMessage(String key, String OperationHandleKey, AsyncMethodCallback<getMessage_call> resultHandler) throws TException {
       checkReady();
-      getMessage_call method_call = new getMessage_call(key, resultHandler, this, protocolFactory, transport);
+      getMessage_call method_call = new getMessage_call(key, OperationHandleKey, resultHandler, this, protocolFactory, transport);
       manager.call(method_call);
     }
 
     public static class getMessage_call extends TAsyncMethodCall {
       private String key;
-      public getMessage_call(String key, AsyncMethodCallback<getMessage_call> resultHandler, TAsyncClient client, TProtocolFactory protocolFactory, TNonblockingTransport transport) throws TException {
+      private String OperationHandleKey;
+      public getMessage_call(String key, String OperationHandleKey, AsyncMethodCallback<getMessage_call> resultHandler, TAsyncClient client, TProtocolFactory protocolFactory, TNonblockingTransport transport) throws TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.key = key;
+        this.OperationHandleKey = OperationHandleKey;
       }
 
       public void write_args(TProtocol prot) throws TException {
         prot.writeMessageBegin(new TMessage("getMessage", TMessageType.CALL, 0));
         getMessage_args args = new getMessage_args();
         args.setKey(key);
+        args.setOperationHandleKey(OperationHandleKey);
         args.write(prot);
         prot.writeMessageEnd();
       }
@@ -404,22 +509,24 @@ public class AsyncDevice {
       }
     }
 
-    public void program(String key, List<ByteBuffer> File, List<Integer> address, long timeout, AsyncMethodCallback<program_call> resultHandler) throws TException {
+    public void program(String key, String OperationHandleKey, List<ByteBuffer> bytes, String description, long timeout, AsyncMethodCallback<program_call> resultHandler) throws TException {
       checkReady();
-      program_call method_call = new program_call(key, File, address, timeout, resultHandler, this, protocolFactory, transport);
+      program_call method_call = new program_call(key, OperationHandleKey, bytes, description, timeout, resultHandler, this, protocolFactory, transport);
       manager.call(method_call);
     }
 
     public static class program_call extends TAsyncMethodCall {
       private String key;
-      private List<ByteBuffer> File;
-      private List<Integer> address;
+      private String OperationHandleKey;
+      private List<ByteBuffer> bytes;
+      private String description;
       private long timeout;
-      public program_call(String key, List<ByteBuffer> File, List<Integer> address, long timeout, AsyncMethodCallback<program_call> resultHandler, TAsyncClient client, TProtocolFactory protocolFactory, TNonblockingTransport transport) throws TException {
+      public program_call(String key, String OperationHandleKey, List<ByteBuffer> bytes, String description, long timeout, AsyncMethodCallback<program_call> resultHandler, TAsyncClient client, TProtocolFactory protocolFactory, TNonblockingTransport transport) throws TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.key = key;
-        this.File = File;
-        this.address = address;
+        this.OperationHandleKey = OperationHandleKey;
+        this.bytes = bytes;
+        this.description = description;
         this.timeout = timeout;
       }
 
@@ -427,9 +534,111 @@ public class AsyncDevice {
         prot.writeMessageBegin(new TMessage("program", TMessageType.CALL, 0));
         program_args args = new program_args();
         args.setKey(key);
-        args.setFile(File);
-        args.setAddress(address);
+        args.setOperationHandleKey(OperationHandleKey);
+        args.setBytes(bytes);
+        args.setDescription(description);
         args.setTimeout(timeout);
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public void getResult() throws TException {
+        if (getState() != State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        TMemoryInputTransport memoryTransport = new TMemoryInputTransport(getFrameBuffer().array());
+        TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        (new Client(prot)).recv_program();
+      }
+    }
+
+    public void HandleCancel(String key, String OperationHandleKey, AsyncMethodCallback<HandleCancel_call> resultHandler) throws TException {
+      checkReady();
+      HandleCancel_call method_call = new HandleCancel_call(key, OperationHandleKey, resultHandler, this, protocolFactory, transport);
+      manager.call(method_call);
+    }
+
+    public static class HandleCancel_call extends TAsyncMethodCall {
+      private String key;
+      private String OperationHandleKey;
+      public HandleCancel_call(String key, String OperationHandleKey, AsyncMethodCallback<HandleCancel_call> resultHandler, TAsyncClient client, TProtocolFactory protocolFactory, TNonblockingTransport transport) throws TException {
+        super(client, protocolFactory, transport, resultHandler, true);
+        this.key = key;
+        this.OperationHandleKey = OperationHandleKey;
+      }
+
+      public void write_args(TProtocol prot) throws TException {
+        prot.writeMessageBegin(new TMessage("HandleCancel", TMessageType.CALL, 0));
+        HandleCancel_args args = new HandleCancel_args();
+        args.setKey(key);
+        args.setOperationHandleKey(OperationHandleKey);
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public void getResult() throws TException {
+        if (getState() != State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        TMemoryInputTransport memoryTransport = new TMemoryInputTransport(getFrameBuffer().array());
+        TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+      }
+    }
+
+    public void HandleGet(String key, String OperationHandleKey, AsyncMethodCallback<HandleGet_call> resultHandler) throws TException {
+      checkReady();
+      HandleGet_call method_call = new HandleGet_call(key, OperationHandleKey, resultHandler, this, protocolFactory, transport);
+      manager.call(method_call);
+    }
+
+    public static class HandleGet_call extends TAsyncMethodCall {
+      private String key;
+      private String OperationHandleKey;
+      public HandleGet_call(String key, String OperationHandleKey, AsyncMethodCallback<HandleGet_call> resultHandler, TAsyncClient client, TProtocolFactory protocolFactory, TNonblockingTransport transport) throws TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+        this.key = key;
+        this.OperationHandleKey = OperationHandleKey;
+      }
+
+      public void write_args(TProtocol prot) throws TException {
+        prot.writeMessageBegin(new TMessage("HandleGet", TMessageType.CALL, 0));
+        HandleGet_args args = new HandleGet_args();
+        args.setKey(key);
+        args.setOperationHandleKey(OperationHandleKey);
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public void getResult() throws TException {
+        if (getState() != State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        TMemoryInputTransport memoryTransport = new TMemoryInputTransport(getFrameBuffer().array());
+        TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        (new Client(prot)).recv_HandleGet();
+      }
+    }
+
+    public void HandleGetState(String key, String OperationHandleKey, AsyncMethodCallback<HandleGetState_call> resultHandler) throws TException {
+      checkReady();
+      HandleGetState_call method_call = new HandleGetState_call(key, OperationHandleKey, resultHandler, this, protocolFactory, transport);
+      manager.call(method_call);
+    }
+
+    public static class HandleGetState_call extends TAsyncMethodCall {
+      private String key;
+      private String OperationHandleKey;
+      public HandleGetState_call(String key, String OperationHandleKey, AsyncMethodCallback<HandleGetState_call> resultHandler, TAsyncClient client, TProtocolFactory protocolFactory, TNonblockingTransport transport) throws TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+        this.key = key;
+        this.OperationHandleKey = OperationHandleKey;
+      }
+
+      public void write_args(TProtocol prot) throws TException {
+        prot.writeMessageBegin(new TMessage("HandleGetState", TMessageType.CALL, 0));
+        HandleGetState_args args = new HandleGetState_args();
+        args.setKey(key);
+        args.setOperationHandleKey(OperationHandleKey);
         args.write(prot);
         prot.writeMessageEnd();
       }
@@ -440,7 +649,7 @@ public class AsyncDevice {
         }
         TMemoryInputTransport memoryTransport = new TMemoryInputTransport(getFrameBuffer().array());
         TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
-        return (new Client(prot)).recv_program();
+        return (new Client(prot)).recv_HandleGetState();
       }
     }
 
@@ -456,6 +665,9 @@ public class AsyncDevice {
       processMap_.put("setMessage", new setMessage());
       processMap_.put("getMessage", new getMessage());
       processMap_.put("program", new program());
+      processMap_.put("HandleCancel", new HandleCancel());
+      processMap_.put("HandleGet", new HandleGet());
+      processMap_.put("HandleGetState", new HandleGetState());
     }
 
     protected static interface ProcessFunction {
@@ -559,7 +771,7 @@ public class AsyncDevice {
         }
         iprot.readMessageEnd();
         setMessage_result result = new setMessage_result();
-        iface_.setMessage(args.key, args.message);
+        iface_.setMessage(args.key, args.OperationHandleKey, args.message);
         oprot.writeMessageBegin(new TMessage("setMessage", TMessageType.REPLY, seqid));
         result.write(oprot);
         oprot.writeMessageEnd();
@@ -585,7 +797,7 @@ public class AsyncDevice {
         }
         iprot.readMessageEnd();
         getMessage_result result = new getMessage_result();
-        result.success = iface_.getMessage(args.key);
+        result.success = iface_.getMessage(args.key, args.OperationHandleKey);
         oprot.writeMessageBegin(new TMessage("getMessage", TMessageType.REPLY, seqid));
         result.write(oprot);
         oprot.writeMessageEnd();
@@ -611,8 +823,81 @@ public class AsyncDevice {
         }
         iprot.readMessageEnd();
         program_result result = new program_result();
-        result.success = iface_.program(args.key, args.File, args.address, args.timeout);
+        iface_.program(args.key, args.OperationHandleKey, args.bytes, args.description, args.timeout);
         oprot.writeMessageBegin(new TMessage("program", TMessageType.REPLY, seqid));
+        result.write(oprot);
+        oprot.writeMessageEnd();
+        oprot.getTransport().flush();
+      }
+
+    }
+
+    private class HandleCancel implements ProcessFunction {
+      public void process(int seqid, TProtocol iprot, TProtocol oprot) throws TException
+      {
+        HandleCancel_args args = new HandleCancel_args();
+        try {
+          args.read(iprot);
+        } catch (TProtocolException e) {
+          iprot.readMessageEnd();
+          TApplicationException x = new TApplicationException(TApplicationException.PROTOCOL_ERROR, e.getMessage());
+          oprot.writeMessageBegin(new TMessage("HandleCancel", TMessageType.EXCEPTION, seqid));
+          x.write(oprot);
+          oprot.writeMessageEnd();
+          oprot.getTransport().flush();
+          return;
+        }
+        iprot.readMessageEnd();
+        iface_.HandleCancel(args.key, args.OperationHandleKey);
+        return;
+      }
+    }
+
+    private class HandleGet implements ProcessFunction {
+      public void process(int seqid, TProtocol iprot, TProtocol oprot) throws TException
+      {
+        HandleGet_args args = new HandleGet_args();
+        try {
+          args.read(iprot);
+        } catch (TProtocolException e) {
+          iprot.readMessageEnd();
+          TApplicationException x = new TApplicationException(TApplicationException.PROTOCOL_ERROR, e.getMessage());
+          oprot.writeMessageBegin(new TMessage("HandleGet", TMessageType.EXCEPTION, seqid));
+          x.write(oprot);
+          oprot.writeMessageEnd();
+          oprot.getTransport().flush();
+          return;
+        }
+        iprot.readMessageEnd();
+        HandleGet_result result = new HandleGet_result();
+        iface_.HandleGet(args.key, args.OperationHandleKey);
+        oprot.writeMessageBegin(new TMessage("HandleGet", TMessageType.REPLY, seqid));
+        result.write(oprot);
+        oprot.writeMessageEnd();
+        oprot.getTransport().flush();
+      }
+
+    }
+
+    private class HandleGetState implements ProcessFunction {
+      public void process(int seqid, TProtocol iprot, TProtocol oprot) throws TException
+      {
+        HandleGetState_args args = new HandleGetState_args();
+        try {
+          args.read(iprot);
+        } catch (TProtocolException e) {
+          iprot.readMessageEnd();
+          TApplicationException x = new TApplicationException(TApplicationException.PROTOCOL_ERROR, e.getMessage());
+          oprot.writeMessageBegin(new TMessage("HandleGetState", TMessageType.EXCEPTION, seqid));
+          x.write(oprot);
+          oprot.writeMessageEnd();
+          oprot.getTransport().flush();
+          return;
+        }
+        iprot.readMessageEnd();
+        HandleGetState_result result = new HandleGetState_result();
+        result.success = iface_.HandleGetState(args.key, args.OperationHandleKey);
+        oprot.writeMessageBegin(new TMessage("HandleGetState", TMessageType.REPLY, seqid));
         result.write(oprot);
         oprot.writeMessageEnd();
         oprot.getTransport().flush();
@@ -1668,15 +1953,18 @@ public class AsyncDevice {
     private static final TStruct STRUCT_DESC = new TStruct("setMessage_args");
 
     private static final TField KEY_FIELD_DESC = new TField("key", TType.STRING, (short)1);
-    private static final TField MESSAGE_FIELD_DESC = new TField("message", TType.STRING, (short)2);
+    private static final TField OPERATION_HANDLE_KEY_FIELD_DESC = new TField("OperationHandleKey", TType.STRING, (short)2);
+    private static final TField MESSAGE_FIELD_DESC = new TField("message", TType.STRING, (short)3);
 
     public String key;
+    public String OperationHandleKey;
     public String message;
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements TFieldIdEnum {
       KEY((short)1, "key"),
-      MESSAGE((short)2, "message");
+      OPERATION_HANDLE_KEY((short)2, "OperationHandleKey"),
+      MESSAGE((short)3, "message");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -1693,7 +1981,9 @@ public class AsyncDevice {
         switch(fieldId) {
           case 1: // KEY
             return KEY;
-          case 2: // MESSAGE
+          case 2: // OPERATION_HANDLE_KEY
+            return OPERATION_HANDLE_KEY;
+          case 3: // MESSAGE
             return MESSAGE;
           default:
             return null;
@@ -1741,6 +2031,8 @@ public class AsyncDevice {
       Map<_Fields, FieldMetaData> tmpMap = new EnumMap<_Fields, FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.KEY, new FieldMetaData("key", TFieldRequirementType.DEFAULT, 
           new FieldValueMetaData(TType.STRING)));
+      tmpMap.put(_Fields.OPERATION_HANDLE_KEY, new FieldMetaData("OperationHandleKey", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
       tmpMap.put(_Fields.MESSAGE, new FieldMetaData("message", TFieldRequirementType.DEFAULT, 
           new FieldValueMetaData(TType.STRING)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -1752,10 +2044,12 @@ public class AsyncDevice {
 
     public setMessage_args(
       String key,
+      String OperationHandleKey,
       String message)
     {
       this();
       this.key = key;
+      this.OperationHandleKey = OperationHandleKey;
       this.message = message;
     }
 
@@ -1765,6 +2059,9 @@ public class AsyncDevice {
     public setMessage_args(setMessage_args other) {
       if (other.isSetKey()) {
         this.key = other.key;
+      }
+      if (other.isSetOperationHandleKey()) {
+        this.OperationHandleKey = other.OperationHandleKey;
       }
       if (other.isSetMessage()) {
         this.message = other.message;
@@ -1783,6 +2080,7 @@ public class AsyncDevice {
     @Override
     public void clear() {
       this.key = null;
+      this.OperationHandleKey = null;
       this.message = null;
     }
 
@@ -1807,6 +2105,30 @@ public class AsyncDevice {
     public void setKeyIsSet(boolean value) {
       if (!value) {
         this.key = null;
+      }
+    }
+
+    public String getOperationHandleKey() {
+      return this.OperationHandleKey;
+    }
+
+    public setMessage_args setOperationHandleKey(String OperationHandleKey) {
+      this.OperationHandleKey = OperationHandleKey;
+      return this;
+    }
+
+    public void unsetOperationHandleKey() {
+      this.OperationHandleKey = null;
+    }
+
+    /** Returns true if field OperationHandleKey is set (has been asigned a value) and false otherwise */
+    public boolean isSetOperationHandleKey() {
+      return this.OperationHandleKey != null;
+    }
+
+    public void setOperationHandleKeyIsSet(boolean value) {
+      if (!value) {
+        this.OperationHandleKey = null;
       }
     }
 
@@ -1844,6 +2166,14 @@ public class AsyncDevice {
         }
         break;
 
+      case OPERATION_HANDLE_KEY:
+        if (value == null) {
+          unsetOperationHandleKey();
+        } else {
+          setOperationHandleKey((String)value);
+        }
+        break;
+
       case MESSAGE:
         if (value == null) {
           unsetMessage();
@@ -1864,6 +2194,9 @@ public class AsyncDevice {
       case KEY:
         return getKey();
 
+      case OPERATION_HANDLE_KEY:
+        return getOperationHandleKey();
+
       case MESSAGE:
         return getMessage();
 
@@ -1880,6 +2213,8 @@ public class AsyncDevice {
       switch (field) {
       case KEY:
         return isSetKey();
+      case OPERATION_HANDLE_KEY:
+        return isSetOperationHandleKey();
       case MESSAGE:
         return isSetMessage();
       }
@@ -1909,6 +2244,15 @@ public class AsyncDevice {
         if (!(this_present_key && that_present_key))
           return false;
         if (!this.key.equals(that.key))
+          return false;
+      }
+
+      boolean this_present_OperationHandleKey = true && this.isSetOperationHandleKey();
+      boolean that_present_OperationHandleKey = true && that.isSetOperationHandleKey();
+      if (this_present_OperationHandleKey || that_present_OperationHandleKey) {
+        if (!(this_present_OperationHandleKey && that_present_OperationHandleKey))
+          return false;
+        if (!this.OperationHandleKey.equals(that.OperationHandleKey))
           return false;
       }
 
@@ -1946,6 +2290,15 @@ public class AsyncDevice {
           return lastComparison;
         }
       }
+      lastComparison = Boolean.valueOf(isSetOperationHandleKey()).compareTo(typedOther.isSetOperationHandleKey());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetOperationHandleKey()) {        lastComparison = TBaseHelper.compareTo(this.OperationHandleKey, typedOther.OperationHandleKey);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
       lastComparison = Boolean.valueOf(isSetMessage()).compareTo(typedOther.isSetMessage());
       if (lastComparison != 0) {
         return lastComparison;
@@ -1975,7 +2328,14 @@ public class AsyncDevice {
               TProtocolUtil.skip(iprot, field.type);
             }
             break;
-          case 2: // MESSAGE
+          case 2: // OPERATION_HANDLE_KEY
+            if (field.type == TType.STRING) {
+              this.OperationHandleKey = iprot.readString();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 3: // MESSAGE
             if (field.type == TType.STRING) {
               this.message = iprot.readString();
             } else { 
@@ -2002,6 +2362,11 @@ public class AsyncDevice {
         oprot.writeString(this.key);
         oprot.writeFieldEnd();
       }
+      if (this.OperationHandleKey != null) {
+        oprot.writeFieldBegin(OPERATION_HANDLE_KEY_FIELD_DESC);
+        oprot.writeString(this.OperationHandleKey);
+        oprot.writeFieldEnd();
+      }
       if (this.message != null) {
         oprot.writeFieldBegin(MESSAGE_FIELD_DESC);
         oprot.writeString(this.message);
@@ -2021,6 +2386,14 @@ public class AsyncDevice {
         sb.append("null");
       } else {
         sb.append(this.key);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("OperationHandleKey:");
+      if (this.OperationHandleKey == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.OperationHandleKey);
       }
       first = false;
       if (!first) sb.append(", ");
@@ -2239,12 +2612,15 @@ public class AsyncDevice {
     private static final TStruct STRUCT_DESC = new TStruct("getMessage_args");
 
     private static final TField KEY_FIELD_DESC = new TField("key", TType.STRING, (short)1);
+    private static final TField OPERATION_HANDLE_KEY_FIELD_DESC = new TField("OperationHandleKey", TType.STRING, (short)2);
 
     public String key;
+    public String OperationHandleKey;
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements TFieldIdEnum {
-      KEY((short)1, "key");
+      KEY((short)1, "key"),
+      OPERATION_HANDLE_KEY((short)2, "OperationHandleKey");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -2261,6 +2637,8 @@ public class AsyncDevice {
         switch(fieldId) {
           case 1: // KEY
             return KEY;
+          case 2: // OPERATION_HANDLE_KEY
+            return OPERATION_HANDLE_KEY;
           default:
             return null;
         }
@@ -2307,6 +2685,8 @@ public class AsyncDevice {
       Map<_Fields, FieldMetaData> tmpMap = new EnumMap<_Fields, FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.KEY, new FieldMetaData("key", TFieldRequirementType.DEFAULT, 
           new FieldValueMetaData(TType.STRING)));
+      tmpMap.put(_Fields.OPERATION_HANDLE_KEY, new FieldMetaData("OperationHandleKey", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
       FieldMetaData.addStructMetaDataMap(getMessage_args.class, metaDataMap);
     }
@@ -2315,10 +2695,12 @@ public class AsyncDevice {
     }
 
     public getMessage_args(
-      String key)
+      String key,
+      String OperationHandleKey)
     {
       this();
       this.key = key;
+      this.OperationHandleKey = OperationHandleKey;
     }
 
     /**
@@ -2327,6 +2709,9 @@ public class AsyncDevice {
     public getMessage_args(getMessage_args other) {
       if (other.isSetKey()) {
         this.key = other.key;
+      }
+      if (other.isSetOperationHandleKey()) {
+        this.OperationHandleKey = other.OperationHandleKey;
       }
     }
 
@@ -2342,6 +2727,7 @@ public class AsyncDevice {
     @Override
     public void clear() {
       this.key = null;
+      this.OperationHandleKey = null;
     }
 
     public String getKey() {
@@ -2368,6 +2754,30 @@ public class AsyncDevice {
       }
     }
 
+    public String getOperationHandleKey() {
+      return this.OperationHandleKey;
+    }
+
+    public getMessage_args setOperationHandleKey(String OperationHandleKey) {
+      this.OperationHandleKey = OperationHandleKey;
+      return this;
+    }
+
+    public void unsetOperationHandleKey() {
+      this.OperationHandleKey = null;
+    }
+
+    /** Returns true if field OperationHandleKey is set (has been asigned a value) and false otherwise */
+    public boolean isSetOperationHandleKey() {
+      return this.OperationHandleKey != null;
+    }
+
+    public void setOperationHandleKeyIsSet(boolean value) {
+      if (!value) {
+        this.OperationHandleKey = null;
+      }
+    }
+
     public void setFieldValue(_Fields field, Object value) {
       switch (field) {
       case KEY:
@@ -2375,6 +2785,14 @@ public class AsyncDevice {
           unsetKey();
         } else {
           setKey((String)value);
+        }
+        break;
+
+      case OPERATION_HANDLE_KEY:
+        if (value == null) {
+          unsetOperationHandleKey();
+        } else {
+          setOperationHandleKey((String)value);
         }
         break;
 
@@ -2390,6 +2808,9 @@ public class AsyncDevice {
       case KEY:
         return getKey();
 
+      case OPERATION_HANDLE_KEY:
+        return getOperationHandleKey();
+
       }
       throw new IllegalStateException();
     }
@@ -2403,6 +2824,8 @@ public class AsyncDevice {
       switch (field) {
       case KEY:
         return isSetKey();
+      case OPERATION_HANDLE_KEY:
+        return isSetOperationHandleKey();
       }
       throw new IllegalStateException();
     }
@@ -2433,6 +2856,15 @@ public class AsyncDevice {
           return false;
       }
 
+      boolean this_present_OperationHandleKey = true && this.isSetOperationHandleKey();
+      boolean that_present_OperationHandleKey = true && that.isSetOperationHandleKey();
+      if (this_present_OperationHandleKey || that_present_OperationHandleKey) {
+        if (!(this_present_OperationHandleKey && that_present_OperationHandleKey))
+          return false;
+        if (!this.OperationHandleKey.equals(that.OperationHandleKey))
+          return false;
+      }
+
       return true;
     }
 
@@ -2458,6 +2890,15 @@ public class AsyncDevice {
           return lastComparison;
         }
       }
+      lastComparison = Boolean.valueOf(isSetOperationHandleKey()).compareTo(typedOther.isSetOperationHandleKey());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetOperationHandleKey()) {        lastComparison = TBaseHelper.compareTo(this.OperationHandleKey, typedOther.OperationHandleKey);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
       return 0;
     }
 
@@ -2474,6 +2915,13 @@ public class AsyncDevice {
           case 1: // KEY
             if (field.type == TType.STRING) {
               this.key = iprot.readString();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 2: // OPERATION_HANDLE_KEY
+            if (field.type == TType.STRING) {
+              this.OperationHandleKey = iprot.readString();
             } else { 
               TProtocolUtil.skip(iprot, field.type);
             }
@@ -2498,6 +2946,11 @@ public class AsyncDevice {
         oprot.writeString(this.key);
         oprot.writeFieldEnd();
       }
+      if (this.OperationHandleKey != null) {
+        oprot.writeFieldBegin(OPERATION_HANDLE_KEY_FIELD_DESC);
+        oprot.writeString(this.OperationHandleKey);
+        oprot.writeFieldEnd();
+      }
       oprot.writeFieldStop();
       oprot.writeStructEnd();
     }
@@ -2512,6 +2965,14 @@ public class AsyncDevice {
         sb.append("null");
       } else {
         sb.append(this.key);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("OperationHandleKey:");
+      if (this.OperationHandleKey == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.OperationHandleKey);
       }
       first = false;
       sb.append(")");
@@ -2816,21 +3277,24 @@ public class AsyncDevice {
     private static final TStruct STRUCT_DESC = new TStruct("program_args");
 
     private static final TField KEY_FIELD_DESC = new TField("key", TType.STRING, (short)1);
-    private static final TField FILE_FIELD_DESC = new TField("File", TType.LIST, (short)2);
-    private static final TField ADDRESS_FIELD_DESC = new TField("address", TType.LIST, (short)3);
-    private static final TField TIMEOUT_FIELD_DESC = new TField("timeout", TType.I64, (short)4);
+    private static final TField OPERATION_HANDLE_KEY_FIELD_DESC = new TField("OperationHandleKey", TType.STRING, (short)2);
+    private static final TField BYTES_FIELD_DESC = new TField("bytes", TType.LIST, (short)3);
+    private static final TField DESCRIPTION_FIELD_DESC = new TField("description", TType.STRING, (short)4);
+    private static final TField TIMEOUT_FIELD_DESC = new TField("timeout", TType.I64, (short)5);
 
     public String key;
-    public List<ByteBuffer> File;
-    public List<Integer> address;
+    public String OperationHandleKey;
+    public List<ByteBuffer> bytes;
+    public String description;
     public long timeout;
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements TFieldIdEnum {
       KEY((short)1, "key"),
-      FILE((short)2, "File"),
-      ADDRESS((short)3, "address"),
-      TIMEOUT((short)4, "timeout");
+      OPERATION_HANDLE_KEY((short)2, "OperationHandleKey"),
+      BYTES((short)3, "bytes"),
+      DESCRIPTION((short)4, "description"),
+      TIMEOUT((short)5, "timeout");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -2847,11 +3311,13 @@ public class AsyncDevice {
         switch(fieldId) {
           case 1: // KEY
             return KEY;
-          case 2: // FILE
-            return FILE;
-          case 3: // ADDRESS
-            return ADDRESS;
-          case 4: // TIMEOUT
+          case 2: // OPERATION_HANDLE_KEY
+            return OPERATION_HANDLE_KEY;
+          case 3: // BYTES
+            return BYTES;
+          case 4: // DESCRIPTION
+            return DESCRIPTION;
+          case 5: // TIMEOUT
             return TIMEOUT;
           default:
             return null;
@@ -2901,12 +3367,13 @@ public class AsyncDevice {
       Map<_Fields, FieldMetaData> tmpMap = new EnumMap<_Fields, FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.KEY, new FieldMetaData("key", TFieldRequirementType.DEFAULT, 
           new FieldValueMetaData(TType.STRING)));
-      tmpMap.put(_Fields.FILE, new FieldMetaData("File", TFieldRequirementType.DEFAULT, 
+      tmpMap.put(_Fields.OPERATION_HANDLE_KEY, new FieldMetaData("OperationHandleKey", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
+      tmpMap.put(_Fields.BYTES, new FieldMetaData("bytes", TFieldRequirementType.DEFAULT, 
           new ListMetaData(TType.LIST, 
               new FieldValueMetaData(TType.STRING))));
-      tmpMap.put(_Fields.ADDRESS, new FieldMetaData("address", TFieldRequirementType.DEFAULT, 
-          new ListMetaData(TType.LIST, 
-              new FieldValueMetaData(TType.I32))));
+      tmpMap.put(_Fields.DESCRIPTION, new FieldMetaData("description", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
       tmpMap.put(_Fields.TIMEOUT, new FieldMetaData("timeout", TFieldRequirementType.DEFAULT, 
           new FieldValueMetaData(TType.I64)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -2918,14 +3385,16 @@ public class AsyncDevice {
 
     public program_args(
       String key,
-      List<ByteBuffer> File,
-      List<Integer> address,
+      String OperationHandleKey,
+      List<ByteBuffer> bytes,
+      String description,
       long timeout)
     {
       this();
       this.key = key;
-      this.File = File;
-      this.address = address;
+      this.OperationHandleKey = OperationHandleKey;
+      this.bytes = bytes;
+      this.description = description;
       this.timeout = timeout;
       setTimeoutIsSet(true);
     }
@@ -2939,21 +3408,20 @@ public class AsyncDevice {
       if (other.isSetKey()) {
         this.key = other.key;
       }
-      if (other.isSetFile()) {
-        List<ByteBuffer> __this__File = new ArrayList<ByteBuffer>();
-        for (ByteBuffer other_element : other.File) {
+      if (other.isSetOperationHandleKey()) {
+        this.OperationHandleKey = other.OperationHandleKey;
+      }
+      if (other.isSetBytes()) {
+        List<ByteBuffer> __this__bytes = new ArrayList<ByteBuffer>();
+        for (ByteBuffer other_element : other.bytes) {
           ByteBuffer temp_binary_element = ByteBuffer.wrap(new byte[other_element.limit() - other_element.arrayOffset()]);
           System.arraycopy(other_element.array(), other_element.arrayOffset(), temp_binary_element.array(), 0, other_element.limit() - other_element.arrayOffset());
-          __this__File.add(temp_binary_element);
+          __this__bytes.add(temp_binary_element);
         }
-        this.File = __this__File;
+        this.bytes = __this__bytes;
       }
-      if (other.isSetAddress()) {
-        List<Integer> __this__address = new ArrayList<Integer>();
-        for (Integer other_element : other.address) {
-          __this__address.add(other_element);
-        }
-        this.address = __this__address;
+      if (other.isSetDescription()) {
+        this.description = other.description;
       }
       this.timeout = other.timeout;
     }
@@ -2970,8 +3438,9 @@ public class AsyncDevice {
     @Override
     public void clear() {
       this.key = null;
-      this.File = null;
-      this.address = null;
+      this.OperationHandleKey = null;
+      this.bytes = null;
+      this.description = null;
       setTimeoutIsSet(false);
       this.timeout = 0;
     }
@@ -3000,81 +3469,90 @@ public class AsyncDevice {
       }
     }
 
-    public int getFileSize() {
-      return (this.File == null) ? 0 : this.File.size();
+    public String getOperationHandleKey() {
+      return this.OperationHandleKey;
     }
 
-    public java.util.Iterator<ByteBuffer> getFileIterator() {
-      return (this.File == null) ? null : this.File.iterator();
-    }
-
-    public void addToFile(ByteBuffer elem) {
-      if (this.File == null) {
-        this.File = new ArrayList<ByteBuffer>();
-      }
-      this.File.add(elem);
-    }
-
-    public List<ByteBuffer> getFile() {
-      return this.File;
-    }
-
-    public program_args setFile(List<ByteBuffer> File) {
-      this.File = File;
+    public program_args setOperationHandleKey(String OperationHandleKey) {
+      this.OperationHandleKey = OperationHandleKey;
       return this;
     }
 
-    public void unsetFile() {
-      this.File = null;
+    public void unsetOperationHandleKey() {
+      this.OperationHandleKey = null;
     }
 
-    /** Returns true if field File is set (has been asigned a value) and false otherwise */
-    public boolean isSetFile() {
-      return this.File != null;
+    /** Returns true if field OperationHandleKey is set (has been asigned a value) and false otherwise */
+    public boolean isSetOperationHandleKey() {
+      return this.OperationHandleKey != null;
     }
 
-    public void setFileIsSet(boolean value) {
+    public void setOperationHandleKeyIsSet(boolean value) {
       if (!value) {
-        this.File = null;
+        this.OperationHandleKey = null;
       }
     }
 
-    public int getAddressSize() {
-      return (this.address == null) ? 0 : this.address.size();
+    public int getBytesSize() {
+      return (this.bytes == null) ? 0 : this.bytes.size();
     }
 
-    public java.util.Iterator<Integer> getAddressIterator() {
-      return (this.address == null) ? null : this.address.iterator();
+    public java.util.Iterator<ByteBuffer> getBytesIterator() {
+      return (this.bytes == null) ? null : this.bytes.iterator();
     }
 
-    public void addToAddress(int elem) {
-      if (this.address == null) {
-        this.address = new ArrayList<Integer>();
+    public void addToBytes(ByteBuffer elem) {
+      if (this.bytes == null) {
+        this.bytes = new ArrayList<ByteBuffer>();
       }
-      this.address.add(elem);
+      this.bytes.add(elem);
     }
 
-    public List<Integer> getAddress() {
-      return this.address;
+    public List<ByteBuffer> getBytes() {
+      return this.bytes;
     }
 
-    public program_args setAddress(List<Integer> address) {
-      this.address = address;
+    public program_args setBytes(List<ByteBuffer> bytes) {
+      this.bytes = bytes;
       return this;
     }
 
-    public void unsetAddress() {
-      this.address = null;
+    public void unsetBytes() {
+      this.bytes = null;
     }
 
-    /** Returns true if field address is set (has been asigned a value) and false otherwise */
-    public boolean isSetAddress() {
-      return this.address != null;
+    /** Returns true if field bytes is set (has been asigned a value) and false otherwise */
+    public boolean isSetBytes() {
+      return this.bytes != null;
     }
 
-    public void setAddressIsSet(boolean value) {
+    public void setBytesIsSet(boolean value) {
       if (!value) {
-        this.address = null;
+        this.bytes = null;
+      }
+    }
+
+    public String getDescription() {
+      return this.description;
+    }
+
+    public program_args setDescription(String description) {
+      this.description = description;
+      return this;
+    }
+
+    public void unsetDescription() {
+      this.description = null;
+    }
+
+    /** Returns true if field description is set (has been asigned a value) and false otherwise */
+    public boolean isSetDescription() {
+      return this.description != null;
+    }
+
+    public void setDescriptionIsSet(boolean value) {
+      if (!value) {
+        this.description = null;
       }
     }
 
@@ -3111,19 +3589,27 @@ public class AsyncDevice {
         }
         break;
 
-      case FILE:
+      case OPERATION_HANDLE_KEY:
         if (value == null) {
-          unsetFile();
+          unsetOperationHandleKey();
         } else {
-          setFile((List<ByteBuffer>)value);
+          setOperationHandleKey((String)value);
         }
         break;
 
-      case ADDRESS:
+      case BYTES:
         if (value == null) {
-          unsetAddress();
+          unsetBytes();
         } else {
-          setAddress((List<Integer>)value);
+          setBytes((List<ByteBuffer>)value);
+        }
+        break;
+
+      case DESCRIPTION:
+        if (value == null) {
+          unsetDescription();
+        } else {
+          setDescription((String)value);
         }
         break;
 
@@ -3147,11 +3633,14 @@ public class AsyncDevice {
       case KEY:
         return getKey();
 
-      case FILE:
-        return getFile();
+      case OPERATION_HANDLE_KEY:
+        return getOperationHandleKey();
 
-      case ADDRESS:
-        return getAddress();
+      case BYTES:
+        return getBytes();
+
+      case DESCRIPTION:
+        return getDescription();
 
       case TIMEOUT:
         return new Long(getTimeout());
@@ -3169,10 +3658,12 @@ public class AsyncDevice {
       switch (field) {
       case KEY:
         return isSetKey();
-      case FILE:
-        return isSetFile();
-      case ADDRESS:
-        return isSetAddress();
+      case OPERATION_HANDLE_KEY:
+        return isSetOperationHandleKey();
+      case BYTES:
+        return isSetBytes();
+      case DESCRIPTION:
+        return isSetDescription();
       case TIMEOUT:
         return isSetTimeout();
       }
@@ -3205,21 +3696,30 @@ public class AsyncDevice {
           return false;
       }
 
-      boolean this_present_File = true && this.isSetFile();
-      boolean that_present_File = true && that.isSetFile();
-      if (this_present_File || that_present_File) {
-        if (!(this_present_File && that_present_File))
+      boolean this_present_OperationHandleKey = true && this.isSetOperationHandleKey();
+      boolean that_present_OperationHandleKey = true && that.isSetOperationHandleKey();
+      if (this_present_OperationHandleKey || that_present_OperationHandleKey) {
+        if (!(this_present_OperationHandleKey && that_present_OperationHandleKey))
           return false;
-        if (!this.File.equals(that.File))
+        if (!this.OperationHandleKey.equals(that.OperationHandleKey))
           return false;
       }
 
-      boolean this_present_address = true && this.isSetAddress();
-      boolean that_present_address = true && that.isSetAddress();
-      if (this_present_address || that_present_address) {
-        if (!(this_present_address && that_present_address))
+      boolean this_present_bytes = true && this.isSetBytes();
+      boolean that_present_bytes = true && that.isSetBytes();
+      if (this_present_bytes || that_present_bytes) {
+        if (!(this_present_bytes && that_present_bytes))
           return false;
-        if (!this.address.equals(that.address))
+        if (!this.bytes.equals(that.bytes))
+          return false;
+      }
+
+      boolean this_present_description = true && this.isSetDescription();
+      boolean that_present_description = true && that.isSetDescription();
+      if (this_present_description || that_present_description) {
+        if (!(this_present_description && that_present_description))
+          return false;
+        if (!this.description.equals(that.description))
           return false;
       }
 
@@ -3257,20 +3757,29 @@ public class AsyncDevice {
           return lastComparison;
         }
       }
-      lastComparison = Boolean.valueOf(isSetFile()).compareTo(typedOther.isSetFile());
+      lastComparison = Boolean.valueOf(isSetOperationHandleKey()).compareTo(typedOther.isSetOperationHandleKey());
       if (lastComparison != 0) {
         return lastComparison;
       }
-      if (isSetFile()) {        lastComparison = TBaseHelper.compareTo(this.File, typedOther.File);
+      if (isSetOperationHandleKey()) {        lastComparison = TBaseHelper.compareTo(this.OperationHandleKey, typedOther.OperationHandleKey);
         if (lastComparison != 0) {
           return lastComparison;
         }
       }
-      lastComparison = Boolean.valueOf(isSetAddress()).compareTo(typedOther.isSetAddress());
+      lastComparison = Boolean.valueOf(isSetBytes()).compareTo(typedOther.isSetBytes());
       if (lastComparison != 0) {
         return lastComparison;
       }
-      if (isSetAddress()) {        lastComparison = TBaseHelper.compareTo(this.address, typedOther.address);
+      if (isSetBytes()) {        lastComparison = TBaseHelper.compareTo(this.bytes, typedOther.bytes);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetDescription()).compareTo(typedOther.isSetDescription());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetDescription()) {        lastComparison = TBaseHelper.compareTo(this.description, typedOther.description);
         if (lastComparison != 0) {
           return lastComparison;
         }
@@ -3304,16 +3813,23 @@ public class AsyncDevice {
               TProtocolUtil.skip(iprot, field.type);
             }
             break;
-          case 2: // FILE
+          case 2: // OPERATION_HANDLE_KEY
+            if (field.type == TType.STRING) {
+              this.OperationHandleKey = iprot.readString();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 3: // BYTES
             if (field.type == TType.LIST) {
               {
                 TList _list0 = iprot.readListBegin();
-                this.File = new ArrayList<ByteBuffer>(_list0.size);
+                this.bytes = new ArrayList<ByteBuffer>(_list0.size);
                 for (int _i1 = 0; _i1 < _list0.size; ++_i1)
                 {
                   ByteBuffer _elem2;
                   _elem2 = iprot.readBinary();
-                  this.File.add(_elem2);
+                  this.bytes.add(_elem2);
                 }
                 iprot.readListEnd();
               }
@@ -3321,24 +3837,14 @@ public class AsyncDevice {
               TProtocolUtil.skip(iprot, field.type);
             }
             break;
-          case 3: // ADDRESS
-            if (field.type == TType.LIST) {
-              {
-                TList _list3 = iprot.readListBegin();
-                this.address = new ArrayList<Integer>(_list3.size);
-                for (int _i4 = 0; _i4 < _list3.size; ++_i4)
-                {
-                  int _elem5;
-                  _elem5 = iprot.readI32();
-                  this.address.add(_elem5);
-                }
-                iprot.readListEnd();
-              }
+          case 4: // DESCRIPTION
+            if (field.type == TType.STRING) {
+              this.description = iprot.readString();
             } else { 
               TProtocolUtil.skip(iprot, field.type);
             }
             break;
-          case 4: // TIMEOUT
+          case 5: // TIMEOUT
             if (field.type == TType.I64) {
               this.timeout = iprot.readI64();
               setTimeoutIsSet(true);
@@ -3366,28 +3872,26 @@ public class AsyncDevice {
         oprot.writeString(this.key);
         oprot.writeFieldEnd();
       }
-      if (this.File != null) {
-        oprot.writeFieldBegin(FILE_FIELD_DESC);
+      if (this.OperationHandleKey != null) {
+        oprot.writeFieldBegin(OPERATION_HANDLE_KEY_FIELD_DESC);
+        oprot.writeString(this.OperationHandleKey);
+        oprot.writeFieldEnd();
+      }
+      if (this.bytes != null) {
+        oprot.writeFieldBegin(BYTES_FIELD_DESC);
         {
-          oprot.writeListBegin(new TList(TType.STRING, this.File.size()));
-          for (ByteBuffer _iter6 : this.File)
+          oprot.writeListBegin(new TList(TType.STRING, this.bytes.size()));
+          for (ByteBuffer _iter3 : this.bytes)
           {
-            oprot.writeBinary(_iter6);
+            oprot.writeBinary(_iter3);
           }
           oprot.writeListEnd();
         }
         oprot.writeFieldEnd();
       }
-      if (this.address != null) {
-        oprot.writeFieldBegin(ADDRESS_FIELD_DESC);
-        {
-          oprot.writeListBegin(new TList(TType.I32, this.address.size()));
-          for (int _iter7 : this.address)
-          {
-            oprot.writeI32(_iter7);
-          }
-          oprot.writeListEnd();
-        }
+      if (this.description != null) {
+        oprot.writeFieldBegin(DESCRIPTION_FIELD_DESC);
+        oprot.writeString(this.description);
         oprot.writeFieldEnd();
       }
       oprot.writeFieldBegin(TIMEOUT_FIELD_DESC);
@@ -3410,19 +3914,27 @@ public class AsyncDevice {
       }
       first = false;
       if (!first) sb.append(", ");
-      sb.append("File:");
-      if (this.File == null) {
+      sb.append("OperationHandleKey:");
+      if (this.OperationHandleKey == null) {
         sb.append("null");
       } else {
-        sb.append(this.File);
+        sb.append(this.OperationHandleKey);
       }
       first = false;
       if (!first) sb.append(", ");
-      sb.append("address:");
-      if (this.address == null) {
+      sb.append("bytes:");
+      if (this.bytes == null) {
         sb.append("null");
       } else {
-        sb.append(this.address);
+        sb.append(this.bytes);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("description:");
+      if (this.description == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.description);
       }
       first = false;
       if (!first) sb.append(", ");
@@ -3441,6 +3953,1525 @@ public class AsyncDevice {
 
   public static class program_result implements TBase<program_result, program_result._Fields>, java.io.Serializable, Cloneable   {
     private static final TStruct STRUCT_DESC = new TStruct("program_result");
+
+
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements TFieldIdEnum {
+;
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+    public static final Map<_Fields, FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, FieldMetaData> tmpMap = new EnumMap<_Fields, FieldMetaData>(_Fields.class);
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      FieldMetaData.addStructMetaDataMap(program_result.class, metaDataMap);
+    }
+
+    public program_result() {
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public program_result(program_result other) {
+    }
+
+    public program_result deepCopy() {
+      return new program_result(this);
+    }
+
+    @Deprecated
+    public program_result clone() {
+      return new program_result(this);
+    }
+
+    @Override
+    public void clear() {
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      }
+    }
+
+    public void setFieldValue(int fieldID, Object value) {
+      setFieldValue(_Fields.findByThriftIdOrThrow(fieldID), value);
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    public Object getFieldValue(int fieldId) {
+      return getFieldValue(_Fields.findByThriftIdOrThrow(fieldId));
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been asigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    public boolean isSet(int fieldID) {
+      return isSet(_Fields.findByThriftIdOrThrow(fieldID));
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof program_result)
+        return this.equals((program_result)that);
+      return false;
+    }
+
+    public boolean equals(program_result that) {
+      if (that == null)
+        return false;
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    public int compareTo(program_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      program_result typedOther = (program_result)other;
+
+      return 0;
+    }
+
+    public void read(TProtocol iprot) throws TException {
+      TField field;
+      iprot.readStructBegin();
+      while (true)
+      {
+        field = iprot.readFieldBegin();
+        if (field.type == TType.STOP) { 
+          break;
+        }
+        switch (field.id) {
+          default:
+            TProtocolUtil.skip(iprot, field.type);
+        }
+        iprot.readFieldEnd();
+      }
+      iprot.readStructEnd();
+
+      // check for required fields of primitive type, which can't be checked in the validate method
+      validate();
+    }
+
+    public void write(TProtocol oprot) throws TException {
+      oprot.writeStructBegin(STRUCT_DESC);
+
+      oprot.writeFieldStop();
+      oprot.writeStructEnd();
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("program_result(");
+      boolean first = true;
+
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws TException {
+      // check for required fields
+    }
+
+  }
+
+  public static class HandleCancel_args implements TBase<HandleCancel_args, HandleCancel_args._Fields>, java.io.Serializable, Cloneable   {
+    private static final TStruct STRUCT_DESC = new TStruct("HandleCancel_args");
+
+    private static final TField KEY_FIELD_DESC = new TField("key", TType.STRING, (short)1);
+    private static final TField OPERATION_HANDLE_KEY_FIELD_DESC = new TField("OperationHandleKey", TType.STRING, (short)2);
+
+    public String key;
+    public String OperationHandleKey;
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements TFieldIdEnum {
+      KEY((short)1, "key"),
+      OPERATION_HANDLE_KEY((short)2, "OperationHandleKey");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // KEY
+            return KEY;
+          case 2: // OPERATION_HANDLE_KEY
+            return OPERATION_HANDLE_KEY;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+
+    public static final Map<_Fields, FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, FieldMetaData> tmpMap = new EnumMap<_Fields, FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.KEY, new FieldMetaData("key", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
+      tmpMap.put(_Fields.OPERATION_HANDLE_KEY, new FieldMetaData("OperationHandleKey", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      FieldMetaData.addStructMetaDataMap(HandleCancel_args.class, metaDataMap);
+    }
+
+    public HandleCancel_args() {
+    }
+
+    public HandleCancel_args(
+      String key,
+      String OperationHandleKey)
+    {
+      this();
+      this.key = key;
+      this.OperationHandleKey = OperationHandleKey;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public HandleCancel_args(HandleCancel_args other) {
+      if (other.isSetKey()) {
+        this.key = other.key;
+      }
+      if (other.isSetOperationHandleKey()) {
+        this.OperationHandleKey = other.OperationHandleKey;
+      }
+    }
+
+    public HandleCancel_args deepCopy() {
+      return new HandleCancel_args(this);
+    }
+
+    @Deprecated
+    public HandleCancel_args clone() {
+      return new HandleCancel_args(this);
+    }
+
+    @Override
+    public void clear() {
+      this.key = null;
+      this.OperationHandleKey = null;
+    }
+
+    public String getKey() {
+      return this.key;
+    }
+
+    public HandleCancel_args setKey(String key) {
+      this.key = key;
+      return this;
+    }
+
+    public void unsetKey() {
+      this.key = null;
+    }
+
+    /** Returns true if field key is set (has been asigned a value) and false otherwise */
+    public boolean isSetKey() {
+      return this.key != null;
+    }
+
+    public void setKeyIsSet(boolean value) {
+      if (!value) {
+        this.key = null;
+      }
+    }
+
+    public String getOperationHandleKey() {
+      return this.OperationHandleKey;
+    }
+
+    public HandleCancel_args setOperationHandleKey(String OperationHandleKey) {
+      this.OperationHandleKey = OperationHandleKey;
+      return this;
+    }
+
+    public void unsetOperationHandleKey() {
+      this.OperationHandleKey = null;
+    }
+
+    /** Returns true if field OperationHandleKey is set (has been asigned a value) and false otherwise */
+    public boolean isSetOperationHandleKey() {
+      return this.OperationHandleKey != null;
+    }
+
+    public void setOperationHandleKeyIsSet(boolean value) {
+      if (!value) {
+        this.OperationHandleKey = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case KEY:
+        if (value == null) {
+          unsetKey();
+        } else {
+          setKey((String)value);
+        }
+        break;
+
+      case OPERATION_HANDLE_KEY:
+        if (value == null) {
+          unsetOperationHandleKey();
+        } else {
+          setOperationHandleKey((String)value);
+        }
+        break;
+
+      }
+    }
+
+    public void setFieldValue(int fieldID, Object value) {
+      setFieldValue(_Fields.findByThriftIdOrThrow(fieldID), value);
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case KEY:
+        return getKey();
+
+      case OPERATION_HANDLE_KEY:
+        return getOperationHandleKey();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    public Object getFieldValue(int fieldId) {
+      return getFieldValue(_Fields.findByThriftIdOrThrow(fieldId));
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been asigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      switch (field) {
+      case KEY:
+        return isSetKey();
+      case OPERATION_HANDLE_KEY:
+        return isSetOperationHandleKey();
+      }
+      throw new IllegalStateException();
+    }
+
+    public boolean isSet(int fieldID) {
+      return isSet(_Fields.findByThriftIdOrThrow(fieldID));
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof HandleCancel_args)
+        return this.equals((HandleCancel_args)that);
+      return false;
+    }
+
+    public boolean equals(HandleCancel_args that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_key = true && this.isSetKey();
+      boolean that_present_key = true && that.isSetKey();
+      if (this_present_key || that_present_key) {
+        if (!(this_present_key && that_present_key))
+          return false;
+        if (!this.key.equals(that.key))
+          return false;
+      }
+
+      boolean this_present_OperationHandleKey = true && this.isSetOperationHandleKey();
+      boolean that_present_OperationHandleKey = true && that.isSetOperationHandleKey();
+      if (this_present_OperationHandleKey || that_present_OperationHandleKey) {
+        if (!(this_present_OperationHandleKey && that_present_OperationHandleKey))
+          return false;
+        if (!this.OperationHandleKey.equals(that.OperationHandleKey))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    public int compareTo(HandleCancel_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      HandleCancel_args typedOther = (HandleCancel_args)other;
+
+      lastComparison = Boolean.valueOf(isSetKey()).compareTo(typedOther.isSetKey());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetKey()) {        lastComparison = TBaseHelper.compareTo(this.key, typedOther.key);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetOperationHandleKey()).compareTo(typedOther.isSetOperationHandleKey());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetOperationHandleKey()) {        lastComparison = TBaseHelper.compareTo(this.OperationHandleKey, typedOther.OperationHandleKey);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public void read(TProtocol iprot) throws TException {
+      TField field;
+      iprot.readStructBegin();
+      while (true)
+      {
+        field = iprot.readFieldBegin();
+        if (field.type == TType.STOP) { 
+          break;
+        }
+        switch (field.id) {
+          case 1: // KEY
+            if (field.type == TType.STRING) {
+              this.key = iprot.readString();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 2: // OPERATION_HANDLE_KEY
+            if (field.type == TType.STRING) {
+              this.OperationHandleKey = iprot.readString();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          default:
+            TProtocolUtil.skip(iprot, field.type);
+        }
+        iprot.readFieldEnd();
+      }
+      iprot.readStructEnd();
+
+      // check for required fields of primitive type, which can't be checked in the validate method
+      validate();
+    }
+
+    public void write(TProtocol oprot) throws TException {
+      validate();
+
+      oprot.writeStructBegin(STRUCT_DESC);
+      if (this.key != null) {
+        oprot.writeFieldBegin(KEY_FIELD_DESC);
+        oprot.writeString(this.key);
+        oprot.writeFieldEnd();
+      }
+      if (this.OperationHandleKey != null) {
+        oprot.writeFieldBegin(OPERATION_HANDLE_KEY_FIELD_DESC);
+        oprot.writeString(this.OperationHandleKey);
+        oprot.writeFieldEnd();
+      }
+      oprot.writeFieldStop();
+      oprot.writeStructEnd();
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("HandleCancel_args(");
+      boolean first = true;
+
+      sb.append("key:");
+      if (this.key == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.key);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("OperationHandleKey:");
+      if (this.OperationHandleKey == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.OperationHandleKey);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws TException {
+      // check for required fields
+    }
+
+  }
+
+  public static class HandleGet_args implements TBase<HandleGet_args, HandleGet_args._Fields>, java.io.Serializable, Cloneable   {
+    private static final TStruct STRUCT_DESC = new TStruct("HandleGet_args");
+
+    private static final TField KEY_FIELD_DESC = new TField("key", TType.STRING, (short)1);
+    private static final TField OPERATION_HANDLE_KEY_FIELD_DESC = new TField("OperationHandleKey", TType.STRING, (short)2);
+
+    public String key;
+    public String OperationHandleKey;
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements TFieldIdEnum {
+      KEY((short)1, "key"),
+      OPERATION_HANDLE_KEY((short)2, "OperationHandleKey");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // KEY
+            return KEY;
+          case 2: // OPERATION_HANDLE_KEY
+            return OPERATION_HANDLE_KEY;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+
+    public static final Map<_Fields, FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, FieldMetaData> tmpMap = new EnumMap<_Fields, FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.KEY, new FieldMetaData("key", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
+      tmpMap.put(_Fields.OPERATION_HANDLE_KEY, new FieldMetaData("OperationHandleKey", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      FieldMetaData.addStructMetaDataMap(HandleGet_args.class, metaDataMap);
+    }
+
+    public HandleGet_args() {
+    }
+
+    public HandleGet_args(
+      String key,
+      String OperationHandleKey)
+    {
+      this();
+      this.key = key;
+      this.OperationHandleKey = OperationHandleKey;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public HandleGet_args(HandleGet_args other) {
+      if (other.isSetKey()) {
+        this.key = other.key;
+      }
+      if (other.isSetOperationHandleKey()) {
+        this.OperationHandleKey = other.OperationHandleKey;
+      }
+    }
+
+    public HandleGet_args deepCopy() {
+      return new HandleGet_args(this);
+    }
+
+    @Deprecated
+    public HandleGet_args clone() {
+      return new HandleGet_args(this);
+    }
+
+    @Override
+    public void clear() {
+      this.key = null;
+      this.OperationHandleKey = null;
+    }
+
+    public String getKey() {
+      return this.key;
+    }
+
+    public HandleGet_args setKey(String key) {
+      this.key = key;
+      return this;
+    }
+
+    public void unsetKey() {
+      this.key = null;
+    }
+
+    /** Returns true if field key is set (has been asigned a value) and false otherwise */
+    public boolean isSetKey() {
+      return this.key != null;
+    }
+
+    public void setKeyIsSet(boolean value) {
+      if (!value) {
+        this.key = null;
+      }
+    }
+
+    public String getOperationHandleKey() {
+      return this.OperationHandleKey;
+    }
+
+    public HandleGet_args setOperationHandleKey(String OperationHandleKey) {
+      this.OperationHandleKey = OperationHandleKey;
+      return this;
+    }
+
+    public void unsetOperationHandleKey() {
+      this.OperationHandleKey = null;
+    }
+
+    /** Returns true if field OperationHandleKey is set (has been asigned a value) and false otherwise */
+    public boolean isSetOperationHandleKey() {
+      return this.OperationHandleKey != null;
+    }
+
+    public void setOperationHandleKeyIsSet(boolean value) {
+      if (!value) {
+        this.OperationHandleKey = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case KEY:
+        if (value == null) {
+          unsetKey();
+        } else {
+          setKey((String)value);
+        }
+        break;
+
+      case OPERATION_HANDLE_KEY:
+        if (value == null) {
+          unsetOperationHandleKey();
+        } else {
+          setOperationHandleKey((String)value);
+        }
+        break;
+
+      }
+    }
+
+    public void setFieldValue(int fieldID, Object value) {
+      setFieldValue(_Fields.findByThriftIdOrThrow(fieldID), value);
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case KEY:
+        return getKey();
+
+      case OPERATION_HANDLE_KEY:
+        return getOperationHandleKey();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    public Object getFieldValue(int fieldId) {
+      return getFieldValue(_Fields.findByThriftIdOrThrow(fieldId));
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been asigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      switch (field) {
+      case KEY:
+        return isSetKey();
+      case OPERATION_HANDLE_KEY:
+        return isSetOperationHandleKey();
+      }
+      throw new IllegalStateException();
+    }
+
+    public boolean isSet(int fieldID) {
+      return isSet(_Fields.findByThriftIdOrThrow(fieldID));
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof HandleGet_args)
+        return this.equals((HandleGet_args)that);
+      return false;
+    }
+
+    public boolean equals(HandleGet_args that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_key = true && this.isSetKey();
+      boolean that_present_key = true && that.isSetKey();
+      if (this_present_key || that_present_key) {
+        if (!(this_present_key && that_present_key))
+          return false;
+        if (!this.key.equals(that.key))
+          return false;
+      }
+
+      boolean this_present_OperationHandleKey = true && this.isSetOperationHandleKey();
+      boolean that_present_OperationHandleKey = true && that.isSetOperationHandleKey();
+      if (this_present_OperationHandleKey || that_present_OperationHandleKey) {
+        if (!(this_present_OperationHandleKey && that_present_OperationHandleKey))
+          return false;
+        if (!this.OperationHandleKey.equals(that.OperationHandleKey))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    public int compareTo(HandleGet_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      HandleGet_args typedOther = (HandleGet_args)other;
+
+      lastComparison = Boolean.valueOf(isSetKey()).compareTo(typedOther.isSetKey());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetKey()) {        lastComparison = TBaseHelper.compareTo(this.key, typedOther.key);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetOperationHandleKey()).compareTo(typedOther.isSetOperationHandleKey());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetOperationHandleKey()) {        lastComparison = TBaseHelper.compareTo(this.OperationHandleKey, typedOther.OperationHandleKey);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public void read(TProtocol iprot) throws TException {
+      TField field;
+      iprot.readStructBegin();
+      while (true)
+      {
+        field = iprot.readFieldBegin();
+        if (field.type == TType.STOP) { 
+          break;
+        }
+        switch (field.id) {
+          case 1: // KEY
+            if (field.type == TType.STRING) {
+              this.key = iprot.readString();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 2: // OPERATION_HANDLE_KEY
+            if (field.type == TType.STRING) {
+              this.OperationHandleKey = iprot.readString();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          default:
+            TProtocolUtil.skip(iprot, field.type);
+        }
+        iprot.readFieldEnd();
+      }
+      iprot.readStructEnd();
+
+      // check for required fields of primitive type, which can't be checked in the validate method
+      validate();
+    }
+
+    public void write(TProtocol oprot) throws TException {
+      validate();
+
+      oprot.writeStructBegin(STRUCT_DESC);
+      if (this.key != null) {
+        oprot.writeFieldBegin(KEY_FIELD_DESC);
+        oprot.writeString(this.key);
+        oprot.writeFieldEnd();
+      }
+      if (this.OperationHandleKey != null) {
+        oprot.writeFieldBegin(OPERATION_HANDLE_KEY_FIELD_DESC);
+        oprot.writeString(this.OperationHandleKey);
+        oprot.writeFieldEnd();
+      }
+      oprot.writeFieldStop();
+      oprot.writeStructEnd();
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("HandleGet_args(");
+      boolean first = true;
+
+      sb.append("key:");
+      if (this.key == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.key);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("OperationHandleKey:");
+      if (this.OperationHandleKey == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.OperationHandleKey);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws TException {
+      // check for required fields
+    }
+
+  }
+
+  public static class HandleGet_result implements TBase<HandleGet_result, HandleGet_result._Fields>, java.io.Serializable, Cloneable   {
+    private static final TStruct STRUCT_DESC = new TStruct("HandleGet_result");
+
+
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements TFieldIdEnum {
+;
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+    public static final Map<_Fields, FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, FieldMetaData> tmpMap = new EnumMap<_Fields, FieldMetaData>(_Fields.class);
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      FieldMetaData.addStructMetaDataMap(HandleGet_result.class, metaDataMap);
+    }
+
+    public HandleGet_result() {
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public HandleGet_result(HandleGet_result other) {
+    }
+
+    public HandleGet_result deepCopy() {
+      return new HandleGet_result(this);
+    }
+
+    @Deprecated
+    public HandleGet_result clone() {
+      return new HandleGet_result(this);
+    }
+
+    @Override
+    public void clear() {
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      }
+    }
+
+    public void setFieldValue(int fieldID, Object value) {
+      setFieldValue(_Fields.findByThriftIdOrThrow(fieldID), value);
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    public Object getFieldValue(int fieldId) {
+      return getFieldValue(_Fields.findByThriftIdOrThrow(fieldId));
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been asigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    public boolean isSet(int fieldID) {
+      return isSet(_Fields.findByThriftIdOrThrow(fieldID));
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof HandleGet_result)
+        return this.equals((HandleGet_result)that);
+      return false;
+    }
+
+    public boolean equals(HandleGet_result that) {
+      if (that == null)
+        return false;
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    public int compareTo(HandleGet_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      HandleGet_result typedOther = (HandleGet_result)other;
+
+      return 0;
+    }
+
+    public void read(TProtocol iprot) throws TException {
+      TField field;
+      iprot.readStructBegin();
+      while (true)
+      {
+        field = iprot.readFieldBegin();
+        if (field.type == TType.STOP) { 
+          break;
+        }
+        switch (field.id) {
+          default:
+            TProtocolUtil.skip(iprot, field.type);
+        }
+        iprot.readFieldEnd();
+      }
+      iprot.readStructEnd();
+
+      // check for required fields of primitive type, which can't be checked in the validate method
+      validate();
+    }
+
+    public void write(TProtocol oprot) throws TException {
+      oprot.writeStructBegin(STRUCT_DESC);
+
+      oprot.writeFieldStop();
+      oprot.writeStructEnd();
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("HandleGet_result(");
+      boolean first = true;
+
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws TException {
+      // check for required fields
+    }
+
+  }
+
+  public static class HandleGetState_args implements TBase<HandleGetState_args, HandleGetState_args._Fields>, java.io.Serializable, Cloneable   {
+    private static final TStruct STRUCT_DESC = new TStruct("HandleGetState_args");
+
+    private static final TField KEY_FIELD_DESC = new TField("key", TType.STRING, (short)1);
+    private static final TField OPERATION_HANDLE_KEY_FIELD_DESC = new TField("OperationHandleKey", TType.STRING, (short)2);
+
+    public String key;
+    public String OperationHandleKey;
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements TFieldIdEnum {
+      KEY((short)1, "key"),
+      OPERATION_HANDLE_KEY((short)2, "OperationHandleKey");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // KEY
+            return KEY;
+          case 2: // OPERATION_HANDLE_KEY
+            return OPERATION_HANDLE_KEY;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+
+    public static final Map<_Fields, FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, FieldMetaData> tmpMap = new EnumMap<_Fields, FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.KEY, new FieldMetaData("key", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
+      tmpMap.put(_Fields.OPERATION_HANDLE_KEY, new FieldMetaData("OperationHandleKey", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      FieldMetaData.addStructMetaDataMap(HandleGetState_args.class, metaDataMap);
+    }
+
+    public HandleGetState_args() {
+    }
+
+    public HandleGetState_args(
+      String key,
+      String OperationHandleKey)
+    {
+      this();
+      this.key = key;
+      this.OperationHandleKey = OperationHandleKey;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public HandleGetState_args(HandleGetState_args other) {
+      if (other.isSetKey()) {
+        this.key = other.key;
+      }
+      if (other.isSetOperationHandleKey()) {
+        this.OperationHandleKey = other.OperationHandleKey;
+      }
+    }
+
+    public HandleGetState_args deepCopy() {
+      return new HandleGetState_args(this);
+    }
+
+    @Deprecated
+    public HandleGetState_args clone() {
+      return new HandleGetState_args(this);
+    }
+
+    @Override
+    public void clear() {
+      this.key = null;
+      this.OperationHandleKey = null;
+    }
+
+    public String getKey() {
+      return this.key;
+    }
+
+    public HandleGetState_args setKey(String key) {
+      this.key = key;
+      return this;
+    }
+
+    public void unsetKey() {
+      this.key = null;
+    }
+
+    /** Returns true if field key is set (has been asigned a value) and false otherwise */
+    public boolean isSetKey() {
+      return this.key != null;
+    }
+
+    public void setKeyIsSet(boolean value) {
+      if (!value) {
+        this.key = null;
+      }
+    }
+
+    public String getOperationHandleKey() {
+      return this.OperationHandleKey;
+    }
+
+    public HandleGetState_args setOperationHandleKey(String OperationHandleKey) {
+      this.OperationHandleKey = OperationHandleKey;
+      return this;
+    }
+
+    public void unsetOperationHandleKey() {
+      this.OperationHandleKey = null;
+    }
+
+    /** Returns true if field OperationHandleKey is set (has been asigned a value) and false otherwise */
+    public boolean isSetOperationHandleKey() {
+      return this.OperationHandleKey != null;
+    }
+
+    public void setOperationHandleKeyIsSet(boolean value) {
+      if (!value) {
+        this.OperationHandleKey = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case KEY:
+        if (value == null) {
+          unsetKey();
+        } else {
+          setKey((String)value);
+        }
+        break;
+
+      case OPERATION_HANDLE_KEY:
+        if (value == null) {
+          unsetOperationHandleKey();
+        } else {
+          setOperationHandleKey((String)value);
+        }
+        break;
+
+      }
+    }
+
+    public void setFieldValue(int fieldID, Object value) {
+      setFieldValue(_Fields.findByThriftIdOrThrow(fieldID), value);
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case KEY:
+        return getKey();
+
+      case OPERATION_HANDLE_KEY:
+        return getOperationHandleKey();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    public Object getFieldValue(int fieldId) {
+      return getFieldValue(_Fields.findByThriftIdOrThrow(fieldId));
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been asigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      switch (field) {
+      case KEY:
+        return isSetKey();
+      case OPERATION_HANDLE_KEY:
+        return isSetOperationHandleKey();
+      }
+      throw new IllegalStateException();
+    }
+
+    public boolean isSet(int fieldID) {
+      return isSet(_Fields.findByThriftIdOrThrow(fieldID));
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof HandleGetState_args)
+        return this.equals((HandleGetState_args)that);
+      return false;
+    }
+
+    public boolean equals(HandleGetState_args that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_key = true && this.isSetKey();
+      boolean that_present_key = true && that.isSetKey();
+      if (this_present_key || that_present_key) {
+        if (!(this_present_key && that_present_key))
+          return false;
+        if (!this.key.equals(that.key))
+          return false;
+      }
+
+      boolean this_present_OperationHandleKey = true && this.isSetOperationHandleKey();
+      boolean that_present_OperationHandleKey = true && that.isSetOperationHandleKey();
+      if (this_present_OperationHandleKey || that_present_OperationHandleKey) {
+        if (!(this_present_OperationHandleKey && that_present_OperationHandleKey))
+          return false;
+        if (!this.OperationHandleKey.equals(that.OperationHandleKey))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    public int compareTo(HandleGetState_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      HandleGetState_args typedOther = (HandleGetState_args)other;
+
+      lastComparison = Boolean.valueOf(isSetKey()).compareTo(typedOther.isSetKey());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetKey()) {        lastComparison = TBaseHelper.compareTo(this.key, typedOther.key);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetOperationHandleKey()).compareTo(typedOther.isSetOperationHandleKey());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetOperationHandleKey()) {        lastComparison = TBaseHelper.compareTo(this.OperationHandleKey, typedOther.OperationHandleKey);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public void read(TProtocol iprot) throws TException {
+      TField field;
+      iprot.readStructBegin();
+      while (true)
+      {
+        field = iprot.readFieldBegin();
+        if (field.type == TType.STOP) { 
+          break;
+        }
+        switch (field.id) {
+          case 1: // KEY
+            if (field.type == TType.STRING) {
+              this.key = iprot.readString();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 2: // OPERATION_HANDLE_KEY
+            if (field.type == TType.STRING) {
+              this.OperationHandleKey = iprot.readString();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          default:
+            TProtocolUtil.skip(iprot, field.type);
+        }
+        iprot.readFieldEnd();
+      }
+      iprot.readStructEnd();
+
+      // check for required fields of primitive type, which can't be checked in the validate method
+      validate();
+    }
+
+    public void write(TProtocol oprot) throws TException {
+      validate();
+
+      oprot.writeStructBegin(STRUCT_DESC);
+      if (this.key != null) {
+        oprot.writeFieldBegin(KEY_FIELD_DESC);
+        oprot.writeString(this.key);
+        oprot.writeFieldEnd();
+      }
+      if (this.OperationHandleKey != null) {
+        oprot.writeFieldBegin(OPERATION_HANDLE_KEY_FIELD_DESC);
+        oprot.writeString(this.OperationHandleKey);
+        oprot.writeFieldEnd();
+      }
+      oprot.writeFieldStop();
+      oprot.writeStructEnd();
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("HandleGetState_args(");
+      boolean first = true;
+
+      sb.append("key:");
+      if (this.key == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.key);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("OperationHandleKey:");
+      if (this.OperationHandleKey == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.OperationHandleKey);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws TException {
+      // check for required fields
+    }
+
+  }
+
+  public static class HandleGetState_result implements TBase<HandleGetState_result, HandleGetState_result._Fields>, java.io.Serializable, Cloneable   {
+    private static final TStruct STRUCT_DESC = new TStruct("HandleGetState_result");
 
     private static final TField SUCCESS_FIELD_DESC = new TField("success", TType.STRING, (short)0);
 
@@ -3512,13 +5543,13 @@ public class AsyncDevice {
       tmpMap.put(_Fields.SUCCESS, new FieldMetaData("success", TFieldRequirementType.DEFAULT, 
           new FieldValueMetaData(TType.STRING)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
-      FieldMetaData.addStructMetaDataMap(program_result.class, metaDataMap);
+      FieldMetaData.addStructMetaDataMap(HandleGetState_result.class, metaDataMap);
     }
 
-    public program_result() {
+    public HandleGetState_result() {
     }
 
-    public program_result(
+    public HandleGetState_result(
       String success)
     {
       this();
@@ -3528,19 +5559,19 @@ public class AsyncDevice {
     /**
      * Performs a deep copy on <i>other</i>.
      */
-    public program_result(program_result other) {
+    public HandleGetState_result(HandleGetState_result other) {
       if (other.isSetSuccess()) {
         this.success = other.success;
       }
     }
 
-    public program_result deepCopy() {
-      return new program_result(this);
+    public HandleGetState_result deepCopy() {
+      return new HandleGetState_result(this);
     }
 
     @Deprecated
-    public program_result clone() {
-      return new program_result(this);
+    public HandleGetState_result clone() {
+      return new HandleGetState_result(this);
     }
 
     @Override
@@ -3552,7 +5583,7 @@ public class AsyncDevice {
       return this.success;
     }
 
-    public program_result setSuccess(String success) {
+    public HandleGetState_result setSuccess(String success) {
       this.success = success;
       return this;
     }
@@ -3619,12 +5650,12 @@ public class AsyncDevice {
     public boolean equals(Object that) {
       if (that == null)
         return false;
-      if (that instanceof program_result)
-        return this.equals((program_result)that);
+      if (that instanceof HandleGetState_result)
+        return this.equals((HandleGetState_result)that);
       return false;
     }
 
-    public boolean equals(program_result that) {
+    public boolean equals(HandleGetState_result that) {
       if (that == null)
         return false;
 
@@ -3645,13 +5676,13 @@ public class AsyncDevice {
       return 0;
     }
 
-    public int compareTo(program_result other) {
+    public int compareTo(HandleGetState_result other) {
       if (!getClass().equals(other.getClass())) {
         return getClass().getName().compareTo(other.getClass().getName());
       }
 
       int lastComparison = 0;
-      program_result typedOther = (program_result)other;
+      HandleGetState_result typedOther = (HandleGetState_result)other;
 
       lastComparison = Boolean.valueOf(isSetSuccess()).compareTo(typedOther.isSetSuccess());
       if (lastComparison != 0) {
@@ -3707,7 +5738,7 @@ public class AsyncDevice {
 
     @Override
     public String toString() {
-      StringBuilder sb = new StringBuilder("program_result(");
+      StringBuilder sb = new StringBuilder("HandleGetState_result(");
       boolean first = true;
 
       sb.append("success:");
