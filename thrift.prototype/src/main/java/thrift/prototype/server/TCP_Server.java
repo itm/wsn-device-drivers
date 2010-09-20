@@ -28,10 +28,13 @@ import org.apache.thrift.transport.TTransportException;
 
 import de.uniluebeck.itm.Impl.Main;
 import de.uniluebeck.itm.devicedriver.DeviceBinFile;
+import de.uniluebeck.itm.devicedriver.State;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
+import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 
 import thrift.prototype.files.AsyncDevice;
 import thrift.prototype.files.LoginFailed;
+import thrift.prototype.files.getMessageAnswer;
 
 //TODO entweder Rohdaten direkt per program (list aus binaerdaten) uebertragen oder 
 //TODO die Rohbloecke einzeln per transfer
@@ -41,7 +44,7 @@ public class TCP_Server {
 	public static void main(String[] args) throws TTransportException {
 	
 		   // put up a server
-	    final TNonblockingServer s = new TNonblockingServer(new AsyncDevice.Processor(new Handler()), new TNonblockingServerSocket(50000));
+	    final TNonblockingServer s = new TNonblockingServer(new AsyncDevice.Processor(new Handler()), new TNonblockingServerSocket(50001));
 	    new Thread(new Runnable() {
 	      @Override
 	      public void run() {
@@ -58,6 +61,7 @@ public class TCP_Server {
 
 		private static Set<String> keys= new HashSet<String>();
 		private static HashMap<String,ClientID> clientIDList = new  HashMap<String, ClientID>();
+		private static HashMap<String,String> UserList = new  HashMap<String, String>();
 		
 		@Override
 		public String connect(String userName, String passWord) throws LoginFailed, TException {
@@ -80,20 +84,29 @@ public class TCP_Server {
 			 * dem Client einen Key zuweisen:
 			 */
 			
+			
 			boolean doublekey = false;
 			String key;
 			
-			/* erstellen eines zufaelligen key, mit dem ein Client identifiziert werden kann */
-			do{
-				double zwkey = Math.random();
-				key = String.valueOf(zwkey);
-				doublekey = keys.contains(key);
-			}while(true == doublekey);
-			
-			/* erstellen einer Client-Repraesantition und speichern in einer Liste */
-			ClientID clientId = new ClientID();
-			keys.add(key);
-			clientIDList.put(key, clientId);
+			// reconnect
+			if(UserList.containsKey(userName)){
+				key = UserList.get(userName);
+			}
+			// connect
+			else {			
+				/* erstellen eines zufaelligen key, mit dem ein Client identifiziert werden kann */
+				do{
+					double zwkey = Math.random();
+					key = String.valueOf(zwkey);
+					doublekey = keys.contains(key);
+				}while(true == doublekey);
+				
+				/* erstellen einer Client-Repraesantition und speichern in einer Liste */
+				ClientID clientId = new ClientID();
+				keys.add(key);
+				clientIDList.put(key, clientId);
+				UserList.put(userName, key);
+			}
 			
 			System.out.println("User verbunden.");
 			
@@ -103,40 +116,47 @@ public class TCP_Server {
 		@Override
 		public void disconnect(String key) throws TException {
 			keys.remove(key);
+			UserList.remove(key);
 			clientIDList.remove(key);
 		}
 		
 		@Override
-		public void setMessage(String key,String message) throws TException {
+		public void setMessage(String key, String HandleKey, String message) throws TException {
 			
 			ClientID clientID = clientIDList.get(key);
+			OperationHandle<Void> handle = null;
+			clientID.setHandleList(HandleKey, handle);
 			clientID.setMessage(message);
 		}
 
 		@Override
-		public String getMessage(String key) throws TException {
+		public String getMessage(String key, String HandleKey) throws TException {
 
 			ClientID clientID = clientIDList.get(key);
+			OperationHandle<Void> handle = null;
+			clientID.setHandleList(HandleKey, handle);
 			return clientID.getMessage();
 		}
 		
 		@Override
-		public String program(String key, List<ByteBuffer> BinFile,
-				List<Integer> addresses, long timeout) throws TException {
+		public void program(String key, String HandleKey, List<ByteBuffer> BinFile,
+				String description, long timeout) throws TException {
 			Main test = new Main();
 			
 			/* erstmal auskommentiert da ich keine 
 			   Moeglichkeit habe eine DeviceBinFile zu erstellen */
-			//ClientID clientID = clientIDList.get(key);
-
-			//clientID.saveBinFile(addresses, BinFile);
+			ClientID clientID = clientIDList.get(key);
+			
+			OperationHandle<Void> handle = null;
+			
+			//clientID.saveBinFile(BinFile, description);
 			
 			//DeviceBinFile binaryImage=clientID.getBinFile();
 			
 			// Provisorisch null
 			DeviceBinFile binaryImage = null;
 			
-			test.program(binaryImage, timeout, new AsyncCallback<Void>(){
+			handle = test.program(binaryImage, timeout, new AsyncCallback<Void>(){
 
 				@Override
 				public void onCancel() {
@@ -158,10 +178,40 @@ public class TCP_Server {
 					System.out.println("jup es geht im TCP-Server");
 				}});
 			
-			System.out.println("fertig mit program");
+			clientID.setHandleList(HandleKey, handle);
 			
-			return "wieder im Client";
+		}
+
+		@Override
+		public void HandleCancel(String key, String OperationHandleKey)
+				throws TException {
 			
+			ClientID clientID = clientIDList.get(key);
+			OperationHandle<Void> handle = clientID.getHandle(OperationHandleKey);
+			handle.cancel();
+			clientID.removeHandle(OperationHandleKey);
+			
+		}
+
+		@Override
+		public void HandleGet(String key, String OperationHandleKey)
+				throws TException {
+			
+			ClientID clientID = clientIDList.get(key);
+			OperationHandle<Void> handle = clientID.getHandle(OperationHandleKey);
+			handle.get();
+			
+			
+		}
+
+		@Override
+		public String HandleGetState(String key, String OperationHandleKey)
+				throws TException {
+			
+			ClientID clientID = clientIDList.get(key);
+			OperationHandle<Void> handle = clientID.getHandle(OperationHandleKey);
+			
+			return handle.getState().getName();
 		}
 		
 	}

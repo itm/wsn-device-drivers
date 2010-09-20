@@ -1,13 +1,15 @@
 package thrift.prototype.server;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import de.uniluebeck.itm.devicedriver.BinFileDataBlock;
 import de.uniluebeck.itm.devicedriver.DeviceBinFile;
+import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 
 /**
  * Client-repraesantition im Server
@@ -17,7 +19,9 @@ import de.uniluebeck.itm.devicedriver.DeviceBinFile;
 public class ClientID {
 	private String Message = "init";
 	private AtomicBoolean blocked = new AtomicBoolean();
-	private static List<BinFileDataBlock> blocklist = new  ArrayList<BinFileDataBlock>();
+	
+	private static Set<String> keys= new HashSet<String>();
+	private HashMap<String, OperationHandle<Void>> handleList = new HashMap<String, OperationHandle<Void>>();
 
 	ClientID(){
 	}
@@ -28,7 +32,7 @@ public class ClientID {
 				Thread.sleep(10000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-			}
+			} 
 		}
 		Message = message;
 	}
@@ -44,17 +48,15 @@ public class ClientID {
 		return Message;
 	}
 	
-	public void saveBinFile(List<Integer> addresses, List<ByteBuffer> values){
+	public void saveBinFile(List<ByteBuffer> values, String description){
 		
 		Iterator<ByteBuffer> valuesIterator = values.iterator();
-		Iterator<Integer> addressesIterator = addresses.iterator();
 		
 		while(valuesIterator.hasNext()){
-			BinFileDataBlock block = new BinFileDataBlock(addressesIterator.next(), valuesIterator.next().array());
-			blocklist.add(block);
+			// TODO DeviceBinFile aus Rohdaten erstellen und auf Festplatte zwischenspeichern
 		}
 		
-		// TODO DeviceBinFile aus Rohdaten erstellen und auf Festplatte zwischenspeichern
+		
 	}
 	
 	public DeviceBinFile getBinFile(){
@@ -70,6 +72,22 @@ public class ClientID {
 
 	public AtomicBoolean getBlocked() {
 		return blocked;
+	}
+
+	public void setHandleList(String HandleKey, OperationHandle<Void> handle) {
+		
+		keys.add(HandleKey);
+		this.handleList.put(HandleKey, handle);
+	}
+
+	public void removeHandle(String HandleKey){
+		
+		handleList.remove(HandleKey);
+		keys.remove(HandleKey);
+	}
+	
+	public OperationHandle<Void> getHandle(String HandleKey) {
+		return handleList.get(HandleKey);
 	}
 	
 }

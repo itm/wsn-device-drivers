@@ -8,8 +8,8 @@ public class TCP_Client {
 	public static void main(String[] args) throws Exception {
 
 		/* Gemeinsamer ClientManager */
-		TCP_Stub stub1 = new TCP_Stub("testUser", "testPassword", "localhost", 50000);
-		TCP_Stub stub2 = new TCP_Stub("testUser", "testPassword", "localhost", 50000);
+		TCP_Stub stub1 = new TCP_Stub("testUser", "testPassword", "localhost", 50001);
+		TCP_Stub stub2 = new TCP_Stub("testUser", "testPassword", "localhost", 50001);
 		
 		int i=0;
 		int j=0;
@@ -134,7 +134,7 @@ public class TCP_Client {
 //				break;
 			//5
 			case 53:
-				handle1.get();
+				handle1.cancel();
 				break;
 			//6
 			case 54:
