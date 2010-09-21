@@ -10,5 +10,10 @@
 			<artifactId>tr.wsn-device-drivers</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
   		</dependency>
+  		<dependency>
+  			<groupId>de.uni-luebeck.itm</groupId>
+			<artifactId>tr.wsn-device-drivers-isense</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+  		</dependency>
 	</dependencies>
 </project>
