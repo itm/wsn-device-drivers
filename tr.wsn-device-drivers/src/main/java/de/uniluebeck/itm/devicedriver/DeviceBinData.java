@@ -29,13 +29,13 @@ package de.uniluebeck.itm.devicedriver;
  * @author Friedemann Wesner
  *
  */
-public interface DeviceBinFile {
+public interface DeviceBinData {
 	
 	/**
 	 * Return the platform type that this bin file is to be used with.
 	 * @return the platform type
 	 */
-	public ChipType getFileType();
+	public ChipType getChipType();
 	
 	/**
 	 * Check if the specified device type is compatible with using this bin file.
@@ -66,7 +66,7 @@ public interface DeviceBinFile {
 	 * of bin file that provides the data.
 	 * @return the next pair of data block and block address, or null if end of file was reached
 	 */
-	public BinFileDataBlock getNextBlock(); 
+	public DeviceBinDataBlock getNextBlock(); 
 	
 	/**
 	 * Calculate total number of blocks that make up the binary file.

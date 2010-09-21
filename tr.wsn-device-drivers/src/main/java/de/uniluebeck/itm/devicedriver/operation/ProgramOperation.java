@@ -1,6 +1,6 @@
 package de.uniluebeck.itm.devicedriver.operation;
 
-import de.uniluebeck.itm.devicedriver.DeviceBinFile;
+import de.uniluebeck.itm.devicedriver.DeviceBinData;
 
 /**
  * An interface that has to be used when implementing a program operation.
@@ -14,5 +14,5 @@ public interface ProgramOperation extends Operation<Void> {
 	 * 
 	 * @param binaryImage The binary image.
 	 */
-	void setBinaryImage(DeviceBinFile binaryImage);
+	void setBinaryImage(DeviceBinData binaryImage);
 }

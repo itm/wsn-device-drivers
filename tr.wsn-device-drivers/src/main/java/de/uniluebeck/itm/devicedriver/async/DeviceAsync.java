@@ -1,6 +1,6 @@
 package de.uniluebeck.itm.devicedriver.async;
 
-import de.uniluebeck.itm.devicedriver.DeviceBinFile;
+import de.uniluebeck.itm.devicedriver.DeviceBinData;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.MessagePacketListener;
@@ -25,7 +25,7 @@ public interface DeviceAsync {
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationHandle</code> for controlling the async operation.
 	 */
-	OperationHandle<Void> program(DeviceBinFile binaryImage, long timeout, AsyncCallback<Void> callback);
+	OperationHandle<Void> program(DeviceBinData binaryImage, long timeout, AsyncCallback<Void> callback);
 	
 	/**
 	 * Remove all data from the flash memory.

@@ -33,7 +33,7 @@ package de.uniluebeck.itm.devicedriver;
  * @author Friedemann Wesner
  *
  */
-public class BinFileDataBlock {
+public class DeviceBinDataBlock {
 	/**
 	 * Address in flash memory that this segment will be written to
 	 */
@@ -49,7 +49,7 @@ public class BinFileDataBlock {
 	 * @param address
 	 * @param data
 	 */
-	public BinFileDataBlock(int address, byte[] data) {
+	public DeviceBinDataBlock(int address, byte[] data) {
 		this.address = address;
 		if (data == null) {
 			this.data = new byte[0];
