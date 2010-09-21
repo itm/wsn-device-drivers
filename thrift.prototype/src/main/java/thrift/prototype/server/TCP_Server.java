@@ -23,11 +23,13 @@ import org.apache.thrift.transport.TTransportException;
 
 import de.uniluebeck.itm.Impl.Main;
 import de.uniluebeck.itm.devicedriver.DeviceBinFile;
+import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 
 import thrift.prototype.files.AsyncDevice;
 import thrift.prototype.files.LoginFailed;
+import thrift.prototype.files.MessagePacket;
 
 //TODO Rohdaten direkt per program (list aus binaerdaten) uebertragen oder 
 
@@ -37,7 +39,7 @@ public class TCP_Server {
 	
 		   // put up a server
 	    final TNonblockingServer s = new TNonblockingServer(new AsyncDevice.Processor(new Handler()), 
-	    		new TNonblockingServerSocket(50000));
+	    		new TNonblockingServerSocket(50001));
 	    new Thread(new Runnable() {
 	      @Override
 	      public void run() {
@@ -204,6 +206,107 @@ public class TCP_Server {
 			OperationHandle<Void> handle = clientID.getHandle(OperationHandleKey);
 			
 			return handle.getState().getName();
+		}
+
+		
+		
+		@Override
+		public List<ByteBuffer> HandleGetReadFlash(String key,
+				String OperationHandleKey) throws TException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public ByteBuffer HandleGetReadMac(String key, String OperationHandleKey)
+				throws TException {
+
+			ClientID clientID = clientIDList.get(key);
+			OperationHandle<MacAddress> handle = clientID.getHandleMac(OperationHandleKey);
+			
+			return ByteBuffer.wrap(handle.get().getMacBytes());
+		}
+
+		@Override
+		public void eraseFlash(String key, String OperationHandleKey,
+				long timeout) throws TException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public List<ByteBuffer> readFlash(String key,
+				String OperationHandleKey, int address, int length, long timeout)
+				throws TException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public ByteBuffer readMac(String key, String OperationHandleKey,
+				long timeout) throws TException {
+			
+			Main test = new Main();
+			
+			/* erstmal auskommentiert da ich keine 
+			   Moeglichkeit habe eine DeviceBinFile zu erstellen */
+			ClientID clientID = clientIDList.get(key);
+			
+			OperationHandle<MacAddress> handle = 
+				test.readMac(timeout, new AsyncCallback<MacAddress>(){
+
+				@Override
+				public void onCancel() {
+					System.out.println("Abbruch im TCP-Server");
+				}
+
+				@Override
+				public void onFailure(Throwable throwable) {
+					System.out.println("Fehler im TCP-Server");
+				}
+
+				@Override
+				public void onProgressChange(float fraction) {
+					System.out.println("change im TCP-Server");
+				}
+
+				@Override
+				public void onSuccess(MacAddress result) {
+					System.out.println("jup es geht im TCP-Server");
+				}});
+			
+			clientID.setHandleListMac(OperationHandleKey, handle);
+			
+			return ByteBuffer.wrap(handle.get().getMacBytes());
+		}
+
+		@Override
+		public void reset(String key, String OperationHandleKey, long timeout)
+				throws TException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void send(String key, String OperationHandleKey,
+				MessagePacket packet, long timeout) throws TException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void writeFlash(String key, String OperationHandleKey,
+				int address, ByteBuffer data, int length, long timeout)
+				throws TException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void writeMac(String key, String OperationHandleKey,
+				ByteBuffer macAddress, long timeout) throws TException {
+			// TODO Auto-generated method stub
+			
 		}
 		
 	}

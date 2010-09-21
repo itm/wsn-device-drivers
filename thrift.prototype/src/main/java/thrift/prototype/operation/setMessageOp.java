@@ -132,11 +132,7 @@ public class setMessageOp extends Operation<Void>{
 						public void onComplete(HandleGetState_call response) {
 							try {
 								String stateName = response.getResult();
-								for(State zwState : State.values()){
-									if(zwState.getName().equalsIgnoreCase(stateName)){
-										state = zwState;
-									}
-								}
+								state = State.fromName(stateName);
 							} catch (TException e) {
 								e.printStackTrace();
 							}

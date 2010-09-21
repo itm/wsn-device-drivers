@@ -55,7 +55,9 @@ public class Main implements DeviceAsync{
 	@Override
 	public OperationHandle<MacAddress> readMac(long timeout,
 			AsyncCallback<MacAddress> callback) {
-		// TODO Auto-generated method stub
+		
+		
+		
 		return null;
 	}
 

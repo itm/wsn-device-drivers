@@ -13,6 +13,11 @@ import thrift.prototype.files.AsyncDevice;
  */
 public class ConnectionBuilder {
 
+	/* Prinzipiel nicht notwendig, da man dies auch in Operation machen kann,
+	 * aber wegen der Moeglichkeit die Verbindung spaeter tauschen zu koennen,
+	 * bleibt diese Klasse erstmal erhalten.
+	 */
+	
 	private AsyncDevice.AsyncClient client;
 	String uri;
 	int port;

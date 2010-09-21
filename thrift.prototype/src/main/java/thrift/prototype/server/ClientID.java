@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.uniluebeck.itm.devicedriver.DeviceBinFile;
+import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 
 /**
@@ -22,6 +23,7 @@ public class ClientID {
 	
 	private static Set<String> keys= new HashSet<String>();
 	private HashMap<String, OperationHandle<Void>> handleList = new HashMap<String, OperationHandle<Void>>();
+	private HashMap<String, OperationHandle<MacAddress>> handleListMac = new HashMap<String, OperationHandle<MacAddress>>();
 
 	ClientID(){
 	}
@@ -85,9 +87,19 @@ public class ClientID {
 		handleList.remove(HandleKey);
 		keys.remove(HandleKey);
 	}
-	
 	public OperationHandle<Void> getHandle(String HandleKey) {
 		return handleList.get(HandleKey);
 	}
 	
+	public void setHandleListMac(String HandleKey, OperationHandle<MacAddress> handle) {
+		keys.add(HandleKey);
+		this.handleListMac.put(HandleKey, handle);
+	}
+	public OperationHandle<MacAddress> getHandleMac(String HandleKey) {
+		return handleListMac.get(HandleKey);
+	}
+	public void removeHandleMac(String HandleKey){
+		handleListMac.remove(HandleKey);
+		keys.remove(HandleKey);
+	}
 }

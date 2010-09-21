@@ -40,11 +40,29 @@ public class AsyncDevice {
 
     public void program(String key, String OperationHandleKey, List<ByteBuffer> bytes, String description, long timeout) throws TException;
 
+    public void eraseFlash(String key, String OperationHandleKey, long timeout) throws TException;
+
+    public List<ByteBuffer> readFlash(String key, String OperationHandleKey, int address, int length, long timeout) throws TException;
+
+    public ByteBuffer readMac(String key, String OperationHandleKey, long timeout) throws TException;
+
+    public void reset(String key, String OperationHandleKey, long timeout) throws TException;
+
+    public void send(String key, String OperationHandleKey, MessagePacket packet, long timeout) throws TException;
+
+    public void writeFlash(String key, String OperationHandleKey, int address, ByteBuffer data, int length, long timeout) throws TException;
+
+    public void writeMac(String key, String OperationHandleKey, ByteBuffer macAddress, long timeout) throws TException;
+
     public void HandleCancel(String key, String OperationHandleKey) throws TException;
 
     public void HandleGet(String key, String OperationHandleKey) throws TException;
 
     public String HandleGetState(String key, String OperationHandleKey) throws TException;
+
+    public List<ByteBuffer> HandleGetReadFlash(String key, String OperationHandleKey) throws TException;
+
+    public ByteBuffer HandleGetReadMac(String key, String OperationHandleKey) throws TException;
 
   }
 
@@ -60,11 +78,29 @@ public class AsyncDevice {
 
     public void program(String key, String OperationHandleKey, List<ByteBuffer> bytes, String description, long timeout, AsyncMethodCallback<AsyncClient.program_call> resultHandler) throws TException;
 
+    public void eraseFlash(String key, String OperationHandleKey, long timeout, AsyncMethodCallback<AsyncClient.eraseFlash_call> resultHandler) throws TException;
+
+    public void readFlash(String key, String OperationHandleKey, int address, int length, long timeout, AsyncMethodCallback<AsyncClient.readFlash_call> resultHandler) throws TException;
+
+    public void readMac(String key, String OperationHandleKey, long timeout, AsyncMethodCallback<AsyncClient.readMac_call> resultHandler) throws TException;
+
+    public void reset(String key, String OperationHandleKey, long timeout, AsyncMethodCallback<AsyncClient.reset_call> resultHandler) throws TException;
+
+    public void send(String key, String OperationHandleKey, MessagePacket packet, long timeout, AsyncMethodCallback<AsyncClient.send_call> resultHandler) throws TException;
+
+    public void writeFlash(String key, String OperationHandleKey, int address, ByteBuffer data, int length, long timeout, AsyncMethodCallback<AsyncClient.writeFlash_call> resultHandler) throws TException;
+
+    public void writeMac(String key, String OperationHandleKey, ByteBuffer macAddress, long timeout, AsyncMethodCallback<AsyncClient.writeMac_call> resultHandler) throws TException;
+
     public void HandleCancel(String key, String OperationHandleKey, AsyncMethodCallback<AsyncClient.HandleCancel_call> resultHandler) throws TException;
 
     public void HandleGet(String key, String OperationHandleKey, AsyncMethodCallback<AsyncClient.HandleGet_call> resultHandler) throws TException;
 
     public void HandleGetState(String key, String OperationHandleKey, AsyncMethodCallback<AsyncClient.HandleGetState_call> resultHandler) throws TException;
+
+    public void HandleGetReadFlash(String key, String OperationHandleKey, AsyncMethodCallback<AsyncClient.HandleGetReadFlash_call> resultHandler) throws TException;
+
+    public void HandleGetReadMac(String key, String OperationHandleKey, AsyncMethodCallback<AsyncClient.HandleGetReadMac_call> resultHandler) throws TException;
 
   }
 
@@ -269,6 +305,264 @@ public class AsyncDevice {
       return;
     }
 
+    public void eraseFlash(String key, String OperationHandleKey, long timeout) throws TException
+    {
+      send_eraseFlash(key, OperationHandleKey, timeout);
+      recv_eraseFlash();
+    }
+
+    public void send_eraseFlash(String key, String OperationHandleKey, long timeout) throws TException
+    {
+      oprot_.writeMessageBegin(new TMessage("eraseFlash", TMessageType.CALL, ++seqid_));
+      eraseFlash_args args = new eraseFlash_args();
+      args.setKey(key);
+      args.setOperationHandleKey(OperationHandleKey);
+      args.setTimeout(timeout);
+      args.write(oprot_);
+      oprot_.writeMessageEnd();
+      oprot_.getTransport().flush();
+    }
+
+    public void recv_eraseFlash() throws TException
+    {
+      TMessage msg = iprot_.readMessageBegin();
+      if (msg.type == TMessageType.EXCEPTION) {
+        TApplicationException x = TApplicationException.read(iprot_);
+        iprot_.readMessageEnd();
+        throw x;
+      }
+      if (msg.seqid != seqid_) {
+        throw new TApplicationException(TApplicationException.BAD_SEQUENCE_ID, "eraseFlash failed: out of sequence response");
+      }
+      eraseFlash_result result = new eraseFlash_result();
+      result.read(iprot_);
+      iprot_.readMessageEnd();
+      return;
+    }
+
+    public List<ByteBuffer> readFlash(String key, String OperationHandleKey, int address, int length, long timeout) throws TException
+    {
+      send_readFlash(key, OperationHandleKey, address, length, timeout);
+      return recv_readFlash();
+    }
+
+    public void send_readFlash(String key, String OperationHandleKey, int address, int length, long timeout) throws TException
+    {
+      oprot_.writeMessageBegin(new TMessage("readFlash", TMessageType.CALL, ++seqid_));
+      readFlash_args args = new readFlash_args();
+      args.setKey(key);
+      args.setOperationHandleKey(OperationHandleKey);
+      args.setAddress(address);
+      args.setLength(length);
+      args.setTimeout(timeout);
+      args.write(oprot_);
+      oprot_.writeMessageEnd();
+      oprot_.getTransport().flush();
+    }
+
+    public List<ByteBuffer> recv_readFlash() throws TException
+    {
+      TMessage msg = iprot_.readMessageBegin();
+      if (msg.type == TMessageType.EXCEPTION) {
+        TApplicationException x = TApplicationException.read(iprot_);
+        iprot_.readMessageEnd();
+        throw x;
+      }
+      if (msg.seqid != seqid_) {
+        throw new TApplicationException(TApplicationException.BAD_SEQUENCE_ID, "readFlash failed: out of sequence response");
+      }
+      readFlash_result result = new readFlash_result();
+      result.read(iprot_);
+      iprot_.readMessageEnd();
+      if (result.isSetSuccess()) {
+        return result.success;
+      }
+      throw new TApplicationException(TApplicationException.MISSING_RESULT, "readFlash failed: unknown result");
+    }
+
+    public ByteBuffer readMac(String key, String OperationHandleKey, long timeout) throws TException
+    {
+      send_readMac(key, OperationHandleKey, timeout);
+      return recv_readMac();
+    }
+
+    public void send_readMac(String key, String OperationHandleKey, long timeout) throws TException
+    {
+      oprot_.writeMessageBegin(new TMessage("readMac", TMessageType.CALL, ++seqid_));
+      readMac_args args = new readMac_args();
+      args.setKey(key);
+      args.setOperationHandleKey(OperationHandleKey);
+      args.setTimeout(timeout);
+      args.write(oprot_);
+      oprot_.writeMessageEnd();
+      oprot_.getTransport().flush();
+    }
+
+    public ByteBuffer recv_readMac() throws TException
+    {
+      TMessage msg = iprot_.readMessageBegin();
+      if (msg.type == TMessageType.EXCEPTION) {
+        TApplicationException x = TApplicationException.read(iprot_);
+        iprot_.readMessageEnd();
+        throw x;
+      }
+      if (msg.seqid != seqid_) {
+        throw new TApplicationException(TApplicationException.BAD_SEQUENCE_ID, "readMac failed: out of sequence response");
+      }
+      readMac_result result = new readMac_result();
+      result.read(iprot_);
+      iprot_.readMessageEnd();
+      if (result.isSetSuccess()) {
+        return result.success;
+      }
+      throw new TApplicationException(TApplicationException.MISSING_RESULT, "readMac failed: unknown result");
+    }
+
+    public void reset(String key, String OperationHandleKey, long timeout) throws TException
+    {
+      send_reset(key, OperationHandleKey, timeout);
+      recv_reset();
+    }
+
+    public void send_reset(String key, String OperationHandleKey, long timeout) throws TException
+    {
+      oprot_.writeMessageBegin(new TMessage("reset", TMessageType.CALL, ++seqid_));
+      reset_args args = new reset_args();
+      args.setKey(key);
+      args.setOperationHandleKey(OperationHandleKey);
+      args.setTimeout(timeout);
+      args.write(oprot_);
+      oprot_.writeMessageEnd();
+      oprot_.getTransport().flush();
+    }
+
+    public void recv_reset() throws TException
+    {
+      TMessage msg = iprot_.readMessageBegin();
+      if (msg.type == TMessageType.EXCEPTION) {
+        TApplicationException x = TApplicationException.read(iprot_);
+        iprot_.readMessageEnd();
+        throw x;
+      }
+      if (msg.seqid != seqid_) {
+        throw new TApplicationException(TApplicationException.BAD_SEQUENCE_ID, "reset failed: out of sequence response");
+      }
+      reset_result result = new reset_result();
+      result.read(iprot_);
+      iprot_.readMessageEnd();
+      return;
+    }
+
+    public void send(String key, String OperationHandleKey, MessagePacket packet, long timeout) throws TException
+    {
+      send_send(key, OperationHandleKey, packet, timeout);
+      recv_send();
+    }
+
+    public void send_send(String key, String OperationHandleKey, MessagePacket packet, long timeout) throws TException
+    {
+      oprot_.writeMessageBegin(new TMessage("send", TMessageType.CALL, ++seqid_));
+      send_args args = new send_args();
+      args.setKey(key);
+      args.setOperationHandleKey(OperationHandleKey);
+      args.setPacket(packet);
+      args.setTimeout(timeout);
+      args.write(oprot_);
+      oprot_.writeMessageEnd();
+      oprot_.getTransport().flush();
+    }
+
+    public void recv_send() throws TException
+    {
+      TMessage msg = iprot_.readMessageBegin();
+      if (msg.type == TMessageType.EXCEPTION) {
+        TApplicationException x = TApplicationException.read(iprot_);
+        iprot_.readMessageEnd();
+        throw x;
+      }
+      if (msg.seqid != seqid_) {
+        throw new TApplicationException(TApplicationException.BAD_SEQUENCE_ID, "send failed: out of sequence response");
+      }
+      send_result result = new send_result();
+      result.read(iprot_);
+      iprot_.readMessageEnd();
+      return;
+    }
+
+    public void writeFlash(String key, String OperationHandleKey, int address, ByteBuffer data, int length, long timeout) throws TException
+    {
+      send_writeFlash(key, OperationHandleKey, address, data, length, timeout);
+      recv_writeFlash();
+    }
+
+    public void send_writeFlash(String key, String OperationHandleKey, int address, ByteBuffer data, int length, long timeout) throws TException
+    {
+      oprot_.writeMessageBegin(new TMessage("writeFlash", TMessageType.CALL, ++seqid_));
+      writeFlash_args args = new writeFlash_args();
+      args.setKey(key);
+      args.setOperationHandleKey(OperationHandleKey);
+      args.setAddress(address);
+      args.setData(data);
+      args.setLength(length);
+      args.setTimeout(timeout);
+      args.write(oprot_);
+      oprot_.writeMessageEnd();
+      oprot_.getTransport().flush();
+    }
+
+    public void recv_writeFlash() throws TException
+    {
+      TMessage msg = iprot_.readMessageBegin();
+      if (msg.type == TMessageType.EXCEPTION) {
+        TApplicationException x = TApplicationException.read(iprot_);
+        iprot_.readMessageEnd();
+        throw x;
+      }
+      if (msg.seqid != seqid_) {
+        throw new TApplicationException(TApplicationException.BAD_SEQUENCE_ID, "writeFlash failed: out of sequence response");
+      }
+      writeFlash_result result = new writeFlash_result();
+      result.read(iprot_);
+      iprot_.readMessageEnd();
+      return;
+    }
+
+    public void writeMac(String key, String OperationHandleKey, ByteBuffer macAddress, long timeout) throws TException
+    {
+      send_writeMac(key, OperationHandleKey, macAddress, timeout);
+      recv_writeMac();
+    }
+
+    public void send_writeMac(String key, String OperationHandleKey, ByteBuffer macAddress, long timeout) throws TException
+    {
+      oprot_.writeMessageBegin(new TMessage("writeMac", TMessageType.CALL, ++seqid_));
+      writeMac_args args = new writeMac_args();
+      args.setKey(key);
+      args.setOperationHandleKey(OperationHandleKey);
+      args.setMacAddress(macAddress);
+      args.setTimeout(timeout);
+      args.write(oprot_);
+      oprot_.writeMessageEnd();
+      oprot_.getTransport().flush();
+    }
+
+    public void recv_writeMac() throws TException
+    {
+      TMessage msg = iprot_.readMessageBegin();
+      if (msg.type == TMessageType.EXCEPTION) {
+        TApplicationException x = TApplicationException.read(iprot_);
+        iprot_.readMessageEnd();
+        throw x;
+      }
+      if (msg.seqid != seqid_) {
+        throw new TApplicationException(TApplicationException.BAD_SEQUENCE_ID, "writeMac failed: out of sequence response");
+      }
+      writeMac_result result = new writeMac_result();
+      result.read(iprot_);
+      iprot_.readMessageEnd();
+      return;
+    }
+
     public void HandleCancel(String key, String OperationHandleKey) throws TException
     {
       send_HandleCancel(key, OperationHandleKey);
@@ -354,6 +648,80 @@ public class AsyncDevice {
         return result.success;
       }
       throw new TApplicationException(TApplicationException.MISSING_RESULT, "HandleGetState failed: unknown result");
+    }
+
+    public List<ByteBuffer> HandleGetReadFlash(String key, String OperationHandleKey) throws TException
+    {
+      send_HandleGetReadFlash(key, OperationHandleKey);
+      return recv_HandleGetReadFlash();
+    }
+
+    public void send_HandleGetReadFlash(String key, String OperationHandleKey) throws TException
+    {
+      oprot_.writeMessageBegin(new TMessage("HandleGetReadFlash", TMessageType.CALL, ++seqid_));
+      HandleGetReadFlash_args args = new HandleGetReadFlash_args();
+      args.setKey(key);
+      args.setOperationHandleKey(OperationHandleKey);
+      args.write(oprot_);
+      oprot_.writeMessageEnd();
+      oprot_.getTransport().flush();
+    }
+
+    public List<ByteBuffer> recv_HandleGetReadFlash() throws TException
+    {
+      TMessage msg = iprot_.readMessageBegin();
+      if (msg.type == TMessageType.EXCEPTION) {
+        TApplicationException x = TApplicationException.read(iprot_);
+        iprot_.readMessageEnd();
+        throw x;
+      }
+      if (msg.seqid != seqid_) {
+        throw new TApplicationException(TApplicationException.BAD_SEQUENCE_ID, "HandleGetReadFlash failed: out of sequence response");
+      }
+      HandleGetReadFlash_result result = new HandleGetReadFlash_result();
+      result.read(iprot_);
+      iprot_.readMessageEnd();
+      if (result.isSetSuccess()) {
+        return result.success;
+      }
+      throw new TApplicationException(TApplicationException.MISSING_RESULT, "HandleGetReadFlash failed: unknown result");
+    }
+
+    public ByteBuffer HandleGetReadMac(String key, String OperationHandleKey) throws TException
+    {
+      send_HandleGetReadMac(key, OperationHandleKey);
+      return recv_HandleGetReadMac();
+    }
+
+    public void send_HandleGetReadMac(String key, String OperationHandleKey) throws TException
+    {
+      oprot_.writeMessageBegin(new TMessage("HandleGetReadMac", TMessageType.CALL, ++seqid_));
+      HandleGetReadMac_args args = new HandleGetReadMac_args();
+      args.setKey(key);
+      args.setOperationHandleKey(OperationHandleKey);
+      args.write(oprot_);
+      oprot_.writeMessageEnd();
+      oprot_.getTransport().flush();
+    }
+
+    public ByteBuffer recv_HandleGetReadMac() throws TException
+    {
+      TMessage msg = iprot_.readMessageBegin();
+      if (msg.type == TMessageType.EXCEPTION) {
+        TApplicationException x = TApplicationException.read(iprot_);
+        iprot_.readMessageEnd();
+        throw x;
+      }
+      if (msg.seqid != seqid_) {
+        throw new TApplicationException(TApplicationException.BAD_SEQUENCE_ID, "HandleGetReadMac failed: out of sequence response");
+      }
+      HandleGetReadMac_result result = new HandleGetReadMac_result();
+      result.read(iprot_);
+      iprot_.readMessageEnd();
+      if (result.isSetSuccess()) {
+        return result.success;
+      }
+      throw new TApplicationException(TApplicationException.MISSING_RESULT, "HandleGetReadMac failed: unknown result");
     }
 
   }
@@ -552,6 +920,286 @@ public class AsyncDevice {
       }
     }
 
+    public void eraseFlash(String key, String OperationHandleKey, long timeout, AsyncMethodCallback<eraseFlash_call> resultHandler) throws TException {
+      checkReady();
+      eraseFlash_call method_call = new eraseFlash_call(key, OperationHandleKey, timeout, resultHandler, this, protocolFactory, transport);
+      manager.call(method_call);
+    }
+
+    public static class eraseFlash_call extends TAsyncMethodCall {
+      private String key;
+      private String OperationHandleKey;
+      private long timeout;
+      public eraseFlash_call(String key, String OperationHandleKey, long timeout, AsyncMethodCallback<eraseFlash_call> resultHandler, TAsyncClient client, TProtocolFactory protocolFactory, TNonblockingTransport transport) throws TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+        this.key = key;
+        this.OperationHandleKey = OperationHandleKey;
+        this.timeout = timeout;
+      }
+
+      public void write_args(TProtocol prot) throws TException {
+        prot.writeMessageBegin(new TMessage("eraseFlash", TMessageType.CALL, 0));
+        eraseFlash_args args = new eraseFlash_args();
+        args.setKey(key);
+        args.setOperationHandleKey(OperationHandleKey);
+        args.setTimeout(timeout);
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public void getResult() throws TException {
+        if (getState() != State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        TMemoryInputTransport memoryTransport = new TMemoryInputTransport(getFrameBuffer().array());
+        TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        (new Client(prot)).recv_eraseFlash();
+      }
+    }
+
+    public void readFlash(String key, String OperationHandleKey, int address, int length, long timeout, AsyncMethodCallback<readFlash_call> resultHandler) throws TException {
+      checkReady();
+      readFlash_call method_call = new readFlash_call(key, OperationHandleKey, address, length, timeout, resultHandler, this, protocolFactory, transport);
+      manager.call(method_call);
+    }
+
+    public static class readFlash_call extends TAsyncMethodCall {
+      private String key;
+      private String OperationHandleKey;
+      private int address;
+      private int length;
+      private long timeout;
+      public readFlash_call(String key, String OperationHandleKey, int address, int length, long timeout, AsyncMethodCallback<readFlash_call> resultHandler, TAsyncClient client, TProtocolFactory protocolFactory, TNonblockingTransport transport) throws TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+        this.key = key;
+        this.OperationHandleKey = OperationHandleKey;
+        this.address = address;
+        this.length = length;
+        this.timeout = timeout;
+      }
+
+      public void write_args(TProtocol prot) throws TException {
+        prot.writeMessageBegin(new TMessage("readFlash", TMessageType.CALL, 0));
+        readFlash_args args = new readFlash_args();
+        args.setKey(key);
+        args.setOperationHandleKey(OperationHandleKey);
+        args.setAddress(address);
+        args.setLength(length);
+        args.setTimeout(timeout);
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public List<ByteBuffer> getResult() throws TException {
+        if (getState() != State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        TMemoryInputTransport memoryTransport = new TMemoryInputTransport(getFrameBuffer().array());
+        TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        return (new Client(prot)).recv_readFlash();
+      }
+    }
+
+    public void readMac(String key, String OperationHandleKey, long timeout, AsyncMethodCallback<readMac_call> resultHandler) throws TException {
+      checkReady();
+      readMac_call method_call = new readMac_call(key, OperationHandleKey, timeout, resultHandler, this, protocolFactory, transport);
+      manager.call(method_call);
+    }
+
+    public static class readMac_call extends TAsyncMethodCall {
+      private String key;
+      private String OperationHandleKey;
+      private long timeout;
+      public readMac_call(String key, String OperationHandleKey, long timeout, AsyncMethodCallback<readMac_call> resultHandler, TAsyncClient client, TProtocolFactory protocolFactory, TNonblockingTransport transport) throws TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+        this.key = key;
+        this.OperationHandleKey = OperationHandleKey;
+        this.timeout = timeout;
+      }
+
+      public void write_args(TProtocol prot) throws TException {
+        prot.writeMessageBegin(new TMessage("readMac", TMessageType.CALL, 0));
+        readMac_args args = new readMac_args();
+        args.setKey(key);
+        args.setOperationHandleKey(OperationHandleKey);
+        args.setTimeout(timeout);
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public ByteBuffer getResult() throws TException {
+        if (getState() != State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        TMemoryInputTransport memoryTransport = new TMemoryInputTransport(getFrameBuffer().array());
+        TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        return (new Client(prot)).recv_readMac();
+      }
+    }
+
+    public void reset(String key, String OperationHandleKey, long timeout, AsyncMethodCallback<reset_call> resultHandler) throws TException {
+      checkReady();
+      reset_call method_call = new reset_call(key, OperationHandleKey, timeout, resultHandler, this, protocolFactory, transport);
+      manager.call(method_call);
+    }
+
+    public static class reset_call extends TAsyncMethodCall {
+      private String key;
+      private String OperationHandleKey;
+      private long timeout;
+      public reset_call(String key, String OperationHandleKey, long timeout, AsyncMethodCallback<reset_call> resultHandler, TAsyncClient client, TProtocolFactory protocolFactory, TNonblockingTransport transport) throws TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+        this.key = key;
+        this.OperationHandleKey = OperationHandleKey;
+        this.timeout = timeout;
+      }
+
+      public void write_args(TProtocol prot) throws TException {
+        prot.writeMessageBegin(new TMessage("reset", TMessageType.CALL, 0));
+        reset_args args = new reset_args();
+        args.setKey(key);
+        args.setOperationHandleKey(OperationHandleKey);
+        args.setTimeout(timeout);
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public void getResult() throws TException {
+        if (getState() != State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        TMemoryInputTransport memoryTransport = new TMemoryInputTransport(getFrameBuffer().array());
+        TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        (new Client(prot)).recv_reset();
+      }
+    }
+
+    public void send(String key, String OperationHandleKey, MessagePacket packet, long timeout, AsyncMethodCallback<send_call> resultHandler) throws TException {
+      checkReady();
+      send_call method_call = new send_call(key, OperationHandleKey, packet, timeout, resultHandler, this, protocolFactory, transport);
+      manager.call(method_call);
+    }
+
+    public static class send_call extends TAsyncMethodCall {
+      private String key;
+      private String OperationHandleKey;
+      private MessagePacket packet;
+      private long timeout;
+      public send_call(String key, String OperationHandleKey, MessagePacket packet, long timeout, AsyncMethodCallback<send_call> resultHandler, TAsyncClient client, TProtocolFactory protocolFactory, TNonblockingTransport transport) throws TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+        this.key = key;
+        this.OperationHandleKey = OperationHandleKey;
+        this.packet = packet;
+        this.timeout = timeout;
+      }
+
+      public void write_args(TProtocol prot) throws TException {
+        prot.writeMessageBegin(new TMessage("send", TMessageType.CALL, 0));
+        send_args args = new send_args();
+        args.setKey(key);
+        args.setOperationHandleKey(OperationHandleKey);
+        args.setPacket(packet);
+        args.setTimeout(timeout);
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public void getResult() throws TException {
+        if (getState() != State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        TMemoryInputTransport memoryTransport = new TMemoryInputTransport(getFrameBuffer().array());
+        TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        (new Client(prot)).recv_send();
+      }
+    }
+
+    public void writeFlash(String key, String OperationHandleKey, int address, ByteBuffer data, int length, long timeout, AsyncMethodCallback<writeFlash_call> resultHandler) throws TException {
+      checkReady();
+      writeFlash_call method_call = new writeFlash_call(key, OperationHandleKey, address, data, length, timeout, resultHandler, this, protocolFactory, transport);
+      manager.call(method_call);
+    }
+
+    public static class writeFlash_call extends TAsyncMethodCall {
+      private String key;
+      private String OperationHandleKey;
+      private int address;
+      private ByteBuffer data;
+      private int length;
+      private long timeout;
+      public writeFlash_call(String key, String OperationHandleKey, int address, ByteBuffer data, int length, long timeout, AsyncMethodCallback<writeFlash_call> resultHandler, TAsyncClient client, TProtocolFactory protocolFactory, TNonblockingTransport transport) throws TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+        this.key = key;
+        this.OperationHandleKey = OperationHandleKey;
+        this.address = address;
+        this.data = data;
+        this.length = length;
+        this.timeout = timeout;
+      }
+
+      public void write_args(TProtocol prot) throws TException {
+        prot.writeMessageBegin(new TMessage("writeFlash", TMessageType.CALL, 0));
+        writeFlash_args args = new writeFlash_args();
+        args.setKey(key);
+        args.setOperationHandleKey(OperationHandleKey);
+        args.setAddress(address);
+        args.setData(data);
+        args.setLength(length);
+        args.setTimeout(timeout);
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public void getResult() throws TException {
+        if (getState() != State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        TMemoryInputTransport memoryTransport = new TMemoryInputTransport(getFrameBuffer().array());
+        TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        (new Client(prot)).recv_writeFlash();
+      }
+    }
+
+    public void writeMac(String key, String OperationHandleKey, ByteBuffer macAddress, long timeout, AsyncMethodCallback<writeMac_call> resultHandler) throws TException {
+      checkReady();
+      writeMac_call method_call = new writeMac_call(key, OperationHandleKey, macAddress, timeout, resultHandler, this, protocolFactory, transport);
+      manager.call(method_call);
+    }
+
+    public static class writeMac_call extends TAsyncMethodCall {
+      private String key;
+      private String OperationHandleKey;
+      private ByteBuffer macAddress;
+      private long timeout;
+      public writeMac_call(String key, String OperationHandleKey, ByteBuffer macAddress, long timeout, AsyncMethodCallback<writeMac_call> resultHandler, TAsyncClient client, TProtocolFactory protocolFactory, TNonblockingTransport transport) throws TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+        this.key = key;
+        this.OperationHandleKey = OperationHandleKey;
+        this.macAddress = macAddress;
+        this.timeout = timeout;
+      }
+
+      public void write_args(TProtocol prot) throws TException {
+        prot.writeMessageBegin(new TMessage("writeMac", TMessageType.CALL, 0));
+        writeMac_args args = new writeMac_args();
+        args.setKey(key);
+        args.setOperationHandleKey(OperationHandleKey);
+        args.setMacAddress(macAddress);
+        args.setTimeout(timeout);
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public void getResult() throws TException {
+        if (getState() != State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        TMemoryInputTransport memoryTransport = new TMemoryInputTransport(getFrameBuffer().array());
+        TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        (new Client(prot)).recv_writeMac();
+      }
+    }
+
     public void HandleCancel(String key, String OperationHandleKey, AsyncMethodCallback<HandleCancel_call> resultHandler) throws TException {
       checkReady();
       HandleCancel_call method_call = new HandleCancel_call(key, OperationHandleKey, resultHandler, this, protocolFactory, transport);
@@ -653,6 +1301,74 @@ public class AsyncDevice {
       }
     }
 
+    public void HandleGetReadFlash(String key, String OperationHandleKey, AsyncMethodCallback<HandleGetReadFlash_call> resultHandler) throws TException {
+      checkReady();
+      HandleGetReadFlash_call method_call = new HandleGetReadFlash_call(key, OperationHandleKey, resultHandler, this, protocolFactory, transport);
+      manager.call(method_call);
+    }
+
+    public static class HandleGetReadFlash_call extends TAsyncMethodCall {
+      private String key;
+      private String OperationHandleKey;
+      public HandleGetReadFlash_call(String key, String OperationHandleKey, AsyncMethodCallback<HandleGetReadFlash_call> resultHandler, TAsyncClient client, TProtocolFactory protocolFactory, TNonblockingTransport transport) throws TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+        this.key = key;
+        this.OperationHandleKey = OperationHandleKey;
+      }
+
+      public void write_args(TProtocol prot) throws TException {
+        prot.writeMessageBegin(new TMessage("HandleGetReadFlash", TMessageType.CALL, 0));
+        HandleGetReadFlash_args args = new HandleGetReadFlash_args();
+        args.setKey(key);
+        args.setOperationHandleKey(OperationHandleKey);
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public List<ByteBuffer> getResult() throws TException {
+        if (getState() != State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        TMemoryInputTransport memoryTransport = new TMemoryInputTransport(getFrameBuffer().array());
+        TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        return (new Client(prot)).recv_HandleGetReadFlash();
+      }
+    }
+
+    public void HandleGetReadMac(String key, String OperationHandleKey, AsyncMethodCallback<HandleGetReadMac_call> resultHandler) throws TException {
+      checkReady();
+      HandleGetReadMac_call method_call = new HandleGetReadMac_call(key, OperationHandleKey, resultHandler, this, protocolFactory, transport);
+      manager.call(method_call);
+    }
+
+    public static class HandleGetReadMac_call extends TAsyncMethodCall {
+      private String key;
+      private String OperationHandleKey;
+      public HandleGetReadMac_call(String key, String OperationHandleKey, AsyncMethodCallback<HandleGetReadMac_call> resultHandler, TAsyncClient client, TProtocolFactory protocolFactory, TNonblockingTransport transport) throws TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+        this.key = key;
+        this.OperationHandleKey = OperationHandleKey;
+      }
+
+      public void write_args(TProtocol prot) throws TException {
+        prot.writeMessageBegin(new TMessage("HandleGetReadMac", TMessageType.CALL, 0));
+        HandleGetReadMac_args args = new HandleGetReadMac_args();
+        args.setKey(key);
+        args.setOperationHandleKey(OperationHandleKey);
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public ByteBuffer getResult() throws TException {
+        if (getState() != State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        TMemoryInputTransport memoryTransport = new TMemoryInputTransport(getFrameBuffer().array());
+        TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        return (new Client(prot)).recv_HandleGetReadMac();
+      }
+    }
+
   }
 
   public static class Processor implements TProcessor {
@@ -665,9 +1381,18 @@ public class AsyncDevice {
       processMap_.put("setMessage", new setMessage());
       processMap_.put("getMessage", new getMessage());
       processMap_.put("program", new program());
+      processMap_.put("eraseFlash", new eraseFlash());
+      processMap_.put("readFlash", new readFlash());
+      processMap_.put("readMac", new readMac());
+      processMap_.put("reset", new reset());
+      processMap_.put("send", new send());
+      processMap_.put("writeFlash", new writeFlash());
+      processMap_.put("writeMac", new writeMac());
       processMap_.put("HandleCancel", new HandleCancel());
       processMap_.put("HandleGet", new HandleGet());
       processMap_.put("HandleGetState", new HandleGetState());
+      processMap_.put("HandleGetReadFlash", new HandleGetReadFlash());
+      processMap_.put("HandleGetReadMac", new HandleGetReadMac());
     }
 
     protected static interface ProcessFunction {
@@ -832,6 +1557,188 @@ public class AsyncDevice {
 
     }
 
+    private class eraseFlash implements ProcessFunction {
+      public void process(int seqid, TProtocol iprot, TProtocol oprot) throws TException
+      {
+        eraseFlash_args args = new eraseFlash_args();
+        try {
+          args.read(iprot);
+        } catch (TProtocolException e) {
+          iprot.readMessageEnd();
+          TApplicationException x = new TApplicationException(TApplicationException.PROTOCOL_ERROR, e.getMessage());
+          oprot.writeMessageBegin(new TMessage("eraseFlash", TMessageType.EXCEPTION, seqid));
+          x.write(oprot);
+          oprot.writeMessageEnd();
+          oprot.getTransport().flush();
+          return;
+        }
+        iprot.readMessageEnd();
+        eraseFlash_result result = new eraseFlash_result();
+        iface_.eraseFlash(args.key, args.OperationHandleKey, args.timeout);
+        oprot.writeMessageBegin(new TMessage("eraseFlash", TMessageType.REPLY, seqid));
+        result.write(oprot);
+        oprot.writeMessageEnd();
+        oprot.getTransport().flush();
+      }
+
+    }
+
+    private class readFlash implements ProcessFunction {
+      public void process(int seqid, TProtocol iprot, TProtocol oprot) throws TException
+      {
+        readFlash_args args = new readFlash_args();
+        try {
+          args.read(iprot);
+        } catch (TProtocolException e) {
+          iprot.readMessageEnd();
+          TApplicationException x = new TApplicationException(TApplicationException.PROTOCOL_ERROR, e.getMessage());
+          oprot.writeMessageBegin(new TMessage("readFlash", TMessageType.EXCEPTION, seqid));
+          x.write(oprot);
+          oprot.writeMessageEnd();
+          oprot.getTransport().flush();
+          return;
+        }
+        iprot.readMessageEnd();
+        readFlash_result result = new readFlash_result();
+        result.success = iface_.readFlash(args.key, args.OperationHandleKey, args.address, args.length, args.timeout);
+        oprot.writeMessageBegin(new TMessage("readFlash", TMessageType.REPLY, seqid));
+        result.write(oprot);
+        oprot.writeMessageEnd();
+        oprot.getTransport().flush();
+      }
+
+    }
+
+    private class readMac implements ProcessFunction {
+      public void process(int seqid, TProtocol iprot, TProtocol oprot) throws TException
+      {
+        readMac_args args = new readMac_args();
+        try {
+          args.read(iprot);
+        } catch (TProtocolException e) {
+          iprot.readMessageEnd();
+          TApplicationException x = new TApplicationException(TApplicationException.PROTOCOL_ERROR, e.getMessage());
+          oprot.writeMessageBegin(new TMessage("readMac", TMessageType.EXCEPTION, seqid));
+          x.write(oprot);
+          oprot.writeMessageEnd();
+          oprot.getTransport().flush();
+          return;
+        }
+        iprot.readMessageEnd();
+        readMac_result result = new readMac_result();
+        result.success = iface_.readMac(args.key, args.OperationHandleKey, args.timeout);
+        oprot.writeMessageBegin(new TMessage("readMac", TMessageType.REPLY, seqid));
+        result.write(oprot);
+        oprot.writeMessageEnd();
+        oprot.getTransport().flush();
+      }
+
+    }
+
+    private class reset implements ProcessFunction {
+      public void process(int seqid, TProtocol iprot, TProtocol oprot) throws TException
+      {
+        reset_args args = new reset_args();
+        try {
+          args.read(iprot);
+        } catch (TProtocolException e) {
+          iprot.readMessageEnd();
+          TApplicationException x = new TApplicationException(TApplicationException.PROTOCOL_ERROR, e.getMessage());
+          oprot.writeMessageBegin(new TMessage("reset", TMessageType.EXCEPTION, seqid));
+          x.write(oprot);
+          oprot.writeMessageEnd();
+          oprot.getTransport().flush();
+          return;
+        }
+        iprot.readMessageEnd();
+        reset_result result = new reset_result();
+        iface_.reset(args.key, args.OperationHandleKey, args.timeout);
+        oprot.writeMessageBegin(new TMessage("reset", TMessageType.REPLY, seqid));
+        result.write(oprot);
+        oprot.writeMessageEnd();
+        oprot.getTransport().flush();
+      }
+
+    }
+
+    private class send implements ProcessFunction {
+      public void process(int seqid, TProtocol iprot, TProtocol oprot) throws TException
+      {
+        send_args args = new send_args();
+        try {
+          args.read(iprot);
+        } catch (TProtocolException e) {
+          iprot.readMessageEnd();
+          TApplicationException x = new TApplicationException(TApplicationException.PROTOCOL_ERROR, e.getMessage());
+          oprot.writeMessageBegin(new TMessage("send", TMessageType.EXCEPTION, seqid));
+          x.write(oprot);
+          oprot.writeMessageEnd();
+          oprot.getTransport().flush();
+          return;
+        }
+        iprot.readMessageEnd();
+        send_result result = new send_result();
+        iface_.send(args.key, args.OperationHandleKey, args.packet, args.timeout);
+        oprot.writeMessageBegin(new TMessage("send", TMessageType.REPLY, seqid));
+        result.write(oprot);
+        oprot.writeMessageEnd();
+        oprot.getTransport().flush();
+      }
+
+    }
+
+    private class writeFlash implements ProcessFunction {
+      public void process(int seqid, TProtocol iprot, TProtocol oprot) throws TException
+      {
+        writeFlash_args args = new writeFlash_args();
+        try {
+          args.read(iprot);
+        } catch (TProtocolException e) {
+          iprot.readMessageEnd();
+          TApplicationException x = new TApplicationException(TApplicationException.PROTOCOL_ERROR, e.getMessage());
+          oprot.writeMessageBegin(new TMessage("writeFlash", TMessageType.EXCEPTION, seqid));
+          x.write(oprot);
+          oprot.writeMessageEnd();
+          oprot.getTransport().flush();
+          return;
+        }
+        iprot.readMessageEnd();
+        writeFlash_result result = new writeFlash_result();
+        iface_.writeFlash(args.key, args.OperationHandleKey, args.address, args.data, args.length, args.timeout);
+        oprot.writeMessageBegin(new TMessage("writeFlash", TMessageType.REPLY, seqid));
+        result.write(oprot);
+        oprot.writeMessageEnd();
+        oprot.getTransport().flush();
+      }
+
+    }
+
+    private class writeMac implements ProcessFunction {
+      public void process(int seqid, TProtocol iprot, TProtocol oprot) throws TException
+      {
+        writeMac_args args = new writeMac_args();
+        try {
+          args.read(iprot);
+        } catch (TProtocolException e) {
+          iprot.readMessageEnd();
+          TApplicationException x = new TApplicationException(TApplicationException.PROTOCOL_ERROR, e.getMessage());
+          oprot.writeMessageBegin(new TMessage("writeMac", TMessageType.EXCEPTION, seqid));
+          x.write(oprot);
+          oprot.writeMessageEnd();
+          oprot.getTransport().flush();
+          return;
+        }
+        iprot.readMessageEnd();
+        writeMac_result result = new writeMac_result();
+        iface_.writeMac(args.key, args.OperationHandleKey, args.macAddress, args.timeout);
+        oprot.writeMessageBegin(new TMessage("writeMac", TMessageType.REPLY, seqid));
+        result.write(oprot);
+        oprot.writeMessageEnd();
+        oprot.getTransport().flush();
+      }
+
+    }
+
     private class HandleCancel implements ProcessFunction {
       public void process(int seqid, TProtocol iprot, TProtocol oprot) throws TException
       {
@@ -898,6 +1805,58 @@ public class AsyncDevice {
         HandleGetState_result result = new HandleGetState_result();
         result.success = iface_.HandleGetState(args.key, args.OperationHandleKey);
         oprot.writeMessageBegin(new TMessage("HandleGetState", TMessageType.REPLY, seqid));
+        result.write(oprot);
+        oprot.writeMessageEnd();
+        oprot.getTransport().flush();
+      }
+
+    }
+
+    private class HandleGetReadFlash implements ProcessFunction {
+      public void process(int seqid, TProtocol iprot, TProtocol oprot) throws TException
+      {
+        HandleGetReadFlash_args args = new HandleGetReadFlash_args();
+        try {
+          args.read(iprot);
+        } catch (TProtocolException e) {
+          iprot.readMessageEnd();
+          TApplicationException x = new TApplicationException(TApplicationException.PROTOCOL_ERROR, e.getMessage());
+          oprot.writeMessageBegin(new TMessage("HandleGetReadFlash", TMessageType.EXCEPTION, seqid));
+          x.write(oprot);
+          oprot.writeMessageEnd();
+          oprot.getTransport().flush();
+          return;
+        }
+        iprot.readMessageEnd();
+        HandleGetReadFlash_result result = new HandleGetReadFlash_result();
+        result.success = iface_.HandleGetReadFlash(args.key, args.OperationHandleKey);
+        oprot.writeMessageBegin(new TMessage("HandleGetReadFlash", TMessageType.REPLY, seqid));
+        result.write(oprot);
+        oprot.writeMessageEnd();
+        oprot.getTransport().flush();
+      }
+
+    }
+
+    private class HandleGetReadMac implements ProcessFunction {
+      public void process(int seqid, TProtocol iprot, TProtocol oprot) throws TException
+      {
+        HandleGetReadMac_args args = new HandleGetReadMac_args();
+        try {
+          args.read(iprot);
+        } catch (TProtocolException e) {
+          iprot.readMessageEnd();
+          TApplicationException x = new TApplicationException(TApplicationException.PROTOCOL_ERROR, e.getMessage());
+          oprot.writeMessageBegin(new TMessage("HandleGetReadMac", TMessageType.EXCEPTION, seqid));
+          x.write(oprot);
+          oprot.writeMessageEnd();
+          oprot.getTransport().flush();
+          return;
+        }
+        iprot.readMessageEnd();
+        HandleGetReadMac_result result = new HandleGetReadMac_result();
+        result.success = iface_.HandleGetReadMac(args.key, args.OperationHandleKey);
+        oprot.writeMessageBegin(new TMessage("HandleGetReadMac", TMessageType.REPLY, seqid));
         result.write(oprot);
         oprot.writeMessageEnd();
         oprot.getTransport().flush();
@@ -4145,6 +5104,5432 @@ public class AsyncDevice {
 
   }
 
+  public static class eraseFlash_args implements TBase<eraseFlash_args, eraseFlash_args._Fields>, java.io.Serializable, Cloneable   {
+    private static final TStruct STRUCT_DESC = new TStruct("eraseFlash_args");
+
+    private static final TField KEY_FIELD_DESC = new TField("key", TType.STRING, (short)1);
+    private static final TField OPERATION_HANDLE_KEY_FIELD_DESC = new TField("OperationHandleKey", TType.STRING, (short)2);
+    private static final TField TIMEOUT_FIELD_DESC = new TField("timeout", TType.I64, (short)3);
+
+    public String key;
+    public String OperationHandleKey;
+    public long timeout;
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements TFieldIdEnum {
+      KEY((short)1, "key"),
+      OPERATION_HANDLE_KEY((short)2, "OperationHandleKey"),
+      TIMEOUT((short)3, "timeout");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // KEY
+            return KEY;
+          case 2: // OPERATION_HANDLE_KEY
+            return OPERATION_HANDLE_KEY;
+          case 3: // TIMEOUT
+            return TIMEOUT;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    private static final int __TIMEOUT_ISSET_ID = 0;
+    private BitSet __isset_bit_vector = new BitSet(1);
+
+    public static final Map<_Fields, FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, FieldMetaData> tmpMap = new EnumMap<_Fields, FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.KEY, new FieldMetaData("key", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
+      tmpMap.put(_Fields.OPERATION_HANDLE_KEY, new FieldMetaData("OperationHandleKey", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
+      tmpMap.put(_Fields.TIMEOUT, new FieldMetaData("timeout", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.I64)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      FieldMetaData.addStructMetaDataMap(eraseFlash_args.class, metaDataMap);
+    }
+
+    public eraseFlash_args() {
+    }
+
+    public eraseFlash_args(
+      String key,
+      String OperationHandleKey,
+      long timeout)
+    {
+      this();
+      this.key = key;
+      this.OperationHandleKey = OperationHandleKey;
+      this.timeout = timeout;
+      setTimeoutIsSet(true);
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public eraseFlash_args(eraseFlash_args other) {
+      __isset_bit_vector.clear();
+      __isset_bit_vector.or(other.__isset_bit_vector);
+      if (other.isSetKey()) {
+        this.key = other.key;
+      }
+      if (other.isSetOperationHandleKey()) {
+        this.OperationHandleKey = other.OperationHandleKey;
+      }
+      this.timeout = other.timeout;
+    }
+
+    public eraseFlash_args deepCopy() {
+      return new eraseFlash_args(this);
+    }
+
+    @Deprecated
+    public eraseFlash_args clone() {
+      return new eraseFlash_args(this);
+    }
+
+    @Override
+    public void clear() {
+      this.key = null;
+      this.OperationHandleKey = null;
+      setTimeoutIsSet(false);
+      this.timeout = 0;
+    }
+
+    public String getKey() {
+      return this.key;
+    }
+
+    public eraseFlash_args setKey(String key) {
+      this.key = key;
+      return this;
+    }
+
+    public void unsetKey() {
+      this.key = null;
+    }
+
+    /** Returns true if field key is set (has been asigned a value) and false otherwise */
+    public boolean isSetKey() {
+      return this.key != null;
+    }
+
+    public void setKeyIsSet(boolean value) {
+      if (!value) {
+        this.key = null;
+      }
+    }
+
+    public String getOperationHandleKey() {
+      return this.OperationHandleKey;
+    }
+
+    public eraseFlash_args setOperationHandleKey(String OperationHandleKey) {
+      this.OperationHandleKey = OperationHandleKey;
+      return this;
+    }
+
+    public void unsetOperationHandleKey() {
+      this.OperationHandleKey = null;
+    }
+
+    /** Returns true if field OperationHandleKey is set (has been asigned a value) and false otherwise */
+    public boolean isSetOperationHandleKey() {
+      return this.OperationHandleKey != null;
+    }
+
+    public void setOperationHandleKeyIsSet(boolean value) {
+      if (!value) {
+        this.OperationHandleKey = null;
+      }
+    }
+
+    public long getTimeout() {
+      return this.timeout;
+    }
+
+    public eraseFlash_args setTimeout(long timeout) {
+      this.timeout = timeout;
+      setTimeoutIsSet(true);
+      return this;
+    }
+
+    public void unsetTimeout() {
+      __isset_bit_vector.clear(__TIMEOUT_ISSET_ID);
+    }
+
+    /** Returns true if field timeout is set (has been asigned a value) and false otherwise */
+    public boolean isSetTimeout() {
+      return __isset_bit_vector.get(__TIMEOUT_ISSET_ID);
+    }
+
+    public void setTimeoutIsSet(boolean value) {
+      __isset_bit_vector.set(__TIMEOUT_ISSET_ID, value);
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case KEY:
+        if (value == null) {
+          unsetKey();
+        } else {
+          setKey((String)value);
+        }
+        break;
+
+      case OPERATION_HANDLE_KEY:
+        if (value == null) {
+          unsetOperationHandleKey();
+        } else {
+          setOperationHandleKey((String)value);
+        }
+        break;
+
+      case TIMEOUT:
+        if (value == null) {
+          unsetTimeout();
+        } else {
+          setTimeout((Long)value);
+        }
+        break;
+
+      }
+    }
+
+    public void setFieldValue(int fieldID, Object value) {
+      setFieldValue(_Fields.findByThriftIdOrThrow(fieldID), value);
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case KEY:
+        return getKey();
+
+      case OPERATION_HANDLE_KEY:
+        return getOperationHandleKey();
+
+      case TIMEOUT:
+        return new Long(getTimeout());
+
+      }
+      throw new IllegalStateException();
+    }
+
+    public Object getFieldValue(int fieldId) {
+      return getFieldValue(_Fields.findByThriftIdOrThrow(fieldId));
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been asigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      switch (field) {
+      case KEY:
+        return isSetKey();
+      case OPERATION_HANDLE_KEY:
+        return isSetOperationHandleKey();
+      case TIMEOUT:
+        return isSetTimeout();
+      }
+      throw new IllegalStateException();
+    }
+
+    public boolean isSet(int fieldID) {
+      return isSet(_Fields.findByThriftIdOrThrow(fieldID));
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof eraseFlash_args)
+        return this.equals((eraseFlash_args)that);
+      return false;
+    }
+
+    public boolean equals(eraseFlash_args that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_key = true && this.isSetKey();
+      boolean that_present_key = true && that.isSetKey();
+      if (this_present_key || that_present_key) {
+        if (!(this_present_key && that_present_key))
+          return false;
+        if (!this.key.equals(that.key))
+          return false;
+      }
+
+      boolean this_present_OperationHandleKey = true && this.isSetOperationHandleKey();
+      boolean that_present_OperationHandleKey = true && that.isSetOperationHandleKey();
+      if (this_present_OperationHandleKey || that_present_OperationHandleKey) {
+        if (!(this_present_OperationHandleKey && that_present_OperationHandleKey))
+          return false;
+        if (!this.OperationHandleKey.equals(that.OperationHandleKey))
+          return false;
+      }
+
+      boolean this_present_timeout = true;
+      boolean that_present_timeout = true;
+      if (this_present_timeout || that_present_timeout) {
+        if (!(this_present_timeout && that_present_timeout))
+          return false;
+        if (this.timeout != that.timeout)
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    public int compareTo(eraseFlash_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      eraseFlash_args typedOther = (eraseFlash_args)other;
+
+      lastComparison = Boolean.valueOf(isSetKey()).compareTo(typedOther.isSetKey());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetKey()) {        lastComparison = TBaseHelper.compareTo(this.key, typedOther.key);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetOperationHandleKey()).compareTo(typedOther.isSetOperationHandleKey());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetOperationHandleKey()) {        lastComparison = TBaseHelper.compareTo(this.OperationHandleKey, typedOther.OperationHandleKey);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetTimeout()).compareTo(typedOther.isSetTimeout());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetTimeout()) {        lastComparison = TBaseHelper.compareTo(this.timeout, typedOther.timeout);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public void read(TProtocol iprot) throws TException {
+      TField field;
+      iprot.readStructBegin();
+      while (true)
+      {
+        field = iprot.readFieldBegin();
+        if (field.type == TType.STOP) { 
+          break;
+        }
+        switch (field.id) {
+          case 1: // KEY
+            if (field.type == TType.STRING) {
+              this.key = iprot.readString();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 2: // OPERATION_HANDLE_KEY
+            if (field.type == TType.STRING) {
+              this.OperationHandleKey = iprot.readString();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 3: // TIMEOUT
+            if (field.type == TType.I64) {
+              this.timeout = iprot.readI64();
+              setTimeoutIsSet(true);
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          default:
+            TProtocolUtil.skip(iprot, field.type);
+        }
+        iprot.readFieldEnd();
+      }
+      iprot.readStructEnd();
+
+      // check for required fields of primitive type, which can't be checked in the validate method
+      validate();
+    }
+
+    public void write(TProtocol oprot) throws TException {
+      validate();
+
+      oprot.writeStructBegin(STRUCT_DESC);
+      if (this.key != null) {
+        oprot.writeFieldBegin(KEY_FIELD_DESC);
+        oprot.writeString(this.key);
+        oprot.writeFieldEnd();
+      }
+      if (this.OperationHandleKey != null) {
+        oprot.writeFieldBegin(OPERATION_HANDLE_KEY_FIELD_DESC);
+        oprot.writeString(this.OperationHandleKey);
+        oprot.writeFieldEnd();
+      }
+      oprot.writeFieldBegin(TIMEOUT_FIELD_DESC);
+      oprot.writeI64(this.timeout);
+      oprot.writeFieldEnd();
+      oprot.writeFieldStop();
+      oprot.writeStructEnd();
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("eraseFlash_args(");
+      boolean first = true;
+
+      sb.append("key:");
+      if (this.key == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.key);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("OperationHandleKey:");
+      if (this.OperationHandleKey == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.OperationHandleKey);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("timeout:");
+      sb.append(this.timeout);
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws TException {
+      // check for required fields
+    }
+
+  }
+
+  public static class eraseFlash_result implements TBase<eraseFlash_result, eraseFlash_result._Fields>, java.io.Serializable, Cloneable   {
+    private static final TStruct STRUCT_DESC = new TStruct("eraseFlash_result");
+
+
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements TFieldIdEnum {
+;
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+    public static final Map<_Fields, FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, FieldMetaData> tmpMap = new EnumMap<_Fields, FieldMetaData>(_Fields.class);
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      FieldMetaData.addStructMetaDataMap(eraseFlash_result.class, metaDataMap);
+    }
+
+    public eraseFlash_result() {
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public eraseFlash_result(eraseFlash_result other) {
+    }
+
+    public eraseFlash_result deepCopy() {
+      return new eraseFlash_result(this);
+    }
+
+    @Deprecated
+    public eraseFlash_result clone() {
+      return new eraseFlash_result(this);
+    }
+
+    @Override
+    public void clear() {
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      }
+    }
+
+    public void setFieldValue(int fieldID, Object value) {
+      setFieldValue(_Fields.findByThriftIdOrThrow(fieldID), value);
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    public Object getFieldValue(int fieldId) {
+      return getFieldValue(_Fields.findByThriftIdOrThrow(fieldId));
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been asigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    public boolean isSet(int fieldID) {
+      return isSet(_Fields.findByThriftIdOrThrow(fieldID));
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof eraseFlash_result)
+        return this.equals((eraseFlash_result)that);
+      return false;
+    }
+
+    public boolean equals(eraseFlash_result that) {
+      if (that == null)
+        return false;
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    public int compareTo(eraseFlash_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      eraseFlash_result typedOther = (eraseFlash_result)other;
+
+      return 0;
+    }
+
+    public void read(TProtocol iprot) throws TException {
+      TField field;
+      iprot.readStructBegin();
+      while (true)
+      {
+        field = iprot.readFieldBegin();
+        if (field.type == TType.STOP) { 
+          break;
+        }
+        switch (field.id) {
+          default:
+            TProtocolUtil.skip(iprot, field.type);
+        }
+        iprot.readFieldEnd();
+      }
+      iprot.readStructEnd();
+
+      // check for required fields of primitive type, which can't be checked in the validate method
+      validate();
+    }
+
+    public void write(TProtocol oprot) throws TException {
+      oprot.writeStructBegin(STRUCT_DESC);
+
+      oprot.writeFieldStop();
+      oprot.writeStructEnd();
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("eraseFlash_result(");
+      boolean first = true;
+
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws TException {
+      // check for required fields
+    }
+
+  }
+
+  public static class readFlash_args implements TBase<readFlash_args, readFlash_args._Fields>, java.io.Serializable, Cloneable   {
+    private static final TStruct STRUCT_DESC = new TStruct("readFlash_args");
+
+    private static final TField KEY_FIELD_DESC = new TField("key", TType.STRING, (short)1);
+    private static final TField OPERATION_HANDLE_KEY_FIELD_DESC = new TField("OperationHandleKey", TType.STRING, (short)2);
+    private static final TField ADDRESS_FIELD_DESC = new TField("address", TType.I32, (short)3);
+    private static final TField LENGTH_FIELD_DESC = new TField("length", TType.I32, (short)4);
+    private static final TField TIMEOUT_FIELD_DESC = new TField("timeout", TType.I64, (short)5);
+
+    public String key;
+    public String OperationHandleKey;
+    public int address;
+    public int length;
+    public long timeout;
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements TFieldIdEnum {
+      KEY((short)1, "key"),
+      OPERATION_HANDLE_KEY((short)2, "OperationHandleKey"),
+      ADDRESS((short)3, "address"),
+      LENGTH((short)4, "length"),
+      TIMEOUT((short)5, "timeout");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // KEY
+            return KEY;
+          case 2: // OPERATION_HANDLE_KEY
+            return OPERATION_HANDLE_KEY;
+          case 3: // ADDRESS
+            return ADDRESS;
+          case 4: // LENGTH
+            return LENGTH;
+          case 5: // TIMEOUT
+            return TIMEOUT;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    private static final int __ADDRESS_ISSET_ID = 0;
+    private static final int __LENGTH_ISSET_ID = 1;
+    private static final int __TIMEOUT_ISSET_ID = 2;
+    private BitSet __isset_bit_vector = new BitSet(3);
+
+    public static final Map<_Fields, FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, FieldMetaData> tmpMap = new EnumMap<_Fields, FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.KEY, new FieldMetaData("key", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
+      tmpMap.put(_Fields.OPERATION_HANDLE_KEY, new FieldMetaData("OperationHandleKey", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
+      tmpMap.put(_Fields.ADDRESS, new FieldMetaData("address", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.I32)));
+      tmpMap.put(_Fields.LENGTH, new FieldMetaData("length", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.I32)));
+      tmpMap.put(_Fields.TIMEOUT, new FieldMetaData("timeout", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.I64)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      FieldMetaData.addStructMetaDataMap(readFlash_args.class, metaDataMap);
+    }
+
+    public readFlash_args() {
+    }
+
+    public readFlash_args(
+      String key,
+      String OperationHandleKey,
+      int address,
+      int length,
+      long timeout)
+    {
+      this();
+      this.key = key;
+      this.OperationHandleKey = OperationHandleKey;
+      this.address = address;
+      setAddressIsSet(true);
+      this.length = length;
+      setLengthIsSet(true);
+      this.timeout = timeout;
+      setTimeoutIsSet(true);
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public readFlash_args(readFlash_args other) {
+      __isset_bit_vector.clear();
+      __isset_bit_vector.or(other.__isset_bit_vector);
+      if (other.isSetKey()) {
+        this.key = other.key;
+      }
+      if (other.isSetOperationHandleKey()) {
+        this.OperationHandleKey = other.OperationHandleKey;
+      }
+      this.address = other.address;
+      this.length = other.length;
+      this.timeout = other.timeout;
+    }
+
+    public readFlash_args deepCopy() {
+      return new readFlash_args(this);
+    }
+
+    @Deprecated
+    public readFlash_args clone() {
+      return new readFlash_args(this);
+    }
+
+    @Override
+    public void clear() {
+      this.key = null;
+      this.OperationHandleKey = null;
+      setAddressIsSet(false);
+      this.address = 0;
+      setLengthIsSet(false);
+      this.length = 0;
+      setTimeoutIsSet(false);
+      this.timeout = 0;
+    }
+
+    public String getKey() {
+      return this.key;
+    }
+
+    public readFlash_args setKey(String key) {
+      this.key = key;
+      return this;
+    }
+
+    public void unsetKey() {
+      this.key = null;
+    }
+
+    /** Returns true if field key is set (has been asigned a value) and false otherwise */
+    public boolean isSetKey() {
+      return this.key != null;
+    }
+
+    public void setKeyIsSet(boolean value) {
+      if (!value) {
+        this.key = null;
+      }
+    }
+
+    public String getOperationHandleKey() {
+      return this.OperationHandleKey;
+    }
+
+    public readFlash_args setOperationHandleKey(String OperationHandleKey) {
+      this.OperationHandleKey = OperationHandleKey;
+      return this;
+    }
+
+    public void unsetOperationHandleKey() {
+      this.OperationHandleKey = null;
+    }
+
+    /** Returns true if field OperationHandleKey is set (has been asigned a value) and false otherwise */
+    public boolean isSetOperationHandleKey() {
+      return this.OperationHandleKey != null;
+    }
+
+    public void setOperationHandleKeyIsSet(boolean value) {
+      if (!value) {
+        this.OperationHandleKey = null;
+      }
+    }
+
+    public int getAddress() {
+      return this.address;
+    }
+
+    public readFlash_args setAddress(int address) {
+      this.address = address;
+      setAddressIsSet(true);
+      return this;
+    }
+
+    public void unsetAddress() {
+      __isset_bit_vector.clear(__ADDRESS_ISSET_ID);
+    }
+
+    /** Returns true if field address is set (has been asigned a value) and false otherwise */
+    public boolean isSetAddress() {
+      return __isset_bit_vector.get(__ADDRESS_ISSET_ID);
+    }
+
+    public void setAddressIsSet(boolean value) {
+      __isset_bit_vector.set(__ADDRESS_ISSET_ID, value);
+    }
+
+    public int getLength() {
+      return this.length;
+    }
+
+    public readFlash_args setLength(int length) {
+      this.length = length;
+      setLengthIsSet(true);
+      return this;
+    }
+
+    public void unsetLength() {
+      __isset_bit_vector.clear(__LENGTH_ISSET_ID);
+    }
+
+    /** Returns true if field length is set (has been asigned a value) and false otherwise */
+    public boolean isSetLength() {
+      return __isset_bit_vector.get(__LENGTH_ISSET_ID);
+    }
+
+    public void setLengthIsSet(boolean value) {
+      __isset_bit_vector.set(__LENGTH_ISSET_ID, value);
+    }
+
+    public long getTimeout() {
+      return this.timeout;
+    }
+
+    public readFlash_args setTimeout(long timeout) {
+      this.timeout = timeout;
+      setTimeoutIsSet(true);
+      return this;
+    }
+
+    public void unsetTimeout() {
+      __isset_bit_vector.clear(__TIMEOUT_ISSET_ID);
+    }
+
+    /** Returns true if field timeout is set (has been asigned a value) and false otherwise */
+    public boolean isSetTimeout() {
+      return __isset_bit_vector.get(__TIMEOUT_ISSET_ID);
+    }
+
+    public void setTimeoutIsSet(boolean value) {
+      __isset_bit_vector.set(__TIMEOUT_ISSET_ID, value);
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case KEY:
+        if (value == null) {
+          unsetKey();
+        } else {
+          setKey((String)value);
+        }
+        break;
+
+      case OPERATION_HANDLE_KEY:
+        if (value == null) {
+          unsetOperationHandleKey();
+        } else {
+          setOperationHandleKey((String)value);
+        }
+        break;
+
+      case ADDRESS:
+        if (value == null) {
+          unsetAddress();
+        } else {
+          setAddress((Integer)value);
+        }
+        break;
+
+      case LENGTH:
+        if (value == null) {
+          unsetLength();
+        } else {
+          setLength((Integer)value);
+        }
+        break;
+
+      case TIMEOUT:
+        if (value == null) {
+          unsetTimeout();
+        } else {
+          setTimeout((Long)value);
+        }
+        break;
+
+      }
+    }
+
+    public void setFieldValue(int fieldID, Object value) {
+      setFieldValue(_Fields.findByThriftIdOrThrow(fieldID), value);
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case KEY:
+        return getKey();
+
+      case OPERATION_HANDLE_KEY:
+        return getOperationHandleKey();
+
+      case ADDRESS:
+        return new Integer(getAddress());
+
+      case LENGTH:
+        return new Integer(getLength());
+
+      case TIMEOUT:
+        return new Long(getTimeout());
+
+      }
+      throw new IllegalStateException();
+    }
+
+    public Object getFieldValue(int fieldId) {
+      return getFieldValue(_Fields.findByThriftIdOrThrow(fieldId));
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been asigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      switch (field) {
+      case KEY:
+        return isSetKey();
+      case OPERATION_HANDLE_KEY:
+        return isSetOperationHandleKey();
+      case ADDRESS:
+        return isSetAddress();
+      case LENGTH:
+        return isSetLength();
+      case TIMEOUT:
+        return isSetTimeout();
+      }
+      throw new IllegalStateException();
+    }
+
+    public boolean isSet(int fieldID) {
+      return isSet(_Fields.findByThriftIdOrThrow(fieldID));
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof readFlash_args)
+        return this.equals((readFlash_args)that);
+      return false;
+    }
+
+    public boolean equals(readFlash_args that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_key = true && this.isSetKey();
+      boolean that_present_key = true && that.isSetKey();
+      if (this_present_key || that_present_key) {
+        if (!(this_present_key && that_present_key))
+          return false;
+        if (!this.key.equals(that.key))
+          return false;
+      }
+
+      boolean this_present_OperationHandleKey = true && this.isSetOperationHandleKey();
+      boolean that_present_OperationHandleKey = true && that.isSetOperationHandleKey();
+      if (this_present_OperationHandleKey || that_present_OperationHandleKey) {
+        if (!(this_present_OperationHandleKey && that_present_OperationHandleKey))
+          return false;
+        if (!this.OperationHandleKey.equals(that.OperationHandleKey))
+          return false;
+      }
+
+      boolean this_present_address = true;
+      boolean that_present_address = true;
+      if (this_present_address || that_present_address) {
+        if (!(this_present_address && that_present_address))
+          return false;
+        if (this.address != that.address)
+          return false;
+      }
+
+      boolean this_present_length = true;
+      boolean that_present_length = true;
+      if (this_present_length || that_present_length) {
+        if (!(this_present_length && that_present_length))
+          return false;
+        if (this.length != that.length)
+          return false;
+      }
+
+      boolean this_present_timeout = true;
+      boolean that_present_timeout = true;
+      if (this_present_timeout || that_present_timeout) {
+        if (!(this_present_timeout && that_present_timeout))
+          return false;
+        if (this.timeout != that.timeout)
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    public int compareTo(readFlash_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      readFlash_args typedOther = (readFlash_args)other;
+
+      lastComparison = Boolean.valueOf(isSetKey()).compareTo(typedOther.isSetKey());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetKey()) {        lastComparison = TBaseHelper.compareTo(this.key, typedOther.key);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetOperationHandleKey()).compareTo(typedOther.isSetOperationHandleKey());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetOperationHandleKey()) {        lastComparison = TBaseHelper.compareTo(this.OperationHandleKey, typedOther.OperationHandleKey);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetAddress()).compareTo(typedOther.isSetAddress());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetAddress()) {        lastComparison = TBaseHelper.compareTo(this.address, typedOther.address);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetLength()).compareTo(typedOther.isSetLength());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetLength()) {        lastComparison = TBaseHelper.compareTo(this.length, typedOther.length);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetTimeout()).compareTo(typedOther.isSetTimeout());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetTimeout()) {        lastComparison = TBaseHelper.compareTo(this.timeout, typedOther.timeout);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public void read(TProtocol iprot) throws TException {
+      TField field;
+      iprot.readStructBegin();
+      while (true)
+      {
+        field = iprot.readFieldBegin();
+        if (field.type == TType.STOP) { 
+          break;
+        }
+        switch (field.id) {
+          case 1: // KEY
+            if (field.type == TType.STRING) {
+              this.key = iprot.readString();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 2: // OPERATION_HANDLE_KEY
+            if (field.type == TType.STRING) {
+              this.OperationHandleKey = iprot.readString();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 3: // ADDRESS
+            if (field.type == TType.I32) {
+              this.address = iprot.readI32();
+              setAddressIsSet(true);
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 4: // LENGTH
+            if (field.type == TType.I32) {
+              this.length = iprot.readI32();
+              setLengthIsSet(true);
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 5: // TIMEOUT
+            if (field.type == TType.I64) {
+              this.timeout = iprot.readI64();
+              setTimeoutIsSet(true);
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          default:
+            TProtocolUtil.skip(iprot, field.type);
+        }
+        iprot.readFieldEnd();
+      }
+      iprot.readStructEnd();
+
+      // check for required fields of primitive type, which can't be checked in the validate method
+      validate();
+    }
+
+    public void write(TProtocol oprot) throws TException {
+      validate();
+
+      oprot.writeStructBegin(STRUCT_DESC);
+      if (this.key != null) {
+        oprot.writeFieldBegin(KEY_FIELD_DESC);
+        oprot.writeString(this.key);
+        oprot.writeFieldEnd();
+      }
+      if (this.OperationHandleKey != null) {
+        oprot.writeFieldBegin(OPERATION_HANDLE_KEY_FIELD_DESC);
+        oprot.writeString(this.OperationHandleKey);
+        oprot.writeFieldEnd();
+      }
+      oprot.writeFieldBegin(ADDRESS_FIELD_DESC);
+      oprot.writeI32(this.address);
+      oprot.writeFieldEnd();
+      oprot.writeFieldBegin(LENGTH_FIELD_DESC);
+      oprot.writeI32(this.length);
+      oprot.writeFieldEnd();
+      oprot.writeFieldBegin(TIMEOUT_FIELD_DESC);
+      oprot.writeI64(this.timeout);
+      oprot.writeFieldEnd();
+      oprot.writeFieldStop();
+      oprot.writeStructEnd();
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("readFlash_args(");
+      boolean first = true;
+
+      sb.append("key:");
+      if (this.key == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.key);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("OperationHandleKey:");
+      if (this.OperationHandleKey == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.OperationHandleKey);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("address:");
+      sb.append(this.address);
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("length:");
+      sb.append(this.length);
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("timeout:");
+      sb.append(this.timeout);
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws TException {
+      // check for required fields
+    }
+
+  }
+
+  public static class readFlash_result implements TBase<readFlash_result, readFlash_result._Fields>, java.io.Serializable, Cloneable   {
+    private static final TStruct STRUCT_DESC = new TStruct("readFlash_result");
+
+    private static final TField SUCCESS_FIELD_DESC = new TField("success", TType.LIST, (short)0);
+
+    public List<ByteBuffer> success;
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements TFieldIdEnum {
+      SUCCESS((short)0, "success");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 0: // SUCCESS
+            return SUCCESS;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+
+    public static final Map<_Fields, FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, FieldMetaData> tmpMap = new EnumMap<_Fields, FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.SUCCESS, new FieldMetaData("success", TFieldRequirementType.DEFAULT, 
+          new ListMetaData(TType.LIST, 
+              new FieldValueMetaData(TType.STRING))));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      FieldMetaData.addStructMetaDataMap(readFlash_result.class, metaDataMap);
+    }
+
+    public readFlash_result() {
+    }
+
+    public readFlash_result(
+      List<ByteBuffer> success)
+    {
+      this();
+      this.success = success;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public readFlash_result(readFlash_result other) {
+      if (other.isSetSuccess()) {
+        List<ByteBuffer> __this__success = new ArrayList<ByteBuffer>();
+        for (ByteBuffer other_element : other.success) {
+          ByteBuffer temp_binary_element = ByteBuffer.wrap(new byte[other_element.limit() - other_element.arrayOffset()]);
+          System.arraycopy(other_element.array(), other_element.arrayOffset(), temp_binary_element.array(), 0, other_element.limit() - other_element.arrayOffset());
+          __this__success.add(temp_binary_element);
+        }
+        this.success = __this__success;
+      }
+    }
+
+    public readFlash_result deepCopy() {
+      return new readFlash_result(this);
+    }
+
+    @Deprecated
+    public readFlash_result clone() {
+      return new readFlash_result(this);
+    }
+
+    @Override
+    public void clear() {
+      this.success = null;
+    }
+
+    public int getSuccessSize() {
+      return (this.success == null) ? 0 : this.success.size();
+    }
+
+    public java.util.Iterator<ByteBuffer> getSuccessIterator() {
+      return (this.success == null) ? null : this.success.iterator();
+    }
+
+    public void addToSuccess(ByteBuffer elem) {
+      if (this.success == null) {
+        this.success = new ArrayList<ByteBuffer>();
+      }
+      this.success.add(elem);
+    }
+
+    public List<ByteBuffer> getSuccess() {
+      return this.success;
+    }
+
+    public readFlash_result setSuccess(List<ByteBuffer> success) {
+      this.success = success;
+      return this;
+    }
+
+    public void unsetSuccess() {
+      this.success = null;
+    }
+
+    /** Returns true if field success is set (has been asigned a value) and false otherwise */
+    public boolean isSetSuccess() {
+      return this.success != null;
+    }
+
+    public void setSuccessIsSet(boolean value) {
+      if (!value) {
+        this.success = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case SUCCESS:
+        if (value == null) {
+          unsetSuccess();
+        } else {
+          setSuccess((List<ByteBuffer>)value);
+        }
+        break;
+
+      }
+    }
+
+    public void setFieldValue(int fieldID, Object value) {
+      setFieldValue(_Fields.findByThriftIdOrThrow(fieldID), value);
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case SUCCESS:
+        return getSuccess();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    public Object getFieldValue(int fieldId) {
+      return getFieldValue(_Fields.findByThriftIdOrThrow(fieldId));
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been asigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      switch (field) {
+      case SUCCESS:
+        return isSetSuccess();
+      }
+      throw new IllegalStateException();
+    }
+
+    public boolean isSet(int fieldID) {
+      return isSet(_Fields.findByThriftIdOrThrow(fieldID));
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof readFlash_result)
+        return this.equals((readFlash_result)that);
+      return false;
+    }
+
+    public boolean equals(readFlash_result that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_success = true && this.isSetSuccess();
+      boolean that_present_success = true && that.isSetSuccess();
+      if (this_present_success || that_present_success) {
+        if (!(this_present_success && that_present_success))
+          return false;
+        if (!this.success.equals(that.success))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    public int compareTo(readFlash_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      readFlash_result typedOther = (readFlash_result)other;
+
+      lastComparison = Boolean.valueOf(isSetSuccess()).compareTo(typedOther.isSetSuccess());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetSuccess()) {        lastComparison = TBaseHelper.compareTo(this.success, typedOther.success);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public void read(TProtocol iprot) throws TException {
+      TField field;
+      iprot.readStructBegin();
+      while (true)
+      {
+        field = iprot.readFieldBegin();
+        if (field.type == TType.STOP) { 
+          break;
+        }
+        switch (field.id) {
+          case 0: // SUCCESS
+            if (field.type == TType.LIST) {
+              {
+                TList _list4 = iprot.readListBegin();
+                this.success = new ArrayList<ByteBuffer>(_list4.size);
+                for (int _i5 = 0; _i5 < _list4.size; ++_i5)
+                {
+                  ByteBuffer _elem6;
+                  _elem6 = iprot.readBinary();
+                  this.success.add(_elem6);
+                }
+                iprot.readListEnd();
+              }
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          default:
+            TProtocolUtil.skip(iprot, field.type);
+        }
+        iprot.readFieldEnd();
+      }
+      iprot.readStructEnd();
+
+      // check for required fields of primitive type, which can't be checked in the validate method
+      validate();
+    }
+
+    public void write(TProtocol oprot) throws TException {
+      oprot.writeStructBegin(STRUCT_DESC);
+
+      if (this.isSetSuccess()) {
+        oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
+        {
+          oprot.writeListBegin(new TList(TType.STRING, this.success.size()));
+          for (ByteBuffer _iter7 : this.success)
+          {
+            oprot.writeBinary(_iter7);
+          }
+          oprot.writeListEnd();
+        }
+        oprot.writeFieldEnd();
+      }
+      oprot.writeFieldStop();
+      oprot.writeStructEnd();
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("readFlash_result(");
+      boolean first = true;
+
+      sb.append("success:");
+      if (this.success == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.success);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws TException {
+      // check for required fields
+    }
+
+  }
+
+  public static class readMac_args implements TBase<readMac_args, readMac_args._Fields>, java.io.Serializable, Cloneable   {
+    private static final TStruct STRUCT_DESC = new TStruct("readMac_args");
+
+    private static final TField KEY_FIELD_DESC = new TField("key", TType.STRING, (short)1);
+    private static final TField OPERATION_HANDLE_KEY_FIELD_DESC = new TField("OperationHandleKey", TType.STRING, (short)2);
+    private static final TField TIMEOUT_FIELD_DESC = new TField("timeout", TType.I64, (short)3);
+
+    public String key;
+    public String OperationHandleKey;
+    public long timeout;
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements TFieldIdEnum {
+      KEY((short)1, "key"),
+      OPERATION_HANDLE_KEY((short)2, "OperationHandleKey"),
+      TIMEOUT((short)3, "timeout");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // KEY
+            return KEY;
+          case 2: // OPERATION_HANDLE_KEY
+            return OPERATION_HANDLE_KEY;
+          case 3: // TIMEOUT
+            return TIMEOUT;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    private static final int __TIMEOUT_ISSET_ID = 0;
+    private BitSet __isset_bit_vector = new BitSet(1);
+
+    public static final Map<_Fields, FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, FieldMetaData> tmpMap = new EnumMap<_Fields, FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.KEY, new FieldMetaData("key", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
+      tmpMap.put(_Fields.OPERATION_HANDLE_KEY, new FieldMetaData("OperationHandleKey", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
+      tmpMap.put(_Fields.TIMEOUT, new FieldMetaData("timeout", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.I64)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      FieldMetaData.addStructMetaDataMap(readMac_args.class, metaDataMap);
+    }
+
+    public readMac_args() {
+    }
+
+    public readMac_args(
+      String key,
+      String OperationHandleKey,
+      long timeout)
+    {
+      this();
+      this.key = key;
+      this.OperationHandleKey = OperationHandleKey;
+      this.timeout = timeout;
+      setTimeoutIsSet(true);
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public readMac_args(readMac_args other) {
+      __isset_bit_vector.clear();
+      __isset_bit_vector.or(other.__isset_bit_vector);
+      if (other.isSetKey()) {
+        this.key = other.key;
+      }
+      if (other.isSetOperationHandleKey()) {
+        this.OperationHandleKey = other.OperationHandleKey;
+      }
+      this.timeout = other.timeout;
+    }
+
+    public readMac_args deepCopy() {
+      return new readMac_args(this);
+    }
+
+    @Deprecated
+    public readMac_args clone() {
+      return new readMac_args(this);
+    }
+
+    @Override
+    public void clear() {
+      this.key = null;
+      this.OperationHandleKey = null;
+      setTimeoutIsSet(false);
+      this.timeout = 0;
+    }
+
+    public String getKey() {
+      return this.key;
+    }
+
+    public readMac_args setKey(String key) {
+      this.key = key;
+      return this;
+    }
+
+    public void unsetKey() {
+      this.key = null;
+    }
+
+    /** Returns true if field key is set (has been asigned a value) and false otherwise */
+    public boolean isSetKey() {
+      return this.key != null;
+    }
+
+    public void setKeyIsSet(boolean value) {
+      if (!value) {
+        this.key = null;
+      }
+    }
+
+    public String getOperationHandleKey() {
+      return this.OperationHandleKey;
+    }
+
+    public readMac_args setOperationHandleKey(String OperationHandleKey) {
+      this.OperationHandleKey = OperationHandleKey;
+      return this;
+    }
+
+    public void unsetOperationHandleKey() {
+      this.OperationHandleKey = null;
+    }
+
+    /** Returns true if field OperationHandleKey is set (has been asigned a value) and false otherwise */
+    public boolean isSetOperationHandleKey() {
+      return this.OperationHandleKey != null;
+    }
+
+    public void setOperationHandleKeyIsSet(boolean value) {
+      if (!value) {
+        this.OperationHandleKey = null;
+      }
+    }
+
+    public long getTimeout() {
+      return this.timeout;
+    }
+
+    public readMac_args setTimeout(long timeout) {
+      this.timeout = timeout;
+      setTimeoutIsSet(true);
+      return this;
+    }
+
+    public void unsetTimeout() {
+      __isset_bit_vector.clear(__TIMEOUT_ISSET_ID);
+    }
+
+    /** Returns true if field timeout is set (has been asigned a value) and false otherwise */
+    public boolean isSetTimeout() {
+      return __isset_bit_vector.get(__TIMEOUT_ISSET_ID);
+    }
+
+    public void setTimeoutIsSet(boolean value) {
+      __isset_bit_vector.set(__TIMEOUT_ISSET_ID, value);
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case KEY:
+        if (value == null) {
+          unsetKey();
+        } else {
+          setKey((String)value);
+        }
+        break;
+
+      case OPERATION_HANDLE_KEY:
+        if (value == null) {
+          unsetOperationHandleKey();
+        } else {
+          setOperationHandleKey((String)value);
+        }
+        break;
+
+      case TIMEOUT:
+        if (value == null) {
+          unsetTimeout();
+        } else {
+          setTimeout((Long)value);
+        }
+        break;
+
+      }
+    }
+
+    public void setFieldValue(int fieldID, Object value) {
+      setFieldValue(_Fields.findByThriftIdOrThrow(fieldID), value);
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case KEY:
+        return getKey();
+
+      case OPERATION_HANDLE_KEY:
+        return getOperationHandleKey();
+
+      case TIMEOUT:
+        return new Long(getTimeout());
+
+      }
+      throw new IllegalStateException();
+    }
+
+    public Object getFieldValue(int fieldId) {
+      return getFieldValue(_Fields.findByThriftIdOrThrow(fieldId));
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been asigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      switch (field) {
+      case KEY:
+        return isSetKey();
+      case OPERATION_HANDLE_KEY:
+        return isSetOperationHandleKey();
+      case TIMEOUT:
+        return isSetTimeout();
+      }
+      throw new IllegalStateException();
+    }
+
+    public boolean isSet(int fieldID) {
+      return isSet(_Fields.findByThriftIdOrThrow(fieldID));
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof readMac_args)
+        return this.equals((readMac_args)that);
+      return false;
+    }
+
+    public boolean equals(readMac_args that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_key = true && this.isSetKey();
+      boolean that_present_key = true && that.isSetKey();
+      if (this_present_key || that_present_key) {
+        if (!(this_present_key && that_present_key))
+          return false;
+        if (!this.key.equals(that.key))
+          return false;
+      }
+
+      boolean this_present_OperationHandleKey = true && this.isSetOperationHandleKey();
+      boolean that_present_OperationHandleKey = true && that.isSetOperationHandleKey();
+      if (this_present_OperationHandleKey || that_present_OperationHandleKey) {
+        if (!(this_present_OperationHandleKey && that_present_OperationHandleKey))
+          return false;
+        if (!this.OperationHandleKey.equals(that.OperationHandleKey))
+          return false;
+      }
+
+      boolean this_present_timeout = true;
+      boolean that_present_timeout = true;
+      if (this_present_timeout || that_present_timeout) {
+        if (!(this_present_timeout && that_present_timeout))
+          return false;
+        if (this.timeout != that.timeout)
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    public int compareTo(readMac_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      readMac_args typedOther = (readMac_args)other;
+
+      lastComparison = Boolean.valueOf(isSetKey()).compareTo(typedOther.isSetKey());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetKey()) {        lastComparison = TBaseHelper.compareTo(this.key, typedOther.key);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetOperationHandleKey()).compareTo(typedOther.isSetOperationHandleKey());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetOperationHandleKey()) {        lastComparison = TBaseHelper.compareTo(this.OperationHandleKey, typedOther.OperationHandleKey);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetTimeout()).compareTo(typedOther.isSetTimeout());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetTimeout()) {        lastComparison = TBaseHelper.compareTo(this.timeout, typedOther.timeout);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public void read(TProtocol iprot) throws TException {
+      TField field;
+      iprot.readStructBegin();
+      while (true)
+      {
+        field = iprot.readFieldBegin();
+        if (field.type == TType.STOP) { 
+          break;
+        }
+        switch (field.id) {
+          case 1: // KEY
+            if (field.type == TType.STRING) {
+              this.key = iprot.readString();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 2: // OPERATION_HANDLE_KEY
+            if (field.type == TType.STRING) {
+              this.OperationHandleKey = iprot.readString();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 3: // TIMEOUT
+            if (field.type == TType.I64) {
+              this.timeout = iprot.readI64();
+              setTimeoutIsSet(true);
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          default:
+            TProtocolUtil.skip(iprot, field.type);
+        }
+        iprot.readFieldEnd();
+      }
+      iprot.readStructEnd();
+
+      // check for required fields of primitive type, which can't be checked in the validate method
+      validate();
+    }
+
+    public void write(TProtocol oprot) throws TException {
+      validate();
+
+      oprot.writeStructBegin(STRUCT_DESC);
+      if (this.key != null) {
+        oprot.writeFieldBegin(KEY_FIELD_DESC);
+        oprot.writeString(this.key);
+        oprot.writeFieldEnd();
+      }
+      if (this.OperationHandleKey != null) {
+        oprot.writeFieldBegin(OPERATION_HANDLE_KEY_FIELD_DESC);
+        oprot.writeString(this.OperationHandleKey);
+        oprot.writeFieldEnd();
+      }
+      oprot.writeFieldBegin(TIMEOUT_FIELD_DESC);
+      oprot.writeI64(this.timeout);
+      oprot.writeFieldEnd();
+      oprot.writeFieldStop();
+      oprot.writeStructEnd();
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("readMac_args(");
+      boolean first = true;
+
+      sb.append("key:");
+      if (this.key == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.key);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("OperationHandleKey:");
+      if (this.OperationHandleKey == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.OperationHandleKey);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("timeout:");
+      sb.append(this.timeout);
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws TException {
+      // check for required fields
+    }
+
+  }
+
+  public static class readMac_result implements TBase<readMac_result, readMac_result._Fields>, java.io.Serializable, Cloneable   {
+    private static final TStruct STRUCT_DESC = new TStruct("readMac_result");
+
+    private static final TField SUCCESS_FIELD_DESC = new TField("success", TType.STRING, (short)0);
+
+    public ByteBuffer success;
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements TFieldIdEnum {
+      SUCCESS((short)0, "success");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 0: // SUCCESS
+            return SUCCESS;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+
+    public static final Map<_Fields, FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, FieldMetaData> tmpMap = new EnumMap<_Fields, FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.SUCCESS, new FieldMetaData("success", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      FieldMetaData.addStructMetaDataMap(readMac_result.class, metaDataMap);
+    }
+
+    public readMac_result() {
+    }
+
+    public readMac_result(
+      ByteBuffer success)
+    {
+      this();
+      this.success = success;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public readMac_result(readMac_result other) {
+      if (other.isSetSuccess()) {
+        this.success = ByteBuffer.wrap(new byte[other.success.limit() - other.success.arrayOffset()]);
+        System.arraycopy(other.success.array(), other.success.arrayOffset(), success.array(), 0, other.success.limit() - other.success.arrayOffset());
+      }
+    }
+
+    public readMac_result deepCopy() {
+      return new readMac_result(this);
+    }
+
+    @Deprecated
+    public readMac_result clone() {
+      return new readMac_result(this);
+    }
+
+    @Override
+    public void clear() {
+      this.success = null;
+    }
+
+    public ByteBuffer getSuccess() {
+      return this.success;
+    }
+
+    public readMac_result setSuccess(ByteBuffer success) {
+      this.success = success;
+      return this;
+    }
+
+    public void unsetSuccess() {
+      this.success = null;
+    }
+
+    /** Returns true if field success is set (has been asigned a value) and false otherwise */
+    public boolean isSetSuccess() {
+      return this.success != null;
+    }
+
+    public void setSuccessIsSet(boolean value) {
+      if (!value) {
+        this.success = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case SUCCESS:
+        if (value == null) {
+          unsetSuccess();
+        } else {
+          setSuccess((ByteBuffer)value);
+        }
+        break;
+
+      }
+    }
+
+    public void setFieldValue(int fieldID, Object value) {
+      setFieldValue(_Fields.findByThriftIdOrThrow(fieldID), value);
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case SUCCESS:
+        return getSuccess();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    public Object getFieldValue(int fieldId) {
+      return getFieldValue(_Fields.findByThriftIdOrThrow(fieldId));
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been asigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      switch (field) {
+      case SUCCESS:
+        return isSetSuccess();
+      }
+      throw new IllegalStateException();
+    }
+
+    public boolean isSet(int fieldID) {
+      return isSet(_Fields.findByThriftIdOrThrow(fieldID));
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof readMac_result)
+        return this.equals((readMac_result)that);
+      return false;
+    }
+
+    public boolean equals(readMac_result that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_success = true && this.isSetSuccess();
+      boolean that_present_success = true && that.isSetSuccess();
+      if (this_present_success || that_present_success) {
+        if (!(this_present_success && that_present_success))
+          return false;
+        if (!this.success.equals(that.success))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    public int compareTo(readMac_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      readMac_result typedOther = (readMac_result)other;
+
+      lastComparison = Boolean.valueOf(isSetSuccess()).compareTo(typedOther.isSetSuccess());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetSuccess()) {        lastComparison = TBaseHelper.compareTo(this.success, typedOther.success);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public void read(TProtocol iprot) throws TException {
+      TField field;
+      iprot.readStructBegin();
+      while (true)
+      {
+        field = iprot.readFieldBegin();
+        if (field.type == TType.STOP) { 
+          break;
+        }
+        switch (field.id) {
+          case 0: // SUCCESS
+            if (field.type == TType.STRING) {
+              this.success = iprot.readBinary();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          default:
+            TProtocolUtil.skip(iprot, field.type);
+        }
+        iprot.readFieldEnd();
+      }
+      iprot.readStructEnd();
+
+      // check for required fields of primitive type, which can't be checked in the validate method
+      validate();
+    }
+
+    public void write(TProtocol oprot) throws TException {
+      oprot.writeStructBegin(STRUCT_DESC);
+
+      if (this.isSetSuccess()) {
+        oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
+        oprot.writeBinary(this.success);
+        oprot.writeFieldEnd();
+      }
+      oprot.writeFieldStop();
+      oprot.writeStructEnd();
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("readMac_result(");
+      boolean first = true;
+
+      sb.append("success:");
+      if (this.success == null) {
+        sb.append("null");
+      } else {
+        TBaseHelper.toString(this.success, sb);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws TException {
+      // check for required fields
+    }
+
+  }
+
+  public static class reset_args implements TBase<reset_args, reset_args._Fields>, java.io.Serializable, Cloneable   {
+    private static final TStruct STRUCT_DESC = new TStruct("reset_args");
+
+    private static final TField KEY_FIELD_DESC = new TField("key", TType.STRING, (short)1);
+    private static final TField OPERATION_HANDLE_KEY_FIELD_DESC = new TField("OperationHandleKey", TType.STRING, (short)2);
+    private static final TField TIMEOUT_FIELD_DESC = new TField("timeout", TType.I64, (short)3);
+
+    public String key;
+    public String OperationHandleKey;
+    public long timeout;
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements TFieldIdEnum {
+      KEY((short)1, "key"),
+      OPERATION_HANDLE_KEY((short)2, "OperationHandleKey"),
+      TIMEOUT((short)3, "timeout");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // KEY
+            return KEY;
+          case 2: // OPERATION_HANDLE_KEY
+            return OPERATION_HANDLE_KEY;
+          case 3: // TIMEOUT
+            return TIMEOUT;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    private static final int __TIMEOUT_ISSET_ID = 0;
+    private BitSet __isset_bit_vector = new BitSet(1);
+
+    public static final Map<_Fields, FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, FieldMetaData> tmpMap = new EnumMap<_Fields, FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.KEY, new FieldMetaData("key", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
+      tmpMap.put(_Fields.OPERATION_HANDLE_KEY, new FieldMetaData("OperationHandleKey", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
+      tmpMap.put(_Fields.TIMEOUT, new FieldMetaData("timeout", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.I64)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      FieldMetaData.addStructMetaDataMap(reset_args.class, metaDataMap);
+    }
+
+    public reset_args() {
+    }
+
+    public reset_args(
+      String key,
+      String OperationHandleKey,
+      long timeout)
+    {
+      this();
+      this.key = key;
+      this.OperationHandleKey = OperationHandleKey;
+      this.timeout = timeout;
+      setTimeoutIsSet(true);
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public reset_args(reset_args other) {
+      __isset_bit_vector.clear();
+      __isset_bit_vector.or(other.__isset_bit_vector);
+      if (other.isSetKey()) {
+        this.key = other.key;
+      }
+      if (other.isSetOperationHandleKey()) {
+        this.OperationHandleKey = other.OperationHandleKey;
+      }
+      this.timeout = other.timeout;
+    }
+
+    public reset_args deepCopy() {
+      return new reset_args(this);
+    }
+
+    @Deprecated
+    public reset_args clone() {
+      return new reset_args(this);
+    }
+
+    @Override
+    public void clear() {
+      this.key = null;
+      this.OperationHandleKey = null;
+      setTimeoutIsSet(false);
+      this.timeout = 0;
+    }
+
+    public String getKey() {
+      return this.key;
+    }
+
+    public reset_args setKey(String key) {
+      this.key = key;
+      return this;
+    }
+
+    public void unsetKey() {
+      this.key = null;
+    }
+
+    /** Returns true if field key is set (has been asigned a value) and false otherwise */
+    public boolean isSetKey() {
+      return this.key != null;
+    }
+
+    public void setKeyIsSet(boolean value) {
+      if (!value) {
+        this.key = null;
+      }
+    }
+
+    public String getOperationHandleKey() {
+      return this.OperationHandleKey;
+    }
+
+    public reset_args setOperationHandleKey(String OperationHandleKey) {
+      this.OperationHandleKey = OperationHandleKey;
+      return this;
+    }
+
+    public void unsetOperationHandleKey() {
+      this.OperationHandleKey = null;
+    }
+
+    /** Returns true if field OperationHandleKey is set (has been asigned a value) and false otherwise */
+    public boolean isSetOperationHandleKey() {
+      return this.OperationHandleKey != null;
+    }
+
+    public void setOperationHandleKeyIsSet(boolean value) {
+      if (!value) {
+        this.OperationHandleKey = null;
+      }
+    }
+
+    public long getTimeout() {
+      return this.timeout;
+    }
+
+    public reset_args setTimeout(long timeout) {
+      this.timeout = timeout;
+      setTimeoutIsSet(true);
+      return this;
+    }
+
+    public void unsetTimeout() {
+      __isset_bit_vector.clear(__TIMEOUT_ISSET_ID);
+    }
+
+    /** Returns true if field timeout is set (has been asigned a value) and false otherwise */
+    public boolean isSetTimeout() {
+      return __isset_bit_vector.get(__TIMEOUT_ISSET_ID);
+    }
+
+    public void setTimeoutIsSet(boolean value) {
+      __isset_bit_vector.set(__TIMEOUT_ISSET_ID, value);
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case KEY:
+        if (value == null) {
+          unsetKey();
+        } else {
+          setKey((String)value);
+        }
+        break;
+
+      case OPERATION_HANDLE_KEY:
+        if (value == null) {
+          unsetOperationHandleKey();
+        } else {
+          setOperationHandleKey((String)value);
+        }
+        break;
+
+      case TIMEOUT:
+        if (value == null) {
+          unsetTimeout();
+        } else {
+          setTimeout((Long)value);
+        }
+        break;
+
+      }
+    }
+
+    public void setFieldValue(int fieldID, Object value) {
+      setFieldValue(_Fields.findByThriftIdOrThrow(fieldID), value);
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case KEY:
+        return getKey();
+
+      case OPERATION_HANDLE_KEY:
+        return getOperationHandleKey();
+
+      case TIMEOUT:
+        return new Long(getTimeout());
+
+      }
+      throw new IllegalStateException();
+    }
+
+    public Object getFieldValue(int fieldId) {
+      return getFieldValue(_Fields.findByThriftIdOrThrow(fieldId));
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been asigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      switch (field) {
+      case KEY:
+        return isSetKey();
+      case OPERATION_HANDLE_KEY:
+        return isSetOperationHandleKey();
+      case TIMEOUT:
+        return isSetTimeout();
+      }
+      throw new IllegalStateException();
+    }
+
+    public boolean isSet(int fieldID) {
+      return isSet(_Fields.findByThriftIdOrThrow(fieldID));
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof reset_args)
+        return this.equals((reset_args)that);
+      return false;
+    }
+
+    public boolean equals(reset_args that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_key = true && this.isSetKey();
+      boolean that_present_key = true && that.isSetKey();
+      if (this_present_key || that_present_key) {
+        if (!(this_present_key && that_present_key))
+          return false;
+        if (!this.key.equals(that.key))
+          return false;
+      }
+
+      boolean this_present_OperationHandleKey = true && this.isSetOperationHandleKey();
+      boolean that_present_OperationHandleKey = true && that.isSetOperationHandleKey();
+      if (this_present_OperationHandleKey || that_present_OperationHandleKey) {
+        if (!(this_present_OperationHandleKey && that_present_OperationHandleKey))
+          return false;
+        if (!this.OperationHandleKey.equals(that.OperationHandleKey))
+          return false;
+      }
+
+      boolean this_present_timeout = true;
+      boolean that_present_timeout = true;
+      if (this_present_timeout || that_present_timeout) {
+        if (!(this_present_timeout && that_present_timeout))
+          return false;
+        if (this.timeout != that.timeout)
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    public int compareTo(reset_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      reset_args typedOther = (reset_args)other;
+
+      lastComparison = Boolean.valueOf(isSetKey()).compareTo(typedOther.isSetKey());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetKey()) {        lastComparison = TBaseHelper.compareTo(this.key, typedOther.key);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetOperationHandleKey()).compareTo(typedOther.isSetOperationHandleKey());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetOperationHandleKey()) {        lastComparison = TBaseHelper.compareTo(this.OperationHandleKey, typedOther.OperationHandleKey);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetTimeout()).compareTo(typedOther.isSetTimeout());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetTimeout()) {        lastComparison = TBaseHelper.compareTo(this.timeout, typedOther.timeout);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public void read(TProtocol iprot) throws TException {
+      TField field;
+      iprot.readStructBegin();
+      while (true)
+      {
+        field = iprot.readFieldBegin();
+        if (field.type == TType.STOP) { 
+          break;
+        }
+        switch (field.id) {
+          case 1: // KEY
+            if (field.type == TType.STRING) {
+              this.key = iprot.readString();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 2: // OPERATION_HANDLE_KEY
+            if (field.type == TType.STRING) {
+              this.OperationHandleKey = iprot.readString();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 3: // TIMEOUT
+            if (field.type == TType.I64) {
+              this.timeout = iprot.readI64();
+              setTimeoutIsSet(true);
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          default:
+            TProtocolUtil.skip(iprot, field.type);
+        }
+        iprot.readFieldEnd();
+      }
+      iprot.readStructEnd();
+
+      // check for required fields of primitive type, which can't be checked in the validate method
+      validate();
+    }
+
+    public void write(TProtocol oprot) throws TException {
+      validate();
+
+      oprot.writeStructBegin(STRUCT_DESC);
+      if (this.key != null) {
+        oprot.writeFieldBegin(KEY_FIELD_DESC);
+        oprot.writeString(this.key);
+        oprot.writeFieldEnd();
+      }
+      if (this.OperationHandleKey != null) {
+        oprot.writeFieldBegin(OPERATION_HANDLE_KEY_FIELD_DESC);
+        oprot.writeString(this.OperationHandleKey);
+        oprot.writeFieldEnd();
+      }
+      oprot.writeFieldBegin(TIMEOUT_FIELD_DESC);
+      oprot.writeI64(this.timeout);
+      oprot.writeFieldEnd();
+      oprot.writeFieldStop();
+      oprot.writeStructEnd();
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("reset_args(");
+      boolean first = true;
+
+      sb.append("key:");
+      if (this.key == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.key);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("OperationHandleKey:");
+      if (this.OperationHandleKey == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.OperationHandleKey);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("timeout:");
+      sb.append(this.timeout);
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws TException {
+      // check for required fields
+    }
+
+  }
+
+  public static class reset_result implements TBase<reset_result, reset_result._Fields>, java.io.Serializable, Cloneable   {
+    private static final TStruct STRUCT_DESC = new TStruct("reset_result");
+
+
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements TFieldIdEnum {
+;
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+    public static final Map<_Fields, FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, FieldMetaData> tmpMap = new EnumMap<_Fields, FieldMetaData>(_Fields.class);
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      FieldMetaData.addStructMetaDataMap(reset_result.class, metaDataMap);
+    }
+
+    public reset_result() {
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public reset_result(reset_result other) {
+    }
+
+    public reset_result deepCopy() {
+      return new reset_result(this);
+    }
+
+    @Deprecated
+    public reset_result clone() {
+      return new reset_result(this);
+    }
+
+    @Override
+    public void clear() {
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      }
+    }
+
+    public void setFieldValue(int fieldID, Object value) {
+      setFieldValue(_Fields.findByThriftIdOrThrow(fieldID), value);
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    public Object getFieldValue(int fieldId) {
+      return getFieldValue(_Fields.findByThriftIdOrThrow(fieldId));
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been asigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    public boolean isSet(int fieldID) {
+      return isSet(_Fields.findByThriftIdOrThrow(fieldID));
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof reset_result)
+        return this.equals((reset_result)that);
+      return false;
+    }
+
+    public boolean equals(reset_result that) {
+      if (that == null)
+        return false;
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    public int compareTo(reset_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      reset_result typedOther = (reset_result)other;
+
+      return 0;
+    }
+
+    public void read(TProtocol iprot) throws TException {
+      TField field;
+      iprot.readStructBegin();
+      while (true)
+      {
+        field = iprot.readFieldBegin();
+        if (field.type == TType.STOP) { 
+          break;
+        }
+        switch (field.id) {
+          default:
+            TProtocolUtil.skip(iprot, field.type);
+        }
+        iprot.readFieldEnd();
+      }
+      iprot.readStructEnd();
+
+      // check for required fields of primitive type, which can't be checked in the validate method
+      validate();
+    }
+
+    public void write(TProtocol oprot) throws TException {
+      oprot.writeStructBegin(STRUCT_DESC);
+
+      oprot.writeFieldStop();
+      oprot.writeStructEnd();
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("reset_result(");
+      boolean first = true;
+
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws TException {
+      // check for required fields
+    }
+
+  }
+
+  public static class send_args implements TBase<send_args, send_args._Fields>, java.io.Serializable, Cloneable   {
+    private static final TStruct STRUCT_DESC = new TStruct("send_args");
+
+    private static final TField KEY_FIELD_DESC = new TField("key", TType.STRING, (short)1);
+    private static final TField OPERATION_HANDLE_KEY_FIELD_DESC = new TField("OperationHandleKey", TType.STRING, (short)2);
+    private static final TField PACKET_FIELD_DESC = new TField("packet", TType.STRUCT, (short)3);
+    private static final TField TIMEOUT_FIELD_DESC = new TField("timeout", TType.I64, (short)4);
+
+    public String key;
+    public String OperationHandleKey;
+    public MessagePacket packet;
+    public long timeout;
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements TFieldIdEnum {
+      KEY((short)1, "key"),
+      OPERATION_HANDLE_KEY((short)2, "OperationHandleKey"),
+      PACKET((short)3, "packet"),
+      TIMEOUT((short)4, "timeout");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // KEY
+            return KEY;
+          case 2: // OPERATION_HANDLE_KEY
+            return OPERATION_HANDLE_KEY;
+          case 3: // PACKET
+            return PACKET;
+          case 4: // TIMEOUT
+            return TIMEOUT;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    private static final int __TIMEOUT_ISSET_ID = 0;
+    private BitSet __isset_bit_vector = new BitSet(1);
+
+    public static final Map<_Fields, FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, FieldMetaData> tmpMap = new EnumMap<_Fields, FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.KEY, new FieldMetaData("key", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
+      tmpMap.put(_Fields.OPERATION_HANDLE_KEY, new FieldMetaData("OperationHandleKey", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
+      tmpMap.put(_Fields.PACKET, new FieldMetaData("packet", TFieldRequirementType.DEFAULT, 
+          new StructMetaData(TType.STRUCT, MessagePacket.class)));
+      tmpMap.put(_Fields.TIMEOUT, new FieldMetaData("timeout", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.I64)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      FieldMetaData.addStructMetaDataMap(send_args.class, metaDataMap);
+    }
+
+    public send_args() {
+    }
+
+    public send_args(
+      String key,
+      String OperationHandleKey,
+      MessagePacket packet,
+      long timeout)
+    {
+      this();
+      this.key = key;
+      this.OperationHandleKey = OperationHandleKey;
+      this.packet = packet;
+      this.timeout = timeout;
+      setTimeoutIsSet(true);
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public send_args(send_args other) {
+      __isset_bit_vector.clear();
+      __isset_bit_vector.or(other.__isset_bit_vector);
+      if (other.isSetKey()) {
+        this.key = other.key;
+      }
+      if (other.isSetOperationHandleKey()) {
+        this.OperationHandleKey = other.OperationHandleKey;
+      }
+      if (other.isSetPacket()) {
+        this.packet = new MessagePacket(other.packet);
+      }
+      this.timeout = other.timeout;
+    }
+
+    public send_args deepCopy() {
+      return new send_args(this);
+    }
+
+    @Deprecated
+    public send_args clone() {
+      return new send_args(this);
+    }
+
+    @Override
+    public void clear() {
+      this.key = null;
+      this.OperationHandleKey = null;
+      this.packet = null;
+      setTimeoutIsSet(false);
+      this.timeout = 0;
+    }
+
+    public String getKey() {
+      return this.key;
+    }
+
+    public send_args setKey(String key) {
+      this.key = key;
+      return this;
+    }
+
+    public void unsetKey() {
+      this.key = null;
+    }
+
+    /** Returns true if field key is set (has been asigned a value) and false otherwise */
+    public boolean isSetKey() {
+      return this.key != null;
+    }
+
+    public void setKeyIsSet(boolean value) {
+      if (!value) {
+        this.key = null;
+      }
+    }
+
+    public String getOperationHandleKey() {
+      return this.OperationHandleKey;
+    }
+
+    public send_args setOperationHandleKey(String OperationHandleKey) {
+      this.OperationHandleKey = OperationHandleKey;
+      return this;
+    }
+
+    public void unsetOperationHandleKey() {
+      this.OperationHandleKey = null;
+    }
+
+    /** Returns true if field OperationHandleKey is set (has been asigned a value) and false otherwise */
+    public boolean isSetOperationHandleKey() {
+      return this.OperationHandleKey != null;
+    }
+
+    public void setOperationHandleKeyIsSet(boolean value) {
+      if (!value) {
+        this.OperationHandleKey = null;
+      }
+    }
+
+    public MessagePacket getPacket() {
+      return this.packet;
+    }
+
+    public send_args setPacket(MessagePacket packet) {
+      this.packet = packet;
+      return this;
+    }
+
+    public void unsetPacket() {
+      this.packet = null;
+    }
+
+    /** Returns true if field packet is set (has been asigned a value) and false otherwise */
+    public boolean isSetPacket() {
+      return this.packet != null;
+    }
+
+    public void setPacketIsSet(boolean value) {
+      if (!value) {
+        this.packet = null;
+      }
+    }
+
+    public long getTimeout() {
+      return this.timeout;
+    }
+
+    public send_args setTimeout(long timeout) {
+      this.timeout = timeout;
+      setTimeoutIsSet(true);
+      return this;
+    }
+
+    public void unsetTimeout() {
+      __isset_bit_vector.clear(__TIMEOUT_ISSET_ID);
+    }
+
+    /** Returns true if field timeout is set (has been asigned a value) and false otherwise */
+    public boolean isSetTimeout() {
+      return __isset_bit_vector.get(__TIMEOUT_ISSET_ID);
+    }
+
+    public void setTimeoutIsSet(boolean value) {
+      __isset_bit_vector.set(__TIMEOUT_ISSET_ID, value);
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case KEY:
+        if (value == null) {
+          unsetKey();
+        } else {
+          setKey((String)value);
+        }
+        break;
+
+      case OPERATION_HANDLE_KEY:
+        if (value == null) {
+          unsetOperationHandleKey();
+        } else {
+          setOperationHandleKey((String)value);
+        }
+        break;
+
+      case PACKET:
+        if (value == null) {
+          unsetPacket();
+        } else {
+          setPacket((MessagePacket)value);
+        }
+        break;
+
+      case TIMEOUT:
+        if (value == null) {
+          unsetTimeout();
+        } else {
+          setTimeout((Long)value);
+        }
+        break;
+
+      }
+    }
+
+    public void setFieldValue(int fieldID, Object value) {
+      setFieldValue(_Fields.findByThriftIdOrThrow(fieldID), value);
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case KEY:
+        return getKey();
+
+      case OPERATION_HANDLE_KEY:
+        return getOperationHandleKey();
+
+      case PACKET:
+        return getPacket();
+
+      case TIMEOUT:
+        return new Long(getTimeout());
+
+      }
+      throw new IllegalStateException();
+    }
+
+    public Object getFieldValue(int fieldId) {
+      return getFieldValue(_Fields.findByThriftIdOrThrow(fieldId));
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been asigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      switch (field) {
+      case KEY:
+        return isSetKey();
+      case OPERATION_HANDLE_KEY:
+        return isSetOperationHandleKey();
+      case PACKET:
+        return isSetPacket();
+      case TIMEOUT:
+        return isSetTimeout();
+      }
+      throw new IllegalStateException();
+    }
+
+    public boolean isSet(int fieldID) {
+      return isSet(_Fields.findByThriftIdOrThrow(fieldID));
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof send_args)
+        return this.equals((send_args)that);
+      return false;
+    }
+
+    public boolean equals(send_args that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_key = true && this.isSetKey();
+      boolean that_present_key = true && that.isSetKey();
+      if (this_present_key || that_present_key) {
+        if (!(this_present_key && that_present_key))
+          return false;
+        if (!this.key.equals(that.key))
+          return false;
+      }
+
+      boolean this_present_OperationHandleKey = true && this.isSetOperationHandleKey();
+      boolean that_present_OperationHandleKey = true && that.isSetOperationHandleKey();
+      if (this_present_OperationHandleKey || that_present_OperationHandleKey) {
+        if (!(this_present_OperationHandleKey && that_present_OperationHandleKey))
+          return false;
+        if (!this.OperationHandleKey.equals(that.OperationHandleKey))
+          return false;
+      }
+
+      boolean this_present_packet = true && this.isSetPacket();
+      boolean that_present_packet = true && that.isSetPacket();
+      if (this_present_packet || that_present_packet) {
+        if (!(this_present_packet && that_present_packet))
+          return false;
+        if (!this.packet.equals(that.packet))
+          return false;
+      }
+
+      boolean this_present_timeout = true;
+      boolean that_present_timeout = true;
+      if (this_present_timeout || that_present_timeout) {
+        if (!(this_present_timeout && that_present_timeout))
+          return false;
+        if (this.timeout != that.timeout)
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    public int compareTo(send_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      send_args typedOther = (send_args)other;
+
+      lastComparison = Boolean.valueOf(isSetKey()).compareTo(typedOther.isSetKey());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetKey()) {        lastComparison = TBaseHelper.compareTo(this.key, typedOther.key);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetOperationHandleKey()).compareTo(typedOther.isSetOperationHandleKey());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetOperationHandleKey()) {        lastComparison = TBaseHelper.compareTo(this.OperationHandleKey, typedOther.OperationHandleKey);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetPacket()).compareTo(typedOther.isSetPacket());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetPacket()) {        lastComparison = TBaseHelper.compareTo(this.packet, typedOther.packet);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetTimeout()).compareTo(typedOther.isSetTimeout());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetTimeout()) {        lastComparison = TBaseHelper.compareTo(this.timeout, typedOther.timeout);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public void read(TProtocol iprot) throws TException {
+      TField field;
+      iprot.readStructBegin();
+      while (true)
+      {
+        field = iprot.readFieldBegin();
+        if (field.type == TType.STOP) { 
+          break;
+        }
+        switch (field.id) {
+          case 1: // KEY
+            if (field.type == TType.STRING) {
+              this.key = iprot.readString();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 2: // OPERATION_HANDLE_KEY
+            if (field.type == TType.STRING) {
+              this.OperationHandleKey = iprot.readString();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 3: // PACKET
+            if (field.type == TType.STRUCT) {
+              this.packet = new MessagePacket();
+              this.packet.read(iprot);
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 4: // TIMEOUT
+            if (field.type == TType.I64) {
+              this.timeout = iprot.readI64();
+              setTimeoutIsSet(true);
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          default:
+            TProtocolUtil.skip(iprot, field.type);
+        }
+        iprot.readFieldEnd();
+      }
+      iprot.readStructEnd();
+
+      // check for required fields of primitive type, which can't be checked in the validate method
+      validate();
+    }
+
+    public void write(TProtocol oprot) throws TException {
+      validate();
+
+      oprot.writeStructBegin(STRUCT_DESC);
+      if (this.key != null) {
+        oprot.writeFieldBegin(KEY_FIELD_DESC);
+        oprot.writeString(this.key);
+        oprot.writeFieldEnd();
+      }
+      if (this.OperationHandleKey != null) {
+        oprot.writeFieldBegin(OPERATION_HANDLE_KEY_FIELD_DESC);
+        oprot.writeString(this.OperationHandleKey);
+        oprot.writeFieldEnd();
+      }
+      if (this.packet != null) {
+        oprot.writeFieldBegin(PACKET_FIELD_DESC);
+        this.packet.write(oprot);
+        oprot.writeFieldEnd();
+      }
+      oprot.writeFieldBegin(TIMEOUT_FIELD_DESC);
+      oprot.writeI64(this.timeout);
+      oprot.writeFieldEnd();
+      oprot.writeFieldStop();
+      oprot.writeStructEnd();
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("send_args(");
+      boolean first = true;
+
+      sb.append("key:");
+      if (this.key == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.key);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("OperationHandleKey:");
+      if (this.OperationHandleKey == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.OperationHandleKey);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("packet:");
+      if (this.packet == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.packet);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("timeout:");
+      sb.append(this.timeout);
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws TException {
+      // check for required fields
+    }
+
+  }
+
+  public static class send_result implements TBase<send_result, send_result._Fields>, java.io.Serializable, Cloneable   {
+    private static final TStruct STRUCT_DESC = new TStruct("send_result");
+
+
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements TFieldIdEnum {
+;
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+    public static final Map<_Fields, FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, FieldMetaData> tmpMap = new EnumMap<_Fields, FieldMetaData>(_Fields.class);
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      FieldMetaData.addStructMetaDataMap(send_result.class, metaDataMap);
+    }
+
+    public send_result() {
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public send_result(send_result other) {
+    }
+
+    public send_result deepCopy() {
+      return new send_result(this);
+    }
+
+    @Deprecated
+    public send_result clone() {
+      return new send_result(this);
+    }
+
+    @Override
+    public void clear() {
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      }
+    }
+
+    public void setFieldValue(int fieldID, Object value) {
+      setFieldValue(_Fields.findByThriftIdOrThrow(fieldID), value);
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    public Object getFieldValue(int fieldId) {
+      return getFieldValue(_Fields.findByThriftIdOrThrow(fieldId));
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been asigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    public boolean isSet(int fieldID) {
+      return isSet(_Fields.findByThriftIdOrThrow(fieldID));
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof send_result)
+        return this.equals((send_result)that);
+      return false;
+    }
+
+    public boolean equals(send_result that) {
+      if (that == null)
+        return false;
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    public int compareTo(send_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      send_result typedOther = (send_result)other;
+
+      return 0;
+    }
+
+    public void read(TProtocol iprot) throws TException {
+      TField field;
+      iprot.readStructBegin();
+      while (true)
+      {
+        field = iprot.readFieldBegin();
+        if (field.type == TType.STOP) { 
+          break;
+        }
+        switch (field.id) {
+          default:
+            TProtocolUtil.skip(iprot, field.type);
+        }
+        iprot.readFieldEnd();
+      }
+      iprot.readStructEnd();
+
+      // check for required fields of primitive type, which can't be checked in the validate method
+      validate();
+    }
+
+    public void write(TProtocol oprot) throws TException {
+      oprot.writeStructBegin(STRUCT_DESC);
+
+      oprot.writeFieldStop();
+      oprot.writeStructEnd();
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("send_result(");
+      boolean first = true;
+
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws TException {
+      // check for required fields
+    }
+
+  }
+
+  public static class writeFlash_args implements TBase<writeFlash_args, writeFlash_args._Fields>, java.io.Serializable, Cloneable   {
+    private static final TStruct STRUCT_DESC = new TStruct("writeFlash_args");
+
+    private static final TField KEY_FIELD_DESC = new TField("key", TType.STRING, (short)1);
+    private static final TField OPERATION_HANDLE_KEY_FIELD_DESC = new TField("OperationHandleKey", TType.STRING, (short)2);
+    private static final TField ADDRESS_FIELD_DESC = new TField("address", TType.I32, (short)3);
+    private static final TField DATA_FIELD_DESC = new TField("data", TType.STRING, (short)4);
+    private static final TField LENGTH_FIELD_DESC = new TField("length", TType.I32, (short)5);
+    private static final TField TIMEOUT_FIELD_DESC = new TField("timeout", TType.I64, (short)6);
+
+    public String key;
+    public String OperationHandleKey;
+    public int address;
+    public ByteBuffer data;
+    public int length;
+    public long timeout;
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements TFieldIdEnum {
+      KEY((short)1, "key"),
+      OPERATION_HANDLE_KEY((short)2, "OperationHandleKey"),
+      ADDRESS((short)3, "address"),
+      DATA((short)4, "data"),
+      LENGTH((short)5, "length"),
+      TIMEOUT((short)6, "timeout");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // KEY
+            return KEY;
+          case 2: // OPERATION_HANDLE_KEY
+            return OPERATION_HANDLE_KEY;
+          case 3: // ADDRESS
+            return ADDRESS;
+          case 4: // DATA
+            return DATA;
+          case 5: // LENGTH
+            return LENGTH;
+          case 6: // TIMEOUT
+            return TIMEOUT;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    private static final int __ADDRESS_ISSET_ID = 0;
+    private static final int __LENGTH_ISSET_ID = 1;
+    private static final int __TIMEOUT_ISSET_ID = 2;
+    private BitSet __isset_bit_vector = new BitSet(3);
+
+    public static final Map<_Fields, FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, FieldMetaData> tmpMap = new EnumMap<_Fields, FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.KEY, new FieldMetaData("key", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
+      tmpMap.put(_Fields.OPERATION_HANDLE_KEY, new FieldMetaData("OperationHandleKey", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
+      tmpMap.put(_Fields.ADDRESS, new FieldMetaData("address", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.I32)));
+      tmpMap.put(_Fields.DATA, new FieldMetaData("data", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
+      tmpMap.put(_Fields.LENGTH, new FieldMetaData("length", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.I32)));
+      tmpMap.put(_Fields.TIMEOUT, new FieldMetaData("timeout", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.I64)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      FieldMetaData.addStructMetaDataMap(writeFlash_args.class, metaDataMap);
+    }
+
+    public writeFlash_args() {
+    }
+
+    public writeFlash_args(
+      String key,
+      String OperationHandleKey,
+      int address,
+      ByteBuffer data,
+      int length,
+      long timeout)
+    {
+      this();
+      this.key = key;
+      this.OperationHandleKey = OperationHandleKey;
+      this.address = address;
+      setAddressIsSet(true);
+      this.data = data;
+      this.length = length;
+      setLengthIsSet(true);
+      this.timeout = timeout;
+      setTimeoutIsSet(true);
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public writeFlash_args(writeFlash_args other) {
+      __isset_bit_vector.clear();
+      __isset_bit_vector.or(other.__isset_bit_vector);
+      if (other.isSetKey()) {
+        this.key = other.key;
+      }
+      if (other.isSetOperationHandleKey()) {
+        this.OperationHandleKey = other.OperationHandleKey;
+      }
+      this.address = other.address;
+      if (other.isSetData()) {
+        this.data = ByteBuffer.wrap(new byte[other.data.limit() - other.data.arrayOffset()]);
+        System.arraycopy(other.data.array(), other.data.arrayOffset(), data.array(), 0, other.data.limit() - other.data.arrayOffset());
+      }
+      this.length = other.length;
+      this.timeout = other.timeout;
+    }
+
+    public writeFlash_args deepCopy() {
+      return new writeFlash_args(this);
+    }
+
+    @Deprecated
+    public writeFlash_args clone() {
+      return new writeFlash_args(this);
+    }
+
+    @Override
+    public void clear() {
+      this.key = null;
+      this.OperationHandleKey = null;
+      setAddressIsSet(false);
+      this.address = 0;
+      this.data = null;
+      setLengthIsSet(false);
+      this.length = 0;
+      setTimeoutIsSet(false);
+      this.timeout = 0;
+    }
+
+    public String getKey() {
+      return this.key;
+    }
+
+    public writeFlash_args setKey(String key) {
+      this.key = key;
+      return this;
+    }
+
+    public void unsetKey() {
+      this.key = null;
+    }
+
+    /** Returns true if field key is set (has been asigned a value) and false otherwise */
+    public boolean isSetKey() {
+      return this.key != null;
+    }
+
+    public void setKeyIsSet(boolean value) {
+      if (!value) {
+        this.key = null;
+      }
+    }
+
+    public String getOperationHandleKey() {
+      return this.OperationHandleKey;
+    }
+
+    public writeFlash_args setOperationHandleKey(String OperationHandleKey) {
+      this.OperationHandleKey = OperationHandleKey;
+      return this;
+    }
+
+    public void unsetOperationHandleKey() {
+      this.OperationHandleKey = null;
+    }
+
+    /** Returns true if field OperationHandleKey is set (has been asigned a value) and false otherwise */
+    public boolean isSetOperationHandleKey() {
+      return this.OperationHandleKey != null;
+    }
+
+    public void setOperationHandleKeyIsSet(boolean value) {
+      if (!value) {
+        this.OperationHandleKey = null;
+      }
+    }
+
+    public int getAddress() {
+      return this.address;
+    }
+
+    public writeFlash_args setAddress(int address) {
+      this.address = address;
+      setAddressIsSet(true);
+      return this;
+    }
+
+    public void unsetAddress() {
+      __isset_bit_vector.clear(__ADDRESS_ISSET_ID);
+    }
+
+    /** Returns true if field address is set (has been asigned a value) and false otherwise */
+    public boolean isSetAddress() {
+      return __isset_bit_vector.get(__ADDRESS_ISSET_ID);
+    }
+
+    public void setAddressIsSet(boolean value) {
+      __isset_bit_vector.set(__ADDRESS_ISSET_ID, value);
+    }
+
+    public ByteBuffer getData() {
+      return this.data;
+    }
+
+    public writeFlash_args setData(ByteBuffer data) {
+      this.data = data;
+      return this;
+    }
+
+    public void unsetData() {
+      this.data = null;
+    }
+
+    /** Returns true if field data is set (has been asigned a value) and false otherwise */
+    public boolean isSetData() {
+      return this.data != null;
+    }
+
+    public void setDataIsSet(boolean value) {
+      if (!value) {
+        this.data = null;
+      }
+    }
+
+    public int getLength() {
+      return this.length;
+    }
+
+    public writeFlash_args setLength(int length) {
+      this.length = length;
+      setLengthIsSet(true);
+      return this;
+    }
+
+    public void unsetLength() {
+      __isset_bit_vector.clear(__LENGTH_ISSET_ID);
+    }
+
+    /** Returns true if field length is set (has been asigned a value) and false otherwise */
+    public boolean isSetLength() {
+      return __isset_bit_vector.get(__LENGTH_ISSET_ID);
+    }
+
+    public void setLengthIsSet(boolean value) {
+      __isset_bit_vector.set(__LENGTH_ISSET_ID, value);
+    }
+
+    public long getTimeout() {
+      return this.timeout;
+    }
+
+    public writeFlash_args setTimeout(long timeout) {
+      this.timeout = timeout;
+      setTimeoutIsSet(true);
+      return this;
+    }
+
+    public void unsetTimeout() {
+      __isset_bit_vector.clear(__TIMEOUT_ISSET_ID);
+    }
+
+    /** Returns true if field timeout is set (has been asigned a value) and false otherwise */
+    public boolean isSetTimeout() {
+      return __isset_bit_vector.get(__TIMEOUT_ISSET_ID);
+    }
+
+    public void setTimeoutIsSet(boolean value) {
+      __isset_bit_vector.set(__TIMEOUT_ISSET_ID, value);
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case KEY:
+        if (value == null) {
+          unsetKey();
+        } else {
+          setKey((String)value);
+        }
+        break;
+
+      case OPERATION_HANDLE_KEY:
+        if (value == null) {
+          unsetOperationHandleKey();
+        } else {
+          setOperationHandleKey((String)value);
+        }
+        break;
+
+      case ADDRESS:
+        if (value == null) {
+          unsetAddress();
+        } else {
+          setAddress((Integer)value);
+        }
+        break;
+
+      case DATA:
+        if (value == null) {
+          unsetData();
+        } else {
+          setData((ByteBuffer)value);
+        }
+        break;
+
+      case LENGTH:
+        if (value == null) {
+          unsetLength();
+        } else {
+          setLength((Integer)value);
+        }
+        break;
+
+      case TIMEOUT:
+        if (value == null) {
+          unsetTimeout();
+        } else {
+          setTimeout((Long)value);
+        }
+        break;
+
+      }
+    }
+
+    public void setFieldValue(int fieldID, Object value) {
+      setFieldValue(_Fields.findByThriftIdOrThrow(fieldID), value);
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case KEY:
+        return getKey();
+
+      case OPERATION_HANDLE_KEY:
+        return getOperationHandleKey();
+
+      case ADDRESS:
+        return new Integer(getAddress());
+
+      case DATA:
+        return getData();
+
+      case LENGTH:
+        return new Integer(getLength());
+
+      case TIMEOUT:
+        return new Long(getTimeout());
+
+      }
+      throw new IllegalStateException();
+    }
+
+    public Object getFieldValue(int fieldId) {
+      return getFieldValue(_Fields.findByThriftIdOrThrow(fieldId));
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been asigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      switch (field) {
+      case KEY:
+        return isSetKey();
+      case OPERATION_HANDLE_KEY:
+        return isSetOperationHandleKey();
+      case ADDRESS:
+        return isSetAddress();
+      case DATA:
+        return isSetData();
+      case LENGTH:
+        return isSetLength();
+      case TIMEOUT:
+        return isSetTimeout();
+      }
+      throw new IllegalStateException();
+    }
+
+    public boolean isSet(int fieldID) {
+      return isSet(_Fields.findByThriftIdOrThrow(fieldID));
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof writeFlash_args)
+        return this.equals((writeFlash_args)that);
+      return false;
+    }
+
+    public boolean equals(writeFlash_args that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_key = true && this.isSetKey();
+      boolean that_present_key = true && that.isSetKey();
+      if (this_present_key || that_present_key) {
+        if (!(this_present_key && that_present_key))
+          return false;
+        if (!this.key.equals(that.key))
+          return false;
+      }
+
+      boolean this_present_OperationHandleKey = true && this.isSetOperationHandleKey();
+      boolean that_present_OperationHandleKey = true && that.isSetOperationHandleKey();
+      if (this_present_OperationHandleKey || that_present_OperationHandleKey) {
+        if (!(this_present_OperationHandleKey && that_present_OperationHandleKey))
+          return false;
+        if (!this.OperationHandleKey.equals(that.OperationHandleKey))
+          return false;
+      }
+
+      boolean this_present_address = true;
+      boolean that_present_address = true;
+      if (this_present_address || that_present_address) {
+        if (!(this_present_address && that_present_address))
+          return false;
+        if (this.address != that.address)
+          return false;
+      }
+
+      boolean this_present_data = true && this.isSetData();
+      boolean that_present_data = true && that.isSetData();
+      if (this_present_data || that_present_data) {
+        if (!(this_present_data && that_present_data))
+          return false;
+        if (!this.data.equals(that.data))
+          return false;
+      }
+
+      boolean this_present_length = true;
+      boolean that_present_length = true;
+      if (this_present_length || that_present_length) {
+        if (!(this_present_length && that_present_length))
+          return false;
+        if (this.length != that.length)
+          return false;
+      }
+
+      boolean this_present_timeout = true;
+      boolean that_present_timeout = true;
+      if (this_present_timeout || that_present_timeout) {
+        if (!(this_present_timeout && that_present_timeout))
+          return false;
+        if (this.timeout != that.timeout)
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    public int compareTo(writeFlash_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      writeFlash_args typedOther = (writeFlash_args)other;
+
+      lastComparison = Boolean.valueOf(isSetKey()).compareTo(typedOther.isSetKey());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetKey()) {        lastComparison = TBaseHelper.compareTo(this.key, typedOther.key);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetOperationHandleKey()).compareTo(typedOther.isSetOperationHandleKey());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetOperationHandleKey()) {        lastComparison = TBaseHelper.compareTo(this.OperationHandleKey, typedOther.OperationHandleKey);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetAddress()).compareTo(typedOther.isSetAddress());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetAddress()) {        lastComparison = TBaseHelper.compareTo(this.address, typedOther.address);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetData()).compareTo(typedOther.isSetData());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetData()) {        lastComparison = TBaseHelper.compareTo(this.data, typedOther.data);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetLength()).compareTo(typedOther.isSetLength());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetLength()) {        lastComparison = TBaseHelper.compareTo(this.length, typedOther.length);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetTimeout()).compareTo(typedOther.isSetTimeout());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetTimeout()) {        lastComparison = TBaseHelper.compareTo(this.timeout, typedOther.timeout);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public void read(TProtocol iprot) throws TException {
+      TField field;
+      iprot.readStructBegin();
+      while (true)
+      {
+        field = iprot.readFieldBegin();
+        if (field.type == TType.STOP) { 
+          break;
+        }
+        switch (field.id) {
+          case 1: // KEY
+            if (field.type == TType.STRING) {
+              this.key = iprot.readString();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 2: // OPERATION_HANDLE_KEY
+            if (field.type == TType.STRING) {
+              this.OperationHandleKey = iprot.readString();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 3: // ADDRESS
+            if (field.type == TType.I32) {
+              this.address = iprot.readI32();
+              setAddressIsSet(true);
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 4: // DATA
+            if (field.type == TType.STRING) {
+              this.data = iprot.readBinary();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 5: // LENGTH
+            if (field.type == TType.I32) {
+              this.length = iprot.readI32();
+              setLengthIsSet(true);
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 6: // TIMEOUT
+            if (field.type == TType.I64) {
+              this.timeout = iprot.readI64();
+              setTimeoutIsSet(true);
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          default:
+            TProtocolUtil.skip(iprot, field.type);
+        }
+        iprot.readFieldEnd();
+      }
+      iprot.readStructEnd();
+
+      // check for required fields of primitive type, which can't be checked in the validate method
+      validate();
+    }
+
+    public void write(TProtocol oprot) throws TException {
+      validate();
+
+      oprot.writeStructBegin(STRUCT_DESC);
+      if (this.key != null) {
+        oprot.writeFieldBegin(KEY_FIELD_DESC);
+        oprot.writeString(this.key);
+        oprot.writeFieldEnd();
+      }
+      if (this.OperationHandleKey != null) {
+        oprot.writeFieldBegin(OPERATION_HANDLE_KEY_FIELD_DESC);
+        oprot.writeString(this.OperationHandleKey);
+        oprot.writeFieldEnd();
+      }
+      oprot.writeFieldBegin(ADDRESS_FIELD_DESC);
+      oprot.writeI32(this.address);
+      oprot.writeFieldEnd();
+      if (this.data != null) {
+        oprot.writeFieldBegin(DATA_FIELD_DESC);
+        oprot.writeBinary(this.data);
+        oprot.writeFieldEnd();
+      }
+      oprot.writeFieldBegin(LENGTH_FIELD_DESC);
+      oprot.writeI32(this.length);
+      oprot.writeFieldEnd();
+      oprot.writeFieldBegin(TIMEOUT_FIELD_DESC);
+      oprot.writeI64(this.timeout);
+      oprot.writeFieldEnd();
+      oprot.writeFieldStop();
+      oprot.writeStructEnd();
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("writeFlash_args(");
+      boolean first = true;
+
+      sb.append("key:");
+      if (this.key == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.key);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("OperationHandleKey:");
+      if (this.OperationHandleKey == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.OperationHandleKey);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("address:");
+      sb.append(this.address);
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("data:");
+      if (this.data == null) {
+        sb.append("null");
+      } else {
+        TBaseHelper.toString(this.data, sb);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("length:");
+      sb.append(this.length);
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("timeout:");
+      sb.append(this.timeout);
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws TException {
+      // check for required fields
+    }
+
+  }
+
+  public static class writeFlash_result implements TBase<writeFlash_result, writeFlash_result._Fields>, java.io.Serializable, Cloneable   {
+    private static final TStruct STRUCT_DESC = new TStruct("writeFlash_result");
+
+
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements TFieldIdEnum {
+;
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+    public static final Map<_Fields, FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, FieldMetaData> tmpMap = new EnumMap<_Fields, FieldMetaData>(_Fields.class);
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      FieldMetaData.addStructMetaDataMap(writeFlash_result.class, metaDataMap);
+    }
+
+    public writeFlash_result() {
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public writeFlash_result(writeFlash_result other) {
+    }
+
+    public writeFlash_result deepCopy() {
+      return new writeFlash_result(this);
+    }
+
+    @Deprecated
+    public writeFlash_result clone() {
+      return new writeFlash_result(this);
+    }
+
+    @Override
+    public void clear() {
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      }
+    }
+
+    public void setFieldValue(int fieldID, Object value) {
+      setFieldValue(_Fields.findByThriftIdOrThrow(fieldID), value);
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    public Object getFieldValue(int fieldId) {
+      return getFieldValue(_Fields.findByThriftIdOrThrow(fieldId));
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been asigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    public boolean isSet(int fieldID) {
+      return isSet(_Fields.findByThriftIdOrThrow(fieldID));
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof writeFlash_result)
+        return this.equals((writeFlash_result)that);
+      return false;
+    }
+
+    public boolean equals(writeFlash_result that) {
+      if (that == null)
+        return false;
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    public int compareTo(writeFlash_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      writeFlash_result typedOther = (writeFlash_result)other;
+
+      return 0;
+    }
+
+    public void read(TProtocol iprot) throws TException {
+      TField field;
+      iprot.readStructBegin();
+      while (true)
+      {
+        field = iprot.readFieldBegin();
+        if (field.type == TType.STOP) { 
+          break;
+        }
+        switch (field.id) {
+          default:
+            TProtocolUtil.skip(iprot, field.type);
+        }
+        iprot.readFieldEnd();
+      }
+      iprot.readStructEnd();
+
+      // check for required fields of primitive type, which can't be checked in the validate method
+      validate();
+    }
+
+    public void write(TProtocol oprot) throws TException {
+      oprot.writeStructBegin(STRUCT_DESC);
+
+      oprot.writeFieldStop();
+      oprot.writeStructEnd();
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("writeFlash_result(");
+      boolean first = true;
+
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws TException {
+      // check for required fields
+    }
+
+  }
+
+  public static class writeMac_args implements TBase<writeMac_args, writeMac_args._Fields>, java.io.Serializable, Cloneable   {
+    private static final TStruct STRUCT_DESC = new TStruct("writeMac_args");
+
+    private static final TField KEY_FIELD_DESC = new TField("key", TType.STRING, (short)1);
+    private static final TField OPERATION_HANDLE_KEY_FIELD_DESC = new TField("OperationHandleKey", TType.STRING, (short)2);
+    private static final TField MAC_ADDRESS_FIELD_DESC = new TField("macAddress", TType.STRING, (short)3);
+    private static final TField TIMEOUT_FIELD_DESC = new TField("timeout", TType.I64, (short)4);
+
+    public String key;
+    public String OperationHandleKey;
+    public ByteBuffer macAddress;
+    public long timeout;
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements TFieldIdEnum {
+      KEY((short)1, "key"),
+      OPERATION_HANDLE_KEY((short)2, "OperationHandleKey"),
+      MAC_ADDRESS((short)3, "macAddress"),
+      TIMEOUT((short)4, "timeout");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // KEY
+            return KEY;
+          case 2: // OPERATION_HANDLE_KEY
+            return OPERATION_HANDLE_KEY;
+          case 3: // MAC_ADDRESS
+            return MAC_ADDRESS;
+          case 4: // TIMEOUT
+            return TIMEOUT;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    private static final int __TIMEOUT_ISSET_ID = 0;
+    private BitSet __isset_bit_vector = new BitSet(1);
+
+    public static final Map<_Fields, FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, FieldMetaData> tmpMap = new EnumMap<_Fields, FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.KEY, new FieldMetaData("key", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
+      tmpMap.put(_Fields.OPERATION_HANDLE_KEY, new FieldMetaData("OperationHandleKey", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
+      tmpMap.put(_Fields.MAC_ADDRESS, new FieldMetaData("macAddress", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
+      tmpMap.put(_Fields.TIMEOUT, new FieldMetaData("timeout", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.I64)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      FieldMetaData.addStructMetaDataMap(writeMac_args.class, metaDataMap);
+    }
+
+    public writeMac_args() {
+    }
+
+    public writeMac_args(
+      String key,
+      String OperationHandleKey,
+      ByteBuffer macAddress,
+      long timeout)
+    {
+      this();
+      this.key = key;
+      this.OperationHandleKey = OperationHandleKey;
+      this.macAddress = macAddress;
+      this.timeout = timeout;
+      setTimeoutIsSet(true);
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public writeMac_args(writeMac_args other) {
+      __isset_bit_vector.clear();
+      __isset_bit_vector.or(other.__isset_bit_vector);
+      if (other.isSetKey()) {
+        this.key = other.key;
+      }
+      if (other.isSetOperationHandleKey()) {
+        this.OperationHandleKey = other.OperationHandleKey;
+      }
+      if (other.isSetMacAddress()) {
+        this.macAddress = ByteBuffer.wrap(new byte[other.macAddress.limit() - other.macAddress.arrayOffset()]);
+        System.arraycopy(other.macAddress.array(), other.macAddress.arrayOffset(), macAddress.array(), 0, other.macAddress.limit() - other.macAddress.arrayOffset());
+      }
+      this.timeout = other.timeout;
+    }
+
+    public writeMac_args deepCopy() {
+      return new writeMac_args(this);
+    }
+
+    @Deprecated
+    public writeMac_args clone() {
+      return new writeMac_args(this);
+    }
+
+    @Override
+    public void clear() {
+      this.key = null;
+      this.OperationHandleKey = null;
+      this.macAddress = null;
+      setTimeoutIsSet(false);
+      this.timeout = 0;
+    }
+
+    public String getKey() {
+      return this.key;
+    }
+
+    public writeMac_args setKey(String key) {
+      this.key = key;
+      return this;
+    }
+
+    public void unsetKey() {
+      this.key = null;
+    }
+
+    /** Returns true if field key is set (has been asigned a value) and false otherwise */
+    public boolean isSetKey() {
+      return this.key != null;
+    }
+
+    public void setKeyIsSet(boolean value) {
+      if (!value) {
+        this.key = null;
+      }
+    }
+
+    public String getOperationHandleKey() {
+      return this.OperationHandleKey;
+    }
+
+    public writeMac_args setOperationHandleKey(String OperationHandleKey) {
+      this.OperationHandleKey = OperationHandleKey;
+      return this;
+    }
+
+    public void unsetOperationHandleKey() {
+      this.OperationHandleKey = null;
+    }
+
+    /** Returns true if field OperationHandleKey is set (has been asigned a value) and false otherwise */
+    public boolean isSetOperationHandleKey() {
+      return this.OperationHandleKey != null;
+    }
+
+    public void setOperationHandleKeyIsSet(boolean value) {
+      if (!value) {
+        this.OperationHandleKey = null;
+      }
+    }
+
+    public ByteBuffer getMacAddress() {
+      return this.macAddress;
+    }
+
+    public writeMac_args setMacAddress(ByteBuffer macAddress) {
+      this.macAddress = macAddress;
+      return this;
+    }
+
+    public void unsetMacAddress() {
+      this.macAddress = null;
+    }
+
+    /** Returns true if field macAddress is set (has been asigned a value) and false otherwise */
+    public boolean isSetMacAddress() {
+      return this.macAddress != null;
+    }
+
+    public void setMacAddressIsSet(boolean value) {
+      if (!value) {
+        this.macAddress = null;
+      }
+    }
+
+    public long getTimeout() {
+      return this.timeout;
+    }
+
+    public writeMac_args setTimeout(long timeout) {
+      this.timeout = timeout;
+      setTimeoutIsSet(true);
+      return this;
+    }
+
+    public void unsetTimeout() {
+      __isset_bit_vector.clear(__TIMEOUT_ISSET_ID);
+    }
+
+    /** Returns true if field timeout is set (has been asigned a value) and false otherwise */
+    public boolean isSetTimeout() {
+      return __isset_bit_vector.get(__TIMEOUT_ISSET_ID);
+    }
+
+    public void setTimeoutIsSet(boolean value) {
+      __isset_bit_vector.set(__TIMEOUT_ISSET_ID, value);
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case KEY:
+        if (value == null) {
+          unsetKey();
+        } else {
+          setKey((String)value);
+        }
+        break;
+
+      case OPERATION_HANDLE_KEY:
+        if (value == null) {
+          unsetOperationHandleKey();
+        } else {
+          setOperationHandleKey((String)value);
+        }
+        break;
+
+      case MAC_ADDRESS:
+        if (value == null) {
+          unsetMacAddress();
+        } else {
+          setMacAddress((ByteBuffer)value);
+        }
+        break;
+
+      case TIMEOUT:
+        if (value == null) {
+          unsetTimeout();
+        } else {
+          setTimeout((Long)value);
+        }
+        break;
+
+      }
+    }
+
+    public void setFieldValue(int fieldID, Object value) {
+      setFieldValue(_Fields.findByThriftIdOrThrow(fieldID), value);
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case KEY:
+        return getKey();
+
+      case OPERATION_HANDLE_KEY:
+        return getOperationHandleKey();
+
+      case MAC_ADDRESS:
+        return getMacAddress();
+
+      case TIMEOUT:
+        return new Long(getTimeout());
+
+      }
+      throw new IllegalStateException();
+    }
+
+    public Object getFieldValue(int fieldId) {
+      return getFieldValue(_Fields.findByThriftIdOrThrow(fieldId));
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been asigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      switch (field) {
+      case KEY:
+        return isSetKey();
+      case OPERATION_HANDLE_KEY:
+        return isSetOperationHandleKey();
+      case MAC_ADDRESS:
+        return isSetMacAddress();
+      case TIMEOUT:
+        return isSetTimeout();
+      }
+      throw new IllegalStateException();
+    }
+
+    public boolean isSet(int fieldID) {
+      return isSet(_Fields.findByThriftIdOrThrow(fieldID));
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof writeMac_args)
+        return this.equals((writeMac_args)that);
+      return false;
+    }
+
+    public boolean equals(writeMac_args that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_key = true && this.isSetKey();
+      boolean that_present_key = true && that.isSetKey();
+      if (this_present_key || that_present_key) {
+        if (!(this_present_key && that_present_key))
+          return false;
+        if (!this.key.equals(that.key))
+          return false;
+      }
+
+      boolean this_present_OperationHandleKey = true && this.isSetOperationHandleKey();
+      boolean that_present_OperationHandleKey = true && that.isSetOperationHandleKey();
+      if (this_present_OperationHandleKey || that_present_OperationHandleKey) {
+        if (!(this_present_OperationHandleKey && that_present_OperationHandleKey))
+          return false;
+        if (!this.OperationHandleKey.equals(that.OperationHandleKey))
+          return false;
+      }
+
+      boolean this_present_macAddress = true && this.isSetMacAddress();
+      boolean that_present_macAddress = true && that.isSetMacAddress();
+      if (this_present_macAddress || that_present_macAddress) {
+        if (!(this_present_macAddress && that_present_macAddress))
+          return false;
+        if (!this.macAddress.equals(that.macAddress))
+          return false;
+      }
+
+      boolean this_present_timeout = true;
+      boolean that_present_timeout = true;
+      if (this_present_timeout || that_present_timeout) {
+        if (!(this_present_timeout && that_present_timeout))
+          return false;
+        if (this.timeout != that.timeout)
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    public int compareTo(writeMac_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      writeMac_args typedOther = (writeMac_args)other;
+
+      lastComparison = Boolean.valueOf(isSetKey()).compareTo(typedOther.isSetKey());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetKey()) {        lastComparison = TBaseHelper.compareTo(this.key, typedOther.key);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetOperationHandleKey()).compareTo(typedOther.isSetOperationHandleKey());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetOperationHandleKey()) {        lastComparison = TBaseHelper.compareTo(this.OperationHandleKey, typedOther.OperationHandleKey);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetMacAddress()).compareTo(typedOther.isSetMacAddress());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetMacAddress()) {        lastComparison = TBaseHelper.compareTo(this.macAddress, typedOther.macAddress);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetTimeout()).compareTo(typedOther.isSetTimeout());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetTimeout()) {        lastComparison = TBaseHelper.compareTo(this.timeout, typedOther.timeout);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public void read(TProtocol iprot) throws TException {
+      TField field;
+      iprot.readStructBegin();
+      while (true)
+      {
+        field = iprot.readFieldBegin();
+        if (field.type == TType.STOP) { 
+          break;
+        }
+        switch (field.id) {
+          case 1: // KEY
+            if (field.type == TType.STRING) {
+              this.key = iprot.readString();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 2: // OPERATION_HANDLE_KEY
+            if (field.type == TType.STRING) {
+              this.OperationHandleKey = iprot.readString();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 3: // MAC_ADDRESS
+            if (field.type == TType.STRING) {
+              this.macAddress = iprot.readBinary();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 4: // TIMEOUT
+            if (field.type == TType.I64) {
+              this.timeout = iprot.readI64();
+              setTimeoutIsSet(true);
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          default:
+            TProtocolUtil.skip(iprot, field.type);
+        }
+        iprot.readFieldEnd();
+      }
+      iprot.readStructEnd();
+
+      // check for required fields of primitive type, which can't be checked in the validate method
+      validate();
+    }
+
+    public void write(TProtocol oprot) throws TException {
+      validate();
+
+      oprot.writeStructBegin(STRUCT_DESC);
+      if (this.key != null) {
+        oprot.writeFieldBegin(KEY_FIELD_DESC);
+        oprot.writeString(this.key);
+        oprot.writeFieldEnd();
+      }
+      if (this.OperationHandleKey != null) {
+        oprot.writeFieldBegin(OPERATION_HANDLE_KEY_FIELD_DESC);
+        oprot.writeString(this.OperationHandleKey);
+        oprot.writeFieldEnd();
+      }
+      if (this.macAddress != null) {
+        oprot.writeFieldBegin(MAC_ADDRESS_FIELD_DESC);
+        oprot.writeBinary(this.macAddress);
+        oprot.writeFieldEnd();
+      }
+      oprot.writeFieldBegin(TIMEOUT_FIELD_DESC);
+      oprot.writeI64(this.timeout);
+      oprot.writeFieldEnd();
+      oprot.writeFieldStop();
+      oprot.writeStructEnd();
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("writeMac_args(");
+      boolean first = true;
+
+      sb.append("key:");
+      if (this.key == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.key);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("OperationHandleKey:");
+      if (this.OperationHandleKey == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.OperationHandleKey);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("macAddress:");
+      if (this.macAddress == null) {
+        sb.append("null");
+      } else {
+        TBaseHelper.toString(this.macAddress, sb);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("timeout:");
+      sb.append(this.timeout);
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws TException {
+      // check for required fields
+    }
+
+  }
+
+  public static class writeMac_result implements TBase<writeMac_result, writeMac_result._Fields>, java.io.Serializable, Cloneable   {
+    private static final TStruct STRUCT_DESC = new TStruct("writeMac_result");
+
+
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements TFieldIdEnum {
+;
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+    public static final Map<_Fields, FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, FieldMetaData> tmpMap = new EnumMap<_Fields, FieldMetaData>(_Fields.class);
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      FieldMetaData.addStructMetaDataMap(writeMac_result.class, metaDataMap);
+    }
+
+    public writeMac_result() {
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public writeMac_result(writeMac_result other) {
+    }
+
+    public writeMac_result deepCopy() {
+      return new writeMac_result(this);
+    }
+
+    @Deprecated
+    public writeMac_result clone() {
+      return new writeMac_result(this);
+    }
+
+    @Override
+    public void clear() {
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      }
+    }
+
+    public void setFieldValue(int fieldID, Object value) {
+      setFieldValue(_Fields.findByThriftIdOrThrow(fieldID), value);
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    public Object getFieldValue(int fieldId) {
+      return getFieldValue(_Fields.findByThriftIdOrThrow(fieldId));
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been asigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    public boolean isSet(int fieldID) {
+      return isSet(_Fields.findByThriftIdOrThrow(fieldID));
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof writeMac_result)
+        return this.equals((writeMac_result)that);
+      return false;
+    }
+
+    public boolean equals(writeMac_result that) {
+      if (that == null)
+        return false;
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    public int compareTo(writeMac_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      writeMac_result typedOther = (writeMac_result)other;
+
+      return 0;
+    }
+
+    public void read(TProtocol iprot) throws TException {
+      TField field;
+      iprot.readStructBegin();
+      while (true)
+      {
+        field = iprot.readFieldBegin();
+        if (field.type == TType.STOP) { 
+          break;
+        }
+        switch (field.id) {
+          default:
+            TProtocolUtil.skip(iprot, field.type);
+        }
+        iprot.readFieldEnd();
+      }
+      iprot.readStructEnd();
+
+      // check for required fields of primitive type, which can't be checked in the validate method
+      validate();
+    }
+
+    public void write(TProtocol oprot) throws TException {
+      oprot.writeStructBegin(STRUCT_DESC);
+
+      oprot.writeFieldStop();
+      oprot.writeStructEnd();
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("writeMac_result(");
+      boolean first = true;
+
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws TException {
+      // check for required fields
+    }
+
+  }
+
   public static class HandleCancel_args implements TBase<HandleCancel_args, HandleCancel_args._Fields>, java.io.Serializable, Cloneable   {
     private static final TStruct STRUCT_DESC = new TStruct("HandleCancel_args");
 
@@ -5746,6 +12131,1376 @@ public class AsyncDevice {
         sb.append("null");
       } else {
         sb.append(this.success);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws TException {
+      // check for required fields
+    }
+
+  }
+
+  public static class HandleGetReadFlash_args implements TBase<HandleGetReadFlash_args, HandleGetReadFlash_args._Fields>, java.io.Serializable, Cloneable   {
+    private static final TStruct STRUCT_DESC = new TStruct("HandleGetReadFlash_args");
+
+    private static final TField KEY_FIELD_DESC = new TField("key", TType.STRING, (short)1);
+    private static final TField OPERATION_HANDLE_KEY_FIELD_DESC = new TField("OperationHandleKey", TType.STRING, (short)2);
+
+    public String key;
+    public String OperationHandleKey;
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements TFieldIdEnum {
+      KEY((short)1, "key"),
+      OPERATION_HANDLE_KEY((short)2, "OperationHandleKey");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // KEY
+            return KEY;
+          case 2: // OPERATION_HANDLE_KEY
+            return OPERATION_HANDLE_KEY;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+
+    public static final Map<_Fields, FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, FieldMetaData> tmpMap = new EnumMap<_Fields, FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.KEY, new FieldMetaData("key", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
+      tmpMap.put(_Fields.OPERATION_HANDLE_KEY, new FieldMetaData("OperationHandleKey", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      FieldMetaData.addStructMetaDataMap(HandleGetReadFlash_args.class, metaDataMap);
+    }
+
+    public HandleGetReadFlash_args() {
+    }
+
+    public HandleGetReadFlash_args(
+      String key,
+      String OperationHandleKey)
+    {
+      this();
+      this.key = key;
+      this.OperationHandleKey = OperationHandleKey;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public HandleGetReadFlash_args(HandleGetReadFlash_args other) {
+      if (other.isSetKey()) {
+        this.key = other.key;
+      }
+      if (other.isSetOperationHandleKey()) {
+        this.OperationHandleKey = other.OperationHandleKey;
+      }
+    }
+
+    public HandleGetReadFlash_args deepCopy() {
+      return new HandleGetReadFlash_args(this);
+    }
+
+    @Deprecated
+    public HandleGetReadFlash_args clone() {
+      return new HandleGetReadFlash_args(this);
+    }
+
+    @Override
+    public void clear() {
+      this.key = null;
+      this.OperationHandleKey = null;
+    }
+
+    public String getKey() {
+      return this.key;
+    }
+
+    public HandleGetReadFlash_args setKey(String key) {
+      this.key = key;
+      return this;
+    }
+
+    public void unsetKey() {
+      this.key = null;
+    }
+
+    /** Returns true if field key is set (has been asigned a value) and false otherwise */
+    public boolean isSetKey() {
+      return this.key != null;
+    }
+
+    public void setKeyIsSet(boolean value) {
+      if (!value) {
+        this.key = null;
+      }
+    }
+
+    public String getOperationHandleKey() {
+      return this.OperationHandleKey;
+    }
+
+    public HandleGetReadFlash_args setOperationHandleKey(String OperationHandleKey) {
+      this.OperationHandleKey = OperationHandleKey;
+      return this;
+    }
+
+    public void unsetOperationHandleKey() {
+      this.OperationHandleKey = null;
+    }
+
+    /** Returns true if field OperationHandleKey is set (has been asigned a value) and false otherwise */
+    public boolean isSetOperationHandleKey() {
+      return this.OperationHandleKey != null;
+    }
+
+    public void setOperationHandleKeyIsSet(boolean value) {
+      if (!value) {
+        this.OperationHandleKey = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case KEY:
+        if (value == null) {
+          unsetKey();
+        } else {
+          setKey((String)value);
+        }
+        break;
+
+      case OPERATION_HANDLE_KEY:
+        if (value == null) {
+          unsetOperationHandleKey();
+        } else {
+          setOperationHandleKey((String)value);
+        }
+        break;
+
+      }
+    }
+
+    public void setFieldValue(int fieldID, Object value) {
+      setFieldValue(_Fields.findByThriftIdOrThrow(fieldID), value);
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case KEY:
+        return getKey();
+
+      case OPERATION_HANDLE_KEY:
+        return getOperationHandleKey();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    public Object getFieldValue(int fieldId) {
+      return getFieldValue(_Fields.findByThriftIdOrThrow(fieldId));
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been asigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      switch (field) {
+      case KEY:
+        return isSetKey();
+      case OPERATION_HANDLE_KEY:
+        return isSetOperationHandleKey();
+      }
+      throw new IllegalStateException();
+    }
+
+    public boolean isSet(int fieldID) {
+      return isSet(_Fields.findByThriftIdOrThrow(fieldID));
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof HandleGetReadFlash_args)
+        return this.equals((HandleGetReadFlash_args)that);
+      return false;
+    }
+
+    public boolean equals(HandleGetReadFlash_args that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_key = true && this.isSetKey();
+      boolean that_present_key = true && that.isSetKey();
+      if (this_present_key || that_present_key) {
+        if (!(this_present_key && that_present_key))
+          return false;
+        if (!this.key.equals(that.key))
+          return false;
+      }
+
+      boolean this_present_OperationHandleKey = true && this.isSetOperationHandleKey();
+      boolean that_present_OperationHandleKey = true && that.isSetOperationHandleKey();
+      if (this_present_OperationHandleKey || that_present_OperationHandleKey) {
+        if (!(this_present_OperationHandleKey && that_present_OperationHandleKey))
+          return false;
+        if (!this.OperationHandleKey.equals(that.OperationHandleKey))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    public int compareTo(HandleGetReadFlash_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      HandleGetReadFlash_args typedOther = (HandleGetReadFlash_args)other;
+
+      lastComparison = Boolean.valueOf(isSetKey()).compareTo(typedOther.isSetKey());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetKey()) {        lastComparison = TBaseHelper.compareTo(this.key, typedOther.key);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetOperationHandleKey()).compareTo(typedOther.isSetOperationHandleKey());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetOperationHandleKey()) {        lastComparison = TBaseHelper.compareTo(this.OperationHandleKey, typedOther.OperationHandleKey);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public void read(TProtocol iprot) throws TException {
+      TField field;
+      iprot.readStructBegin();
+      while (true)
+      {
+        field = iprot.readFieldBegin();
+        if (field.type == TType.STOP) { 
+          break;
+        }
+        switch (field.id) {
+          case 1: // KEY
+            if (field.type == TType.STRING) {
+              this.key = iprot.readString();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 2: // OPERATION_HANDLE_KEY
+            if (field.type == TType.STRING) {
+              this.OperationHandleKey = iprot.readString();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          default:
+            TProtocolUtil.skip(iprot, field.type);
+        }
+        iprot.readFieldEnd();
+      }
+      iprot.readStructEnd();
+
+      // check for required fields of primitive type, which can't be checked in the validate method
+      validate();
+    }
+
+    public void write(TProtocol oprot) throws TException {
+      validate();
+
+      oprot.writeStructBegin(STRUCT_DESC);
+      if (this.key != null) {
+        oprot.writeFieldBegin(KEY_FIELD_DESC);
+        oprot.writeString(this.key);
+        oprot.writeFieldEnd();
+      }
+      if (this.OperationHandleKey != null) {
+        oprot.writeFieldBegin(OPERATION_HANDLE_KEY_FIELD_DESC);
+        oprot.writeString(this.OperationHandleKey);
+        oprot.writeFieldEnd();
+      }
+      oprot.writeFieldStop();
+      oprot.writeStructEnd();
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("HandleGetReadFlash_args(");
+      boolean first = true;
+
+      sb.append("key:");
+      if (this.key == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.key);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("OperationHandleKey:");
+      if (this.OperationHandleKey == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.OperationHandleKey);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws TException {
+      // check for required fields
+    }
+
+  }
+
+  public static class HandleGetReadFlash_result implements TBase<HandleGetReadFlash_result, HandleGetReadFlash_result._Fields>, java.io.Serializable, Cloneable   {
+    private static final TStruct STRUCT_DESC = new TStruct("HandleGetReadFlash_result");
+
+    private static final TField SUCCESS_FIELD_DESC = new TField("success", TType.LIST, (short)0);
+
+    public List<ByteBuffer> success;
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements TFieldIdEnum {
+      SUCCESS((short)0, "success");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 0: // SUCCESS
+            return SUCCESS;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+
+    public static final Map<_Fields, FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, FieldMetaData> tmpMap = new EnumMap<_Fields, FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.SUCCESS, new FieldMetaData("success", TFieldRequirementType.DEFAULT, 
+          new ListMetaData(TType.LIST, 
+              new FieldValueMetaData(TType.STRING))));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      FieldMetaData.addStructMetaDataMap(HandleGetReadFlash_result.class, metaDataMap);
+    }
+
+    public HandleGetReadFlash_result() {
+    }
+
+    public HandleGetReadFlash_result(
+      List<ByteBuffer> success)
+    {
+      this();
+      this.success = success;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public HandleGetReadFlash_result(HandleGetReadFlash_result other) {
+      if (other.isSetSuccess()) {
+        List<ByteBuffer> __this__success = new ArrayList<ByteBuffer>();
+        for (ByteBuffer other_element : other.success) {
+          ByteBuffer temp_binary_element = ByteBuffer.wrap(new byte[other_element.limit() - other_element.arrayOffset()]);
+          System.arraycopy(other_element.array(), other_element.arrayOffset(), temp_binary_element.array(), 0, other_element.limit() - other_element.arrayOffset());
+          __this__success.add(temp_binary_element);
+        }
+        this.success = __this__success;
+      }
+    }
+
+    public HandleGetReadFlash_result deepCopy() {
+      return new HandleGetReadFlash_result(this);
+    }
+
+    @Deprecated
+    public HandleGetReadFlash_result clone() {
+      return new HandleGetReadFlash_result(this);
+    }
+
+    @Override
+    public void clear() {
+      this.success = null;
+    }
+
+    public int getSuccessSize() {
+      return (this.success == null) ? 0 : this.success.size();
+    }
+
+    public java.util.Iterator<ByteBuffer> getSuccessIterator() {
+      return (this.success == null) ? null : this.success.iterator();
+    }
+
+    public void addToSuccess(ByteBuffer elem) {
+      if (this.success == null) {
+        this.success = new ArrayList<ByteBuffer>();
+      }
+      this.success.add(elem);
+    }
+
+    public List<ByteBuffer> getSuccess() {
+      return this.success;
+    }
+
+    public HandleGetReadFlash_result setSuccess(List<ByteBuffer> success) {
+      this.success = success;
+      return this;
+    }
+
+    public void unsetSuccess() {
+      this.success = null;
+    }
+
+    /** Returns true if field success is set (has been asigned a value) and false otherwise */
+    public boolean isSetSuccess() {
+      return this.success != null;
+    }
+
+    public void setSuccessIsSet(boolean value) {
+      if (!value) {
+        this.success = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case SUCCESS:
+        if (value == null) {
+          unsetSuccess();
+        } else {
+          setSuccess((List<ByteBuffer>)value);
+        }
+        break;
+
+      }
+    }
+
+    public void setFieldValue(int fieldID, Object value) {
+      setFieldValue(_Fields.findByThriftIdOrThrow(fieldID), value);
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case SUCCESS:
+        return getSuccess();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    public Object getFieldValue(int fieldId) {
+      return getFieldValue(_Fields.findByThriftIdOrThrow(fieldId));
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been asigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      switch (field) {
+      case SUCCESS:
+        return isSetSuccess();
+      }
+      throw new IllegalStateException();
+    }
+
+    public boolean isSet(int fieldID) {
+      return isSet(_Fields.findByThriftIdOrThrow(fieldID));
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof HandleGetReadFlash_result)
+        return this.equals((HandleGetReadFlash_result)that);
+      return false;
+    }
+
+    public boolean equals(HandleGetReadFlash_result that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_success = true && this.isSetSuccess();
+      boolean that_present_success = true && that.isSetSuccess();
+      if (this_present_success || that_present_success) {
+        if (!(this_present_success && that_present_success))
+          return false;
+        if (!this.success.equals(that.success))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    public int compareTo(HandleGetReadFlash_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      HandleGetReadFlash_result typedOther = (HandleGetReadFlash_result)other;
+
+      lastComparison = Boolean.valueOf(isSetSuccess()).compareTo(typedOther.isSetSuccess());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetSuccess()) {        lastComparison = TBaseHelper.compareTo(this.success, typedOther.success);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public void read(TProtocol iprot) throws TException {
+      TField field;
+      iprot.readStructBegin();
+      while (true)
+      {
+        field = iprot.readFieldBegin();
+        if (field.type == TType.STOP) { 
+          break;
+        }
+        switch (field.id) {
+          case 0: // SUCCESS
+            if (field.type == TType.LIST) {
+              {
+                TList _list8 = iprot.readListBegin();
+                this.success = new ArrayList<ByteBuffer>(_list8.size);
+                for (int _i9 = 0; _i9 < _list8.size; ++_i9)
+                {
+                  ByteBuffer _elem10;
+                  _elem10 = iprot.readBinary();
+                  this.success.add(_elem10);
+                }
+                iprot.readListEnd();
+              }
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          default:
+            TProtocolUtil.skip(iprot, field.type);
+        }
+        iprot.readFieldEnd();
+      }
+      iprot.readStructEnd();
+
+      // check for required fields of primitive type, which can't be checked in the validate method
+      validate();
+    }
+
+    public void write(TProtocol oprot) throws TException {
+      oprot.writeStructBegin(STRUCT_DESC);
+
+      if (this.isSetSuccess()) {
+        oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
+        {
+          oprot.writeListBegin(new TList(TType.STRING, this.success.size()));
+          for (ByteBuffer _iter11 : this.success)
+          {
+            oprot.writeBinary(_iter11);
+          }
+          oprot.writeListEnd();
+        }
+        oprot.writeFieldEnd();
+      }
+      oprot.writeFieldStop();
+      oprot.writeStructEnd();
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("HandleGetReadFlash_result(");
+      boolean first = true;
+
+      sb.append("success:");
+      if (this.success == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.success);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws TException {
+      // check for required fields
+    }
+
+  }
+
+  public static class HandleGetReadMac_args implements TBase<HandleGetReadMac_args, HandleGetReadMac_args._Fields>, java.io.Serializable, Cloneable   {
+    private static final TStruct STRUCT_DESC = new TStruct("HandleGetReadMac_args");
+
+    private static final TField KEY_FIELD_DESC = new TField("key", TType.STRING, (short)1);
+    private static final TField OPERATION_HANDLE_KEY_FIELD_DESC = new TField("OperationHandleKey", TType.STRING, (short)2);
+
+    public String key;
+    public String OperationHandleKey;
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements TFieldIdEnum {
+      KEY((short)1, "key"),
+      OPERATION_HANDLE_KEY((short)2, "OperationHandleKey");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // KEY
+            return KEY;
+          case 2: // OPERATION_HANDLE_KEY
+            return OPERATION_HANDLE_KEY;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+
+    public static final Map<_Fields, FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, FieldMetaData> tmpMap = new EnumMap<_Fields, FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.KEY, new FieldMetaData("key", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
+      tmpMap.put(_Fields.OPERATION_HANDLE_KEY, new FieldMetaData("OperationHandleKey", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      FieldMetaData.addStructMetaDataMap(HandleGetReadMac_args.class, metaDataMap);
+    }
+
+    public HandleGetReadMac_args() {
+    }
+
+    public HandleGetReadMac_args(
+      String key,
+      String OperationHandleKey)
+    {
+      this();
+      this.key = key;
+      this.OperationHandleKey = OperationHandleKey;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public HandleGetReadMac_args(HandleGetReadMac_args other) {
+      if (other.isSetKey()) {
+        this.key = other.key;
+      }
+      if (other.isSetOperationHandleKey()) {
+        this.OperationHandleKey = other.OperationHandleKey;
+      }
+    }
+
+    public HandleGetReadMac_args deepCopy() {
+      return new HandleGetReadMac_args(this);
+    }
+
+    @Deprecated
+    public HandleGetReadMac_args clone() {
+      return new HandleGetReadMac_args(this);
+    }
+
+    @Override
+    public void clear() {
+      this.key = null;
+      this.OperationHandleKey = null;
+    }
+
+    public String getKey() {
+      return this.key;
+    }
+
+    public HandleGetReadMac_args setKey(String key) {
+      this.key = key;
+      return this;
+    }
+
+    public void unsetKey() {
+      this.key = null;
+    }
+
+    /** Returns true if field key is set (has been asigned a value) and false otherwise */
+    public boolean isSetKey() {
+      return this.key != null;
+    }
+
+    public void setKeyIsSet(boolean value) {
+      if (!value) {
+        this.key = null;
+      }
+    }
+
+    public String getOperationHandleKey() {
+      return this.OperationHandleKey;
+    }
+
+    public HandleGetReadMac_args setOperationHandleKey(String OperationHandleKey) {
+      this.OperationHandleKey = OperationHandleKey;
+      return this;
+    }
+
+    public void unsetOperationHandleKey() {
+      this.OperationHandleKey = null;
+    }
+
+    /** Returns true if field OperationHandleKey is set (has been asigned a value) and false otherwise */
+    public boolean isSetOperationHandleKey() {
+      return this.OperationHandleKey != null;
+    }
+
+    public void setOperationHandleKeyIsSet(boolean value) {
+      if (!value) {
+        this.OperationHandleKey = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case KEY:
+        if (value == null) {
+          unsetKey();
+        } else {
+          setKey((String)value);
+        }
+        break;
+
+      case OPERATION_HANDLE_KEY:
+        if (value == null) {
+          unsetOperationHandleKey();
+        } else {
+          setOperationHandleKey((String)value);
+        }
+        break;
+
+      }
+    }
+
+    public void setFieldValue(int fieldID, Object value) {
+      setFieldValue(_Fields.findByThriftIdOrThrow(fieldID), value);
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case KEY:
+        return getKey();
+
+      case OPERATION_HANDLE_KEY:
+        return getOperationHandleKey();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    public Object getFieldValue(int fieldId) {
+      return getFieldValue(_Fields.findByThriftIdOrThrow(fieldId));
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been asigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      switch (field) {
+      case KEY:
+        return isSetKey();
+      case OPERATION_HANDLE_KEY:
+        return isSetOperationHandleKey();
+      }
+      throw new IllegalStateException();
+    }
+
+    public boolean isSet(int fieldID) {
+      return isSet(_Fields.findByThriftIdOrThrow(fieldID));
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof HandleGetReadMac_args)
+        return this.equals((HandleGetReadMac_args)that);
+      return false;
+    }
+
+    public boolean equals(HandleGetReadMac_args that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_key = true && this.isSetKey();
+      boolean that_present_key = true && that.isSetKey();
+      if (this_present_key || that_present_key) {
+        if (!(this_present_key && that_present_key))
+          return false;
+        if (!this.key.equals(that.key))
+          return false;
+      }
+
+      boolean this_present_OperationHandleKey = true && this.isSetOperationHandleKey();
+      boolean that_present_OperationHandleKey = true && that.isSetOperationHandleKey();
+      if (this_present_OperationHandleKey || that_present_OperationHandleKey) {
+        if (!(this_present_OperationHandleKey && that_present_OperationHandleKey))
+          return false;
+        if (!this.OperationHandleKey.equals(that.OperationHandleKey))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    public int compareTo(HandleGetReadMac_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      HandleGetReadMac_args typedOther = (HandleGetReadMac_args)other;
+
+      lastComparison = Boolean.valueOf(isSetKey()).compareTo(typedOther.isSetKey());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetKey()) {        lastComparison = TBaseHelper.compareTo(this.key, typedOther.key);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetOperationHandleKey()).compareTo(typedOther.isSetOperationHandleKey());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetOperationHandleKey()) {        lastComparison = TBaseHelper.compareTo(this.OperationHandleKey, typedOther.OperationHandleKey);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public void read(TProtocol iprot) throws TException {
+      TField field;
+      iprot.readStructBegin();
+      while (true)
+      {
+        field = iprot.readFieldBegin();
+        if (field.type == TType.STOP) { 
+          break;
+        }
+        switch (field.id) {
+          case 1: // KEY
+            if (field.type == TType.STRING) {
+              this.key = iprot.readString();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          case 2: // OPERATION_HANDLE_KEY
+            if (field.type == TType.STRING) {
+              this.OperationHandleKey = iprot.readString();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          default:
+            TProtocolUtil.skip(iprot, field.type);
+        }
+        iprot.readFieldEnd();
+      }
+      iprot.readStructEnd();
+
+      // check for required fields of primitive type, which can't be checked in the validate method
+      validate();
+    }
+
+    public void write(TProtocol oprot) throws TException {
+      validate();
+
+      oprot.writeStructBegin(STRUCT_DESC);
+      if (this.key != null) {
+        oprot.writeFieldBegin(KEY_FIELD_DESC);
+        oprot.writeString(this.key);
+        oprot.writeFieldEnd();
+      }
+      if (this.OperationHandleKey != null) {
+        oprot.writeFieldBegin(OPERATION_HANDLE_KEY_FIELD_DESC);
+        oprot.writeString(this.OperationHandleKey);
+        oprot.writeFieldEnd();
+      }
+      oprot.writeFieldStop();
+      oprot.writeStructEnd();
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("HandleGetReadMac_args(");
+      boolean first = true;
+
+      sb.append("key:");
+      if (this.key == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.key);
+      }
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("OperationHandleKey:");
+      if (this.OperationHandleKey == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.OperationHandleKey);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws TException {
+      // check for required fields
+    }
+
+  }
+
+  public static class HandleGetReadMac_result implements TBase<HandleGetReadMac_result, HandleGetReadMac_result._Fields>, java.io.Serializable, Cloneable   {
+    private static final TStruct STRUCT_DESC = new TStruct("HandleGetReadMac_result");
+
+    private static final TField SUCCESS_FIELD_DESC = new TField("success", TType.STRING, (short)0);
+
+    public ByteBuffer success;
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements TFieldIdEnum {
+      SUCCESS((short)0, "success");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 0: // SUCCESS
+            return SUCCESS;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+
+    public static final Map<_Fields, FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, FieldMetaData> tmpMap = new EnumMap<_Fields, FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.SUCCESS, new FieldMetaData("success", TFieldRequirementType.DEFAULT, 
+          new FieldValueMetaData(TType.STRING)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      FieldMetaData.addStructMetaDataMap(HandleGetReadMac_result.class, metaDataMap);
+    }
+
+    public HandleGetReadMac_result() {
+    }
+
+    public HandleGetReadMac_result(
+      ByteBuffer success)
+    {
+      this();
+      this.success = success;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public HandleGetReadMac_result(HandleGetReadMac_result other) {
+      if (other.isSetSuccess()) {
+        this.success = ByteBuffer.wrap(new byte[other.success.limit() - other.success.arrayOffset()]);
+        System.arraycopy(other.success.array(), other.success.arrayOffset(), success.array(), 0, other.success.limit() - other.success.arrayOffset());
+      }
+    }
+
+    public HandleGetReadMac_result deepCopy() {
+      return new HandleGetReadMac_result(this);
+    }
+
+    @Deprecated
+    public HandleGetReadMac_result clone() {
+      return new HandleGetReadMac_result(this);
+    }
+
+    @Override
+    public void clear() {
+      this.success = null;
+    }
+
+    public ByteBuffer getSuccess() {
+      return this.success;
+    }
+
+    public HandleGetReadMac_result setSuccess(ByteBuffer success) {
+      this.success = success;
+      return this;
+    }
+
+    public void unsetSuccess() {
+      this.success = null;
+    }
+
+    /** Returns true if field success is set (has been asigned a value) and false otherwise */
+    public boolean isSetSuccess() {
+      return this.success != null;
+    }
+
+    public void setSuccessIsSet(boolean value) {
+      if (!value) {
+        this.success = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case SUCCESS:
+        if (value == null) {
+          unsetSuccess();
+        } else {
+          setSuccess((ByteBuffer)value);
+        }
+        break;
+
+      }
+    }
+
+    public void setFieldValue(int fieldID, Object value) {
+      setFieldValue(_Fields.findByThriftIdOrThrow(fieldID), value);
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case SUCCESS:
+        return getSuccess();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    public Object getFieldValue(int fieldId) {
+      return getFieldValue(_Fields.findByThriftIdOrThrow(fieldId));
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been asigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      switch (field) {
+      case SUCCESS:
+        return isSetSuccess();
+      }
+      throw new IllegalStateException();
+    }
+
+    public boolean isSet(int fieldID) {
+      return isSet(_Fields.findByThriftIdOrThrow(fieldID));
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof HandleGetReadMac_result)
+        return this.equals((HandleGetReadMac_result)that);
+      return false;
+    }
+
+    public boolean equals(HandleGetReadMac_result that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_success = true && this.isSetSuccess();
+      boolean that_present_success = true && that.isSetSuccess();
+      if (this_present_success || that_present_success) {
+        if (!(this_present_success && that_present_success))
+          return false;
+        if (!this.success.equals(that.success))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    public int compareTo(HandleGetReadMac_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      HandleGetReadMac_result typedOther = (HandleGetReadMac_result)other;
+
+      lastComparison = Boolean.valueOf(isSetSuccess()).compareTo(typedOther.isSetSuccess());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetSuccess()) {        lastComparison = TBaseHelper.compareTo(this.success, typedOther.success);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public void read(TProtocol iprot) throws TException {
+      TField field;
+      iprot.readStructBegin();
+      while (true)
+      {
+        field = iprot.readFieldBegin();
+        if (field.type == TType.STOP) { 
+          break;
+        }
+        switch (field.id) {
+          case 0: // SUCCESS
+            if (field.type == TType.STRING) {
+              this.success = iprot.readBinary();
+            } else { 
+              TProtocolUtil.skip(iprot, field.type);
+            }
+            break;
+          default:
+            TProtocolUtil.skip(iprot, field.type);
+        }
+        iprot.readFieldEnd();
+      }
+      iprot.readStructEnd();
+
+      // check for required fields of primitive type, which can't be checked in the validate method
+      validate();
+    }
+
+    public void write(TProtocol oprot) throws TException {
+      oprot.writeStructBegin(STRUCT_DESC);
+
+      if (this.isSetSuccess()) {
+        oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
+        oprot.writeBinary(this.success);
+        oprot.writeFieldEnd();
+      }
+      oprot.writeFieldStop();
+      oprot.writeStructEnd();
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("HandleGetReadMac_result(");
+      boolean first = true;
+
+      sb.append("success:");
+      if (this.success == null) {
+        sb.append("null");
+      } else {
+        TBaseHelper.toString(this.success, sb);
       }
       first = false;
       sb.append(")");

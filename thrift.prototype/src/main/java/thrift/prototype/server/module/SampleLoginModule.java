@@ -175,7 +175,7 @@ public class SampleLoginModule implements LoginModule {
 	// verify the username/password
 	boolean usernameCorrect = false;
 	boolean passwordCorrect = false;
-	if (username.equals("testUser"))
+	if (username.equals("testUser") || username.equals("testUser2"))
 	    usernameCorrect = true;
 	if (usernameCorrect &&
 	    password.length == 12 &&

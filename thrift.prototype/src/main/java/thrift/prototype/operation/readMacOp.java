@@ -8,32 +8,35 @@ import org.apache.thrift.transport.TTransportException;
 import thrift.prototype.files.AsyncDevice;
 import thrift.prototype.files.AsyncDevice.AsyncClient.HandleCancel_call;
 import thrift.prototype.files.AsyncDevice.AsyncClient.HandleGetState_call;
-import thrift.prototype.files.AsyncDevice.AsyncClient.HandleGet_call;
-import thrift.prototype.files.AsyncDevice.AsyncClient.getMessage_call;
+import thrift.prototype.files.AsyncDevice.AsyncClient.HandleGetReadMac_call;
+import thrift.prototype.files.AsyncDevice.AsyncClient.readMac_call;
 
+import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.State;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 
-public class getMessageOp extends Operation<String> {
+public class readMacOp extends Operation<MacAddress> {
 
-	public getMessageOp(String id, String OperationHandleKey, String uri, int port,
+	MacAddress macaddress;
+	
+	public readMacOp(String id, String OperationHandleKey, String uri, int port,
 			TAsyncClientManager acm) {
 		super(id, OperationHandleKey, uri, port, acm);
 	}
 
-	public OperationHandle<Void> operate(final AsyncCallback<String> callback) {
+	public OperationHandle<MacAddress> operate(long timeout, final AsyncCallback<MacAddress> callback) {
 			
 		try {
 				// Entfernter Methodenaufruf
-				client.getMessage(id, OperationHandleKey, new AsyncMethodCallback<AsyncDevice.AsyncClient.getMessage_call>() {
+				client.readMac(id, OperationHandleKey, timeout, new AsyncMethodCallback<AsyncDevice.AsyncClient.readMac_call>() {
 		            
 					// Bei erfolgreicher Uebertragung
 					@Override
-					public void onComplete(getMessage_call response) {
+					public void onComplete(readMac_call response) {
 						try {
-							String message = response.getResult();
-							callback.onSuccess(message);
+							macaddress = new MacAddress(response.getResult().array());
+							callback.onSuccess(macaddress);
 						} catch (TException e) {
 							e.printStackTrace();
 						}// benachrichtigen des synchro-objekts
@@ -61,7 +64,7 @@ public class getMessageOp extends Operation<String> {
 				e.printStackTrace();
 			}
 			
-			return new OperationHandle<Void>(){
+			return new OperationHandle<MacAddress>(){
 
 				@Override
 				public void cancel() {
@@ -84,15 +87,16 @@ public class getMessageOp extends Operation<String> {
 					OperationKeys.getInstance().removeKey(OperationHandleKey);
 				}
 				@Override
-				public Void get() {
+				public MacAddress get() {
 					
 					try {
-						client.HandleGet(id, OperationHandleKey, new AsyncMethodCallback<AsyncDevice.AsyncClient.HandleGet_call>(){
+						client.HandleGetReadMac(id, OperationHandleKey, new AsyncMethodCallback<AsyncDevice.AsyncClient.HandleGetReadMac_call>(){
 
 							@Override
-							public void onComplete(HandleGet_call response) {
+							public void onComplete(HandleGetReadMac_call response) {
 								try {
 									response.getResult();
+									// einmalige Antwort oder wiederholender Aufruf?
 								} catch (TException e) {
 									e.printStackTrace();
 								}

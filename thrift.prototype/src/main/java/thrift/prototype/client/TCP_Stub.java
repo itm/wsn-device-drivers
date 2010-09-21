@@ -16,6 +16,7 @@ import thrift.prototype.operation.Connect;
 import thrift.prototype.operation.OperationKeys;
 import thrift.prototype.operation.getMessageOp;
 import thrift.prototype.operation.programm;
+import thrift.prototype.operation.readMacOp;
 import thrift.prototype.operation.setMessageOp;
 
 /**
@@ -147,7 +148,13 @@ public class TCP_Stub implements DeviceAsync{
 		// TODO Auto-generated method stub
 		
 	}
-
+	
+	@Override
+	public void removeMessagePacketListener(MessagePacketListener listener) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	@Override
 	public OperationHandle<Void> eraseFlash(long timeout,
 			AsyncCallback<Void> callback) {
@@ -165,13 +172,15 @@ public class TCP_Stub implements DeviceAsync{
 	@Override
 	public OperationHandle<MacAddress> readMac(long timeout,
 			AsyncCallback<MacAddress> callback) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		
+		// Abbruch wenn keine id vergeben wurde -> nicht authentifiziert
+		if(userID.equalsIgnoreCase("-1")){
+			callback.onFailure(null);
+		}
 
-	@Override
-	public void removeMessagePacketListener(MessagePacketListener listener) {
-		// TODO Auto-generated method stub
+		String OperationHandleKey = OperationKeys.getInstance().getKey();
+
+		return new readMacOp(userID, OperationHandleKey, uri, port, acm).operate(timeout, callback);
 		
 	}
 
