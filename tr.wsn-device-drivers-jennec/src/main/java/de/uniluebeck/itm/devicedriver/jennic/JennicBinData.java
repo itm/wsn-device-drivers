@@ -26,94 +26,87 @@ package de.uniluebeck.itm.devicedriver.jennic;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.devicedriver.BinFileDataBlock;
 import de.uniluebeck.itm.devicedriver.ChipType;
-import de.uniluebeck.itm.devicedriver.DeviceBinFile;
-import de.uniluebeck.itm.devicedriver.exception.FileLoadException;
+import de.uniluebeck.itm.devicedriver.DeviceBinData;
+import de.uniluebeck.itm.devicedriver.DeviceBinDataBlock;
 
 /**
+ * @author Malte Legenhausen
  * @author dp
  */
-public class JennicBinFile implements DeviceBinFile {
+public class JennicBinData implements DeviceBinData {
 
-	private static final Logger log = LoggerFactory.getLogger(JennicBinFile.class);
+	private static final Logger log = LoggerFactory.getLogger(JennicBinData.class);
 
-	private final int blockSize = 128;
+	private static final int BLOCK_SIZE = 128;
 
+	private final byte[] bytes;
+
+	private final int length;
+	
+	private final String description;
+	
 	private int blockIterator = 0;
 
-	private byte[] bytes = null;
 
-	private int length = -1;
+	/**
+	 * Static method to load the binary data from a file.
+	 * 
+	 * @param file The file from which the data has to be read.
+	 * @return The JennecBinData instance with the data from the given file.
+	 * @throws IOException is thrown when errors current the file operations occured.
+	 */
+	public static JennicBinData fromFile(File file) throws IOException {
+		if (!file.exists() || !file.canRead()) {
+			throw new IOException("Unable to open file: " + file.getAbsolutePath());
+		}
 
-	private String description;
-
-	public JennicBinFile(byte[] bytes, String description) {
+		byte[] bytes = new byte[(int) file.length()];
+		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+		bis.read(bytes, 0, bytes.length);
+		return new JennicBinData(bytes, file.getAbsolutePath());
+	}
+	
+	/**
+	 * Static method to load the binary data from a filename.
+	 * 
+	 * @param filename The filename from where the data has to be read.
+	 * @return The JennicBinData instance with the data from the given filename.
+	 * @throws IOException is thrown when errors current the file operations occured.
+	 */
+	public static JennicBinData fromFilename(String filename) throws IOException {
+		return JennicBinData.fromFile(new File(filename));
+	}
+	
+	/**
+	 * Constructor.
+	 * 
+	 * @param bytes 
+	 * @param description
+	 */
+	public JennicBinData(byte[] bytes, String description) {
 		this.bytes = bytes;
 		this.length = bytes.length;
 		this.description = description;
 	}
 
 	/**
-	 * Constructor
-	 *
-	 * @param binFile
-	 *
-	 * @throws FileLoadException
-	 */
-	public JennicBinFile(File binFile) throws Exception {
-		
-		this.description = binFile.getAbsolutePath();
-
-		if (!binFile.exists() || !binFile.canRead()) {
-			throw new Exception("Unable to open file: " + binFile.getAbsolutePath());
-		}
-
-		try {
-			bytes = new byte[(int) binFile.length()];
-			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(binFile));
-			length = bis.read(bytes, 0, bytes.length);
-
-			// log.debug("Read " + length + " bytes from " + binFile.getAbsolutePath());
-			// log.debug("Total of blocks in " + binFile.getName() + ": " + getBlockCount());
-			// int displayBytes = 200;
-			// log.debug("Bin File starts with: " + Tools.toHexString(bytes, 0, bytes.length < displayBytes ?
-			// bytes.length : displayBytes));
-
-		} catch (Exception e) {
-			log.error("Unable to load file[" + binFile + "]: " + e, e);
-			throw new Exception("Unable to load file: " + binFile);
-		}
-
-	}
-
-	/**
-	 * Constructor
-	 *
-	 * @param filename
-	 *
-	 * @throws FileLoadException
-	 */
-	public JennicBinFile(String filename) throws Exception {
-		this(new File(filename));
-	}
-
-	/**
 	 * Calculate number of blocks to write
 	 */
 	private int getFullBlocksCount() {
-		return (int) (length / blockSize);
+		return (int) (length / BLOCK_SIZE);
 	}
 
 	/**
 	 * Calculate residue after last block
 	 */
 	private int getResidue() {
-		return (int) (length % blockSize == 0 ? 0 : length - (getFullBlocksCount() * blockSize));
+		return (int) (length % BLOCK_SIZE == 0 ? 0 : length - (getFullBlocksCount() * BLOCK_SIZE));
 	}
 
 	private int getBlockOffset(int block) {
@@ -124,7 +117,7 @@ public class JennicBinFile implements DeviceBinFile {
 			return -1;
 		}
 
-		return block * blockSize;
+		return block * BLOCK_SIZE;
 	}
 
 	private byte[] getBlock(int block) {
@@ -136,7 +129,7 @@ public class JennicBinFile implements DeviceBinFile {
 		}
 
 		int offset = getBlockOffset(block);
-		int length = (getResidue() != 0 && block == maxBlocks - 1) ? getResidue() : blockSize;
+		int length = (getResidue() != 0 && block == maxBlocks - 1) ? getResidue() : BLOCK_SIZE;
 		byte b[] = new byte[length];
 		// log.debug("Returning block #" + block + " (" + length + " bytes at position " + offset);
 		System.arraycopy(bytes, offset, b, 0, length);
@@ -162,7 +155,7 @@ public class JennicBinFile implements DeviceBinFile {
 	 * @return
 	 */
 	public boolean insertHeader(byte[] b) {
-		ChipType chipType = getFileType();
+		ChipType chipType = getChipType();
 		int headerStart = chipType.getHeaderStart();
 		int headerLength = chipType.getHeaderLength();
 
@@ -180,7 +173,7 @@ public class JennicBinFile implements DeviceBinFile {
 		System.arraycopy(b, 0, bytes, address, len);
 	}
 
-	public ChipType getFileType() {
+	public ChipType getChipType() {
 		if (bytes[0] == (byte) 0xE1) {
 			log.debug("File type is JN5121");
 			return ChipType.JN5121;
@@ -241,14 +234,14 @@ public class JennicBinFile implements DeviceBinFile {
 		return length;
 	}
 
-	public BinFileDataBlock getNextBlock() {
+	public DeviceBinDataBlock getNextBlock() {
 		if (hasNextBlock()) {
 			int offset = getBlockOffset(blockIterator);
 			byte[] data = getBlock(blockIterator);
 
 			blockIterator++;
 
-			return new BinFileDataBlock(offset, data);
+			return new DeviceBinDataBlock(offset, data);
 		} else {
 			return null;
 		}
@@ -271,7 +264,7 @@ public class JennicBinFile implements DeviceBinFile {
 	@Override
 	public String toString() {
 		return "JennicBinFile{" +
-				"blockSize=" + blockSize +
+				"blockSize=" + BLOCK_SIZE +
 				", blockIterator=" + blockIterator +
 				", bytes=" + bytes +
 				", length=" + length +
@@ -280,7 +273,7 @@ public class JennicBinFile implements DeviceBinFile {
 	}
 
 	public boolean isCompatible(ChipType deviceType) {
-		return deviceType.equals(getFileType());
+		return deviceType.equals(getChipType());
 	}
 
 	public int getBlockCount() {

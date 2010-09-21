@@ -3,7 +3,7 @@ package de.uniluebeck.itm.devicedriver.jennic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.devicedriver.BinFileDataBlock;
+import de.uniluebeck.itm.devicedriver.DeviceBinDataBlock;
 import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.Monitor;
 import de.uniluebeck.itm.devicedriver.Sector;
@@ -26,7 +26,7 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 	}
 	
 	public Void execute(Monitor monitor) throws Exception {
-		JennicBinFile jennicProgram = (JennicBinFile) binaryImage;
+		JennicBinData jennicProgram = (JennicBinData) binaryImage;
 		
 		// Enter programming mode
 		EnterProgramModeOperation enterProgramModeOperation = device.createEnterProgramModeOperation();
@@ -50,8 +50,8 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 
 		// Check if file and current chip match
 		if (!binaryImage.isCompatible(chipType)) {
-			log.error("Chip type(" + chipType + ") and bin-program type(" + binaryImage.getFileType() + ") do not match");
-			throw new ProgramChipMismatchException(chipType, binaryImage.getFileType());
+			log.error("Chip type(" + chipType + ") and bin-program type(" + binaryImage.getChipType() + ") do not match");
+			throw new ProgramChipMismatchException(chipType, binaryImage.getChipType());
 		}
 		
 		// insert flash header of device
@@ -73,7 +73,7 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 		device.eraseFlash(Sector.THIRD);
 		
 		// Write program to flash
-		BinFileDataBlock block = null;
+		DeviceBinDataBlock block = null;
 		int blockCount = 0;
 		while ((block = binaryImage.getNextBlock()) != null) {
 			try {
