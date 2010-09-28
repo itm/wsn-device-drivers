@@ -2,7 +2,7 @@ package thrift.prototype.client;
 
 import org.apache.thrift.async.TAsyncClientManager;
 
-import de.uniluebeck.itm.devicedriver.DeviceBinFile;
+import de.uniluebeck.itm.devicedriver.DeviceBinData;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.MessagePacketListener;
@@ -122,7 +122,7 @@ public class TCP_Stub implements DeviceAsync{
 	 * Methode um ein entferntes Device zu flashen
 	 */
 	@Override
-	public OperationHandle<Void> program(DeviceBinFile binaryImage,
+	public OperationHandle<Void> program(DeviceBinData binaryImage,
 			long timeout, final AsyncCallback<Void> callback) {
 		
 		// Abbruch wenn keine id vergeben wurde -> nicht authentifiziert

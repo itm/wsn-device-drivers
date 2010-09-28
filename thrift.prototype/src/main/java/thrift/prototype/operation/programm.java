@@ -13,7 +13,7 @@ import thrift.prototype.files.AsyncDevice.AsyncClient.HandleGetState_call;
 import thrift.prototype.files.AsyncDevice.AsyncClient.HandleGet_call;
 import thrift.prototype.files.AsyncDevice.AsyncClient.program_call;
 
-import de.uniluebeck.itm.devicedriver.DeviceBinFile;
+import de.uniluebeck.itm.devicedriver.DeviceBinData;
 import de.uniluebeck.itm.devicedriver.State;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
@@ -26,7 +26,7 @@ public class programm extends Operation<Void> {
 	}
 
 
-	public OperationHandle<Void> operate(DeviceBinFile binaryImage,
+	public OperationHandle<Void> operate(DeviceBinData binaryImage,
 			long timeout, final AsyncCallback<Void> callback) {
 		
 		/*

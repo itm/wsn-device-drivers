@@ -1,6 +1,6 @@
 package de.uniluebeck.itm.Impl;
 
-import de.uniluebeck.itm.devicedriver.DeviceBinFile;
+import de.uniluebeck.itm.devicedriver.DeviceBinData;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.MessagePacketListener;
@@ -27,21 +27,6 @@ public class Main implements DeviceAsync{
 	public OperationHandle<Void> eraseFlash(long timeout,
 			AsyncCallback<Void> callback) {
 		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public OperationHandle<Void> program(DeviceBinFile binaryImage,
-			long timeout, AsyncCallback<Void> callback) {
-		
-		callback.onSuccess(null);
-		try {
-			System.out.println("jup es geht Main");
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		return null;
 	}
 
@@ -92,6 +77,21 @@ public class Main implements DeviceAsync{
 	public OperationHandle<Void> writeMac(MacAddress macAddress, long timeout,
 			AsyncCallback<Void> callback) {
 		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public OperationHandle<Void> program(DeviceBinData binaryImage,
+			long timeout, AsyncCallback<Void> callback) {
+		
+		callback.onSuccess(null);
+		try {
+			System.out.println("jup es geht Main");
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
 

@@ -22,7 +22,7 @@ import org.apache.thrift.transport.TNonblockingServerSocket;
 import org.apache.thrift.transport.TTransportException;
 
 import de.uniluebeck.itm.Impl.Main;
-import de.uniluebeck.itm.devicedriver.DeviceBinFile;
+import de.uniluebeck.itm.devicedriver.DeviceBinData;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
@@ -148,7 +148,7 @@ public class TCP_Server {
 			//DeviceBinFile binaryImage=clientID.getBinFile();
 			
 			// Provisorisch null
-			DeviceBinFile binaryImage = null;
+			DeviceBinData binaryImage = null;
 			
 			handle = test.program(binaryImage, timeout, new AsyncCallback<Void>(){
 

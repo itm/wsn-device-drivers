@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import de.uniluebeck.itm.devicedriver.DeviceBinFile;
+import de.uniluebeck.itm.devicedriver.DeviceBinData;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 
@@ -61,7 +61,7 @@ public class ClientID {
 		
 	}
 	
-	public DeviceBinFile getBinFile(){
+	public DeviceBinData getBinFile(){
 		
 		// TODO DeviceBinFile von Festplatte auslesen und zurueckgeben
 		
