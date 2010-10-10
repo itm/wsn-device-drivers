@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.devicedriver.generic.exception;
+package de.uniluebeck.itm.devicedriver.exception;
 
 public class EnterProgramModeException extends RuntimeException {
 	/**

@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.devicedriver.generic;
+package de.uniluebeck.itm.devicedriver.serialport;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.devicedriver.Monitor;
-import de.uniluebeck.itm.devicedriver.SerialPortConnection;
 import de.uniluebeck.itm.devicedriver.operation.AbstractSendOperation;
 
 public class SerialPortSendOperation extends AbstractSendOperation {

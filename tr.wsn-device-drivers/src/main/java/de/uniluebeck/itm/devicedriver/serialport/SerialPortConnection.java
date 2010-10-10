@@ -1,5 +1,6 @@
-package de.uniluebeck.itm.devicedriver;
+package de.uniluebeck.itm.devicedriver.serialport;
 
+import de.uniluebeck.itm.devicedriver.Connection;
 import gnu.io.SerialPort;
 
 /**

@@ -6,11 +6,12 @@ import org.slf4j.LoggerFactory;
 import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.Monitor;
-import de.uniluebeck.itm.devicedriver.SerialPortConnection;
-import de.uniluebeck.itm.devicedriver.generic.EnterProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.operation.AbstractReadMacAddressOperation;
+import de.uniluebeck.itm.devicedriver.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.operation.GetChipTypeOperation;
+import de.uniluebeck.itm.devicedriver.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.operation.ReadFlashOperation;
+import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection;
 
 public class JennicReadMacAddressOperation extends AbstractReadMacAddressOperation {
 
@@ -61,6 +62,10 @@ public class JennicReadMacAddressOperation extends AbstractReadMacAddressOperati
 
 		final MacAddress macAddress = new MacAddress(header);
 		log.debug("Done, result is: " + macAddress);
+		
+		final LeaveProgramModeOperation leaveProgramModeOperation = device.createLeaveProgramModeOperation();
+		executeSubOperation(leaveProgramModeOperation);
+		
 		return macAddress;
 	}
 

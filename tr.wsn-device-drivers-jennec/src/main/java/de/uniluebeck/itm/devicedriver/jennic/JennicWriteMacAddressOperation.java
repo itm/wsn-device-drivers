@@ -6,9 +6,10 @@ import org.slf4j.LoggerFactory;
 import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.Monitor;
 import de.uniluebeck.itm.devicedriver.Sector;
-import de.uniluebeck.itm.devicedriver.generic.EnterProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.operation.AbstractWriteMacAddressOperation;
+import de.uniluebeck.itm.devicedriver.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.operation.GetChipTypeOperation;
+import de.uniluebeck.itm.devicedriver.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.operation.ReadFlashOperation;
 import de.uniluebeck.itm.devicedriver.operation.WriteFlashOperation;
 import de.uniluebeck.itm.devicedriver.util.StringUtils;
@@ -84,6 +85,10 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 		writeSector(monitor, Sector.FIRST, sector);
 
 		log.debug("Done, written MAC Address: " + macAddress);
+		
+		final LeaveProgramModeOperation leaveProgramModeOperation = device.createLeaveProgramModeOperation();
+		executeSubOperation(leaveProgramModeOperation);
+		
 		return null;
 	}
 	

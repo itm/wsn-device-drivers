@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import gnu.io.SerialPort;
 import de.uniluebeck.itm.devicedriver.Monitor;
-import de.uniluebeck.itm.devicedriver.SerialPortConnection;
 import de.uniluebeck.itm.devicedriver.operation.AbstractResetOperation;
+import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection;
 
 public class JennicResetOperation extends AbstractResetOperation {
 

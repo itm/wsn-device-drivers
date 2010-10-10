@@ -42,6 +42,9 @@ import de.uniluebeck.itm.devicedriver.DeviceBinDataBlock;
  */
 public class PacemateBinData implements DeviceBinData {
 
+	/**
+	 * 
+	 */
 	private static final Logger log = LoggerFactory.getLogger(PacemateBinData.class);
 
 	/**

@@ -10,17 +10,14 @@ import org.slf4j.LoggerFactory;
 import de.uniluebeck.itm.devicedriver.AbstractDevice;
 import de.uniluebeck.itm.devicedriver.Connection;
 import de.uniluebeck.itm.devicedriver.Monitor;
-import de.uniluebeck.itm.devicedriver.SerialPortConnection;
-import de.uniluebeck.itm.devicedriver.SerialPortConnection.SerialPortMode;
 import de.uniluebeck.itm.devicedriver.exception.InvalidChecksumException;
 import de.uniluebeck.itm.devicedriver.exception.TimeoutException;
 import de.uniluebeck.itm.devicedriver.exception.UnexpectedResponseException;
-import de.uniluebeck.itm.devicedriver.generic.EnterProgramModeOperation;
-import de.uniluebeck.itm.devicedriver.generic.SerialPortEnterProgramModeOperation;
-import de.uniluebeck.itm.devicedriver.generic.SerialPortSendOperation;
 import de.uniluebeck.itm.devicedriver.operation.AbstractWriteMacAddressOperation;
+import de.uniluebeck.itm.devicedriver.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.operation.EraseFlashOperation;
 import de.uniluebeck.itm.devicedriver.operation.GetChipTypeOperation;
+import de.uniluebeck.itm.devicedriver.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.operation.ProgramOperation;
 import de.uniluebeck.itm.devicedriver.operation.ReadFlashOperation;
 import de.uniluebeck.itm.devicedriver.operation.ReadMacAddressOperation;
@@ -28,6 +25,11 @@ import de.uniluebeck.itm.devicedriver.operation.ResetOperation;
 import de.uniluebeck.itm.devicedriver.operation.SendOperation;
 import de.uniluebeck.itm.devicedriver.operation.WriteFlashOperation;
 import de.uniluebeck.itm.devicedriver.operation.WriteMacAddressOperation;
+import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection;
+import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection.SerialPortMode;
+import de.uniluebeck.itm.devicedriver.serialport.SerialPortEnterProgramModeOperation;
+import de.uniluebeck.itm.devicedriver.serialport.SerialPortLeaveProgramModeOperation;
+import de.uniluebeck.itm.devicedriver.serialport.SerialPortSendOperation;
 import de.uniluebeck.itm.devicedriver.util.StringUtils;
 import de.uniluebeck.itm.devicedriver.util.TimeDiff;
 
@@ -66,6 +68,10 @@ public class PacemateDevice extends AbstractDevice {
 	
 	public EnterProgramModeOperation createEnterProgramModeOperation() {
 		return new SerialPortEnterProgramModeOperation(connection);
+	}
+	
+	public LeaveProgramModeOperation createLeaveProgramModeOperation() {
+		return new SerialPortLeaveProgramModeOperation(connection);
 	}
 
 	public GetChipTypeOperation createGetChipTypeOperation() {

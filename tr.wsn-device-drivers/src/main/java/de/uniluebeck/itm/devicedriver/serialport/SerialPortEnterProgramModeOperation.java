@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.devicedriver.generic;
+package de.uniluebeck.itm.devicedriver.serialport;
 
 import gnu.io.SerialPort;
 
@@ -6,9 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.devicedriver.Monitor;
-import de.uniluebeck.itm.devicedriver.SerialPortConnection;
-import de.uniluebeck.itm.devicedriver.generic.exception.EnterProgramModeException;
+import de.uniluebeck.itm.devicedriver.exception.EnterProgramModeException;
 import de.uniluebeck.itm.devicedriver.operation.AbstractOperation;
+import de.uniluebeck.itm.devicedriver.operation.EnterProgramModeOperation;
 
 public class SerialPortEnterProgramModeOperation extends AbstractOperation<Void> implements EnterProgramModeOperation {
 

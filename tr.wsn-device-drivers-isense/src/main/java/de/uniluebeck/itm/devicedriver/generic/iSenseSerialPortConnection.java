@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.devicedriver.jennic;
+package de.uniluebeck.itm.devicedriver.generic;
 
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
@@ -19,14 +19,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.devicedriver.ConnectionListener;
-import de.uniluebeck.itm.devicedriver.SerialPortConnection;
+import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection;
 
-public class JennicSerialPortConnection implements SerialPortConnection {
+public class iSenseSerialPortConnection implements SerialPortConnection {
 	
 	/**
 	 * Logger for this class.
 	 */
-	private static final Logger log = LoggerFactory.getLogger(JennicSerialPortConnection.class);
+	private static final Logger log = LoggerFactory.getLogger(iSenseSerialPortConnection.class);
 	
 	private static final int MAX_RETRIES = 5;
 	

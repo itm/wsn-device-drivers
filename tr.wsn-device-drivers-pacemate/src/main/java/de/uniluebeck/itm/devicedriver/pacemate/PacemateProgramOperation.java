@@ -29,6 +29,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 	public Void execute(Monitor monitor) throws Exception {
 		// Enter programming mode
 		executeSubOperation(device.createEnterProgramModeOperation());
+		
 		device.clearStreamData();
 		device.autobaud();
 
@@ -211,6 +212,9 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 				blockNumber++;
 			}
 		}
+		
+		executeSubOperation(device.createLeaveProgramModeOperation());
+		
 		return null;
 	}
 

@@ -83,6 +83,9 @@ public class PacemateReadMacAddressOperation extends AbstractReadMacAddressOpera
 		log.debug("Read MAC: " + macAddress);
 
 		log.debug("Done, result is: " + macAddress);
+		
+		executeSubOperation(device.createLeaveProgramModeOperation());
+		
 		return macAddress;
 	}
 	

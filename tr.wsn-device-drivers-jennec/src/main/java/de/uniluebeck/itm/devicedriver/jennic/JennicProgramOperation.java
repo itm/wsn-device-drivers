@@ -3,12 +3,11 @@ package de.uniluebeck.itm.devicedriver.jennic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.devicedriver.DeviceBinDataBlock;
 import de.uniluebeck.itm.devicedriver.ChipType;
+import de.uniluebeck.itm.devicedriver.DeviceBinDataBlock;
 import de.uniluebeck.itm.devicedriver.Monitor;
 import de.uniluebeck.itm.devicedriver.Sector;
 import de.uniluebeck.itm.devicedriver.exception.ProgramChipMismatchException;
-import de.uniluebeck.itm.devicedriver.generic.EnterProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.operation.AbstractProgramOperation;
 import de.uniluebeck.itm.devicedriver.operation.WriteFlashOperation;
 
@@ -29,8 +28,7 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 		JennicBinData jennicProgram = (JennicBinData) binaryImage;
 		
 		// Enter programming mode
-		EnterProgramModeOperation enterProgramModeOperation = device.createEnterProgramModeOperation();
-		executeSubOperation(enterProgramModeOperation);
+		executeSubOperation(device.createEnterProgramModeOperation());
 
 		// Wait for a connection
 		while (!isCanceled() && !device.waitForConnection()) {
@@ -98,6 +96,9 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 			
 			blockCount++;
 		}
+		
+		executeSubOperation(device.createLeaveProgramModeOperation());
+		
 		return null;
 	}
 }
