@@ -7,8 +7,6 @@ import java.io.OutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.devicedriver.AbstractDevice;
-import de.uniluebeck.itm.devicedriver.Connection;
 import de.uniluebeck.itm.devicedriver.Monitor;
 import de.uniluebeck.itm.devicedriver.exception.InvalidChecksumException;
 import de.uniluebeck.itm.devicedriver.exception.TimeoutException;
@@ -25,15 +23,14 @@ import de.uniluebeck.itm.devicedriver.operation.ResetOperation;
 import de.uniluebeck.itm.devicedriver.operation.SendOperation;
 import de.uniluebeck.itm.devicedriver.operation.WriteFlashOperation;
 import de.uniluebeck.itm.devicedriver.operation.WriteMacAddressOperation;
+import de.uniluebeck.itm.devicedriver.serialport.AbstractSerialPortDevice;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection;
-import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection.SerialPortMode;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortEnterProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortLeaveProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortSendOperation;
 import de.uniluebeck.itm.devicedriver.util.StringUtils;
-import de.uniluebeck.itm.devicedriver.util.TimeDiff;
 
-public class PacemateDevice extends AbstractDevice {
+public class PacemateDevice extends AbstractSerialPortDevice {
 
 	/**
 	 * This is the Start Address in the RAM to write data
@@ -44,21 +41,13 @@ public class PacemateDevice extends AbstractDevice {
 	
 	private static final int TIMEOUT = 2000;
 	
-	private Object dataAvailableMonitor = new Object();
-	
 	/**
 	 * is The LPC2136 echo on
 	 */
 	private boolean echoOn = true;
 
-	private final SerialPortConnection connection;
-
 	public PacemateDevice(SerialPortConnection connection) {
-		this.connection = connection;
-	}
-
-	public Connection getConnection() {
-		return connection;
+		super(connection);
 	}
 
 	public int[] getChannels() {
@@ -218,14 +207,6 @@ public class PacemateDevice extends AbstractDevice {
 		sendBootLoaderMessage(Messages.Unlock_RequestMessage());
 
 		receiveBootLoaderReply(Messages.CMD_SUCCESS);
-	}
-	
-	public void leaveProgrammingMode() throws Exception {
-		// log.debug("Leaving programming mode.");
-
-		// Restore normal settings
-		connection.flush();
-		connection.setSerialPortMode(SerialPortMode.NORMAL);
 	}
 
 	public byte[] receiveBootLoaderReply(String type) throws TimeoutException, UnexpectedResponseException, InvalidChecksumException, IOException, NullPointerException {
@@ -387,40 +368,6 @@ public class PacemateDevice extends AbstractDevice {
 		outStream.flush();
 
 		receiveBootLoaderReply(Messages.DATA_ECHO);
-	}
-	
-	/**
-	 * Wait at most timeoutMillis for the input stream to become available
-	 * 
-	 * @param istream
-	 *            The stream to monitor
-	 * @param timeoutMillis
-	 *            Milliseconds to wait until timeout, 0 for no timeout
-	 * @param minCharacters
-	 *            The minimal amount of available characters
-	 * @return The number of characters available
-	 * @throws IOException
-	 */
-	private int waitDataAvailable(int timeoutMillis) throws TimeoutException, IOException {
-		InputStream inputStream = connection.getInputStream();
-		TimeDiff timeDiff = new TimeDiff();
-		int avail = 0;
-
-		while (inputStream != null && (avail = inputStream.available()) == 0) {
-			if (timeoutMillis > 0 && timeDiff.ms() >= timeoutMillis) {
-				log.warn("Timeout waiting for data (waited: " + timeDiff.ms() + ", timeoutMs:" + timeoutMillis + ")");
-				throw new TimeoutException();
-			}
-
-			synchronized (dataAvailableMonitor) {
-				try {
-					dataAvailableMonitor.wait(50);
-				} catch (InterruptedException e) {
-					log.error("" + e, e);
-				}
-			}
-		}
-		return avail;
 	}
 
 	public boolean waitForConnection() {

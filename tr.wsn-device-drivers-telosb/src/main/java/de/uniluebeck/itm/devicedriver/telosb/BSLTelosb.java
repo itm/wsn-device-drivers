@@ -38,7 +38,6 @@ import de.uniluebeck.itm.devicedriver.exception.ReceivedIncorrectDataException;
 import de.uniluebeck.itm.devicedriver.exception.TimeoutException;
 import de.uniluebeck.itm.devicedriver.exception.UnexpectedResponseException;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection;
-import de.uniluebeck.itm.devicedriver.util.TimeDiff;
 
 /**
  * @author Friedemann Wesner
@@ -132,6 +131,8 @@ public class BSLTelosb {
 	/* current baudrate used for communicating with the bsl */
 	private BaudRate currentBaudRate = BaudRate.Baud9600;
 
+	private final TelosbDevice device;
+	
 	private final SerialPortConnection connection;
 	
 	private final SerialPort serialPort;
@@ -142,11 +143,6 @@ public class BSLTelosb {
 
 	/* for i2c communication with the msp430 */
 	private final TelosI2CCom i2cCom;
-
-	/**
-	 * 
-	 */
-	public Object dataAvailableMonitor = new Object();
 
 	int oldBaudRate;
 
@@ -159,8 +155,9 @@ public class BSLTelosb {
 	 *            used for communication with the bsl
 	 * @throws IOException
 	 */
-	public BSLTelosb(SerialPortConnection connection) {
-		this.connection = connection;
+	public BSLTelosb(TelosbDevice device) {
+		this.device = device;
+		this.connection = device.getSerialPortConnection();
 		serialPort = connection.getSerialPort();
 		inputStream = connection.getInputStream();
 		outputStream = connection.getOutputStream();
@@ -341,7 +338,7 @@ public class BSLTelosb {
 			throw new NullPointerException("Inputstream for BSL is null.");
 		}
 
-		waitDataAvailable(inputStream, DEFAULT_REPLYTIMEOUTMS);
+		device.waitDataAvailable(DEFAULT_REPLYTIMEOUTMS);
 		reply = inputStream.read();
 
 		if (reply == DATA_ACK) {
@@ -365,7 +362,7 @@ public class BSLTelosb {
 			numBytesRead = 0;
 			numTries = 0;
 			while (true) {
-				waitDataAvailable(inputStream, DEFAULT_REPLYTIMEOUTMS);
+				device.waitDataAvailable(DEFAULT_REPLYTIMEOUTMS);
 				numBytesRead += inputStream.read(dataFrame, 1 + numBytesRead, 3 - numBytesRead);
 				if (numBytesRead != 3) {
 					if (numTries < 3) {
@@ -405,7 +402,7 @@ public class BSLTelosb {
 			numBytesRead = 0;
 			numTries = 0;
 			while (true) {
-				waitDataAvailable(inputStream, DEFAULT_REPLYTIMEOUTMS);
+				device.waitDataAvailable(DEFAULT_REPLYTIMEOUTMS);
 				numBytesRead += inputStream.read(dataFrame, 4 + numBytesRead, lengthFrameData - numBytesRead);
 				if (numBytesRead != lengthFrameData) {
 					if (numTries < 5) {
@@ -428,7 +425,7 @@ public class BSLTelosb {
 			}
 
 			// read and validate checksum
-			waitDataAvailable(inputStream, DEFAULT_REPLYTIMEOUTMS);
+			device.waitDataAvailable(DEFAULT_REPLYTIMEOUTMS);
 			receivedChecksumL = inputStream.read();
 			receivedChecksumH = inputStream.read();
 			if (receivedChecksumH == -1 || receivedChecksumL == -1) {
@@ -784,31 +781,6 @@ public class BSLTelosb {
 		checksum = ~checksum;
 
 		return checksum;
-	}
-
-	/*
-	 * Wait for data beeing available from serial port. Throw TimeoutException after
-	 * specified time out.
-	 */
-	private int waitDataAvailable(InputStream istream, int timeoutMillis) throws TimeoutException, IOException {
-		TimeDiff timeDiff = new TimeDiff();
-		int avail = 0;
-
-		while (istream != null && (avail = istream.available()) == 0) {
-			if (timeoutMillis > 0 && timeDiff.ms() >= timeoutMillis) {
-				throw new TimeoutException("Timeout waiting for data (waited: " + timeDiff.ms() + ", timeoutMs:"
-						+ timeoutMillis + ")");
-			}
-
-			synchronized (dataAvailableMonitor) {
-				try {
-					dataAvailableMonitor.wait(50);
-				} catch (InterruptedException e) {
-					log.error("" + e, e);
-				}
-			}
-		}
-		return avail;
 	}
 
 	/**

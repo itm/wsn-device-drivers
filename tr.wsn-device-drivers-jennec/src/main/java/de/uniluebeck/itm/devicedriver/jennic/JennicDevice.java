@@ -1,27 +1,19 @@
 package de.uniluebeck.itm.devicedriver.jennic;
 
-import gnu.io.SerialPortEvent;
-import gnu.io.SerialPortEventListener;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.TooManyListenersException;
-import java.util.concurrent.TimeoutException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.devicedriver.AbstractDevice;
 import de.uniluebeck.itm.devicedriver.ChipType;
-import de.uniluebeck.itm.devicedriver.Connection;
-import de.uniluebeck.itm.devicedriver.ConnectionListener;
-import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.Sector;
 import de.uniluebeck.itm.devicedriver.exception.FlashConfigurationFailedException;
 import de.uniluebeck.itm.devicedriver.exception.FlashEraseFailedException;
 import de.uniluebeck.itm.devicedriver.exception.FlashTypeReadFailedException;
 import de.uniluebeck.itm.devicedriver.exception.InvalidChecksumException;
+import de.uniluebeck.itm.devicedriver.exception.TimeoutException;
 import de.uniluebeck.itm.devicedriver.exception.UnexpectedResponseException;
 import de.uniluebeck.itm.devicedriver.generic.FlashType;
 import de.uniluebeck.itm.devicedriver.jennic.exception.SectorEraseException;
@@ -36,14 +28,13 @@ import de.uniluebeck.itm.devicedriver.operation.ResetOperation;
 import de.uniluebeck.itm.devicedriver.operation.SendOperation;
 import de.uniluebeck.itm.devicedriver.operation.WriteFlashOperation;
 import de.uniluebeck.itm.devicedriver.operation.WriteMacAddressOperation;
+import de.uniluebeck.itm.devicedriver.serialport.AbstractSerialPortDevice;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortEnterProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortLeaveProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortSendOperation;
-import de.uniluebeck.itm.devicedriver.util.StringUtils;
-import de.uniluebeck.itm.devicedriver.util.TimeDiff;
 
-public class JennicDevice extends AbstractDevice implements ConnectionListener, SerialPortEventListener {
+public class JennicDevice extends AbstractSerialPortDevice {
 
 	/**
 	 * Logger for this class.
@@ -52,30 +43,8 @@ public class JennicDevice extends AbstractDevice implements ConnectionListener, 
 	
 	private static final int TIMEOUT = 2000;
 	
-	
-	private final Object dataAvailableMonitor = new Object();
-	
-	/**
-	 * Data buffer for incoming data 
-	 */
-	private byte[] packet = new byte[2048];
-
-	/** 
-	 * Current packetLength of the received packet 
-	 */
-	private int packetLength = 0;
-
-	/** */
-	private boolean foundDLE = false;
-
-	/** */
-	private boolean foundPacket = false;
-	
-	private final SerialPortConnection connection;
-	
 	public JennicDevice(SerialPortConnection connection) {
-		this.connection = connection;
-		this.connection.addConnectionListener(this);
+		super(connection);
 	}
 	
 	public EnterProgramModeOperation createEnterProgramModeOperation() {
@@ -138,26 +107,6 @@ public class JennicDevice extends AbstractDevice implements ConnectionListener, 
 	@Override
 	public int[] getChannels() {
 		return new int[] { 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26 };
-	}
-
-	@Override
-	public Connection getConnection() {
-		return connection;
-	}
-
-	@Override
-	public void serialEvent(SerialPortEvent event) {
-		switch (event.getEventType()) {
-		case SerialPortEvent.DATA_AVAILABLE:
-			synchronized (dataAvailableMonitor) {
-				dataAvailableMonitor.notifyAll();
-			}
-			receivePacket(connection.getInputStream());
-			break;
-		default:
-			log.debug("Serial event (other than data available): " + event);
-			break;
-		}
 	}
 	
 	public FlashType getFlashType() throws Exception {
@@ -243,76 +192,6 @@ public class JennicDevice extends AbstractDevice implements ConnectionListener, 
 		log.debug("Done. Flash is configured");
 	}
 	
-	private void receivePacket(InputStream inStream) {
-		try {
-			while (inStream != null && inStream.available() > 0) {
-				byte c = (byte) (0xff & inStream.read());
-
-				// Check if DLE was found
-				if (foundDLE) {
-					foundDLE = false;
-
-					if (c == MessagePacket.STX && !foundPacket) {
-						//log.debug("iSenseDeviceImpl: STX received in DLE mode");
-						foundPacket = true;
-					} else if (c == MessagePacket.ETX && foundPacket) {
-						//log.debug("ETX received in DLE mode");
-
-						// Parse message and notify listeners
-						MessagePacket p = MessagePacket.parse(packet, 0, packetLength);
-						// p.setIsenseDevice(this);
-						//log.debug("Packet found: " + p);
-						notifyMessagePacketListener(p);
-
-						// Reset packet information
-						clearPacket();
-					} else if (c == MessagePacket.DLE && foundPacket) {
-						// Stuffed DLE found
-						//log.debug("Stuffed DLE received in DLE mode");
-						ensureBufferSize();
-						packet[packetLength++] = MessagePacket.DLE;
-					} else {
-						log.error("Incomplete packet received: " + StringUtils.toHexString(this.packet, 0, packetLength));
-						clearPacket();
-					}
-
-				} else {
-					if (c == MessagePacket.DLE) {
-						log.debug("Plain DLE received");
-						foundDLE = true;
-					} else if (foundPacket) {
-						ensureBufferSize();
-						packet[packetLength++] = c;
-					}
-				}
-			}
-
-		} catch (IOException error) {
-			log.error("Error on rx (Retry in 1s): " + error, error);
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-			}
-		}
-	}
-	
-	/**
-	 * 
-	 */
-	private void ensureBufferSize() {
-		if (packetLength + 1 >= this.packet.length) {
-			byte tmp[] = new byte[packetLength + 100];
-			System.arraycopy(this.packet, 0, tmp, 0, packetLength);
-			this.packet = tmp;
-		}
-	}
-	
-	private void clearPacket() {
-		packetLength = 0;
-		foundDLE = false;
-		foundPacket = false;
-	}
-	
 	/** 
 	 * 
 	 */
@@ -368,13 +247,13 @@ public class JennicDevice extends AbstractDevice implements ConnectionListener, 
 
 		// Throw exception if checksums diffe
 		byte checksum = Messages.calculateChecksum(fullMessage);
-		if (checksum != recvChecksum)
+		if (checksum != recvChecksum) {
 			throw new InvalidChecksumException();
-
+		}
 		// Check if the response type is unexpected
-		if (message[0] != type)
+		if (message[0] != type) {
 			throw new UnexpectedResponseException(type, message[0]);
-
+		}
 		return message;
 	}
 	
@@ -398,45 +277,5 @@ public class JennicDevice extends AbstractDevice implements ConnectionListener, 
 
 		connection.flush();
 		return false;
-	}
-	
-	/**
-	 * Wait at most timeoutMillis for the input stream to become available
-	 * 
-	 * @param timeoutMillis Milliseconds to wait until timeout, 0 for no timeout
-	 * @return The number of characters available
-	 * @throws IOException
-	 */
-	public int waitDataAvailable(int timeoutMillis) throws TimeoutException, IOException {
-		InputStream inputStream = connection.getInputStream();
-		TimeDiff timeDiff = new TimeDiff();
-		int available = 0;
-
-		while (inputStream != null && (available = inputStream.available()) == 0) {
-			if (timeoutMillis > 0 && timeDiff.ms() >= timeoutMillis) {
-				log.warn("Timeout waiting for data (waited: " + timeDiff.ms() + ", timeoutMs:" + timeoutMillis + ")");
-				throw new TimeoutException();
-			}
-
-			synchronized (dataAvailableMonitor) {
-				try {
-					dataAvailableMonitor.wait(50);
-				} catch (InterruptedException e) {
-					log.error("Interrupted: " + e, e);
-				}
-			}
-		}
-		return available;
-	}
-
-	@Override
-	public void onConnectionChange(Connection connection, boolean connected) {
-		if (connected) {
-			try {
-				this.connection.getSerialPort().addEventListener(this);
-			} catch (TooManyListenersException e) {
-				log.error("Can not register serial port listener", e);
-			}
-		}
 	}
 }

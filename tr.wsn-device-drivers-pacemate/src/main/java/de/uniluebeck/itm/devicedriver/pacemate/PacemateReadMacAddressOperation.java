@@ -95,7 +95,7 @@ public class PacemateReadMacAddressOperation extends AbstractReadMacAddressOpera
 		try {
 			address = readMacAddress(monitor);
 		} finally {
-			device.leaveProgrammingMode();
+			executeSubOperation(device.createLeaveProgramModeOperation());
 		}
 		return address;
 	}
