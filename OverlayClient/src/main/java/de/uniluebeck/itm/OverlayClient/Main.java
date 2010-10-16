@@ -21,6 +21,8 @@ public class Main {
 		options.addOption(version_option);
 
 		// add options for Meta-Service
+		options.addOption("port", true, "port");
+		options.addOption("server", true, "server");
 		options.addOption("id", true, "Enthält die ID, nach der gesucht werden soll");
 		options.addOption("microcontroller", true, "Enthält den Mircrocontroller, nach dem gesucht werden soll");
 		options.addOption("sensor", true, "Enthält den Sensor, nach dem gesucht werden soll");
@@ -29,10 +31,6 @@ public class Main {
 		HelpFormatter formatter = new HelpFormatter();
 
 		CommandLineParser parser = new GnuParser();
-		
-		BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
-		String last_line = buffer.readLine();
-		args = last_line.split(" ");
 		CommandLine cmd = null;
 		try {
 			cmd = parser.parse(options, args);
@@ -74,6 +72,5 @@ public class Main {
 				}
 			}
 		}	
-		buffer.close();
 	}
 }
