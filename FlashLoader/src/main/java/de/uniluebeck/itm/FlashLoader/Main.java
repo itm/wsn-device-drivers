@@ -21,16 +21,14 @@ public class Main {
 		options.addOption(version_option);
 		
 		// add options for FlashLoader
+		options.addOption("port", true, "port");
+		options.addOption("server", true, "server");
 		options.addOption("file", true, "Enthält das Programm, das geflasht werden soll");
 
 		// for help statement
 		HelpFormatter formatter = new HelpFormatter();
 
 		CommandLineParser parser = new GnuParser();
-		
-		BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
-		String last_line = buffer.readLine();
-		args = last_line.split(" ");
 		CommandLine cmd = null;
 		try {
 			cmd = parser.parse(options, args);
@@ -83,6 +81,5 @@ public class Main {
 				
 			}
 		}
-		buffer.close();
 	}
 }
