@@ -21,6 +21,8 @@ public class Main {
 		options.addOption(version_option);
 
 		// add options for Datenlogger
+		options.addOption("port", true, "port");
+		options.addOption("server", true, "server");
 		options.addOption("location", true, "Ausgabeziel der Daten, die geloggt werden");
 		options.addOption("filters", true, "Kombination der Filtertypen: Regular Expression-Filter, (Datentyp,Beginn,Wert)-Filter");
 
@@ -29,9 +31,9 @@ public class Main {
 
 		CommandLineParser parser = new GnuParser();
 		
-		BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
-		String last_line = buffer.readLine();
-		args = last_line.split(" ");
+		//BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
+		//String last_line = buffer.readLine();
+		//args = last_line.split(" ");
 		CommandLine cmd = null;
 		try {
 			cmd = parser.parse(options, args);
@@ -101,6 +103,6 @@ public class Main {
 				
 			}
 		}
-		buffer.close();
+		//buffer.close();
 	}
 }
