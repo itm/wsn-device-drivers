@@ -29,10 +29,6 @@ public class Main {
 		HelpFormatter formatter = new HelpFormatter();
 
 		CommandLineParser parser = new GnuParser();
-		
-		BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
-		String last_line = buffer.readLine();
-		args = last_line.split(" ");
 		CommandLine cmd = null;
 		try {
 			cmd = parser.parse(options, args);
@@ -65,6 +61,5 @@ public class Main {
 				messenger.send(message);							
 			}
 		}
-		buffer.close();
 	}
 }
