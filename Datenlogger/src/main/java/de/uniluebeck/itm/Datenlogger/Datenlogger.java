@@ -74,7 +74,7 @@ public class Datenlogger {
 	}
 	
 	private void writeToXmlFile(){
-		//Read the xml file.
+		//Read the xml file
         CreateXML create = new CreateXML();
 
         List<Node> nodeList = new ArrayList<Node>();
