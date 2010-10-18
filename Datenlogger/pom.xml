@@ -26,5 +26,30 @@
     	<artifactId>cli</artifactId>
     	<version>1.0.0</version>
     </dependency>
+    <dependency>
+    	<groupId>org.simpleframework</groupId>
+    	<artifactId>simple-xml</artifactId>
+    	<version>1.8</version>
+    </dependency>
+    <dependency>
+    	<groupId>javax.persistence</groupId>
+    	<artifactId>persistence-api</artifactId>
+    	<version>1.0</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.hibernate</groupId>
+    	<artifactId>hibernate</artifactId>
+    	<version>3.2.7.ga</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.hibernate</groupId>
+    	<artifactId>hibernate-annotations</artifactId>
+    	<version>3.4.0.GA</version>
+    </dependency>
+    <dependency>
+    	<groupId>log4j</groupId>
+   		<artifactId>log4j</artifactId>
+   		<version>1.2.14</version>
+	</dependency>   
   </dependencies>
 </project>
