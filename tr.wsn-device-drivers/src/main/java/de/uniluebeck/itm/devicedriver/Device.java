@@ -97,7 +97,7 @@ public interface Device {
 	 * @param listener The listener that will be called.
 	 * @param types The types that specify when the handler is called.
 	 */
-	void addMessagePacketListener(MessagePacketListener listener, PacketType... types);
+	void addListener(MessagePacketListener listener, PacketType... types);
 	
 	/**
 	 * Add an handler that will be called when the given byte types occure.
@@ -105,12 +105,12 @@ public interface Device {
 	 * @param listener The listener that will be called.
 	 * @param types The types as byte array that specify when the listener is called.
 	 */
-	void addMessagePacketListener(MessagePacketListener listener, int... types);
+	void addListener(MessagePacketListener listener, int... types);
 	
 	/**
 	 * Remove the given handler from the handler list.
 	 * 
 	 * @param listener The listener that has to be removed.
 	 */
-	void removeMessagePacketListener(MessagePacketListener listener);
+	void removeListener(MessagePacketListener listener);
 }

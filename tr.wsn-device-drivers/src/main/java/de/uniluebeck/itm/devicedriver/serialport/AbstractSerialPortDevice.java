@@ -68,7 +68,7 @@ public abstract class AbstractSerialPortDevice extends AbstractDevice implements
 	 */
 	public AbstractSerialPortDevice(SerialPortConnection connection) {
 		this.connection = connection;
-		this.connection.addConnectionListener(this);
+		this.connection.addListener(this);
 	}
 
 	@Override

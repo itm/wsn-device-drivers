@@ -57,12 +57,12 @@ public class QueuedDeviceAsync implements DeviceAsync {
 
 	@Override
 	public void addMessagePacketListener(MessagePacketListener listener, PacketType... types) {
-		device.addMessagePacketListener(listener, types);
+		device.addListener(listener, types);
 	}
 
 	@Override
 	public void addMessagePacketListener(MessagePacketListener listener, int... types) {
-		device.addMessagePacketListener(listener, types);
+		device.addListener(listener, types);
 	}
 
 	@Override
@@ -97,7 +97,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 
 	@Override
 	public void removeMessagePacketListener(MessagePacketListener listener) {
-		device.removeMessagePacketListener(listener);
+		device.removeListener(listener);
 	}
 
 	@Override

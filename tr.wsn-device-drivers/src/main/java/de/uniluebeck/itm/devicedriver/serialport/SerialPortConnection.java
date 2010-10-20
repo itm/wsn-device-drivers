@@ -10,7 +10,9 @@ import gnu.io.SerialPort;
  */
 public interface SerialPortConnection extends Connection {
 	
-	/** */
+	/**
+	 * Serial port modes for normal usage and programming.
+	 */
 	public enum SerialPortMode {
 		NORMAL, PROGRAM
 	}

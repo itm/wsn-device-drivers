@@ -152,7 +152,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	}
 	
 	@Override
-	public void addOperationListener(OperationListener<T> listener) {
+	public void addListener(OperationListener<T> listener) {
 		listeners.add(listener);
 	}
 	

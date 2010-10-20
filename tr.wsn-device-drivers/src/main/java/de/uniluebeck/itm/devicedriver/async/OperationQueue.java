@@ -32,12 +32,12 @@ public interface OperationQueue {
 	 * 
 	 * @param listener A listener that handle queue events.
 	 */
-	void addOperationQueueListener(OperationQueueListener listener);
+	void addListener(OperationQueueListener listener);
 	
 	/**
 	 * Remove a listener from the queue.
 	 * 
 	 * @param listener The listener that has to be removed.
 	 */
-	void removeOperationQueueListener(OperationQueueListener listener);
+	void removeQueueListener(OperationQueueListener listener);
 }

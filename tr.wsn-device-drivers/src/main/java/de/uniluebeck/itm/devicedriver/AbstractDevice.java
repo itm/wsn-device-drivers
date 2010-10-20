@@ -10,7 +10,7 @@ public abstract class AbstractDevice implements Device {
 	private final Map<Integer, List<MessagePacketListener>> listeners = new TreeMap<Integer, List<MessagePacketListener>>();
 
 	@Override
-	public void addMessagePacketListener(MessagePacketListener listener, int... types) {
+	public void addListener(MessagePacketListener listener, int... types) {
 		for (final int type : types) {
 			if (!listeners.containsKey(type)) {
 				listeners.put(type, new ArrayList<MessagePacketListener>());
@@ -20,7 +20,7 @@ public abstract class AbstractDevice implements Device {
 	}
 	
 	@Override
-	public void addMessagePacketListener(MessagePacketListener listener, PacketType... types) {
+	public void addListener(MessagePacketListener listener, PacketType... types) {
 		for (final PacketType type : types) {
 			final int key = type.getValue();
 			if (!listeners.containsKey(type)) {
@@ -31,7 +31,7 @@ public abstract class AbstractDevice implements Device {
 	}
 	
 	@Override
-	public void removeMessagePacketListener(MessagePacketListener listener) {
+	public void removeListener(MessagePacketListener listener) {
 		for (List<MessagePacketListener> listeners : this.listeners.values()) {
 			listeners.remove(listener);
 		}

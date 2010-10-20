@@ -63,7 +63,7 @@ public interface Operation<T> extends Callable<T> {
 	 * 
 	 * @param listener The <code>OperationListener</code> that has to be added.
 	 */
-	void addOperationListener(OperationListener<T> listener);
+	void addListener(OperationListener<T> listener);
 	
 	/**
 	 * Removes the given <code>OperationListener</code> from the listener list.

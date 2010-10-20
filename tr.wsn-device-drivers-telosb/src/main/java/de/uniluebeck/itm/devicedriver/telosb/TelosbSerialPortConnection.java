@@ -182,13 +182,13 @@ public class TelosbSerialPortConnection implements SerialPortConnection {
 	}
 
 	@Override
-	public void addConnectionListener(ConnectionListener listener) {
+	public void addListener(ConnectionListener listener) {
 		listeners.add(listener);
 	}
 
 	@Override
-	public void removeConnectionListener(ConnectionListener listener) {
-		listeners.add(listener);
+	public void removeListener(ConnectionListener listener) {
+		listeners.remove(listener);
 	}
 
 	@Override

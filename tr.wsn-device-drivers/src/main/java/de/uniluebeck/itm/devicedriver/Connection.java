@@ -51,12 +51,12 @@ public interface Connection {
 	 * 
 	 * @param listener The listener that has to be added.
 	 */
-	void addConnectionListener(ConnectionListener listener);
+	void addListener(ConnectionListener listener);
 	
 	/**
 	 * Removes the given listener from the the internal listener list.
 	 * 
 	 * @param listener The listener that has to be removed.
 	 */
-	void removeConnectionListener(ConnectionListener listener);
+	void removeListener(ConnectionListener listener);
 }

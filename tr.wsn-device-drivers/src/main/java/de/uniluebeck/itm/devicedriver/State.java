@@ -56,6 +56,15 @@ public enum State {
 	}
 	
 	/**
+	 * Returns true when this state is equals to DONE, EXCEPTED or CANCELED else false.
+	 * 
+	 * @return A boolean for representing a finished state.
+	 */
+	public boolean isFinishState() {
+		return this == State.DONE || this == State.EXCEPTED || this == State.CANCELED;
+	}
+	
+	/**
 	 * Determine the State by his name.
 	 * 
 	 * @param name The name of the state that has to be retuned.

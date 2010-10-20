@@ -51,11 +51,11 @@ public class SingleThreadOperationQueue implements OperationQueue {
 	public synchronized <T> OperationHandle<T> addOperation(Operation<T> operation, long timeout, final AsyncCallback<T> callback) {
 		operations.add(operation);
 		notifyAdded(operation);
-		operation.addOperationListener(new OperationListener<T>() {
+		operation.addListener(new OperationListener<T>() {
 			@Override
 			public void onStateChanged(Operation<T> operation, State oldState, State newState) {
 				notifyStateChanged(operation, oldState, newState);
-				if (newState == State.DONE || newState == State.EXCEPTED || newState == State.CANCELED) {
+				if (newState.isFinishState()) {
 					operations.remove(operation);
 					notifyRemoved(operation);
 				}
@@ -71,7 +71,7 @@ public class SingleThreadOperationQueue implements OperationQueue {
 		
 		logger.debug("Submit " + operation + " to executor queue.");
 		final Future<T> future = executor.submit(operation);
-		operation.addOperationListener(new OperationAdapter<T>() {
+		operation.addListener(new OperationAdapter<T>() {
 			@Override
 			public void onTimeout(Operation<T> operation, long timeout) {
 				future.cancel(true);
@@ -86,33 +86,56 @@ public class SingleThreadOperationQueue implements OperationQueue {
 	}
 
 	@Override
-	public void addOperationQueueListener(OperationQueueListener listener) {
+	public void addListener(OperationQueueListener listener) {
 		listeners.add(listener);
 	}
 
 	@Override
-	public void removeOperationQueueListener(OperationQueueListener listener) {
+	public void removeQueueListener(OperationQueueListener listener) {
 		listeners.remove(listener);
 	}
 	
+	/**
+	 * Notify all listeners that the state of a operation has changed.
+	 * 
+	 * @param operation The operation that has changed the state.
+	 * @param oldState The old state of the operation.
+	 * @param newState The new state of the operation.
+	 */
 	private void notifyStateChanged(Operation<?> operation, State oldState, State newState) {
 		for (OperationQueueListener listener : listeners.toArray(new OperationQueueListener[listeners.size()])) {
 			listener.onStateChanged(operation, oldState, newState);
 		}
 	}
 	
+	/**
+	 * Notify all listeners that a operation has reached his timeout.
+	 * 
+	 * @param operation The operation that timed out.
+	 * @param timeout The timeout limit that was set for this operation.
+	 */
 	private void notifyTimeout(Operation<?> operation, long timeout) {
 		for (OperationQueueListener listener : listeners.toArray(new OperationQueueListener[listeners.size()])) {
 			listener.onTimeout(operation, timeout);
 		}
 	}
 	
+	/**
+	 * Notify all listeners that a operation was added to the queue.
+	 * 
+	 * @param operation The added operation.
+	 */
 	private void notifyAdded(Operation<?> operation) {
 		for (OperationQueueListener listener : listeners.toArray(new OperationQueueListener[listeners.size()])) {
 			listener.onAdded(operation);
 		}
 	}
 	
+	/**
+	 * Notify all listeners that a operation was removed from the queue.
+	 * 
+	 * @param operation The removed operation.
+	 */
 	private void notifyRemoved(Operation<?> operation) {
 		for (OperationQueueListener listener : listeners.toArray(new OperationQueueListener[listeners.size()])) {
 			listener.onRemoved(operation);
