@@ -7,6 +7,7 @@ import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.Connection;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.Monitor;
+import de.uniluebeck.itm.devicedriver.Programable;
 import de.uniluebeck.itm.devicedriver.operation.AbstractGetChipTypeOperation;
 import de.uniluebeck.itm.devicedriver.operation.AbstractReadMacAddressOperation;
 import de.uniluebeck.itm.devicedriver.operation.AbstractWriteMacAddressOperation;
@@ -26,7 +27,7 @@ import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortLeaveProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortSendOperation;
 
-public class TelosbDevice extends AbstractSerialPortDevice {
+public class TelosbDevice extends AbstractSerialPortDevice implements Programable {
 
 	/**
 	 * Logger for this class.
@@ -44,10 +45,12 @@ public class TelosbDevice extends AbstractSerialPortDevice {
 		return null;
 	}
 
+	@Override
 	public EnterProgramModeOperation createEnterProgramModeOperation() {
 		return new TelosbEnterProgramModeOperation(connection, bsl);
 	}
 	
+	@Override
 	public LeaveProgramModeOperation createLeaveProgramModeOperation() {
 		return new SerialPortLeaveProgramModeOperation(connection);
 	}

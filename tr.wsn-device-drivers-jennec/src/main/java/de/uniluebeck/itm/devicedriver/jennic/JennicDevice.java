@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.devicedriver.ChipType;
+import de.uniluebeck.itm.devicedriver.Programable;
 import de.uniluebeck.itm.devicedriver.Sector;
 import de.uniluebeck.itm.devicedriver.exception.FlashConfigurationFailedException;
 import de.uniluebeck.itm.devicedriver.exception.FlashEraseFailedException;
@@ -34,7 +35,7 @@ import de.uniluebeck.itm.devicedriver.serialport.SerialPortEnterProgramModeOpera
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortLeaveProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortSendOperation;
 
-public class JennicDevice extends AbstractSerialPortDevice {
+public class JennicDevice extends AbstractSerialPortDevice implements Programable {
 
 	/**
 	 * Logger for this class.
@@ -47,10 +48,12 @@ public class JennicDevice extends AbstractSerialPortDevice {
 		super(connection);
 	}
 	
+	@Override
 	public EnterProgramModeOperation createEnterProgramModeOperation() {
 		return new SerialPortEnterProgramModeOperation(connection);
 	}
 	
+	@Override
 	public LeaveProgramModeOperation createLeaveProgramModeOperation() {
 		return new SerialPortLeaveProgramModeOperation(connection);
 	}

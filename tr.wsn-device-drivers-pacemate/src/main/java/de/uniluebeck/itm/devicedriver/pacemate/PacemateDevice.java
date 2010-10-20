@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.devicedriver.Monitor;
+import de.uniluebeck.itm.devicedriver.Programable;
 import de.uniluebeck.itm.devicedriver.exception.InvalidChecksumException;
 import de.uniluebeck.itm.devicedriver.exception.TimeoutException;
 import de.uniluebeck.itm.devicedriver.exception.UnexpectedResponseException;
@@ -30,7 +31,7 @@ import de.uniluebeck.itm.devicedriver.serialport.SerialPortLeaveProgramModeOpera
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortSendOperation;
 import de.uniluebeck.itm.devicedriver.util.StringUtils;
 
-public class PacemateDevice extends AbstractSerialPortDevice {
+public class PacemateDevice extends AbstractSerialPortDevice implements Programable {
 
 	/**
 	 * This is the Start Address in the RAM to write data
@@ -49,44 +50,54 @@ public class PacemateDevice extends AbstractSerialPortDevice {
 	public PacemateDevice(SerialPortConnection connection) {
 		super(connection);
 	}
-
+	
+	@Override
 	public int[] getChannels() {
 		return new int[] { 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
 				24, 25, 26 };
 	}
 	
+	@Override
 	public EnterProgramModeOperation createEnterProgramModeOperation() {
 		return new SerialPortEnterProgramModeOperation(connection);
 	}
 	
+	@Override
 	public LeaveProgramModeOperation createLeaveProgramModeOperation() {
 		return new SerialPortLeaveProgramModeOperation(connection);
 	}
 
+	@Override
 	public GetChipTypeOperation createGetChipTypeOperation() {
 		return new PacemateGetChipTypeOperation(this);
 	}
 
+	@Override
 	public ProgramOperation createProgramOperation() {
 		return new PacemateProgramOperation(this);
 	}
 
+	@Override
 	public EraseFlashOperation createEraseFlashOperation() {
 		return new PacemateEraseFlashOperation(this);
 	}
 
+	@Override
 	public WriteFlashOperation createWriteFlashOperation() {
 		return new PacemateWriteFlashOperation(this);
 	}
 
+	@Override
 	public ReadFlashOperation createReadFlashOperation() {
 		return new PacemateReadFlashOperation(this);
 	}
 
+	@Override
 	public ReadMacAddressOperation createReadMacAddressOperation() {
 		return new PacemateReadMacAddressOperation(this);
 	}
 
+	@Override
 	public WriteMacAddressOperation createWriteMacAddressOperation() {
 		return new AbstractWriteMacAddressOperation() {
 			@Override
@@ -97,10 +108,12 @@ public class PacemateDevice extends AbstractSerialPortDevice {
 		};
 	}
 
+	@Override
 	public ResetOperation createResetOperation() {
 		return new PacemateResetOperation(connection);
 	}
 
+	@Override
 	public SendOperation createSendOperation() {
 		return new SerialPortSendOperation(connection);
 	}
