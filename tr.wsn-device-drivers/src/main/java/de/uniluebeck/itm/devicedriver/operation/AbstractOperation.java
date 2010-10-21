@@ -14,6 +14,7 @@ import de.uniluebeck.itm.devicedriver.exception.TimeoutException;
 
 /**
  * An abstract operation.
+ * The result of a timed out operation is null also when the operation completed at the same time.
  * 
  * @author Malte Legenhausen
  *
@@ -54,7 +55,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	/**
 	 * <code>Timer</code> that executes the timeout operation.
 	 */
-	private final Timer timer = new Timer(); 
+	private final Timer timer = new Timer(getClass().getName()); 
 	
 	/**
 	 * Boolean thats stores if the operatio has to be canceled.
@@ -66,18 +67,21 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 		this.timeout = timeout;
 		this.callback = callback;
 		
-		timer.schedule(new TimerTask() {			
+		final TimerTask task = new TimerTask() {			
 			@Override
 			public void run() {
-				logger.debug("Timeout of operation reached");
-				State oldState = state;
-				state = State.EXCEPTED;
-				fireTimeout();
-				logger.debug("Operation state changed from " + oldState + " to " + state);
-				fireStateChanged(oldState, state);
-				callback.onFailure(new TimeoutException("Operation timeout " + timeout + "ms reached."));
+				synchronized (state) {
+					final State oldState = state;
+					state = State.EXCEPTED;
+					logger.debug("Timeout of operation reached");
+					fireTimeout();
+					logger.debug("Operation state changed from " + oldState + " to " + state);
+					fireStateChanged(oldState, state);
+					callback.onFailure(new TimeoutException("Operation timeout " + timeout + "ms reached."));
+				}
 			}
-		}, timeout);
+		};
+		timer.schedule(task, timeout);
 	}
 	
 	@Override
@@ -87,6 +91,16 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 		fireStateChanged(State.WAITING, state);
 		try {
 			final T result = execute(callback);
+			timer.cancel();
+			
+			// Do nothing after a timeout happens and execute finished.
+			synchronized (state) {
+				if (state == State.EXCEPTED) {
+					logger.warn("Operation finsihed but timeout occured.");
+					return null;
+				}
+			}
+			
 			if (canceled) {
 				state = State.CANCELED;
 				callback.onCancel();
@@ -172,5 +186,10 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	@Override
 	public boolean isCanceled() {
 		return canceled;
+	}
+	
+	@Override
+	protected void finalize() {
+		timer.cancel();
 	}
 }
