@@ -75,28 +75,6 @@ public class Main {
 				datenlogger.setLocation(location);
 				datenlogger.startlog();
 				
-			}else if(args[0].equals("stoplog")) {
-				System.out.println("starte Datenlogger...");
-				
-				String port = cmd.getOptionValue("port");
-				String server = cmd.getOptionValue("server");
-				
-				Datenlogger datenlogger = new Datenlogger();
-				datenlogger.setPort(port);
-				datenlogger.setServer(server);
-				datenlogger.stoplog();
-				
-			}else if(args[0].equals("addfilter")) {
-				System.out.println("starte Datenlogger...");
-				
-				String port = cmd.getOptionValue("port");
-				String server = cmd.getOptionValue("server");
-				
-				Datenlogger datenlogger = new Datenlogger();
-				datenlogger.setPort(port);
-				datenlogger.setServer(server);
-				datenlogger.addfilter();
-				
 			}
 		}
 	}

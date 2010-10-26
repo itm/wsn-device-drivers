@@ -4,6 +4,8 @@ import model.*;
 import viewer.CreateXML;
 import viewer.StoreToDatabase;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +15,41 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.AnnotationConfiguration;
 
 public class Datenlogger {
+	
+	public static class Listener extends Thread{
+        boolean notStop = true;
+        Datenlogger logger;
+        
+        public Listener(Datenlogger datenlogger){
+			logger = datenlogger;
+		}
+        
+        public void run(){
+            while(notStop){
+                try {
+                    Thread.sleep(1000);
+                    BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+                    String input = in.readLine();
+                    if(input.startsWith("-filter")){
+                    	String delims = " ";
+                		String[] tokens = input.split(delims);
+                    	logger.addfilter(tokens[1]);
+                    }else if(input.equals("-stoplog")){
+                    	logger.stoplog();
+                    }
+                    else if(input.startsWith("-loction")){
+                    	String delims = " ";
+                		String[] tokens = input.split(delims);
+                    	logger.setLocation(tokens[1]);
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }          
+            }
+            System.exit(0);
+        }
+    }
+	
 	String port;
 	String server;
 	String filters;
@@ -23,8 +60,10 @@ public class Datenlogger {
 		
 	}
 	
-	private String[] parseFilter(String filter){
-		return new String[5];
+	public String[] parseFilter(String filter){
+		String delims = "[&|]";
+		String[] tokens = filter.split(delims);
+		return tokens;
 	}
 	
 	public void setPort(String port) {
@@ -50,6 +89,8 @@ public class Datenlogger {
 	}	
 	
 	public void startlog(){
+		new Listener(this).start();
+		
 		System.out.println("Parameter:");
 		System.out.println("Port: " + port);
 		System.out.println("Server: " + server);
@@ -57,7 +98,11 @@ public class Datenlogger {
 		System.out.println("Location: " + location);
 		gestartet = true;
 		System.out.println("\nStarte das Loggen des Knotens....");
-		writeToXmlFile();
+		try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
 	}	
 	
 	public void stoplog(){
@@ -68,9 +113,10 @@ public class Datenlogger {
 		System.out.println("\nDas Loggen des Knotens wurde beendet.");
 	}
 	
-	public void addfilter(){
+	public void addfilter(String filter){
 		System.out.println("Parameter:");
 		System.out.println("Port: " + port);
+		System.out.println("Filter hinzugefuegt");
 	}
 	
 	private void writeToXmlFile(){
