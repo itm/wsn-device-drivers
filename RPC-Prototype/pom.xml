@@ -1,0 +1,65 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>rpc-pro.rpcPrototype</groupId>
+  <artifactId>RPC-Prototype</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>RPC-Prototype</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+    	<groupId>com.google.protobuf</groupId>
+    	<artifactId>protobuf-java</artifactId>
+    	<version>2.3.0</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
+    </dependency>
+    <dependency>
+    	<groupId>com.googlecode.protobuf.pro</groupId>
+    	<artifactId>protobuf-rpc-pro-duplex</artifactId>
+    	<version>1.1.0</version>
+    	<scope>system</scope>
+    	<systemPath>/home/dark/Master/2. semester/Fallstudie/protobuf/lib/protobuf-rpc-pro-duplex-1.1.0.jar</systemPath>
+    </dependency>
+    <dependency>
+    	<groupId>apache-log4j</groupId>
+    	<artifactId>log4j</artifactId>
+    	<version>1.2.15</version>
+    	<scope>system</scope>
+    	<systemPath>/home/dark/Master/2. semester/Fallstudie/protobuf/lib/log4j-1.2.15.jar</systemPath>
+    </dependency>
+    <dependency>
+    	<groupId>org.jboss.netty</groupId>
+    	<artifactId>netty</artifactId>
+    	<version>3.2.1.Final</version>
+    	<scope>compile</scope>
+    </dependency>
+    <dependency>
+    	<groupId>commons-logging</groupId>
+    	<artifactId>commons-logging</artifactId>
+    	<version>1.1.1</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
+    </dependency>
+    <dependency>
+    	<groupId>de.uni-luebeck.itm</groupId>
+    	<artifactId>tr.wsn-device-drivers</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
+    	<scope>compile</scope>
+    </dependency>
+  </dependencies>
+</project>

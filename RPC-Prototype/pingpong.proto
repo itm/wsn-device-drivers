@@ -1,0 +1,50 @@
+
+option java_package = "rpc_pro.rpcPrototype.files";
+option java_outer_classname = "MessageServiceFiles";
+
+message VOID {
+}
+
+message Message {
+	required string query = 1;
+}
+
+message HandleReturns {
+	
+}
+
+message Identification {
+	required string username = 1;
+	required string password = 2;
+}
+
+message ProgramPacket {
+	repeated bytes BinaryPacket = 1;
+	optional int64 timeout = 2;
+}
+
+service TestOperations {
+	rpc setMessage (Message) returns (VOID);
+	rpc getMessage (VOID) returns (Message);
+}
+
+service Operations {
+	rpc connect (Identification) returns (Message);
+	rpc program (ProgramPacket) returns (VOID);
+	rpc getState (VOID) returns (Message);
+	//rpc eraseFlash () returns (VOID);
+	//rpc readFlash () returns ();
+	//rpc readMac () returns ();
+	//rpc reset () returns (VOID);
+	//rpc send () returns (VOID);
+	//rpc writeFlash () returns (VOID);
+	//rpc writeMac () retuns (VOID);
+	
+}
+
+service PacketService {
+	//rpc addMessagePacketListener () returns (VOID);
+	//rpc addMessagePacketListener () returns (VOID);
+	//rpc removeMessagePacketListener () returns (VOID);
+}
+
