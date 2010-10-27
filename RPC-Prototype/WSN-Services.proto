@@ -53,3 +53,6 @@ service PacketService {
 	//rpc removeMessagePacketListener () returns (VOID);
 }
 
+service PacketServiceAnswer{
+	
+}

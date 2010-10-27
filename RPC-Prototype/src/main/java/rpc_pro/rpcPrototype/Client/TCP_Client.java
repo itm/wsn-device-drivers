@@ -9,7 +9,9 @@ public class TCP_Client {
 
 		/* Gemeinsamer ClientManager */
 		Stub stub1 = new Stub("testUser", "testPassword", "localhost", 8080);
-		Stub stub2 = new Stub("testUser", "testPassword", "localhost", 8080);
+		// mehrmaliges login durch aendern des ClientPorts
+		//Stub stub2 = new Stub("testUser", "testPassword", "localhost", 8080, 2345);
+		Stub stub2 = new Stub("testUser2", "testPassword", "localhost", 8080);
 		
 		int i=0;
 		int j=0;
