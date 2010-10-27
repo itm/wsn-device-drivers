@@ -6,6 +6,13 @@ import java.util.concurrent.Executors;
 //import org.apache.commons.logging.Log;
 //import org.apache.commons.logging.LogFactory;
 //import org.apache.log4j.BasicConfigurator;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.*;
+import org.apache.shiro.config.IniSecurityManagerFactory;
+import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.Factory;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.Identification;
@@ -91,6 +98,12 @@ public class Server {
 	    	
 	    	// ein wenig Kommunikation
 	    	System.out.println("Serving " + bootstrap);
+	    	
+	    	/* Initialiesieren von Shiro */
+	    	
+	    	Factory<SecurityManager> factory = new IniSecurityManagerFactory("shiro.ini");
+	        SecurityManager securityManager = factory.getInstance();
+	        SecurityUtils.setSecurityManager(securityManager);	        
 			
 	}
 	
@@ -162,6 +175,34 @@ public class Server {
 			ClientID id = new ClientID();
 			
 			// Abgleich der Userdaten
+			
+			/*Shiro:*/
+//			Subject currentUser = SecurityUtils.getSubject();
+//			
+//	        if (!currentUser.isAuthenticated()) {
+//	            UsernamePasswordToken token = new UsernamePasswordToken(request.getUsername(), request.getPassword());
+//	            token.setRememberMe(true);
+//	            try {
+//	            	
+//	                currentUser.login(token);
+//	                // eintragen der ClientID-Instanz zusammen mit den benutzten Channel in eine Liste
+//					idList.put(channel, id);				
+//					
+//	            } catch (UnknownAccountException uae) {
+//	            	controller.setFailed("There is no user with username of " + token.getPrincipal());
+//	            } catch (IncorrectCredentialsException ice) {
+//	            	controller.setFailed("Password for account " + token.getPrincipal() + " was incorrect!");
+//	            } catch (LockedAccountException lae) {
+//	            	controller.setFailed("The account for username " + token.getPrincipal() + " is locked.  " +
+//	                        "Please contact your administrator to unlock it.");
+//	            } catch (AuthenticationException ae) {
+//	            	controller.setFailed(ae.getMessage());
+//	            }
+//	        }
+//	        // ausfuehren des Callback
+//	        done.run(VOID.newBuilder().build());
+			/*Shiro END*/
+			
 			// dies sollte spaeter per JAAS gemacht werden
 			if(request.getPassword().equals("testPassword") && (request.getUsername().equalsIgnoreCase("testUser") || request.getUsername().equalsIgnoreCase("testUser2") )){
 				
@@ -174,6 +215,7 @@ public class Server {
 			else{
 				// ausfuehren des Callback bei fehlgeschlagener Authentifikation
 				controller.setFailed("Die Authentifikation ist fehlgeschalgen!");
+//				System.out.println("failed:"+ controller.failed());
 				done.run(VOID.newBuilder().build());
 				//done.run(STRING.newBuilder().setQuery("Die Authentifikation ist fehlgeschalgen!").build());
 			}

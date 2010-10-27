@@ -33,20 +33,21 @@
     	<artifactId>protobuf-rpc-pro-duplex</artifactId>
     	<version>1.1.0</version>
     	<scope>system</scope>
-    	<systemPath>/home/dark/Master/2. semester/Fallstudie/protobuf/lib/protobuf-rpc-pro-duplex-1.1.0.jar</systemPath>
+    	<systemPath>D:\Documents\java\protobuf-rpc-pro-duplex-1.1.0.jar</systemPath>
     </dependency>
     <dependency>
     	<groupId>apache-log4j</groupId>
     	<artifactId>log4j</artifactId>
     	<version>1.2.15</version>
     	<scope>system</scope>
-    	<systemPath>/home/dark/Master/2. semester/Fallstudie/protobuf/lib/log4j-1.2.15.jar</systemPath>
+    	<systemPath>D:\Documents\java\log4j-1.2.15.jar</systemPath>
     </dependency>
     <dependency>
     	<groupId>org.jboss.netty</groupId>
     	<artifactId>netty</artifactId>
     	<version>3.2.1.Final</version>
-    	<scope>compile</scope>
+    	<scope>system</scope>
+    	<systemPath>D:\Documents\java\netty-3.2.1.Final.jar</systemPath>
     </dependency>
     <dependency>
     	<groupId>commons-logging</groupId>
@@ -60,6 +61,11 @@
     	<artifactId>tr.wsn-device-drivers</artifactId>
     	<version>0.0.1-SNAPSHOT</version>
     	<scope>compile</scope>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.shiro</groupId>
+    	<artifactId>shiro-core</artifactId>
+    	<version>1.0.0-incubating</version>
     </dependency>
   </dependencies>
 </project>
