@@ -35,6 +35,13 @@ public final class MessageServiceFiles {
       return rpc_pro.rpcPrototype.files.MessageServiceFiles.internal_static_VOID_fieldAccessorTable;
     }
     
+    // optional string OperationKey = 1;
+    public static final int OPERATIONKEY_FIELD_NUMBER = 1;
+    private boolean hasOperationKey;
+    private java.lang.String operationKey_ = "";
+    public boolean hasOperationKey() { return hasOperationKey; }
+    public java.lang.String getOperationKey() { return operationKey_; }
+    
     private void initFields() {
     }
     public final boolean isInitialized() {
@@ -44,6 +51,9 @@ public final class MessageServiceFiles {
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
+      if (hasOperationKey()) {
+        output.writeString(1, getOperationKey());
+      }
       getUnknownFields().writeTo(output);
     }
     
@@ -53,6 +63,10 @@ public final class MessageServiceFiles {
       if (size != -1) return size;
     
       size = 0;
+      if (hasOperationKey()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeStringSize(1, getOperationKey());
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
       return size;
@@ -211,6 +225,9 @@ public final class MessageServiceFiles {
       
       public Builder mergeFrom(rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID other) {
         if (other == rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.getDefaultInstance()) return this;
+        if (other.hasOperationKey()) {
+          setOperationKey(other.getOperationKey());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
@@ -236,10 +253,35 @@ public final class MessageServiceFiles {
               }
               break;
             }
+            case 10: {
+              setOperationKey(input.readString());
+              break;
+            }
           }
         }
       }
       
+      
+      // optional string OperationKey = 1;
+      public boolean hasOperationKey() {
+        return result.hasOperationKey();
+      }
+      public java.lang.String getOperationKey() {
+        return result.getOperationKey();
+      }
+      public Builder setOperationKey(java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  result.hasOperationKey = true;
+        result.operationKey_ = value;
+        return this;
+      }
+      public Builder clearOperationKey() {
+        result.hasOperationKey = false;
+        result.operationKey_ = getDefaultInstance().getOperationKey();
+        return this;
+      }
       
       // @@protoc_insertion_point(builder_scope:VOID)
     }
@@ -253,31 +295,31 @@ public final class MessageServiceFiles {
     // @@protoc_insertion_point(class_scope:VOID)
   }
   
-  public static final class Message extends
+  public static final class STRING extends
       com.google.protobuf.GeneratedMessage {
-    // Use Message.newBuilder() to construct.
-    private Message() {
+    // Use STRING.newBuilder() to construct.
+    private STRING() {
       initFields();
     }
-    private Message(boolean noInit) {}
+    private STRING(boolean noInit) {}
     
-    private static final Message defaultInstance;
-    public static Message getDefaultInstance() {
+    private static final STRING defaultInstance;
+    public static STRING getDefaultInstance() {
       return defaultInstance;
     }
     
-    public Message getDefaultInstanceForType() {
+    public STRING getDefaultInstanceForType() {
       return defaultInstance;
     }
     
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return rpc_pro.rpcPrototype.files.MessageServiceFiles.internal_static_Message_descriptor;
+      return rpc_pro.rpcPrototype.files.MessageServiceFiles.internal_static_STRING_descriptor;
     }
     
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return rpc_pro.rpcPrototype.files.MessageServiceFiles.internal_static_Message_fieldAccessorTable;
+      return rpc_pro.rpcPrototype.files.MessageServiceFiles.internal_static_STRING_fieldAccessorTable;
     }
     
     // required string query = 1;
@@ -286,6 +328,13 @@ public final class MessageServiceFiles {
     private java.lang.String query_ = "";
     public boolean hasQuery() { return hasQuery; }
     public java.lang.String getQuery() { return query_; }
+    
+    // optional string OperationKey = 2;
+    public static final int OPERATIONKEY_FIELD_NUMBER = 2;
+    private boolean hasOperationKey;
+    private java.lang.String operationKey_ = "";
+    public boolean hasOperationKey() { return hasOperationKey; }
+    public java.lang.String getOperationKey() { return operationKey_; }
     
     private void initFields() {
     }
@@ -300,6 +349,9 @@ public final class MessageServiceFiles {
       if (hasQuery()) {
         output.writeString(1, getQuery());
       }
+      if (hasOperationKey()) {
+        output.writeString(2, getOperationKey());
+      }
       getUnknownFields().writeTo(output);
     }
     
@@ -313,46 +365,50 @@ public final class MessageServiceFiles {
         size += com.google.protobuf.CodedOutputStream
           .computeStringSize(1, getQuery());
       }
+      if (hasOperationKey()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeStringSize(2, getOperationKey());
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
       return size;
     }
     
-    public static rpc_pro.rpcPrototype.files.MessageServiceFiles.Message parseFrom(
+    public static rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static rpc_pro.rpcPrototype.files.MessageServiceFiles.Message parseFrom(
+    public static rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static rpc_pro.rpcPrototype.files.MessageServiceFiles.Message parseFrom(byte[] data)
+    public static rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static rpc_pro.rpcPrototype.files.MessageServiceFiles.Message parseFrom(
+    public static rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static rpc_pro.rpcPrototype.files.MessageServiceFiles.Message parseFrom(java.io.InputStream input)
+    public static rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static rpc_pro.rpcPrototype.files.MessageServiceFiles.Message parseFrom(
+    public static rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input, extensionRegistry)
                .buildParsed();
     }
-    public static rpc_pro.rpcPrototype.files.MessageServiceFiles.Message parseDelimitedFrom(java.io.InputStream input)
+    public static rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       Builder builder = newBuilder();
       if (builder.mergeDelimitedFrom(input)) {
@@ -361,7 +417,7 @@ public final class MessageServiceFiles {
         return null;
       }
     }
-    public static rpc_pro.rpcPrototype.files.MessageServiceFiles.Message parseDelimitedFrom(
+    public static rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -372,12 +428,12 @@ public final class MessageServiceFiles {
         return null;
       }
     }
-    public static rpc_pro.rpcPrototype.files.MessageServiceFiles.Message parseFrom(
+    public static rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static rpc_pro.rpcPrototype.files.MessageServiceFiles.Message parseFrom(
+    public static rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -387,25 +443,25 @@ public final class MessageServiceFiles {
     
     public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(rpc_pro.rpcPrototype.files.MessageServiceFiles.Message prototype) {
+    public static Builder newBuilder(rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING prototype) {
       return newBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() { return newBuilder(this); }
     
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
-      private rpc_pro.rpcPrototype.files.MessageServiceFiles.Message result;
+      private rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING result;
       
-      // Construct using rpc_pro.rpcPrototype.files.MessageServiceFiles.Message.newBuilder()
+      // Construct using rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING.newBuilder()
       private Builder() {}
       
       private static Builder create() {
         Builder builder = new Builder();
-        builder.result = new rpc_pro.rpcPrototype.files.MessageServiceFiles.Message();
+        builder.result = new rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING();
         return builder;
       }
       
-      protected rpc_pro.rpcPrototype.files.MessageServiceFiles.Message internalGetResult() {
+      protected rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING internalGetResult() {
         return result;
       }
       
@@ -414,7 +470,7 @@ public final class MessageServiceFiles {
           throw new IllegalStateException(
             "Cannot call clear() after build().");
         }
-        result = new rpc_pro.rpcPrototype.files.MessageServiceFiles.Message();
+        result = new rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING();
         return this;
       }
       
@@ -424,24 +480,24 @@ public final class MessageServiceFiles {
       
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return rpc_pro.rpcPrototype.files.MessageServiceFiles.Message.getDescriptor();
+        return rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING.getDescriptor();
       }
       
-      public rpc_pro.rpcPrototype.files.MessageServiceFiles.Message getDefaultInstanceForType() {
-        return rpc_pro.rpcPrototype.files.MessageServiceFiles.Message.getDefaultInstance();
+      public rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING getDefaultInstanceForType() {
+        return rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING.getDefaultInstance();
       }
       
       public boolean isInitialized() {
         return result.isInitialized();
       }
-      public rpc_pro.rpcPrototype.files.MessageServiceFiles.Message build() {
+      public rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING build() {
         if (result != null && !isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return buildPartial();
       }
       
-      private rpc_pro.rpcPrototype.files.MessageServiceFiles.Message buildParsed()
+      private rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING buildParsed()
           throws com.google.protobuf.InvalidProtocolBufferException {
         if (!isInitialized()) {
           throw newUninitializedMessageException(
@@ -450,29 +506,32 @@ public final class MessageServiceFiles {
         return buildPartial();
       }
       
-      public rpc_pro.rpcPrototype.files.MessageServiceFiles.Message buildPartial() {
+      public rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING buildPartial() {
         if (result == null) {
           throw new IllegalStateException(
             "build() has already been called on this Builder.");
         }
-        rpc_pro.rpcPrototype.files.MessageServiceFiles.Message returnMe = result;
+        rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING returnMe = result;
         result = null;
         return returnMe;
       }
       
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof rpc_pro.rpcPrototype.files.MessageServiceFiles.Message) {
-          return mergeFrom((rpc_pro.rpcPrototype.files.MessageServiceFiles.Message)other);
+        if (other instanceof rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING) {
+          return mergeFrom((rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
       
-      public Builder mergeFrom(rpc_pro.rpcPrototype.files.MessageServiceFiles.Message other) {
-        if (other == rpc_pro.rpcPrototype.files.MessageServiceFiles.Message.getDefaultInstance()) return this;
+      public Builder mergeFrom(rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING other) {
+        if (other == rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING.getDefaultInstance()) return this;
         if (other.hasQuery()) {
           setQuery(other.getQuery());
+        }
+        if (other.hasOperationKey()) {
+          setOperationKey(other.getOperationKey());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -503,6 +562,10 @@ public final class MessageServiceFiles {
               setQuery(input.readString());
               break;
             }
+            case 18: {
+              setOperationKey(input.readString());
+              break;
+            }
           }
         }
       }
@@ -529,16 +592,37 @@ public final class MessageServiceFiles {
         return this;
       }
       
-      // @@protoc_insertion_point(builder_scope:Message)
+      // optional string OperationKey = 2;
+      public boolean hasOperationKey() {
+        return result.hasOperationKey();
+      }
+      public java.lang.String getOperationKey() {
+        return result.getOperationKey();
+      }
+      public Builder setOperationKey(java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  result.hasOperationKey = true;
+        result.operationKey_ = value;
+        return this;
+      }
+      public Builder clearOperationKey() {
+        result.hasOperationKey = false;
+        result.operationKey_ = getDefaultInstance().getOperationKey();
+        return this;
+      }
+      
+      // @@protoc_insertion_point(builder_scope:STRING)
     }
     
     static {
-      defaultInstance = new Message(true);
+      defaultInstance = new STRING(true);
       rpc_pro.rpcPrototype.files.MessageServiceFiles.internalForceInit();
       defaultInstance.initFields();
     }
     
-    // @@protoc_insertion_point(class_scope:Message)
+    // @@protoc_insertion_point(class_scope:STRING)
   }
   
   public static final class HandleReturns extends
@@ -1163,6 +1247,13 @@ public final class MessageServiceFiles {
     public boolean hasTimeout() { return hasTimeout; }
     public long getTimeout() { return timeout_; }
     
+    // optional string OperationKey = 3;
+    public static final int OPERATIONKEY_FIELD_NUMBER = 3;
+    private boolean hasOperationKey;
+    private java.lang.String operationKey_ = "";
+    public boolean hasOperationKey() { return hasOperationKey; }
+    public java.lang.String getOperationKey() { return operationKey_; }
+    
     private void initFields() {
     }
     public final boolean isInitialized() {
@@ -1177,6 +1268,9 @@ public final class MessageServiceFiles {
       }
       if (hasTimeout()) {
         output.writeInt64(2, getTimeout());
+      }
+      if (hasOperationKey()) {
+        output.writeString(3, getOperationKey());
       }
       getUnknownFields().writeTo(output);
     }
@@ -1199,6 +1293,10 @@ public final class MessageServiceFiles {
       if (hasTimeout()) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(2, getTimeout());
+      }
+      if (hasOperationKey()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeStringSize(3, getOperationKey());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -1371,6 +1469,9 @@ public final class MessageServiceFiles {
         if (other.hasTimeout()) {
           setTimeout(other.getTimeout());
         }
+        if (other.hasOperationKey()) {
+          setOperationKey(other.getOperationKey());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
@@ -1402,6 +1503,10 @@ public final class MessageServiceFiles {
             }
             case 16: {
               setTimeout(input.readInt64());
+              break;
+            }
+            case 26: {
+              setOperationKey(input.readString());
               break;
             }
           }
@@ -1467,6 +1572,27 @@ public final class MessageServiceFiles {
         return this;
       }
       
+      // optional string OperationKey = 3;
+      public boolean hasOperationKey() {
+        return result.hasOperationKey();
+      }
+      public java.lang.String getOperationKey() {
+        return result.getOperationKey();
+      }
+      public Builder setOperationKey(java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  result.hasOperationKey = true;
+        result.operationKey_ = value;
+        return this;
+      }
+      public Builder clearOperationKey() {
+        result.hasOperationKey = false;
+        result.operationKey_ = getDefaultInstance().getOperationKey();
+        return this;
+      }
+      
       // @@protoc_insertion_point(builder_scope:ProgramPacket)
     }
     
@@ -1486,13 +1612,13 @@ public final class MessageServiceFiles {
     public interface Interface {
       public abstract void setMessage(
           com.google.protobuf.RpcController controller,
-          rpc_pro.rpcPrototype.files.MessageServiceFiles.Message request,
+          rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING request,
           com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID> done);
       
       public abstract void getMessage(
           com.google.protobuf.RpcController controller,
           rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request,
-          com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.Message> done);
+          com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING> done);
       
     }
     
@@ -1502,7 +1628,7 @@ public final class MessageServiceFiles {
         @Override
         public  void setMessage(
             com.google.protobuf.RpcController controller,
-            rpc_pro.rpcPrototype.files.MessageServiceFiles.Message request,
+            rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING request,
             com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID> done) {
           impl.setMessage(controller, request, done);
         }
@@ -1511,7 +1637,7 @@ public final class MessageServiceFiles {
         public  void getMessage(
             com.google.protobuf.RpcController controller,
             rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request,
-            com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.Message> done) {
+            com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING> done) {
           impl.getMessage(controller, request, done);
         }
         
@@ -1538,7 +1664,7 @@ public final class MessageServiceFiles {
           }
           switch(method.getIndex()) {
             case 0:
-              return impl.setMessage(controller, (rpc_pro.rpcPrototype.files.MessageServiceFiles.Message)request);
+              return impl.setMessage(controller, (rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING)request);
             case 1:
               return impl.getMessage(controller, (rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID)request);
             default:
@@ -1556,7 +1682,7 @@ public final class MessageServiceFiles {
           }
           switch(method.getIndex()) {
             case 0:
-              return rpc_pro.rpcPrototype.files.MessageServiceFiles.Message.getDefaultInstance();
+              return rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING.getDefaultInstance();
             case 1:
               return rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.getDefaultInstance();
             default:
@@ -1576,7 +1702,7 @@ public final class MessageServiceFiles {
             case 0:
               return rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.getDefaultInstance();
             case 1:
-              return rpc_pro.rpcPrototype.files.MessageServiceFiles.Message.getDefaultInstance();
+              return rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
           }
@@ -1587,13 +1713,13 @@ public final class MessageServiceFiles {
     
     public abstract void setMessage(
         com.google.protobuf.RpcController controller,
-        rpc_pro.rpcPrototype.files.MessageServiceFiles.Message request,
+        rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING request,
         com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID> done);
     
     public abstract void getMessage(
         com.google.protobuf.RpcController controller,
         rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request,
-        com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.Message> done);
+        com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING> done);
     
     public static final
         com.google.protobuf.Descriptors.ServiceDescriptor
@@ -1618,13 +1744,13 @@ public final class MessageServiceFiles {
       }
       switch(method.getIndex()) {
         case 0:
-          this.setMessage(controller, (rpc_pro.rpcPrototype.files.MessageServiceFiles.Message)request,
+          this.setMessage(controller, (rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING)request,
             com.google.protobuf.RpcUtil.<rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID>specializeCallback(
               done));
           return;
         case 1:
           this.getMessage(controller, (rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID)request,
-            com.google.protobuf.RpcUtil.<rpc_pro.rpcPrototype.files.MessageServiceFiles.Message>specializeCallback(
+            com.google.protobuf.RpcUtil.<rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING>specializeCallback(
               done));
           return;
         default:
@@ -1642,7 +1768,7 @@ public final class MessageServiceFiles {
       }
       switch(method.getIndex()) {
         case 0:
-          return rpc_pro.rpcPrototype.files.MessageServiceFiles.Message.getDefaultInstance();
+          return rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING.getDefaultInstance();
         case 1:
           return rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.getDefaultInstance();
         default:
@@ -1662,7 +1788,7 @@ public final class MessageServiceFiles {
         case 0:
           return rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.getDefaultInstance();
         case 1:
-          return rpc_pro.rpcPrototype.files.MessageServiceFiles.Message.getDefaultInstance();
+          return rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
       }
@@ -1686,7 +1812,7 @@ public final class MessageServiceFiles {
       
       public  void setMessage(
           com.google.protobuf.RpcController controller,
-          rpc_pro.rpcPrototype.files.MessageServiceFiles.Message request,
+          rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING request,
           com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID> done) {
         channel.callMethod(
           getDescriptor().getMethods().get(0),
@@ -1702,16 +1828,16 @@ public final class MessageServiceFiles {
       public  void getMessage(
           com.google.protobuf.RpcController controller,
           rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request,
-          com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.Message> done) {
+          com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING> done) {
         channel.callMethod(
           getDescriptor().getMethods().get(1),
           controller,
           request,
-          rpc_pro.rpcPrototype.files.MessageServiceFiles.Message.getDefaultInstance(),
+          rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING.getDefaultInstance(),
           com.google.protobuf.RpcUtil.generalizeCallback(
             done,
-            rpc_pro.rpcPrototype.files.MessageServiceFiles.Message.class,
-            rpc_pro.rpcPrototype.files.MessageServiceFiles.Message.getDefaultInstance()));
+            rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING.class,
+            rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING.getDefaultInstance()));
       }
     }
     
@@ -1723,10 +1849,10 @@ public final class MessageServiceFiles {
     public interface BlockingInterface {
       public rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID setMessage(
           com.google.protobuf.RpcController controller,
-          rpc_pro.rpcPrototype.files.MessageServiceFiles.Message request)
+          rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING request)
           throws com.google.protobuf.ServiceException;
       
-      public rpc_pro.rpcPrototype.files.MessageServiceFiles.Message getMessage(
+      public rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING getMessage(
           com.google.protobuf.RpcController controller,
           rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request)
           throws com.google.protobuf.ServiceException;
@@ -1741,7 +1867,7 @@ public final class MessageServiceFiles {
       
       public rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID setMessage(
           com.google.protobuf.RpcController controller,
-          rpc_pro.rpcPrototype.files.MessageServiceFiles.Message request)
+          rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING request)
           throws com.google.protobuf.ServiceException {
         return (rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID) channel.callBlockingMethod(
           getDescriptor().getMethods().get(0),
@@ -1751,15 +1877,15 @@ public final class MessageServiceFiles {
       }
       
       
-      public rpc_pro.rpcPrototype.files.MessageServiceFiles.Message getMessage(
+      public rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING getMessage(
           com.google.protobuf.RpcController controller,
           rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request)
           throws com.google.protobuf.ServiceException {
-        return (rpc_pro.rpcPrototype.files.MessageServiceFiles.Message) channel.callBlockingMethod(
+        return (rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING) channel.callBlockingMethod(
           getDescriptor().getMethods().get(1),
           controller,
           request,
-          rpc_pro.rpcPrototype.files.MessageServiceFiles.Message.getDefaultInstance());
+          rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING.getDefaultInstance());
       }
       
     }
@@ -1773,17 +1899,27 @@ public final class MessageServiceFiles {
       public abstract void connect(
           com.google.protobuf.RpcController controller,
           rpc_pro.rpcPrototype.files.MessageServiceFiles.Identification request,
-          com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.Message> done);
+          com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID> done);
       
       public abstract void program(
           com.google.protobuf.RpcController controller,
           rpc_pro.rpcPrototype.files.MessageServiceFiles.ProgramPacket request,
           com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID> done);
       
+      public abstract void cancelHandle(
+          com.google.protobuf.RpcController controller,
+          rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request,
+          com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID> done);
+      
+      public abstract void getHnadle(
+          com.google.protobuf.RpcController controller,
+          rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request,
+          com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID> done);
+      
       public abstract void getState(
           com.google.protobuf.RpcController controller,
           rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request,
-          com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.Message> done);
+          com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING> done);
       
     }
     
@@ -1794,7 +1930,7 @@ public final class MessageServiceFiles {
         public  void connect(
             com.google.protobuf.RpcController controller,
             rpc_pro.rpcPrototype.files.MessageServiceFiles.Identification request,
-            com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.Message> done) {
+            com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID> done) {
           impl.connect(controller, request, done);
         }
         
@@ -1807,10 +1943,26 @@ public final class MessageServiceFiles {
         }
         
         @Override
+        public  void cancelHandle(
+            com.google.protobuf.RpcController controller,
+            rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request,
+            com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID> done) {
+          impl.cancelHandle(controller, request, done);
+        }
+        
+        @Override
+        public  void getHnadle(
+            com.google.protobuf.RpcController controller,
+            rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request,
+            com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID> done) {
+          impl.getHnadle(controller, request, done);
+        }
+        
+        @Override
         public  void getState(
             com.google.protobuf.RpcController controller,
             rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request,
-            com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.Message> done) {
+            com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING> done) {
           impl.getState(controller, request, done);
         }
         
@@ -1841,6 +1993,10 @@ public final class MessageServiceFiles {
             case 1:
               return impl.program(controller, (rpc_pro.rpcPrototype.files.MessageServiceFiles.ProgramPacket)request);
             case 2:
+              return impl.cancelHandle(controller, (rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID)request);
+            case 3:
+              return impl.getHnadle(controller, (rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID)request);
+            case 4:
               return impl.getState(controller, (rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID)request);
             default:
               throw new java.lang.AssertionError("Can't get here.");
@@ -1862,6 +2018,10 @@ public final class MessageServiceFiles {
               return rpc_pro.rpcPrototype.files.MessageServiceFiles.ProgramPacket.getDefaultInstance();
             case 2:
               return rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.getDefaultInstance();
+            case 3:
+              return rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.getDefaultInstance();
+            case 4:
+              return rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
           }
@@ -1877,11 +2037,15 @@ public final class MessageServiceFiles {
           }
           switch(method.getIndex()) {
             case 0:
-              return rpc_pro.rpcPrototype.files.MessageServiceFiles.Message.getDefaultInstance();
+              return rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.getDefaultInstance();
             case 1:
               return rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.getDefaultInstance();
             case 2:
-              return rpc_pro.rpcPrototype.files.MessageServiceFiles.Message.getDefaultInstance();
+              return rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.getDefaultInstance();
+            case 3:
+              return rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.getDefaultInstance();
+            case 4:
+              return rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
           }
@@ -1893,17 +2057,27 @@ public final class MessageServiceFiles {
     public abstract void connect(
         com.google.protobuf.RpcController controller,
         rpc_pro.rpcPrototype.files.MessageServiceFiles.Identification request,
-        com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.Message> done);
+        com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID> done);
     
     public abstract void program(
         com.google.protobuf.RpcController controller,
         rpc_pro.rpcPrototype.files.MessageServiceFiles.ProgramPacket request,
         com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID> done);
     
+    public abstract void cancelHandle(
+        com.google.protobuf.RpcController controller,
+        rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request,
+        com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID> done);
+    
+    public abstract void getHnadle(
+        com.google.protobuf.RpcController controller,
+        rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request,
+        com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID> done);
+    
     public abstract void getState(
         com.google.protobuf.RpcController controller,
         rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request,
-        com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.Message> done);
+        com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING> done);
     
     public static final
         com.google.protobuf.Descriptors.ServiceDescriptor
@@ -1929,7 +2103,7 @@ public final class MessageServiceFiles {
       switch(method.getIndex()) {
         case 0:
           this.connect(controller, (rpc_pro.rpcPrototype.files.MessageServiceFiles.Identification)request,
-            com.google.protobuf.RpcUtil.<rpc_pro.rpcPrototype.files.MessageServiceFiles.Message>specializeCallback(
+            com.google.protobuf.RpcUtil.<rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID>specializeCallback(
               done));
           return;
         case 1:
@@ -1938,8 +2112,18 @@ public final class MessageServiceFiles {
               done));
           return;
         case 2:
+          this.cancelHandle(controller, (rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID)request,
+            com.google.protobuf.RpcUtil.<rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID>specializeCallback(
+              done));
+          return;
+        case 3:
+          this.getHnadle(controller, (rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID)request,
+            com.google.protobuf.RpcUtil.<rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID>specializeCallback(
+              done));
+          return;
+        case 4:
           this.getState(controller, (rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID)request,
-            com.google.protobuf.RpcUtil.<rpc_pro.rpcPrototype.files.MessageServiceFiles.Message>specializeCallback(
+            com.google.protobuf.RpcUtil.<rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING>specializeCallback(
               done));
           return;
         default:
@@ -1962,6 +2146,10 @@ public final class MessageServiceFiles {
           return rpc_pro.rpcPrototype.files.MessageServiceFiles.ProgramPacket.getDefaultInstance();
         case 2:
           return rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.getDefaultInstance();
+        case 3:
+          return rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.getDefaultInstance();
+        case 4:
+          return rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
       }
@@ -1977,11 +2165,15 @@ public final class MessageServiceFiles {
       }
       switch(method.getIndex()) {
         case 0:
-          return rpc_pro.rpcPrototype.files.MessageServiceFiles.Message.getDefaultInstance();
+          return rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.getDefaultInstance();
         case 1:
           return rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.getDefaultInstance();
         case 2:
-          return rpc_pro.rpcPrototype.files.MessageServiceFiles.Message.getDefaultInstance();
+          return rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.getDefaultInstance();
+        case 3:
+          return rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.getDefaultInstance();
+        case 4:
+          return rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
       }
@@ -2006,16 +2198,16 @@ public final class MessageServiceFiles {
       public  void connect(
           com.google.protobuf.RpcController controller,
           rpc_pro.rpcPrototype.files.MessageServiceFiles.Identification request,
-          com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.Message> done) {
+          com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID> done) {
         channel.callMethod(
           getDescriptor().getMethods().get(0),
           controller,
           request,
-          rpc_pro.rpcPrototype.files.MessageServiceFiles.Message.getDefaultInstance(),
+          rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.getDefaultInstance(),
           com.google.protobuf.RpcUtil.generalizeCallback(
             done,
-            rpc_pro.rpcPrototype.files.MessageServiceFiles.Message.class,
-            rpc_pro.rpcPrototype.files.MessageServiceFiles.Message.getDefaultInstance()));
+            rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.class,
+            rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.getDefaultInstance()));
       }
       
       public  void program(
@@ -2033,19 +2225,49 @@ public final class MessageServiceFiles {
             rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.getDefaultInstance()));
       }
       
-      public  void getState(
+      public  void cancelHandle(
           com.google.protobuf.RpcController controller,
           rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request,
-          com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.Message> done) {
+          com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID> done) {
         channel.callMethod(
           getDescriptor().getMethods().get(2),
           controller,
           request,
-          rpc_pro.rpcPrototype.files.MessageServiceFiles.Message.getDefaultInstance(),
+          rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.getDefaultInstance(),
           com.google.protobuf.RpcUtil.generalizeCallback(
             done,
-            rpc_pro.rpcPrototype.files.MessageServiceFiles.Message.class,
-            rpc_pro.rpcPrototype.files.MessageServiceFiles.Message.getDefaultInstance()));
+            rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.class,
+            rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.getDefaultInstance()));
+      }
+      
+      public  void getHnadle(
+          com.google.protobuf.RpcController controller,
+          rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request,
+          com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID> done) {
+        channel.callMethod(
+          getDescriptor().getMethods().get(3),
+          controller,
+          request,
+          rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.getDefaultInstance(),
+          com.google.protobuf.RpcUtil.generalizeCallback(
+            done,
+            rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.class,
+            rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.getDefaultInstance()));
+      }
+      
+      public  void getState(
+          com.google.protobuf.RpcController controller,
+          rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request,
+          com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING> done) {
+        channel.callMethod(
+          getDescriptor().getMethods().get(4),
+          controller,
+          request,
+          rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING.getDefaultInstance(),
+          com.google.protobuf.RpcUtil.generalizeCallback(
+            done,
+            rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING.class,
+            rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING.getDefaultInstance()));
       }
     }
     
@@ -2055,7 +2277,7 @@ public final class MessageServiceFiles {
     }
     
     public interface BlockingInterface {
-      public rpc_pro.rpcPrototype.files.MessageServiceFiles.Message connect(
+      public rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID connect(
           com.google.protobuf.RpcController controller,
           rpc_pro.rpcPrototype.files.MessageServiceFiles.Identification request)
           throws com.google.protobuf.ServiceException;
@@ -2065,7 +2287,17 @@ public final class MessageServiceFiles {
           rpc_pro.rpcPrototype.files.MessageServiceFiles.ProgramPacket request)
           throws com.google.protobuf.ServiceException;
       
-      public rpc_pro.rpcPrototype.files.MessageServiceFiles.Message getState(
+      public rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID cancelHandle(
+          com.google.protobuf.RpcController controller,
+          rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request)
+          throws com.google.protobuf.ServiceException;
+      
+      public rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID getHnadle(
+          com.google.protobuf.RpcController controller,
+          rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request)
+          throws com.google.protobuf.ServiceException;
+      
+      public rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING getState(
           com.google.protobuf.RpcController controller,
           rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request)
           throws com.google.protobuf.ServiceException;
@@ -2078,15 +2310,15 @@ public final class MessageServiceFiles {
       
       private final com.google.protobuf.BlockingRpcChannel channel;
       
-      public rpc_pro.rpcPrototype.files.MessageServiceFiles.Message connect(
+      public rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID connect(
           com.google.protobuf.RpcController controller,
           rpc_pro.rpcPrototype.files.MessageServiceFiles.Identification request)
           throws com.google.protobuf.ServiceException {
-        return (rpc_pro.rpcPrototype.files.MessageServiceFiles.Message) channel.callBlockingMethod(
+        return (rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID) channel.callBlockingMethod(
           getDescriptor().getMethods().get(0),
           controller,
           request,
-          rpc_pro.rpcPrototype.files.MessageServiceFiles.Message.getDefaultInstance());
+          rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.getDefaultInstance());
       }
       
       
@@ -2102,15 +2334,39 @@ public final class MessageServiceFiles {
       }
       
       
-      public rpc_pro.rpcPrototype.files.MessageServiceFiles.Message getState(
+      public rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID cancelHandle(
           com.google.protobuf.RpcController controller,
           rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request)
           throws com.google.protobuf.ServiceException {
-        return (rpc_pro.rpcPrototype.files.MessageServiceFiles.Message) channel.callBlockingMethod(
+        return (rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID) channel.callBlockingMethod(
           getDescriptor().getMethods().get(2),
           controller,
           request,
-          rpc_pro.rpcPrototype.files.MessageServiceFiles.Message.getDefaultInstance());
+          rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.getDefaultInstance());
+      }
+      
+      
+      public rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID getHnadle(
+          com.google.protobuf.RpcController controller,
+          rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request)
+          throws com.google.protobuf.ServiceException {
+        return (rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID) channel.callBlockingMethod(
+          getDescriptor().getMethods().get(3),
+          controller,
+          request,
+          rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.getDefaultInstance());
+      }
+      
+      
+      public rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING getState(
+          com.google.protobuf.RpcController controller,
+          rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request)
+          throws com.google.protobuf.ServiceException {
+        return (rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING) channel.callBlockingMethod(
+          getDescriptor().getMethods().get(4),
+          controller,
+          request,
+          rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING.getDefaultInstance());
       }
       
     }
@@ -2278,10 +2534,10 @@ public final class MessageServiceFiles {
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_VOID_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
-    internal_static_Message_descriptor;
+    internal_static_STRING_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_Message_fieldAccessorTable;
+      internal_static_STRING_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
     internal_static_HandleReturns_descriptor;
   private static
@@ -2306,17 +2562,20 @@ public final class MessageServiceFiles {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\016pingpong.proto\"\006\n\004VOID\"\030\n\007Message\022\r\n\005q" +
-      "uery\030\001 \002(\t\"\017\n\rHandleReturns\"4\n\016Identific" +
-      "ation\022\020\n\010username\030\001 \002(\t\022\020\n\010password\030\002 \002(" +
-      "\t\"6\n\rProgramPacket\022\024\n\014BinaryPacket\030\001 \003(\014" +
-      "\022\017\n\007timeout\030\002 \001(\0032N\n\016TestOperations\022\035\n\ns" +
-      "etMessage\022\010.Message\032\005.VOID\022\035\n\ngetMessage" +
-      "\022\005.VOID\032\010.Message2q\n\nOperations\022$\n\007conne" +
-      "ct\022\017.Identification\032\010.Message\022 \n\007program" +
-      "\022\016.ProgramPacket\032\005.VOID\022\033\n\010getState\022\005.VO" +
-      "ID\032\010.Message2\017\n\rPacketServiceB1\n\032rpc_pro",
-      ".rpcPrototype.filesB\023MessageServiceFiles"
+      "\n\016pingpong.proto\"\034\n\004VOID\022\024\n\014OperationKey" +
+      "\030\001 \001(\t\"-\n\006STRING\022\r\n\005query\030\001 \002(\t\022\024\n\014Opera" +
+      "tionKey\030\002 \001(\t\"\017\n\rHandleReturns\"4\n\016Identi" +
+      "fication\022\020\n\010username\030\001 \002(\t\022\020\n\010password\030\002" +
+      " \002(\t\"L\n\rProgramPacket\022\024\n\014BinaryPacket\030\001 " +
+      "\003(\014\022\017\n\007timeout\030\002 \001(\003\022\024\n\014OperationKey\030\003 \001" +
+      "(\t2L\n\016TestOperations\022\034\n\nsetMessage\022\007.STR" +
+      "ING\032\005.VOID\022\034\n\ngetMessage\022\005.VOID\032\007.STRING" +
+      "2\246\001\n\nOperations\022!\n\007connect\022\017.Identificat" +
+      "ion\032\005.VOID\022 \n\007program\022\016.ProgramPacket\032\005.",
+      "VOID\022\034\n\014cancelHandle\022\005.VOID\032\005.VOID\022\031\n\tge" +
+      "tHnadle\022\005.VOID\032\005.VOID\022\032\n\010getState\022\005.VOID" +
+      "\032\007.STRING2\017\n\rPacketServiceB1\n\032rpc_pro.rp" +
+      "cPrototype.filesB\023MessageServiceFiles"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -2328,17 +2587,17 @@ public final class MessageServiceFiles {
           internal_static_VOID_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_VOID_descriptor,
-              new java.lang.String[] { },
+              new java.lang.String[] { "OperationKey", },
               rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.class,
               rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.Builder.class);
-          internal_static_Message_descriptor =
+          internal_static_STRING_descriptor =
             getDescriptor().getMessageTypes().get(1);
-          internal_static_Message_fieldAccessorTable = new
+          internal_static_STRING_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_Message_descriptor,
-              new java.lang.String[] { "Query", },
-              rpc_pro.rpcPrototype.files.MessageServiceFiles.Message.class,
-              rpc_pro.rpcPrototype.files.MessageServiceFiles.Message.Builder.class);
+              internal_static_STRING_descriptor,
+              new java.lang.String[] { "Query", "OperationKey", },
+              rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING.class,
+              rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING.Builder.class);
           internal_static_HandleReturns_descriptor =
             getDescriptor().getMessageTypes().get(2);
           internal_static_HandleReturns_fieldAccessorTable = new
@@ -2360,7 +2619,7 @@ public final class MessageServiceFiles {
           internal_static_ProgramPacket_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_ProgramPacket_descriptor,
-              new java.lang.String[] { "BinaryPacket", "Timeout", },
+              new java.lang.String[] { "BinaryPacket", "Timeout", "OperationKey", },
               rpc_pro.rpcPrototype.files.MessageServiceFiles.ProgramPacket.class,
               rpc_pro.rpcPrototype.files.MessageServiceFiles.ProgramPacket.Builder.class);
           return null;

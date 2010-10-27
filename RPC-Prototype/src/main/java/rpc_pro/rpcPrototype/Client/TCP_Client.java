@@ -138,7 +138,7 @@ public class TCP_Client {
 				break;
 			//6
 			case 54:
-				handle2.get();
+				System.out.println(handle1.getState());
 				break;
 			case 55:
 				handle3.get();

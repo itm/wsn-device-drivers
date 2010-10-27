@@ -1,19 +1,14 @@
 package rpc_pro.rpcPrototype.Server;
 
 import java.util.HashMap;
-import java.util.List;
-
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID;
-
-import com.google.protobuf.RpcController;
-import com.googlecode.protobuf.pro.duplex.RpcClientChannel;
 
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
+
 
 public class ClientID {
 
 	String Message = "init";
-	private static HashMap<RpcController,OperationHandle<Void>> handleList = new HashMap<RpcController,OperationHandle<Void>>();
+	private static HashMap<String,OperationHandle<Void>> handleList = new HashMap<String,OperationHandle<Void>>();
 	
 	public ClientID(){
 		
@@ -28,6 +23,15 @@ public class ClientID {
 			} 
 		}
 		Message = message;
+		
+		
+//		try {
+//			Thread.sleep(10000000);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
 	}
 	
 	public String getMessage() {
@@ -41,54 +45,13 @@ public class ClientID {
 		return Message;
 	}
 
-	public void setHandleList(RpcController controller, OperationHandle<Void> handle) {
-		handleList.put(controller, handle);
+	// Eintragen des OperationHandle mit dem OperationKey in eine HashMap
+	public void setHandleList(String OperationKey, OperationHandle<Void> handle) {
+		handleList.put(OperationKey, handle);
 	}
 
-	public OperationHandle<Void> getHandleList(RpcController controller) {
-		return handleList.get(controller);
+	// Rueckgabe des richtigen OperationHandle
+	public OperationHandle<Void> getHandleList(String OperationKey) {
+		return handleList.get(OperationKey);
 	}
-	
-	
-	
-	
-	
-//	
-//	private static HashMap<RpcController, String> userList = null;
-//	
-//	private static ClientID instance = null;
-//	
-//	
-//	private ClientID(){
-//	}
-//	
-//	public static ClientID getClientID(){
-//		if(instance == null){
-//			instance = new ClientID();
-//			userList = new HashMap<RpcController, String>();
-//		}
-//		return instance;
-//	}
-//	
-//	
-//	public void setController(RpcController controller, String username){
-//		userList.put(controller, username);
-//	}
-//	
-//	public boolean getAuthentifikation(RpcController controller){
-//		
-//		if(userList.containsKey(controller)){
-//			return true;
-//		}
-//		else{
-//			return false;
-//		}
-//	}
-//	
-//	
-//	public String getUsername(RpcController controller){
-//		
-//		return userList.get(controller);
-//	}
-	
 }

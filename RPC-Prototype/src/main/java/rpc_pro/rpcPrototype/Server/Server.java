@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.Identification;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.Message;
+import rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.Operations;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.ProgramPacket;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.TestOperations;
@@ -40,17 +40,21 @@ public class Server {
 		
 		//BasicConfigurator.configure();
 		
+		// setzen der server-Informationen
 		PeerInfo serverInfo = new PeerInfo("localhost", 8080);
 		
+		// setzen des ThreadPools
 		 RpcServerCallExecutor executor = new ThreadPoolCallExecutor(10, 10);
 	        
-	        DuplexTcpServerBootstrap bootstrap = new DuplexTcpServerBootstrap(
-	                        serverInfo,
-	                new NioServerSocketChannelFactory(
-	                        Executors.newCachedThreadPool(),
-	                        Executors.newCachedThreadPool()),
-	                executor);
+		 // setzen des bootstraps
+		 DuplexTcpServerBootstrap bootstrap = new DuplexTcpServerBootstrap(
+				 serverInfo,
+				 new NioServerSocketChannelFactory(
+						 Executors.newCachedThreadPool(),
+						 Executors.newCachedThreadPool()),
+				 executor);
 	        
+		 // setzen eines ConnectionLoggers
 	        RpcConnectionEventNotifier rpcEventNotifier = new RpcConnectionEventNotifier();
 	        RpcConnectionEventListener listener = new RpcConnectionEventListener() {
 				
@@ -78,69 +82,115 @@ public class Server {
 	    	bootstrap.registerConnectionEventListener(rpcEventNotifier);
 	        
 	        
+	    	// registrieren der benutzten Services
 	    	bootstrap.getRpcServiceRegistry().registerService(TestOperations.newReflectiveService(new TestOperationsImpl()));
 	    	bootstrap.getRpcServiceRegistry().registerService(Operations.newReflectiveService(new OperationsImpl()));
 
+	    	// starten des Servers
 	    	bootstrap.bind();
+	    	
+	    	// ein wenig Kommunikation
 	    	System.out.println("Serving " + bootstrap);
 			
 	}
 	
+	// Testklassen
 	static class TestOperationsImpl implements TestOperations.Interface {
 
+		// setzen einer Nachricht auf dem Server
 		@Override
-		public void setMessage(RpcController controller, Message request,
+		public void setMessage(RpcController controller, STRING request,
 				RpcCallback<VOID> done) {
 			
-			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
-			OperationHandle<Void> handle = null;
+			// erstellen einer Klasse zum Testen der OperationHandle
+			Main test = new Main();
 			
-			id.setHandleList(controller, handle);
+			// herausfinden des TCP-Channel und finden der Userspezifischen Klasse
+			// ein Channel kann fuer mehrere Operationen offen bleiben
+			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
+			
+			// aber die handle muessen zu jeder Operation eindeutig zuweisbar sein
+			
+			// erzeugen eines OperationHandle zur der Operation
+			OperationHandle<Void> handle = test.setMessage();
+			
+			// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
+			id.setHandleList(request.getOperationKey(), handle);
+			// setzen der Nachricht auf dem Server
 			id.setMessage(request.getQuery());
 			
+			// ausfuehren des Callbacks
 			done.run(VOID.newBuilder().build());
-			
-			//System.out.println("Die Nachricht: "+request.getQuery()+" ist auf dem Server angekommen.");
 		}
 
+		// abrufen einer Nachricht vom Server
 		@Override
 		public void getMessage(RpcController controller, VOID request,
-				RpcCallback<Message> done) {
+				RpcCallback<STRING> done) {
 			
+			// erstellen einer Klasse zum Testen der OperationHandle
+			Main test = new Main();
+			
+			// identifizieren des Users mit dem Channel
 			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
 			
-			done.run(Message.newBuilder().setQuery(id.getMessage()).build());
+			// erzeugen eines OperationHandle zur der Operation
+			OperationHandle<Void> handle = test.getMessage();
 			
+			// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
+			id.setHandleList(request.getOperationKey(), handle);
 			
+			// ausfuehren des Callbacks mit der Nachricht
+			done.run(STRING.newBuilder().setQuery(id.getMessage()).setOperationKey(controller.toString()).build());
+
 		}
 	}
 	
+	// eigentliche Operationen, die spaeter verwendet werden sollen
 	static class OperationsImpl implements Operations.Interface {
+		
+		// Methode zum verbinden auf den Server
+		// hier sollte die Authentifikation stattfinden
 		@Override
 		public void connect(RpcController controller, Identification request,
-				RpcCallback<Message> done) {
+				RpcCallback<VOID> done) {
 			
+			// eine Moeglichkeit den benutzten channel zu identifizieren
 			RpcClientChannel channel = ServerRpcController.getRpcChannel(controller);
 			
+			// erzeugen einer channel bezogenen User Instanz
 			ClientID id = new ClientID();
 			
+			// Abgleich der Userdaten
+			// dies sollte spaeter per JAAS gemacht werden
 			if(request.getPassword().equals("testPassword") && (request.getUsername().equalsIgnoreCase("testUser") || request.getUsername().equalsIgnoreCase("testUser2") )){
+				
+				// eintragen der ClientID-Instanz zusammen mit den benutzten Channel in eine Liste
 				idList.put(channel, id);
-				done.run(Message.newBuilder().setQuery("Die Authentifikation war erfolgreich!").build());
+				// ausfuehren des Callback bei erfolgreicher Authentifikation
+				//done.run(STRING.newBuilder().setQuery("Die Authentifikation war erfolgreich!").build());
+				done.run(VOID.newBuilder().build());
 			}
 			else{
-				done.run(Message.newBuilder().setQuery("Die Authentifikation ist fehlgeschalgen!").build());
+				// ausfuehren des Callback bei fehlgeschlagener Authentifikation
+				controller.setFailed("Die Authentifikation ist fehlgeschalgen!");
+				done.run(VOID.newBuilder().build());
+				//done.run(STRING.newBuilder().setQuery("Die Authentifikation ist fehlgeschalgen!").build());
 			}
 		}
 
+		// Methode um Device zu Programmieren
 		@Override
 		public void program(RpcController controller, ProgramPacket request,
 				RpcCallback<VOID> done) {
 			
+			// erstellen einer Klasse zum Testen der OperationHandle
 			Main test = new Main();
 			
+			// identifizieren des Users mit dem Channel
 			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
 			
+			// erzeugen eines OperationHandle zur der Operation
 			OperationHandle <Void> handle = test.program(null, request.getTimeout(), new AsyncCallback<Void>(){
 
 				@Override
@@ -163,62 +213,44 @@ public class Server {
 					System.out.println("jup es geht im TCP-Server");
 				}});
 			
-			id.setHandleList(controller, handle);
+			// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
+			id.setHandleList(request.getOperationKey(), handle);
 			
+			// ausfuehren des Callbacks
 			done.run(VOID.newBuilder().build());
 		}
 
+		// reagieren auf ein getState-Aufruf
 		@Override
 		public void getState(RpcController controller, VOID request,
-				RpcCallback<Message> done) {
+				RpcCallback<STRING> done) {
 			
 			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
-			OperationHandle<Void> handle = id.getHandleList(controller);
-			
-			done.run(Message.newBuilder().setQuery(handle.getState().getName()).build());
-			
+			OperationHandle<Void> handle = id.getHandleList(request.getOperationKey());			
+			done.run(STRING.newBuilder().setQuery(handle.getState().getName()).build());
 		}
 
-//		@Override
-//		public void setMessage(RpcController controller, Message request,
-//				RpcCallback<Message> done) {
-//			
-//			ClientID id = ClientID.getClientID();
-//			
-//			id.setController(request.getQuery(), controller);
-//			
-//			new testServer().test();
-//			
-//		}
-//
-//		@Override
-//		public void sendMessage(RpcController controller, Message request,
-//				RpcCallback<Message> done) {
-//			
-//			RpcClientChannel channel = ServerRpcController.getRpcChannel(controller);
-//			Interface clientService = HalloService.newStub(channel);
-//			RpcController clientController = channel.newRpcController();
-//			
-//			clientService.sayHello(clientController, request, null);
-//			
-//		}
-		
-		
-//		@Override
-//		public void setMessage(RpcController controller, Message request,
-//				RpcCallback<Message> done) {
-//			
-//			System.out.println("setMessage gestartet");
-//			
-//			RpcClientChannel channel = ServerRpcController.getRpcChannel(controller);
-//			Interface clientService = HalloService.newStub(channel);
-//			RpcController clientController = channel.newRpcController();
-//			
-//			
-//			Message clientRequest = Message.newBuilder().setQuery("Hello World").build();
-//			clientService.sayHello(clientController, clientRequest, null);
-//			
-//		}
+		// eventuell nicht notwendig wenn controller.startCancel() im client funktioniert
+		// reagieren auf ein cancel-Aufruf
+		@Override
+		public void cancelHandle(RpcController controller, VOID request,
+				RpcCallback<VOID> done) {
+	
+			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
+			OperationHandle<Void> handle = id.getHandleList(request.getOperationKey());
+			handle.cancel();
+			done.run(VOID.newBuilder().build());
+		}
 
+		// reagieren auf ein get-Aufruf
+		@Override
+		public void getHnadle(RpcController controller, VOID request,
+				RpcCallback<VOID> done) {
+			
+			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
+			OperationHandle<Void> handle = id.getHandleList(request.getOperationKey());
+			handle.get();
+			done.run(VOID.newBuilder().build());
+		}
 	}
 }

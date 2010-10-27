@@ -3,10 +3,12 @@ option java_package = "rpc_pro.rpcPrototype.files";
 option java_outer_classname = "MessageServiceFiles";
 
 message VOID {
+	optional string OperationKey = 1;
 }
 
-message Message {
+message STRING {
 	required string query = 1;
+	optional string OperationKey = 2;
 }
 
 message HandleReturns {
@@ -21,17 +23,17 @@ message Identification {
 message ProgramPacket {
 	repeated bytes BinaryPacket = 1;
 	optional int64 timeout = 2;
+	optional string OperationKey = 3;
 }
 
 service TestOperations {
-	rpc setMessage (Message) returns (VOID);
-	rpc getMessage (VOID) returns (Message);
+	rpc setMessage (STRING) returns (VOID);
+	rpc getMessage (VOID) returns (STRING);
 }
 
 service Operations {
-	rpc connect (Identification) returns (Message);
+	rpc connect (Identification) returns (VOID);
 	rpc program (ProgramPacket) returns (VOID);
-	rpc getState (VOID) returns (Message);
 	//rpc eraseFlash () returns (VOID);
 	//rpc readFlash () returns ();
 	//rpc readMac () returns ();
@@ -39,6 +41,9 @@ service Operations {
 	//rpc send () returns (VOID);
 	//rpc writeFlash () returns (VOID);
 	//rpc writeMac () retuns (VOID);
+	rpc cancelHandle (VOID) returns (VOID);
+	rpc getHnadle (VOID) returns (VOID);
+	rpc getState (VOID) returns (STRING);
 	
 }
 
