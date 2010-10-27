@@ -8,7 +8,7 @@ public class TCP_Client {
 	public static void main(String[] args) throws Exception {
 
 		/* Gemeinsamer ClientManager */
-		Stub stub1 = new Stub("testUser", "hallo", "localhost", 8080);
+		Stub stub1 = new Stub("testUser", "testPassword", "localhost", 8080);
 		Stub stub2 = new Stub("testUser2", "hallo", "localhost", 8080);
 		
 		int i=0;
@@ -141,7 +141,7 @@ public class TCP_Client {
 				System.out.println(handle1.getState());
 				break;
 			case 55:
-				handle3.get();
+				handle1.get();
 				break;
 			case 56:
 				handle4.get();

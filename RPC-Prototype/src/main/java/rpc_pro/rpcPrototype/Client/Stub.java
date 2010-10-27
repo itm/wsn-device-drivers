@@ -70,7 +70,7 @@ public class Stub implements DeviceAsync{
 
 			@Override
 			public void onFailure(Throwable throwable) {
-				throwable.printStackTrace();
+				System.out.println(throwable.getMessage());
 			}
 
 			@Override
@@ -150,7 +150,12 @@ public class Stub implements DeviceAsync{
 			// callback aufruf des Servers
 			@Override
 			public void run(VOID arg0) {
-				callback.onSuccess(null);
+				if(controller.failed()){
+					callback.onFailure(new Throwable(controller.errorText()));
+				}
+				else{
+					callback.onSuccess(null);
+				}
 			}});
 		
 		// Nach erfolgreicher Ausfuerung des Calls den OperationHandle loeschen?
@@ -227,8 +232,13 @@ public class Stub implements DeviceAsync{
 		testService.getMessage(controller, VOID.newBuilder().setOperationKey(controller.toString()).build(), new RpcCallback<STRING>() {
 			
 			@Override
-			public void run(STRING arg0) {
-				callback.onSuccess(arg0.getQuery());
+			public void run(STRING arg0) {	
+				if(controller.failed()){
+					callback.onFailure(new Throwable(controller.errorText()));
+				}
+				else{
+					callback.onSuccess(arg0.getQuery());
+				}
 			}
 		});
 		
@@ -312,7 +322,12 @@ public class Stub implements DeviceAsync{
 		operationService.program(controller, packet, new RpcCallback<VOID>() {
 			@Override
 			public void run(VOID parameter) {
-				callback.onSuccess(null);
+				if(controller.failed()){
+					callback.onFailure(new Throwable(controller.errorText()));
+				}
+				else{
+					callback.onSuccess(null);
+				}
 			}
 		});
 		

@@ -41,7 +41,7 @@ public class Server {
 
 	//private static Log log = LogFactory.getLog(Server.class);
 	private static HashMap<RpcClientChannel,ClientID> idList = new HashMap<RpcClientChannel,ClientID>();
-	
+	private static HashMap<RpcClientChannel,Subject> authList = new HashMap<RpcClientChannel,Subject>();
 	
 	public static void main (String[] args){
 		
@@ -115,6 +115,13 @@ public class Server {
 		public void setMessage(RpcController controller, STRING request,
 				RpcCallback<VOID> done) {
 			
+			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
+			if(user==null || !user.isAuthenticated()){
+				controller.setFailed("Sie sind nicht authentifiziert!");
+				done.run(null);
+				return;
+			}
+			
 			// erstellen einer Klasse zum Testen der OperationHandle
 			Main test = new Main();
 			
@@ -140,6 +147,13 @@ public class Server {
 		@Override
 		public void getMessage(RpcController controller, VOID request,
 				RpcCallback<STRING> done) {
+			
+			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
+			if(user==null || !user.isAuthenticated()){
+				controller.setFailed("Sie sind nicht authentifiziert!");
+				done.run(null);
+				return;
+			}
 			
 			// erstellen einer Klasse zum Testen der OperationHandle
 			Main test = new Main();
@@ -177,54 +191,54 @@ public class Server {
 			// Abgleich der Userdaten
 			
 			/*Shiro:*/
-//			Subject currentUser = SecurityUtils.getSubject();
-//			
-//	        if (!currentUser.isAuthenticated()) {
-//	            UsernamePasswordToken token = new UsernamePasswordToken(request.getUsername(), request.getPassword());
-//	            token.setRememberMe(true);
-//	            try {
-//	            	
-//	                currentUser.login(token);
-//	                // eintragen der ClientID-Instanz zusammen mit den benutzten Channel in eine Liste
-//					idList.put(channel, id);				
-//					
-//	            } catch (UnknownAccountException uae) {
-//	            	controller.setFailed("There is no user with username of " + token.getPrincipal());
-//	            } catch (IncorrectCredentialsException ice) {
-//	            	controller.setFailed("Password for account " + token.getPrincipal() + " was incorrect!");
-//	            } catch (LockedAccountException lae) {
-//	            	controller.setFailed("The account for username " + token.getPrincipal() + " is locked.  " +
-//	                        "Please contact your administrator to unlock it.");
-//	            } catch (AuthenticationException ae) {
-//	            	controller.setFailed(ae.getMessage());
-//	            }
-//	        }
-//	        // ausfuehren des Callback
-//	        done.run(VOID.newBuilder().build());
-			/*Shiro END*/
+			Subject currentUser = SecurityUtils.getSubject();
 			
-			// dies sollte spaeter per JAAS gemacht werden
-			if(request.getPassword().equals("testPassword") && (request.getUsername().equalsIgnoreCase("testUser") || request.getUsername().equalsIgnoreCase("testUser2") )){
-				
-				// eintragen der ClientID-Instanz zusammen mit den benutzten Channel in eine Liste
-				idList.put(channel, id);
-				// ausfuehren des Callback bei erfolgreicher Authentifikation
-				//done.run(STRING.newBuilder().setQuery("Die Authentifikation war erfolgreich!").build());
-				done.run(VOID.newBuilder().build());
-			}
-			else{
-				// ausfuehren des Callback bei fehlgeschlagener Authentifikation
-				controller.setFailed("Die Authentifikation ist fehlgeschalgen!");
-//				System.out.println("failed:"+ controller.failed());
-				done.run(VOID.newBuilder().build());
-				//done.run(STRING.newBuilder().setQuery("Die Authentifikation ist fehlgeschalgen!").build());
-			}
+	        if (!currentUser.isAuthenticated()) {
+	            UsernamePasswordToken token = new UsernamePasswordToken(request.getUsername(), request.getPassword());
+	            token.setRememberMe(true);
+	            try {
+	            	
+	                currentUser.login(token);
+	                // eintragen der ClientID-Instanz zusammen mit den benutzten Channel in eine Liste
+					idList.put(channel, id);
+					authList.put(channel, currentUser);
+			        // ausfuehren des Callback
+			        done.run(VOID.newBuilder().build());
+					
+	            } catch (UnknownAccountException uae) {
+	            	controller.setFailed("There is no user with username of " + token.getPrincipal());
+	            	done.run(null);
+	            	return;
+	            } catch (IncorrectCredentialsException ice) {
+	            	controller.setFailed("Password for account " + token.getPrincipal() + " was incorrect!");
+	            	done.run(null);
+	            	return;
+	            } catch (LockedAccountException lae) {
+	            	controller.setFailed("The account for username " + token.getPrincipal() + " is locked.  " +
+	                        "Please contact your administrator to unlock it.");
+	            	done.run(null);
+	            	return;
+	            } catch (AuthenticationException ae) {
+	            	controller.setFailed(ae.getMessage());
+	            	done.run(null);
+	            	return;
+	            }
+	        }
+			/*Shiro END*/
+
 		}
 
 		// Methode um Device zu Programmieren
 		@Override
 		public void program(RpcController controller, ProgramPacket request,
 				RpcCallback<VOID> done) {
+			
+			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
+			if(user==null || !user.isAuthenticated()){
+				controller.setFailed("Sie sind nicht authentifiziert!");
+				done.run(null);
+				return;
+			}
 			
 			// erstellen einer Klasse zum Testen der OperationHandle
 			Main test = new Main();
