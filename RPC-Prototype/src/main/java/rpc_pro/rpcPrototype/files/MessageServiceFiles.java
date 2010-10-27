@@ -1911,7 +1911,7 @@ public final class MessageServiceFiles {
           rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request,
           com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID> done);
       
-      public abstract void getHnadle(
+      public abstract void getHandle(
           com.google.protobuf.RpcController controller,
           rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request,
           com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID> done);
@@ -1951,11 +1951,11 @@ public final class MessageServiceFiles {
         }
         
         @Override
-        public  void getHnadle(
+        public  void getHandle(
             com.google.protobuf.RpcController controller,
             rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request,
             com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID> done) {
-          impl.getHnadle(controller, request, done);
+          impl.getHandle(controller, request, done);
         }
         
         @Override
@@ -1995,7 +1995,7 @@ public final class MessageServiceFiles {
             case 2:
               return impl.cancelHandle(controller, (rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID)request);
             case 3:
-              return impl.getHnadle(controller, (rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID)request);
+              return impl.getHandle(controller, (rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID)request);
             case 4:
               return impl.getState(controller, (rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID)request);
             default:
@@ -2069,7 +2069,7 @@ public final class MessageServiceFiles {
         rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request,
         com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID> done);
     
-    public abstract void getHnadle(
+    public abstract void getHandle(
         com.google.protobuf.RpcController controller,
         rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request,
         com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID> done);
@@ -2117,7 +2117,7 @@ public final class MessageServiceFiles {
               done));
           return;
         case 3:
-          this.getHnadle(controller, (rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID)request,
+          this.getHandle(controller, (rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID)request,
             com.google.protobuf.RpcUtil.<rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID>specializeCallback(
               done));
           return;
@@ -2240,7 +2240,7 @@ public final class MessageServiceFiles {
             rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.getDefaultInstance()));
       }
       
-      public  void getHnadle(
+      public  void getHandle(
           com.google.protobuf.RpcController controller,
           rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request,
           com.google.protobuf.RpcCallback<rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID> done) {
@@ -2292,7 +2292,7 @@ public final class MessageServiceFiles {
           rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request)
           throws com.google.protobuf.ServiceException;
       
-      public rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID getHnadle(
+      public rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID getHandle(
           com.google.protobuf.RpcController controller,
           rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request)
           throws com.google.protobuf.ServiceException;
@@ -2346,7 +2346,7 @@ public final class MessageServiceFiles {
       }
       
       
-      public rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID getHnadle(
+      public rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID getHandle(
           com.google.protobuf.RpcController controller,
           rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID request)
           throws com.google.protobuf.ServiceException {
@@ -2573,7 +2573,7 @@ public final class MessageServiceFiles {
       "2\246\001\n\nOperations\022!\n\007connect\022\017.Identificat" +
       "ion\032\005.VOID\022 \n\007program\022\016.ProgramPacket\032\005.",
       "VOID\022\034\n\014cancelHandle\022\005.VOID\032\005.VOID\022\031\n\tge" +
-      "tHnadle\022\005.VOID\032\005.VOID\022\032\n\010getState\022\005.VOID" +
+      "tHandle\022\005.VOID\032\005.VOID\022\032\n\010getState\022\005.VOID" +
       "\032\007.STRING2\017\n\rPacketServiceB1\n\032rpc_pro.rp" +
       "cPrototype.filesB\023MessageServiceFiles"
     };

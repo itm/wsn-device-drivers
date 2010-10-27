@@ -300,7 +300,7 @@ public class Server {
 
 		// reagieren auf ein get-Aufruf
 		@Override
-		public void getHnadle(RpcController controller, VOID request,
+		public void getHandle(RpcController controller, VOID request,
 				RpcCallback<VOID> done) {
 			
 			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));

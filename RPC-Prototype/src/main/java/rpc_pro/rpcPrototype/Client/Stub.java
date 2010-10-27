@@ -52,13 +52,16 @@ public class Stub implements DeviceAsync{
 	TestOperations.Interface testService = null;
 	State state = null;
 	
-
 	Stub (String userName, String passWord, String uri, int port) throws Exception{
+		this(userName,passWord,uri,port,1234);
+	}
+
+	Stub (String userName, String passWord, String uri, int port, int clientPort) throws Exception{
 		
 		// setzen der Server-Infos
 		server = new PeerInfo(uri,port);
 		// setzen der Client-Infos fuer Reverse RPC
-		client = new PeerInfo(userName+"client",1234);
+		client = new PeerInfo(userName+"client",clientPort);
 		
 		// aufruf des initialen Connects
 		connect(userName, passWord, new AsyncCallback<String>() {
@@ -187,7 +190,7 @@ public class Stub implements DeviceAsync{
 		        BlockingInterface blockOperationService =  Operations.newBlockingStub(channel);
 		        try {
 		        	// sync RPC-Aufruf
-					blockOperationService.getHnadle(controller, VOID.newBuilder().setOperationKey(controller.toString()).build());
+					blockOperationService.getHandle(controller, VOID.newBuilder().setOperationKey(controller.toString()).build());
 				} catch (ServiceException e) {
 					e.printStackTrace();
 				}
@@ -269,7 +272,7 @@ public class Stub implements DeviceAsync{
 		        BlockingInterface blockOperationService =  Operations.newBlockingStub(channel);
 		        try {
 		        	// sync RPC-Aufruf
-					blockOperationService.getHnadle(controller, VOID.newBuilder().setOperationKey(controller.toString()).build());
+					blockOperationService.getHandle(controller, VOID.newBuilder().setOperationKey(controller.toString()).build());
 				} catch (ServiceException e) {
 					e.printStackTrace();
 				}
@@ -358,7 +361,7 @@ public class Stub implements DeviceAsync{
 		        BlockingInterface blockOperationService =  Operations.newBlockingStub(channel);
 		        try {
 		        	// sync RPC-Aufruf
-					blockOperationService.getHnadle(controller, VOID.newBuilder().setOperationKey(controller.toString()).build());
+					blockOperationService.getHandle(controller, VOID.newBuilder().setOperationKey(controller.toString()).build());
 				} catch (ServiceException e) {
 					e.printStackTrace();
 				}

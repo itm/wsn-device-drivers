@@ -42,7 +42,7 @@ service Operations {
 	//rpc writeFlash () returns (VOID);
 	//rpc writeMac () retuns (VOID);
 	rpc cancelHandle (VOID) returns (VOID);
-	rpc getHnadle (VOID) returns (VOID);
+	rpc getHandle (VOID) returns (VOID);
 	rpc getState (VOID) returns (STRING);
 	
 }
