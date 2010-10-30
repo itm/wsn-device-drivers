@@ -4,5 +4,10 @@
 	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.4"/>
 	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/tr.wsn-device-drivers"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/tr.wsn-device-drivers-isense"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/tr.wsn-device-drivers-jennec"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/tr.wsn-device-drivers-pacemate"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/tr.wsn-device-drivers-telosb"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
