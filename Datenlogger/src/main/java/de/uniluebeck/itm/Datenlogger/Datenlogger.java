@@ -98,6 +98,7 @@ public class Datenlogger {
 		System.out.println("Location: " + location);
 		gestartet = true;
 		System.out.println("\nStarte das Loggen des Knotens....");
+		writeToDatabase();
 		try {
             Thread.sleep(1000);
         } catch (InterruptedException ex) {
