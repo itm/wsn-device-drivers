@@ -1,5 +1,8 @@
 package de.uniluebeck.itm.FlashLoader;
 
+import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
+import de.uniluebeck.itm.devicedriver.nulldevice.NullDevice;
+
 public class FlashLoader {
 	
 	String port;
@@ -27,16 +30,31 @@ public class FlashLoader {
 		System.out.println("Port: " + port);
 		System.out.println("Server: " + server);
 		System.out.println("File: " + file);
-		for(int i=10; i>0; i--){
-			System.out.println("Der Knoten wird programmiert: noch "+i+" Sekunden.");
-			try{
-				Thread.sleep(1000);
+		
+		NullDevice nullDevice = new NullDevice();
+		
+		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+			public void onSuccess(Void result) {
+				System.out.println("Das Programmieren war erfolgreich.");
 			}
-			catch(InterruptedException e){
-				System.out.println("Sleep Interrupted");
+			public void onCancel() {
+				System.out.println("Die Operation wurde abgebrochen");
 			}
+			public void onFailure(Throwable throwable) {
+				throwable.printStackTrace();
+			}
+			public void onProgressChange(float fraction) {
+				System.out.println("Es tut sich was.");
+			}
+		};
+	
+		try {
+			nullDevice.createProgramOperation().execute(callback);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		System.out.println("\nDer Knoten wurde erfolgreich programmiert.");
+		System.exit(0);
 	}
 	
 	public void readmac(){
