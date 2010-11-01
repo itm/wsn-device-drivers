@@ -14,12 +14,16 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.Factory;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 
+import rpc_pro.rpcPrototype.files.MessageServiceFiles.ByteData;
+import rpc_pro.rpcPrototype.files.MessageServiceFiles.FlashData;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.Identification;
+import rpc_pro.rpcPrototype.files.MessageServiceFiles.MacData;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.Operations;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.ProgramPacket;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.TestOperations;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID;
+import rpc_pro.rpcPrototype.files.MessageServiceFiles.sendData;
 
 import com.google.protobuf.RpcCallback;
 import com.google.protobuf.RpcController;
@@ -33,6 +37,7 @@ import com.googlecode.protobuf.pro.duplex.listener.RpcConnectionEventListener;
 import com.googlecode.protobuf.pro.duplex.server.DuplexTcpServerBootstrap;
 
 import de.uniluebeck.itm.Impl.Main;
+import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 import de.uniluebeck.itm.tr.util.TimedCache;
@@ -40,9 +45,12 @@ import de.uniluebeck.itm.tr.util.TimedCache;
 public class Server {
 
 	//private static Log log = LogFactory.getLog(Server.class);
+	
+	// werden nach 30 min alle eintraege des Cache geloescht?
+	// wie Timeout fuer einen Eintrag neu starten?
 	private static TimedCache<RpcClientChannel,ClientID> idList = new TimedCache<RpcClientChannel,ClientID>();
 	private static TimedCache<RpcClientChannel,Subject> authList = new TimedCache<RpcClientChannel,Subject>();
-	
+
 	public static void main (String[] args){
 		
 		//BasicConfigurator.configure();
@@ -286,7 +294,6 @@ public class Server {
 			done.run(STRING.newBuilder().setQuery(handle.getState().getName()).build());
 		}
 
-		// eventuell nicht notwendig wenn controller.startCancel() im client funktioniert
 		// reagieren auf ein cancel-Aufruf
 		@Override
 		public void cancelHandle(RpcController controller, VOID request,
@@ -294,8 +301,11 @@ public class Server {
 	
 			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
 			OperationHandle<Void> handle = id.getHandleList(request.getOperationKey());
-			handle.cancel();
-			done.run(VOID.newBuilder().build());
+			System.out.println("canceled: "+controller.isCanceled());
+			if(controller.isCanceled()){
+				handle.cancel();
+				done.run(VOID.newBuilder().build());
+			}
 		}
 
 		// reagieren auf ein get-Aufruf
@@ -307,6 +317,137 @@ public class Server {
 			OperationHandle<Void> handle = id.getHandleList(request.getOperationKey());
 			handle.get();
 			done.run(VOID.newBuilder().build());
+		}
+
+		@Override
+		public void writeMac(RpcController controller, MacData request,
+				RpcCallback<VOID> done) {
+			
+			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
+			if(user==null || !user.isAuthenticated()){
+				controller.setFailed("Sie sind nicht authentifiziert!");
+				done.run(null);
+				return;
+			}
+			
+			// erstellen einer Klasse zum Testen der OperationHandle
+			Main test = new Main();
+			
+			// identifizieren des Users mit dem Channel
+			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
+			
+			// erzeugen eines OperationHandle zur der Operation
+			OperationHandle <Void> handle = test.writeMac(new MacAddress(request.toByteArray()), request.getTimeout(), new AsyncCallback<Void>(){
+
+				@Override
+				public void onCancel() {
+					System.out.println("Abbruch im TCP-Server");
+				}
+
+				@Override
+				public void onFailure(Throwable throwable) {
+					System.out.println("Fehler im TCP-Server");
+				}
+
+				@Override
+				public void onProgressChange(float fraction) {
+					System.out.println("change im TCP-Server");
+				}
+
+				@Override
+				public void onSuccess(Void result) {
+					System.out.println("jup es geht im TCP-Server");
+				}});
+			
+			// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
+			id.setHandleList(request.getOperationKey(), handle);
+			
+			// ausfuehren des Callbacks
+			done.run(VOID.newBuilder().build());
+			
+		}
+
+		@Override
+		public void writeFlash(RpcController controller, FlashData request,
+				RpcCallback<VOID> done) {
+			
+			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
+			if(user==null || !user.isAuthenticated()){
+				controller.setFailed("Sie sind nicht authentifiziert!");
+				done.run(null);
+				return;
+			}
+			
+			// erstellen einer Klasse zum Testen der OperationHandle
+			Main test = new Main();
+			
+			// identifizieren des Users mit dem Channel
+			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
+			
+			// erzeugen eines OperationHandle zur der Operation
+			OperationHandle <Void> handle = test.writeFlash(request.getAddress(),request.toByteArray(),request.getLength(),request.getTimeout(),new AsyncCallback<Void>(){
+
+				@Override
+				public void onCancel() {
+					System.out.println("Abbruch im TCP-Server");
+				}
+
+				@Override
+				public void onFailure(Throwable throwable) {
+					System.out.println("Fehler im TCP-Server");
+				}
+
+				@Override
+				public void onProgressChange(float fraction) {
+					System.out.println("change im TCP-Server");
+				}
+
+				@Override
+				public void onSuccess(Void result) {
+					System.out.println("jup es geht im TCP-Server");
+				}});
+			
+			// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
+			id.setHandleList(request.getOperationKey(), handle);
+			
+			// ausfuehren des Callbacks
+			done.run(VOID.newBuilder().build());
+			
+		}
+
+		@Override
+		public void eraseFlash(RpcController controller, VOID request,
+				RpcCallback<VOID> done) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void readFlash(RpcController controller, FlashData request,
+				RpcCallback<ByteData> done) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void readMac(RpcController controller, VOID request,
+				RpcCallback<MacData> done) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void reset(RpcController controller, VOID request,
+				RpcCallback<VOID> done) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void send(RpcController controller, sendData request,
+				RpcCallback<VOID> done) {
+			// TODO Auto-generated method stub
+			
 		}
 	}
 }

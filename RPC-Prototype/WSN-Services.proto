@@ -3,16 +3,13 @@ option java_package = "rpc_pro.rpcPrototype.files";
 option java_outer_classname = "MessageServiceFiles";
 
 message VOID {
-	optional string OperationKey = 1;
+	optional int64 timeout = 1;
+	optional string OperationKey = 2;
 }
 
 message STRING {
 	required string query = 1;
 	optional string OperationKey = 2;
-}
-
-message HandleReturns {
-	
 }
 
 message Identification {
@@ -22,9 +19,41 @@ message Identification {
 
 message ProgramPacket {
 	repeated bytes BinaryPacket = 1;
+	required int64 timeout = 2;
+	optional string OperationKey = 3;
+}
+
+message MacData{
+	repeated bytes MACADDRESS = 1;
 	optional int64 timeout = 2;
 	optional string OperationKey = 3;
 }
+
+message FlashData{
+	required int32 address = 1;
+	repeated bytes data = 2;
+	required int32 length = 3;
+	required int64 timeout = 4;
+	optional string OperationKey = 5;
+}
+
+message sendData {
+	required int32 type = 1;
+	repeated bytes data = 2;
+	required int64 timeout = 3;
+	optional string OperationKey = 4;
+}
+
+message ByteData {
+	repeated bytes data = 1;
+	optional string OperationKey = 2;
+}
+
+//message MessageListenerData {
+//	
+//	repeated int32 types = 2;
+//	optional string OperationKey = 3;
+//}
 
 service TestOperations {
 	rpc setMessage (STRING) returns (VOID);
@@ -32,27 +61,31 @@ service TestOperations {
 }
 
 service Operations {
-	rpc connect (Identification) returns (VOID);
-	rpc program (ProgramPacket) returns (VOID);
-	//rpc eraseFlash () returns (VOID);
-	//rpc readFlash () returns ();
-	//rpc readMac () returns ();
-	//rpc reset () returns (VOID);
-	//rpc send () returns (VOID);
-	//rpc writeFlash () returns (VOID);
-	//rpc writeMac () retuns (VOID);
-	rpc cancelHandle (VOID) returns (VOID);
-	rpc getHandle (VOID) returns (VOID);
-	rpc getState (VOID) returns (STRING);
+	rpc connect (Identification) returns (VOID); //erledigt
+	rpc program (ProgramPacket) returns (VOID); //erledigt
+	rpc eraseFlash (VOID) returns (VOID);
+	rpc readFlash (FlashData) returns (ByteData);
+	rpc readMac (VOID) returns (MacData);
+	rpc reset (VOID) returns (VOID);
+	rpc send (sendData) returns (VOID);
+	rpc writeFlash (FlashData) returns (VOID);
+	rpc writeMac (MacData) returns (VOID); //erledigt
+	rpc cancelHandle (VOID) returns (VOID); //erledigt
+	rpc getHandle (VOID) returns (VOID); //erledigt
+	rpc getState (VOID) returns (STRING); //erledigt
 	
 }
 
 service PacketService {
 	//rpc addMessagePacketListener () returns (VOID);
-	//rpc addMessagePacketListener () returns (VOID);
 	//rpc removeMessagePacketListener () returns (VOID);
 }
 
 service PacketServiceAnswer{
-	
+	//rpc sendReverseMessage () returns (VOID);
+}
+
+service RemoteOperations{
+	//rpc editDeviceConfig () returns ();
+	//rpc reloadDeviceConfig () returns ();
 }

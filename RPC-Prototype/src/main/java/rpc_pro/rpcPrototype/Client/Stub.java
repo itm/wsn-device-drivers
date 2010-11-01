@@ -11,7 +11,9 @@ import java.util.concurrent.Executors;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 
 import rpc_pro.rpcPrototype.files.PacketServiceImpl;
+import rpc_pro.rpcPrototype.files.MessageServiceFiles.FlashData;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.Identification;
+import rpc_pro.rpcPrototype.files.MessageServiceFiles.MacData;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.Operations;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.PacketService;
@@ -20,6 +22,7 @@ import rpc_pro.rpcPrototype.files.MessageServiceFiles.TestOperations;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.Operations.BlockingInterface;
 
+import com.google.protobuf.ByteString;
 import com.google.protobuf.RpcCallback;
 import com.google.protobuf.RpcController;
 import com.google.protobuf.ServiceException;
@@ -169,17 +172,14 @@ public class Stub implements DeviceAsync{
 			// aufruf bei cancel (User-seitig)
 			@Override
 			public void cancel() {
-				// theoretisch soll das so gehen,
-				// ist aber noch nicht getestet
-				controller.startCancel();
-				
-				//alternativer async RPC aufruf zum abbrechen
-//				operationService.cancelHandle(controller, VOID.newBuilder().build(), new RpcCallback<VOID>(){
-//
-//					@Override
-//					public void run(VOID parameter) {
-//						callback.onCancel();
-//					}});
+
+				BlockingInterface blockOperationService =  Operations.newBlockingStub(channel);
+				try {
+					controller.startCancel();
+					blockOperationService.cancelHandle(controller, VOID.newBuilder().build());
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
 			}
 
 			// aufruf bei get (User-seitig)
@@ -298,15 +298,6 @@ public class Stub implements DeviceAsync{
 				} catch (ServiceException e) {
 					e.printStackTrace();
 				}
-
-				//alternativer async RPC aufruf
-//				operationService.getState(controller, VOID.newBuilder().setHandleKey(controller.toString()).build(), new RpcCallback<STRING>(){
-//					@Override
-//					public void run(STRING parameter) {
-//						System.out.println(parameter.getQuery());
-//						state = State.fromName(parameter.getQuery());
-//					}});
-				
 				return state;
 			}};
 	}
@@ -415,6 +406,12 @@ public class Stub implements DeviceAsync{
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Override
+	public void removeMessagePacketListener(MessagePacketListener listener) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	@Override
 	public OperationHandle<Void> eraseFlash(long timeout,
@@ -438,12 +435,6 @@ public class Stub implements DeviceAsync{
 	}
 
 	@Override
-	public void removeMessagePacketListener(MessagePacketListener listener) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public OperationHandle<Void> reset(long timeout,
 			AsyncCallback<Void> callback) {
 		// TODO Auto-generated method stub
@@ -459,16 +450,170 @@ public class Stub implements DeviceAsync{
 
 	@Override
 	public OperationHandle<Void> writeFlash(int address, byte[] data,
-			int length, long timeout, AsyncCallback<Void> callback) {
-		// TODO Auto-generated method stub
-		return null;
+			int length, long timeout, final AsyncCallback<Void> callback) {
+		
+		final RpcController controller = channel.newRpcController();
+		
+		FlashData flash = FlashData.newBuilder().setAddress(address).addData(ByteString.copyFrom(data)).setLength(length).setTimeout(timeout).setOperationKey(controller.toString()).build();
+		
+		operationService.writeFlash(controller, flash, new RpcCallback<VOID>() {
+			
+			@Override
+			public void run(VOID parameter) {
+				if(controller.failed()){
+					callback.onFailure(new Throwable(controller.errorText()));
+				}
+				else{
+					callback.onSuccess(null);
+				}
+			}
+		});
+		
+		// Rueckgabe eines OperationHandle
+		return new OperationHandle<Void>(){
+
+			// aufruf bei cancel (User-seitig)
+			@Override
+			public void cancel() {
+
+				BlockingInterface blockOperationService =  Operations.newBlockingStub(channel);
+				try {
+					controller.startCancel();
+					blockOperationService.cancelHandle(controller, VOID.newBuilder().build());
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
+			}
+
+			// aufruf bei get (User-seitig)
+			@Override
+			public Void get() {
+
+				// erzeugen eines sync RPC-Objekts fuer die Operationen
+		        BlockingInterface blockOperationService =  Operations.newBlockingStub(channel);
+		        try {
+		        	// sync RPC-Aufruf
+					blockOperationService.getHandle(controller, VOID.newBuilder().setOperationKey(controller.toString()).build());
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
+				return null;
+			}
+			
+			// aufruf bei getState (User-seitig)
+			@Override
+			public State getState() {
+				
+				// erzeugen eines State-Objekts
+				State state = null;
+
+				// Blockierender Aufruf fuer getState in Ordnung?
+				
+				// erzeugen eines sync RPC-Objekts fuer die Operationen
+				BlockingInterface blockOperationService =  Operations.newBlockingStub(channel);
+				try {
+					// sync RPC-Aufruf
+					STRING result = blockOperationService.getState(controller,  VOID.newBuilder().setOperationKey(controller.toString()).build());
+					// erzeugen eines State aus dem result-String
+					state = State.fromName(result.getQuery());
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
+
+				//alternativer async RPC aufruf
+//				operationService.getState(controller, VOID.newBuilder().setHandleKey(controller.toString()).build(), new RpcCallback<STRING>(){
+//					@Override
+//					public void run(STRING parameter) {
+//						System.out.println(parameter.getQuery());
+//						state = State.fromName(parameter.getQuery());
+//					}});
+				
+				return state;
+			}};
 	}
 
 	@Override
 	public OperationHandle<Void> writeMac(MacAddress macAddress, long timeout,
-			AsyncCallback<Void> callback) {
-		// TODO Auto-generated method stub
-		return null;
+			final AsyncCallback<Void> callback) {
+
+		final RpcController controller = channel.newRpcController();
+		
+		MacData address = MacData.newBuilder().addMACADDRESS(ByteString.copyFrom(macAddress.getMacBytes())).setTimeout(timeout).setOperationKey(controller.toString()).build();
+		
+		operationService.writeMac(controller, address, new RpcCallback<VOID>() {
+			
+			@Override
+			public void run(VOID parameter) {
+				if(controller.failed()){
+					callback.onFailure(new Throwable(controller.errorText()));
+				}
+				else{
+					callback.onSuccess(null);
+				}
+			}
+		});
+		
+		// Rueckgabe eines OperationHandle
+		return new OperationHandle<Void>(){
+
+			// aufruf bei cancel (User-seitig)
+			@Override
+			public void cancel() {
+
+				BlockingInterface blockOperationService =  Operations.newBlockingStub(channel);
+				try {
+					controller.startCancel();
+					blockOperationService.cancelHandle(controller, VOID.newBuilder().build());
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
+			}
+
+			// aufruf bei get (User-seitig)
+			@Override
+			public Void get() {
+
+				// erzeugen eines sync RPC-Objekts fuer die Operationen
+		        BlockingInterface blockOperationService =  Operations.newBlockingStub(channel);
+		        try {
+		        	// sync RPC-Aufruf
+					blockOperationService.getHandle(controller, VOID.newBuilder().setOperationKey(controller.toString()).build());
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
+				return null;
+			}
+			
+			// aufruf bei getState (User-seitig)
+			@Override
+			public State getState() {
+				
+				// erzeugen eines State-Objekts
+				State state = null;
+
+				// Blockierender Aufruf fuer getState in Ordnung?
+				
+				// erzeugen eines sync RPC-Objekts fuer die Operationen
+				BlockingInterface blockOperationService =  Operations.newBlockingStub(channel);
+				try {
+					// sync RPC-Aufruf
+					STRING result = blockOperationService.getState(controller,  VOID.newBuilder().setOperationKey(controller.toString()).build());
+					// erzeugen eines State aus dem result-String
+					state = State.fromName(result.getQuery());
+				} catch (ServiceException e) {
+					e.printStackTrace();
+				}
+
+				//alternativer async RPC aufruf
+//				operationService.getState(controller, VOID.newBuilder().setHandleKey(controller.toString()).build(), new RpcCallback<STRING>(){
+//					@Override
+//					public void run(STRING parameter) {
+//						System.out.println(parameter.getQuery());
+//						state = State.fromName(parameter.getQuery());
+//					}});
+				
+				return state;
+			}};
 	}
 }
 	
