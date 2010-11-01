@@ -1,6 +1,5 @@
 package rpc_pro.rpcPrototype.Server;
 
-import java.util.HashMap;
 import java.util.concurrent.Executors;
 
 //import org.apache.commons.logging.Log;
@@ -36,12 +35,13 @@ import com.googlecode.protobuf.pro.duplex.server.DuplexTcpServerBootstrap;
 import de.uniluebeck.itm.Impl.Main;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
+import de.uniluebeck.itm.tr.util.TimedCache;
 
 public class Server {
 
 	//private static Log log = LogFactory.getLog(Server.class);
-	private static HashMap<RpcClientChannel,ClientID> idList = new HashMap<RpcClientChannel,ClientID>();
-	private static HashMap<RpcClientChannel,Subject> authList = new HashMap<RpcClientChannel,Subject>();
+	private static TimedCache<RpcClientChannel,ClientID> idList = new TimedCache<RpcClientChannel,ClientID>();
+	private static TimedCache<RpcClientChannel,Subject> authList = new TimedCache<RpcClientChannel,Subject>();
 	
 	public static void main (String[] args){
 		
@@ -181,7 +181,7 @@ public class Server {
 		@Override
 		public void connect(RpcController controller, Identification request,
 				RpcCallback<VOID> done) {
-			
+						
 			// eine Moeglichkeit den benutzten channel zu identifizieren
 			RpcClientChannel channel = ServerRpcController.getRpcChannel(controller);
 			

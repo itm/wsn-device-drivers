@@ -404,7 +404,8 @@ public class Stub implements DeviceAsync{
 	@Override
 	public void addMessagePacketListener(MessagePacketListener listener,
 			PacketType... types) {
-		// TODO Auto-generated method stub
+		
+		
 		
 	}
 

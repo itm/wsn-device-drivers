@@ -13,46 +13,12 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-
+  
   <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
     <dependency>
     	<groupId>com.google.protobuf</groupId>
     	<artifactId>protobuf-java</artifactId>
     	<version>2.3.0</version>
-    	<type>jar</type>
-    	<scope>compile</scope>
-    </dependency>
-    <dependency>
-    	<groupId>com.googlecode.protobuf.pro</groupId>
-    	<artifactId>protobuf-rpc-pro-duplex</artifactId>
-    	<version>1.1.0</version>
-    	<scope>system</scope>
-    	<systemPath>D:\Documents\java\protobuf-rpc-pro-duplex-1.1.0.jar</systemPath>
-    </dependency>
-    <dependency>
-    	<groupId>apache-log4j</groupId>
-    	<artifactId>log4j</artifactId>
-    	<version>1.2.15</version>
-    	<scope>system</scope>
-    	<systemPath>D:\Documents\java\log4j-1.2.15.jar</systemPath>
-    </dependency>
-    <dependency>
-    	<groupId>org.jboss.netty</groupId>
-    	<artifactId>netty</artifactId>
-    	<version>3.2.1.Final</version>
-    	<scope>system</scope>
-    	<systemPath>D:\Documents\java\netty-3.2.1.Final.jar</systemPath>
-    </dependency>
-    <dependency>
-    	<groupId>commons-logging</groupId>
-    	<artifactId>commons-logging</artifactId>
-    	<version>1.1.1</version>
     	<type>jar</type>
     	<scope>compile</scope>
     </dependency>
@@ -67,5 +33,105 @@
     	<artifactId>shiro-core</artifactId>
     	<version>1.0.0-incubating</version>
     </dependency>
+    <dependency>
+    	<groupId>junit</groupId>
+    	<artifactId>junit</artifactId>
+    	<version>4.8.2</version>
+    	<type>jar</type>
+    	<scope>test</scope>
+    </dependency>
+    <dependency>
+    	<groupId>org.jboss.netty</groupId>
+    	<artifactId>netty</artifactId>
+    	<version>3.2.1.Final</version>
+    </dependency>
+    <dependency>
+    	<groupId>de.uniluebeck.itm</groupId>
+    	<artifactId>tr.util</artifactId>
+    	<version>0.5.3</version>
+    </dependency>
+    <dependency>
+    	<groupId>log4j</groupId>
+    	<artifactId>log4j</artifactId>
+    	<version>1.2.16</version>
+    </dependency>
+    <dependency>
+    	<groupId>commons-logging</groupId>
+    	<artifactId>commons-logging</artifactId>
+    	<version>1.1.1</version>
+    </dependency>
+    <dependency>
+    	<groupId>com.googlecode.protobuf.pro</groupId>
+    	<artifactId>protobuf-rpc-pro-duplex</artifactId>
+    	<version>1.1.0</version>
+    </dependency>
   </dependencies>
+
+
+	<repositories>
+		<repository>
+			<id>google-maven-repository</id>
+			<name>Google Maven Repository</name>
+			<url>http://google-maven-repository.googlecode.com/svn/repository/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>itm-maven-repository-releases</id>
+			<url>http://www.itm.uni-luebeck.de/projects/maven/releases/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>itm-maven-repository-snapshots</id>
+			<url>http://www.itm.uni-luebeck.de/projects/maven/snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>repository.tu-bs.de</id>
+			<url>http://www.ibr.cs.tu-bs.de/maven/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<id>repository.jboss.org</id>
+			<url>http://repository.jboss.org/nexus/content/groups/public/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+	
+	<distributionManagement>
+		<repository>
+			<id>itm-maven-repository-releases</id>
+			<name>ITM UzL Maven releases repository</name>
+			<url>scp://itm01.itm.uni-luebeck.de/www/itm/projects/maven/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>itm-maven-repository-snapshots</id>
+			<name>ITM UzL Maven snapshots repository</name>
+			<url>scp://itm01.itm.uni-luebeck.de/www/itm/projects/maven/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<scm>
+		<connection>scm:git:https://itm@github.com/itm/testbed-runtime.git</connection>
+	</scm>
+
 </project>
