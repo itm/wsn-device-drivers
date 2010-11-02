@@ -130,6 +130,12 @@ public class Server {
 				return;
 			}
 			
+			if (!user.isPermitted("message:set")) {
+				controller.setFailed("Sie haben nicht die noetigen Rechte!");
+				done.run(null);
+				return;
+			}
+			
 			// erstellen einer Klasse zum Testen der OperationHandle
 			Main test = new Main();
 			
@@ -159,6 +165,13 @@ public class Server {
 			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
 			if(user==null || !user.isAuthenticated()){
 				controller.setFailed("Sie sind nicht authentifiziert!");
+				done.run(null);
+				return;
+			}
+			
+
+			if (!user.isPermitted("message:get")) {
+				controller.setFailed("Sie haben nicht die noetigen Rechte!");
 				done.run(null);
 				return;
 			}
@@ -200,6 +213,8 @@ public class Server {
 			
 			/*Shiro:*/
 			Subject currentUser = SecurityUtils.getSubject();
+			
+			System.out.println(currentUser); //TODO delete!
 			
 	        if (!currentUser.isAuthenticated()) {
 	            UsernamePasswordToken token = new UsernamePasswordToken(request.getUsername(), request.getPassword());
@@ -244,6 +259,12 @@ public class Server {
 			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
 			if(user==null || !user.isAuthenticated()){
 				controller.setFailed("Sie sind nicht authentifiziert!");
+				done.run(null);
+				return;
+			}
+			
+			if (!user.isPermitted("write:program")) {
+				controller.setFailed("Sie haben nicht die noetigen Rechte!");
 				done.run(null);
 				return;
 			}
@@ -330,6 +351,12 @@ public class Server {
 				return;
 			}
 			
+			if (!user.isPermitted("write:mac")) {
+				controller.setFailed("Sie haben nicht die noetigen Rechte!");
+				done.run(null);
+				return;
+			}
+			
 			// erstellen einer Klasse zum Testen der OperationHandle
 			Main test = new Main();
 			
@@ -374,6 +401,12 @@ public class Server {
 			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
 			if(user==null || !user.isAuthenticated()){
 				controller.setFailed("Sie sind nicht authentifiziert!");
+				done.run(null);
+				return;
+			}			
+
+			if (!user.isPermitted("write:flash")) {
+				controller.setFailed("Sie haben nicht die noetigen Rechte!");
 				done.run(null);
 				return;
 			}
