@@ -102,6 +102,7 @@ public class Datenlogger {
 		gestartet = true;
 		System.out.println("\nStarte das Loggen des Knotens....");
 		//writeToDatabase();
+		//writeToXmlFile();
 		try {
             Thread.sleep(1000);
         } catch (InterruptedException ex) {
