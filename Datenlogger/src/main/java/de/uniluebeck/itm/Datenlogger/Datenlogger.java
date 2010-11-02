@@ -34,19 +34,22 @@ public class Datenlogger {
                     	String delims = " ";
                 		String[] tokens = input.split(delims);
                     	logger.addfilter(tokens[1]);
-                    }else if(input.equals("-stoplog")){
+                    }else if(input.equals("stoplog")){
                     	logger.stoplog();
+                    	notStop = false;
                     }
                     else if(input.startsWith("-loction")){
                     	String delims = " ";
                 		String[] tokens = input.split(delims);
                     	logger.setLocation(tokens[1]);
                     }
+                    else if(input.startsWith("exit")){
+                    	notStop = false;
+                    }
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }          
             }
-            System.exit(0);
         }
     }
 	
