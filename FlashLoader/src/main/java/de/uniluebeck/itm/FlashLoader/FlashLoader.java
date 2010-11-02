@@ -118,6 +118,29 @@ public class FlashLoader {
 	}
 	
 	public void reset(){
+		Device device = new NullDevice();
+		OperationQueue queue = new SingleThreadOperationQueue();
+		DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
 		
+		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+			public void onSuccess(Void result) {
+				System.out.println("Das Gerät wurde neu gestartet.");
+			}
+			public void onCancel() {
+				System.out.println("Die Operation wurde abgebrochen");
+			}
+			public void onFailure(Throwable throwable) {
+				throwable.printStackTrace();
+			}
+			public void onProgressChange(float fraction) {
+				System.out.println("Es tut sich was.");
+			}
+		};
+
+		OperationHandle<Void> handle = deviceAsync.reset(1000, callback);
+		// Macht den Aufruf synchron.
+		handle.get();
+		
+		System.exit(0);
 	}
 }

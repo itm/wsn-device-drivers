@@ -64,19 +64,34 @@ public class Main {
 			}else if(args[0].equals("readmac")) {
 				System.out.println("starte FlashLoader...");
 				
+				String port = cmd.getOptionValue("port");
+				String server = cmd.getOptionValue("server");
+				
 				FlashLoader flashLoader = new FlashLoader();
+				flashLoader.setPort(port);
+				flashLoader.setServer(server);
 				flashLoader.readmac();	
 				
 			}else if(args[0].equals("writemac")) {
 				System.out.println("starte FlashLoader...");
 				
+				String port = cmd.getOptionValue("port");
+				String server = cmd.getOptionValue("server");
+				
 				FlashLoader flashLoader = new FlashLoader();
+				flashLoader.setPort(port);
+				flashLoader.setServer(server);
 				flashLoader.writemac();	
 				
 			}else if(args[0].equals("reset")) {
 				System.out.println("starte FlashLoader...");
 				
+				String port = cmd.getOptionValue("port");
+				String server = cmd.getOptionValue("server");
+				
 				FlashLoader flashLoader = new FlashLoader();
+				flashLoader.setPort(port);
+				flashLoader.setServer(server);
 				flashLoader.reset();	
 				
 			}
