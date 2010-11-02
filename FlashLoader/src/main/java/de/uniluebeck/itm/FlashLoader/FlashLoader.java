@@ -63,6 +63,10 @@ public class FlashLoader {
 	}
 	
 	public void readmac(){
+		System.out.println("Parameter:");
+		System.out.println("Port: " + port);
+		System.out.println("Server: " + server);
+		
 		Device device = new NullDevice();
 		OperationQueue queue = new SingleThreadOperationQueue();
 		DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
@@ -91,6 +95,10 @@ public class FlashLoader {
 	}
 	
 	public void writemac(){
+		System.out.println("Parameter:");
+		System.out.println("Port: " + port);
+		System.out.println("Server: " + server);
+		
 		Device device = new NullDevice();
 		OperationQueue queue = new SingleThreadOperationQueue();
 		DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
@@ -118,6 +126,10 @@ public class FlashLoader {
 	}
 	
 	public void reset(){
+		System.out.println("Parameter:");
+		System.out.println("Port: " + port);
+		System.out.println("Server: " + server);
+		
 		Device device = new NullDevice();
 		OperationQueue queue = new SingleThreadOperationQueue();
 		DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
