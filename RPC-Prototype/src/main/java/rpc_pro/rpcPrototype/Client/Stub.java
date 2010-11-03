@@ -10,13 +10,15 @@ import java.util.concurrent.Executors;
 
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 
-import rpc_pro.rpcPrototype.files.PacketServiceImpl;
+import rpc_pro.rpcPrototype.files.PacketServiceAnswerImpl;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.FlashData;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.Identification;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.MacData;
+import rpc_pro.rpcPrototype.files.MessageServiceFiles.PacketService;
+import rpc_pro.rpcPrototype.files.MessageServiceFiles.PacketServiceAnswer;
+import rpc_pro.rpcPrototype.files.MessageServiceFiles.PacketTypeData;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.Operations;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.PacketService;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.ProgramPacket;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.TestOperations;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID;
@@ -53,7 +55,8 @@ public class Stub implements DeviceAsync{
 	RpcClientChannel channel = null;
 	Operations.Interface operationService = null;
 	TestOperations.Interface testService = null;
-	State state = null;
+	PacketService.Interface packetService = null;
+	PacketServiceAnswerImpl packetServiceAnswerImpl = null;
 	
 	Stub (String userName, String passWord, String uri, int port) throws Exception{
 		this(userName,passWord,uri,port,1234);
@@ -103,8 +106,10 @@ public class Stub implements DeviceAsync{
         Executors.newCachedThreadPool()),
         executor);
 
+		packetServiceAnswerImpl = new PacketServiceAnswerImpl();
+		
 		// registrieren der Reverse-RPC Services
-		bootstrap.getRpcServiceRegistry().registerService(PacketService.newReflectiveService(new PacketServiceImpl()));
+		bootstrap.getRpcServiceRegistry().registerService(PacketServiceAnswer.newReflectiveService(packetServiceAnswerImpl));
 		
 		// setzen der Verbindungs-Optionen, siehe Netty
 		bootstrap.setOption("connectTimeoutMillis",10000);
@@ -125,6 +130,9 @@ public class Stub implements DeviceAsync{
 		testService = TestOperations.newStub(channel);
 		// erzeugen eines async RPC-Objekts fuer die Operationen
 		operationService = Operations.newStub(channel);
+		// erzeugen eines async RPC-Objekts fuer die PacketService
+		packetService = PacketService.newStub(channel);
+		
 		
 		// aufbauen eines Identification-Packets
 		Identification id = Identification.newBuilder().setUsername(userName).setPassword(passWord).build();
@@ -396,20 +404,56 @@ public class Stub implements DeviceAsync{
 	public void addMessagePacketListener(MessagePacketListener listener,
 			PacketType... types) {
 		
+		final RpcController controller = channel.newRpcController();
+
+		PacketTypeData request = PacketTypeData.newBuilder().setOperationKey(listener.toString()).build();
 		
+		for(int i=0;i<types.length;i++){
+			request = PacketTypeData.newBuilder().setType(i, types[i].getValue()).build();
+		}
 		
+		packetService.addMessagePacketListener(controller, request, new RpcCallback<VOID>(){
+
+			@Override
+			public void run(VOID parameter) {
+				// TODO Auto-generated method stub
+				
+			}});
 	}
 
 	@Override
 	public void addMessagePacketListener(MessagePacketListener listener,
 			int... types) {
-		// TODO Auto-generated method stub
 		
+		final RpcController controller = channel.newRpcController();
+
+		packetServiceAnswerImpl.setListener(listener.toString(),listener);
+		
+		PacketTypeData request = PacketTypeData.newBuilder().setOperationKey(controller.toString()).build();
+		
+		for(int i=0;i<types.length;i++){
+			request = PacketTypeData.newBuilder().setType(i, types[i]).build();
+		}
+		
+		packetService.addMessagePacketListener(controller, request, new RpcCallback<VOID>(){
+
+			@Override
+			public void run(VOID parameter) {				
+			}});
+
 	}
 	
 	@Override
 	public void removeMessagePacketListener(MessagePacketListener listener) {
-		// TODO Auto-generated method stub
+		
+		final RpcController controller = channel.newRpcController();
+		
+		packetService.removeMessagePacketListener(controller, VOID.newBuilder().setOperationKey(controller.toString()).build(), new RpcCallback<VOID>(){
+
+			@Override
+			public void run(VOID parameter) {
+				packetServiceAnswerImpl.removeListener(controller.toString());
+			}});
 		
 	}
 

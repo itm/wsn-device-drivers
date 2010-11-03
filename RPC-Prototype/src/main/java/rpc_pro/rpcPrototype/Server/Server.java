@@ -1,5 +1,7 @@
 package rpc_pro.rpcPrototype.Server;
 
+
+import java.util.HashMap;
 import java.util.concurrent.Executors;
 
 //import org.apache.commons.logging.Log;
@@ -18,6 +20,8 @@ import rpc_pro.rpcPrototype.files.MessageServiceFiles.ByteData;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.FlashData;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.Identification;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.MacData;
+import rpc_pro.rpcPrototype.files.MessageServiceFiles.PacketService;
+import rpc_pro.rpcPrototype.files.MessageServiceFiles.PacketTypeData;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.Operations;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.ProgramPacket;
@@ -50,7 +54,8 @@ public class Server {
 	// wie Timeout fuer einen Eintrag neu starten?
 	private static TimedCache<RpcClientChannel,ClientID> idList = new TimedCache<RpcClientChannel,ClientID>();
 	private static TimedCache<RpcClientChannel,Subject> authList = new TimedCache<RpcClientChannel,Subject>();
-
+	private static HashMap <String,RemoteMessagePacketListener> listenerList = new HashMap<String,RemoteMessagePacketListener>();
+	
 	public static void main (String[] args){
 		
 		//BasicConfigurator.configure();
@@ -99,6 +104,7 @@ public class Server {
 	        
 	    	// registrieren der benutzten Services
 	    	bootstrap.getRpcServiceRegistry().registerService(TestOperations.newReflectiveService(new TestOperationsImpl()));
+	    	bootstrap.getRpcServiceRegistry().registerService(Operations.newReflectiveService(new OperationsImpl()));
 	    	bootstrap.getRpcServiceRegistry().registerService(Operations.newReflectiveService(new OperationsImpl()));
 
 	    	// starten des Servers
@@ -483,4 +489,52 @@ public class Server {
 			
 		}
 	}
+	
+	static class PacketServiceImpl implements PacketService.Interface {
+
+		@Override
+		public void removeMessagePacketListener(RpcController controller,
+				VOID request, RpcCallback<VOID> done) {
+			
+			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
+			if(user==null || !user.isAuthenticated()){
+				controller.setFailed("Sie sind nicht authentifiziert!");
+				done.run(null);
+				return;
+			}
+			
+			Main test = new Main();
+			test.removeMessagePacketListener(listenerList.get(request.getOperationKey()));
+			listenerList.remove(request.getOperationKey());
+			done.run(VOID.newBuilder().build());
+			
+		}
+
+		@Override
+		public void addMessagePacketListener(RpcController controller,
+				PacketTypeData request, RpcCallback<VOID> done) {
+			
+			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
+			if(user==null || !user.isAuthenticated()){
+				controller.setFailed("Sie sind nicht authentifiziert!");
+				done.run(null);
+				return;
+			}
+			
+			int[] types = new int[request.getTypeCount()];
+			for (int i=0;i<request.getTypeCount();i++){
+				types[i] = request.getType(i);
+			}
+			
+			
+			RemoteMessagePacketListener listener = new RemoteMessagePacketListener(request.getOperationKey() ,ServerRpcController.getRpcChannel(controller));
+			listenerList.put(request.getOperationKey(), listener);
+			
+			Main test = new Main();
+			test.addMessagePacketListener(listener, types);
+			done.run(VOID.newBuilder().build());
+			
+		}
+	}
+
 }

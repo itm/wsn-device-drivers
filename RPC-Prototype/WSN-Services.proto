@@ -40,7 +40,7 @@ message FlashData{
 message sendData {
 	required int32 type = 1;
 	repeated bytes data = 2;
-	required int64 timeout = 3;
+	optional int64 timeout = 3;
 	optional string OperationKey = 4;
 }
 
@@ -49,11 +49,10 @@ message ByteData {
 	optional string OperationKey = 2;
 }
 
-//message MessageListenerData {
-//	
-//	repeated int32 types = 2;
-//	optional string OperationKey = 3;
-//}
+message PacketTypeData {
+	repeated int32 type = 1;
+	optional string OperationKey = 2;
+}
 
 service TestOperations {
 	rpc setMessage (STRING) returns (VOID);
@@ -61,31 +60,31 @@ service TestOperations {
 }
 
 service Operations {
-	rpc connect (Identification) returns (VOID); //erledigt
-	rpc program (ProgramPacket) returns (VOID); //erledigt
+	rpc connect (Identification) returns (VOID);
+	rpc program (ProgramPacket) returns (VOID);
 	rpc eraseFlash (VOID) returns (VOID);
 	rpc readFlash (FlashData) returns (ByteData);
 	rpc readMac (VOID) returns (MacData);
 	rpc reset (VOID) returns (VOID);
 	rpc send (sendData) returns (VOID);
 	rpc writeFlash (FlashData) returns (VOID);
-	rpc writeMac (MacData) returns (VOID); //erledigt
-	rpc cancelHandle (VOID) returns (VOID); //erledigt
-	rpc getHandle (VOID) returns (VOID); //erledigt
-	rpc getState (VOID) returns (STRING); //erledigt
-	
+	rpc writeMac (MacData) returns (VOID); 
+	rpc cancelHandle (VOID) returns (VOID);
+	rpc getHandle (VOID) returns (VOID);
+	rpc getState (VOID) returns (STRING);
 }
 
 service PacketService {
-	//rpc addMessagePacketListener () returns (VOID);
-	//rpc removeMessagePacketListener () returns (VOID);
+	rpc addMessagePacketListener (PacketTypeData) returns (VOID);
+	rpc removeMessagePacketListener (VOID) returns (VOID);
 }
 
 service PacketServiceAnswer{
-	//rpc sendReverseMessage () returns (VOID);
+	rpc sendReverseMessage (sendData) returns (VOID);
 }
 
 service RemoteOperations{
+	//rpc newDeviceConfig () returns (VOID);
 	//rpc editDeviceConfig () returns ();
 	//rpc reloadDeviceConfig () returns ();
 }
