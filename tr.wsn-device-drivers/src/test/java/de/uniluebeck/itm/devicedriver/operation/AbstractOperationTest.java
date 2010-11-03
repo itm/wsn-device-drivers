@@ -90,7 +90,7 @@ public class AbstractOperationTest {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
-		assertEquals(State.EXCEPTED, operation.getState());
+		assertEquals(State.TIMEDOUT, operation.getState());
 	}
 
 	@Test

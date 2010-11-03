@@ -77,8 +77,6 @@ public class SingleThreadOperationQueue implements OperationQueue {
 				future.cancel(true);
 			}
 		});
-		// Start the timer to schedule.
-		operation.scheduleTimeout();
 		return new FutureOperationHandle<T>(future, operation);
 	}
 

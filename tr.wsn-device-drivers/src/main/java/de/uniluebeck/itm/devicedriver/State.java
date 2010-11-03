@@ -28,6 +28,11 @@ public enum State {
 	EXCEPTED("Excepted"),
 	
 	/**
+	 * The <code>Operation</code> reached the timeout.
+	 */
+	TIMEDOUT("Timedout"),
+	
+	/**
 	 * The <code>Operation</code> is done.
 	 */
 	DONE("Done");
@@ -61,7 +66,7 @@ public enum State {
 	 * @return A boolean for representing a finished state.
 	 */
 	public boolean isFinishState() {
-		return this == State.DONE || this == State.EXCEPTED || this == State.CANCELED;
+		return this == State.DONE || this == State.EXCEPTED || this == State.CANCELED || this == State.TIMEDOUT;
 	}
 	
 	/**

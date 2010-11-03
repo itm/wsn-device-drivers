@@ -76,7 +76,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 			public void run() {
 				synchronized (state) {
 					final State oldState = state;
-					state = State.EXCEPTED;
+					state = State.TIMEDOUT;
 					logger.debug("Timeout of operation reached");
 					fireTimeout();
 					logger.debug("Operation state changed from " + oldState + " to " + state);
@@ -91,11 +91,6 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	public void init(final long timeout, final AsyncCallback<T> callback) {
 		this.timeout = timeout;
 		this.callback = callback;
-		timer.cancel();
-	}
-	
-	@Override
-	public void scheduleTimeout() {
 		timer.schedule(task, timeout);
 	}
 	
@@ -110,7 +105,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 			
 			// Do nothing after a timeout happens and execute finished.
 			synchronized (state) {
-				if (state == State.EXCEPTED) {
+				if (state == State.TIMEDOUT) {
 					logger.warn("Operation finsihed but timeout occured.");
 					return null;
 				}
@@ -183,6 +178,10 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	@Override
 	public void addListener(OperationListener<T> listener) {
 		listeners.add(listener);
+		// Cause timeout is an async event. Timeout is called when a listener is added.
+		if (state == State.TIMEDOUT) {
+			listener.onTimeout(this, timeout);
+		}
 	}
 	
 	@Override

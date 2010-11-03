@@ -59,11 +59,6 @@ public interface Operation<T> extends Callable<T> {
 	long getTimeout();
 	
 	/**
-	 * Start the schudule for signalizing that a timeout occurs.
-	 */
-	void scheduleTimeout();
-	
-	/**
 	 * Adds an <code>OperationListener</code> to the listener list.
 	 * 
 	 * @param listener The <code>OperationListener</code> that has to be added.
