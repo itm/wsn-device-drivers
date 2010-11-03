@@ -6,7 +6,16 @@ import java.util.Map;
 import java.util.TreeMap;
 
 
+/**
+ * Abstract device with a default implementation for <code>MessagePacketListener</code> notification.
+ * 
+ * @author Malte Legenhausen
+ */
 public abstract class AbstractDevice implements Device {
+	
+	/**
+	 * Mapping from message packet type to a list of <code>MessagePacketListener</code> instances.
+	 */
 	private final Map<Integer, List<MessagePacketListener>> listeners = new TreeMap<Integer, List<MessagePacketListener>>();
 
 	@Override
@@ -20,14 +29,13 @@ public abstract class AbstractDevice implements Device {
 	}
 	
 	@Override
-	public void addListener(MessagePacketListener listener, PacketType... types) {
-		for (final PacketType type : types) {
-			final int key = type.getValue();
-			if (!listeners.containsKey(type)) {
-				listeners.put(key, new ArrayList<MessagePacketListener>());
-			}
-			listeners.get(key).add(listener);
+	public void addListener(MessagePacketListener listener, PacketType... packetTypes) {
+		final int[] types = new int[packetTypes.length];
+		int i = 0;
+		for (PacketType type : packetTypes) {
+			types[i++] = type.getValue();
 		}
+		addListener(listener, types);
 	}
 	
 	@Override
@@ -37,6 +45,11 @@ public abstract class AbstractDevice implements Device {
 		}
 	}
 	
+	/**
+	 * Notify all listeners about the given <code>MessagePacket</code>.
+	 * 
+	 * @param packet The message packet that has to be send to all listeners of the packet type.
+	 */
 	protected void notifyMessagePacketListener(MessagePacket packet) {
 		List<MessagePacketListener> listeners = this.listeners.get(packet.getType());
 		for (MessagePacketListener listener : listeners.toArray(new MessagePacketListener[listeners.size()])) {

@@ -77,6 +77,8 @@ public class SingleThreadOperationQueue implements OperationQueue {
 				future.cancel(true);
 			}
 		});
+		// Start the timer to schedule.
+		operation.scheduleTimeout();
 		return new FutureOperationHandle<T>(future, operation);
 	}
 
@@ -91,7 +93,7 @@ public class SingleThreadOperationQueue implements OperationQueue {
 	}
 
 	@Override
-	public void removeQueueListener(OperationQueueListener listener) {
+	public void removeListener(OperationQueueListener listener) {
 		listeners.remove(listener);
 	}
 	

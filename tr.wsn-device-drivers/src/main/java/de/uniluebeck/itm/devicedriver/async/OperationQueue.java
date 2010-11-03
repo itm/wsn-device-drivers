@@ -39,5 +39,5 @@ public interface OperationQueue {
 	 * 
 	 * @param listener The listener that has to be removed.
 	 */
-	void removeQueueListener(OperationQueueListener listener);
+	void removeListener(OperationQueueListener listener);
 }

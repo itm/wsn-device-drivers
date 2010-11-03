@@ -55,19 +55,23 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	/**
 	 * <code>Timer</code> that executes the timeout operation.
 	 */
-	private final Timer timer = new Timer(getClass().getName()); 
+	private final Timer timer = new Timer(getClass().getName());
+	
+	/**
+	 * The timeout task for this operation.
+	 */
+	private final TimerTask task;
 	
 	/**
 	 * Boolean thats stores if the operatio has to be canceled.
 	 */
 	private boolean canceled;
 	
-	@Override
-	public void init(final long timeout, final AsyncCallback<T> callback) {
-		this.timeout = timeout;
-		this.callback = callback;
-		
-		final TimerTask task = new TimerTask() {			
+	/**
+	 * Constructor.
+	 */
+	public AbstractOperation() {
+		task = new TimerTask() {			
 			@Override
 			public void run() {
 				synchronized (state) {
@@ -81,6 +85,17 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 				}
 			}
 		};
+	}
+	
+	@Override
+	public void init(final long timeout, final AsyncCallback<T> callback) {
+		this.timeout = timeout;
+		this.callback = callback;
+		timer.cancel();
+	}
+	
+	@Override
+	public void scheduleTimeout() {
 		timer.schedule(task, timeout);
 	}
 	
