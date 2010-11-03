@@ -34,40 +34,51 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<plugins>
 			<plugin>
-			    <groupId>org.apache.maven.plugins</groupId>
-			    <artifactId>maven-dependency-plugin</artifactId>
-			    <version>2.1</version>
-			    <executions>
-			        <execution>
-			            <id>copy-dlls</id>
-			            <phase>process-test-resources</phase>
-			            <goals>
-			                <goal>copy-dependencies</goal>
-			            </goals>
-			            <configuration>
-			                <includeTypes>dll</includeTypes>
-			                <excludeTypes>*</excludeTypes>
-			                <stripVersion>true</stripVersion>
-			                <silent>true</silent>
-			                <outputDirectory>${project.build.directory}/dll</outputDirectory>
-			                <overWriteReleases>false</overWriteReleases>
-			                <overWriteSnapshots>false</overWriteSnapshots>
-			                <overWriteIfNewer>true</overWriteIfNewer>
-			            </configuration>
-			        </execution>
-			    </executions>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.1</version>
+				<executions>
+					<execution>
+						<id>copy-dlls</id>
+						<phase>process-test-resources</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<includeTypes>dll</includeTypes>
+							<excludeTypes>*</excludeTypes>
+							<stripVersion>true</stripVersion>
+							<silent>true</silent>
+							<outputDirectory>${project.build.directory}/dll</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>false</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
-			    <groupId>org.apache.maven.plugins</groupId>
-			    <artifactId>maven-surefire-plugin</artifactId>
-			    <configuration>
-			        <argLine>-Djava.library.path=${basedir}/target/classes</argLine>
-			    </configuration>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<argLine>-Djava.library.path=${basedir}/target/classes</argLine>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
+
+	<!-- To use the report goals in your POM or parent POM -->
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.4</version>
+			</plugin>
+		</plugins>
+	</reporting>
 </project>

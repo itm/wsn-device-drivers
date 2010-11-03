@@ -79,7 +79,7 @@ public class AbstractOperationTest {
 		Operation<Void> operation = new AbstractOperation<Void>() {
 			@Override
 			public Void execute(Monitor monitor) throws Exception {
-				Thread.sleep(100);
+				Thread.sleep(200);
 				return null;
 			}
 		};
@@ -113,4 +113,38 @@ public class AbstractOperationTest {
 		assertTrue(!operation.isCanceled());
 	}
 
+	@Test
+	public void testGetTimeout() {
+		Operation<Void> operation = new AbstractOperation<Void>() {
+			@Override
+			public Void execute(Monitor monitor) throws Exception {
+				Thread.sleep(200);
+				return null;
+			}
+		};
+		operation.init(100, new AsyncAdapter<Void>());
+		assertEquals(100, operation.getTimeout());
+	}
+	
+	@Test
+	public void testAddListener() {
+		operation.init(0, new AsyncAdapter<Object>());
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		operation.addListener(new OperationListener<Object>() {
+			@Override
+			public void onTimeout(Operation<Object> operation, long timeout) {
+				assertTrue(true);
+			}
+			
+			@Override
+			public void onStateChanged(Operation<Object> operation, State oldState, State newState) {
+				// TODO Auto-generated method stub
+			}
+		});
+	}
 }

@@ -2,19 +2,29 @@ package de.uniluebeck.itm.devicedriver.async.singlethread;
 
 import static org.junit.Assert.fail;
 
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import de.uniluebeck.itm.devicedriver.Monitor;
+import de.uniluebeck.itm.devicedriver.async.AsyncAdapter;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
+import de.uniluebeck.itm.devicedriver.async.OperationQueue;
 import de.uniluebeck.itm.devicedriver.operation.AbstractOperation;
 import de.uniluebeck.itm.devicedriver.operation.Operation;
 
 public class SingleThreadOperationQueueTest {
 
+	private OperationQueue queue;
+	
+	@Before
+	public void setUp() {
+		queue = new SingleThreadOperationQueue();
+	}
+	
 	@Test
 	public void testAddOperation() {
-		SingleThreadOperationQueue queue = new SingleThreadOperationQueue();		
 		Operation<Boolean> operation = new AbstractOperation<Boolean>() {
 			@Override
 			public Boolean execute(Monitor monitor) throws Exception {
@@ -51,17 +61,21 @@ public class SingleThreadOperationQueueTest {
 
 	@Test
 	public void testGetOperations() {
-		fail("Not yet implemented");
+		Operation<Boolean> operation = new AbstractOperation<Boolean>() {
+			@Override
+			public Boolean execute(Monitor monitor) throws Exception {
+				Thread.sleep(100);
+				return true;
+			}
+		};
+		queue.addOperation(operation, 1000, new AsyncAdapter<Boolean>());
+		Assert.assertTrue(!queue.getOperations().isEmpty());
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Assert.assertTrue(queue.getOperations().isEmpty());
 	}
-
-	@Test
-	public void testAddListener() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testRemoveQueueListener() {
-		fail("Not yet implemented");
-	}
-
 }
