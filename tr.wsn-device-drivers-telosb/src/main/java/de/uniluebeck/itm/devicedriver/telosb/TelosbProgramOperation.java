@@ -39,9 +39,10 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 		// Check if file and current chip match
 		final GetChipTypeOperation getChipTypeOperation = device.createGetChipTypeOperation();
 		final ChipType chipType = executeSubOperation(getChipTypeOperation);
-		if ( !binaryImage.isCompatible(chipType) ) {
-			log.error("Chip type(" + chipType + ") and bin-program type(" + binaryImage.getChipType() + ") do not match");
-			throw new ProgramChipMismatchException(chipType, binaryImage.getChipType());
+		final TelosbBinData binData = new TelosbBinData(binaryImage);
+		if ( !binData.isCompatible(chipType) ) {
+			log.error("Chip type(" + chipType + ") and bin-program type(" + binData.getChipType() + ") do not match");
+			throw new ProgramChipMismatchException(chipType, binData.getChipType());
 		}
 		
 		// Write program to flash
@@ -50,7 +51,7 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 		DeviceBinDataBlock block;
 		int blockCount = 0;
 		int bytesProgrammed = 0;
-		while ((block = binaryImage.getNextBlock()) != null) {
+		while ((block = binData.getNextBlock()) != null) {
 			
 			// write single block
 			try {
@@ -71,7 +72,7 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 			bytesProgrammed += block.data.length;
 			
 			// Notify listeners of the new status
-			float progress = ((float) blockCount) / ((float) binaryImage.getBlockCount());
+			float progress = ((float) blockCount) / ((float) binData.getBlockCount());
 			monitor.onProgressChange(progress);
 			
 			// Return if the user has requested to cancel this operation

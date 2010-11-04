@@ -51,13 +51,12 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 		ChipType chipType = executeSubOperation(getChipTypeOperation);
 		// log.debug("Chip type is " + chipType);
 
+		final PacemateBinData binData = new PacemateBinData(binaryImage);
 		// Check if file and current chip match
-		if (!binaryImage.isCompatible(chipType)) {
-			log.error("Chip type(" + chipType + ") and bin-program type(" + binaryImage.getChipType() + ") do not match");
-			throw new ProgramChipMismatchException(chipType, binaryImage.getChipType());
+		if (!binData.isCompatible(chipType)) {
+			log.error("Chip type(" + chipType + ") and bin-program type(" + binData.getChipType() + ") do not match");
+			throw new ProgramChipMismatchException(chipType, binData.getChipType());
 		}
-
-		PacemateBinData pacemateProgram = (PacemateBinData) binaryImage;
 
 		// pacemateProgram.changeStrangeBytePattern();
 
@@ -76,7 +75,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 			throw e;
 		}
 
-		int flashCRC = pacemateProgram.calcCRC();
+		int flashCRC = binData.calcCRC();
 
 		System.out.println("CRC " + flashCRC);
 
@@ -91,7 +90,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 		DeviceBinDataBlock block = null;
 		int blockCount = 3;
 		int blockNumber = 3; // blockNumber != blockCount because block 8 & 9 == 32 kb all other 4 kb
-		while ((block = binaryImage.getNextBlock()) != null) {
+		while ((block = binData.getNextBlock()) != null) {
 			try {
 				device.writeToRAM(PacemateDevice.START_ADDRESS_IN_RAM, block.data.length);
 			} catch (Exception e) {
@@ -131,7 +130,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 				// printLine(pacemateProgram.encode(line,(line.length -offset)));
 
 				try {
-					device.sendDataMessage(pacemateProgram.encode(line, (line.length - offset)));
+					device.sendDataMessage(binData.encode(line, (line.length - offset)));
 				} catch (Exception e) {
 					log.debug("Error while writing flash! Operation will be cancelled!");
 					return null;
@@ -140,7 +139,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 				linecounter++;
 				if ((linecounter == 20) || (counter >= block.data.length)) {
 					try {
-						device.sendChecksum(pacemateProgram.crc);
+						device.sendChecksum(binData.crc);
 					} catch (InvalidChecksumException e) {
 						log.debug("Invalid Checksum - resend last part");
 						// so resending the last 20 lines
@@ -151,7 +150,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 					}
 					linecounter = 0;
 					// System.out.println("CRC "+pacemateProgram.crc);
-					pacemateProgram.crc = 0;
+					binData.crc = 0;
 					bytesNotYetProoved = 0;
 				}
 			}
@@ -175,7 +174,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 			}
 
 			// Notify listeners of the new status
-			float progress = ((float) (blockCount - 2)) / ((float) binaryImage.getBlockCount());
+			float progress = ((float) (blockCount - 2)) / ((float) binData.getBlockCount());
 			monitor.onProgressChange(progress);
 
 			// Return with success if the user has requested to cancel this

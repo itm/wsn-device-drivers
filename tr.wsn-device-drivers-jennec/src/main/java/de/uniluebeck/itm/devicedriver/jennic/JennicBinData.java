@@ -49,8 +49,6 @@ public class JennicBinData implements DeviceBinData {
 
 	private final int length;
 	
-	private final String description;
-	
 	private int blockIterator = 0;
 
 
@@ -69,7 +67,7 @@ public class JennicBinData implements DeviceBinData {
 		byte[] bytes = new byte[(int) file.length()];
 		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
 		bis.read(bytes, 0, bytes.length);
-		return new JennicBinData(bytes, file.getAbsolutePath());
+		return new JennicBinData(bytes);
 	}
 	
 	/**
@@ -89,10 +87,9 @@ public class JennicBinData implements DeviceBinData {
 	 * @param bytes 
 	 * @param description
 	 */
-	public JennicBinData(byte[] bytes, String description) {
+	public JennicBinData(byte[] bytes) {
 		this.bytes = bytes;
 		this.length = bytes.length;
-		this.description = description;
 	}
 
 	/**
@@ -165,7 +162,7 @@ public class JennicBinData implements DeviceBinData {
 			return true;
 		}
 
-		log.error("Unknown chip type of file " + description);
+		log.error("Unknown chip type " + chipType.toString());
 		return false;
 	}
 
@@ -226,7 +223,7 @@ public class JennicBinData implements DeviceBinData {
 
 		}
 
-		log.error("Chip type of file " + description + " is UNKNOWN");
+		log.error("Chip type is UNKNOWN");
 		return ChipType.UNKNOWN;
 	}
 
@@ -268,7 +265,6 @@ public class JennicBinData implements DeviceBinData {
 				", blockIterator=" + blockIterator +
 				", bytes=" + bytes +
 				", length=" + length +
-				", description='" + description + '\'' +
 				'}';
 	}
 

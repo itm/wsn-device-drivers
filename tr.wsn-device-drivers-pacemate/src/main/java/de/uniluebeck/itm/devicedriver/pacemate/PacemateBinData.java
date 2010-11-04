@@ -61,8 +61,6 @@ public class PacemateBinData implements DeviceBinData {
 
 	private int blockIterator = 0;
 
-	private final String description;
-
 	/**
 	 * checksum reset every 20 lines or end of block
 	 */
@@ -87,7 +85,7 @@ public class PacemateBinData implements DeviceBinData {
 		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
 		byte[] data = new byte[(int) file.length()];
 		bis.read(data, 0, data.length);
-		return new PacemateBinData(data, file.getAbsolutePath());
+		return new PacemateBinData(data);
 	}
 	
 	/**
@@ -109,14 +107,13 @@ public class PacemateBinData implements DeviceBinData {
 	 * @param description
 	 * @throws IOException
 	 */
-	public PacemateBinData(int address, byte[] data, String description) throws IOException {
+	public PacemateBinData(int address, byte[] data) throws IOException {
 		this.address = 0x3000;
-		this.description = description;
 		load(data);
 	}
 	
-	public PacemateBinData(byte[] data, String description) throws IOException {
-		this(0x3000, data, description);
+	public PacemateBinData(byte[] data) throws IOException {
+		this(0x3000, data);
 	}
 
 	/**
@@ -351,7 +348,7 @@ public class PacemateBinData implements DeviceBinData {
 			return true;
 		}
 
-		log.error("Unknown chip type of file " + description);
+		log.error("Unknown chip type");
 		return false;
 	}
 
@@ -403,7 +400,6 @@ public class PacemateBinData implements DeviceBinData {
 				"blockSize=" + blockSize +
 				", startAddress=" + address +
 				", blockIterator=" + blockIterator +
-				", description='" + description + '\'' +
 				", crc=" + crc +
 				", bytes=" + bytes +
 				", length=" + length +

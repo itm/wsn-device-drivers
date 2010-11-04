@@ -59,8 +59,6 @@ public class TelosbBinData implements DeviceBinData {
 	private BlockIterator blockIterator = new BlockIterator();
 
 	private final List<Segment> segments = new ArrayList<Segment>();
-
-	private final String description;
 	
 	public static TelosbBinData fromFile(File file) throws IOException {
 		if (!file.exists() || !file.canRead()) {
@@ -70,15 +68,14 @@ public class TelosbBinData implements DeviceBinData {
 		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
 		byte[] data = new byte[(int) file.length()];
 		bis.read(data, 0, data.length);
-		return new TelosbBinData(data, file.getAbsolutePath());
+		return new TelosbBinData(data);
 	}
 	
 	public static TelosbBinData fromFilename(String filename) throws IOException {
 		return TelosbBinData.fromFile(new File(filename));
 	}
 	
-	public TelosbBinData(byte[] binaryData, String description) throws IOException {
-		this.description = description;
+	public TelosbBinData(byte[] binaryData) throws IOException {
 		reload(new BufferedReader(new InputStreamReader(new ByteArrayInputStream(binaryData))));
 	}
 
@@ -250,7 +247,6 @@ public class TelosbBinData implements DeviceBinData {
 		return "TelosbBinFile{" +
 				"maxBlockSize=" + maxBlockSize +
 				", blockIterator=" + blockIterator +
-				", description=" + description +
 				", segments=" + segments +
 				'}';
 	}

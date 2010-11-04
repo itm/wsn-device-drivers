@@ -49,7 +49,7 @@ public class PacemateWriteFlashOperation extends AbstractWriteFlashOperation {
 		ChipType chipType = executeSubOperation(getChipTypeOperation);
 		log.debug("Chip type is " + chipType);
 
-		PacemateBinData pacemateProgram = new PacemateBinData(address, data, null);
+		final PacemateBinData binData = new PacemateBinData(address, data);
 
 		try {
 			device.configureFlash();
@@ -65,7 +65,7 @@ public class PacemateWriteFlashOperation extends AbstractWriteFlashOperation {
 			throw e;
 		}
 
-		int flashCRC = pacemateProgram.calcCRC();
+		int flashCRC = binData.calcCRC();
 
 		log.debug("CRC " + flashCRC);
 
@@ -80,7 +80,7 @@ public class PacemateWriteFlashOperation extends AbstractWriteFlashOperation {
 		DeviceBinDataBlock block = null;
 		int blockCount = 3;
 		int blockNumber = 3; // blockNumber != blockCount because block 8 & 9 == 32 kb all other 4 kb
-		while ((block = pacemateProgram.getNextBlock()) != null) {
+		while ((block = binData.getNextBlock()) != null) {
 			try {
 				device.writeToRAM(PacemateDevice.START_ADDRESS_IN_RAM, block.data.length);
 			} catch (Exception e) {
@@ -121,7 +121,7 @@ public class PacemateWriteFlashOperation extends AbstractWriteFlashOperation {
 				// printLine(pacemateProgram.encode(line,(line.length -offset)));
 
 				try {
-					device.sendDataMessage(pacemateProgram.encode(line, (line.length - offset)));
+					device.sendDataMessage(binData.encode(line, (line.length - offset)));
 				} catch (Exception e) {
 					log.debug("Error while writing flash! Operation will be cancelled!");
 					return null;
@@ -130,7 +130,7 @@ public class PacemateWriteFlashOperation extends AbstractWriteFlashOperation {
 				linecounter++;
 				if ((linecounter == 20) || (counter >= block.data.length)) {
 					try {
-						device.sendChecksum(pacemateProgram.crc);
+						device.sendChecksum(binData.crc);
 					} catch (InvalidChecksumException e) {
 						log.debug("Invalid Checksum - resend last part");
 						// so resending the last 20 lines
@@ -141,7 +141,7 @@ public class PacemateWriteFlashOperation extends AbstractWriteFlashOperation {
 					}
 					linecounter = 0;
 					// System.out.println("CRC "+pacemateProgram.crc);
-					pacemateProgram.crc = 0;
+					binData.crc = 0;
 					bytesNotYetProoved = 0;
 				}
 			}
@@ -166,7 +166,7 @@ public class PacemateWriteFlashOperation extends AbstractWriteFlashOperation {
 			}
 
 			// Notify listeners of the new status
-			float progress = ((float) (blockCount - 2)) / ((float) pacemateProgram.getBlockCount());
+			float progress = ((float) (blockCount - 2)) / ((float) binData.getBlockCount());
 			monitor.onProgressChange(progress);
 
 			// Return with success if the user has requested to cancel this

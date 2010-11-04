@@ -25,8 +25,6 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 	}
 	
 	public Void execute(Monitor monitor) throws Exception {
-		JennicBinData jennicProgram = (JennicBinData) binaryImage;
-		
 		// Enter programming mode
 		executeSubOperation(device.createEnterProgramModeOperation());
 
@@ -46,17 +44,18 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 		final ChipType chipType = executeSubOperation(device.createGetChipTypeOperation());
 		//log.debug("Chip type is " + chipType);
 
+		final JennicBinData binData = new JennicBinData(binaryImage);
 		// Check if file and current chip match
-		if (!binaryImage.isCompatible(chipType)) {
-			log.error("Chip type(" + chipType + ") and bin-program type(" + binaryImage.getChipType() + ") do not match");
-			throw new ProgramChipMismatchException(chipType, binaryImage.getChipType());
+		if (!binData.isCompatible(chipType)) {
+			log.error("Chip type(" + chipType + ") and bin-program type(" + binData.getChipType() + ") do not match");
+			throw new ProgramChipMismatchException(chipType, binData.getChipType());
 		}
 		
 		// insert flash header of device
 		try {
 			final GetFlashHeaderOperation getFlashHeaderOperation = device.createGetFlashHeaderOperation();
 			final byte[] flashHeader = executeSubOperation(getFlashHeaderOperation);
-			if (!jennicProgram.insertHeader(flashHeader)) {
+			if (!binData.insertHeader(flashHeader)) {
 				log.error("Unable to write flash header to binary file.");
 				return null;
 			}
@@ -73,7 +72,7 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 		// Write program to flash
 		DeviceBinDataBlock block = null;
 		int blockCount = 0;
-		while ((block = binaryImage.getNextBlock()) != null) {
+		while ((block = binData.getNextBlock()) != null) {
 			try {
 				WriteFlashOperation operation = device.createWriteFlashOperation();
 				operation.setData(block.address, block.data, block.data.length);
@@ -84,7 +83,7 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 			}
 			
 			// Notify listeners of the new status
-			float progress = ((float) blockCount) / ((float) binaryImage.getBlockCount());
+			float progress = ((float) blockCount) / ((float) binData.getBlockCount());
 			monitor.onProgressChange(progress);
 			
 			// Return with success if the user has requested to cancel this
