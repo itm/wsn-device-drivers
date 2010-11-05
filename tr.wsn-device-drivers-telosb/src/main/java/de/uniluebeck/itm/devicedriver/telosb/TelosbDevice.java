@@ -47,73 +47,95 @@ public class TelosbDevice extends AbstractSerialPortDevice implements Programabl
 
 	@Override
 	public EnterProgramModeOperation createEnterProgramModeOperation() {
-		return new TelosbEnterProgramModeOperation(connection, bsl);
+		final EnterProgramModeOperation operation = new TelosbEnterProgramModeOperation(connection, bsl);
+		monitor.monitorState(operation);
+		return operation;
 	}
 	
 	@Override
 	public LeaveProgramModeOperation createLeaveProgramModeOperation() {
-		return new SerialPortLeaveProgramModeOperation(connection);
+		final LeaveProgramModeOperation operation = new SerialPortLeaveProgramModeOperation(connection);
+		monitor.monitorState(operation);
+		return operation;
 	}
 	
 	@Override
 	public GetChipTypeOperation createGetChipTypeOperation() {
-		return new AbstractGetChipTypeOperation() {
+		final GetChipTypeOperation operation = new AbstractGetChipTypeOperation() {
 			@Override
 			public ChipType execute(Monitor monitor) throws Exception {
 				return ChipType.TelosB;
 			}
 		};
+		monitor.monitorState(operation);
+		return operation;
 	}
 
 	@Override
 	public ProgramOperation createProgramOperation() {
-		return new TelosbProgramOperation(this);
+		final ProgramOperation operation = new TelosbProgramOperation(this);
+		monitor.monitorState(operation);
+		return operation;
 	}
 
 	@Override
 	public EraseFlashOperation createEraseFlashOperation() {
-		return new TelosbEraseFlashOperation(bsl);
+		final EraseFlashOperation operation = new TelosbEraseFlashOperation(bsl);
+		monitor.monitorState(operation);
+		return operation;
 	}
 
 	@Override
 	public WriteFlashOperation createWriteFlashOperation() {
-		return new TelosbWriteFlashOperation(bsl);
+		final WriteFlashOperation operation = new TelosbWriteFlashOperation(bsl);
+		monitor.monitorState(operation);
+		return operation;
 	}
 
 	public ReadFlashOperation createReadFlashOperation() {
-		return new TelosbReadFlashOperation(bsl);
+		final ReadFlashOperation operation = new TelosbReadFlashOperation(bsl);
+		monitor.monitorState(operation);
+		return operation;
 	}
 
 	@Override
 	public ReadMacAddressOperation createReadMacAddressOperation() {
-		return new AbstractReadMacAddressOperation() {
+		final ReadMacAddressOperation operation = new AbstractReadMacAddressOperation() {
 			@Override
 			public MacAddress execute(Monitor monitor) throws Exception {
 				log.warn("readMacAddress is not implemented.");
 				return null;
 			}
 		};
+		monitor.monitorState(operation);
+		return operation;
 	}
 
 	@Override
 	public WriteMacAddressOperation createWriteMacAddressOperation() {
-		return new AbstractWriteMacAddressOperation() {
+		final WriteMacAddressOperation operation = new AbstractWriteMacAddressOperation() {
 			@Override
 			public Void execute(Monitor monitor) throws Exception {
 				log.warn("writeMacAddress is not implemented.");
 				return null;
 			}
 		};
+		monitor.monitorState(operation);
+		return operation;
 	}
 
 	@Override
 	public ResetOperation createResetOperation() {
-		return new TelosbResetOperation(bsl);
+		final ResetOperation operation = new TelosbResetOperation(bsl);
+		monitor.monitorState(operation);
+		return operation;
 	}
 
 	@Override
 	public SendOperation createSendOperation() {
-		return new SerialPortSendOperation(connection);
+		final SendOperation operation = new SerialPortSendOperation(connection);
+		monitor.monitorState(operation);
+		return operation;
 	}
 	
 	@Override

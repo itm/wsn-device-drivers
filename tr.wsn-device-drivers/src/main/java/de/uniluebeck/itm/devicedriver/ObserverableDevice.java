@@ -11,13 +11,13 @@ import java.util.TreeMap;
  * 
  * @author Malte Legenhausen
  */
-public abstract class AbstractDevice implements Device {
+public abstract class ObserverableDevice implements Device {
 	
 	/**
 	 * Mapping from message packet type to a list of <code>MessagePacketListener</code> instances.
 	 */
 	private final Map<Integer, List<MessagePacketListener>> listeners = new TreeMap<Integer, List<MessagePacketListener>>();
-
+	
 	@Override
 	public void addListener(MessagePacketListener listener, int... types) {
 		for (final int type : types) {
@@ -57,4 +57,6 @@ public abstract class AbstractDevice implements Device {
 			listener.onMessagePlainTextReceived(new MessagePlainText(packet.getContent()));
 		}
 	}
+	
+	
 }

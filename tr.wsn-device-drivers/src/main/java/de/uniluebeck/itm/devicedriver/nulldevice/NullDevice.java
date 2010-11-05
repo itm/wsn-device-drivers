@@ -3,7 +3,7 @@ package de.uniluebeck.itm.devicedriver.nulldevice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.devicedriver.AbstractDevice;
+import de.uniluebeck.itm.devicedriver.ObserverableDevice;
 import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.Connection;
 import de.uniluebeck.itm.devicedriver.MacAddress;
@@ -27,7 +27,7 @@ import de.uniluebeck.itm.devicedriver.operation.SendOperation;
 import de.uniluebeck.itm.devicedriver.operation.WriteFlashOperation;
 import de.uniluebeck.itm.devicedriver.operation.WriteMacAddressOperation;
 
-public class NullDevice extends AbstractDevice {
+public class NullDevice extends ObserverableDevice {
 
 	/**
 	 * Logger for this class.

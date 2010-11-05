@@ -50,61 +50,85 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 	
 	@Override
 	public EnterProgramModeOperation createEnterProgramModeOperation() {
-		return new SerialPortEnterProgramModeOperation(connection);
+		final EnterProgramModeOperation operation = new SerialPortEnterProgramModeOperation(connection);
+		monitor.monitorState(operation);
+		return operation;
 	}
 	
 	@Override
 	public LeaveProgramModeOperation createLeaveProgramModeOperation() {
-		return new SerialPortLeaveProgramModeOperation(connection);
+		final LeaveProgramModeOperation operation = new SerialPortLeaveProgramModeOperation(connection);
+		monitor.monitorState(operation);
+		return operation;
 	}
 	
 	@Override
 	public EraseFlashOperation createEraseFlashOperation() {
-		return new JennicEraseFlashOperation(this);
+		final EraseFlashOperation operation = new JennicEraseFlashOperation(this);
+		monitor.monitorState(operation);
+		return operation;
 	}
 
 	@Override
 	public GetChipTypeOperation createGetChipTypeOperation() {
-		return new JennicGetChipTypeOperation(this);
+		GetChipTypeOperation operation = new JennicGetChipTypeOperation(this);
+		monitor.monitorState(operation);
+		return operation;
 	}
 	
 	public GetFlashHeaderOperation createGetFlashHeaderOperation() {
-		return new JennicGetFlashHeaderOperation(this);
+		final GetFlashHeaderOperation operation = new JennicGetFlashHeaderOperation(this);
+		monitor.monitorState(operation);
+		return operation;
 	}
 
 	@Override
 	public ProgramOperation createProgramOperation() {
-		return new JennicProgramOperation(this);
+		final ProgramOperation operation = new JennicProgramOperation(this);
+		monitor.monitorState(operation);
+		return operation;
 	}
 
 	@Override
 	public ReadFlashOperation createReadFlashOperation() {
-		return new JennicReadFlashOperation(this);
+		final ReadFlashOperation operation = new JennicReadFlashOperation(this);
+		monitor.monitorState(operation);
+		return operation;
 	}
 
 	@Override
 	public ReadMacAddressOperation createReadMacAddressOperation() {
-		return new JennicReadMacAddressOperation(this);
+		final ReadMacAddressOperation operation = new JennicReadMacAddressOperation(this);
+		monitor.monitorState(operation);
+		return operation;
 	}
 
 	@Override
 	public ResetOperation createResetOperation() {
-		return new JennicResetOperation(connection);
+		final ResetOperation operation = new JennicResetOperation(connection);
+		monitor.monitorState(operation);
+		return operation;
 	}
 
 	@Override
 	public SendOperation createSendOperation() {
-		return new SerialPortSendOperation(connection);
+		final SendOperation operation = new SerialPortSendOperation(connection);
+		monitor.monitorState(operation);
+		return operation;
 	}
 
 	@Override
 	public WriteFlashOperation createWriteFlashOperation() {
-		return new JennicWriteFlashOperation(this);
+		final WriteFlashOperation operation = new JennicWriteFlashOperation(this);
+		monitor.monitorState(operation);
+		return operation;
 	}
 
 	@Override
 	public WriteMacAddressOperation createWriteMacAddressOperation() {
-		return new JennicWriteMacAddressOperation(this);
+		final WriteMacAddressOperation operation = new JennicWriteMacAddressOperation(this);
+		monitor.monitorState(operation);
+		return operation;
 	}
 
 	@Override

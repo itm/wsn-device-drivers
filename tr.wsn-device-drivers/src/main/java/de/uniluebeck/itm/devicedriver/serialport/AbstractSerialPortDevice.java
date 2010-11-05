@@ -10,11 +10,12 @@ import java.util.TooManyListenersException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.devicedriver.AbstractDevice;
 import de.uniluebeck.itm.devicedriver.Connection;
 import de.uniluebeck.itm.devicedriver.ConnectionListener;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
+import de.uniluebeck.itm.devicedriver.ObserverableDevice;
 import de.uniluebeck.itm.devicedriver.exception.TimeoutException;
+import de.uniluebeck.itm.devicedriver.operation.RunningOperationsMonitor;
 import de.uniluebeck.itm.devicedriver.util.StringUtils;
 import de.uniluebeck.itm.devicedriver.util.TimeDiff;
 
@@ -24,7 +25,7 @@ import de.uniluebeck.itm.devicedriver.util.TimeDiff;
  * 
  * @author Malte Legenhausen
  */
-public abstract class AbstractSerialPortDevice extends AbstractDevice implements ConnectionListener, SerialPortEventListener {
+public abstract class AbstractSerialPortDevice extends ObserverableDevice implements ConnectionListener, SerialPortEventListener {
 	
 	/**
 	 * Logger for this class.
@@ -62,6 +63,11 @@ public abstract class AbstractSerialPortDevice extends AbstractDevice implements
 	protected final SerialPortConnection connection;
 	
 	/**
+	 * Monitor for observe operations that are in <code>State.RUNNING</code>.
+	 */
+	protected final RunningOperationsMonitor monitor = new RunningOperationsMonitor();
+	
+	/**
 	 * Constructor.
 	 * 
 	 * @param connection The serial port connection for this device.
@@ -92,7 +98,10 @@ public abstract class AbstractSerialPortDevice extends AbstractDevice implements
 			synchronized (dataAvailableMonitor) {
 				dataAvailableMonitor.notifyAll();
 			}
-			receivePacket(connection.getInputStream());
+			
+			if (monitor.isRunning()) {
+				receivePacket(connection.getInputStream());
+			}
 			break;
 		default:
 			log.debug("Serial event (other than data available): " + event);

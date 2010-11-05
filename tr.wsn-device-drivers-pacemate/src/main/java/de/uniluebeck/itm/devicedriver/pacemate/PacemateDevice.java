@@ -41,11 +41,6 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 	private static final Logger log = LoggerFactory.getLogger(PacemateDevice.class);
 	
 	private static final int TIMEOUT = 2000;
-	
-	/**
-	 * is The LPC2136 echo on
-	 */
-	private boolean echoOn = true;
 
 	public PacemateDevice(SerialPortConnection connection) {
 		super(connection);
@@ -59,63 +54,85 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 	
 	@Override
 	public EnterProgramModeOperation createEnterProgramModeOperation() {
-		return new SerialPortEnterProgramModeOperation(connection);
+		final EnterProgramModeOperation operation = new SerialPortEnterProgramModeOperation(connection);
+		monitor.monitorState(operation);
+		return operation;
 	}
 	
 	@Override
 	public LeaveProgramModeOperation createLeaveProgramModeOperation() {
-		return new SerialPortLeaveProgramModeOperation(connection);
+		final LeaveProgramModeOperation operation = new SerialPortLeaveProgramModeOperation(connection);
+		monitor.monitorState(operation);
+		return operation;
 	}
 
 	@Override
 	public GetChipTypeOperation createGetChipTypeOperation() {
-		return new PacemateGetChipTypeOperation(this);
+		final GetChipTypeOperation operation = new PacemateGetChipTypeOperation(this);
+		monitor.monitorState(operation);
+		return operation;
 	}
 
 	@Override
 	public ProgramOperation createProgramOperation() {
-		return new PacemateProgramOperation(this);
+		final ProgramOperation operation = new PacemateProgramOperation(this);
+		monitor.monitorState(operation);
+		return operation;
 	}
 
 	@Override
 	public EraseFlashOperation createEraseFlashOperation() {
-		return new PacemateEraseFlashOperation(this);
+		final EraseFlashOperation operation = new PacemateEraseFlashOperation(this);
+		monitor.monitorState(operation);
+		return operation;
 	}
 
 	@Override
 	public WriteFlashOperation createWriteFlashOperation() {
-		return new PacemateWriteFlashOperation(this);
+		final WriteFlashOperation operation = new PacemateWriteFlashOperation(this);
+		monitor.monitorState(operation);
+		return operation;
 	}
 
 	@Override
 	public ReadFlashOperation createReadFlashOperation() {
-		return new PacemateReadFlashOperation(this);
+		final ReadFlashOperation operation = new PacemateReadFlashOperation(this);
+		monitor.monitorState(operation);
+		return operation;
 	}
 
 	@Override
 	public ReadMacAddressOperation createReadMacAddressOperation() {
-		return new PacemateReadMacAddressOperation(this);
+		final ReadMacAddressOperation operation = new PacemateReadMacAddressOperation(this);
+		monitor.monitorState(operation);
+		return operation;
 	}
 
 	@Override
 	public WriteMacAddressOperation createWriteMacAddressOperation() {
-		return new AbstractWriteMacAddressOperation() {
+		final WriteMacAddressOperation operation = new AbstractWriteMacAddressOperation() {
 			@Override
 			public Void execute(Monitor monitor) throws Exception {
 				log.warn("writeMacAddres is not implemented.");
 				return null;
 			}
 		};
+		monitor.monitorState(operation);
+		return operation;
 	}
 
 	@Override
 	public ResetOperation createResetOperation() {
-		return new PacemateResetOperation(connection);
+		final ResetOperation operation = new PacemateResetOperation(connection);
+		monitor.monitorState(operation);
+		return operation;
 	}
 
 	@Override
 	public SendOperation createSendOperation() {
-		return new SerialPortSendOperation(connection);
+		final SendOperation operation = new SerialPortSendOperation(connection);
+		monitor.monitorState(operation);
+		return operation;
 	}
 	
 	public boolean autobaud() {
@@ -127,10 +144,10 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 			sendBootLoaderMessage(Messages.AutoBaudRequest3Message());
 			receiveBootLoaderReply(Messages.OK);
 			log.info("Autobaud");
-		} catch (TimeoutException to) {
-			log.debug("Still waiting for a connection.");
-		} catch (Exception error) {
-			log.warn("Exception while waiting for connection", error);
+		} catch (TimeoutException e) {
+			log.debug("Still waiting for a connection.", e);
+		} catch (Exception e) {
+			log.warn("Exception while waiting for connection", e);
 		}
 		return true;
 	}
@@ -238,9 +255,6 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 		waitDataAvailable(TIMEOUT);
 
 		int read_returnCode = 1;
-
-		if (echoOn == false)
-			read_returnCode = 2;
 
 		// Read the message
 		while (index < 255) {
