@@ -14,6 +14,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.AnnotationConfiguration;
 
+import java.util.regex.*;
+
 public class Datenlogger {
 	
 	public static class Listener extends Thread{
@@ -101,6 +103,21 @@ public class Datenlogger {
 		System.out.println("Location: " + location);
 		gestartet = true;
 		System.out.println("\nStarte das Loggen des Knotens....");
+		String erhaltene_Daten = "";
+		
+		//Filtern der erhaltenen Daten
+		if(filters != null){
+			String[] filter = parseFilter(filters);
+			String patternStr = filter[0];
+			Pattern pattern = Pattern.compile(patternStr);
+			Matcher matcher = pattern.matcher(erhaltene_Daten);
+			while (matcher.find()) {
+				//logge Daten
+				//writeToDatabase();
+				//writeToXmlFile();
+			}
+		}
+		
 		//writeToDatabase();
 		//writeToXmlFile();
 		try {
