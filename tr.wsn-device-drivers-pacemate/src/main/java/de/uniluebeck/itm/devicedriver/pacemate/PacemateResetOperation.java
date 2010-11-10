@@ -1,14 +1,16 @@
 package de.uniluebeck.itm.devicedriver.pacemate;
 
+import gnu.io.SerialPort;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import gnu.io.SerialPort;
 import de.uniluebeck.itm.devicedriver.Monitor;
-import de.uniluebeck.itm.devicedriver.operation.AbstractResetOperation;
+import de.uniluebeck.itm.devicedriver.operation.AbstractOperation;
+import de.uniluebeck.itm.devicedriver.operation.ResetOperation;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection;
 
-public class PacemateResetOperation extends AbstractResetOperation {
+public class PacemateResetOperation extends AbstractOperation<Void> implements ResetOperation {
 
 	/**
 	 * Logger for this class.

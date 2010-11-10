@@ -6,12 +6,13 @@ import org.slf4j.LoggerFactory;
 import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.Monitor;
-import de.uniluebeck.itm.devicedriver.operation.AbstractReadMacAddressOperation;
+import de.uniluebeck.itm.devicedriver.operation.AbstractOperation;
 import de.uniluebeck.itm.devicedriver.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.devicedriver.operation.ReadFlashOperation;
+import de.uniluebeck.itm.devicedriver.operation.ReadMacAddressOperation;
 import de.uniluebeck.itm.devicedriver.util.StringUtils;
 
-public class PacemateReadMacAddressOperation extends AbstractReadMacAddressOperation {
+public class PacemateReadMacAddressOperation extends AbstractOperation<MacAddress> implements ReadMacAddressOperation {
 
 	/**
 	 * Logger for this class.

@@ -3,13 +3,10 @@ package de.uniluebeck.itm.devicedriver.telosb;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.Connection;
-import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.Monitor;
 import de.uniluebeck.itm.devicedriver.Programable;
-import de.uniluebeck.itm.devicedriver.operation.AbstractGetChipTypeOperation;
-import de.uniluebeck.itm.devicedriver.operation.AbstractReadMacAddressOperation;
+import de.uniluebeck.itm.devicedriver.exception.NotImplementedException;
 import de.uniluebeck.itm.devicedriver.operation.AbstractWriteMacAddressOperation;
 import de.uniluebeck.itm.devicedriver.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.operation.EraseFlashOperation;
@@ -61,12 +58,7 @@ public class TelosbDevice extends AbstractSerialPortDevice implements Programabl
 	
 	@Override
 	public GetChipTypeOperation createGetChipTypeOperation() {
-		final GetChipTypeOperation operation = new AbstractGetChipTypeOperation() {
-			@Override
-			public ChipType execute(Monitor monitor) throws Exception {
-				return ChipType.TelosB;
-			}
-		};
+		final GetChipTypeOperation operation = new TelosbGetChipTypeOperation();
 		monitor.monitorState(operation);
 		return operation;
 	}
@@ -100,13 +92,7 @@ public class TelosbDevice extends AbstractSerialPortDevice implements Programabl
 
 	@Override
 	public ReadMacAddressOperation createReadMacAddressOperation() {
-		final ReadMacAddressOperation operation = new AbstractReadMacAddressOperation() {
-			@Override
-			public MacAddress execute(Monitor monitor) throws Exception {
-				log.warn("readMacAddress is not implemented.");
-				return null;
-			}
-		};
+		final ReadMacAddressOperation operation = new TelosbReadMacAddressOperation();
 		monitor.monitorState(operation);
 		return operation;
 	}
@@ -116,8 +102,8 @@ public class TelosbDevice extends AbstractSerialPortDevice implements Programabl
 		final WriteMacAddressOperation operation = new AbstractWriteMacAddressOperation() {
 			@Override
 			public Void execute(Monitor monitor) throws Exception {
-				log.warn("writeMacAddress is not implemented.");
-				return null;
+				log.debug("Write mac address it not available.");
+				throw new NotImplementedException("Write mac address is not available.");
 			}
 		};
 		monitor.monitorState(operation);

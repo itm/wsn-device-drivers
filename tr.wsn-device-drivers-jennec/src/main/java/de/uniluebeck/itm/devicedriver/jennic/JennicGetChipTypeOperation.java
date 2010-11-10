@@ -6,10 +6,11 @@ import org.slf4j.LoggerFactory;
 import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.Monitor;
 import de.uniluebeck.itm.devicedriver.exception.RamReadFailedException;
-import de.uniluebeck.itm.devicedriver.operation.AbstractGetChipTypeOperation;
+import de.uniluebeck.itm.devicedriver.operation.AbstractOperation;
+import de.uniluebeck.itm.devicedriver.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.devicedriver.util.StringUtils;
 
-public class JennicGetChipTypeOperation extends AbstractGetChipTypeOperation {
+public class JennicGetChipTypeOperation extends AbstractOperation<ChipType> implements GetChipTypeOperation {
 
 	/**
 	 * Logger for this class.

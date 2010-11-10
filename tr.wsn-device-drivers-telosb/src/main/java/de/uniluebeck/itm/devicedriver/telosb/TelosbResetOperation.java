@@ -1,9 +1,10 @@
 package de.uniluebeck.itm.devicedriver.telosb;
 
 import de.uniluebeck.itm.devicedriver.Monitor;
-import de.uniluebeck.itm.devicedriver.operation.AbstractResetOperation;
+import de.uniluebeck.itm.devicedriver.operation.AbstractOperation;
+import de.uniluebeck.itm.devicedriver.operation.ResetOperation;
 
-public class TelosbResetOperation extends AbstractResetOperation {
+public class TelosbResetOperation extends AbstractOperation<Void> implements ResetOperation {
 
 	private final BSLTelosb bsl;
 	

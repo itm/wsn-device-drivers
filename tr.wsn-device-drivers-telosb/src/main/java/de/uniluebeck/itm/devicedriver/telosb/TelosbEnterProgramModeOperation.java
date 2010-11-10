@@ -4,11 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.devicedriver.Monitor;
-import de.uniluebeck.itm.devicedriver.operation.AbstractEnterProgramModeOperation;
+import de.uniluebeck.itm.devicedriver.operation.AbstractOperation;
+import de.uniluebeck.itm.devicedriver.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection.SerialPortMode;
 
-public class TelosbEnterProgramModeOperation extends AbstractEnterProgramModeOperation {
+public class TelosbEnterProgramModeOperation extends AbstractOperation<Void> implements EnterProgramModeOperation {
 
 	/**
 	 * Logger for this class.

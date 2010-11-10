@@ -5,9 +5,10 @@ import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.devicedriver.Monitor;
 import de.uniluebeck.itm.devicedriver.exception.FlashEraseFailedException;
-import de.uniluebeck.itm.devicedriver.operation.AbstractEraseFlashOperation;
+import de.uniluebeck.itm.devicedriver.operation.AbstractOperation;
+import de.uniluebeck.itm.devicedriver.operation.EraseFlashOperation;
 
-public class JennicEraseFlashOperation extends AbstractEraseFlashOperation {
+public class JennicEraseFlashOperation extends AbstractOperation<Void> implements EraseFlashOperation {
 
 	/**
 	 * Logger for this class.

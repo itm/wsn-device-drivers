@@ -1,10 +1,11 @@
 package de.uniluebeck.itm.devicedriver.serialport;
 
 import de.uniluebeck.itm.devicedriver.Monitor;
-import de.uniluebeck.itm.devicedriver.operation.AbstractLeaveProgramModeOperation;
+import de.uniluebeck.itm.devicedriver.operation.AbstractOperation;
+import de.uniluebeck.itm.devicedriver.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection.SerialPortMode;
 
-public class SerialPortLeaveProgramModeOperation extends AbstractLeaveProgramModeOperation {
+public class SerialPortLeaveProgramModeOperation extends AbstractOperation<Void> implements LeaveProgramModeOperation {
 
 private final SerialPortConnection connection;
 	

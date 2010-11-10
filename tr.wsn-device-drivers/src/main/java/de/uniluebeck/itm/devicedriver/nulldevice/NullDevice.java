@@ -3,17 +3,14 @@ package de.uniluebeck.itm.devicedriver.nulldevice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.devicedriver.ObserverableDevice;
 import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.Connection;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.Monitor;
-import de.uniluebeck.itm.devicedriver.operation.AbstractEraseFlashOperation;
-import de.uniluebeck.itm.devicedriver.operation.AbstractGetChipTypeOperation;
+import de.uniluebeck.itm.devicedriver.ObserverableDevice;
+import de.uniluebeck.itm.devicedriver.operation.AbstractOperation;
 import de.uniluebeck.itm.devicedriver.operation.AbstractProgramOperation;
 import de.uniluebeck.itm.devicedriver.operation.AbstractReadFlashOperation;
-import de.uniluebeck.itm.devicedriver.operation.AbstractReadMacAddressOperation;
-import de.uniluebeck.itm.devicedriver.operation.AbstractResetOperation;
 import de.uniluebeck.itm.devicedriver.operation.AbstractSendOperation;
 import de.uniluebeck.itm.devicedriver.operation.AbstractWriteFlashOperation;
 import de.uniluebeck.itm.devicedriver.operation.AbstractWriteMacAddressOperation;
@@ -29,6 +26,42 @@ import de.uniluebeck.itm.devicedriver.operation.WriteMacAddressOperation;
 
 public class NullDevice extends ObserverableDevice {
 
+	private class NullEraseFlashOperation extends AbstractOperation<Void> implements EraseFlashOperation {
+		@Override
+		public Void execute(Monitor monitor) {
+			logger.warn("Null device is used. EraseFlashOperation does nothing.");
+			monitor.onProgressChange(1.0f);
+			return null;
+		}
+	}
+	
+	private class NullGetChipTypeOperation extends AbstractOperation<ChipType> implements GetChipTypeOperation {
+		@Override
+		public ChipType execute(Monitor monitor) {
+			logger.warn("Null device is used. GetChipTypeOperation does nothing.");
+			monitor.onProgressChange(1.0f);
+			return ChipType.UNKNOWN;
+		}
+	}
+	
+	private class NullReadMacAddressOperation extends AbstractOperation<MacAddress> implements ReadMacAddressOperation {
+		@Override
+		public MacAddress execute(Monitor monitor) {
+			logger.warn("Null device is used. ReadMacAddressOperation does nothing.");
+			monitor.onProgressChange(1.0f);
+			return new MacAddress();
+		}
+	}
+	
+	private class NullResetOperation extends AbstractOperation<Void> implements ResetOperation {
+		@Override
+		public Void execute(Monitor monitor) {
+			logger.warn("Null device is used. ResetOperation does nothing.");
+			monitor.onProgressChange(1.0f);
+			return null;
+		}
+	}
+	
 	/**
 	 * Logger for this class.
 	 */
@@ -36,26 +69,12 @@ public class NullDevice extends ObserverableDevice {
 	
 	@Override
 	public EraseFlashOperation createEraseFlashOperation() {
-		return new AbstractEraseFlashOperation() {
-			@Override
-			public Void execute(Monitor monitor) {
-				logger.warn("Null device is used. EraseFlashOperation does nothing.");
-				monitor.onProgressChange(1.0f);
-				return null;
-			}
-		};
+		return new NullEraseFlashOperation();
 	}
 
 	@Override
 	public GetChipTypeOperation createGetChipTypeOperation() {
-		return new AbstractGetChipTypeOperation() {
-			@Override
-			public ChipType execute(Monitor monitor) {
-				logger.warn("Null device is used. GetChipTypeOperation does nothing.");
-				monitor.onProgressChange(1.0f);
-				return ChipType.UNKNOWN;
-			}
-		};
+		return new NullGetChipTypeOperation();
 	}
 
 	@Override
@@ -94,26 +113,12 @@ public class NullDevice extends ObserverableDevice {
 
 	@Override
 	public ReadMacAddressOperation createReadMacAddressOperation() {
-		return new AbstractReadMacAddressOperation() {
-			@Override
-			public MacAddress execute(Monitor monitor) {
-				logger.warn("Null device is used. ReadMacAddressOperation does nothing.");
-				monitor.onProgressChange(1.0f);
-				return new MacAddress();
-			}
-		};
+		return new NullReadMacAddressOperation();
 	}
 
 	@Override
 	public ResetOperation createResetOperation() {
-		return new AbstractResetOperation() {
-			@Override
-			public Void execute(Monitor monitor) {
-				logger.warn("Null device is used. ResetOperation does nothing.");
-				monitor.onProgressChange(1.0f);
-				return null;
-			}
-		};
+		return new NullResetOperation();
 	}
 
 	@Override
