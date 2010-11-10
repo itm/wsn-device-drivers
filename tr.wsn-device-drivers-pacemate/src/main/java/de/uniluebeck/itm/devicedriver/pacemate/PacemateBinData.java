@@ -23,24 +23,20 @@
 
 package de.uniluebeck.itm.devicedriver.pacemate;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.devicedriver.ChipType;
-import de.uniluebeck.itm.devicedriver.DeviceBinData;
-import de.uniluebeck.itm.devicedriver.DeviceBinDataBlock;
+import de.uniluebeck.itm.devicedriver.util.BinDataBlock;
 
 /**
  * @author Maick Danckwardt
  * @author Malte Legenhausen
  * @author dp
  */
-public class PacemateBinData implements DeviceBinData {
+public class PacemateBinData {
 
 	/**
 	 * 
@@ -69,35 +65,6 @@ public class PacemateBinData implements DeviceBinData {
 	private byte[] bytes = null;
 
 	private int length = -1;
-
-	/**
-	 * Static method to load the binary data from a file.
-	 * 
-	 * @param file The file from which the data has to be read.
-	 * @return The JennecBinData instance with the data from the given file.
-	 * @throws IOException is thrown when errors current the file operations occured.
-	 */
-	public static PacemateBinData fromFile(File file) throws IOException {
-		if (!file.exists() || !file.canRead()) {
-			log.error("Unable to open file: " + file.getAbsolutePath());
-			throw new IOException("Unable to open file: " + file.getAbsolutePath());
-		}
-		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
-		byte[] data = new byte[(int) file.length()];
-		bis.read(data, 0, data.length);
-		return new PacemateBinData(data);
-	}
-	
-	/**
-	 * Static method to load the binary data from a filename.
-	 * 
-	 * @param filename The filename from where the data has to be read.
-	 * @return The JennicBinData instance with the data from the given filename.
-	 * @throws IOException is thrown when errors current the file operations occured.
-	 */
-	public static PacemateBinData fromFilename(String filename) throws IOException {
-		return PacemateBinData.fromFile(new File(filename));
-	}
 	
 	/**
 	 * Constructor.
@@ -108,7 +75,7 @@ public class PacemateBinData implements DeviceBinData {
 	 * @throws IOException
 	 */
 	public PacemateBinData(int address, byte[] data) throws IOException {
-		this.address = 0x3000;
+		this.address = address;
 		load(data);
 	}
 	
@@ -356,36 +323,31 @@ public class PacemateBinData implements DeviceBinData {
 		System.arraycopy(b, 0, bytes, address, len);
 	}
 
-	@Override
 	public ChipType getChipType() {
 		return ChipType.LPC2136;
 	}
 
-	@Override
 	public int getLength() {
 		return length;
 	}
 
-	@Override
-	public DeviceBinDataBlock getNextBlock() {
+	public BinDataBlock getNextBlock() {
 		if (hasNextBlock()) {
 			int offset = address + getBlockOffset(blockIterator);
 			byte[] data = getBlock(blockIterator);
 
 			blockIterator++;
 
-			return new DeviceBinDataBlock(offset, data);
+			return new BinDataBlock(offset, data);
 		} else {
 			return null;
 		}
 	}
 
-	@Override
 	public void resetBlockIterator() {
 		blockIterator = 0;
 	}
 
-	@Override
 	public boolean hasNextBlock() {
 		if (blockIterator < getBlockCount()) {
 			return true;
@@ -406,7 +368,6 @@ public class PacemateBinData implements DeviceBinData {
 				'}';
 	}
 
-	@Override
 	public boolean isCompatible(ChipType deviceType) {
 		return deviceType.equals(getChipType());
 	}

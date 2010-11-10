@@ -23,7 +23,7 @@
 
 package de.uniluebeck.itm.devicedriver.jennic.exception;
 
-import de.uniluebeck.itm.devicedriver.Sector;
+import de.uniluebeck.itm.devicedriver.jennic.Sector;
 
 /**
 *

@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.devicedriver.ChipType;
-import de.uniluebeck.itm.devicedriver.DeviceBinDataBlock;
 import de.uniluebeck.itm.devicedriver.Monitor;
 import de.uniluebeck.itm.devicedriver.exception.FlashProgramFailedException;
 import de.uniluebeck.itm.devicedriver.exception.ProgramChipMismatchException;
@@ -16,6 +15,7 @@ import de.uniluebeck.itm.devicedriver.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.devicedriver.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.operation.ResetOperation;
 import de.uniluebeck.itm.devicedriver.operation.WriteFlashOperation;
+import de.uniluebeck.itm.devicedriver.util.BinDataBlock;
 
 public class TelosbProgramOperation extends AbstractProgramOperation {
 
@@ -48,7 +48,7 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 		// Write program to flash
 		log.info("Starting to write program into flash memory...");
 		
-		DeviceBinDataBlock block;
+		BinDataBlock block;
 		int blockCount = 0;
 		int bytesProgrammed = 0;
 		while ((block = binData.getNextBlock()) != null) {

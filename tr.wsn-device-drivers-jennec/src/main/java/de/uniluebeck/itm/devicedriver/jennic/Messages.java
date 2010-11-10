@@ -25,7 +25,6 @@ package de.uniluebeck.itm.devicedriver.jennic;
 
 import java.nio.ByteBuffer;
 
-import de.uniluebeck.itm.devicedriver.Sector;
 import de.uniluebeck.itm.devicedriver.generic.FlashType;
 
 /**

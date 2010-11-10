@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.Monitor;
-import de.uniluebeck.itm.devicedriver.Sector;
 import de.uniluebeck.itm.devicedriver.operation.AbstractWriteMacAddressOperation;
 import de.uniluebeck.itm.devicedriver.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.operation.GetChipTypeOperation;

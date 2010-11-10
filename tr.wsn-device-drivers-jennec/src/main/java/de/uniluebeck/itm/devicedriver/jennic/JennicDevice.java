@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.Programable;
-import de.uniluebeck.itm.devicedriver.Sector;
 import de.uniluebeck.itm.devicedriver.exception.FlashConfigurationFailedException;
 import de.uniluebeck.itm.devicedriver.exception.FlashEraseFailedException;
 import de.uniluebeck.itm.devicedriver.exception.FlashTypeReadFailedException;

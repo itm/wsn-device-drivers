@@ -23,23 +23,17 @@
 
 package de.uniluebeck.itm.devicedriver.jennic;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.devicedriver.ChipType;
-import de.uniluebeck.itm.devicedriver.DeviceBinData;
-import de.uniluebeck.itm.devicedriver.DeviceBinDataBlock;
+import de.uniluebeck.itm.devicedriver.util.BinDataBlock;
 
 /**
  * @author Malte Legenhausen
  * @author dp
  */
-public class JennicBinData implements DeviceBinData {
+public class JennicBinData {
 
 	private static final Logger log = LoggerFactory.getLogger(JennicBinData.class);
 
@@ -50,36 +44,6 @@ public class JennicBinData implements DeviceBinData {
 	private final int length;
 	
 	private int blockIterator = 0;
-
-
-	/**
-	 * Static method to load the binary data from a file.
-	 * 
-	 * @param file The file from which the data has to be read.
-	 * @return The JennecBinData instance with the data from the given file.
-	 * @throws IOException is thrown when errors current the file operations occured.
-	 */
-	public static JennicBinData fromFile(File file) throws IOException {
-		if (!file.exists() || !file.canRead()) {
-			throw new IOException("Unable to open file: " + file.getAbsolutePath());
-		}
-
-		byte[] bytes = new byte[(int) file.length()];
-		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
-		bis.read(bytes, 0, bytes.length);
-		return new JennicBinData(bytes);
-	}
-	
-	/**
-	 * Static method to load the binary data from a filename.
-	 * 
-	 * @param filename The filename from where the data has to be read.
-	 * @return The JennicBinData instance with the data from the given filename.
-	 * @throws IOException is thrown when errors current the file operations occured.
-	 */
-	public static JennicBinData fromFilename(String filename) throws IOException {
-		return JennicBinData.fromFile(new File(filename));
-	}
 	
 	/**
 	 * Constructor.
@@ -231,25 +195,23 @@ public class JennicBinData implements DeviceBinData {
 		return length;
 	}
 
-	public DeviceBinDataBlock getNextBlock() {
+	public BinDataBlock getNextBlock() {
 		if (hasNextBlock()) {
 			int offset = getBlockOffset(blockIterator);
 			byte[] data = getBlock(blockIterator);
 
 			blockIterator++;
 
-			return new DeviceBinDataBlock(offset, data);
+			return new BinDataBlock(offset, data);
 		} else {
 			return null;
 		}
 	}
 
-	@Override
 	public void resetBlockIterator() {
 		blockIterator = 0;
 	}
 
-	@Override
 	public boolean hasNextBlock() {
 		if (blockIterator < getBlockCount()) {
 			return true;

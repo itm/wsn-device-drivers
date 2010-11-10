@@ -4,12 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.devicedriver.ChipType;
-import de.uniluebeck.itm.devicedriver.DeviceBinDataBlock;
 import de.uniluebeck.itm.devicedriver.Monitor;
-import de.uniluebeck.itm.devicedriver.Sector;
 import de.uniluebeck.itm.devicedriver.exception.ProgramChipMismatchException;
 import de.uniluebeck.itm.devicedriver.operation.AbstractProgramOperation;
 import de.uniluebeck.itm.devicedriver.operation.WriteFlashOperation;
+import de.uniluebeck.itm.devicedriver.util.BinDataBlock;
 
 public class JennicProgramOperation extends AbstractProgramOperation {
 	
@@ -70,7 +69,7 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 		device.eraseFlash(Sector.THIRD);
 		
 		// Write program to flash
-		DeviceBinDataBlock block = null;
+		BinDataBlock block = null;
 		int blockCount = 0;
 		while ((block = binData.getNextBlock()) != null) {
 			try {

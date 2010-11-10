@@ -23,11 +23,8 @@
 
 package de.uniluebeck.itm.devicedriver.telosb;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -38,16 +35,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.devicedriver.ChipType;
-import de.uniluebeck.itm.devicedriver.DeviceBinData;
-import de.uniluebeck.itm.devicedriver.DeviceBinDataBlock;
+import de.uniluebeck.itm.devicedriver.util.BinDataBlock;
 
 /**
- * Binary file used to program a Telos B device. The file is assumed to be in intel hex format.
- *
+ * Binary file used to program a Telos B device. The file is assumed to be in
+ * intel hex format.
+ * 
  * @author Friedemann Wesner
  * @author Malte Legenhausen
  */
-public class TelosbBinData implements DeviceBinData {
+public class TelosbBinData {
 
 	/**
 	 * 
@@ -59,31 +56,12 @@ public class TelosbBinData implements DeviceBinData {
 	private BlockIterator blockIterator = new BlockIterator();
 
 	private final List<Segment> segments = new ArrayList<Segment>();
-	
-	public static TelosbBinData fromFile(File file) throws IOException {
-		if (!file.exists() || !file.canRead()) {
-			log.error("Unable to open file: " + file.getAbsolutePath());
-			throw new IOException("Unable to open file: " + file.getAbsolutePath());
-		}
-		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
-		byte[] data = new byte[(int) file.length()];
-		bis.read(data, 0, data.length);
-		return new TelosbBinData(data);
-	}
-	
-	public static TelosbBinData fromFilename(String filename) throws IOException {
-		return TelosbBinData.fromFile(new File(filename));
-	}
-	
+
 	public TelosbBinData(byte[] binaryData) throws IOException {
-		reload(new BufferedReader(new InputStreamReader(new ByteArrayInputStream(binaryData))));
+		reload(new BufferedReader(new InputStreamReader(
+				new ByteArrayInputStream(binaryData))));
 	}
 
-	/* (non-Javadoc)
-	 * @see ishell.device.IDeviceBinFile#getBlockCount()
-	 */
-
-	@Override
 	public int getBlockCount() {
 		int blocksPerSegment = 0;
 		int totalBlocks = 0;
@@ -98,20 +76,10 @@ public class TelosbBinData implements DeviceBinData {
 		return totalBlocks;
 	}
 
-	/* (non-Javadoc)
-	 * @see ishell.device.IDeviceBinFile#getFileType()
-	 */
-
-	@Override
 	public ChipType getChipType() {
 		return ChipType.TelosB;
 	}
 
-	/* (non-Javadoc)
-	 * @see ishell.device.IDeviceBinFile#getLength()
-	 */
-
-	@Override
 	public int getLength() {
 		int totalLength = 0;
 
@@ -122,13 +90,8 @@ public class TelosbBinData implements DeviceBinData {
 		return totalLength;
 	}
 
-	/* (non-Javadoc)
-	 * @see ishell.device.IDeviceBinFile#getNextBlock()
-	 */
-
-	@Override
-	public DeviceBinDataBlock getNextBlock() {
-		DeviceBinDataBlock dataBlock = null;
+	public BinDataBlock getNextBlock() {
+		BinDataBlock dataBlock = null;
 		int actualBlockSize = maxBlockSize;
 		byte[] data = null;
 		Segment seg = null;
@@ -139,8 +102,10 @@ public class TelosbBinData implements DeviceBinData {
 				actualBlockSize = seg.data.length - blockIterator.byteNo;
 			}
 			data = new byte[actualBlockSize];
-			System.arraycopy(seg.data, blockIterator.byteNo, data, 0, actualBlockSize);
-			dataBlock = new DeviceBinDataBlock(seg.startAddress + blockIterator.byteNo, data);
+			System.arraycopy(seg.data, blockIterator.byteNo, data, 0,
+					actualBlockSize);
+			dataBlock = new BinDataBlock(seg.startAddress
+					+ blockIterator.byteNo, data);
 
 			if (blockIterator.byteNo + maxBlockSize >= seg.data.length) {
 				blockIterator.segmentNo++;
@@ -153,11 +118,6 @@ public class TelosbBinData implements DeviceBinData {
 		return dataBlock;
 	}
 
-	/* (non-Javadoc)
-	 * @see ishell.device.IDeviceBinFile#hasNextBlock()
-	 */
-
-	@Override
 	public boolean hasNextBlock() {
 		if (blockIterator.segmentNo >= segments.size()) {
 			return false;
@@ -169,11 +129,6 @@ public class TelosbBinData implements DeviceBinData {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see ishell.device.IDeviceBinFile#isCompatible(ishell.device.ChipType)
-	 */
-
-	@Override
 	public boolean isCompatible(ChipType deviceType) {
 		return deviceType.equals(getChipType());
 	}
@@ -194,7 +149,8 @@ public class TelosbBinData implements DeviceBinData {
 			// check for correct ihex format
 			if (line.charAt(0) != ':') {
 				log.error("File is not in correct intel hex format.");
-				throw new IOException("File is not in correct intel hex format.");
+				throw new IOException(
+						"File is not in correct intel hex format.");
 			}
 
 			// remove spaces
@@ -212,17 +168,19 @@ public class TelosbBinData implements DeviceBinData {
 			if (dataType == 0x00) {
 				if (currentAddress != lineAddress) {
 					if (segmentData.length > 0) {
-						segments.add(new Segment(segmentStartAddress, segmentData));
+						segments.add(new Segment(segmentStartAddress,
+								segmentData));
 					}
 					currentAddress = lineAddress;
 					segmentStartAddress = lineAddress;
 					segmentData = new byte[0];
 				}
 				tempData = new byte[segmentData.length + dataLength];
-				System.arraycopy(segmentData, 0, tempData, 0, segmentData.length);
+				System.arraycopy(segmentData, 0, tempData, 0,
+						segmentData.length);
 				for (int i = 0; i < dataLength; i++) {
-					tempData[segmentData.length + i] =
-							(byte) Integer.parseInt(line.substring(9 + 2 * i, 9 + 2 * i + 2), 16);
+					tempData[segmentData.length + i] = (byte) Integer.parseInt(
+							line.substring(9 + 2 * i, 9 + 2 * i + 2), 16);
 				}
 				segmentData = tempData;
 				currentAddress += tempData.length;
@@ -233,27 +191,19 @@ public class TelosbBinData implements DeviceBinData {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see ishell.device.IDeviceBinFile#resetBlockIterator()
-	 */
-
-	@Override
 	public void resetBlockIterator() {
 		blockIterator.reset();
 	}
 
-	@Override
 	public String toString() {
-		return "TelosbBinFile{" +
-				"maxBlockSize=" + maxBlockSize +
-				", blockIterator=" + blockIterator +
-				", segments=" + segments +
-				'}';
+		return "TelosbBinFile{" + "maxBlockSize=" + maxBlockSize
+				+ ", blockIterator=" + blockIterator + ", segments=" + segments
+				+ '}';
 	}
 
 	/*
-		 * A continued data segment of the ihex file that was read
-		 */
+	 * A continued data segment of the ihex file that was read
+	 */
 
 	private class Segment {
 

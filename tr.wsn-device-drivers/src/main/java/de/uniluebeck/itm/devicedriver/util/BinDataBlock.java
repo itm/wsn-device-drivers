@@ -21,47 +21,40 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                                *
  **********************************************************************************************************************/
 
-package de.uniluebeck.itm.devicedriver;
+package de.uniluebeck.itm.devicedriver.util;
+
+
 
 /**
- * @author Markus Class defining sectors
+ * A data block of a binary file that is intended to be written to a device's flash memory.
+ * The data block consists of the address within flash memory that the data should be written to, and
+ * a portion of actual data. The size of the data portion depends on the device type and
+ * hence on the type of bin file that provides the data block for writing. 
+ * @author Friedemann Wesner
+ *
  */
-public enum Sector {
-
+public class BinDataBlock {
 	/**
-	 * First Sector
+	 * Address in flash memory that this segment will be written to
 	 */
-	FIRST(0x00000, 0x07fff),
-	
-	/**
-	 * Second Sector
-	 */
-	SECOND(0x08000, 0x0ffff),
+	public int address;
 	
 	/**
-	 * Third Sector
+	 * Actual block of data bytes of the segment 
 	 */
-	THIRD(0x10000, 0x17fff),
+	public byte[] data = null;
 	
 	/**
-	 * Fourth Sector
+	 * Constructor
+	 * @param address
+	 * @param data
 	 */
-	FOURTH(0x18000, 0x1ffff);
-	
-	private final int start;
-	
-	private final int end;
-	
-	private Sector(int start, int end) {
-		this.start = start;
-		this.end = end;
-	}
-	
-	public int getStart() {
-		return start;
-	}
-	
-	public int getEnd() {
-		return end;
+	public BinDataBlock(int address, byte[] data) {
+		this.address = address;
+		if (data == null) {
+			this.data = new byte[0];
+		} else {
+			this.data = data;
+		}
 	}
 }

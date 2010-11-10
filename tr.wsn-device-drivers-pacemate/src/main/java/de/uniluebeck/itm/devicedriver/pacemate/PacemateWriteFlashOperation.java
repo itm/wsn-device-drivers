@@ -4,11 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.devicedriver.ChipType;
-import de.uniluebeck.itm.devicedriver.DeviceBinDataBlock;
 import de.uniluebeck.itm.devicedriver.Monitor;
 import de.uniluebeck.itm.devicedriver.exception.InvalidChecksumException;
 import de.uniluebeck.itm.devicedriver.operation.AbstractWriteFlashOperation;
 import de.uniluebeck.itm.devicedriver.operation.GetChipTypeOperation;
+import de.uniluebeck.itm.devicedriver.util.BinDataBlock;
 
 public class PacemateWriteFlashOperation extends AbstractWriteFlashOperation {
 
@@ -77,7 +77,7 @@ public class PacemateWriteFlashOperation extends AbstractWriteFlashOperation {
 		}
 
 		// Write program to flash
-		DeviceBinDataBlock block = null;
+		BinDataBlock block = null;
 		int blockCount = 3;
 		int blockNumber = 3; // blockNumber != blockCount because block 8 & 9 == 32 kb all other 4 kb
 		while ((block = binData.getNextBlock()) != null) {
