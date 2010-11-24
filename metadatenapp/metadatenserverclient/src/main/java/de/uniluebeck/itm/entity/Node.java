@@ -23,16 +23,10 @@ public class Node implements Key {
     private String microcontroller;
 
     @Element
-    private String applikations_ID;
+    private String ipAddress;
 
     @Element
-    private String softwareRevision;
-
-    @Element
-    private String otapVersion;
-
-    @Element
-    private String testbed;
+    private String description;
 
 
     /**
@@ -54,20 +48,19 @@ public class Node implements Key {
      * Constructor Method.
      *
      * @param microcontoller
-     * @param applikations_ID
+     * @param ipAddress
      * @param softwareRevision
      * @param otapVersion
-     * @param testbed
+     * @param description
      * @param capList
      */
-    public Node(String identity, String microcontoller, String applikations_ID, String softwareRevision, String otapVersion,
-                String testbed, List capList) {
+    public Node(String identity, String microcontoller, String IpAddress,
+                String description, List capList) {
         setId(identity);
         setMicrocontroller(microcontoller);
-        setApplikations_ID(applikations_ID);
-        setSoftwareRevision(softwareRevision);
-        setOtapVersion(otapVersion);
-        setTestbed(testbed);
+        setIpAddress(IpAddress);
+
+        setDescription(description);
         setCapabilityList(capList);
     }
 
@@ -93,42 +86,25 @@ public class Node implements Key {
 
 
 	public String getApplikations_ID() {
-		return applikations_ID;
+		return ipAddress;
 	}
 
 
-	public void setApplikations_ID(String applikationsID) {
-		applikations_ID = applikationsID;
+	public void setIpAddress(String ipAddress) {
+		ipAddress = ipAddress;
 	}
 
 
-	public String getSoftwareRevision() {
-		return softwareRevision;
+	
+
+
+	public String getDescription() {
+		return description;
 	}
 
 
-	public void setSoftwareRevision(String softwareRevision) {
-		this.softwareRevision = softwareRevision;
-	}
-
-
-	public String getOtapVersion() {
-		return otapVersion;
-	}
-
-
-	public void setOtapVersion(String otapVersion) {
-		this.otapVersion = otapVersion;
-	}
-
-
-	public String getTestbed() {
-		return testbed;
-	}
-
-
-	public void setTestbed(String testbed) {
-		this.testbed = testbed;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 
