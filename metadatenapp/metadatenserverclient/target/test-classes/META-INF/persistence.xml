@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+    <persistence-unit name="pollPersistenceUnit" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        <class>de.uniluebeck.itm.ep7.poll.entities.Poll</class>
+        <class>de.uniluebeck.itm.ep7.poll.entities.OptionList</class>
+        <class>de.uniluebeck.itm.ep7.poll.entities.Option</class>
+        <class>de.uniluebeck.itm.ep7.poll.entities.TextOption</class>
+        <class>de.uniluebeck.itm.ep7.poll.entities.DateOption</class>
+        <class>de.uniluebeck.itm.ep7.poll.entities.Vote</class>
+        <class>de.uniluebeck.itm.ep7.poll.entities.LocalizedString</class>
+        <class>de.uniluebeck.itm.ep7.poll.entities.Language</class>
+    </persistence-unit>
+</persistence>
