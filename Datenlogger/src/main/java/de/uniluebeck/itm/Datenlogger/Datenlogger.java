@@ -1,20 +1,44 @@
 package de.uniluebeck.itm.Datenlogger;
 
-import model.*;
-import viewer.CreateXML;
-import viewer.StoreToDatabase;
+import static com.google.common.base.Predicates.and;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import model.Capability;
+import model.Data;
+import model.DisableLink;
+import model.DisableNode;
+import model.EnableLink;
+import model.EnableNode;
+import model.Link;
+import model.LinkDefaults;
+import model.Node;
+import model.NodeDefaults;
+import model.Origin;
+import model.Position;
+import model.Rssi;
+import model.Scenario;
+import model.Setup;
+import model.Timeinfo;
+import model.Trace;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.AnnotationConfiguration;
 
-import java.util.regex.*;
+import viewer.CreateXML;
+import viewer.StoreToDatabase;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 public class Datenlogger {
 	
@@ -54,6 +78,34 @@ public class Datenlogger {
             }
         }
     }
+	
+	private class Klammer_Predicate implements Predicate<CharSequence>, Serializable {
+
+		private static final long serialVersionUID = 775543062421891927L;
+		String filter;
+		
+		public Klammer_Predicate(String filter){
+			this.filter = filter;
+			filter = filter.substring(1, filter.length()-1);
+		}
+
+		public boolean apply(CharSequence erhaltene_Daten) {
+			boolean ergebnis = true;
+			String[] einzelne_filter = filter.split(",");
+			//matche Datentyp
+			if(!einzelne_filter[0].equals(erhaltene_Daten.subSequence(0, 5))){
+				ergebnis = false;
+			}
+			//matche Wert
+			int beginn = Integer.parseInt(einzelne_filter[1]);
+			if(!einzelne_filter[2].equals(erhaltene_Daten.subSequence(beginn, beginn + 5))){
+				ergebnis = false;
+			}
+			return ergebnis;
+		}
+
+	}
+
 	
 	String port;
 	String server;
@@ -101,21 +153,18 @@ public class Datenlogger {
 		System.out.println("Server: " + server);
 		System.out.println("Filter: " + filters);
 		System.out.println("Location: " + location);
+		
 		gestartet = true;
 		System.out.println("\nStarte das Loggen des Knotens....");
-		String erhaltene_Daten = "";
+		final String erhaltene_Daten = "";
 		
-		//Filtern der erhaltenen Daten
-		if(filters != null){
-			String[] filter = parseFilter(filters);
-			String patternStr = filter[0];
-			Pattern pattern = Pattern.compile(patternStr);
-			Matcher matcher = pattern.matcher(erhaltene_Daten);
-			while (matcher.find()) {
-				//logge Daten
-				//writeToDatabase();
-				//writeToXmlFile();
-			}
+		String beispiel_filter_1 = "(uint32,5,17)";
+		String beispiel_filter_2 = "(int16,0,3)";
+		
+		boolean ergebnis = and(new Klammer_Predicate(beispiel_filter_1), new Klammer_Predicate(beispiel_filter_2)).apply(erhaltene_Daten);
+		
+		if(ergebnis){
+			//logge Daten
 		}
 		
 		//writeToDatabase();
