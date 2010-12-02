@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tns:DeviceList xmlns:tns="http://xml.netbeans.org/schema/devices" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xml.netbeans.org/schema/devices devices.xsd ">
+  <tns:newElement>
+    <tns:KnotenTyp>tns:KnotenTyp</tns:KnotenTyp>
+    <tns:Port>1111</tns:Port>
+  </tns:newElement>
+</tns:DeviceList>

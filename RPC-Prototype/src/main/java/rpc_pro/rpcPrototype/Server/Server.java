@@ -4,27 +4,31 @@ package rpc_pro.rpcPrototype.Server;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
 
-//import org.apache.commons.logging.Log;
-//import org.apache.commons.logging.LogFactory;
-//import org.apache.log4j.BasicConfigurator;
+import javax.xml.bind.JAXBException;
+
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.LockedAccountException;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.config.IniSecurityManagerFactory;
 import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.Factory;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 
+import rpc_pro.rpcPrototype.Server.Devices.ConfigReader;
+import rpc_pro.rpcPrototype.Server.Devices.DeviceList;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.ByteData;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.FlashData;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.Identification;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.MacData;
+import rpc_pro.rpcPrototype.files.MessageServiceFiles.Operations;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.PacketService;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.PacketTypeData;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.Operations;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.ProgramPacket;
+import rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.TestOperations;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.sendData;
@@ -57,6 +61,15 @@ public class Server {
 	private static HashMap <String,RemoteMessagePacketListener> listenerList = new HashMap<String,RemoteMessagePacketListener>();
 	
 	public static void main (String[] args){
+		
+		try {
+			DeviceList list = ConfigReader.readFile();
+			//TODO xsd: newElement in Device umbenennen!
+			System.out.println(list.getNewElement().get(0).getKnotenTyp());
+		} catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		//BasicConfigurator.configure();
 		
