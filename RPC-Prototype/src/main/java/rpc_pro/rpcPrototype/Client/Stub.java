@@ -57,6 +57,7 @@ public class Stub implements DeviceAsync{
 	PacketService.Interface packetService = null;
 	PacketServiceAnswerImpl packetServiceAnswerImpl = null;
 	
+	// Konstruktor mit ID notwendig
 	Stub (String userName, String passWord, String uri, int port) throws Exception{
 		this(userName,passWord,uri,port,1234);
 	}
@@ -68,32 +69,42 @@ public class Stub implements DeviceAsync{
 		// setzen der Client-Infos fuer Reverse RPC
 		client = new PeerInfo(userName+"client",clientPort);
 		
-		// aufruf des initialen Connects
-		connect(userName, passWord, new AsyncCallback<String>() {
-
-			@Override
-			public void onCancel() {
-				// TODO Auto-generated method stub
+		boolean connected = false;
+		
+		while(!connected){
+			try{
+				// aufruf des initialen Connects
+				connect(userName, passWord, new AsyncCallback<String>() {
+		
+					@Override
+					public void onCancel() {
+						// TODO Auto-generated method stub
+					}
+		
+					@Override
+					public void onFailure(Throwable throwable) {
+						System.out.println(throwable.getMessage());
+					}
+		
+					@Override
+					public void onSuccess(String result) {
+						System.out.println(result);
+					}
+		
+					@Override
+					public void onProgressChange(float fraction) {
+					}
+				});
+				connected = true;
 			}
-
-			@Override
-			public void onFailure(Throwable throwable) {
-				System.out.println(throwable.getMessage());
+			catch(Exception ex){
+				client = new PeerInfo(userName+"client",client.getPort()+1);
 			}
-
-			@Override
-			public void onSuccess(String result) {
-				System.out.println(result);
-			}
-
-			@Override
-			public void onProgressChange(float fraction) {
-			}
-		});
+		}
 	}
 	
 	// initialer Connect
-	private void connect(String userName, String passWord, final AsyncCallback<String> callback){
+	private void connect(String userName, String passWord, final AsyncCallback<String> callback) throws Exception{
 		
 		// setzen des Thread-Pools
 		executor = new ThreadPoolCallExecutor(3, 10);
@@ -123,7 +134,17 @@ public class Stub implements DeviceAsync{
 			callback.onFailure(e);
 		}
 		// erzeugen eines Controlles fuer diese Operation
-		final RpcController controller = channel.newRpcController();
+		
+		final RpcController controller;
+		RpcController temp = null;
+		
+		try{
+			temp = channel.newRpcController();
+			}
+			catch(NullPointerException ex){
+				throw new Exception(ex.getMessage());
+			}
+		controller = temp;
 		
 		// erzeugen eines async RPC-Objekts fuer die TestOperationen
 		testService = TestOperations.newStub(channel);
