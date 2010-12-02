@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-    targetNamespace="http://xml.netbeans.org/schema/devices"
-    xmlns:tns="http://xml.netbeans.org/schema/devices"
+    targetNamespace="rpc_pro/rpcPrototype/schema/devices"
+    xmlns:tns="rpc_pro/rpcPrototype/schema/devices"
     elementFormDefault="qualified">
     <xsd:complexType name="Device">
         <xsd:sequence>
@@ -19,7 +19,7 @@
     </xsd:complexType>
     <xsd:complexType name="DeviceList">
         <xsd:sequence>
-            <xsd:element name="newElement" type="tns:Device" maxOccurs="unbounded"></xsd:element>
+            <xsd:element name="Device" type="tns:Device" maxOccurs="unbounded"></xsd:element>
         </xsd:sequence>
     </xsd:complexType>
     <xsd:element name="DeviceList" type="tns:DeviceList"></xsd:element>

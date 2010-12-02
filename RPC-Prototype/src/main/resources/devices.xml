@@ -1,36 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<!--
-    Document   : devices.xml
-    Created on : 2. Dezember 2010, 14:46
-    Author     : Schuett
-    Description:
-        Purpose of the document follows.
--->
-
-<ns0:DeviceList  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
-   xmlns:ns0='http://xml.netbeans.org/schema/devices'
-   xsi:schemaLocation='http://xml.netbeans.org/schema/devices/devices.xsd'>
-    <ns0:newElement>
+<ns0:DeviceList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:ns0="rpc_pro/rpcPrototype/schema/devices" 
+		xsi:schemaLocation="rpc_pro/rpcPrototype/schema/devices devices.xsd ">
+ 
+ <ns0:Device>
         <ns0:KnotenTyp>isense</ns0:KnotenTyp>
         <ns0:Port>1111</ns0:Port>
         <ns0:Sensors>
             <ns0:Sensor>temp</ns0:Sensor>
             <ns0:Sensor>hydro</ns0:Sensor>
         </ns0:Sensors>
-    </ns0:newElement>
-    <ns0:newElement>
+    </ns0:Device>
+    <ns0:Device>
         <ns0:KnotenTyp>jennec</ns0:KnotenTyp>
         <ns0:Port>2222</ns0:Port>
         <ns0:TestBed>ITM</ns0:TestBed>
         <ns0:Sensors>
             <ns0:Sensor>temp</ns0:Sensor>
         </ns0:Sensors>
-    </ns0:newElement>
-    <ns0:newElement>
+    </ns0:Device>
+    <ns0:Device>
         <ns0:KnotenTyp>pacemate</ns0:KnotenTyp>
         <ns0:Port>3333</ns0:Port>
         <ns0:TestBed>ITM</ns0:TestBed>
-    </ns0:newElement>
-
+    </ns0:Device>
+    
 </ns0:DeviceList>

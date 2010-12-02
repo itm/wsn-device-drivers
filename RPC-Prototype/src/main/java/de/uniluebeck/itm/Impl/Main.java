@@ -15,7 +15,7 @@ public class Main implements DeviceAsync{
 		return new OperationHandle<Void>(){
 
 			@Override
-			public void cancel() {
+			public void cancel() { 
 				System.out.println("cancel ausgefuehrt");
 				
 			}

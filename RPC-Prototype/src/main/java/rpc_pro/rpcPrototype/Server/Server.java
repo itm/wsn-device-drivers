@@ -65,7 +65,8 @@ public class Server {
 		try {
 			DeviceList list = ConfigReader.readFile();
 			//TODO xsd: newElement in Device umbenennen!
-			System.out.println(list.getNewElement().get(0).getKnotenTyp());
+			System.out.println(list.getDevice().size());
+			System.out.println(list.getDevice().get(0).getKnotenTyp());
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

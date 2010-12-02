@@ -9,7 +9,7 @@ import javax.xml.bind.Unmarshaller;
 
 public class ConfigReader {
 
-	final static String path = "src/main/resources/devices1.xml";
+	final static String path = "src/main/resources/devices.xml";
 	
 	public static DeviceList readFile() throws JAXBException {
 		
