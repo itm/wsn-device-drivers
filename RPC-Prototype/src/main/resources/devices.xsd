@@ -4,23 +4,23 @@
     targetNamespace="rpc_pro/rpcPrototype/schema/devices"
     xmlns:tns="rpc_pro/rpcPrototype/schema/devices"
     elementFormDefault="qualified">
-    <xsd:complexType name="Device">
+    <xsd:complexType name="jaxbDevice">
         <xsd:sequence>
             <xsd:element name="KnotenTyp" type="xsd:string"></xsd:element>
             <xsd:element name="Port" type="xsd:int"></xsd:element>
             <xsd:element name="TestBed" type="xsd:string" minOccurs="0"></xsd:element>
-            <xsd:element name="Sensors" type="tns:Sensors" minOccurs="0"></xsd:element>
+            <xsd:element name="Sensors" type="tns:jaxbSensors" minOccurs="0"></xsd:element>
         </xsd:sequence>
     </xsd:complexType>
-    <xsd:complexType name="Sensors">
+    <xsd:complexType name="jaxbSensors">
         <xsd:sequence>
             <xsd:element name="Sensor" type="xsd:string" maxOccurs="unbounded" minOccurs="1"></xsd:element>
         </xsd:sequence>
     </xsd:complexType>
-    <xsd:complexType name="DeviceList">
+    <xsd:complexType name="jaxbDeviceList">
         <xsd:sequence>
-            <xsd:element name="Device" type="tns:Device" maxOccurs="unbounded"></xsd:element>
+            <xsd:element name="jaxbDevice" type="tns:jaxbDevice" maxOccurs="unbounded"></xsd:element>
         </xsd:sequence>
     </xsd:complexType>
-    <xsd:element name="DeviceList" type="tns:DeviceList"></xsd:element>
+    <xsd:element name="jaxbDeviceList" type="tns:jaxbDeviceList"></xsd:element>
 </xsd:schema>

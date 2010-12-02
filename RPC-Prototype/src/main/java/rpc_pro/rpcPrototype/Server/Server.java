@@ -18,8 +18,8 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.Factory;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 
-import rpc_pro.rpcPrototype.Server.Devices.ConfigReader;
-import rpc_pro.rpcPrototype.Server.Devices.DeviceList;
+import rpc_pro.rpcPrototype.Server.JaxbDevices.ConfigReader;
+import rpc_pro.rpcPrototype.Server.JaxbDevices.JaxbDeviceList;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.ByteData;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.FlashData;
 import rpc_pro.rpcPrototype.files.MessageServiceFiles.Identification;
@@ -61,12 +61,14 @@ public class Server {
 	private static HashMap <String,RemoteMessagePacketListener> listenerList = new HashMap<String,RemoteMessagePacketListener>();
 	
 	public static void main (String[] args){
-		
+
 		try {
-			DeviceList list = ConfigReader.readFile();
-			//TODO xsd: newElement in Device umbenennen!
-			System.out.println(list.getDevice().size());
-			System.out.println(list.getDevice().get(0).getKnotenTyp());
+			JaxbDeviceList list = ConfigReader.readFile();
+			
+			
+
+			System.out.println(list.getJaxbDevice().size());
+			System.out.println(list.getJaxbDevice().get(0).getKnotenTyp());
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -294,9 +296,9 @@ public class Server {
 			
 			// identifizieren des Users mit dem Channel
 			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
-			
+
 			// erzeugen eines OperationHandle zur der Operation
-			OperationHandle <Void> handle = test.program(null, request.getTimeout(), new AsyncCallback<Void>(){
+			OperationHandle <Void> handle = test.program(request.getBinaryPacketList().get(0).toByteArray(), request.getTimeout(), new AsyncCallback<Void>(){
 
 				@Override
 				public void onCancel() {

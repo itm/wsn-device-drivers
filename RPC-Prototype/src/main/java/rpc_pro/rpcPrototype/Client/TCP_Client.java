@@ -143,7 +143,33 @@ public class TCP_Client {
 				System.out.println(handle1.getState());
 				break;
 			case 55:
-				handle1.get();
+				//handle1.get();
+				byte[] bytes = {1,2,3,4,5};
+				stub1.program(bytes, 14000, new AsyncCallback<Void>(){
+
+					@Override
+					public void onCancel() {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void onFailure(Throwable throwable) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void onSuccess(Void result) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void onProgressChange(float fraction) {
+						// TODO Auto-generated method stub
+						
+					}});
 				break;
 			case 56:
 				handle4.get();

@@ -339,7 +339,7 @@ public class Stub implements DeviceAsync{
 		
 		// Hier muss noch die Umsetzung aus einem BinaerFile in ein BinaryPacket hin
 		
-		ProgramPacket packet = ProgramPacket.newBuilder().addAllBinaryPacket(null).setTimeout(timeout).setOperationKey(controller.toString()).build();
+		ProgramPacket packet = ProgramPacket.newBuilder().addBinaryPacket(ByteString.copyFrom(bytes)).setTimeout(timeout).setOperationKey(controller.toString()).build();
 		
 		operationService.program(controller, packet, new RpcCallback<VOID>() {
 			@Override
