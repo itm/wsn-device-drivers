@@ -33,7 +33,6 @@ import com.googlecode.protobuf.pro.duplex.RpcClientChannel;
 import com.googlecode.protobuf.pro.duplex.client.DuplexTcpClientBootstrap;
 import com.googlecode.protobuf.pro.duplex.execute.ThreadPoolCallExecutor;
 
-import de.uniluebeck.itm.devicedriver.DeviceBinData;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.MessagePacketListener;
@@ -312,7 +311,7 @@ public class Stub implements DeviceAsync{
 	
 	
 	@Override
-	public OperationHandle<Void> program(DeviceBinData binaryImage,
+	public OperationHandle<Void> program(byte[] bytes,
 			long timeout, final AsyncCallback<Void> callback) {
 		
 		final RpcController controller = channel.newRpcController();

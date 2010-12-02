@@ -1,6 +1,5 @@
 package de.uniluebeck.itm.Impl;
 
-import de.uniluebeck.itm.devicedriver.DeviceBinData;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.MessagePacketListener;
@@ -132,7 +131,7 @@ public class Main implements DeviceAsync{
 	}
 
 	@Override
-	public OperationHandle<Void> program(DeviceBinData binaryImage,
+	public OperationHandle<Void> program(byte[] bytes,
 			long timeout, AsyncCallback<Void> callback) {
 		
 		callback.onSuccess(null);
