@@ -60,6 +60,11 @@
     	<artifactId>commons-logging</artifactId>
     	<version>1.1.1</version>
     </dependency>
+    <dependency>
+    	<groupId>com.googlecode.protobuf.pro</groupId>
+    	<artifactId>protobuf-rpc-pro-duplex</artifactId>
+    	<version>1.1.0</version>
+    </dependency>
   </dependencies>
 
 
