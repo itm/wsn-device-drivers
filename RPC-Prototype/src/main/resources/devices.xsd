@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://xml.netbeans.org/schema/devices"
+    xmlns:tns="http://xml.netbeans.org/schema/devices"
+    elementFormDefault="qualified">
+    <xsd:complexType name="Device">
+        <xsd:sequence>
+            <xsd:element name="KnotenTyp" type="xsd:string"></xsd:element>
+            <xsd:element name="Port" type="xsd:int"></xsd:element>
+            <xsd:element name="TestBed" type="xsd:string"></xsd:element>
+            <xsd:element name="Sensors" type="tns:Sensors" minOccurs="0"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Sensors">
+        <xsd:sequence>
+            <xsd:element name="Sensor" type="xsd:string" maxOccurs="unbounded" minOccurs="1"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="DeviceList">
+        <xsd:sequence>
+            <xsd:element name="newElement" type="tns:Device" maxOccurs="unbounded"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="DeviceList" type="tns:DeviceList"></xsd:element>
+</xsd:schema>
