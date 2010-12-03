@@ -2,9 +2,6 @@ package de.uniluebeck.itm.Datenlogger;
 
 import static com.google.common.base.Predicates.and;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -36,80 +33,13 @@ import org.hibernate.cfg.AnnotationConfiguration;
 import viewer.CreateXML;
 import viewer.StoreToDatabase;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-
 public class Datenlogger {
-	
-	public static class Listener extends Thread{
-        boolean notStop = true;
-        Datenlogger logger;
-        
-        public Listener(Datenlogger datenlogger){
-			logger = datenlogger;
-		}
-        
-        public void run(){
-            while(notStop){
-                try {
-                    Thread.sleep(1000);
-                    BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-                    String input = in.readLine();
-                    if(input.startsWith("-filter")){
-                    	String delims = " ";
-                		String[] tokens = input.split(delims);
-                    	logger.addfilter(tokens[1]);
-                    }else if(input.equals("stoplog")){
-                    	logger.stoplog();
-                    	notStop = false;
-                    }
-                    else if(input.startsWith("-loction")){
-                    	String delims = " ";
-                		String[] tokens = input.split(delims);
-                    	logger.setLocation(tokens[1]);
-                    }
-                    else if(input.startsWith("exit")){
-                    	notStop = false;
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }          
-            }
-        }
-    }
-	
-	private class Klammer_Predicate implements Predicate<CharSequence>, Serializable {
-
-		private static final long serialVersionUID = 775543062421891927L;
-		String filter;
-		
-		public Klammer_Predicate(String filter){
-			this.filter = filter;
-			filter = filter.substring(1, filter.length()-1);
-		}
-
-		public boolean apply(CharSequence erhaltene_Daten) {
-			boolean ergebnis = true;
-			String[] einzelne_filter = filter.split(",");
-			//matche Datentyp
-			if(!einzelne_filter[0].equals(erhaltene_Daten.subSequence(0, 5))){
-				ergebnis = false;
-			}
-			//matche Wert
-			int beginn = Integer.parseInt(einzelne_filter[1]);
-			if(!einzelne_filter[2].equals(erhaltene_Daten.subSequence(beginn, beginn + 5))){
-				ergebnis = false;
-			}
-			return ergebnis;
-		}
-
-	}
-
 	
 	String port;
 	String server;
 	String filters;
+	String[] klammer_filter_array;
+	String[] regex_filter_array;
 	String location;
 	boolean gestartet = false;
 
@@ -117,10 +47,10 @@ public class Datenlogger {
 		
 	}
 	
-	public String[] parseFilter(String filter){
+	public void parseFilter(String filter){
 		String delims = "[&|]";
-		String[] tokens = filter.split(delims);
-		return tokens;
+		klammer_filter_array = filter.split(delims);
+		regex_filter_array = filter.split(delims);
 	}
 	
 	public void setPort(String port) {
@@ -156,19 +86,27 @@ public class Datenlogger {
 		
 		gestartet = true;
 		System.out.println("\nStarte das Loggen des Knotens....");
-		final String erhaltene_Daten = "";
+		String erhaltene_Daten = "";
 		
+		//Filtern
+		boolean ergebnis;
+		
+		//(Datentyp, Beginn, Wert)-Filter
 		String beispiel_filter_1 = "(uint32,5,17)";
-		String beispiel_filter_2 = "(int16,0,3)";
-		
-		boolean ergebnis = and(new Klammer_Predicate(beispiel_filter_1), new Klammer_Predicate(beispiel_filter_2)).apply(erhaltene_Daten);
+		String beispiel_filter_2 = "(int16,0,3)";		
+		ergebnis = and(new Klammer_Predicate(beispiel_filter_1), new Klammer_Predicate(beispiel_filter_2)).apply(erhaltene_Daten);
+
+		//Reg-Ausdruck-Filter
+		Pattern p = Pattern.compile("[+-]?[0-9]+");
+		Matcher m = p.matcher(erhaltene_Daten);
+		ergebnis = m.matches();
 		
 		if(ergebnis){
 			//logge Daten
+			//writeToDatabase();
+			//writeToXmlFile();
 		}
-		
-		//writeToDatabase();
-		//writeToXmlFile();
+
 		try {
             Thread.sleep(1000);
         } catch (InterruptedException ex) {
@@ -188,6 +126,8 @@ public class Datenlogger {
 		System.out.println("Parameter:");
 		System.out.println("Port: " + port);
 		System.out.println("Filter hinzugefuegt");
+		regex_filter_array[regex_filter_array.length] = filter;
+		klammer_filter_array[klammer_filter_array.length] = filter;
 	}
 	
 	private void writeToXmlFile(){
