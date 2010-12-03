@@ -37,9 +37,9 @@ public class Datenlogger {
 	
 	String port;
 	String server;
-	String filters;
+	String klammer_filter;
+	String regex_filter;
 	String[] klammer_filter_array;
-	String[] regex_filter_array;
 	String location;
 	boolean gestartet = false;
 
@@ -47,10 +47,9 @@ public class Datenlogger {
 		
 	}
 	
-	public void parseFilter(String filter){
+	public void parse_klammer_filter(String klammer_filter){
 		String delims = "[&|]";
-		klammer_filter_array = filter.split(delims);
-		regex_filter_array = filter.split(delims);
+		klammer_filter_array = klammer_filter.split(delims);
 	}
 	
 	public void setPort(String port) {
@@ -61,8 +60,20 @@ public class Datenlogger {
 		this.server = server;
 	}
 
-	public void setFilters(String filters) {
-		this.filters = filters;
+	public boolean isGestartet() {
+		return gestartet;
+	}
+
+	public void setGestartet(boolean gestartet) {
+		this.gestartet = gestartet;
+	}
+
+	public void setKlammer_filter(String klammer_filter) {
+		this.klammer_filter = klammer_filter;
+	}
+
+	public void setRegex_filter(String regex_filter) {
+		this.regex_filter = regex_filter;
 	}
 
 	public void setLocation(String location) {
@@ -81,7 +92,8 @@ public class Datenlogger {
 		System.out.println("Parameter:");
 		System.out.println("Port: " + port);
 		System.out.println("Server: " + server);
-		System.out.println("Filter: " + filters);
+		System.out.println("Klammer-Filter: " + klammer_filter);
+		System.out.println("Regex-Filter: " + regex_filter);
 		System.out.println("Location: " + location);
 		
 		gestartet = true;
@@ -89,19 +101,21 @@ public class Datenlogger {
 		String erhaltene_Daten = "";
 		
 		//Filtern
-		boolean ergebnis;
+		boolean matches;
 		
 		//(Datentyp, Beginn, Wert)-Filter
 		String beispiel_filter_1 = "(uint32,5,17)";
-		String beispiel_filter_2 = "(int16,0,3)";		
-		ergebnis = and(new Klammer_Predicate(beispiel_filter_1), new Klammer_Predicate(beispiel_filter_2)).apply(erhaltene_Daten);
-
-		//Reg-Ausdruck-Filter
-		Pattern p = Pattern.compile("[+-]?[0-9]+");
-		Matcher m = p.matcher(erhaltene_Daten);
-		ergebnis = m.matches();
+		String beispiel_filter_2 = "(int16,0,3)";
+		matches = and(new Klammer_Predicate(beispiel_filter_1), new Klammer_Predicate(beispiel_filter_2)).apply(erhaltene_Daten);
 		
-		if(ergebnis){
+			
+		//Reg-Ausdruck-Filter
+		//"[+-]?[0-9]+"
+		Pattern p = Pattern.compile(regex_filter);
+		Matcher m = p.matcher(erhaltene_Daten);
+		matches = m.matches();
+		
+		if(!matches){
 			//logge Daten
 			//writeToDatabase();
 			//writeToXmlFile();
@@ -122,12 +136,20 @@ public class Datenlogger {
 		System.out.println("\nDas Loggen des Knotens wurde beendet.");
 	}
 	
-	public void addfilter(String filter){
+	public void add_klammer_filter(String filter){
 		System.out.println("Parameter:");
 		System.out.println("Port: " + port);
-		System.out.println("Filter hinzugefuegt");
-		regex_filter_array[regex_filter_array.length] = filter;
 		klammer_filter_array[klammer_filter_array.length] = filter;
+		System.out.println("Klammer-Filter: " + klammer_filter);
+		System.out.println("Filter hinzugefuegt");
+	}
+	
+	public void add_regex_filter(String filter){
+		System.out.println("Parameter:");
+		System.out.println("Port: " + port);
+		regex_filter.concat(filter);
+		System.out.println("Regex-Filter: " + regex_filter);
+		System.out.println("Filter hinzugefuegt");
 	}
 	
 	private void writeToXmlFile(){

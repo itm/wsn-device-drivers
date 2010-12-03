@@ -24,8 +24,9 @@ public class Main {
 		options.addOption("port", true, "port");
 		options.addOption("server", true, "server");
 		options.addOption("location", true, "Ausgabeziel der Daten, die geloggt werden");
-		options.addOption("filters", true, "Kombination der Filtertypen: Regular Expression-Filter, (Datentyp,Beginn,Wert)-Filter");
-
+		options.addOption("klammer_filters", true, "Kombination der Filtertypen: (Datentyp,Beginn,Wert)-Filter");
+		options.addOption("regex_filter", true, "Kombination der Filtertypen: Regular Expression-Filter");
+		
 		// for help statement
 		HelpFormatter formatter = new HelpFormatter();
 
@@ -65,13 +66,15 @@ public class Main {
 				
 				String port = cmd.getOptionValue("port");
 				String server = cmd.getOptionValue("server");
-				String filters = cmd.getOptionValue("filters");
+				String klammer_filter = cmd.getOptionValue("klammer_filter");
+				String regex_filter = cmd.getOptionValue("regex_filter");
 				String location = cmd.getOptionValue("location");
 				
 				Datenlogger datenlogger = new Datenlogger();
 				datenlogger.setPort(port);
 				datenlogger.setServer(server);
-				datenlogger.setFilters(filters);
+				datenlogger.setKlammer_filter(klammer_filter);
+				datenlogger.setRegex_filter(regex_filter);
 				datenlogger.setLocation(location);
 				datenlogger.startlog();
 				

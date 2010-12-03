@@ -17,10 +17,14 @@ public class Listener extends Thread{
                 Thread.sleep(1000);
                 BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
                 String input = in.readLine();
-                if(input.startsWith("-filter")){
+                if(input.startsWith("-klammer_filter")){
                 	String delims = " ";
             		String[] tokens = input.split(delims);
-                	logger.addfilter(tokens[1]);
+                	logger.add_klammer_filter(tokens[1]);
+                }else if(input.startsWith("-regex_filter")){
+                	String delims = " ";
+            		String[] tokens = input.split(delims);
+                	logger.add_regex_filter(tokens[1]);
                 }else if(input.equals("stoplog")){
                 	logger.stoplog();
                 	notStop = false;
