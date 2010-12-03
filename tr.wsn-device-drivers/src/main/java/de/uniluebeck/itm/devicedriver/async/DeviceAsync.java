@@ -1,5 +1,6 @@
 package de.uniluebeck.itm.devicedriver.async;
 
+import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.MessagePacketListener;
@@ -14,6 +15,8 @@ import de.uniluebeck.itm.devicedriver.PacketType;
  * @author Malte Legenhausen
  */
 public interface DeviceAsync {
+	
+	OperationHandle<ChipType> getChipType(long timeout, AsyncCallback<ChipType> callback);
 	
 	/**
 	 * Programms a iSense device with the given binaryImage without removing the current MAC address.

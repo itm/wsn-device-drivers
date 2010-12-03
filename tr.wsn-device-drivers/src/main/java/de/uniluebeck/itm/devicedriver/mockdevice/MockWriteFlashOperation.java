@@ -5,10 +5,10 @@ import de.uniluebeck.itm.devicedriver.operation.AbstractWriteFlashOperation;
 
 public class MockWriteFlashOperation extends AbstractWriteFlashOperation {
 
-	private final byte[] flashRom;
+	private final MockConfiguration configuration;
 	
-	public MockWriteFlashOperation(byte[] flashRom) {
-		this.flashRom = flashRom;
+	public MockWriteFlashOperation(MockConfiguration flashRom) {
+		this.configuration = flashRom;
 	}
 	
 	@Override
@@ -17,7 +17,7 @@ public class MockWriteFlashOperation extends AbstractWriteFlashOperation {
 			Thread.sleep(500 * i);
 			monitor.onProgressChange(0.1f * i);
 		}
-		System.arraycopy(data, 0, flashRom, address, length);
+		System.arraycopy(data, 0, configuration.getFlashRom(), address, length);
 		return null;
 	}
 

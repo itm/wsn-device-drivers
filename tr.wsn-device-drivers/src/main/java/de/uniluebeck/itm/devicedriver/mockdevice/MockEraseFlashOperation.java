@@ -7,19 +7,21 @@ import de.uniluebeck.itm.devicedriver.operation.EraseFlashOperation;
 public class MockEraseFlashOperation extends AbstractOperation<Void> implements
 		EraseFlashOperation {
 
-	private byte[] flashRom;
+	private MockConfiguration configuration;
 	
-	public MockEraseFlashOperation(byte[] flashRom) {
-		this.flashRom = flashRom;
+	public MockEraseFlashOperation(MockConfiguration flashRom) {
+		this.configuration = flashRom;
 	}
 	
 	@Override
 	public Void execute(Monitor monitor) throws Exception {
+		byte[] flashRom = configuration.getFlashRom();
 		for (int i = 0; i < flashRom.length; ++i) {
 			flashRom[i] = 0x00;
 			float progress = (i * 1.0f) / flashRom.length;
 			monitor.onProgressChange(progress);
 		}
+		configuration.setFlashRom(flashRom);
 		return null;
 	}
 

@@ -10,9 +10,7 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.Connection;
-import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.ObserverableDevice;
 import de.uniluebeck.itm.devicedriver.PacketType;
@@ -50,13 +48,7 @@ public class MockDevice extends ObserverableDevice {
 	 */
 	private static final Logger logger = LoggerFactory.getLogger(MockDevice.class);
 	
-	private MacAddress macAddress;
-	
-	private ChipType chipType;
-	
-	private byte[] flashRom;
-	
-	private int[] channels = new int[] {11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26};
+	private final MockConfiguration configuration;
 	
 	/**
 	 *
@@ -71,17 +63,21 @@ public class MockDevice extends ObserverableDevice {
 	/**
 	 *
 	 */
-	private TimeUnit aliveTimeUnit = TimeUnit.SECONDS;
+	private TimeUnit aliveTimeUnit = TimeUnit.MILLISECONDS;
 	
 	/**
 	 *
 	 */
 	private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);
 	
-	public MockDevice(int flashSize, ChipType chipType, MacAddress macAddress) {
-		this.flashRom = new byte[flashSize];
-		this.chipType = chipType;
-		this.macAddress = macAddress;
+	public MockDevice() {
+		this(new MockConfiguration());
+	}
+	
+	public MockDevice(MockConfiguration configuration) {
+		this.configuration = configuration;
+		
+		scheduleAliveRunnable();
 	}
 	
 	@Override
@@ -91,46 +87,42 @@ public class MockDevice extends ObserverableDevice {
 
 	@Override
 	public int[] getChannels() {
-		return channels;
-	}
-
-	public void setChannels(int[] channels) {
-		this.channels = channels;
+		return configuration.getChannels();
 	}
 
 	@Override
 	public GetChipTypeOperation createGetChipTypeOperation() {
-		return new MockGetChipTypeOperation(chipType);
+		return new MockGetChipTypeOperation(configuration);
 	}
 
 	@Override
 	public ProgramOperation createProgramOperation() {
-		return new MockProgramOperation(flashRom);
+		return new MockProgramOperation(configuration);
 	}
 
 	@Override
 	public EraseFlashOperation createEraseFlashOperation() {
-		return new MockEraseFlashOperation(flashRom);
+		return new MockEraseFlashOperation(configuration);
 	}
 
 	@Override
 	public WriteFlashOperation createWriteFlashOperation() {
-		return new MockWriteFlashOperation(flashRom);
+		return new MockWriteFlashOperation(configuration);
 	}
 
 	@Override
 	public ReadFlashOperation createReadFlashOperation() {
-		return new MockReadFlashOperation(flashRom);
+		return new MockReadFlashOperation(configuration);
 	}
 
 	@Override
 	public ReadMacAddressOperation createReadMacAddressOperation() {
-		return new MockReadMacAddress(macAddress);
+		return new MockReadMacAddress(configuration);
 	}
 
 	@Override
 	public WriteMacAddressOperation createWriteMacAddressOperation() {
-		return new MockWriteMacAddressOperation(this);
+		return new MockWriteMacAddressOperation(configuration);
 	}
 
 	@Override
@@ -141,10 +133,6 @@ public class MockDevice extends ObserverableDevice {
 	@Override
 	public SendOperation createSendOperation() {
 		return null;
-	}
-	
-	public void setMacAddress(MacAddress macAddress) {
-		this.macAddress = macAddress;
 	}
 	
 	public long getAliveTimeout() {

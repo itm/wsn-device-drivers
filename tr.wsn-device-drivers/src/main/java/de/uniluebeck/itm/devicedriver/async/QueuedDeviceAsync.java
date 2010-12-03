@@ -5,12 +5,14 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
+import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.Device;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.MessagePacketListener;
 import de.uniluebeck.itm.devicedriver.PacketType;
 import de.uniluebeck.itm.devicedriver.operation.EraseFlashOperation;
+import de.uniluebeck.itm.devicedriver.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.devicedriver.operation.ProgramOperation;
 import de.uniluebeck.itm.devicedriver.operation.ReadFlashOperation;
 import de.uniluebeck.itm.devicedriver.operation.ReadMacAddressOperation;
@@ -62,6 +64,13 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	@Override
 	public void addMessagePacketListener(MessagePacketListener listener, int... types) {
 		device.addListener(listener, types);
+	}
+	
+	@Override
+	public OperationHandle<ChipType> getChipType(long timeout, AsyncCallback<ChipType> callback) {
+		logger.debug("Reading Chip Type (Timeout: " + timeout + "ms");
+		GetChipTypeOperation operation = device.createGetChipTypeOperation();
+		return queue.addOperation(operation, timeout, callback);
 	}
 
 	@Override

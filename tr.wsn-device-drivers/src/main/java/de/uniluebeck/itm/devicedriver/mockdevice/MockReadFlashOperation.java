@@ -5,10 +5,10 @@ import de.uniluebeck.itm.devicedriver.operation.AbstractReadFlashOperation;
 
 public class MockReadFlashOperation extends AbstractReadFlashOperation {
 
-	private final byte[] flashRom;
+	private final MockConfiguration configuration;
 	
-	public MockReadFlashOperation(byte[] flashRom) {
-		this.flashRom = flashRom;
+	public MockReadFlashOperation(MockConfiguration configuration) {
+		this.configuration = configuration;
 	}
 	
 	@Override
@@ -18,7 +18,7 @@ public class MockReadFlashOperation extends AbstractReadFlashOperation {
 			monitor.onProgressChange(0.1f * i);
 		}
 		byte[] result = new byte[length];
-		System.arraycopy(flashRom, address, result, 0, length);
+		System.arraycopy(configuration.getFlashRom(), address, result, 0, length);
 		return result;
 	}
 

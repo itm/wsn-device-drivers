@@ -5,10 +5,10 @@ import de.uniluebeck.itm.devicedriver.operation.AbstractProgramOperation;
 
 public class MockProgramOperation extends AbstractProgramOperation {
 
-	private byte[] flashRom;
+	private MockConfiguration configuration;
 	
-	public MockProgramOperation(byte[] flashRom) {
-		this.flashRom = flashRom;
+	public MockProgramOperation(MockConfiguration flashRom) {
+		this.configuration = flashRom;
 	}
 	
 	@Override
@@ -17,7 +17,7 @@ public class MockProgramOperation extends AbstractProgramOperation {
 			Thread.sleep(500 * i);
 			monitor.onProgressChange(0.1f * i);
 		}
-		System.arraycopy(binaryImage, 0, flashRom, 0, binaryImage.length);
+		System.arraycopy(binaryImage, 0, configuration.getFlashRom(), 0, binaryImage.length);
 		return null;
 	}
 
