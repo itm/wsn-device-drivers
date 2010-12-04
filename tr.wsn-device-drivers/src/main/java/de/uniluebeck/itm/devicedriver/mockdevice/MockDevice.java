@@ -38,7 +38,7 @@ public class MockDevice extends ObserverableDevice {
 
 		@Override
 		public void run() {
-			final Long diff = (Calendar.getInstance().getTimeInMillis() - started) / 100;
+			final Long diff = (Calendar.getInstance().getTimeInMillis() - started) / 1000;
 			sendLogMessage("MockDevice alive since " + diff + " seconds (update #" + (++i) + ")");
 		}
 	}
@@ -58,12 +58,12 @@ public class MockDevice extends ObserverableDevice {
 	/**
 	 *
 	 */
-	private long aliveTimeout = 3;
+	private long aliveTimeout = 1;
 
 	/**
 	 *
 	 */
-	private TimeUnit aliveTimeUnit = TimeUnit.MILLISECONDS;
+	private TimeUnit aliveTimeUnit = TimeUnit.SECONDS;
 	
 	/**
 	 *

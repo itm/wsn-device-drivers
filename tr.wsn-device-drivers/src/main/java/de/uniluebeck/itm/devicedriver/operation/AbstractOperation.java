@@ -63,7 +63,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	private boolean canceled;
 	
 	/**
-	 * Method is called when the timeout occured.
+	 * Method is called when a timeout occured.
 	 */
 	protected void onTimeout() {
 		changeState(State.TIMEDOUT);

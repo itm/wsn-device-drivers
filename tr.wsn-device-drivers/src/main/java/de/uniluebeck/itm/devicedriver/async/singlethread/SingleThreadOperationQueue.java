@@ -58,10 +58,6 @@ public class SingleThreadOperationQueue implements OperationQueue {
 					operations.remove(operation);
 					notifyRemoved(operation);
 				}
-				
-				if (newState.equals(State.TIMEDOUT)) {
-					notifyTimeout(operation, operation.getTimeout());
-				}
 			}
 		});
 		logger.debug("Init operation " + operation);
@@ -107,18 +103,6 @@ public class SingleThreadOperationQueue implements OperationQueue {
 	private void notifyStateChanged(Operation<?> operation, State oldState, State newState) {
 		for (OperationQueueListener listener : listeners.toArray(new OperationQueueListener[listeners.size()])) {
 			listener.onStateChanged(operation, oldState, newState);
-		}
-	}
-	
-	/**
-	 * Notify all listeners that a operation has reached his timeout.
-	 * 
-	 * @param operation The operation that timed out.
-	 * @param timeout The timeout limit that was set for this operation.
-	 */
-	private void notifyTimeout(Operation<?> operation, long timeout) {
-		for (OperationQueueListener listener : listeners.toArray(new OperationQueueListener[listeners.size()])) {
-			listener.onTimeout(operation, timeout);
 		}
 	}
 	

@@ -23,12 +23,13 @@ public class MockDeviceExample {
 	public static void main(String[] args) {
 		final OperationQueue queue = new SingleThreadOperationQueue();
 		final Device device = new MockDevice();
+		
 		final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
 		
 		System.out.println("Message packet listener added");
 		deviceAsync.addMessagePacketListener(new MessagePacketAdapter() {
 			public void onMessagePlainTextReceived(MessagePlainText message) {
-				System.out.println("Message: " + message);
+				System.out.println("Message: " + new String(message.getContent()));
 			}
 		}, PacketType.LOG);
 		
