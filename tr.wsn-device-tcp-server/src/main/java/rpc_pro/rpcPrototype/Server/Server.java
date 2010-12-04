@@ -17,6 +17,8 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.Factory;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rpc_pro.rpcPrototype.Server.JaxbDevices.ConfigReader;
 import rpc_pro.rpcPrototype.Server.JaxbDevices.JaxbDeviceList;
@@ -52,7 +54,7 @@ import de.uniluebeck.itm.tr.util.TimedCache;
 
 public class Server {
 
-	//private static Log log = LogFactory.getLog(Server.class);
+	private static Logger log = LoggerFactory.getLogger(Server.class);
 	
 	// werden nach 30 min alle eintraege des Cache geloescht?
 	// wie Timeout fuer einen Eintrag neu starten?

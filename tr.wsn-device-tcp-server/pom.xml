@@ -2,36 +2,30 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+	<parent>
+		<groupId>de.uni-luebeck.itm</groupId>
+		<artifactId>tr.wsn-device</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../</relativePath>
+	</parent>
+
   <groupId>de.uni-luebeck.itm</groupId>
   <artifactId>tr.wsn-device-tcp-server</artifactId>
   <name>TR :: WSN TCP Server</name>
   <version>0.0.1-SNAPSHOT</version>
-  <packaging>jar</packaging>
-
-  <url>http://maven.apache.org</url>
-
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
   
   <dependencies>
     <dependency>
     	<groupId>com.google.protobuf</groupId>
     	<artifactId>protobuf-java</artifactId>
-    	<version>2.3.0</version>
-    	<type>jar</type>
-    	<scope>compile</scope>
     </dependency>
     <dependency>
     	<groupId>org.apache.shiro</groupId>
     	<artifactId>shiro-core</artifactId>
-    	<version>1.0.0-incubating</version>
     </dependency>
     <dependency>
     	<groupId>junit</groupId>
     	<artifactId>junit</artifactId>
-    	<version>4.8.2</version>
-    	<type>jar</type>
     	<scope>test</scope>
     </dependency>
     <dependency>
@@ -43,11 +37,6 @@
     	<groupId>de.uniluebeck.itm</groupId>
     	<artifactId>tr.util</artifactId>
     	<version>0.5.3</version>
-    </dependency>
-    <dependency>
-    	<groupId>log4j</groupId>
-    	<artifactId>log4j</artifactId>
-    	<version>1.2.16</version>
     </dependency>
     <dependency>
     	<groupId>commons-logging</groupId>
@@ -138,5 +127,18 @@
 	<scm>
 		<connection>scm:git:https://itm@github.com/itm/testbed-runtime.git</connection>
 	</scm>
+
+	<build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

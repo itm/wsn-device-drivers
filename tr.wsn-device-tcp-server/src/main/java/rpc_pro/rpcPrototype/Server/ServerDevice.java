@@ -1,7 +1,5 @@
 package rpc_pro.rpcPrototype.Server;
 
-import gnu.io.SerialPort;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
