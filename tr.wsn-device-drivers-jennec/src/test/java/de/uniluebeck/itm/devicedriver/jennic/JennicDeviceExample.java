@@ -6,7 +6,7 @@ import de.uniluebeck.itm.devicedriver.generic.iSenseSerialPortConnection;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection;
 
 
-public class JennicDeviceTest {
+public class JennicDeviceExample {
 
 	
 	
@@ -26,7 +26,6 @@ public class JennicDeviceTest {
 			}
 		});
 		connection.connect("COM18");
-
 	}
 
 }

@@ -7,6 +7,6 @@ public class QueuedDeviceAsyncTest {
 	
 	@Test
 	public void testAll() {
-		System.loadLibrary("rxtxSerial");
+		
 	}
 }
