@@ -24,7 +24,7 @@ public class RunningOperationsMonitor {
 	 * @param operation The operation that has to be observed.
 	 */
 	public <T> void monitorState(Operation<T> operation) {
-		operation.addListener(new OperationAdapter<T>() {
+		operation.addListener(new OperationListener<T>() {
 			@Override
 			public void onStateChanged(Operation<T> operation, State oldState, State newState) {
 				RunningOperationsMonitor.this.onStateChanged(operation, oldState, newState);

@@ -58,74 +58,58 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	private final Timer timer = new Timer(getClass().getName());
 	
 	/**
-	 * The timeout task for this operation.
-	 */
-	private final TimerTask task;
-	
-	/**
 	 * Boolean thats stores if the operatio has to be canceled.
 	 */
 	private boolean canceled;
 	
 	/**
-	 * Constructor.
+	 * Method is called when the timeout occured.
 	 */
-	public AbstractOperation() {
-		task = new TimerTask() {			
-			@Override
-			public void run() {
-				synchronized (state) {
-					final State oldState = state;
-					state = State.TIMEDOUT;
-					logger.debug("Timeout of operation reached");
-					fireTimeout();
-					logger.debug("Operation state changed from " + oldState + " to " + state);
-					fireStateChanged(oldState, state);
-					callback.onFailure(new TimeoutException("Operation timeout " + timeout + "ms reached."));
-				}
-			}
-		};
+	protected void onTimeout() {
+		changeState(State.TIMEDOUT);
+		callback.onFailure(new TimeoutException("Operation timeout " + timeout + "ms reached."));
 	}
 	
 	@Override
 	public void init(final long timeout, final AsyncCallback<T> callback) {
 		this.timeout = timeout;
 		this.callback = callback;
+		
+		final TimerTask task = new TimerTask() {			
+			@Override
+			public void run() {
+				onTimeout();
+			}
+		};
 		timer.schedule(task, timeout);
 	}
 	
 	@Override
 	public T call() {
-		state = State.RUNNING;
-		logger.debug("Operation state changed from " + State.WAITING + " to " + state);
-		fireStateChanged(State.WAITING, state);
+		changeState(State.RUNNING);
 		try {
 			final T result = execute(callback);
 			timer.cancel();
 			
 			// Do nothing after a timeout happens and execute finished.
 			synchronized (state) {
-				if (state == State.TIMEDOUT) {
+				if (state.equals(State.TIMEDOUT)) {
 					logger.warn("Operation finsihed but timeout occured.");
 					return null;
 				}
 			}
 			
 			if (canceled) {
-				state = State.CANCELED;
+				changeState(State.CANCELED);
 				callback.onCancel();
 			} else {
-				state = State.DONE;
+				changeState(State.DONE);
 				callback.onSuccess(result);
 			}
-			logger.debug("Operation state changed from " + State.RUNNING + " to " + state);
-			fireStateChanged(State.RUNNING, state);
 			return result;
 		} catch (Exception e) {
-			state = State.EXCEPTED;
+			changeState(State.EXCEPTED);
 			callback.onFailure(e);
-			logger.debug("Operation state changed from " + State.RUNNING + " to " + state);
-			fireStateChanged(State.RUNNING, state);
 		}
 		return null;
 	}
@@ -145,23 +129,28 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	}
 	
 	/**
+	 * Thread safe state change function.
+	 * 
+	 * @param newState The new State of this operation.
+	 */
+	private void changeState(State newState) {
+		synchronized (state) {
+			final State oldState = state;
+			state = newState;
+			fireStateChanged(oldState, newState);
+		}
+	}
+	
+	/**
 	 * Notify all listeners that the state has changed.
 	 * 
 	 * @param oldState The old state.
 	 * @param newState The new state.
 	 */
 	private void fireStateChanged(State oldState, State newState) {
+		logger.debug("Operation state changed from " + oldState + " to " + newState);
 		for (OperationListener<T> listener : listeners.toArray(new OperationListener[listeners.size()])) {
 			listener.onStateChanged(this, oldState, newState);
-		}
-	}
-	
-	/**
-	 * Notify all listeners that a timeout occures.
-	 */
-	private void fireTimeout() {
-		for (OperationListener<T> listener : listeners.toArray(new OperationListener[listeners.size()])) {
-			listener.onTimeout(this, timeout);
 		}
 	}
 
@@ -178,10 +167,6 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	@Override
 	public void addListener(OperationListener<T> listener) {
 		listeners.add(listener);
-		// Cause timeout is an async event. Timeout is called when a listener is added.
-		if (state == State.TIMEDOUT) {
-			listener.onTimeout(this, timeout);
-		}
 	}
 	
 	@Override

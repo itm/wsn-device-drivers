@@ -16,7 +16,6 @@ import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 import de.uniluebeck.itm.devicedriver.async.OperationQueue;
 import de.uniluebeck.itm.devicedriver.async.OperationQueueListener;
 import de.uniluebeck.itm.devicedriver.operation.Operation;
-import de.uniluebeck.itm.devicedriver.operation.OperationAdapter;
 import de.uniluebeck.itm.devicedriver.operation.OperationListener;
 
 /**
@@ -59,11 +58,10 @@ public class SingleThreadOperationQueue implements OperationQueue {
 					operations.remove(operation);
 					notifyRemoved(operation);
 				}
-			}
-
-			@Override
-			public void onTimeout(Operation<T> operation, long timeout) {
-				notifyTimeout(operation, timeout);
+				
+				if (newState.equals(State.TIMEDOUT)) {
+					notifyTimeout(operation, operation.getTimeout());
+				}
 			}
 		});
 		logger.debug("Init operation " + operation);
@@ -71,10 +69,14 @@ public class SingleThreadOperationQueue implements OperationQueue {
 		
 		logger.debug("Submit " + operation + " to executor queue.");
 		final Future<T> future = executor.submit(operation);
-		operation.addListener(new OperationAdapter<T>() {
+		operation.addListener(new OperationListener<T>() {
 			@Override
-			public void onTimeout(Operation<T> operation, long timeout) {
-				future.cancel(true);
+			public void onStateChanged(Operation<T> operation, State oldState, State newState) {
+				if (newState.equals(State.TIMEDOUT)) {
+					final long timeout = operation.getTimeout();
+					logger.warn("Operation " + operation + " will be canceled cause timeout of " + timeout + "ms was reached");
+					future.cancel(true);
+				}	
 			}
 		});
 		return new FutureOperationHandle<T>(future, operation);
