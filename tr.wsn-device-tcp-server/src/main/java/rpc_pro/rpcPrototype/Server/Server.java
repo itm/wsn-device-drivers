@@ -131,7 +131,7 @@ public class Server {
 	    	
 	    	/* Initialiesieren von Shiro */
 	    	
-	    	Factory<SecurityManager> factory = new IniSecurityManagerFactory("shiro.ini");
+	    	Factory<SecurityManager> factory = new IniSecurityManagerFactory("src/main/resources/shiro.ini");
 	        SecurityManager securityManager = factory.getInstance();
 	        SecurityUtils.setSecurityManager(securityManager);	        
 			
