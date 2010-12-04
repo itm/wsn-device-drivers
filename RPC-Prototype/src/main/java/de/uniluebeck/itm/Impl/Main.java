@@ -1,5 +1,6 @@
 package de.uniluebeck.itm.Impl;
 
+import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.MessagePacketListener;
@@ -142,6 +143,14 @@ public class Main implements DeviceAsync{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return null;
+	}
+
+
+	@Override
+	public OperationHandle<ChipType> getChipType(long timeout,
+			AsyncCallback<ChipType> callback) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

@@ -33,6 +33,7 @@ import com.googlecode.protobuf.pro.duplex.RpcClientChannel;
 import com.googlecode.protobuf.pro.duplex.client.DuplexTcpClientBootstrap;
 import com.googlecode.protobuf.pro.duplex.execute.ThreadPoolCallExecutor;
 
+import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.MessagePacketListener;
@@ -678,6 +679,13 @@ public class Stub implements DeviceAsync{
 				
 				return state;
 			}};
+	}
+
+	@Override
+	public OperationHandle<ChipType> getChipType(long timeout,
+			AsyncCallback<ChipType> callback) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
 	

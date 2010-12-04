@@ -2,12 +2,12 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>rpc-pro.rpcPrototype</groupId>
-  <artifactId>RPC-Prototype</artifactId>
+  <groupId>de.uni-luebeck.itm</groupId>
+  <artifactId>tr.wsn-device-tcp-server</artifactId>
+  <name>TR :: WSN TCP Server</name>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>RPC-Prototype</name>
   <url>http://maven.apache.org</url>
 
   <properties>
@@ -67,19 +67,6 @@
     <dependency>
     	<groupId>de.uni-luebeck.itm</groupId>
     	<artifactId>tr.wsn-device-drivers</artifactId>
-    	<version>0.0.1-SNAPSHOT</version>
-    	<scope>compile</scope>
-    </dependency>
-    <dependency>
-    	<groupId>de.uni-luebeck.itm</groupId>
-    	<artifactId>tr.wsn-device-drivers-jennec</artifactId>
-    	<version>0.0.1-SNAPSHOT</version>
-    	<type>jar</type>
-    	<scope>compile</scope>
-    </dependency>
-    <dependency>
-    	<groupId>de.uni-luebeck.itm</groupId>
-    	<artifactId>tr.wsn-device-drivers-isense</artifactId>
     	<version>0.0.1-SNAPSHOT</version>
     	<type>jar</type>
     	<scope>compile</scope>
