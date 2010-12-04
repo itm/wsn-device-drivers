@@ -59,6 +59,16 @@
 				<artifactId>junit</artifactId>
 				<version>4.8.1</version>
 			</dependency>
+			<dependency>
+				<groupId>com.google.protobuf</groupId>
+				<artifactId>protobuf-java</artifactId>
+				<version>2.3.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.shiro</groupId>
+				<artifactId>shiro-core</artifactId>
+				<version>1.1.0</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -102,5 +112,6 @@
 		<module>tr.wsn-device-drivers-jennec</module>
 		<module>tr.wsn-device-drivers-pacemate</module>
 		<module>tr.wsn-device-drivers-telosb</module>
+		<module>tr.wsn-device-tcp-server</module>
 	</modules>
 </project>
