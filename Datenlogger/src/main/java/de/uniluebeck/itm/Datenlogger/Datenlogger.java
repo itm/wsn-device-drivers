@@ -1,9 +1,11 @@
 package de.uniluebeck.itm.Datenlogger;
 
 import static com.google.common.base.Predicates.and;
+import static com.google.common.base.Predicates.or;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,6 +32,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.AnnotationConfiguration;
 
+import com.google.common.base.Predicate;
+
 import viewer.CreateXML;
 import viewer.StoreToDatabase;
 
@@ -39,7 +43,6 @@ public class Datenlogger {
 	String server;
 	String klammer_filter;
 	String regex_filter;
-	String[] klammer_filter_array;
 	String location;
 	boolean gestartet = false;
 
@@ -47,9 +50,53 @@ public class Datenlogger {
 		
 	}
 	
-	public void parse_klammer_filter(String klammer_filter){
-		String delims = "[&|]";
-		klammer_filter_array = klammer_filter.split(delims);
+	public Predicate<CharSequence> parse_klammer_filter(String klammer_filter){
+		Stack<Predicate<CharSequence>> ausdruecke = new Stack<Predicate<CharSequence>>();
+		Stack<String> operatoren = new Stack<String>();
+		String ausdruck = "";
+		for(int i = 0; i < klammer_filter.length(); i++){
+			String character = Character.toString(klammer_filter.charAt(i));
+			if(character.equals("|")){
+				operatoren.push("or");
+			}else if(character.equals("&")){
+				operatoren.push("and");
+			}else if(character.equals("(")){
+				//do nothing
+			}else if(character.equals(")")){
+				if(!ausdruck.equals("")){
+					System.out.println(ausdruck);
+					Predicate<CharSequence> predicate = new Klammer_Predicate(ausdruck);
+					ausdruecke.push(predicate);
+					ausdruck = "";
+				}else{
+					Predicate<CharSequence> erster_ausdruck = ausdruecke.pop();
+					Predicate<CharSequence> zweiter_ausdruck = ausdruecke.pop();
+					String operator = operatoren.pop();
+					if(operator.equals("or")){
+						Predicate<CharSequence> ergebnis = or(erster_ausdruck, zweiter_ausdruck);
+						ausdruecke.push(ergebnis);
+					}else if(operator.equals("and")){
+						Predicate<CharSequence> ergebnis = and(erster_ausdruck, zweiter_ausdruck);
+						ausdruecke.push(ergebnis);
+					}
+				}
+			}else{
+				ausdruck = ausdruck + character;
+			}			
+		}
+		while(operatoren.size() != 0){
+			Predicate<CharSequence> erster_ausdruck = ausdruecke.pop();
+			Predicate<CharSequence> zweiter_ausdruck = ausdruecke.pop();
+			String operator = operatoren.pop();
+			if(operator.equals("or")){
+				Predicate<CharSequence> ergebnis = or(erster_ausdruck, zweiter_ausdruck);
+				ausdruecke.push(ergebnis);
+			}else if(operator.equals("and")){
+				Predicate<CharSequence> ergebnis = and(erster_ausdruck, zweiter_ausdruck);
+				ausdruecke.push(ergebnis);
+			}
+		}	
+		return ausdruecke.pop();
 	}
 	
 	public void setPort(String port) {
@@ -104,9 +151,7 @@ public class Datenlogger {
 		boolean matches;
 		
 		//(Datentyp, Beginn, Wert)-Filter
-		String beispiel_filter_1 = "(uint32,5,17)";
-		String beispiel_filter_2 = "(int16,0,3)";
-		matches = and(new Klammer_Predicate(beispiel_filter_1), new Klammer_Predicate(beispiel_filter_2)).apply(erhaltene_Daten);
+		matches = parse_klammer_filter(klammer_filter).apply(erhaltene_Daten);
 		
 			
 		//Reg-Ausdruck-Filter
@@ -139,7 +184,7 @@ public class Datenlogger {
 	public void add_klammer_filter(String filter){
 		System.out.println("Parameter:");
 		System.out.println("Port: " + port);
-		klammer_filter_array[klammer_filter_array.length] = filter;
+		klammer_filter = klammer_filter + filter;
 		System.out.println("Klammer-Filter: " + klammer_filter);
 		System.out.println("Filter hinzugefuegt");
 	}
@@ -147,7 +192,7 @@ public class Datenlogger {
 	public void add_regex_filter(String filter){
 		System.out.println("Parameter:");
 		System.out.println("Port: " + port);
-		regex_filter.concat(filter);
+		regex_filter = regex_filter + filter;
 		System.out.println("Regex-Filter: " + regex_filter);
 		System.out.println("Filter hinzugefuegt");
 	}
