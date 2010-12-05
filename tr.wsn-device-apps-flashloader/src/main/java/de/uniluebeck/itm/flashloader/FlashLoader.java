@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.FlashLoader;
+package de.uniluebeck.itm.flashloader;
 
 import de.uniluebeck.itm.devicedriver.Device;
 import de.uniluebeck.itm.devicedriver.MacAddress;
@@ -70,7 +70,7 @@ public class FlashLoader {
 		System.exit(0);
 	}
 	
-	public MacAddress readmac(){
+	public void readmac(){
 		System.out.println("Parameter:");
 		System.out.println("Port: " + port);
 		System.out.println("Server: " + server);

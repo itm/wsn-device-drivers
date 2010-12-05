@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.FlashLoader;
+package de.uniluebeck.itm.flashloader;
 
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import junit.framework.TestCase;

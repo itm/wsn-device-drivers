@@ -1,10 +1,16 @@
-package de.uniluebeck.itm.FlashLoader;
+package de.uniluebeck.itm.flashloader;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+
+import de.uniluebeck.itm.devicedriver.MacAddress;
 
 public class Main {
 	
@@ -58,8 +64,7 @@ public class Main {
 				FlashLoader flashLoader = new FlashLoader();
 				flashLoader.setPort(port);
 				flashLoader.setServer(server);
-				flashLoader.setFile(file);
-				flashLoader.flash();	
+				flashLoader.flash(file);	
 				
 			}else if(args[0].equals("readmac")) {
 				System.out.println("starte FlashLoader...");
@@ -81,7 +86,8 @@ public class Main {
 				FlashLoader flashLoader = new FlashLoader();
 				flashLoader.setPort(port);
 				flashLoader.setServer(server);
-				flashLoader.writemac();	
+				MacAddress macAdresse = new MacAddress(1024);
+				flashLoader.writemac(macAdresse);
 				
 			}else if(args[0].equals("reset")) {
 				System.out.println("starte FlashLoader...");
