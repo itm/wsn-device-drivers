@@ -114,8 +114,8 @@
 		<module>tr.wsn-device-drivers-telosb</module>
 		<module>tr.wsn-device-tcp-server</module>
 		<module>tr.wsn-device-apps-messenger</module>
-		<module>FlashLoader</module>
-		<module>Datenlogger</module>
-		<module>OverlayClient</module>
+		<module>tr.wsn-device-apps-flashloader</module>
+		<module>tr.wsn-device-apps-datenlogger</module>
+		<module>tr.wsn-device-apps-overlayclient</module>
 	</modules>
 </project>
