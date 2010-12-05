@@ -113,7 +113,7 @@
 		<module>tr.wsn-device-drivers-pacemate</module>
 		<module>tr.wsn-device-drivers-telosb</module>
 		<module>tr.wsn-device-tcp-server</module>
-		<module>Messenger</module>
+		<module>tr.wsn-device-apps-messenger</module>
 		<module>FlashLoader</module>
 		<module>Datenlogger</module>
 		<module>OverlayClient</module>
