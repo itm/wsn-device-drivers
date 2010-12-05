@@ -1,4 +1,4 @@
-package rpc_pro.rpcPrototype.files;
+package de.uniluebeck.itm.tcp.files;
 
 import java.util.HashMap;
 
@@ -8,10 +8,10 @@ import com.google.protobuf.RpcController;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.MessagePacketListener;
 import de.uniluebeck.itm.devicedriver.MessagePlainText;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketServiceAnswer;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData;
 
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.PacketServiceAnswer;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.sendData;
 
 // Implementierung der Methoden fuer das ReverseRPC
 public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface{

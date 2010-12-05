@@ -1,4 +1,4 @@
-package rpc_pro.rpcPrototype.Server;
+package de.uniluebeck.itm.tcp.Server;
 
 import java.io.InputStream;
 import java.io.OutputStream;

@@ -6,7 +6,7 @@
 //
 
 
-package rpc_pro.rpcPrototype.Server.JaxbDevices;
+package de.uniluebeck.itm.tcp.Server.JaxbDevices;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

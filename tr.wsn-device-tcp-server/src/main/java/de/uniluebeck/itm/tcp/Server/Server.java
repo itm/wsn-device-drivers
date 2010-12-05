@@ -1,4 +1,4 @@
-package rpc_pro.rpcPrototype.Server;
+package de.uniluebeck.itm.tcp.Server;
 
 
 import java.util.HashMap;
@@ -20,20 +20,6 @@ import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rpc_pro.rpcPrototype.Server.JaxbDevices.ConfigReader;
-import rpc_pro.rpcPrototype.Server.JaxbDevices.JaxbDeviceList;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.ByteData;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.FlashData;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.Identification;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.MacData;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.Operations;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.PacketService;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.PacketTypeData;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.ProgramPacket;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.TestOperations;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.sendData;
 
 import com.google.protobuf.RpcCallback;
 import com.google.protobuf.RpcController;
@@ -50,6 +36,20 @@ import de.uniluebeck.itm.Impl.Main;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
+import de.uniluebeck.itm.tcp.Server.JaxbDevices.ConfigReader;
+import de.uniluebeck.itm.tcp.Server.JaxbDevices.JaxbDeviceList;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.ByteData;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.Identification;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.Operations;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketService;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketTypeData;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.TestOperations;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData;
 import de.uniluebeck.itm.tr.util.TimedCache;
 
 public class Server {

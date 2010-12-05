@@ -6,4 +6,4 @@
 //
 
 @javax.xml.bind.annotation.XmlSchema(namespace = "rpc_pro/rpcPrototype/schema/devices", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
-package rpc_pro.rpcPrototype.Server.JaxbDevices;
+package de.uniluebeck.itm.tcp.Server.JaxbDevices;

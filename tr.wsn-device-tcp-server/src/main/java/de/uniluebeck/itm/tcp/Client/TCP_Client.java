@@ -1,4 +1,4 @@
-package rpc_pro.rpcPrototype.Client;
+package de.uniluebeck.itm.tcp.Client;
 
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;

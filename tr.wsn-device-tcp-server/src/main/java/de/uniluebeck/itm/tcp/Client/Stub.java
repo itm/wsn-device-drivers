@@ -1,4 +1,4 @@
-package rpc_pro.rpcPrototype.Client;
+package de.uniluebeck.itm.tcp.Client;
 
 import java.io.IOException;
 import java.util.concurrent.Executors;
@@ -10,19 +10,6 @@ import java.util.concurrent.Executors;
 
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 
-import rpc_pro.rpcPrototype.files.PacketServiceAnswerImpl;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.FlashData;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.Identification;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.MacData;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.PacketService;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.PacketServiceAnswer;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.PacketTypeData;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.Operations;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.ProgramPacket;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.TestOperations;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.Operations.BlockingInterface;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.RpcCallback;
@@ -42,6 +29,19 @@ import de.uniluebeck.itm.devicedriver.State;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
+import de.uniluebeck.itm.tcp.files.PacketServiceAnswerImpl;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.Identification;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.Operations;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketService;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketServiceAnswer;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketTypeData;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.TestOperations;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.Operations.BlockingInterface;
 
 
 public class Stub implements DeviceAsync{

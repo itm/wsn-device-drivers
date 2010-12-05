@@ -6,7 +6,7 @@
 //
 
 
-package rpc_pro.rpcPrototype.Server.JaxbDevices;
+package de.uniluebeck.itm.tcp.Server.JaxbDevices;
 
 import java.util.ArrayList;
 import java.util.List;

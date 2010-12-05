@@ -1,8 +1,5 @@
-package rpc_pro.rpcPrototype.Server;
+package de.uniluebeck.itm.tcp.Server;
 
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.PacketServiceAnswer;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID;
-import rpc_pro.rpcPrototype.files.MessageServiceFiles.sendData;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.RpcCallback;
@@ -12,6 +9,9 @@ import com.googlecode.protobuf.pro.duplex.RpcClientChannel;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.MessagePacketListener;
 import de.uniluebeck.itm.devicedriver.MessagePlainText;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketServiceAnswer;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData;
 
 public class RemoteMessagePacketListener implements MessagePacketListener {
 
