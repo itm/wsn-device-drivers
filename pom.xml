@@ -69,6 +69,11 @@
 				<artifactId>shiro-core</artifactId>
 				<version>1.1.0</version>
 			</dependency>
+			<dependency>
+				<groupId>org.jboss.netty</groupId>
+				<artifactId>netty</artifactId>
+				<version>3.2.1.Final</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -86,14 +91,22 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
             </plugin>
         </plugins>
-    </build>
+        <pluginManagement>
+        	<plugins>
+        		<plugin>
+        			<groupId>org.apache.maven.plugins</groupId>
+        			<artifactId>maven-compiler-plugin</artifactId>
+        			<version>2.3.2</version>
+        			<configuration>
+                    	<source>1.6</source>
+                    	<target>1.6</target>
+                	</configuration>
+        		</plugin>
+        	</plugins>
+        </pluginManagement>
+	</build>
     
     <!-- To use the report goals in your POM or parent POM -->
     <reporting>
@@ -106,6 +119,16 @@
 		</plugins>
 	</reporting>
 
+	<repositories>
+		<repository>
+			<id>repository.jboss.org</id>
+			<url>http://repository.jboss.org/nexus/content/groups/public/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
 	<modules>
 		<module>tr.wsn-device-drivers</module>
 		<module>tr.wsn-device-drivers-isense</module>
@@ -113,6 +136,7 @@
 		<module>tr.wsn-device-drivers-pacemate</module>
 		<module>tr.wsn-device-drivers-telosb</module>
 		<module>tr.wsn-device-tcp-server</module>
+		<module>tr.wsn-device-tcp-client</module>
 		<module>tr.wsn-device-apps-messenger</module>
 		<module>tr.wsn-device-apps-flashloader</module>
 		<module>tr.wsn-device-apps-datenlogger</module>
