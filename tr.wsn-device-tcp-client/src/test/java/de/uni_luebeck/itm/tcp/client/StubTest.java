@@ -1,10 +1,11 @@
-package de.uniluebeck.itm.tcp.client;
+package de.uni_luebeck.itm.tcp.client;
 
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
+import de.uniluebeck.itm.tcp.client.Stub;
 
-public class TCP_Client {
-	
+public class StubTest {
+
 	public static void main(String[] args) throws Exception {
 
 		/* Gemeinsamer ClientManager */
@@ -178,5 +179,5 @@ public class TCP_Client {
 		}
 
 	}
-
+	
 }

@@ -59,11 +59,11 @@ public class Stub implements DeviceAsync{
 	PacketServiceAnswerImpl packetServiceAnswerImpl = null;
 	
 	// Konstruktor mit ID notwendig
-	Stub (String userName, String passWord, String uri, int port) throws Exception{
+	public Stub (String userName, String passWord, String uri, int port) throws Exception{
 		this(userName,passWord,uri,port,1234);
 	}
 
-	Stub (String userName, String passWord, String uri, int port, int clientPort) throws Exception{
+	public Stub (String userName, String passWord, String uri, int port, int clientPort) throws Exception{
 		
 		// setzen der Server-Infos
 		server = new PeerInfo(uri,port);
