@@ -2,20 +2,21 @@ package de.uniluebeck.itm.FlashLoader;
 
 import de.uniluebeck.itm.devicedriver.Device;
 import de.uniluebeck.itm.devicedriver.MacAddress;
+import de.uniluebeck.itm.devicedriver.MessagePacketAdapter;
+import de.uniluebeck.itm.devicedriver.MessagePlainText;
+import de.uniluebeck.itm.devicedriver.PacketType;
+import de.uniluebeck.itm.devicedriver.async.AsyncAdapter;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
-import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 import de.uniluebeck.itm.devicedriver.async.OperationQueue;
 import de.uniluebeck.itm.devicedriver.async.QueuedDeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.singlethread.SingleThreadOperationQueue;
-import de.uniluebeck.itm.devicedriver.nulldevice.NullDevice;
-
+import de.uniluebeck.itm.devicedriver.mockdevice.MockDevice;
 
 public class FlashLoader {
 	
 	String port;
 	String server;
-	String file;
 	
 	public FlashLoader(){
 		
@@ -28,100 +29,120 @@ public class FlashLoader {
 	public void setServer(String server) {
 		this.server = server;
 	}
-
-	public void setFile(String file) {
-		this.file = file;
-	}
 	
-	public void flash(){
+	public void flash(String file){
 		System.out.println("Parameter:");
 		System.out.println("Port: " + port);
 		System.out.println("Server: " + server);
 		System.out.println("File: " + file);
 		
-		Device device = new NullDevice();
-		OperationQueue queue = new SingleThreadOperationQueue();
-		DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
+		final OperationQueue queue = new SingleThreadOperationQueue();
+		final Device device = new MockDevice();
+		final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
 		
-		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+		System.out.println("Message packet listener added");
+		deviceAsync.addMessagePacketListener(new MessagePacketAdapter() {
+			public void onMessagePlainTextReceived(MessagePlainText message) {
+				System.out.println("Message: " + message);
+			}
+		}, PacketType.LOG);
+		
+		System.out.println("Program the Device");
+		deviceAsync.program(file.getBytes(), 10000, new AsyncAdapter<Void>() {
+
+			@Override
+			public void onProgressChange(float fraction) {
+				final int percent = (int) (fraction * 100.0);
+				System.out.println("Programming the Device: " + percent + "%");
+			}
+
+			@Override
 			public void onSuccess(Void result) {
-				System.out.println("Das Programmieren war erfolgreich.");
+				System.out.println("The Device has been flashed.");
 			}
-			public void onCancel() {
-				System.out.println("Die Operation wurde abgebrochen");
-			}
+
+			@Override
 			public void onFailure(Throwable throwable) {
 				throwable.printStackTrace();
 			}
-			public void onProgressChange(float fraction) {
-				System.out.println("Es tut sich was.");
-			}
-		};
-		OperationHandle<Void> handle = deviceAsync.program(null, 1000, callback);
-		handle.get();
+		});
 		
 		System.exit(0);
 	}
 	
-	public void readmac(){
+	public MacAddress readmac(){
 		System.out.println("Parameter:");
 		System.out.println("Port: " + port);
 		System.out.println("Server: " + server);
 		
-		Device device = new NullDevice();
-		OperationQueue queue = new SingleThreadOperationQueue();
-		DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
+		final OperationQueue queue = new SingleThreadOperationQueue();
+		final Device device = new MockDevice();
+		final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
 		
-		AsyncCallback<MacAddress> callback = new AsyncCallback<MacAddress>() {
+		System.out.println("Message packet listener added");
+		deviceAsync.addMessagePacketListener(new MessagePacketAdapter() {
+			public void onMessagePlainTextReceived(MessagePlainText message) {
+				System.out.println("Message: " + message);
+			}
+		}, PacketType.LOG);
+		
+		System.out.println("Reading mac address...");
+		
+		final AsyncCallback<MacAddress> callback = new AsyncAdapter<MacAddress>() {
+			public void onProgressChange(float fraction) {
+				final int percent = (int) (fraction * 100.0);
+				System.out.println("Reading mac address progress: " + percent + "%");
+			}
+			
 			public void onSuccess(MacAddress result) {
-				System.out.println("Mac-Adresse: " + result);
+				System.out.println("Mac Address: " + result.getMacString());
 			}
-			public void onCancel() {
-				System.out.println("Die Operation wurde abgebrochen");
-			}
+			
 			public void onFailure(Throwable throwable) {
 				throwable.printStackTrace();
 			}
-			public void onProgressChange(float fraction) {
-				System.out.println("Es tut sich was.");
-			}
 		};
-
-		OperationHandle<MacAddress> handle = deviceAsync.readMac(1000, callback);
-		// Macht den Aufruf synchron.
-		MacAddress address = handle.get();
-		System.out.println(address);
+		
+		deviceAsync.readMac(10000, callback);
 		
 		System.exit(0);
 	}
 	
-	public void writemac(){
+	public void writemac(MacAddress macAdresse){
 		System.out.println("Parameter:");
 		System.out.println("Port: " + port);
 		System.out.println("Server: " + server);
 		
-		Device device = new NullDevice();
-		OperationQueue queue = new SingleThreadOperationQueue();
-		DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
+		final OperationQueue queue = new SingleThreadOperationQueue();
+		final Device device = new MockDevice();
+		final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
 		
-		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+		System.out.println("Message packet listener added");
+		deviceAsync.addMessagePacketListener(new MessagePacketAdapter() {
+			public void onMessagePlainTextReceived(MessagePlainText message) {
+				System.out.println("Message: " + message);
+			}
+		}, PacketType.LOG);
+		
+		System.out.println("Setting Mac Address");
+		deviceAsync.writeMac(new MacAddress(1024), 10000, new AsyncAdapter<Void>() {
+
+			@Override
+			public void onProgressChange(float fraction) {
+				final int percent = (int) (fraction * 100.0);
+				System.out.println("Writing mac address progress: " + percent + "%");
+			}
+
+			@Override
 			public void onSuccess(Void result) {
-				System.out.println("Die Mac-Adresse wurde erfolgreich übertragen");
+				System.out.println("Mac Address written");
 			}
-			public void onCancel() {
-				System.out.println("Die Operation wurde abgebrochen");
-			}
+
+			@Override
 			public void onFailure(Throwable throwable) {
 				throwable.printStackTrace();
 			}
-			public void onProgressChange(float fraction) {
-				System.out.println("Es tut sich was.");
-			}
-		};
-
-		OperationHandle<Void> handle = deviceAsync.writeMac(null, 1000, callback);
-		// Macht den Aufruf synchron.
-		handle.get();
+		});
 		
 		System.exit(0);
 	}
@@ -131,28 +152,36 @@ public class FlashLoader {
 		System.out.println("Port: " + port);
 		System.out.println("Server: " + server);
 		
-		Device device = new NullDevice();
-		OperationQueue queue = new SingleThreadOperationQueue();
-		DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
+		final OperationQueue queue = new SingleThreadOperationQueue();
+		final Device device = new MockDevice();
+		final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
 		
-		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+		System.out.println("Message packet listener added");
+		deviceAsync.addMessagePacketListener(new MessagePacketAdapter() {
+			public void onMessagePlainTextReceived(MessagePlainText message) {
+				System.out.println("Message: " + message);
+			}
+		}, PacketType.LOG);
+		
+		System.out.println("Reset");
+		deviceAsync.reset(10000, new AsyncAdapter<Void>() {
+
+			@Override
+			public void onProgressChange(float fraction) {
+				final int percent = (int) (fraction * 100.0);
+				System.out.println("Reset the Device: " + percent + "%");
+			}
+
+			@Override
 			public void onSuccess(Void result) {
-				System.out.println("Das Gerät wurde neu gestartet.");
+				System.out.println("Device has been reseted");
 			}
-			public void onCancel() {
-				System.out.println("Die Operation wurde abgebrochen");
-			}
+
+			@Override
 			public void onFailure(Throwable throwable) {
 				throwable.printStackTrace();
 			}
-			public void onProgressChange(float fraction) {
-				System.out.println("Es tut sich was.");
-			}
-		};
-
-		OperationHandle<Void> handle = deviceAsync.reset(1000, callback);
-		// Macht den Aufruf synchron.
-		handle.get();
+		});
 		
 		System.exit(0);
 	}
