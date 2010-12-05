@@ -21,7 +21,6 @@ import com.googlecode.protobuf.pro.duplex.client.DuplexTcpClientBootstrap;
 import com.googlecode.protobuf.pro.duplex.execute.ThreadPoolCallExecutor;
 
 
-import de.uniluebeck.itm.devicedriver.State;
 import de.uniluebeck.itm.entity.Node;
 //import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 //import de.uniluebeck.itm.devicedriver.async.OperationHandle;
@@ -33,7 +32,7 @@ import de.uniluebeck.itm.metadaten.files.MetaDataService.VOID;
 
 
 
-public class Stub {
+public class Stub  {
 
 	//private static Log log = LogFactory.getLog(Client.class);
 	
@@ -44,7 +43,7 @@ public class Stub {
 	RpcClientChannel channel = null;
 	Operations.Interface operationService = null;
 //	TestOperations.Interface testService = null;
-	State state = null;
+//	State state = null;
 	
 	Stub (String userName, String passWord, String uri, int port) throws Exception{
 		this(userName,passWord,uri,port,1234);

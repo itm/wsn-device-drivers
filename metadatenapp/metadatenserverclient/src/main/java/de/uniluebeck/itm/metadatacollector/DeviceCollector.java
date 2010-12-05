@@ -16,6 +16,7 @@ public class DeviceCollector {
      
   public Node devicecollect(Device device, Node node)
   {
+	  device.createGetChipTypeOperation();
 	  node.setMicrocontroller("");
 	   
 	  

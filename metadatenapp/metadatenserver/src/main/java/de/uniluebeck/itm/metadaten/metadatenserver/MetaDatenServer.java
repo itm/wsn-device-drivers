@@ -14,7 +14,13 @@ import org.apache.shiro.config.IniSecurityManagerFactory;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.Factory;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.AnnotationConfiguration;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
+
+
 
 import com.google.protobuf.RpcCallback;
 import com.google.protobuf.RpcController;
@@ -35,6 +41,7 @@ import de.uniluebeck.itm.metadaten.files.MetaDataService.Operations;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.SearchRequest;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.SearchResponse;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.VOID;
+import de.uniluebeck.itm.persistence.StoreToDatabase;
 import de.uniluebeck.itm.tr.util.TimedCache;
 
 public class MetaDatenServer {
@@ -254,6 +261,23 @@ public class MetaDatenServer {
 			knotenliste.add(node);
 			System.out.println("Knoten mit Micocontroller: " +request.getMicrocontroller() + "wurde dem Verzeichnis zugefügt");
 			done.run(VOID.newBuilder().build());
+			
+			SessionFactory sessionFactory;
+			try {
+	            sessionFactory = new AnnotationConfiguration().
+	                    configure("hibernate.cfg.xml").
+	                    buildSessionFactory();
+	        }
+	        catch (Throwable ex) {
+	            throw new ExceptionInInitializerError(ex);
+	        }
+			StoreToDatabase storeDB = new StoreToDatabase();
+	        
+//	        node.setId("urn:wisebed:node:cti:gw2:n4");
+	        storeDB.storeNode(node);
+	        final Session session = sessionFactory.openSession();
+	        Transaction tr = session.beginTransaction();
+	        tr.commit();
 
 		}
 

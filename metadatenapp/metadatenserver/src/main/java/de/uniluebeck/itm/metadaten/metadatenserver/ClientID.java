@@ -8,7 +8,7 @@ import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 public class ClientID {
 
 	String Message = "init";
-	private static HashMap<String,OperationHandle<Void>> handleList = new HashMap<String,OperationHandle<Void>>();
+//	private static HashMap<String,OperationHandle<Void>> handleList = new HashMap<String,OperationHandle<Void>>();
 	
 	public ClientID(){
 		
@@ -45,13 +45,13 @@ public class ClientID {
 		return Message;
 	}
 
-	// Eintragen des OperationHandle mit dem OperationKey in eine HashMap
-	public void setHandleList(String OperationKey, OperationHandle<Void> handle) {
-		handleList.put(OperationKey, handle);
-	}
-
-	// Rueckgabe des richtigen OperationHandle
-	public OperationHandle<Void> getHandleList(String OperationKey) {
-		return handleList.get(OperationKey);
-	}
+//	// Eintragen des OperationHandle mit dem OperationKey in eine HashMap
+//	public void setHandleList(String OperationKey, OperationHandle<Void> handle) {
+//		handleList.put(OperationKey, handle);
+//	}
+//
+//	// Rueckgabe des richtigen OperationHandle
+//	public OperationHandle<Void> getHandleList(String OperationKey) {
+//		return handleList.get(OperationKey);
+//	}
 }

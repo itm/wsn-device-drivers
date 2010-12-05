@@ -2,17 +2,26 @@ package de.uniluebeck.itm.metadatenservice;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.TimerTask;
 
 import de.uniluebeck.itm.entity.Node;
-import de.uniluebeck.itm.metadatacollector.MetaDatenCollector;
+import de.uniluebeck.itm.metadatacollector.IMetaDataCollector;
+import de.uniluebeck.itm.metadatacollector.MetaDataCollector;
 
-public class MetaDatenService {
+public class MetaDatenService extends TimerTask implements iMetaDatenService{
+	
+	private ClientStub stub = null;
+	private List<MetaDataCollector> collector = new ArrayList<MetaDataCollector> ();
+	
+	MetaDatenService () throws Exception {
+		//TODO Konfig.-Daten aus Configfile auslesen
+		stub=new ClientStub("testUser", "testPassword", "localhost", 8080);
+		
+	}
 	
 	public static void main(String[] args) throws Exception {
 
 		/*Collection von MetaDatenCollectors*/
-		List<MetaDatenCollector> collector = new ArrayList ();
 		
 		/* Gemeinsamer ClientManager */
 		Stub stub1 = new Stub("testUser", "testPassword", "localhost", 8080);
@@ -45,132 +54,98 @@ public class MetaDatenService {
 					}
 					@Override
 					public void onProgressChange(float fraction) {
-					}});
-//				handle1 = stub1.setMessage("Dies ist Nachricht Nr.: "+i+" von Client1",new AsyncCallback<Void>(){
-//					@Override
-//					public void onCancel() {
-//					}
-//					@Override
-//					public void onFailure(Throwable throwable) {
-//						System.out.println(throwable.getMessage());
-//					}
-//					@Override
-//					public void onSuccess(Void result) {
-//						System.out.println("Nachricht uebertragen");
-//					}
-//					@Override
-//					public void onProgressChange(float fraction) {
-//					}});
-//				i++;
-				System.out.println("Tue nichts");
-				break;
-				
-			// 2 druecken
-			case 50:
-//				handle2 = stub1.getMessage(new AsyncCallback<String>(){	
-//					@Override
-//					public void onCancel() {
-//					}
-//					@Override
-//					public void onFailure(Throwable throwable) {
-//						System.out.println(throwable.getMessage());
-//					}
-//					@Override
-//					public void onSuccess(String result) {
-//						System.out.println(result);
-//					}
-//					@Override
-//					public void onProgressChange(float fraction) {
-//					}});
-				System.out.println("Tue nichts");
-				break;
-				
-			case 51:
-//				handle3 = stub2.setMessage("Dies ist Nachricht Nr.: "+j+" von Client2",new AsyncCallback<Void>(){
-//					@Override
-//					public void onCancel() {
-//					}
-//					@Override
-//					public void onFailure(Throwable throwable) {
-//						System.out.println(throwable.getMessage());
-//					}
-//					@Override
-//					public void onSuccess(Void result) {
-//						System.out.println("Nachricht uebertragen");
-//					}
-//					@Override
-//					public void onProgressChange(float fraction) {
-//					}});
-//				j++;
-				System.out.println("Tue nichts");
-				break;	
-
-			case 52:
-//				handle4 = stub2.getMessage(new AsyncCallback<String>(){
-//					@Override
-//					public void onCancel() {
-//					}
-//					@Override
-//					public void onFailure(Throwable throwable) {
-//						System.out.println(throwable.getMessage());
-//					}
-//					@Override
-//					public void onSuccess(String result) {
-//						System.out.println(result);
-//					}
-//					@Override
-//					public void onProgressChange(float fraction) {
-//					}});
-				System.out.println("Tue nichts");
-				break;
-				
-//			case 53:
-//				// konnte ich nicht sinnvoll testen, da ich keine DeviceBinFile erstellen konnte
-//				// vlt ware es sinnvoll hier ein Pfad zu uebergeben, anstatt des DeviceBinFile
-//				// sollte aber theoretisch gehen
-//				handle1 = stub1.program(null, 0L, new AsyncCallback<Void>(){
-//
-//					@Override
-//					public void onCancel() {
-//						// TODO Auto-generated method stub
-//						
-//					}
-//
-//					@Override
-//					public void onFailure(Throwable throwable) {
-//						// TODO Auto-generated method stub
-//						
-//					}
-//
-//					@Override
-//					public void onSuccess(Void result) {
-//						System.out.println("geht");
-//						
-//					}
-//
-//					@Override
-//					public void onProgressChange(float fraction) {
-//						// TODO Auto-generated method stub
-//						
-//					}});
-//				break;
-			//5
-//			case 53:
-//				handle1.cancel();
-//				break;
-//			//6
-//			case 54:
-//				System.out.println(handle1.getState());
-//				break;
-//			case 55:
-//				handle1.get();
-//				break;
-//			case 56:
-//				handle4.get();
-//				break;
+					
+				}});
 			}
 		}
+	}
+	
 
+
+	@Override
+	public void run() {
+		
+		for(int i=0; i<collector.size();i++)
+		{
+			collector.get(i).collect();
+		}
+		
+	}
+
+
+
+	@Override
+	public void addMetaDataCollector(MetaDataCollector mdcollector) {
+		collector.add(mdcollector);
+		
+	}
+
+
+
+	@Override
+	public void removeMetaDataCollector(MetaDataCollector mdcollector) {
+		collector.remove(mdcollector);
+		
+	}
+
+
+
+	@Override
+	public void addNode(Node node, final AsyncCallback<String> callback) {
+		stub.add(node, new AsyncCallback<String>(){
+			@Override
+			public void onCancel() {
+			}
+			@Override
+			public void onFailure(Throwable throwable) {
+				callback.onFailure(throwable);
+			}
+			@Override
+			public void onSuccess(String result) {
+				callback.onSuccess(result);
+				
+			}
+			@Override
+			public void onProgressChange(float fraction) {
+			
+		}});
+		
+	}
+
+
+
+	@Override
+	public void removeNode(Node node, AsyncCallback<String> callback) {
+		// TODO Clientseitige Implementierung
+		
+	}
+
+
+
+	@Override
+	public void refreshNode(Node node, AsyncCallback<String> callback) {
+		// TODO Clientseitige Implementierung
+		
+	}
+
+
+
+	@Override
+	public void updateNode(Node node, AsyncCallback<String> callback) {
+		// TODO Clientseitige Implementierung
+		
+	}
+
+
+
+	public List<MetaDataCollector> getCollector() {
+		return collector;
+	}
+
+
+
+	public void setCollector(List<MetaDataCollector> collector) {
+		this.collector = collector;
 	}
 
 }

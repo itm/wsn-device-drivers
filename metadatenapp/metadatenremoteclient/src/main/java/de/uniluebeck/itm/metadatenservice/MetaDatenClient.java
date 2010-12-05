@@ -178,7 +178,7 @@ public class MetaDatenClient implements MetaDataClient {
 		// erzeugen eines synchronen RPC-Objekts fuer die Operationen
 		BlockingInterface blockOperationService =  Operations.newBlockingStub(channel);
 		try {
-			// sync RPC-Aufruf
+			// async RPC-Aufruf
 			SearchResponse resultresp = blockOperationService.search(controller, request);
 			System.out.println("Größe der Sresponse" + resultresp.getResponseList().size());
 			List <NODE> result = new ArrayList<NODE>();
