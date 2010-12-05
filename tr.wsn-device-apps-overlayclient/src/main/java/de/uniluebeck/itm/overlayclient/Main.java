@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.OverlayClient;
+package de.uniluebeck.itm.overlayclient;
 
 import java.io.BufferedReader;
 import java.io.IOException;

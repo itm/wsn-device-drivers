@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.OverlayClient;
+package de.uniluebeck.itm.overlayclient;
 
 public class OverlayClient {
 
