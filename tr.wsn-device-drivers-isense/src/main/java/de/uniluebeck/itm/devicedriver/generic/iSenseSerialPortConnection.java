@@ -9,19 +9,15 @@ import gnu.io.UnsupportedCommOperationException;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.devicedriver.ConnectionListener;
+import de.uniluebeck.itm.devicedriver.AbstractConnection;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection;
 
-public class iSenseSerialPortConnection implements SerialPortConnection {
+public class iSenseSerialPortConnection extends AbstractConnection implements SerialPortConnection {
 	
 	/**
 	 * Logger for this class.
@@ -34,8 +30,6 @@ public class iSenseSerialPortConnection implements SerialPortConnection {
 
 	private static final int PROGRAM_BAUDRATE = 38400;
 	
-	private final List<ConnectionListener> listeners = new ArrayList<ConnectionListener>();
-	
 	private final int stopbits = SerialPort.STOPBITS_1;
 
 	private final int databits = SerialPort.DATABITS_8;
@@ -43,12 +37,6 @@ public class iSenseSerialPortConnection implements SerialPortConnection {
 	private final int parityBit = SerialPort.PARITY_NONE;
 	
 	private SerialPort serialPort = null;
-	
-	private InputStream inputStream;
-	
-	private OutputStream outStream;
-	
-	private boolean connected = false;
 	
 	@Override
 	public SerialPort getSerialPort() {
@@ -115,10 +103,9 @@ public class iSenseSerialPortConnection implements SerialPortConnection {
 
 		setSerialPortMode(SerialPortMode.NORMAL);
 
-		outStream = new BufferedOutputStream(serialPort.getOutputStream());
-		inputStream = new BufferedInputStream(serialPort.getInputStream());
-		connected = true;
-		notifyConnectionChange(connected);
+		setOutputStream(new BufferedOutputStream(serialPort.getOutputStream()));
+		setInputStream(new BufferedInputStream(serialPort.getInputStream()));
+		setConnected(true);
 	}
 	
 	@Override
@@ -135,38 +122,17 @@ public class iSenseSerialPortConnection implements SerialPortConnection {
 	}
 
 	@Override
-	public boolean isConnected() {
-		return connected;
-	}
-	
-	private void notifyConnectionChange(boolean connected) {
-		for (final ConnectionListener listener : listeners.toArray(new ConnectionListener[listeners.size()])) {
-			listener.onConnectionChange(this, connected);
-		}
-	}
-
-	@Override
-	public void addListener(ConnectionListener listener) {
-		listeners.add(listener);
-	}
-	
-	@Override
-	public void removeListener(ConnectionListener listener) {
-		listeners.remove(listener);
-	}
-
-	@Override
 	public void shutdown(boolean force) {
 		try {
-			if (inputStream != null) {
-				inputStream.close();
+			if (getInputStream() != null) {
+				getInputStream().close();
 			}
 		} catch (IOException e) {
 			log.error("Failed to close in-stream :" + e, e);
 		}
 		try {
-			if (outStream != null) {
-				outStream.close();
+			if (getOutputStream() != null) {
+				getOutputStream().close();
 			}
 		} catch (IOException e) {
 			log.error("Failed to close out-stream :" + e, e);
@@ -174,20 +140,9 @@ public class iSenseSerialPortConnection implements SerialPortConnection {
 		if (serialPort != null) {
 			serialPort.removeEventListener();
 			serialPort.close();
-			connected = false;
-			notifyConnectionChange(connected);
+			setConnected(false);
 			serialPort = null;
 		}
-	}
-
-	@Override
-	public InputStream getInputStream() {
-		return inputStream;
-	}
-
-	@Override
-	public OutputStream getOutputStream() {
-		return outStream;
 	}
 
 	/** 
@@ -195,12 +150,12 @@ public class iSenseSerialPortConnection implements SerialPortConnection {
 	 */
 	@Override
 	public void flush() {
-		long i = 0;
+		long count = 0;
 		log.debug("Flushing serial rx buffer");
 		try {
-			while ((i = inputStream.available()) > 0) {
-				log.debug("Skipping " + i + " characters while flushing on the serial rx");
-				inputStream.skip(i);
+			while ((count = getInputStream().available()) > 0) {
+				log.debug("Skipping " + count + " characters while flushing on the serial rx");
+				getInputStream().skip(count);
 			}
 		} catch (IOException e) {
 			log.error("Error while serial rx flushing buffer: " + e, e);

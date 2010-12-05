@@ -1,19 +1,14 @@
 package de.uniluebeck.itm.devicedriver.mockdevice;
 
-import java.util.Calendar;
-import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.devicedriver.Connection;
+import de.uniluebeck.itm.devicedriver.ConnectionEvent;
+import de.uniluebeck.itm.devicedriver.ConnectionListener;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.ObserverableDevice;
-import de.uniluebeck.itm.devicedriver.PacketType;
+import de.uniluebeck.itm.devicedriver.mockdevice.MockConnection.MockListener;
 import de.uniluebeck.itm.devicedriver.operation.EraseFlashOperation;
 import de.uniluebeck.itm.devicedriver.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.devicedriver.operation.ProgramOperation;
@@ -24,24 +19,7 @@ import de.uniluebeck.itm.devicedriver.operation.SendOperation;
 import de.uniluebeck.itm.devicedriver.operation.WriteFlashOperation;
 import de.uniluebeck.itm.devicedriver.operation.WriteMacAddressOperation;
 
-public class MockDevice extends ObserverableDevice {
-	
-	private class AliveRunnable implements Runnable {
-		
-		private int i = 0;
-
-		private final Long started;
-
-		private AliveRunnable() {
-			started = Calendar.getInstance().getTimeInMillis();
-		}
-
-		@Override
-		public void run() {
-			final Long diff = (Calendar.getInstance().getTimeInMillis() - started) / 1000;
-			sendLogMessage("MockDevice alive since " + diff + " seconds (update #" + (++i) + ")");
-		}
-	}
+public class MockDevice extends ObserverableDevice implements MockListener {
 	
 	/**
 	 * Logger for this class.
@@ -50,39 +28,35 @@ public class MockDevice extends ObserverableDevice {
 	
 	private final MockConfiguration configuration;
 	
-	/**
-	 *
-	 */
-	private Future<?> aliveRunnableFuture;
+	private final MockConnection connection;
 	
-	/**
-	 *
-	 */
-	private long aliveTimeout = 1;
-
-	/**
-	 *
-	 */
-	private TimeUnit aliveTimeUnit = TimeUnit.SECONDS;
-	
-	/**
-	 *
-	 */
-	private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);
-	
-	public MockDevice() {
-		this(new MockConfiguration());
+	public MockDevice(MockConnection connection) {
+		this(new MockConfiguration(), connection);
 	}
 	
-	public MockDevice(MockConfiguration configuration) {
+	public MockDevice(MockConfiguration configuration, MockConnection connection) {
 		this.configuration = configuration;
+		this.connection = connection;
 		
-		scheduleAliveRunnable();
+		connection.addListener(new ConnectionListener() {
+			@Override
+			public void onConnectionChange(ConnectionEvent event) {
+				MockDevice.this.onConnectionChange(event);
+			}
+		});
+	}
+	
+	private void onConnectionChange(ConnectionEvent event) {
+		if (event.isConnected()) {
+			connection.addMockListener(this);
+		} else {
+			connection.removeMockListener(this);
+		}
 	}
 	
 	@Override
 	public Connection getConnection() {
-		return null;
+		return connection;
 	}
 
 	@Override
@@ -127,56 +101,18 @@ public class MockDevice extends ObserverableDevice {
 
 	@Override
 	public ResetOperation createResetOperation() {
-		return new MockResetOperation(this);
+		return new MockResetOperation(connection);
 	}
 
 	@Override
 	public SendOperation createSendOperation() {
 		return null;
 	}
-	
-	public long getAliveTimeout() {
-		return aliveTimeout;
-	}
 
-	public void setAliveTimeout(long aliveTimeout) {
-		this.aliveTimeout = aliveTimeout;
-	}
-
-	public TimeUnit getAliveTimeUnit() {
-		return aliveTimeUnit;
-	}
-
-	public void setAliveTimeUnit(TimeUnit aliveTimeUnit) {
-		this.aliveTimeUnit = aliveTimeUnit;
-	}
-
-	public void scheduleAliveRunnable() {
-		aliveRunnableFuture = executorService.scheduleWithFixedDelay(
-			new AliveRunnable(), 
-			new Random().nextInt((int) aliveTimeout), 
-			aliveTimeout,
-			aliveTimeUnit
-		);
-	}
-
-	public void stopAliveRunnable() {
-		if (aliveRunnableFuture != null && !aliveRunnableFuture.isCancelled()) {
-			aliveRunnableFuture.cancel(true);
-		}
-	}
-
-	public void sendLogMessage(String message) {
-		byte[] msgBytes = message.getBytes();
-		byte[] bytes = new byte[msgBytes.length + 2];
-		bytes[0] = (byte) PacketType.LOG.getValue();
-		bytes[1] = (byte) PacketType.LogType.DEBUG.getValue();
-		System.arraycopy(msgBytes, 0, bytes, 2, msgBytes.length);
-
+	@Override
+	public void onData(byte[] bytes) {
 		MessagePacket messagePacket = MessagePacket.parse(bytes, 0, bytes.length);
 		logger.debug("Emitting message packet: {}", messagePacket);
-
 		notifyMessagePacketListener(messagePacket);
-
 	}
 }

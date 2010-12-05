@@ -48,8 +48,7 @@ public class SingleThreadOperationQueue implements OperationQueue {
 	
 	@Override
 	public synchronized <T> OperationHandle<T> addOperation(Operation<T> operation, long timeout, final AsyncCallback<T> callback) {
-		operations.add(operation);
-		notifyAdded(operation);
+		operation.setAsyncCallback(callback);
 		operation.addListener(new OperationListener<T>() {
 			@Override
 			public void onStateChanged(Operation<T> operation, State oldState, State newState) {
@@ -60,8 +59,6 @@ public class SingleThreadOperationQueue implements OperationQueue {
 				}
 			}
 		});
-		logger.debug("Init operation " + operation);
-		operation.init(timeout, callback);
 		
 		logger.debug("Submit " + operation + " to executor queue.");
 		final Future<T> future = executor.submit(operation);
@@ -75,6 +72,13 @@ public class SingleThreadOperationQueue implements OperationQueue {
 				}	
 			}
 		});
+		logger.debug("Schedule operation timeout of " + timeout + "ms");
+		operation.scheduleTimeout(timeout);
+		
+		logger.debug("Operation added");
+		operations.add(operation);
+		notifyAdded(operation);
+		
 		return new FutureOperationHandle<T>(future, operation);
 	}
 
@@ -91,6 +95,16 @@ public class SingleThreadOperationQueue implements OperationQueue {
 	@Override
 	public void removeListener(OperationQueueListener listener) {
 		listeners.remove(listener);
+	}
+	
+	@Override
+	public List<Operation<?>> shutdown(boolean force) {
+		if (force) {
+			executor.shutdownNow();
+		} else {
+			executor.shutdown();
+		}
+		return operations;
 	}
 	
 	/**

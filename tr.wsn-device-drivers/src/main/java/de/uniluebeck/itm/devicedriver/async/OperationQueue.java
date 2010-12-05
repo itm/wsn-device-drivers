@@ -40,4 +40,12 @@ public interface OperationQueue {
 	 * @param listener The listener that has to be removed.
 	 */
 	void removeListener(OperationQueueListener listener);
+	
+	/**
+	 * Shutdown the queue and return all operations left in the queue.
+	 * 
+	 * @param force Use true to stop immediately else false to wait until all operations has finished.
+	 * @return A list of operations that are not executed. Only returned if force equals true.
+	 */
+	List<Operation<?>> shutdown(boolean force);
 }

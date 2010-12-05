@@ -40,7 +40,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	/**
 	 * The timeout after which the application will be canceled.
 	 */
-	private long timeout;
+	private Long timeout = null;
 	
 	/**
 	 * The callback that is called when the operation has finished, canceled or when an exception occured.
@@ -62,33 +62,39 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	 */
 	private boolean canceled;
 	
-	/**
-	 * Method is called when a timeout occured.
-	 */
-	protected void onTimeout() {
-		changeState(State.TIMEDOUT);
-		callback.onFailure(new TimeoutException("Operation timeout " + timeout + "ms reached."));
-	}
+	private final TimerTask task;
 	
-	@Override
-	public void init(final long timeout, final AsyncCallback<T> callback) {
-		this.timeout = timeout;
-		this.callback = callback;
-		
-		final TimerTask task = new TimerTask() {			
+	public AbstractOperation() {
+		task = new TimerTask() {			
 			@Override
 			public void run() {
 				onTimeout();
 			}
 		};
-		timer.schedule(task, timeout);
+	}
+	
+	/**
+	 * Method is called when a timeout occured.
+	 */
+	protected void onTimeout() {
+		setState(State.TIMEDOUT);
+		callback.onFailure(new TimeoutException("Operation timeout " + timeout + "ms reached."));
+	}
+	
+	@Override
+	public void setAsyncCallback(final AsyncCallback<T> callback) {
+		this.callback = callback;
 	}
 	
 	@Override
 	public T call() {
-		changeState(State.RUNNING);
+		setState(State.RUNNING);
 		try {
-			final T result = execute(callback);
+			T result = null;
+			// Cancel execution if operation was canceled before operation changed to running.
+			if (!canceled) {
+				result = execute(callback);
+			}
 			timer.cancel();
 			
 			// Do nothing after a timeout happens and execute finished.
@@ -100,15 +106,15 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 			}
 			
 			if (canceled) {
-				changeState(State.CANCELED);
+				setState(State.CANCELED);
 				callback.onCancel();
 			} else {
-				changeState(State.DONE);
+				setState(State.DONE);
 				callback.onSuccess(result);
 			}
 			return result;
 		} catch (Exception e) {
-			changeState(State.EXCEPTED);
+			setState(State.EXCEPTED);
 			callback.onFailure(e);
 		}
 		return null;
@@ -133,7 +139,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	 * 
 	 * @param newState The new State of this operation.
 	 */
-	private void changeState(State newState) {
+	private void setState(State newState) {
 		synchronized (state) {
 			final State oldState = state;
 			state = newState;
@@ -160,7 +166,13 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	}
 
 	@Override
-	public long getTimeout() {
+	public void scheduleTimeout(long timeout) {
+		this.timeout = timeout;
+		timer.schedule(task, timeout);
+	}
+	
+	@Override
+	public Long getTimeout() {
 		return timeout;
 	}
 	

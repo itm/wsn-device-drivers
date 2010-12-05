@@ -1,6 +1,6 @@
 package de.uniluebeck.itm.devicedriver.jennic;
 
-import de.uniluebeck.itm.devicedriver.Connection;
+import de.uniluebeck.itm.devicedriver.ConnectionEvent;
 import de.uniluebeck.itm.devicedriver.ConnectionListener;
 import de.uniluebeck.itm.devicedriver.generic.iSenseSerialPortConnection;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection;
@@ -19,8 +19,8 @@ public class JennicDeviceExample {
 		connection.addListener(new ConnectionListener() {
 			
 			@Override
-			public void onConnectionChange(Connection connection, boolean connected) {
-				if (connected) {
+			public void onConnectionChange(ConnectionEvent event) {
+				if (event.isConnected()) {
 					System.out.println("Connection established");
 				}				
 			}

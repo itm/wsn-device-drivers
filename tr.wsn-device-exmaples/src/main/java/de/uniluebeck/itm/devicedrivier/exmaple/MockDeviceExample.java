@@ -13,6 +13,7 @@ import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 import de.uniluebeck.itm.devicedriver.async.OperationQueue;
 import de.uniluebeck.itm.devicedriver.async.QueuedDeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.singlethread.SingleThreadOperationQueue;
+import de.uniluebeck.itm.devicedriver.mockdevice.MockConnection;
 import de.uniluebeck.itm.devicedriver.mockdevice.MockDevice;
 
 public class MockDeviceExample {
@@ -22,7 +23,11 @@ public class MockDeviceExample {
 	 */
 	public static void main(String[] args) {
 		final OperationQueue queue = new SingleThreadOperationQueue();
-		final Device device = new MockDevice();
+		final MockConnection connection = new MockConnection();
+		final Device device = new MockDevice(connection);
+		
+		connection.connect("MockPort");
+		System.out.println("Connected");
 		
 		final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
 		
@@ -88,7 +93,10 @@ public class MockDeviceExample {
 		});
 		
 		System.out.println("Chip Type: " + handle.get());
-		System.out.println("Finsihed");
+		queue.shutdown(true);
+		System.out.println("Queue terminated");
+		connection.shutdown(true);
+		System.out.println("Connection closed");
 	}
 
 }

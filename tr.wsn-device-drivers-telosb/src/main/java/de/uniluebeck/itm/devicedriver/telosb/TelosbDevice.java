@@ -3,7 +3,7 @@ package de.uniluebeck.itm.devicedriver.telosb;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.devicedriver.Connection;
+import de.uniluebeck.itm.devicedriver.ConnectionEvent;
 import de.uniluebeck.itm.devicedriver.Monitor;
 import de.uniluebeck.itm.devicedriver.Programable;
 import de.uniluebeck.itm.devicedriver.exception.NotImplementedException;
@@ -125,10 +125,10 @@ public class TelosbDevice extends AbstractSerialPortDevice implements Programabl
 	}
 	
 	@Override
-	public void onConnectionChange(Connection connection, boolean connected) {
-		super.onConnectionChange(connection, connected);
+	public void onConnectionChange(ConnectionEvent event) {
+		super.onConnectionChange(event);
 		
-		if (connected) {
+		if (event.isConnected()) {
 			bsl = new BSLTelosb(this);
 		}
 	}

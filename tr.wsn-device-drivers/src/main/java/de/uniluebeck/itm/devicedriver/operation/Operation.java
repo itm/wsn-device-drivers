@@ -17,12 +17,11 @@ import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 public interface Operation<T> extends Callable<T> {
 
 	/**
-	 * Initialisation method that is called before the method is commited to the scheduler.
+	 * Set method for the <code>AsyncCallback</code>.
 	 * 
-	 * @param timeout The timeout of the <code>Operation</code>.
 	 * @param callback The callback that is called when the method has finished or raised an exception.
 	 */
-	void init(long timeout, AsyncCallback<T> callback);
+	void setAsyncCallback(AsyncCallback<T> callback);
 	
 	/**
 	 * Method that is called when the operation has to be executed.
@@ -56,7 +55,14 @@ public interface Operation<T> extends Callable<T> {
 	 * 
 	 * @return The timeout of the operation.
 	 */
-	long getTimeout();
+	Long getTimeout();
+	
+	/**
+	 * Start the timer that will change the operation state to <code>State.TIMEDOUT</code>.
+	 * 
+	 * @param timeout The timeout in milliseconds.
+	 */
+	void scheduleTimeout(long timeout);
 	
 	/**
 	 * Adds an <code>OperationListener</code> to the listener list.

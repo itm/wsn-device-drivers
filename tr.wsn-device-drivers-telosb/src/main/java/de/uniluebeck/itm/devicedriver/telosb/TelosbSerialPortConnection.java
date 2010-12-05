@@ -7,19 +7,15 @@ import gnu.io.SerialPort;
 import gnu.io.UnsupportedCommOperationException;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.devicedriver.ConnectionListener;
+import de.uniluebeck.itm.devicedriver.AbstractConnection;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection;
 
-public class TelosbSerialPortConnection implements SerialPortConnection {
+public class TelosbSerialPortConnection extends AbstractConnection implements SerialPortConnection {
 
 	/**
 	 * Logger for this class.
@@ -42,25 +38,7 @@ public class TelosbSerialPortConnection implements SerialPortConnection {
 	private static final int BSL_PARITY_EVEN = SerialPort.PARITY_EVEN;
 	private static final int BSL_PARITY_NONE = SerialPort.PARITY_NONE;
 	
-	private final List<ConnectionListener> listeners = new ArrayList<ConnectionListener>();
-	
 	private SerialPort serialPort;
-	
-	private InputStream inputStream;
-	
-	private OutputStream outputStream;
-	
-	private boolean connected = false;
-	
-	@Override
-	public InputStream getInputStream() {
-		return inputStream;
-	}
-
-	@Override
-	public OutputStream getOutputStream() {
-		return outputStream;
-	}
 
 	@Override
 	public void connect(String uri) {
@@ -129,36 +107,35 @@ public class TelosbSerialPortConnection implements SerialPortConnection {
 		serialPort.setDTR(true);
 
 		try {
-			inputStream = serialPort.getInputStream();
-			outputStream = serialPort.getOutputStream();
+			setInputStream(serialPort.getInputStream());
+			setOutputStream(serialPort.getOutputStream());
 		} catch (IOException e) {
 			log.error("Unable to get I/O streams of port " + uri + ", failed to connect.", e);
 			throw new RuntimeException(e);
 		}
 		
 		serialPort.notifyOnDataAvailable(true);
-		connected = true;
-
-		notifyConnectionChange(connected);
+		setConnected(true);
 		log.debug("Device connected to serial port " + serialPort.getName());
 	}
 
 	@Override
 	public void shutdown(boolean force) {
+		
 		if (log.isDebugEnabled()) {
 			log.debug("Shutting down device");
 		}
 
-		if (inputStream != null) {
+		if (getInputStream() != null) {
 			try {
-				inputStream.close();
+				getInputStream().close();
 			} catch (IOException e) {
 				log.debug("Unable to close input stream: " + e);
 			}
 		}
-		if (outputStream != null) {
+		if (getOutputStream() != null) {
 			try {
-				outputStream.close();
+				getOutputStream().close();
 			} catch (IOException e) {
 				log.debug("Unable to close output stream: " + e);
 			}
@@ -172,23 +149,7 @@ public class TelosbSerialPortConnection implements SerialPortConnection {
 			serialPort.close();
 			serialPort = null;
 		}
-		connected = false;
-		notifyConnectionChange(connected);
-	}
-
-	@Override
-	public boolean isConnected() {
-		return connected;
-	}
-
-	@Override
-	public void addListener(ConnectionListener listener) {
-		listeners.add(listener);
-	}
-
-	@Override
-	public void removeListener(ConnectionListener listener) {
-		listeners.remove(listener);
+		setConnected(false);
 	}
 
 	@Override
@@ -229,22 +190,15 @@ public class TelosbSerialPortConnection implements SerialPortConnection {
 
 	@Override
 	public void flush() {
-		long i = 0;
+		long count = 0;
 		log.debug("Flushing serial rx buffer");
 		try {
-			while ((i = inputStream.available()) > 0) {
-				log.debug("Skipping " + i + " characters while flushing on the serial rx");
-				inputStream.skip(i);
+			while ((count = getInputStream().available()) > 0) {
+				log.debug("Skipping " + count + " characters while flushing on the serial rx");
+				getInputStream().skip(count);
 			}
 		} catch (IOException e) {
 			log.error("Error while serial rx flushing buffer: " + e, e);
 		}
-	}
-
-	private void notifyConnectionChange(boolean connected) {
-		for (final ConnectionListener listener : listeners.toArray(new ConnectionListener[listeners.size()])) {
-			listener.onConnectionChange(this, connected);
-		}
-	}
-	
+	}	
 }

@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.devicedriver.Connection;
+import de.uniluebeck.itm.devicedriver.ConnectionEvent;
 import de.uniluebeck.itm.devicedriver.ConnectionListener;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.ObserverableDevice;
@@ -110,8 +111,8 @@ public abstract class AbstractSerialPortDevice extends ObserverableDevice implem
 	}
 	
 	@Override
-	public void onConnectionChange(Connection connection, boolean connected) {
-		if (connected) {
+	public void onConnectionChange(ConnectionEvent event) {
+		if (event.isConnected()) {
 			try {
 				this.connection.getSerialPort().addEventListener(this);
 			} catch (TooManyListenersException e) {

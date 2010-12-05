@@ -7,20 +7,20 @@ import de.uniluebeck.itm.devicedriver.operation.ResetOperation;
 public class MockResetOperation extends AbstractOperation<Void> implements
 		ResetOperation {
 
-	private MockDevice device;
+	private MockConnection connection;
 	
-	public MockResetOperation(MockDevice device) {
-		this.device = device;
+	public MockResetOperation(MockConnection device) {
+		this.connection = device;
 	}
 	
 	@Override
 	public Void execute(Monitor monitor) throws Exception {
 		Thread.sleep(200);
-		device.stopAliveRunnable();
+		connection.stopAliveRunnable();
 		Thread.sleep(1000);
-		device.sendLogMessage("Booting MockDevice...");
+		connection.sendMessage("Booting MockDevice...");
 		Thread.sleep(100);
-		device.scheduleAliveRunnable();
+		connection.scheduleAliveRunnable();
 		return null;
 	}
 }

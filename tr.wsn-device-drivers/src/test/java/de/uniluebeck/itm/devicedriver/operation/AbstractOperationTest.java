@@ -1,10 +1,6 @@
 package de.uniluebeck.itm.devicedriver.operation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,29 +24,34 @@ public class AbstractOperationTest {
 	
 	@Test
 	public void testCallSuccess() {
-		operation.init(1000, new AsyncAdapter<Object>());
+		operation.setAsyncCallback(new AsyncAdapter<Object>() {
+			@Override
+			public void onFailure(Throwable throwable) {
+				throwable.printStackTrace();
+			}
+		});
 		// Test success
 		try {
 			operation.call();
 		} catch (Exception e) {
 			e.printStackTrace();
-			fail(e.getMessage());
+			Assert.fail(e.getMessage());
 		}
-		assertEquals(operation.getState(), State.DONE);
+		Assert.assertEquals(State.DONE, operation.getState());
 	}
 	
 	@Test
 	public void testCallCancel() {
 		// Test cancel
-		operation.init(1000, new AsyncAdapter<Object>());
+		operation.setAsyncCallback(new AsyncAdapter<Object>());
 		operation.cancel();
 		try {
 			operation.call();
 		} catch (Exception e) {
 			e.printStackTrace();
-			fail(e.getMessage());
+			Assert.fail(e.getMessage());
 		}
-		assertEquals(operation.getState(), State.CANCELED);
+		Assert.assertEquals(operation.getState(), State.CANCELED);
 	}
 	
 	@Test
@@ -62,14 +63,14 @@ public class AbstractOperationTest {
 				throw new Exception("Some exception");
 			}
 		};
-		operation.init(1000, new AsyncAdapter<Void>());
+		operation.setAsyncCallback(new AsyncAdapter<Void>());
 		try {
 			operation.call();
 		} catch (Exception e) {
 			e.printStackTrace();
-			fail(e.getMessage());
+			Assert.fail(e.getMessage());
 		}
-		assertEquals(operation.getState(), State.EXCEPTED);
+		Assert.assertEquals(operation.getState(), State.EXCEPTED);
 		
 	}
 	
@@ -83,34 +84,35 @@ public class AbstractOperationTest {
 				return null;
 			}
 		};
-		operation.init(100, new AsyncAdapter<Void>());
+		operation.setAsyncCallback(new AsyncAdapter<Void>());
+		operation.scheduleTimeout(100L);
 		try {
 			operation.call();
 		} catch(Exception e) {
 			e.printStackTrace();
-			fail(e.getMessage());
+			Assert.fail(e.getMessage());
 		}
-		assertEquals(State.TIMEDOUT, operation.getState());
+		Assert.assertEquals(State.TIMEDOUT, operation.getState());
 	}
 
 	@Test
 	public void testExecuteSubOperation() {
 		try {
-			assertNull(operation.execute(null));
+			Assert.assertNull(operation.execute(null));
 		} catch (Exception e) {
-			fail(e.getMessage());
+			Assert.fail(e.getMessage());
 		}
 	}
 
 	@Test
 	public void testCancel() {
 		operation.cancel();
-		assertTrue(operation.isCanceled());
+		Assert.assertTrue(operation.isCanceled());
 	}
 
 	@Test
 	public void testIsCanceled() {
-		assertTrue(!operation.isCanceled());
+		Assert.assertTrue(!operation.isCanceled());
 	}
 
 	@Test
@@ -118,11 +120,12 @@ public class AbstractOperationTest {
 		Operation<Void> operation = new AbstractOperation<Void>() {
 			@Override
 			public Void execute(Monitor monitor) throws Exception {
-				Thread.sleep(200);
+				Thread.sleep(2000);
 				return null;
 			}
 		};
-		operation.init(100, new AsyncAdapter<Void>());
-		assertEquals(100, operation.getTimeout());
+		operation.setAsyncCallback(new AsyncAdapter<Void>());
+		operation.scheduleTimeout(100L);
+		Assert.assertTrue(operation.getTimeout().equals(100L));
 	}
 }
