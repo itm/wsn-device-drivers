@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.Messenger;
+package de.uniluebeck.itm.messenger;
 
 import junit.framework.TestCase;
 

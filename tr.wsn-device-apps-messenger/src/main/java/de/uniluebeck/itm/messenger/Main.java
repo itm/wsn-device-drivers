@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.Messenger;
+package de.uniluebeck.itm.messenger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
