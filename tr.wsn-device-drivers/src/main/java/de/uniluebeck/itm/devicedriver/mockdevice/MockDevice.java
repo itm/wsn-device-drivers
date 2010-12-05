@@ -19,6 +19,12 @@ import de.uniluebeck.itm.devicedriver.operation.SendOperation;
 import de.uniluebeck.itm.devicedriver.operation.WriteFlashOperation;
 import de.uniluebeck.itm.devicedriver.operation.WriteMacAddressOperation;
 
+
+/**
+ * Mock device that can be used for testing.
+ * 
+ * @author Malte Legenhausen
+ */
 public class MockDevice extends ObserverableDevice implements MockListener {
 	
 	/**
@@ -106,7 +112,7 @@ public class MockDevice extends ObserverableDevice implements MockListener {
 
 	@Override
 	public SendOperation createSendOperation() {
-		return null;
+		return new MockSendOperation(connection);
 	}
 
 	@Override

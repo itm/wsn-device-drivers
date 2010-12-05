@@ -106,4 +106,8 @@ public class MockConnection extends AbstractConnection {
 		System.arraycopy(msgBytes, 0, bytes, 2, msgBytes.length);
 		fireData(bytes);
 	}
+	
+	public void sendData(byte[] bytes) {
+		fireData(bytes);
+	}
 }
