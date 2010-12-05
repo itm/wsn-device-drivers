@@ -1,13 +1,16 @@
 package de.uniluebeck.itm.Messenger;
 
 import de.uniluebeck.itm.devicedriver.Device;
-import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
+import de.uniluebeck.itm.devicedriver.MessagePacket;
+import de.uniluebeck.itm.devicedriver.MessagePacketAdapter;
+import de.uniluebeck.itm.devicedriver.MessagePlainText;
+import de.uniluebeck.itm.devicedriver.PacketType;
+import de.uniluebeck.itm.devicedriver.async.AsyncAdapter;
 import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
-import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 import de.uniluebeck.itm.devicedriver.async.OperationQueue;
 import de.uniluebeck.itm.devicedriver.async.QueuedDeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.singlethread.SingleThreadOperationQueue;
-import de.uniluebeck.itm.devicedriver.nulldevice.NullDevice;
+import de.uniluebeck.itm.devicedriver.mockdevice.MockDevice;
 
 public class Messenger {
 	
@@ -32,27 +35,37 @@ public class Messenger {
 		System.out.println("Server: " + server);
 		System.out.println("Message: " + message);
 		
-		Device device = new NullDevice();
-		OperationQueue queue = new SingleThreadOperationQueue();
-		DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
+		final OperationQueue queue = new SingleThreadOperationQueue();
+		final Device device = new MockDevice();
+		final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
 		
-		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+		System.out.println("Message packet listener added");
+		deviceAsync.addMessagePacketListener(new MessagePacketAdapter() {
+			public void onMessagePlainTextReceived(MessagePlainText message) {
+				System.out.println("Message: " + message);
+			}
+		}, PacketType.LOG);
+		
+		System.out.println("Send Message");
+		MessagePacket packet = new MessagePacket(0, message.getBytes());
+		deviceAsync.send(packet, 10000, new AsyncAdapter<Void>() {
+
+			@Override
+			public void onProgressChange(float fraction) {
+				final int percent = (int) (fraction * 100.0);
+				System.out.println("Sending the message: " + percent + "%");
+			}
+
+			@Override
 			public void onSuccess(Void result) {
-				System.out.println("Die Nachricht wurde verschickt");
+				System.out.println("Message send");
 			}
-			public void onCancel() {
-				System.out.println("Die Operation wurde abgebrochen");
-			}
+
+			@Override
 			public void onFailure(Throwable throwable) {
 				throwable.printStackTrace();
 			}
-			public void onProgressChange(float fraction) {
-				System.out.println("Es tut sich was.");
-			}
-		};
-
-		OperationHandle<Void> handle = deviceAsync.send(null, 1000, callback);
-		handle.get();
+		});
 		
 		System.exit(0);
 	}
