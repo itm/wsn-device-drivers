@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.Datenlogger;
+package de.uniluebeck.itm.datenlogger;
 
 import java.io.BufferedReader;
 import java.io.IOException;

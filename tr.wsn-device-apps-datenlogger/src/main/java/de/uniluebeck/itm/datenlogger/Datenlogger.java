@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.Datenlogger;
+package de.uniluebeck.itm.datenlogger;
 
 import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.or;
