@@ -11,12 +11,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.devicedriver.State;
+import de.uniluebeck.itm.devicedriver.async.AddedEvent;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 import de.uniluebeck.itm.devicedriver.async.OperationQueue;
 import de.uniluebeck.itm.devicedriver.async.OperationQueueListener;
+import de.uniluebeck.itm.devicedriver.async.RemovedEvent;
 import de.uniluebeck.itm.devicedriver.operation.Operation;
 import de.uniluebeck.itm.devicedriver.operation.OperationListener;
+import de.uniluebeck.itm.devicedriver.operation.StateChangedEvent;
 
 /**
  * Class that implements the queue as single thread executor.
@@ -34,7 +37,7 @@ public class SingleThreadOperationQueue implements OperationQueue {
 	/**
 	 * List that contains all listeners.
 	 */
-	private final List<OperationQueueListener> listeners = new ArrayList<OperationQueueListener>();
+	private final List<OperationQueueListener<?>> listeners = new ArrayList<OperationQueueListener<?>>();
 	
 	/**
 	 * Queue for all <code>OperationContainer</code> that are in progress.
@@ -51,11 +54,12 @@ public class SingleThreadOperationQueue implements OperationQueue {
 		operation.setAsyncCallback(callback);
 		operation.addListener(new OperationListener<T>() {
 			@Override
-			public void onStateChanged(Operation<T> operation, State oldState, State newState) {
-				notifyStateChanged(operation, oldState, newState);
-				if (newState.isFinishState()) {
+			public void onStateChanged(StateChangedEvent<T> event) {
+				fireStateChangedEvent(event);
+				if (event.getNewState().isFinishState()) {
+					final Operation<T> operation = event.getOperation();
 					operations.remove(operation);
-					notifyRemoved(operation);
+					fireRemovedEvent(new RemovedEvent<T>(this, operation));
 				}
 			}
 		});
@@ -64,8 +68,10 @@ public class SingleThreadOperationQueue implements OperationQueue {
 		final Future<T> future = executor.submit(operation);
 		operation.addListener(new OperationListener<T>() {
 			@Override
-			public void onStateChanged(Operation<T> operation, State oldState, State newState) {
+			public void onStateChanged(StateChangedEvent<T> event) {
+				final State newState = event.getNewState();
 				if (newState.equals(State.TIMEDOUT)) {
+					final Operation<T> operation = event.getOperation();
 					final long timeout = operation.getTimeout();
 					logger.warn("Operation " + operation + " will be canceled cause timeout of " + timeout + "ms was reached");
 					future.cancel(true);
@@ -77,7 +83,7 @@ public class SingleThreadOperationQueue implements OperationQueue {
 		
 		logger.debug("Operation added");
 		operations.add(operation);
-		notifyAdded(operation);
+		fireAddedEvent(new AddedEvent<T>(this, operation));
 		
 		return new FutureOperationHandle<T>(future, operation);
 	}
@@ -88,12 +94,12 @@ public class SingleThreadOperationQueue implements OperationQueue {
 	}
 
 	@Override
-	public void addListener(OperationQueueListener listener) {
+	public void addListener(OperationQueueListener<?> listener) {
 		listeners.add(listener);
 	}
 
 	@Override
-	public void removeListener(OperationQueueListener listener) {
+	public void removeListener(OperationQueueListener<?> listener) {
 		listeners.remove(listener);
 	}
 	
@@ -114,9 +120,9 @@ public class SingleThreadOperationQueue implements OperationQueue {
 	 * @param oldState The old state of the operation.
 	 * @param newState The new state of the operation.
 	 */
-	private void notifyStateChanged(Operation<?> operation, State oldState, State newState) {
-		for (OperationQueueListener listener : listeners.toArray(new OperationQueueListener[listeners.size()])) {
-			listener.onStateChanged(operation, oldState, newState);
+	private <T> void fireStateChangedEvent(final StateChangedEvent<T> event) {
+		for (final OperationQueueListener<T> listener : listeners.toArray(new OperationQueueListener[listeners.size()])) {
+			listener.onStateChanged(event);
 		}
 	}
 	
@@ -125,9 +131,9 @@ public class SingleThreadOperationQueue implements OperationQueue {
 	 * 
 	 * @param operation The added operation.
 	 */
-	private void notifyAdded(Operation<?> operation) {
-		for (OperationQueueListener listener : listeners.toArray(new OperationQueueListener[listeners.size()])) {
-			listener.onAdded(operation);
+	private <T> void fireAddedEvent(final AddedEvent<T> event) {
+		for (final OperationQueueListener<T> listener : listeners.toArray(new OperationQueueListener[listeners.size()])) {
+			listener.onAdded(event);
 		}
 	}
 	
@@ -136,9 +142,9 @@ public class SingleThreadOperationQueue implements OperationQueue {
 	 * 
 	 * @param operation The removed operation.
 	 */
-	private void notifyRemoved(Operation<?> operation) {
-		for (OperationQueueListener listener : listeners.toArray(new OperationQueueListener[listeners.size()])) {
-			listener.onRemoved(operation);
+	private <T> void fireRemovedEvent(final RemovedEvent<T> event) {
+		for (final OperationQueueListener<T> listener : listeners.toArray(new OperationQueueListener[listeners.size()])) {
+			listener.onRemoved(event);
 		}
 	}
 }

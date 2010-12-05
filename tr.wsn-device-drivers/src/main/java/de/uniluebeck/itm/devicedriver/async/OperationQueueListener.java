@@ -1,35 +1,33 @@
 package de.uniluebeck.itm.devicedriver.async;
 
-import de.uniluebeck.itm.devicedriver.State;
-import de.uniluebeck.itm.devicedriver.operation.Operation;
+import de.uniluebeck.itm.devicedriver.operation.StateChangedEvent;
+
 
 /**
  * Listener for observing <code>OperationQueue</code> changes.
  * 
  * @author Malte Legenhausen
  */
-public interface OperationQueueListener {
+public interface OperationQueueListener<T> {
 	
 	/**
 	 * Method is called when an operation state change occurs.
 	 * 
-	 * @param operation The operation that changed his state.
-	 * @param oldState The <code>State</code> before the state change.
-	 * @param newState The <code>State</code> after the state change.
+	 * @param event Event that describes a state change.
 	 */
-	void onStateChanged(Operation<?> operation, State oldState, State newState);
+	void onStateChanged(StateChangedEvent<T> event);
 	
 	/**
 	 * Method is called when a operation is added to the queue.
 	 * 
-	 * @param operation The operation that is added to the queue.
+	 * @param event The operation that is added to the queue.
 	 */
-	void onAdded(Operation<?> operation);
+	void onAdded(AddedEvent<T> event);
 	
 	/**
 	 * Method is called when a operation is removed from the queue.
 	 * 
-	 * @param operation The operation that is removed from the queue.
+	 * @param event The operation that is removed from the queue.
 	 */
-	void onRemoved(Operation<?> operation);
+	void onRemoved(RemovedEvent<T> event);
 }

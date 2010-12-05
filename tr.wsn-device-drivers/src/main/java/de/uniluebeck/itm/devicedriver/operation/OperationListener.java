@@ -1,6 +1,5 @@
 package de.uniluebeck.itm.devicedriver.operation;
 
-import de.uniluebeck.itm.devicedriver.State;
 
 
 /**
@@ -19,5 +18,5 @@ public interface OperationListener<T> {
 	 * @param oldState The <code>State</code> before the state change.
 	 * @param newState The <code>State</code> after the state change.
 	 */
-	void onStateChanged(Operation<T> operation, State oldState, State newState);
+	void onStateChanged(StateChangedEvent<T> event);
 }

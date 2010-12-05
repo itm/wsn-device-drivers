@@ -155,8 +155,9 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	 */
 	private void fireStateChanged(State oldState, State newState) {
 		logger.debug("Operation state changed from " + oldState + " to " + newState);
+		final StateChangedEvent<T> event = new StateChangedEvent<T>(this, oldState, newState);
 		for (OperationListener<T> listener : listeners.toArray(new OperationListener[listeners.size()])) {
-			listener.onStateChanged(this, oldState, newState);
+			listener.onStateChanged(event);
 		}
 	}
 

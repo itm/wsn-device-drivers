@@ -26,8 +26,8 @@ public class RunningOperationsMonitor {
 	public <T> void monitorState(Operation<T> operation) {
 		operation.addListener(new OperationListener<T>() {
 			@Override
-			public void onStateChanged(Operation<T> operation, State oldState, State newState) {
-				RunningOperationsMonitor.this.onStateChanged(operation, oldState, newState);
+			public void onStateChanged(StateChangedEvent<T> event) {
+				RunningOperationsMonitor.this.onStateChanged(event);
 			}
 		});
 	}
@@ -40,9 +40,10 @@ public class RunningOperationsMonitor {
 	 * @param oldState The state before.
 	 * @param newState The new state.
 	 */
-	private <T> void onStateChanged(Operation<T> operation, State oldState, State newState) {
+	private void onStateChanged(StateChangedEvent<?> event) {
+		final Operation<?> operation = (Operation<?>) event.getSource();
 		synchronized (operations) {
-			if (newState == State.RUNNING) {
+			if (event.getNewState() == State.RUNNING) {
 				operations.add(operation);
 			} else {
 				operations.remove(operation);
