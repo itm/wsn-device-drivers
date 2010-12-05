@@ -24,11 +24,6 @@
   		<plugin>
   			<groupId>org.apache.maven.plugins</groupId>
   			<artifactId>maven-compiler-plugin</artifactId>
-  			<version>2.3.2</version>
-  			<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-			</configuration>
   		</plugin>
   	</plugins>
   </build>
@@ -47,7 +42,6 @@
 	<dependency>
 		<groupId>org.jboss.netty</groupId>
 		<artifactId>netty</artifactId>
-		<version>3.2.1.Final</version>
 	</dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -101,13 +95,6 @@
 				<enabled>true</enabled>
 			</snapshots>
 			<layout>default</layout>
-		</repository>
-		<repository>
-			<id>repository.jboss.org</id>
-			<url>http://repository.jboss.org/nexus/content/groups/public/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
 		</repository>
 	</repositories>
 </project>
