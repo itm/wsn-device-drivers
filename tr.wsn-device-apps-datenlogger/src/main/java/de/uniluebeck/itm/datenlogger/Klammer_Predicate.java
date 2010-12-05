@@ -15,15 +15,18 @@ public class Klammer_Predicate implements Predicate<CharSequence>, Serializable 
 	}
 
 	public boolean apply(CharSequence erhaltene_Daten) {
+		System.out.println("APPLY!!!!!!!!!!!!!!!!!!!!!");
 		boolean ergebnis = true;
 		String[] einzelne_filter = filter.split(",");
 		//matche Datentyp
-		if(!einzelne_filter[0].equals(erhaltene_Daten.subSequence(0, 5))){
+		if(!einzelne_filter[0].equals(erhaltene_Daten.subSequence(0, 6))){
 			ergebnis = false;
 		}
 		//matche Wert
 		int beginn = Integer.parseInt(einzelne_filter[1]);
-		if(!einzelne_filter[2].equals(erhaltene_Daten.subSequence(beginn, beginn + 5))){
+		System.out.println(einzelne_filter[2]);
+		System.out.println(erhaltene_Daten.charAt(beginn + 6));
+		if(einzelne_filter[2].charAt(0) != erhaltene_Daten.charAt(beginn + 6)){
 			ergebnis = false;
 		}
 		return ergebnis;

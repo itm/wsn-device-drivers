@@ -145,25 +145,32 @@ public class Datenlogger {
 		
 		gestartet = true;
 		System.out.println("\nStarte das Loggen des Knotens....");
-		String erhaltene_Daten = "";
+		String erhaltene_Daten = "5";
 		
 		//Filtern
-		boolean matches;
+		boolean matches = false;
 		
 		//(Datentyp, Beginn, Wert)-Filter
-		matches = parse_klammer_filter(klammer_filter).apply(erhaltene_Daten);
-		
+		if(klammer_filter != null){
+			matches = parse_klammer_filter(klammer_filter).apply(erhaltene_Daten);
+		}
 			
 		//Reg-Ausdruck-Filter
 		//"[+-]?[0-9]+"
-		Pattern p = Pattern.compile(regex_filter);
-		Matcher m = p.matcher(erhaltene_Daten);
-		matches = m.matches();
+		if(regex_filter != null){
+			Pattern p = Pattern.compile(regex_filter);
+			Matcher m = p.matcher(erhaltene_Daten);
+			matches = m.matches();
+		}	
 		
 		if(!matches){
 			//logge Daten
+			System.out.println("Daten werden geloggt.");
 			//writeToDatabase();
 			//writeToXmlFile();
+		}
+		else{
+			System.out.println("Daten werden nicht geloggt.");
 		}
 
 		try {

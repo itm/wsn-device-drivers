@@ -24,7 +24,7 @@ public class Main {
 		options.addOption("port", true, "port");
 		options.addOption("server", true, "server");
 		options.addOption("location", true, "Ausgabeziel der Daten, die geloggt werden");
-		options.addOption("klammer_filters", true, "Kombination der Filtertypen: (Datentyp,Beginn,Wert)-Filter");
+		options.addOption("klammer_filter", true, "Kombination der Filtertypen: (Datentyp,Beginn,Wert)-Filter");
 		options.addOption("regex_filter", true, "Kombination der Filtertypen: Regular Expression-Filter");
 		
 		// for help statement
