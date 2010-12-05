@@ -1,4 +1,4 @@
-package de.uni_luebeck.itm.tcp.client;
+package de.uniluebeck.itm.tcp.client;
 
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
