@@ -62,13 +62,18 @@ public class Server {
 	private static TimedCache<RpcClientChannel,Subject> authList = new TimedCache<RpcClientChannel,Subject>();
 	private static HashMap <String,RemoteMessagePacketListener> listenerList = new HashMap<String,RemoteMessagePacketListener>();
 	
-	public static void main (String[] args){
+	private String host;
+	private int port;
+	
+	Server(String host, int port){
+		this.host = host;
+		this.port = port;
+	}
+	
+	public void start (){
 
 		try {
 			JaxbDeviceList list = ConfigReader.readFile();
-			
-			
-
 			System.out.println(list.getJaxbDevice().size());
 			System.out.println(list.getJaxbDevice().get(0).getKnotenTyp());
 		} catch (JAXBException e) {
@@ -79,7 +84,7 @@ public class Server {
 		//BasicConfigurator.configure();
 		
 		// setzen der server-Informationen
-		PeerInfo serverInfo = new PeerInfo("localhost", 8080);
+		PeerInfo serverInfo = new PeerInfo(host, port);
 		
 		// setzen des ThreadPools
 		 RpcServerCallExecutor executor = new ThreadPoolCallExecutor(10, 10);
@@ -98,22 +103,22 @@ public class Server {
 				
 				@Override
 				public void connectionReestablished(RpcClientChannel clientChannel) {
-					System.out.println("connectionReestablished " + clientChannel);
+					log.info("connectionReestablished " + clientChannel);
 				}
 				
 				@Override
 				public void connectionOpened(RpcClientChannel clientChannel) {
-					System.out.println("connectionOpened " + clientChannel);	
+					log.info("connectionOpened " + clientChannel);	
 				}
 				
 				@Override
 				public void connectionLost(RpcClientChannel clientChannel) {
-					System.out.println("connectionLost " + clientChannel);
+					log.info("connectionLost " + clientChannel);
 				}
 				
 				@Override
 				public void connectionChanged(RpcClientChannel clientChannel) {
-					System.out.println("connectionChanged " + clientChannel);
+					log.info("connectionChanged " + clientChannel);
 				}
 			};
 			rpcEventNotifier.setEventListener(listener);
@@ -129,7 +134,7 @@ public class Server {
 	    	bootstrap.bind();
 	    	
 	    	// ein wenig Kommunikation
-	    	System.out.println("Serving " + bootstrap);
+	    	log.info("Serving " + bootstrap);
 	    	
 	    	/* Initialiesieren von Shiro */
 	    	
