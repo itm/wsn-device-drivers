@@ -22,7 +22,7 @@ import de.uniluebeck.itm.devicedriver.operation.Operation;
 import de.uniluebeck.itm.devicedriver.operation.OperationListener;
 
 /**
- * Class that implements the queue as single thread executor.
+ * Class that implements the queue with the single thread executor from the Java Concurrency Framework.
  * Only one <code>Operation</code> is executed at once.
  * 
  * @author Malte Legenhausen
@@ -50,42 +50,75 @@ public class SingleThreadOperationQueue implements OperationQueue {
 	private final ExecutorService executor = Executors.newSingleThreadExecutor();
 	
 	@Override
-	public synchronized <T> OperationHandle<T> addOperation(Operation<T> operation, long timeout, final AsyncCallback<T> callback) {
+	public synchronized <T> OperationHandle<T> addOperation(final Operation<T> operation, final long timeout, final AsyncCallback<T> callback) {
 		operation.setAsyncCallback(callback);
 		operation.setTimeout(timeout);
+		
+		// Add listener for removing operation.
 		operation.addListener(new OperationListener<T>() {
 			@Override
 			public void onStateChanged(StateChangedEvent<T> event) {
 				fireStateChangedEvent(event);
 				if (event.getNewState().isFinishState()) {
-					final Operation<T> operation = event.getOperation();
-					operations.remove(operation);
-					fireRemovedEvent(new RemovedEvent<T>(this, operation));
+					removeOperation(event.getOperation());
 				}
 			}
 		});
 		
+		// Submit the operation to the executor.
 		logger.debug("Submit " + operation + " to executor queue.");
 		final Future<T> future = executor.submit(operation);
+		
+		// Add listener for timeout handling.
 		operation.addListener(new OperationListener<T>() {
 			@Override
 			public void onStateChanged(StateChangedEvent<T> event) {
-				final State newState = event.getNewState();
-				if (newState.equals(State.TIMEDOUT)) {
-					final Operation<T> operation = event.getOperation();
-					final long timeout = operation.getTimeout();
-					logger.warn("Operation " + operation + " will be canceled cause timeout of " + timeout + "ms was reached");
-					future.cancel(true);
-				}	
+				if (event.getNewState().equals(State.TIMEDOUT)) {
+					cancelOperation(event.getOperation(), future);
+				}
 			}
 		});
-		logger.debug("Schedule operation timeout of " + timeout + "ms");
 		
+		addOperation(operation);
+		
+		return new FutureOperationHandle<T>(future, operation);
+	}
+	
+	/**
+	 * Add the operation to the internal operation list.
+	 * 
+	 * @param <T> The return type of the operation.
+	 * @param operation The operation that has to be added to the internal operation list.
+	 */
+	private <T> void addOperation(final Operation<T> operation) {
 		logger.debug("Operation added");
 		operations.add(operation);
 		fireAddedEvent(new AddedEvent<T>(this, operation));
-		
-		return new FutureOperationHandle<T>(future, operation);
+	}
+	
+	/**
+	 * Cancel the operation when the state changed to timeout.
+	 * 
+	 * @param <T> Return type of the operation and the future object.
+	 * @param operation The operation that reached the timeout.
+	 * @param future The future object to force the operation cancel.
+	 */
+	private <T> void cancelOperation(final Operation<T> operation, final Future<T> future) {
+		final long timeout = operation.getTimeout();
+		logger.warn("Operation " + operation + " will be canceled cause timeout of " + timeout + "ms was reached");
+		future.cancel(true);
+	}
+	
+	/**
+	 * Remove the operation from the queue.
+	 * 
+	 * @param <T> Return type of the operation.
+	 * @param operation The operation that has to be removed.
+	 */
+	private <T> void removeOperation(final Operation<T> operation) {
+		logger.debug("Operation removed");
+		operations.remove(operation);
+		fireRemovedEvent(new RemovedEvent<T>(this, operation));
 	}
 
 	@Override
@@ -94,17 +127,17 @@ public class SingleThreadOperationQueue implements OperationQueue {
 	}
 
 	@Override
-	public void addListener(OperationQueueListener<?> listener) {
+	public void addListener(final OperationQueueListener<?> listener) {
 		listeners.add(listener);
 	}
 
 	@Override
-	public void removeListener(OperationQueueListener<?> listener) {
+	public void removeListener(final OperationQueueListener<?> listener) {
 		listeners.remove(listener);
 	}
 	
 	@Override
-	public List<Operation<?>> shutdown(boolean force) {
+	public List<Operation<?>> shutdown(final boolean force) {
 		if (force) {
 			executor.shutdownNow();
 		} else {
