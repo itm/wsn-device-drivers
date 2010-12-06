@@ -15,6 +15,7 @@ import de.uniluebeck.itm.devicedriver.exception.TimeoutException;
 
 /**
  * An abstract operation.
+ * If no other timeout is set the operation will be canceled automatically after the <code>DEFAULT_TIMEOUT</code>.
  * The result of a timed out operation is null also when the operation completed at the same time.
  * 
  * @author Malte Legenhausen
@@ -22,6 +23,11 @@ import de.uniluebeck.itm.devicedriver.exception.TimeoutException;
  * @param <T> The return type of the operation.
  */
 public abstract class AbstractOperation<T> implements Operation<T> {
+	
+	/**
+	 * Default timeout is set to 5 minutes.
+	 */
+	public static final long DEFAULT_TIMEOUT = 30000;
 	
 	/**
 	 * Logger for this class.
@@ -41,7 +47,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	/**
 	 * The timeout after which the application will be canceled.
 	 */
-	private Long timeout = null;
+	private long timeout = DEFAULT_TIMEOUT;
 	
 	/**
 	 * The callback that is called when the operation has finished, canceled or when an exception occured.
@@ -63,8 +69,14 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	 */
 	private boolean canceled;
 	
+	/**
+	 * The task that will be executed when the timeout occurs.
+	 */
 	private final TimerTask task;
 	
+	/**
+	 * Constructor.
+	 */
 	public AbstractOperation() {
 		task = new TimerTask() {			
 			@Override
@@ -90,8 +102,9 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	@Override
 	public T call() {
 		setState(State.RUNNING);
-		callback.onExecute();
+		scheduleTimeout();
 		
+		callback.onExecute();
 		T result = null;
 		try {
 			// Cancel execution if operation was canceled before operation changed to running.
@@ -100,10 +113,11 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 			}
 		} catch (Exception e) {
 			setState(State.EXCEPTED);
+			logger.error("Exception during operation execution", e);
 			callback.onFailure(e);
 			return null;
 		} finally {
-			timer.cancel();
+			cancelTimeout();
 		}
 		
 		// Do nothing after a timeout happens and execute finished.
@@ -124,6 +138,17 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 		return result;
 	}
 	
+	private void scheduleTimeout() {
+		logger.debug("Schduling timeout timer (Timout: + " + timeout + "ms");
+		timer.schedule(task, timeout);
+	}
+	
+	private void cancelTimeout() {
+		logger.debug("Canceling timeout timer");
+		timer.cancel();
+	}
+	
+	
 	/**
 	 * Call this method when another <code>Operation</code> has to be executed while this <code>Operation</code>.
 	 * 
@@ -143,11 +168,11 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	 * 
 	 * @param newState The new State of this operation.
 	 */
-	private void setState(State newState) {
+	private void setState(final State newState) {
 		synchronized (state) {
 			final State oldState = state;
 			state = newState;
-			fireStateChanged(oldState, newState);
+			fireStateChangedEvent(new StateChangedEvent<T>(this, oldState, newState));
 		}
 	}
 	
@@ -157,9 +182,8 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	 * @param oldState The old state.
 	 * @param newState The new state.
 	 */
-	private void fireStateChanged(State oldState, State newState) {
-		logger.debug("Operation state changed from " + oldState + " to " + newState);
-		final StateChangedEvent<T> event = new StateChangedEvent<T>(this, oldState, newState);
+	private void fireStateChangedEvent(final StateChangedEvent<T> event) {
+		logger.debug("Operation state changed from " + event.getOldState() + " to " + event.getNewState());
 		for (OperationListener<T> listener : listeners.toArray(new OperationListener[listeners.size()])) {
 			listener.onStateChanged(event);
 		}
@@ -169,15 +193,24 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	public State getState() {
 		return state;
 	}
+	
+	/**
+	 * Method will throw an <code>IllegalStateException</code> when 
+	 * trying to change the timeout when the operation is in running state.
+	 */
+	@Override
+	public void setTimeout(long timeout) {
+		if (timeout < 0) {
+			throw new IllegalArgumentException("Negativ timeout is not allowed");
+		}
+		if (state.equals(State.RUNNING)) {
+			throw new IllegalStateException("Timeout can not be set when operation is in running state");
+		}
+		this.timeout = timeout;
+	}
 
 	@Override
-	public void scheduleTimeout(long timeout) {
-		this.timeout = timeout;
-		timer.schedule(task, timeout);
-	}
-	
-	@Override
-	public Long getTimeout() {
+	public long getTimeout() {
 		return timeout;
 	}
 	

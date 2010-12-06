@@ -51,18 +51,18 @@ public interface Operation<T> extends Callable<T> {
 	State getState();
 	
 	/**
+	 * Set the execution time limit for this operation.
+	 * 
+	 * @param timeout The limit in milliseconds.
+	 */
+	void setTimeout(long timeout);
+	
+	/**
 	 * Returns the timeout for this operation.
 	 * 
 	 * @return The timeout of the operation.
 	 */
-	Long getTimeout();
-	
-	/**
-	 * Start the timer that will change the operation state to <code>State.TIMEDOUT</code>.
-	 * 
-	 * @param timeout The timeout in milliseconds.
-	 */
-	void scheduleTimeout(long timeout);
+	long getTimeout();
 	
 	/**
 	 * Adds an <code>OperationListener</code> to the listener list.

@@ -20,6 +20,8 @@ public class AbstractOperationTest {
 				return null;
 			}
 		};
+		operation.setTimeout(1000);
+		operation.setAsyncCallback(new AsyncAdapter<Object>());
 	}
 	
 	@Test
@@ -63,6 +65,7 @@ public class AbstractOperationTest {
 				throw new Exception("Some exception");
 			}
 		};
+		operation.setTimeout(1000);
 		operation.setAsyncCallback(new AsyncAdapter<Void>());
 		try {
 			operation.call();
@@ -85,7 +88,7 @@ public class AbstractOperationTest {
 			}
 		};
 		operation.setAsyncCallback(new AsyncAdapter<Void>());
-		operation.scheduleTimeout(100L);
+		operation.setTimeout(100);
 		try {
 			operation.call();
 		} catch(Exception e) {
@@ -120,12 +123,10 @@ public class AbstractOperationTest {
 		Operation<Void> operation = new AbstractOperation<Void>() {
 			@Override
 			public Void execute(Monitor monitor) throws Exception {
-				Thread.sleep(2000);
 				return null;
 			}
 		};
-		operation.setAsyncCallback(new AsyncAdapter<Void>());
-		operation.scheduleTimeout(100L);
-		Assert.assertTrue(operation.getTimeout().equals(100L));
+		operation.setTimeout(100);
+		Assert.assertEquals(100, operation.getTimeout());
 	}
 }

@@ -52,6 +52,7 @@ public class SingleThreadOperationQueue implements OperationQueue {
 	@Override
 	public synchronized <T> OperationHandle<T> addOperation(Operation<T> operation, long timeout, final AsyncCallback<T> callback) {
 		operation.setAsyncCallback(callback);
+		operation.setTimeout(timeout);
 		operation.addListener(new OperationListener<T>() {
 			@Override
 			public void onStateChanged(StateChangedEvent<T> event) {
@@ -79,7 +80,6 @@ public class SingleThreadOperationQueue implements OperationQueue {
 			}
 		});
 		logger.debug("Schedule operation timeout of " + timeout + "ms");
-		operation.scheduleTimeout(timeout);
 		
 		logger.debug("Operation added");
 		operations.add(operation);
