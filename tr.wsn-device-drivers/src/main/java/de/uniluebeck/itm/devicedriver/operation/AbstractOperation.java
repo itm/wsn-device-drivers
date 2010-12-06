@@ -131,6 +131,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 		if (canceled) {
 			setState(State.CANCELED);
 			callback.onCancel();
+			result = null;
 		} else {
 			setState(State.DONE);
 			callback.onSuccess(result);
