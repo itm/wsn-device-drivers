@@ -1,6 +1,8 @@
 package de.uniluebeck.itm.devicedriver.async;
 
-import de.uniluebeck.itm.devicedriver.operation.StateChangedEvent;
+import de.uniluebeck.itm.devicedriver.event.AddedEvent;
+import de.uniluebeck.itm.devicedriver.event.RemovedEvent;
+import de.uniluebeck.itm.devicedriver.event.StateChangedEvent;
 
 
 /**

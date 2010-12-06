@@ -4,6 +4,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import de.uniluebeck.itm.devicedriver.State;
+import de.uniluebeck.itm.devicedriver.event.StateChangedEvent;
 
 /**
  * Monitor for tracking all operations that are in <code>State.RUNNING</code>.

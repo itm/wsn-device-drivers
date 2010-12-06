@@ -11,15 +11,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.devicedriver.State;
-import de.uniluebeck.itm.devicedriver.async.AddedEvent;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 import de.uniluebeck.itm.devicedriver.async.OperationQueue;
 import de.uniluebeck.itm.devicedriver.async.OperationQueueListener;
-import de.uniluebeck.itm.devicedriver.async.RemovedEvent;
+import de.uniluebeck.itm.devicedriver.event.AddedEvent;
+import de.uniluebeck.itm.devicedriver.event.RemovedEvent;
+import de.uniluebeck.itm.devicedriver.event.StateChangedEvent;
 import de.uniluebeck.itm.devicedriver.operation.Operation;
 import de.uniluebeck.itm.devicedriver.operation.OperationListener;
-import de.uniluebeck.itm.devicedriver.operation.StateChangedEvent;
 
 /**
  * Class that implements the queue as single thread executor.

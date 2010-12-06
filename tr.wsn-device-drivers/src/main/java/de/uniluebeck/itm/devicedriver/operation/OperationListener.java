@@ -1,5 +1,7 @@
 package de.uniluebeck.itm.devicedriver.operation;
 
+import de.uniluebeck.itm.devicedriver.event.StateChangedEvent;
+
 
 
 /**

@@ -1,6 +1,7 @@
-package de.uniluebeck.itm.devicedriver.operation;
+package de.uniluebeck.itm.devicedriver.event;
 
 import de.uniluebeck.itm.devicedriver.State;
+import de.uniluebeck.itm.devicedriver.operation.Operation;
 
 public class StateChangedEvent<T> extends OperationEvent<T> {
 

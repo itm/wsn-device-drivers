@@ -1,7 +1,6 @@
-package de.uniluebeck.itm.devicedriver.async;
+package de.uniluebeck.itm.devicedriver.event;
 
 import de.uniluebeck.itm.devicedriver.operation.Operation;
-import de.uniluebeck.itm.devicedriver.operation.OperationEvent;
 
 public class RemovedEvent<T> extends OperationEvent<T> {
 

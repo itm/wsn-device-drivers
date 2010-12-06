@@ -1,6 +1,8 @@
-package de.uniluebeck.itm.devicedriver.operation;
+package de.uniluebeck.itm.devicedriver.event;
 
 import java.util.EventObject;
+
+import de.uniluebeck.itm.devicedriver.operation.Operation;
 
 public class OperationEvent<T> extends EventObject {
 

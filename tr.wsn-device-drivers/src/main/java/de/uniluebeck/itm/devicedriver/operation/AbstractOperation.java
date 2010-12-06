@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.devicedriver.State;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
+import de.uniluebeck.itm.devicedriver.event.StateChangedEvent;
 import de.uniluebeck.itm.devicedriver.exception.TimeoutException;
 
 /**
