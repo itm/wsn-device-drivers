@@ -325,6 +325,12 @@ public class Server {
 				@Override
 				public void onSuccess(Void result) {
 					System.out.println("jup es geht im TCP-Server");
+				}
+
+				@Override
+				public void onExecute() {
+					// TODO Auto-generated method stub
+					
 				}});
 			
 			// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
@@ -413,6 +419,12 @@ public class Server {
 				@Override
 				public void onSuccess(Void result) {
 					System.out.println("jup es geht im TCP-Server");
+				}
+
+				@Override
+				public void onExecute() {
+					// TODO Auto-generated method stub
+					
 				}});
 			
 			// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
@@ -467,6 +479,12 @@ public class Server {
 				@Override
 				public void onSuccess(Void result) {
 					System.out.println("jup es geht im TCP-Server");
+				}
+
+				@Override
+				public void onExecute() {
+					// TODO Auto-generated method stub
+					
 				}});
 			
 			// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
