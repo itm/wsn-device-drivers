@@ -32,7 +32,7 @@ public class SingleThreadOperationQueueTest {
 				return true;
 			}
 		};
-		AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
+		AsyncCallback<Boolean> callback = new AsyncAdapter<Boolean>() {
 			@Override
 			public void onSuccess(Boolean result) {
 				System.out.println("Success");

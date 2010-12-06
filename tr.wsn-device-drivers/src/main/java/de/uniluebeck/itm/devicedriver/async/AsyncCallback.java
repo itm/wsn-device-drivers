@@ -12,6 +12,11 @@ import de.uniluebeck.itm.devicedriver.Monitor;
 public interface AsyncCallback<T> extends Monitor {
 	
 	/**
+	 * Method is called when the operation will now be executed.
+	 */
+	void onExecute();
+	
+	/**
 	 * Method is called on successfully method execution.
 	 * 
 	 * @param result The result of the operation.

@@ -90,35 +90,38 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	@Override
 	public T call() {
 		setState(State.RUNNING);
+		callback.onExecute();
+		
+		T result = null;
 		try {
-			T result = null;
 			// Cancel execution if operation was canceled before operation changed to running.
 			if (!canceled) {
 				result = execute(callback);
 			}
-			timer.cancel();
-			
-			// Do nothing after a timeout happens and execute finished.
-			synchronized (state) {
-				if (state.equals(State.TIMEDOUT)) {
-					logger.warn("Operation finsihed but timeout occured.");
-					return null;
-				}
-			}
-			
-			if (canceled) {
-				setState(State.CANCELED);
-				callback.onCancel();
-			} else {
-				setState(State.DONE);
-				callback.onSuccess(result);
-			}
-			return result;
 		} catch (Exception e) {
 			setState(State.EXCEPTED);
 			callback.onFailure(e);
+			return null;
+		} finally {
+			timer.cancel();
 		}
-		return null;
+		
+		// Do nothing after a timeout happens and execute finished.
+		synchronized (state) {
+			if (state.equals(State.TIMEDOUT)) {
+				logger.warn("Operation finsihed but timeout occured.");
+				return null;
+			}
+		}	
+		
+		if (canceled) {
+			setState(State.CANCELED);
+			callback.onCancel();
+		} else {
+			setState(State.DONE);
+			callback.onSuccess(result);
+		}
+		return result;
 	}
 	
 	/**

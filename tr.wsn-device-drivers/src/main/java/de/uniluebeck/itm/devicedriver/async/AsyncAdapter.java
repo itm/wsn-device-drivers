@@ -11,6 +11,11 @@ package de.uniluebeck.itm.devicedriver.async;
 public class AsyncAdapter<T> implements AsyncCallback<T> {
 
 	@Override
+	public void onExecute() {
+		
+	}
+	
+	@Override
 	public void onProgressChange(float fraction) {
 		
 	}
