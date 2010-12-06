@@ -12,8 +12,7 @@
   <artifactId>tr.wsn-device-tcp-client</artifactId>
   <version>0.0.1-SNAPSHOT</version>
 
-  <name>tr.wsn-device-tcp-client</name>
-  <url>http://maven.apache.org</url>
+  <name>TR :: WSN TCP Client</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -58,8 +57,6 @@
     <dependency>
     	<groupId>de.uni-luebeck.itm</groupId>
     	<artifactId>tr.wsn-device-drivers</artifactId>
-    	<version>0.0.1-SNAPSHOT</version>
-    	<scope>compile</scope>
     </dependency>
   </dependencies>
 </project>

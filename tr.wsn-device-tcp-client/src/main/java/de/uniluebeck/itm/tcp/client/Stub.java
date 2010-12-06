@@ -95,6 +95,12 @@ public class Stub implements DeviceAsync{
 					@Override
 					public void onProgressChange(float fraction) {
 					}
+
+					@Override
+					public void onExecute() {
+						// TODO Auto-generated method stub
+						
+					}
 				});
 				connected = true;
 			}

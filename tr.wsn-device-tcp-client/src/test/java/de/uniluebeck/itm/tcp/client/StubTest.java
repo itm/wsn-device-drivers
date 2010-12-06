@@ -45,6 +45,11 @@ public class StubTest {
 					}
 					@Override
 					public void onProgressChange(float fraction) {
+					}
+					@Override
+					public void onExecute() {
+						// TODO Auto-generated method stub
+						
 					}});
 				i++;
 				break;
@@ -65,6 +70,11 @@ public class StubTest {
 					}
 					@Override
 					public void onProgressChange(float fraction) {
+					}
+					@Override
+					public void onExecute() {
+						// TODO Auto-generated method stub
+						
 					}});
 				break;
 				
@@ -83,6 +93,11 @@ public class StubTest {
 					}
 					@Override
 					public void onProgressChange(float fraction) {
+					}
+					@Override
+					public void onExecute() {
+						// TODO Auto-generated method stub
+						
 					}});
 				j++;
 				break;	
@@ -102,6 +117,11 @@ public class StubTest {
 					}
 					@Override
 					public void onProgressChange(float fraction) {
+					}
+					@Override
+					public void onExecute() {
+						// TODO Auto-generated method stub
+						
 					}});
 				break;
 				
@@ -168,6 +188,12 @@ public class StubTest {
 
 					@Override
 					public void onProgressChange(float fraction) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void onExecute() {
 						// TODO Auto-generated method stub
 						
 					}});
