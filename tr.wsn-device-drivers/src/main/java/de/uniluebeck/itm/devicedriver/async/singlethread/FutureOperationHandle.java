@@ -32,7 +32,7 @@ public class FutureOperationHandle<T> implements OperationHandle<T> {
 	 * @param future The <code>Future</code> class that handles the threaded operation.
 	 * @param operation The <code>Operation</code> associated with this handle.
 	 */
-	public FutureOperationHandle(Future<T> future, Operation<T> operation) {
+	public FutureOperationHandle(final Future<T> future, final Operation<T> operation) {
 		this.future = future;
 		this.operation = operation;
 	}

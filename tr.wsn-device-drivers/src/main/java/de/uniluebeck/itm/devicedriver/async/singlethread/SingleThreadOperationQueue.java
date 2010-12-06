@@ -59,7 +59,7 @@ public class SingleThreadOperationQueue implements OperationQueue {
 	 * 
 	 * @param executor Set a custom <code>PausableExecutorService</code>.
 	 */
-	public SingleThreadOperationQueue(PausableExecutorService executor) {
+	public SingleThreadOperationQueue(final PausableExecutorService executor) {
 		this.executor = executor;
 	}
 	

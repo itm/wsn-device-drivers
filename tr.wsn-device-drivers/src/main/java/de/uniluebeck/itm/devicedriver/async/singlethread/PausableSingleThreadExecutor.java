@@ -22,12 +22,12 @@ public class PausableSingleThreadExecutor extends ThreadPoolExecutor implements 
 	/**
 	 * Pause lock.
 	 */
-	private ReentrantLock pauseLock = new ReentrantLock();
+	private final ReentrantLock pauseLock = new ReentrantLock();
 	
 	/**
 	 * Condition to wait for unpause.
 	 */
-	private Condition unpaused = pauseLock.newCondition();
+	private final Condition unpaused = pauseLock.newCondition();
 
 	/**
 	 * Constructor.
@@ -37,7 +37,7 @@ public class PausableSingleThreadExecutor extends ThreadPoolExecutor implements 
 	}
 
 	@Override
-	protected void beforeExecute(Thread t, Runnable r) {
+	protected void beforeExecute(final Thread t, final Runnable r) {
 		super.beforeExecute(t, r);
 		pauseLock.lock();
 		try {
