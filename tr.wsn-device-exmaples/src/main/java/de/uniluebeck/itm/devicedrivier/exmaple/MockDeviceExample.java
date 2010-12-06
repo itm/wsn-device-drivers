@@ -3,8 +3,8 @@ package de.uniluebeck.itm.devicedrivier.exmaple;
 import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.Device;
 import de.uniluebeck.itm.devicedriver.MacAddress;
-import de.uniluebeck.itm.devicedriver.MessagePacketAdapter;
-import de.uniluebeck.itm.devicedriver.MessagePlainText;
+import de.uniluebeck.itm.devicedriver.MessagePacket;
+import de.uniluebeck.itm.devicedriver.MessagePacketListener;
 import de.uniluebeck.itm.devicedriver.PacketType;
 import de.uniluebeck.itm.devicedriver.async.AsyncAdapter;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
@@ -13,6 +13,7 @@ import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 import de.uniluebeck.itm.devicedriver.async.OperationQueue;
 import de.uniluebeck.itm.devicedriver.async.QueuedDeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.singlethread.SingleThreadOperationQueue;
+import de.uniluebeck.itm.devicedriver.event.MessageEvent;
 import de.uniluebeck.itm.devicedriver.mockdevice.MockConnection;
 import de.uniluebeck.itm.devicedriver.mockdevice.MockDevice;
 
@@ -32,9 +33,9 @@ public class MockDeviceExample {
 		final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
 		
 		System.out.println("Message packet listener added");
-		deviceAsync.addMessagePacketListener(new MessagePacketAdapter() {
-			public void onMessagePlainTextReceived(MessagePlainText message) {
-				System.out.println("Message: " + new String(message.getContent()));
+		deviceAsync.addListener(new MessagePacketListener() {
+			public void onMessagePacketReceived(MessageEvent<MessagePacket> event) {
+				System.out.println("Message: " + new String(event.getMessage().getContent()));
 			}
 		}, PacketType.LOG);
 		

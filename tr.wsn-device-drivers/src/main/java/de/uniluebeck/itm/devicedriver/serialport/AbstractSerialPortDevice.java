@@ -15,6 +15,7 @@ import de.uniluebeck.itm.devicedriver.ConnectionEvent;
 import de.uniluebeck.itm.devicedriver.ConnectionListener;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.ObserverableDevice;
+import de.uniluebeck.itm.devicedriver.event.MessageEvent;
 import de.uniluebeck.itm.devicedriver.exception.TimeoutException;
 import de.uniluebeck.itm.devicedriver.operation.RunningOperationsMonitor;
 import de.uniluebeck.itm.devicedriver.util.StringUtils;
@@ -169,7 +170,7 @@ public abstract class AbstractSerialPortDevice extends ObserverableDevice implem
 						MessagePacket p = MessagePacket.parse(packet, 0, packetLength);
 						// p.setIsenseDevice(this);
 						//log.debug("Packet found: " + p);
-						notifyMessagePacketListener(p);
+						fireMessagePacketEvent(new MessageEvent<MessagePacket>(this, p));
 
 						// Reset packet information
 						clearPacket();

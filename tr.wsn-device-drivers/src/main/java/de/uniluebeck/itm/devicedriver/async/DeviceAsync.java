@@ -2,9 +2,8 @@ package de.uniluebeck.itm.devicedriver.async;
 
 import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.MacAddress;
+import de.uniluebeck.itm.devicedriver.MessageObserverable;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
-import de.uniluebeck.itm.devicedriver.MessagePacketListener;
-import de.uniluebeck.itm.devicedriver.PacketType;
 
 
 /**
@@ -14,8 +13,15 @@ import de.uniluebeck.itm.devicedriver.PacketType;
  * 
  * @author Malte Legenhausen
  */
-public interface DeviceAsync {
+public interface DeviceAsync extends MessageObserverable {
 	
+	/**
+	 * Returns the chip type of this device.
+	 * 
+	 * @param timeout Maximum operation time before the method will be canceled in milliseconds.
+	 * @param callback Interface that is called on successfully or failed method execution.
+	 * @return Returns a <code>OperationHandle</code> for controlling the async operation.
+	 */
 	OperationHandle<ChipType> getChipType(long timeout, AsyncCallback<ChipType> callback);
 	
 	/**
@@ -99,27 +105,4 @@ public interface DeviceAsync {
 	 * @return Returns a <code>OperationHandle</code> for controlling the async operation.
 	 */
 	OperationHandle<Void> send(MessagePacket packet, long timeout, AsyncCallback<Void> callback);
-	
-	/**
-	 * Add an handler that will be called when one of the given <code>PacketTypes</code> occure.
-	 * 
-	 * @param listener The listener that will be called.
-	 * @param types The types that specify when the listener is called.
-	 */
-	void addMessagePacketListener(MessagePacketListener listener, PacketType... types);
-	
-	/**
-	 * Add an handler that will be called when the given byte types occure.
-	 * 
-	 * @param listener The listener that will be called.
-	 * @param types The types as byte array that specify when the listener is called.
-	 */
-	void addMessagePacketListener(MessagePacketListener listener, int... types);
-	
-	/**
-	 * Remove the given handler from the handler list.
-	 * 
-	 * @param listener The handler that has to be removed.
-	 */
-	void removeMessagePacketListener(MessagePacketListener listener);
 }

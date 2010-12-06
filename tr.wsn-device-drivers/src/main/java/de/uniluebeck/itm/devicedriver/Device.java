@@ -16,12 +16,12 @@ import de.uniluebeck.itm.devicedriver.operation.WriteMacAddressOperation;
  * 
  * @author Malte Legenhausen
  */
-public interface Device {
+public interface Device extends MessageObserverable {
 	
 	/**
 	 * Returns the <code>Connection</code> object for this device.
 	 * 
-	 * @return
+	 * @return The connection which is used by this device to communicate with the real device.
 	 */
 	Connection getConnection();
 
@@ -90,27 +90,4 @@ public interface Device {
 	 * @param packet The <code>MessagePacket</code> that has to be send to the device.
 	 */
 	SendOperation createSendOperation();
-	
-	/**
-	 * Stores an handler that will be called when a given type occure.
-	 * 
-	 * @param listener The listener that will be called.
-	 * @param types The types that specify when the handler is called.
-	 */
-	void addListener(MessagePacketListener listener, PacketType... types);
-	
-	/**
-	 * Add an handler that will be called when the given byte types occure.
-	 * 
-	 * @param listener The listener that will be called.
-	 * @param types The types as byte array that specify when the listener is called.
-	 */
-	void addListener(MessagePacketListener listener, int... types);
-	
-	/**
-	 * Remove the given handler from the handler list.
-	 * 
-	 * @param listener The listener that has to be removed.
-	 */
-	void removeListener(MessagePacketListener listener);
 }

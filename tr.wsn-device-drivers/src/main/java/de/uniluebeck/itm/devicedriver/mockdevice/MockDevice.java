@@ -8,6 +8,7 @@ import de.uniluebeck.itm.devicedriver.ConnectionEvent;
 import de.uniluebeck.itm.devicedriver.ConnectionListener;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.ObserverableDevice;
+import de.uniluebeck.itm.devicedriver.event.MessageEvent;
 import de.uniluebeck.itm.devicedriver.mockdevice.MockConnection.MockListener;
 import de.uniluebeck.itm.devicedriver.operation.EraseFlashOperation;
 import de.uniluebeck.itm.devicedriver.operation.GetChipTypeOperation;
@@ -119,6 +120,6 @@ public class MockDevice extends ObserverableDevice implements MockListener {
 	public void onData(byte[] bytes) {
 		MessagePacket messagePacket = MessagePacket.parse(bytes, 0, bytes.length);
 		logger.debug("Emitting message packet: {}", messagePacket);
-		notifyMessagePacketListener(messagePacket);
+		fireMessagePacketEvent(new MessageEvent<MessagePacket>(this, messagePacket));
 	}
 }

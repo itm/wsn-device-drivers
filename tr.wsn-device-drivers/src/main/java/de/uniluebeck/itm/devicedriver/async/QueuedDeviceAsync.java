@@ -10,6 +10,7 @@ import de.uniluebeck.itm.devicedriver.Device;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.MessagePacketListener;
+import de.uniluebeck.itm.devicedriver.MessagePlainTextListener;
 import de.uniluebeck.itm.devicedriver.PacketType;
 import de.uniluebeck.itm.devicedriver.operation.EraseFlashOperation;
 import de.uniluebeck.itm.devicedriver.operation.GetChipTypeOperation;
@@ -57,13 +58,33 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	}
 
 	@Override
-	public void addMessagePacketListener(MessagePacketListener listener, PacketType... types) {
+	public void addListener(MessagePacketListener listener, PacketType... types) {
 		device.addListener(listener, types);
 	}
 
 	@Override
-	public void addMessagePacketListener(MessagePacketListener listener, int... types) {
+	public void addListener(MessagePacketListener listener, int... types) {
 		device.addListener(listener, types);
+	}
+	
+	@Override
+	public void addListener(MessagePacketListener listener) {
+		device.addListener(listener);
+	}
+	
+	@Override
+	public void addListener(MessagePlainTextListener listener) {
+		device.addListener(listener);
+	}
+	
+	@Override
+	public void removeListener(MessagePacketListener listener) {
+		device.removeListener(listener);
+	}
+	
+	@Override
+	public void removeListener(MessagePlainTextListener listener) {
+		device.removeListener(listener);
 	}
 	
 	@Override
@@ -101,11 +122,6 @@ public class QueuedDeviceAsync implements DeviceAsync {
 		logger.debug("Read mac (timeout: " + timeout + "ms)");
 		ReadMacAddressOperation operation = device.createReadMacAddressOperation();
 		return queue.addOperation(operation, timeout, callback);
-	}
-
-	@Override
-	public void removeMessagePacketListener(MessagePacketListener listener) {
-		device.removeListener(listener);
 	}
 
 	@Override
