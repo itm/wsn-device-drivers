@@ -3,8 +3,6 @@ package de.uniluebeck.itm.devicedriver.async.singlethread;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
@@ -47,7 +45,23 @@ public class SingleThreadOperationQueue implements OperationQueue {
 	/**
 	 * The single thread executor that runs the <code>OperationContainer</code>.
 	 */
-	private final ExecutorService executor = Executors.newSingleThreadExecutor();
+	private final PausableExecutorService executor;
+	
+	/**
+	 * Constructor.
+	 */
+	public SingleThreadOperationQueue() {
+		this(new PausableSingleThreadExecutor());
+	}
+	
+	/**
+	 * Constructor.
+	 * 
+	 * @param executor Set a custom <code>PausableExecutorService</code>.
+	 */
+	public SingleThreadOperationQueue(PausableExecutorService executor) {
+		this.executor = executor;
+	}
 	
 	@Override
 	public synchronized <T> OperationHandle<T> addOperation(final Operation<T> operation, final long timeout, final AsyncCallback<T> callback) {
@@ -65,6 +79,10 @@ public class SingleThreadOperationQueue implements OperationQueue {
 			}
 		});
 		
+		// Pause the executor to submit the operation and savely add the timeout handler.
+		logger.debug("Pause executor");
+		executor.pause();
+		
 		// Submit the operation to the executor.
 		logger.debug("Submit " + operation + " to executor queue.");
 		final Future<T> future = executor.submit(operation);
@@ -81,6 +99,10 @@ public class SingleThreadOperationQueue implements OperationQueue {
 		
 		addOperation(operation);
 		
+		// Resume executor to execute new submitted operations.
+		logger.debug("Resume executor");
+		executor.resume();
+		
 		return new FutureOperationHandle<T>(future, operation);
 	}
 	
@@ -91,8 +113,8 @@ public class SingleThreadOperationQueue implements OperationQueue {
 	 * @param operation The operation that has to be added to the internal operation list.
 	 */
 	private <T> void addOperation(final Operation<T> operation) {
-		logger.debug("Operation added");
 		operations.add(operation);
+		logger.debug("Operation added to internal operation list");
 		fireAddedEvent(new AddedEvent<T>(this, operation));
 	}
 	
@@ -116,8 +138,8 @@ public class SingleThreadOperationQueue implements OperationQueue {
 	 * @param operation The operation that has to be removed.
 	 */
 	private <T> void removeOperation(final Operation<T> operation) {
-		logger.debug("Operation removed");
 		operations.remove(operation);
+		logger.debug("Operation removed from internal operation list");
 		fireRemovedEvent(new RemovedEvent<T>(this, operation));
 	}
 
