@@ -79,7 +79,7 @@ public abstract class ObserverableDevice implements Device {
 	 * 
 	 * @param packet The message packet that has to be send to all listeners of the packet type.
 	 */
-	protected void fireMessagePacketEvent(MessageEvent<MessagePacket> event) {
+	public void fireMessagePacketEvent(MessageEvent<MessagePacket> event) {
 		final List<MessagePacketListener> listeners = this.messagePacketMap.get(event.getMessage().getType());
 		for (final MessagePacketListener listener : listeners.toArray(new MessagePacketListener[listeners.size()])) {
 			listener.onMessagePacketReceived(event);
@@ -89,7 +89,7 @@ public abstract class ObserverableDevice implements Device {
 		}
 	}
 	
-	protected void fireMessagePlainTextEvent(MessageEvent<MessagePlainText> event) {
+	public void fireMessagePlainTextEvent(MessageEvent<MessagePlainText> event) {
 		for (final MessagePlainTextListener listener : messagePlainTextListener.toArray(new MessagePlainTextListener[messagePlainTextListener.size()])) {
 			listener.onMessagePlainTextReceived(event);
 		}
