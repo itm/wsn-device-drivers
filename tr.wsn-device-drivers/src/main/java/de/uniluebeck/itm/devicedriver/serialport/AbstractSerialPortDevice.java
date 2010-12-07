@@ -14,6 +14,7 @@ import de.uniluebeck.itm.devicedriver.Connection;
 import de.uniluebeck.itm.devicedriver.ConnectionEvent;
 import de.uniluebeck.itm.devicedriver.ConnectionListener;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
+import de.uniluebeck.itm.devicedriver.MessagePlainText;
 import de.uniluebeck.itm.devicedriver.ObserverableDevice;
 import de.uniluebeck.itm.devicedriver.event.MessageEvent;
 import de.uniluebeck.itm.devicedriver.exception.TimeoutException;
@@ -35,12 +36,22 @@ public abstract class AbstractSerialPortDevice extends ObserverableDevice implem
 	private static final Logger log = LoggerFactory.getLogger(AbstractSerialPortDevice.class);
 	
 	/**
-	 * Data buffer for incoming data 
+	 * Data buffer for <code>MessagePlainText</code> objects.
+	 */
+	private byte[] plainText = new byte[2048];
+	
+	/**
+	 * Current length of the received plainText.
+	 */
+	private int plainTextLength = 0;
+	
+	/**
+	 * Data buffer for <code>MessagePacket</code> objects.
 	 */
 	private byte[] packet = new byte[2048];
 
 	/** 
-	 * Current packetLength of the received packet 
+	 * Current packetLength of the received packet.
 	 */
 	private int packetLength = 0;
 
@@ -153,47 +164,18 @@ public abstract class AbstractSerialPortDevice extends ObserverableDevice implem
 	
 	private void receivePacket(InputStream inStream) {
 		try {
+			plainTextLength = 0;
 			while (inStream != null && inStream.available() > 0) {
-				byte c = (byte) (0xff & inStream.read());
-
-				// Check if DLE was found
-				if (foundDLE) {
-					foundDLE = false;
-
-					if (c == MessagePacket.STX && !foundPacket) {
-						//log.debug("iSenseDeviceImpl: STX received in DLE mode");
-						foundPacket = true;
-					} else if (c == MessagePacket.ETX && foundPacket) {
-						//log.debug("ETX received in DLE mode");
-
-						// Parse message and notify listeners
-						MessagePacket p = MessagePacket.parse(packet, 0, packetLength);
-						// p.setIsenseDevice(this);
-						//log.debug("Packet found: " + p);
-						fireMessagePacketEvent(new MessageEvent<MessagePacket>(this, p));
-
-						// Reset packet information
-						clearPacket();
-					} else if (c == MessagePacket.DLE && foundPacket) {
-						// Stuffed DLE found
-						//log.debug("Stuffed DLE received in DLE mode");
-						ensureBufferSize();
-						packet[packetLength++] = MessagePacket.DLE;
-					} else {
-						log.error("Incomplete packet received: " + StringUtils.toHexString(this.packet, 0, packetLength));
-						clearPacket();
-					}
-				} else {
-					if (c == MessagePacket.DLE) {
-						log.debug("Plain DLE received");
-						foundDLE = true;
-					} else if (foundPacket) {
-						ensureBufferSize();
-						packet[packetLength++] = c;
-					}
-				}
+				final byte input = (byte) (0xff & inStream.read());
+				
+				// MessagePacket processing
+				processMessagePacketInput(input);
+				
+				// PlainTextMessage processing
+				processMessagePlainTextInput(input);
 			}
-
+			// Send all data left in the buffer.
+			sendMessagePlainText();
 		} catch (IOException error) {
 			log.error("Error on rx (Retry in 1s): " + error, error);
 			try {
@@ -202,6 +184,66 @@ public abstract class AbstractSerialPortDevice extends ObserverableDevice implem
 				log.warn(e.getMessage());
 			}
 		}
+	}
+	
+	private void processMessagePacketInput(byte input) {
+		// Check if DLE was found
+		if (foundDLE) {
+			foundDLE = false;
+
+			if (input == MessagePacket.STX && !foundPacket) {
+				//log.debug("iSenseDeviceImpl: STX received in DLE mode");
+				foundPacket = true;
+			} else if (input == MessagePacket.ETX && foundPacket) {
+				//log.debug("ETX received in DLE mode");
+
+				// Parse message and notify listeners
+				MessagePacket p = MessagePacket.parse(packet, 0, packetLength);
+				// p.setIsenseDevice(this);
+				//log.debug("Packet found: " + p);
+				fireMessagePacketEvent(new MessageEvent<MessagePacket>(this, p));
+
+				// Reset packet information
+				clearPacket();
+			} else if (input == MessagePacket.DLE && foundPacket) {
+				// Stuffed DLE found
+				//log.debug("Stuffed DLE received in DLE mode");
+				ensureBufferSize();
+				packet[packetLength++] = MessagePacket.DLE;
+			} else {
+				log.error("Incomplete packet received: " + StringUtils.toHexString(this.packet, 0, packetLength));
+				clearPacket();
+			}
+		} else {
+			if (input == MessagePacket.DLE) {
+				log.debug("Plain DLE received");
+				foundDLE = true;
+			} else if (foundPacket) {
+				ensureBufferSize();
+				packet[packetLength++] = input;
+			}
+		}
+	}
+	
+	private void processMessagePlainTextInput(byte c) {
+		if ((plainTextLength + 1) < plainText.length) {
+			plainText[plainTextLength++] = c;
+		} else {
+			sendMessagePlainText();
+		}
+	}
+	
+	private void sendMessagePlainText() {
+		// Copy them into a buffer with correct length
+		byte[] buffer = new byte[plainTextLength];
+		System.arraycopy(plainText, 0, buffer, 0, plainTextLength);
+
+		// Notify listeners
+		MessagePlainText p = new MessagePlainText(buffer);
+		fireMessagePlainTextEvent(new MessageEvent<MessagePlainText>(this, p));
+
+		// Reset packet information
+		plainTextLength = 0;
 	}
 	
 	/**
