@@ -71,15 +71,9 @@ public class Server {
 	}
 	
 	public void start (){
-
-		try {
-			JaxbDeviceList list = ConfigReader.readFile();
-			System.out.println(list.getJaxbDevice().size());
-			System.out.println(list.getJaxbDevice().get(0).getKnotenTyp());
-		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+		ServerDevice serverDevices = new ServerDevice();
+		serverDevices.createServerDevices();
 		
 		//BasicConfigurator.configure();
 		

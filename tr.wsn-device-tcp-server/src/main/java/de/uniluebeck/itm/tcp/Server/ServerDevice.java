@@ -1,140 +1,135 @@
 package de.uniluebeck.itm.tcp.Server;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.List;
 
-import de.uniluebeck.itm.devicedriver.ConnectionListener;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.bind.JAXBException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.uniluebeck.itm.devicedriver.Connection;
 import de.uniluebeck.itm.devicedriver.Device;
-import de.uniluebeck.itm.devicedriver.State;
-import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
-import de.uniluebeck.itm.devicedriver.async.OperationHandle;
-import de.uniluebeck.itm.devicedriver.async.OperationQueue;
-import de.uniluebeck.itm.devicedriver.async.OperationQueueListener;
+import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.QueuedDeviceAsync;
-//import de.uniluebeck.itm.devicedriver.jennic.JennicDevice;
-import de.uniluebeck.itm.devicedriver.operation.Operation;
-import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection;
-import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection.SerialPortMode;
+import de.uniluebeck.itm.devicedriver.async.singlethread.SingleThreadOperationQueue;
+import de.uniluebeck.itm.tcp.Server.JaxbDevices.ConfigReader;
+import de.uniluebeck.itm.tcp.Server.JaxbDevices.JaxbDevice;
+import de.uniluebeck.itm.tcp.Server.JaxbDevices.JaxbDeviceList;
 
 public class ServerDevice {
 
+	private static Logger log = LoggerFactory.getLogger(ServerDevice.class);
+	
+	public static Map<String,DeviceAsync> DeviceList = new HashMap<String,DeviceAsync>();
+	
 	ServerDevice(){
+	}
+	
+	public void createServerDevices() {
+		
+		try {
+			JaxbDeviceList list = readDevices();
+			
+			for(JaxbDevice jaxDevice : list.getJaxbDevice()){
+				String key = createID();
+				//Connection con = createConnection(jaxDevice.getKnotenTyp());
+				Connection con = createConnection("de.uniluebeck.itm.devicedriver.mockdevice.MockConnection");
+				con.connect(jaxDevice.getPort());
+				Device device = createDevice("de.uniluebeck.itm.devicedriver.mockdevice.MockDevice", con);
+				DeviceAsync deviceAsync = createDeviceAsync(device);
+				DeviceList.put(key, deviceAsync);
+				
+			}
+			
+		} catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			log.error(e.getMessage());
+		}
+		System.out.println();
 		
 	}
 	
-//	private Device createDevice(){
-//
-//		return new JennicDevice(new SerialPortConnection(){
-//	
-//			@Override
-//			public void flush() {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//	
-//			@Override
-//			public SerialPort getSerialPort() {
-//				// TODO Auto-generated method stub
-//				return null;
-//			}
-//	
-//			@Override
-//			public void setSerialPortMode(SerialPortMode mode) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//	
-//			@Override
-//			public void addListener(ConnectionListener listener) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//	
-//			@Override
-//			public void connect(String uri) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//	
-//			@Override
-//			public InputStream getInputStream() {
-//				// TODO Auto-generated method stub
-//				return null;
-//			}
-//	
-//			@Override
-//			public OutputStream getOutputStream() {
-//				// TODO Auto-generated method stub
-//				return null;
-//			}
-//	
-//			@Override
-//			public boolean isConnected() {
-//				// TODO Auto-generated method stub
-//				return false;
-//			}
-//	
-//			@Override
-//			public void removeListener(ConnectionListener listener) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//	
-//			@Override
-//			public void shutdown(boolean force) {
-//				// TODO Auto-generated method stub
-//				
-//			}});
-//	}
-//	
-//	private QueuedDeviceAsync createQueuedDevice(Device device){
-//		
-//		return new QueuedDeviceAsync(new OperationQueue(){
-//
-//			@Override
-//			public void addListener(OperationQueueListener listener) {
-//				// TODO Auto-generated method stub
-//				
-//				
-//			}
-//
-//			@Override
-//			public <T> OperationHandle<T> addOperation(
-//					Operation<T> operation, long timeout,
-//					AsyncCallback<T> callback) {
-//					
-//				return new OperationHandle<T>(){
-//
-//					@Override
-//					public void cancel() {
-//						// TODO Auto-generated method stub
-//						
-//					}
-//
-//					@Override
-//					public T get() {
-//						
-//						return null;
-//					}
-//
-//					@Override
-//					public State getState() {
-//						// TODO Auto-generated method stub
-//						return null;
-//					}};
-//			}
-//
-//			@Override
-//			public List<Operation<?>> getOperations() {
-//				// TODO Auto-generated method stub
-//				return null;
-//			}
-//
-//			@Override
-//			public void removeListener(OperationQueueListener listener) {
-//				// TODO Auto-generated method stub
-//				
-//			}},device);
-//	}
+	private JaxbDeviceList readDevices() throws JAXBException{
+		
+		return ConfigReader.readFile();
+		
+	}
+	//ConnectionType = de.uniluebeck.itm.devicedriver.mockdevice.MockConnection
+	private Connection createConnection(String ConnectionType) {
+		
+		Connection connection = null;
+		Class con;
+		
+		try {
+			con = Class.forName(ConnectionType);
+			connection = (Connection) con.newInstance();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return  connection;
+	}
+	
+	//DeviceName = de.uniluebeck.itm.devicedriver.mockdevice.MockDevice
+	//DeviceName = de.uniluebeck.itm.devicedriver.jennic.JennicDevice
+	private Device createDevice(String DeviceName, Connection con) {
+
+		Device device = null;
+		Class deviceClass;
+		
+		try {
+			deviceClass = Class.forName(DeviceName);
+			Constructor ConncectionArgsConstructor = deviceClass.getConstructor(new Class[] {con.getClass()});
+			device = (Device) ConncectionArgsConstructor.newInstance(new Object[] {con});
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    
+		return device;
+	}
+	
+	private DeviceAsync createDeviceAsync(Device device){
+		
+		return new QueuedDeviceAsync(new SingleThreadOperationQueue(), device);
+	}
+	
+	private String createID(){
+		
+		double rand;
+		
+		do{
+			rand = Math.random()%1000;
+		}while(DeviceList.containsKey(String.valueOf(rand)));
+		
+		return String.valueOf(rand);
+	}
 }

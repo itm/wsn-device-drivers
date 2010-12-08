@@ -63,6 +63,20 @@
 			<groupId>de.uni-luebeck.itm</groupId>
 			<artifactId>tr.wsn-device-drivers</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>de.uni-luebeck.itm</groupId>
+			<artifactId>tr.wsn-device-drivers-isense</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>de.uni-luebeck.itm</groupId>
+			<artifactId>tr.wsn-device-drivers-jennec</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 
 	<repositories>

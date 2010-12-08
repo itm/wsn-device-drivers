@@ -7,7 +7,7 @@
     <xsd:complexType name="jaxbDevice">
         <xsd:sequence>
             <xsd:element name="KnotenTyp" type="xsd:string"></xsd:element>
-            <xsd:element name="Port" type="xsd:int"></xsd:element>
+            <xsd:element name="Port" type="xsd:string"></xsd:element>
             <xsd:element name="TestBed" type="xsd:string" minOccurs="0"></xsd:element>
             <xsd:element name="Sensors" type="tns:jaxbSensors" minOccurs="0"></xsd:element>
         </xsd:sequence>
