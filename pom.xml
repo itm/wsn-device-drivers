@@ -141,5 +141,6 @@
 		<module>tr.wsn-device-apps-flashloader</module>
 		<module>tr.wsn-device-apps-datenlogger</module>
 		<module>tr.wsn-device-apps-overlayclient</module>
+		<module>tr.wsn-device-metadatenapps</module>
 	</modules>
 </project>
