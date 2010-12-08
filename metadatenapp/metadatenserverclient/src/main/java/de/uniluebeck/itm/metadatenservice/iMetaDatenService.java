@@ -3,24 +3,25 @@ package de.uniluebeck.itm.metadatenservice;
 import java.util.List;
 
 import de.uniluebeck.itm.entity.Node;
+import de.uniluebeck.itm.metadatacollector.IMetaDataCollector;
 import de.uniluebeck.itm.metadatacollector.MetaDataCollector;
 
 public interface iMetaDatenService {
-	
+	//TODO i groß 
 	
 	/**
 	 * Fügt dem MetaDatenService einen MetaDatenCollector hinzu, der dann seinerseits
 	 * die Daten des Knoten regelmäßig aktualisiert.
 	 * @param mdcollector
 	 */
-	public void addMetaDataCollector(MetaDataCollector mdcollector);
+	public void addMetaDataCollector(IMetaDataCollector mdcollector);
 	
 	/**
 	 * Entfernt  einen MetaDatenCollector aus  dem MetaDatenService.
 	 * 
 	 * @param mdcollector
 	 */
-	public void removeMetaDataCollector(MetaDataCollector mdcollector);
+	public void removeMetaDataCollector(IMetaDataCollector mdcollector);
 	
 	/**
 	 * Fügt den Knoten dem Verzeichnis hinzu

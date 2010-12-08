@@ -12,7 +12,7 @@ import org.simpleframework.xml.ElementList;
 public class Node implements Key {
 
     @Attribute
-    private String id;
+    private String id="";
 
 
     /**
@@ -20,13 +20,13 @@ public class Node implements Key {
      */
 
     @Element
-    private String microcontroller;
+    private String microcontroller="";
 
     @Element
-    private String ipAddress;
+    private String ipAddress="";
 
     @Element
-    private String description;
+    private String description="";
 
 
     /**

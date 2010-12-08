@@ -262,22 +262,22 @@ public class MetaDatenServer {
 			System.out.println("Knoten mit Micocontroller: " +request.getMicrocontroller() + "wurde dem Verzeichnis zugefügt");
 			done.run(VOID.newBuilder().build());
 			
-			SessionFactory sessionFactory;
-			try {
-	            sessionFactory = new AnnotationConfiguration().
-	                    configure("hibernate.cfg.xml").
-	                    buildSessionFactory();
-	        }
-	        catch (Throwable ex) {
-	            throw new ExceptionInInitializerError(ex);
-	        }
-			StoreToDatabase storeDB = new StoreToDatabase();
-	        
-//	        node.setId("urn:wisebed:node:cti:gw2:n4");
-	        storeDB.storeNode(node);
-	        final Session session = sessionFactory.openSession();
-	        Transaction tr = session.beginTransaction();
-	        tr.commit();
+//			SessionFactory sessionFactory;
+//			try {
+//	            sessionFactory = new AnnotationConfiguration().
+//	                    configure("hibernate.cfg.xml").
+//	                    buildSessionFactory();
+//	        }
+//	        catch (Throwable ex) {
+//	            throw new ExceptionInInitializerError(ex);
+//	        }
+//			StoreToDatabase storeDB = new StoreToDatabase();
+//	        
+////	        node.setId("urn:wisebed:node:cti:gw2:n4");
+//	        storeDB.storeNode(node);
+//	        final Session session = sessionFactory.openSession();
+//	        Transaction tr = session.beginTransaction();
+//	        tr.commit();
 
 		}
 
@@ -347,6 +347,7 @@ public class MetaDatenServer {
 			
 			return nodeout;
 		}
+		
 		private NODE changeToNODE(Node nodein)	
 		{
 			

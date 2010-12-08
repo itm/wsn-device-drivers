@@ -1,7 +1,6 @@
 package de.uniluebeck.itm.metadatenservice;
 
 import java.io.IOException;
-import java.util.TimerTask;
 import java.util.concurrent.Executors;
 
 
@@ -25,8 +24,10 @@ import com.googlecode.protobuf.pro.duplex.execute.ThreadPoolCallExecutor;
 import de.uniluebeck.itm.entity.Node;
 //import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 //import de.uniluebeck.itm.devicedriver.async.OperationHandle;
+import de.uniluebeck.itm.metadataclienthelper.NodeHelper;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Identification;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.NODE;
+import de.uniluebeck.itm.metadaten.files.MetaDataService.SearchResponse;
 
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Operations;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.VOID;
@@ -34,7 +35,8 @@ import de.uniluebeck.itm.metadaten.files.MetaDataService.VOID;
 
 
 public class ClientStub  {
-
+	//TODO connect gleich im Konstruktor oder soll Verbindung für jeden Refresh/add-Zyklus extra
+	//durchgeführt werden?
 	//private static Log log = LogFactory.getLog(Client.class);
 	
 	PeerInfo server = null;
@@ -43,8 +45,7 @@ public class ClientStub  {
 	DuplexTcpClientBootstrap bootstrap = null;
 	RpcClientChannel channel = null;
 	Operations.Interface operationService = null;
-//	TestOperations.Interface testService = null;
-//	State state = null;
+
 	
 	ClientStub (String userName, String passWord, String uri, int port) throws Exception{
 		this(userName,passWord,uri,port,1234);
@@ -142,14 +143,11 @@ public class ClientStub  {
 
 		// erzeugen eines Controllers fuer diese Operation
 		final RpcController controller = channel.newRpcController();
-		// erzeugen einer Nachricht, der OperationKey wird aus der controllerID erzeugt
-//		STRING request = STRING.newBuilder().setQuery(setMessage).setOperationKey(controller.toString()).build();
 		// Node für die Übertragung erzeugen
-		NODE request = NODE.newBuilder().setIp(node.getIpAddress()).setDescription(node.getDescription()).setKnotenid(node.getId()).setMicrocontroller(node.getMicrocontroller()).setSensoren("Viele").build();
-		//Result erezugen
-			
+		NodeHelper nhelper = new NodeHelper();
+		
 		//ausfuehren des async RPCs
-		operationService.add(controller, request, new RpcCallback<VOID>(){
+		operationService.add(controller, nhelper.changetoNODE(node), new RpcCallback<VOID>(){
 
 			// callback aufruf des Servers
 			@Override

@@ -10,8 +10,8 @@ public class MetaDataCollector implements IMetaDataCollector {
 	private Device device = null;
 	private String knotenId="";
 	
-	MetaDataCollector (){};
-	MetaDataCollector (Device device, String knotenId)
+	public MetaDataCollector (){};
+	public MetaDataCollector (Device device, String knotenId)
 	{
 		this.device=device;
 		this.knotenId=knotenId;

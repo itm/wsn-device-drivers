@@ -13,6 +13,7 @@ import com.googlecode.protobuf.pro.duplex.PeerInfo;
 import com.googlecode.protobuf.pro.duplex.RpcClientChannel;
 import com.googlecode.protobuf.pro.duplex.client.DuplexTcpClientBootstrap;
 import com.googlecode.protobuf.pro.duplex.execute.ThreadPoolCallExecutor;
+
 import de.uniluebeck.itm.entity.Node;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Identification;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.NODE;
@@ -20,7 +21,13 @@ import de.uniluebeck.itm.metadaten.files.MetaDataService.Operations;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Operations.BlockingInterface;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.SearchRequest;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.SearchResponse;
+import de.unuluebeck.itm.metadataclienthelper.NodeHelper;
 
+/**
+ * 
+ * @author tora
+ *
+ */
 
 
 public class MetaDatenClient implements MetaDataClient {
@@ -118,18 +125,7 @@ public class MetaDatenClient implements MetaDataClient {
 			channel.close();
 		}
 	
-	private static Node changeToNode(NODE nodein)	
-	{
-		Node nodeout = new Node();
-		nodeout.setId(nodein.getKnotenid());
-		nodeout.setIpAddress(nodein.getIp());
-		nodeout.setMicrocontroller(nodein.getMicrocontroller());
-		nodeout.setDescription(nodein.getDescription());
-		//TODO CapabilityList
-//		nodeout.setCapabilityList(nodein.getSensoren());
-		
-		return nodeout;
-	}
+
 	
 	public List<Node> search (Node queryexmpl, String query) throws Exception
 	{
@@ -137,10 +133,11 @@ public class MetaDatenClient implements MetaDataClient {
 		this.connect(user, password);
 		// erzeugen eines Controllers fuer diese Operation
 		final RpcController controller = channel.newRpcController();
+		NodeHelper nhelper = new NodeHelper();
 		// Node für die Übertragung erzeugen
-		NODE noderequest = NODE.newBuilder().setIp(queryexmpl.getIpAddress()).setDescription(queryexmpl.getDescription()).setKnotenid(queryexmpl.getId()).setMicrocontroller(queryexmpl.getMicrocontroller()).setSensoren("Viele").build();
-		//Result erzugen
-		SearchRequest request = SearchRequest.newBuilder().setQueryMs(noderequest).setQueryString("123").build();
+		
+		//Result erzeugen
+		SearchRequest request = SearchRequest.newBuilder().setQueryMs(nhelper.changetoNODE(queryexmpl)).setQueryString("123").build();
 	
 		// erzeugen eines synchronen RPC-Objekts fuer die Operationen
 		BlockingInterface blockOperationService =  Operations.newBlockingStub(channel);
@@ -154,7 +151,7 @@ public class MetaDatenClient implements MetaDataClient {
 			for (int i=0 ;i < result.size(); i++)
 				{
 					System.out.println("Knoten hinzufügen");
-					nodelist.add(changeToNode(result.get(i)));
+					nodelist.add(nhelper.changeToNode(result.get(i)));
 				}
 		} catch (ServiceException e) {
 			e.printStackTrace();
@@ -163,13 +160,16 @@ public class MetaDatenClient implements MetaDataClient {
 		this.disconnect();
 		return nodelist;
 	}
-	
+	/**
+	 * Asynchrone Suche
+	 */
 	public void searchasync (Node queryexmpl, String query, final AsyncCallback<List<Node>> callback) throws Exception
 	{
 
 		this.connect(user, password);
 		// erzeugen eines Controllers fuer diese Operation
 		final RpcController controller = channel.newRpcController();
+		NodeHelper nhelper = new NodeHelper();
 		// Node für die Übertragung erzeugen
 		NODE noderequest = NODE.newBuilder().setIp(queryexmpl.getIpAddress()).setDescription(queryexmpl.getDescription()).setKnotenid(queryexmpl.getId()).setMicrocontroller(queryexmpl.getMicrocontroller()).setSensoren("Viele").build();
 		//Result erzugen
@@ -178,7 +178,7 @@ public class MetaDatenClient implements MetaDataClient {
 		// erzeugen eines synchronen RPC-Objekts fuer die Operationen
 		BlockingInterface blockOperationService =  Operations.newBlockingStub(channel);
 		try {
-			// async RPC-Aufruf
+			// synchroner RPC-Aufruf
 			SearchResponse resultresp = blockOperationService.search(controller, request);
 			System.out.println("Größe der Sresponse" + resultresp.getResponseList().size());
 			List <NODE> result = new ArrayList<NODE>();
@@ -187,7 +187,7 @@ public class MetaDatenClient implements MetaDataClient {
 			for (int i=0 ;i < result.size(); i++)
 				{
 					System.out.println("Knoten hinzufügen");
-					nodelist.add(changeToNode(result.get(i)));
+					nodelist.add(nhelper.changeToNode(result.get(i)));
 				}
 		} catch (ServiceException e) {
 			callback.onFailure(e);
