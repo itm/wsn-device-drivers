@@ -2,12 +2,16 @@ package de.uniluebeck.itm.flashloader;
 
 import de.uniluebeck.itm.devicedriver.Device;
 import de.uniluebeck.itm.devicedriver.MacAddress;
+import de.uniluebeck.itm.devicedriver.MessagePacket;
+import de.uniluebeck.itm.devicedriver.MessagePacketListener;
+import de.uniluebeck.itm.devicedriver.PacketType;
 import de.uniluebeck.itm.devicedriver.async.AsyncAdapter;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.OperationQueue;
 import de.uniluebeck.itm.devicedriver.async.QueuedDeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.singlethread.SingleThreadOperationQueue;
+import de.uniluebeck.itm.devicedriver.event.MessageEvent;
 import de.uniluebeck.itm.devicedriver.mockdevice.MockConnection;
 import de.uniluebeck.itm.devicedriver.mockdevice.MockDevice;
 
@@ -37,14 +41,21 @@ public class FlashLoader {
 		final OperationQueue queue = new SingleThreadOperationQueue();
 		final MockConnection connection = new MockConnection();
 		final Device device = new MockDevice(connection);
-		final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
 		
 		connection.connect("MockPort");
 		System.out.println("Connected");
 		
+		final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
+		
+		System.out.println("Message packet listener added");
+		deviceAsync.addListener(new MessagePacketListener() {
+			public void onMessagePacketReceived(MessageEvent<MessagePacket> event) {
+				System.out.println("Message: " + new String(event.getMessage().getContent()));
+			}
+		}, PacketType.LOG);
+		
 		System.out.println("Program the Device");
-		deviceAsync.program(file.getBytes(), 10000, new AsyncAdapter<Void>() {
-
+		deviceAsync.program(file.getBytes(), 100000, new AsyncAdapter<Void>() {
 			@Override
 			public void onProgressChange(float fraction) {
 				final int percent = (int) (fraction * 100.0);
@@ -54,15 +65,15 @@ public class FlashLoader {
 			@Override
 			public void onSuccess(Void result) {
 				System.out.println("The Device has been flashed.");
+				System.exit(0);
 			}
 
 			@Override
 			public void onFailure(Throwable throwable) {
 				throwable.printStackTrace();
+				System.exit(0);
 			}
 		});
-		
-		System.exit(0);
 	}
 	
 	public void readmac(){
@@ -73,10 +84,18 @@ public class FlashLoader {
 		final OperationQueue queue = new SingleThreadOperationQueue();
 		final MockConnection connection = new MockConnection();
 		final Device device = new MockDevice(connection);
-		final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
 		
 		connection.connect("MockPort");
 		System.out.println("Connected");
+		
+		final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
+		
+		System.out.println("Message packet listener added");
+		deviceAsync.addListener(new MessagePacketListener() {
+			public void onMessagePacketReceived(MessageEvent<MessagePacket> event) {
+				System.out.println("Message: " + new String(event.getMessage().getContent()));
+			}
+		}, PacketType.LOG);
 		
 		System.out.println("Reading mac address...");
 		
@@ -88,16 +107,16 @@ public class FlashLoader {
 			
 			public void onSuccess(MacAddress result) {
 				System.out.println("Mac Address: " + result.getMacString());
+				System.exit(0);
 			}
 			
 			public void onFailure(Throwable throwable) {
 				throwable.printStackTrace();
+				System.exit(0);
 			}
 		};
 		
 		deviceAsync.readMac(10000, callback);
-		
-		System.exit(0);
 	}
 	
 	public void writemac(MacAddress macAdresse){
@@ -108,10 +127,18 @@ public class FlashLoader {
 		final OperationQueue queue = new SingleThreadOperationQueue();
 		final MockConnection connection = new MockConnection();
 		final Device device = new MockDevice(connection);
-		final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
 		
 		connection.connect("MockPort");
 		System.out.println("Connected");
+		
+		final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
+		
+		System.out.println("Message packet listener added");
+		deviceAsync.addListener(new MessagePacketListener() {
+			public void onMessagePacketReceived(MessageEvent<MessagePacket> event) {
+				System.out.println("Message: " + new String(event.getMessage().getContent()));
+			}
+		}, PacketType.LOG);
 		
 		System.out.println("Setting Mac Address");
 		deviceAsync.writeMac(new MacAddress(1024), 10000, new AsyncAdapter<Void>() {
@@ -125,15 +152,15 @@ public class FlashLoader {
 			@Override
 			public void onSuccess(Void result) {
 				System.out.println("Mac Address written");
+				System.exit(0);
 			}
 
 			@Override
 			public void onFailure(Throwable throwable) {
 				throwable.printStackTrace();
+				System.exit(0);
 			}
 		});
-		
-		System.exit(0);
 	}
 	
 	public void reset(){
@@ -144,10 +171,18 @@ public class FlashLoader {
 		final OperationQueue queue = new SingleThreadOperationQueue();
 		final MockConnection connection = new MockConnection();
 		final Device device = new MockDevice(connection);
-		final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
 		
 		connection.connect("MockPort");
 		System.out.println("Connected");
+		
+		final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
+		
+		System.out.println("Message packet listener added");
+		deviceAsync.addListener(new MessagePacketListener() {
+			public void onMessagePacketReceived(MessageEvent<MessagePacket> event) {
+				System.out.println("Message: " + new String(event.getMessage().getContent()));
+			}
+		}, PacketType.LOG);
 		
 		System.out.println("Reset");
 		deviceAsync.reset(10000, new AsyncAdapter<Void>() {
@@ -161,14 +196,14 @@ public class FlashLoader {
 			@Override
 			public void onSuccess(Void result) {
 				System.out.println("Device has been reseted");
+				System.exit(0);
 			}
 
 			@Override
 			public void onFailure(Throwable throwable) {
 				throwable.printStackTrace();
+				System.exit(0);
 			}
 		});
-		
-		System.exit(0);
 	}
 }
