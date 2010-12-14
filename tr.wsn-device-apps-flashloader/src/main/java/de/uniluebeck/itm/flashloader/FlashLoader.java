@@ -2,15 +2,13 @@ package de.uniluebeck.itm.flashloader;
 
 import de.uniluebeck.itm.devicedriver.Device;
 import de.uniluebeck.itm.devicedriver.MacAddress;
-import de.uniluebeck.itm.devicedriver.MessagePacketAdapter;
-import de.uniluebeck.itm.devicedriver.MessagePlainText;
-import de.uniluebeck.itm.devicedriver.PacketType;
 import de.uniluebeck.itm.devicedriver.async.AsyncAdapter;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.OperationQueue;
 import de.uniluebeck.itm.devicedriver.async.QueuedDeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.singlethread.SingleThreadOperationQueue;
+import de.uniluebeck.itm.devicedriver.mockdevice.MockConnection;
 import de.uniluebeck.itm.devicedriver.mockdevice.MockDevice;
 
 public class FlashLoader {
@@ -37,15 +35,12 @@ public class FlashLoader {
 		System.out.println("File: " + file);
 		
 		final OperationQueue queue = new SingleThreadOperationQueue();
-		final Device device = new MockDevice();
+		final MockConnection connection = new MockConnection();
+		final Device device = new MockDevice(connection);
 		final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
 		
-		System.out.println("Message packet listener added");
-		deviceAsync.addMessagePacketListener(new MessagePacketAdapter() {
-			public void onMessagePlainTextReceived(MessagePlainText message) {
-				System.out.println("Message: " + message);
-			}
-		}, PacketType.LOG);
+		connection.connect("MockPort");
+		System.out.println("Connected");
 		
 		System.out.println("Program the Device");
 		deviceAsync.program(file.getBytes(), 10000, new AsyncAdapter<Void>() {
@@ -76,15 +71,12 @@ public class FlashLoader {
 		System.out.println("Server: " + server);
 		
 		final OperationQueue queue = new SingleThreadOperationQueue();
-		final Device device = new MockDevice();
+		final MockConnection connection = new MockConnection();
+		final Device device = new MockDevice(connection);
 		final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
 		
-		System.out.println("Message packet listener added");
-		deviceAsync.addMessagePacketListener(new MessagePacketAdapter() {
-			public void onMessagePlainTextReceived(MessagePlainText message) {
-				System.out.println("Message: " + message);
-			}
-		}, PacketType.LOG);
+		connection.connect("MockPort");
+		System.out.println("Connected");
 		
 		System.out.println("Reading mac address...");
 		
@@ -114,15 +106,12 @@ public class FlashLoader {
 		System.out.println("Server: " + server);
 		
 		final OperationQueue queue = new SingleThreadOperationQueue();
-		final Device device = new MockDevice();
+		final MockConnection connection = new MockConnection();
+		final Device device = new MockDevice(connection);
 		final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
 		
-		System.out.println("Message packet listener added");
-		deviceAsync.addMessagePacketListener(new MessagePacketAdapter() {
-			public void onMessagePlainTextReceived(MessagePlainText message) {
-				System.out.println("Message: " + message);
-			}
-		}, PacketType.LOG);
+		connection.connect("MockPort");
+		System.out.println("Connected");
 		
 		System.out.println("Setting Mac Address");
 		deviceAsync.writeMac(new MacAddress(1024), 10000, new AsyncAdapter<Void>() {
@@ -153,15 +142,12 @@ public class FlashLoader {
 		System.out.println("Server: " + server);
 		
 		final OperationQueue queue = new SingleThreadOperationQueue();
-		final Device device = new MockDevice();
+		final MockConnection connection = new MockConnection();
+		final Device device = new MockDevice(connection);
 		final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
 		
-		System.out.println("Message packet listener added");
-		deviceAsync.addMessagePacketListener(new MessagePacketAdapter() {
-			public void onMessagePlainTextReceived(MessagePlainText message) {
-				System.out.println("Message: " + message);
-			}
-		}, PacketType.LOG);
+		connection.connect("MockPort");
+		System.out.println("Connected");
 		
 		System.out.println("Reset");
 		deviceAsync.reset(10000, new AsyncAdapter<Void>() {
