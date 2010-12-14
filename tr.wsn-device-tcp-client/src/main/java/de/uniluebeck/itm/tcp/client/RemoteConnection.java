@@ -32,6 +32,7 @@ public class RemoteConnection extends AbstractConnection{
 	private RpcClientChannel channel = null;
 	
 	/**
+	 * establishes a connection to the server running on the given host.
 	 * @param uri: ConnectionString der Form DeviceID:Username:password@host:port
 	 */
 	@Override
@@ -68,6 +69,8 @@ public class RemoteConnection extends AbstractConnection{
 		bootstrap.setOption("receiveBufferSize", 1048576);
 		bootstrap.setOption("tcpNoDelay", false);
 		
+		//try to connect with different client ports 
+		//	until there is a port not already in use:
 		boolean peered = false;
 		while(!peered){
 			try {

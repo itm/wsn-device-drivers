@@ -41,7 +41,9 @@ import de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.Operations.BlockingInterface;
 
-
+/**
+ * The RemoteDevice represents one device on the server acting as a stub.
+ */
 public class RemoteDevice implements DeviceAsync{
 
 	private static Logger log = LoggerFactory.getLogger(RemoteDevice.class);

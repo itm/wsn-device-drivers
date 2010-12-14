@@ -22,13 +22,26 @@ import de.uniluebeck.itm.tcp.Server.JaxbDevices.JaxbDeviceList;
 
 public class ServerDevice {
 
+	/**
+	 * the logger.
+	 */
 	private static Logger log = LoggerFactory.getLogger(ServerDevice.class);
 	
+	/**
+	 * stores the objects representing the devices callable via the server.
+	 */
 	private static Map<String,DeviceAsync> DeviceList = new HashMap<String,DeviceAsync>();
 
+	/**
+	 * Constructor.
+	 */
 	ServerDevice(){
 	}
 	
+	/**
+	 * reads the devices.xml, creates a device object for every device in the file
+	 * and store it in the DeviceList.
+	 */
 	public void createServerDevices() {
 		
 		try {
@@ -55,12 +68,20 @@ public class ServerDevice {
 		
 	}
 	
+	/**
+	 * readouts the devices specified in the devices.xml.
+	 * @return a JaxbDeviceList object with a list of devices in it.
+	 * @throws JAXBException
+	 */
 	private JaxbDeviceList readDevices() throws JAXBException{
 		
 		return ConfigReader.readFile();
 		
 	}
 	//ConnectionType = de.uniluebeck.itm.devicedriver.mockdevice.MockConnection
+	/**
+	 * creates a connection instance of the type specified in the devices.xml .
+	 */
 	private Connection createConnection(String ConnectionType) {
 		
 		Connection connection = null;
@@ -84,6 +105,9 @@ public class ServerDevice {
 	
 	//DeviceName = de.uniluebeck.itm.devicedriver.mockdevice.MockDevice
 	//DeviceName = de.uniluebeck.itm.devicedriver.jennic.JennicDevice
+	/**
+	 * creates a device instance of the type specified in the devices.xml .
+	 */
 	private Device createDevice(String DeviceName, Connection con) {
 
 		Device device = null;
@@ -119,11 +143,20 @@ public class ServerDevice {
 		return device;
 	}
 	
+	/**
+	 * creates the actual object representing the device on the server.
+	 * @param device the device that shall be usable asynchronously.
+	 * @return a representation of the device which can be called asynchronously.
+	 */
 	private DeviceAsync createDeviceAsync(Device device){
 		
 		return new QueuedDeviceAsync(new SingleThreadOperationQueue(), device);
 	}
 	
+	/**
+	 * creates a distinct id for the devices.
+	 * @return
+	 */
 	private String createID(){
 		
 		double rand;

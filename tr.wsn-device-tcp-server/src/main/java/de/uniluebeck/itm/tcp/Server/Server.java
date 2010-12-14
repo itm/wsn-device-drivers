@@ -59,26 +59,52 @@ import de.uniluebeck.itm.tr.util.TimedCache;
 
 public class Server {
 
+	/**
+	 * logger.
+	 */
 	private static Logger log = LoggerFactory.getLogger(Server.class);
 	
 	// werden nach 30 min alle eintraege des Cache geloescht?
 	// wie Timeout fuer einen Eintrag neu starten?
+	/**
+	 * stores a clientID for every open channel.
+	 */
 	private static TimedCache<RpcClientChannel,ClientID> idList = new TimedCache<RpcClientChannel,ClientID>(30,TimeUnit.MINUTES);
+	/**
+	 * stores a Shiro subject for every open channel.
+	 */
 	private static TimedCache<RpcClientChannel,Subject> authList = new TimedCache<RpcClientChannel,Subject>(30,TimeUnit.MINUTES);
 	//private static HashMap<RpcClientChannel,Subject> authList = new HashMap<RpcClientChannel,Subject>();
 	private static HashMap <String,MessagePacketListener> packetListenerList = new HashMap<String,MessagePacketListener>();
 	private static HashMap <String,MessagePlainTextListener> plainTextListenerList = new HashMap<String,MessagePlainTextListener>();
 	
+	/**
+	 * IP of the host the server is running on.
+	 */
 	private String host;
+	/**
+	 * the port ther server is listening on.
+	 */
 	private int port;
+	/**
+	 * contains the objects representing the devices connected to the host.
+	 */
 	private static ServerDevice serverDevices;
 	
+	/**
+	 * Constructor.
+	 * @param host IP of the host.
+	 * @param port the port the server is listening on.
+	 */
 	Server(String host, int port){
 		this.host = host;
 		this.port = port;
 		serverDevices = new ServerDevice();
 	}
 	
+	/**
+	 * starts the whole Server.
+	 */
 	public void start (){
 		
 		serverDevices.createServerDevices();
