@@ -2,14 +2,12 @@ package de.uniluebeck.itm.messenger;
 
 import de.uniluebeck.itm.devicedriver.Device;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
-import de.uniluebeck.itm.devicedriver.MessagePacketAdapter;
-import de.uniluebeck.itm.devicedriver.MessagePlainText;
-import de.uniluebeck.itm.devicedriver.PacketType;
 import de.uniluebeck.itm.devicedriver.async.AsyncAdapter;
 import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.OperationQueue;
 import de.uniluebeck.itm.devicedriver.async.QueuedDeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.singlethread.SingleThreadOperationQueue;
+import de.uniluebeck.itm.devicedriver.mockdevice.MockConnection;
 import de.uniluebeck.itm.devicedriver.mockdevice.MockDevice;
 
 public class Messenger {
@@ -36,15 +34,12 @@ public class Messenger {
 		System.out.println("Message: " + message);
 		
 		final OperationQueue queue = new SingleThreadOperationQueue();
-		final Device device = new MockDevice();
+		final MockConnection connection = new MockConnection();
+		final Device device = new MockDevice(connection);
 		final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
 		
-		System.out.println("Message packet listener added");
-		deviceAsync.addMessagePacketListener(new MessagePacketAdapter() {
-			public void onMessagePlainTextReceived(MessagePlainText message) {
-				System.out.println("Message: " + message);
-			}
-		}, PacketType.LOG);
+		connection.connect("MockPort");
+		System.out.println("Connected");
 		
 		System.out.println("Send Message");
 		MessagePacket packet = new MessagePacket(0, message.getBytes());
