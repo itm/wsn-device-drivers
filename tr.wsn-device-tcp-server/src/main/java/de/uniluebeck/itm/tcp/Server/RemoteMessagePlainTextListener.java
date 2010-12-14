@@ -6,36 +6,38 @@ import com.google.protobuf.RpcCallback;
 import com.google.protobuf.RpcController;
 import com.googlecode.protobuf.pro.duplex.RpcClientChannel;
 
-import de.uniluebeck.itm.devicedriver.MessagePacket;
-import de.uniluebeck.itm.devicedriver.MessagePacketListener;
+import de.uniluebeck.itm.devicedriver.MessagePlainText;
+import de.uniluebeck.itm.devicedriver.MessagePlainTextListener;
 import de.uniluebeck.itm.devicedriver.event.MessageEvent;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketServiceAnswer;
 
-public class RemoteMessagePacketListener implements MessagePacketListener {
+public class RemoteMessagePlainTextListener implements MessagePlainTextListener{
 
 	private RpcClientChannel channel = null;
 	private PacketServiceAnswer.Interface answer;
 	private String OperationKey;
 	
-	RemoteMessagePacketListener(String OperationKey, RpcClientChannel channel){
+	RemoteMessagePlainTextListener(String OperationKey, RpcClientChannel channel){
 		this.OperationKey = OperationKey;
 		this.channel = channel;
 		answer = PacketServiceAnswer.newStub(channel);
 	}
 
 	@Override
-	public void onMessagePacketReceived(final MessageEvent<MessagePacket> event) {
+	public void onMessagePlainTextReceived(
+			final MessageEvent<MessagePlainText> message) {
 		
 		final RpcController controller = channel.newRpcController();
-		ListenerData request = ListenerData.newBuilder().setOperationKey(OperationKey).setSource(event.getSource().toString()).setType(event.getMessage().getType()).addData(ByteString.copyFrom(event.getMessage().getContent())).build();
+		ListenerData request = ListenerData.newBuilder().setOperationKey(OperationKey).setSource(message.getSource().toString()).addData(ByteString.copyFrom(message.getMessage().getContent())).build();
 
-		answer.sendReversePacketMessage(controller, request, new RpcCallback<EmptyAnswer>(){
+		answer.sendReversePlainTextMessage(controller, request, new RpcCallback<EmptyAnswer>(){
 
 			@Override
 			public void run(EmptyAnswer parameter) {	
 			}});
 		
 	}
+
 }

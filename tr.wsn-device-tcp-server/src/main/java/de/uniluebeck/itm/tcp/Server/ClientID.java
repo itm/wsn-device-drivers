@@ -1,57 +1,49 @@
 package de.uniluebeck.itm.tcp.Server;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
+import com.googlecode.protobuf.pro.duplex.RpcClientChannel;
+
+import de.uniluebeck.itm.devicedriver.MacAddress;
+import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 
 
 public class ClientID {
 
 	String Message = "init";
-	private static HashMap<String,OperationHandle<Void>> handleList = new HashMap<String,OperationHandle<Void>>();
+	private HashMap<String,OperationHandle<Void>> handleVoidList = new HashMap<String,OperationHandle<Void>>();
+	private HashMap<String,OperationHandle<MacAddress>> handleMacList = new HashMap<String,OperationHandle<MacAddress>>();
 	
-	public ClientID(){
-		
-	}
+	private DeviceAsync device;
 	
-	public void setMessage(String message){
-		for(int i=0;i<1;i++){
-			try {
-				Thread.sleep(10000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} 
-		}
-		Message = message;
-		
-		
-//		try {
-//			Thread.sleep(10000000);
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
-	}
-	
-	public String getMessage() {
-		for(int i=0;i<1;i++){
-			try {
-				Thread.sleep(10000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		return Message;
+	public ClientID(DeviceAsync device){
+		this.device = device;
 	}
 
 	// Eintragen des OperationHandle mit dem OperationKey in eine HashMap
-	public void setHandleList(String OperationKey, OperationHandle<Void> handle) {
-		handleList.put(OperationKey, handle);
+	public void setHandleVoidList(String OperationKey, OperationHandle<Void> handle) {
+		handleVoidList.put(OperationKey, handle);
+	}
+	
+	public void setHandleMacList(String OperationKey, OperationHandle<MacAddress> handle) {
+		handleMacList.put(OperationKey, handle);
 	}
 
 	// Rueckgabe des richtigen OperationHandle
-	public OperationHandle<Void> getHandleList(String OperationKey) {
-		return handleList.get(OperationKey);
+	public OperationHandle<Void> getHandleVoidList(String OperationKey) {
+		return handleVoidList.get(OperationKey);
+	}
+
+	// Rueckgabe des richtigen OperationHandle
+	public OperationHandle<MacAddress> getHandleMacList(String OperationKey) {
+		return handleMacList.get(OperationKey);
+	}
+	
+	public DeviceAsync getDevice() {
+		return device;
 	}
 }

@@ -3,8 +3,7 @@ package de.uniluebeck.itm.tcp.Server;
 
 import java.util.HashMap;
 import java.util.concurrent.Executors;
-
-import javax.xml.bind.JAXBException;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -21,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+import com.google.protobuf.ByteString;
 import com.google.protobuf.RpcCallback;
 import com.google.protobuf.RpcController;
 import com.googlecode.protobuf.pro.duplex.PeerInfo;
@@ -34,21 +34,27 @@ import com.googlecode.protobuf.pro.duplex.server.DuplexTcpServerBootstrap;
 
 import de.uniluebeck.itm.Impl.Main;
 import de.uniluebeck.itm.devicedriver.MacAddress;
+import de.uniluebeck.itm.devicedriver.MessagePacket;
+import de.uniluebeck.itm.devicedriver.MessagePacketListener;
+import de.uniluebeck.itm.devicedriver.MessagePlainText;
+import de.uniluebeck.itm.devicedriver.MessagePlainTextListener;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
+import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
-import de.uniluebeck.itm.tcp.Server.JaxbDevices.ConfigReader;
-import de.uniluebeck.itm.tcp.Server.JaxbDevices.JaxbDeviceList;
+import de.uniluebeck.itm.devicedriver.event.MessageEvent;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.ByteData;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.Identification;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.Operations;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketService;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketTypeData;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.TestOperations;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketService;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData;
 import de.uniluebeck.itm.tr.util.TimedCache;
 
@@ -58,24 +64,25 @@ public class Server {
 	
 	// werden nach 30 min alle eintraege des Cache geloescht?
 	// wie Timeout fuer einen Eintrag neu starten?
-	private static TimedCache<RpcClientChannel,ClientID> idList = new TimedCache<RpcClientChannel,ClientID>();
-	private static TimedCache<RpcClientChannel,Subject> authList = new TimedCache<RpcClientChannel,Subject>();
-	private static HashMap <String,RemoteMessagePacketListener> listenerList = new HashMap<String,RemoteMessagePacketListener>();
+	private static TimedCache<RpcClientChannel,ClientID> idList = new TimedCache<RpcClientChannel,ClientID>(30,TimeUnit.MINUTES);
+	private static TimedCache<RpcClientChannel,Subject> authList = new TimedCache<RpcClientChannel,Subject>(30,TimeUnit.MINUTES);
+	//private static HashMap<RpcClientChannel,Subject> authList = new HashMap<RpcClientChannel,Subject>();
+	private static HashMap <String,MessagePacketListener> packetListenerList = new HashMap<String,MessagePacketListener>();
+	private static HashMap <String,MessagePlainTextListener> plainTextListenerList = new HashMap<String,MessagePlainTextListener>();
 	
 	private String host;
 	private int port;
+	private static ServerDevice serverDevices;
 	
 	Server(String host, int port){
 		this.host = host;
 		this.port = port;
+		serverDevices = new ServerDevice();
 	}
 	
 	public void start (){
 		
-		ServerDevice serverDevices = new ServerDevice();
 		serverDevices.createServerDevices();
-		
-		//BasicConfigurator.configure();
 		
 		// setzen der server-Informationen
 		PeerInfo serverInfo = new PeerInfo(host, port);
@@ -120,7 +127,6 @@ public class Server {
 	        
 	        
 	    	// registrieren der benutzten Services
-	    	bootstrap.getRpcServiceRegistry().registerService(TestOperations.newReflectiveService(new TestOperationsImpl()));
 	    	bootstrap.getRpcServiceRegistry().registerService(Operations.newReflectiveService(new OperationsImpl()));
 	    	bootstrap.getRpcServiceRegistry().registerService(PacketService.newReflectiveService(new PacketServiceImpl()));
 
@@ -138,85 +144,6 @@ public class Server {
 			
 	}
 	
-	// Testklassen
-	static class TestOperationsImpl implements TestOperations.Interface {
-
-		// setzen einer Nachricht auf dem Server
-		@Override
-		public void setMessage(RpcController controller, STRING request,
-				RpcCallback<VOID> done) {
-			
-			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
-			if(user==null || !user.isAuthenticated()){
-				controller.setFailed("Sie sind nicht authentifiziert!");
-				done.run(null);
-				return;
-			}
-			
-			if (!user.isPermitted("message:set")) {
-				controller.setFailed("Sie haben nicht die noetigen Rechte!");
-				done.run(null);
-				return;
-			}
-			
-			// erstellen einer Klasse zum Testen der OperationHandle
-			Main test = new Main();
-			
-			// herausfinden des TCP-Channel und finden der Userspezifischen Klasse
-			// ein Channel kann fuer mehrere Operationen offen bleiben
-			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
-			
-			// aber die handle muessen zu jeder Operation eindeutig zuweisbar sein
-			
-			// erzeugen eines OperationHandle zur der Operation
-			OperationHandle<Void> handle = test.setMessage();
-			
-			// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
-			id.setHandleList(request.getOperationKey(), handle);
-			// setzen der Nachricht auf dem Server
-			id.setMessage(request.getQuery());
-			
-			// ausfuehren des Callbacks
-			done.run(VOID.newBuilder().build());
-		}
-
-		// abrufen einer Nachricht vom Server
-		@Override
-		public void getMessage(RpcController controller, VOID request,
-				RpcCallback<STRING> done) {
-			
-			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
-			if(user==null || !user.isAuthenticated()){
-				controller.setFailed("Sie sind nicht authentifiziert!");
-				done.run(null);
-				return;
-			}
-			
-
-			if (!user.isPermitted("message:get")) {
-				controller.setFailed("Sie haben nicht die noetigen Rechte!");
-				done.run(null);
-				return;
-			}
-			
-			// erstellen einer Klasse zum Testen der OperationHandle
-			Main test = new Main();
-			
-			// identifizieren des Users mit dem Channel
-			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
-			
-			// erzeugen eines OperationHandle zur der Operation
-			OperationHandle<Void> handle = test.getMessage();
-			
-			// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
-			id.setHandleList(request.getOperationKey(), handle);
-			
-			// ausfuehren des Callbacks mit der Nachricht
-			done.run(STRING.newBuilder().setQuery(id.getMessage()).setOperationKey(controller.toString()).build());
-
-		}
-	}
-	
 	// eigentliche Operationen, die spaeter verwendet werden sollen
 	static class OperationsImpl implements Operations.Interface {
 		
@@ -224,20 +151,18 @@ public class Server {
 		// hier sollte die Authentifikation stattfinden
 		@Override
 		public void connect(RpcController controller, Identification request,
-				RpcCallback<VOID> done) {
+				RpcCallback<EmptyAnswer> done) {
 						
 			// eine Moeglichkeit den benutzten channel zu identifizieren
 			RpcClientChannel channel = ServerRpcController.getRpcChannel(controller);
 			
 			// erzeugen einer channel bezogenen User Instanz
-			ClientID id = new ClientID();
+			ClientID id = new ClientID(serverDevices.getDeviceList().get(request.getDeviceID()));
 			
 			// Abgleich der Userdaten
 			
 			/*Shiro:*/
 			Subject currentUser = SecurityUtils.getSubject();
-			
-			System.out.println(currentUser); //TODO delete!
 			
 	        if (!currentUser.isAuthenticated()) {
 	            UsernamePasswordToken token = new UsernamePasswordToken(request.getUsername(), request.getPassword());
@@ -249,7 +174,7 @@ public class Server {
 					idList.put(channel, id);
 					authList.put(channel, currentUser);
 			        // ausfuehren des Callback
-			        done.run(VOID.newBuilder().build());
+			        done.run(EmptyAnswer.newBuilder().build());
 					
 	            } catch (UnknownAccountException uae) {
 	            	controller.setFailed("There is no user with username of " + token.getPrincipal());
@@ -277,7 +202,7 @@ public class Server {
 		// Methode um Device zu Programmieren
 		@Override
 		public void program(RpcController controller, ProgramPacket request,
-				RpcCallback<VOID> done) {
+				RpcCallback<EmptyAnswer> done) {
 			
 			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
 			if(user==null || !user.isAuthenticated()){
@@ -292,14 +217,14 @@ public class Server {
 				return;
 			}
 			
-			// erstellen einer Klasse zum Testen der OperationHandle
-			Main test = new Main();
-			
 			// identifizieren des Users mit dem Channel
-			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
+			final ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
+			
+			// erstellen einer Klasse zum Testen der OperationHandle
+			DeviceAsync deviceAsync = id.getDevice();
 
 			// erzeugen eines OperationHandle zur der Operation
-			OperationHandle <Void> handle = test.program(request.getBinaryPacketList().get(0).toByteArray(), request.getTimeout(), new AsyncCallback<Void>(){
+			OperationHandle <Void> handle = deviceAsync.program(request.getBinaryPacketList().get(0).toByteArray(), request.getTimeout(), new AsyncCallback<Void>(){
 
 				@Override
 				public void onCancel() {
@@ -328,50 +253,50 @@ public class Server {
 				}});
 			
 			// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
-			id.setHandleList(request.getOperationKey(), handle);
+			id.setHandleVoidList(request.getOperationKey(), handle);
 			
 			// ausfuehren des Callbacks
-			done.run(VOID.newBuilder().build());
+			done.run(EmptyAnswer.newBuilder().build());
 		}
 
 		// reagieren auf ein getState-Aufruf
 		@Override
-		public void getState(RpcController controller, VOID request,
+		public void getState(RpcController controller, OpKey request,
 				RpcCallback<STRING> done) {
 			
 			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
-			OperationHandle<Void> handle = id.getHandleList(request.getOperationKey());			
+			OperationHandle<Void> handle = id.getHandleVoidList(request.getOperationKey());			
 			done.run(STRING.newBuilder().setQuery(handle.getState().getName()).build());
 		}
 
 		// reagieren auf ein cancel-Aufruf
 		@Override
-		public void cancelHandle(RpcController controller, VOID request,
-				RpcCallback<VOID> done) {
+		public void cancelHandle(RpcController controller, OpKey request,
+				RpcCallback<EmptyAnswer> done) {
 	
 			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
-			OperationHandle<Void> handle = id.getHandleList(request.getOperationKey());
+			OperationHandle<Void> handle = id.getHandleVoidList(request.getOperationKey());
 			System.out.println("canceled: "+controller.isCanceled());
 			if(controller.isCanceled()){
 				handle.cancel();
-				done.run(VOID.newBuilder().build());
+				done.run(EmptyAnswer.newBuilder().build());
 			}
 		}
 
 		// reagieren auf ein get-Aufruf
 		@Override
-		public void getHandle(RpcController controller, VOID request,
-				RpcCallback<VOID> done) {
+		public void getHandle(RpcController controller, OpKey request,
+				RpcCallback<EmptyAnswer> done) {
 			
 			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
-			OperationHandle<Void> handle = id.getHandleList(request.getOperationKey());
+			OperationHandle<Void> handle = id.getHandleVoidList(request.getOperationKey());
 			handle.get();
-			done.run(VOID.newBuilder().build());
+			done.run(EmptyAnswer.newBuilder().build());
 		}
 
 		@Override
 		public void writeMac(RpcController controller, MacData request,
-				RpcCallback<VOID> done) {
+				RpcCallback<EmptyAnswer> done) {
 			
 			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
 			if(user==null || !user.isAuthenticated()){
@@ -422,16 +347,16 @@ public class Server {
 				}});
 			
 			// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
-			id.setHandleList(request.getOperationKey(), handle);
+			id.setHandleVoidList(request.getOperationKey(), handle);
 			
 			// ausfuehren des Callbacks
-			done.run(VOID.newBuilder().build());
+			done.run(EmptyAnswer.newBuilder().build());
 			
 		}
 
 		@Override
 		public void writeFlash(RpcController controller, FlashData request,
-				RpcCallback<VOID> done) {
+				RpcCallback<EmptyAnswer> done) {
 			
 			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
 			if(user==null || !user.isAuthenticated()){
@@ -482,16 +407,16 @@ public class Server {
 				}});
 			
 			// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
-			id.setHandleList(request.getOperationKey(), handle);
+			id.setHandleVoidList(request.getOperationKey(), handle);
 			
 			// ausfuehren des Callbacks
-			done.run(VOID.newBuilder().build());
+			done.run(EmptyAnswer.newBuilder().build());
 			
 		}
 
 		@Override
-		public void eraseFlash(RpcController controller, VOID request,
-				RpcCallback<VOID> done) {
+		public void eraseFlash(RpcController controller, Timeout request,
+				RpcCallback<EmptyAnswer> done) {
 			// TODO Auto-generated method stub
 			
 		}
@@ -504,32 +429,8 @@ public class Server {
 		}
 
 		@Override
-		public void readMac(RpcController controller, VOID request,
-				RpcCallback<MacData> done) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void reset(RpcController controller, VOID request,
-				RpcCallback<VOID> done) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void send(RpcController controller, sendData request,
-				RpcCallback<VOID> done) {
-			// TODO Auto-generated method stub
-			
-		}
-	}
-	
-	static class PacketServiceImpl implements PacketService.Interface {
-
-		@Override
-		public void removeMessagePacketListener(RpcController controller,
-				VOID request, RpcCallback<VOID> done) {
+		public void readMac(final RpcController controller, final Timeout request,
+				final RpcCallback<EmptyAnswer> done) {
 			
 			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
 			if(user==null || !user.isAuthenticated()){
@@ -538,17 +439,88 @@ public class Server {
 				return;
 			}
 			
-			Main test = new Main();
-			test.removeMessagePacketListener(listenerList.get(request.getOperationKey()));
-			listenerList.remove(request.getOperationKey());
-			done.run(VOID.newBuilder().build());
+			if (!user.isPermitted("write:program")) {
+				controller.setFailed("Sie haben nicht die noetigen Rechte!");
+				done.run(null);
+				return;
+			}
+			
+			// identifizieren des Users mit dem Channel
+			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
+			
+			// erstellen einer Klasse zum Testen der OperationHandle
+			DeviceAsync deviceAsync = id.getDevice();
+
+			// erzeugen eines OperationHandle zur der Operation
+			OperationHandle <MacAddress> handle = deviceAsync.readMac(request.getTimeout(), new AsyncCallback<MacAddress>(){
+
+				@Override
+				public void onCancel() {
+					controller.setFailed("readMac wurde vom Device abgebrochen");
+					done.run(null);
+				}
+
+				@Override
+				public void onFailure(Throwable throwable) {
+					controller.setFailed(throwable.getMessage());
+					done.run(null);
+				}
+
+				@Override
+				public void onProgressChange(float fraction) {
+					ReverseMessage message = new ReverseMessage(request.getOperationKey(),ServerRpcController.getRpcChannel(controller));
+					message.sendReverseMessage(String.valueOf(fraction));
+				}
+
+				@Override
+				public void onSuccess(MacAddress result) {
+					// ausfuehren des Callbacks
+					ReverseMessage message = new ReverseMessage(request.getOperationKey(),ServerRpcController.getRpcChannel(controller));
+					message.sendReverseMac(result);
+				}
+
+				//TODO wozu onExecute und wo wird es abgefangen
+				@Override
+				public void onExecute() {
+					
+				}});
+			
+			// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
+			id.setHandleMacList(request.getOperationKey(), handle);
+			
+			done.run(EmptyAnswer.newBuilder().build());
 			
 		}
 
 		@Override
-		public void addMessagePacketListener(RpcController controller,
-				PacketTypeData request, RpcCallback<VOID> done) {
+		public void reset(RpcController controller, Timeout request,
+				RpcCallback<EmptyAnswer> done) {
+			// TODO Auto-generated method stub
 			
+		}
+
+		@Override
+		public void send(RpcController controller, sendData request,
+				RpcCallback<EmptyAnswer> done) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getChipType(RpcController controller, Timeout request,
+				RpcCallback<ChipType> done) {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+	
+
+	static class PacketServiceImpl implements PacketService.Interface {
+
+		@Override
+		public void addMessagePacketListener(final RpcController controller,
+				final PacketTypeData request, RpcCallback<EmptyAnswer> done) {
+
 			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
 			if(user==null || !user.isAuthenticated()){
 				controller.setFailed("Sie sind nicht authentifiziert!");
@@ -560,14 +532,94 @@ public class Server {
 			for (int i=0;i<request.getTypeCount();i++){
 				types[i] = request.getType(i);
 			}
+	
+			MessagePacketListener listener = new MessagePacketListener() {
+				
+				@Override
+				public void onMessagePacketReceived(MessageEvent<MessagePacket> event) {
+					RemoteMessagePacketListener remoteListener = new RemoteMessagePacketListener(request.getOperationKey(),ServerRpcController.getRpcChannel(controller));
+					remoteListener.onMessagePacketReceived(event);
+				}
+			};
+			
+			// erstellen einer Klasse zum Testen der OperationHandle
+			DeviceAsync deviceAsync = idList.get(ServerRpcController.getRpcChannel(controller)).getDevice();
+			deviceAsync.addListener(listener, types);
+			
+			packetListenerList.put(request.getOperationKey(), listener);
+			
+			done.run(EmptyAnswer.newBuilder().build());
+			
+		}
+
+		@Override
+		public void addMessagePlainTextListener(final RpcController controller,
+				final PacketTypeData request, RpcCallback<EmptyAnswer> done) {
+			
+			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
+			if(user==null || !user.isAuthenticated()){
+				controller.setFailed("Sie sind nicht authentifiziert!");
+				done.run(null);
+				return;
+			}
+			
+
+			MessagePlainTextListener listener = new MessagePlainTextListener() {
+
+				@Override
+				public void onMessagePlainTextReceived(
+						MessageEvent<MessagePlainText> message) {
+					
+					RemoteMessagePlainTextListener remoteListener = new RemoteMessagePlainTextListener(request.getOperationKey(),ServerRpcController.getRpcChannel(controller));
+					remoteListener.onMessagePlainTextReceived(message);
+				}
+			};
+			
+			// erstellen einer Klasse zum Testen der OperationHandle
+			DeviceAsync deviceAsync = idList.get(ServerRpcController.getRpcChannel(controller)).getDevice();
+			deviceAsync.addListener(listener);
+			
+			plainTextListenerList.put(request.getOperationKey(), listener);
+			
+			done.run(EmptyAnswer.newBuilder().build());
 			
 			
-			RemoteMessagePacketListener listener = new RemoteMessagePacketListener(request.getOperationKey() ,ServerRpcController.getRpcChannel(controller));
-			listenerList.put(request.getOperationKey(), listener);
+		}
+
+		@Override
+		public void removeMessagePacketListener(RpcController controller,
+				OpKey request, RpcCallback<EmptyAnswer> done) {
 			
-			Main test = new Main();
-			test.addMessagePacketListener(listener, types);
-			done.run(VOID.newBuilder().build());
+			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
+			if(user==null || !user.isAuthenticated()){
+				controller.setFailed("Sie sind nicht authentifiziert!");
+				done.run(null);
+				return;
+			}
+			
+			DeviceAsync deviceAsync = idList.get(ServerRpcController.getRpcChannel(controller)).getDevice();
+
+			deviceAsync.removeListener(packetListenerList.get(request.getOperationKey()));
+			packetListenerList.remove(request.getOperationKey());
+			done.run(EmptyAnswer.newBuilder().build());
+			
+		}
+		
+		@Override
+		public void removeMessagePlainTextListener(RpcController controller,
+				OpKey request, RpcCallback<EmptyAnswer> done) {
+			
+			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
+			if(user==null || !user.isAuthenticated()){
+				controller.setFailed("Sie sind nicht authentifiziert!");
+				done.run(null);
+				return;
+			}
+
+			DeviceAsync deviceAsync = idList.get(ServerRpcController.getRpcChannel(controller)).getDevice();
+			deviceAsync.removeListener(plainTextListenerList.get(request.getOperationKey()));
+			plainTextListenerList.remove(request.getOperationKey());
+			done.run(EmptyAnswer.newBuilder().build());
 			
 		}
 	}

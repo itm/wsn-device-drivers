@@ -24,8 +24,8 @@ public class ServerDevice {
 
 	private static Logger log = LoggerFactory.getLogger(ServerDevice.class);
 	
-	public static Map<String,DeviceAsync> DeviceList = new HashMap<String,DeviceAsync>();
-	
+	private static Map<String,DeviceAsync> DeviceList = new HashMap<String,DeviceAsync>();
+
 	ServerDevice(){
 	}
 	
@@ -35,11 +35,13 @@ public class ServerDevice {
 			JaxbDeviceList list = readDevices();
 			
 			for(JaxbDevice jaxDevice : list.getJaxbDevice()){
-				String key = createID();
+				//String key = createID();
+				
+				String key="1"; //TODO nur zum testen
 				//Connection con = createConnection(jaxDevice.getKnotenTyp());
-				Connection con = createConnection("de.uniluebeck.itm.devicedriver.mockdevice.MockConnection");
+				Connection con = createConnection(jaxDevice.getConnectionType());
 				con.connect(jaxDevice.getPort());
-				Device device = createDevice("de.uniluebeck.itm.devicedriver.mockdevice.MockDevice", con);
+				Device device = createDevice(jaxDevice.getDeviceType(), con);
 				DeviceAsync deviceAsync = createDeviceAsync(device);
 				DeviceList.put(key, deviceAsync);
 				
@@ -131,5 +133,9 @@ public class ServerDevice {
 		}while(DeviceList.containsKey(String.valueOf(rand)));
 		
 		return String.valueOf(rand);
+	}
+	
+	public Map<String, DeviceAsync> getDeviceList() {
+		return DeviceList;
 	}
 }

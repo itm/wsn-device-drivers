@@ -4,6 +4,7 @@ import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.MessagePacketListener;
+import de.uniluebeck.itm.devicedriver.MessagePlainTextListener;
 import de.uniluebeck.itm.devicedriver.PacketType;
 import de.uniluebeck.itm.devicedriver.State;
 import de.uniluebeck.itm.devicedriver.async.*;
@@ -59,20 +60,6 @@ public class Main implements DeviceAsync{
 			}};
 		
 	}
-	
-	@Override
-	public void addMessagePacketListener(MessagePacketListener listener,
-			PacketType... types) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void addMessagePacketListener(MessagePacketListener listener,
-			int... types) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public OperationHandle<Void> eraseFlash(long timeout,
@@ -95,12 +82,6 @@ public class Main implements DeviceAsync{
 		
 		
 		return null;
-	}
-
-	@Override
-	public void removeMessagePacketListener(MessagePacketListener listener) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -152,6 +133,48 @@ public class Main implements DeviceAsync{
 			AsyncCallback<ChipType> callback) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+
+	@Override
+	public void addListener(MessagePacketListener listener, PacketType... types) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void addListener(MessagePacketListener listener, int... types) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void addListener(MessagePacketListener listener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void addListener(MessagePlainTextListener listener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void removeListener(MessagePacketListener listener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void removeListener(MessagePlainTextListener listener) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

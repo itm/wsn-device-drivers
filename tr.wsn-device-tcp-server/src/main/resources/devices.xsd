@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-    targetNamespace="rpc_pro/rpcPrototype/schema/devices"
-    xmlns:tns="rpc_pro/rpcPrototype/schema/devices"
+    targetNamespace="de/uniluebeck/itm/schema/devices"
+    xmlns:tns="de/uniluebeck/itm/schema/devices"
     elementFormDefault="qualified">
     <xsd:complexType name="jaxbDevice">
         <xsd:sequence>
-            <xsd:element name="KnotenTyp" type="xsd:string"></xsd:element>
-            <xsd:element name="Port" type="xsd:string"></xsd:element>
+            <xsd:element name="DeviceName" type="xsd:string" minOccurs="0"></xsd:element>
+            <xsd:element name="DeviceType" type="xsd:string" minOccurs="1" maxOccurs="1"></xsd:element>
+            <xsd:element name="ConnectionType" type="xsd:string" minOccurs="1" maxOccurs="1"></xsd:element>
+            <xsd:element name="Port" type="xsd:string" minOccurs="1" maxOccurs="1"></xsd:element>
             <xsd:element name="TestBed" type="xsd:string" minOccurs="0"></xsd:element>
             <xsd:element name="Sensors" type="tns:jaxbSensors" minOccurs="0"></xsd:element>
         </xsd:sequence>
