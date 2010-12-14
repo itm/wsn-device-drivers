@@ -2,11 +2,14 @@ package de.uniluebeck.itm.messenger;
 
 import de.uniluebeck.itm.devicedriver.Device;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
+import de.uniluebeck.itm.devicedriver.MessagePacketListener;
+import de.uniluebeck.itm.devicedriver.PacketType;
 import de.uniluebeck.itm.devicedriver.async.AsyncAdapter;
 import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.OperationQueue;
 import de.uniluebeck.itm.devicedriver.async.QueuedDeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.singlethread.SingleThreadOperationQueue;
+import de.uniluebeck.itm.devicedriver.event.MessageEvent;
 import de.uniluebeck.itm.devicedriver.mockdevice.MockConnection;
 import de.uniluebeck.itm.devicedriver.mockdevice.MockDevice;
 
@@ -36,14 +39,22 @@ public class Messenger {
 		final OperationQueue queue = new SingleThreadOperationQueue();
 		final MockConnection connection = new MockConnection();
 		final Device device = new MockDevice(connection);
-		final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
 		
 		connection.connect("MockPort");
 		System.out.println("Connected");
 		
+		final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
+		
+		System.out.println("Message packet listener added");
+		deviceAsync.addListener(new MessagePacketListener() {
+			public void onMessagePacketReceived(MessageEvent<MessagePacket> event) {
+				System.out.println("Message: " + new String(event.getMessage().getContent()));
+			}
+		}, PacketType.LOG);
+		
 		System.out.println("Send Message");
 		MessagePacket packet = new MessagePacket(0, message.getBytes());
-		deviceAsync.send(packet, 10000, new AsyncAdapter<Void>() {
+		deviceAsync.send(packet, 100000, new AsyncAdapter<Void>() {
 
 			@Override
 			public void onProgressChange(float fraction) {
@@ -54,14 +65,14 @@ public class Messenger {
 			@Override
 			public void onSuccess(Void result) {
 				System.out.println("Message send");
+				System.exit(0);
 			}
 
 			@Override
 			public void onFailure(Throwable throwable) {
 				throwable.printStackTrace();
+				System.exit(0);
 			}
 		});
-		
-		System.exit(0);
 	}
 }
