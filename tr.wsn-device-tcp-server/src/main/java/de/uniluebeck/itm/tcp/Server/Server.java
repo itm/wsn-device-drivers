@@ -20,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-import com.google.protobuf.ByteString;
 import com.google.protobuf.RpcCallback;
 import com.google.protobuf.RpcController;
 import com.googlecode.protobuf.pro.duplex.PeerInfo;
@@ -294,9 +293,10 @@ public class Server {
 			done.run(EmptyAnswer.newBuilder().build());
 		}
 
+		
 		@Override
-		public void writeMac(RpcController controller, MacData request,
-				RpcCallback<EmptyAnswer> done) {
+		public void writeMac(final RpcController controller, MacData request,
+				final RpcCallback<EmptyAnswer> done) {
 			
 			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
 			if(user==null || !user.isAuthenticated()){
@@ -311,38 +311,43 @@ public class Server {
 				return;
 			}
 			
-			// erstellen einer Klasse zum Testen der OperationHandle
-			Main test = new Main();
-			
 			// identifizieren des Users mit dem Channel
 			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
 			
+			// erstellen einer Klasse zum Testen der OperationHandle
+			DeviceAsync deviceAsync = id.getDevice();
+			
+			final ReverseMessage message = new ReverseMessage(request.getOperationKey(),ServerRpcController.getRpcChannel(controller));
+			
 			// erzeugen eines OperationHandle zur der Operation
-			OperationHandle <Void> handle = test.writeMac(new MacAddress(request.toByteArray()), request.getTimeout(), new AsyncCallback<Void>(){
-
+			OperationHandle <Void> handle = deviceAsync.writeMac(new MacAddress(request.getMACADDRESSList().get(0).toByteArray()), request.getTimeout(), new AsyncCallback<Void>(){
 				@Override
 				public void onCancel() {
-					System.out.println("Abbruch im TCP-Server");
+					//TODO bessere Fehlermeldung
+					controller.setFailed("writeMac wurde vom Device abgebrochen");
+					done.run(null);
 				}
 
 				@Override
 				public void onFailure(Throwable throwable) {
-					System.out.println("Fehler im TCP-Server");
+					controller.setFailed(throwable.getMessage());
+					done.run(null);
 				}
 
 				@Override
 				public void onProgressChange(float fraction) {
-					System.out.println("change im TCP-Server");
+					message.sendReverseMessage(String.valueOf(fraction));
 				}
 
 				@Override
 				public void onSuccess(Void result) {
-					System.out.println("jup es geht im TCP-Server");
+					// ausfuehren des Callbacks
+					message.reverseSuccessMessage();
 				}
 
+				//TODO wozu onExecute und wo wird es abgefangen
 				@Override
 				public void onExecute() {
-					// TODO Auto-generated method stub
 					
 				}});
 			
@@ -450,12 +455,15 @@ public class Server {
 			
 			// erstellen einer Klasse zum Testen der OperationHandle
 			DeviceAsync deviceAsync = id.getDevice();
+			
+			final ReverseMessage message = new ReverseMessage(request.getOperationKey(),ServerRpcController.getRpcChannel(controller));
 
 			// erzeugen eines OperationHandle zur der Operation
 			OperationHandle <MacAddress> handle = deviceAsync.readMac(request.getTimeout(), new AsyncCallback<MacAddress>(){
 
 				@Override
 				public void onCancel() {
+					//TODO bessere Fehlermeldung
 					controller.setFailed("readMac wurde vom Device abgebrochen");
 					done.run(null);
 				}
@@ -468,15 +476,13 @@ public class Server {
 
 				@Override
 				public void onProgressChange(float fraction) {
-					ReverseMessage message = new ReverseMessage(request.getOperationKey(),ServerRpcController.getRpcChannel(controller));
 					message.sendReverseMessage(String.valueOf(fraction));
 				}
 
 				@Override
 				public void onSuccess(MacAddress result) {
 					// ausfuehren des Callbacks
-					ReverseMessage message = new ReverseMessage(request.getOperationKey(),ServerRpcController.getRpcChannel(controller));
-					message.sendReverseMac(result);
+					message.reverseSuccessMac(result);
 				}
 
 				//TODO wozu onExecute und wo wird es abgefangen
@@ -620,7 +626,6 @@ public class Server {
 			deviceAsync.removeListener(plainTextListenerList.get(request.getOperationKey()));
 			plainTextListenerList.remove(request.getOperationKey());
 			done.run(EmptyAnswer.newBuilder().build());
-			
 		}
 	}
 

@@ -6466,9 +6466,14 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage request,
           com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
       
-      public abstract void reverseReadMac(
+      public abstract void reverseSuccessMac(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
+      
+      public abstract void reverseSuccessMessage(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request,
           com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
       
     }
@@ -6501,11 +6506,19 @@ public final class MessageServiceFiles {
         }
         
         @Override
-        public  void reverseReadMac(
+        public  void reverseSuccessMac(
             com.google.protobuf.RpcController controller,
             de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData request,
             com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
-          impl.reverseReadMac(controller, request, done);
+          impl.reverseSuccessMac(controller, request, done);
+        }
+        
+        @Override
+        public  void reverseSuccessMessage(
+            com.google.protobuf.RpcController controller,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request,
+            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
+          impl.reverseSuccessMessage(controller, request, done);
         }
         
       };
@@ -6537,7 +6550,9 @@ public final class MessageServiceFiles {
             case 2:
               return impl.sendReverseMessage(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage)request);
             case 3:
-              return impl.reverseReadMac(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData)request);
+              return impl.reverseSuccessMac(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData)request);
+            case 4:
+              return impl.reverseSuccessMessage(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey)request);
             default:
               throw new java.lang.AssertionError("Can't get here.");
           }
@@ -6560,6 +6575,8 @@ public final class MessageServiceFiles {
               return de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage.getDefaultInstance();
             case 3:
               return de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData.getDefaultInstance();
+            case 4:
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
           }
@@ -6581,6 +6598,8 @@ public final class MessageServiceFiles {
             case 2:
               return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
             case 3:
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
+            case 4:
               return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
@@ -6605,9 +6624,14 @@ public final class MessageServiceFiles {
         de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage request,
         com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
     
-    public abstract void reverseReadMac(
+    public abstract void reverseSuccessMac(
         com.google.protobuf.RpcController controller,
         de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData request,
+        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
+    
+    public abstract void reverseSuccessMessage(
+        com.google.protobuf.RpcController controller,
+        de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request,
         com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
     
     public static final
@@ -6648,7 +6672,12 @@ public final class MessageServiceFiles {
               done));
           return;
         case 3:
-          this.reverseReadMac(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData)request,
+          this.reverseSuccessMac(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData)request,
+            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
+              done));
+          return;
+        case 4:
+          this.reverseSuccessMessage(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey)request,
             com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
               done));
           return;
@@ -6674,6 +6703,8 @@ public final class MessageServiceFiles {
           return de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage.getDefaultInstance();
         case 3:
           return de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData.getDefaultInstance();
+        case 4:
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
       }
@@ -6695,6 +6726,8 @@ public final class MessageServiceFiles {
         case 2:
           return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
         case 3:
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
+        case 4:
           return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
@@ -6762,12 +6795,27 @@ public final class MessageServiceFiles {
             de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance()));
       }
       
-      public  void reverseReadMac(
+      public  void reverseSuccessMac(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData request,
           com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
         channel.callMethod(
           getDescriptor().getMethods().get(3),
+          controller,
+          request,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
+          com.google.protobuf.RpcUtil.generalizeCallback(
+            done,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.class,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance()));
+      }
+      
+      public  void reverseSuccessMessage(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
+        channel.callMethod(
+          getDescriptor().getMethods().get(4),
           controller,
           request,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
@@ -6799,9 +6847,14 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage request)
           throws com.google.protobuf.ServiceException;
       
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer reverseReadMac(
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer reverseSuccessMac(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData request)
+          throws com.google.protobuf.ServiceException;
+      
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer reverseSuccessMessage(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request)
           throws com.google.protobuf.ServiceException;
     }
     
@@ -6848,12 +6901,24 @@ public final class MessageServiceFiles {
       }
       
       
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer reverseReadMac(
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer reverseSuccessMac(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData request)
           throws com.google.protobuf.ServiceException {
         return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
           getDescriptor().getMethods().get(3),
+          controller,
+          request,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
+      }
+      
+      
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer reverseSuccessMessage(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request)
+          throws com.google.protobuf.ServiceException {
+        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
+          getDescriptor().getMethods().get(4),
           controller,
           request,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
@@ -7134,15 +7199,16 @@ public final class MessageServiceFiles {
       "lainTextListener\022\017.PacketTypeData\032\014.Empt" +
       "yAnswer\0223\n\033removeMessagePacketListener\022\006" +
       ".OpKey\032\014.EmptyAnswer\0226\n\036removeMessagePla" +
-      "inTextListener\022\006.OpKey\032\014.EmptyAnswer2\350\001\n" +
+      "inTextListener\022\006.OpKey\032\014.EmptyAnswer2\232\002\n" +
       "\023PacketServiceAnswer\0227\n\030sendReversePacke" +
       "tMessage\022\r.ListenerData\032\014.EmptyAnswer\022:\n",
       "\033sendReversePlainTextMessage\022\r.ListenerD" +
       "ata\032\014.EmptyAnswer\0222\n\022sendReverseMessage\022" +
-      "\016.clientMessage\032\014.EmptyAnswer\022(\n\016reverse" +
-      "ReadMac\022\010.MacData\032\014.EmptyAnswer2\022\n\020Remot" +
-      "eOperationsB2\n\033de.uniluebeck.itm.tcp.fil" +
-      "esB\023MessageServiceFiles"
+      "\016.clientMessage\032\014.EmptyAnswer\022+\n\021reverse" +
+      "SuccessMac\022\010.MacData\032\014.EmptyAnswer\022-\n\025re" +
+      "verseSuccessMessage\022\006.OpKey\032\014.EmptyAnswe" +
+      "r2\022\n\020RemoteOperationsB2\n\033de.uniluebeck.i" +
+      "tm.tcp.filesB\023MessageServiceFiles"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {

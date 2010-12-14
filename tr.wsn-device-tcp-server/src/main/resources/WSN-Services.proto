@@ -106,7 +106,9 @@ service PacketServiceAnswer{
 	rpc sendReversePlainTextMessage (ListenerData) returns (EmptyAnswer);
 	
 	rpc sendReverseMessage (clientMessage) returns (EmptyAnswer);
-	rpc reverseReadMac (MacData) returns (EmptyAnswer);
+	rpc reverseSuccessMac (MacData) returns (EmptyAnswer);
+	rpc reverseSuccessMessage (OpKey) returns (EmptyAnswer);
+	
 }
 
 service RemoteOperations{
