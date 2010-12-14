@@ -2,7 +2,6 @@ package de.uniluebeck.itm.tcp.client;
 
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -185,6 +184,9 @@ public class RemoteDevice implements DeviceAsync{
 				if(controller.failed()){
 					callback.onFailure(new Throwable(controller.errorText()));
 				}
+				else{
+					System.out.println("Ausgabe");
+				}
 			}
 		});
 		
@@ -344,15 +346,14 @@ public class RemoteDevice implements DeviceAsync{
 		
 		MacData address = MacData.newBuilder().addMACADDRESS(ByteString.copyFrom(macAddress.getMacBytes())).setTimeout(timeout).setOperationKey(controller.toString()).build();
 		
+		packetServiceAnswerImpl.addCallback(address.getOperationKey(), callback);
+		
 		operationService.writeMac(controller, address, new RpcCallback<EmptyAnswer>() {
 			
 			@Override
 			public void run(EmptyAnswer parameter) {
 				if(controller.failed()){
 					callback.onFailure(new Throwable(controller.errorText()));
-				}
-				else{
-					callback.onSuccess(null);
 				}
 			}
 		});

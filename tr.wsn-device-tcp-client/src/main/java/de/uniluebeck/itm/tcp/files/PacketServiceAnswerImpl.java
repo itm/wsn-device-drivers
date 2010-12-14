@@ -15,8 +15,8 @@ import de.uniluebeck.itm.devicedriver.event.MessageEvent;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketServiceAnswer;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage;
 
 // Implementierung der Methoden fuer das ReverseRPC
@@ -47,10 +47,12 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 		plainTextListenerList.remove(key);
 	}
 
+	@SuppressWarnings("unchecked")
 	public AsyncCallback getCallback(String key) {
 		return callbackList.get(key);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void addCallback(String key, AsyncCallback callback) {
 		this.callbackList.put(key, callback);
 	}
@@ -91,11 +93,20 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 	}
 
 	@Override
-	public void reverseReadMac(RpcController controller, MacData request,
+	public void reverseSuccessMac(RpcController controller, MacData request,
 			RpcCallback<EmptyAnswer> done) {
 		
 		getCallback(request.getOperationKey()).onSuccess(new MacAddress(request.getMACADDRESSList().get(0).toByteArray()));
 		
+		done.run(EmptyAnswer.newBuilder().build());
+		
+	}
+
+	@Override
+	public void reverseSuccessMessage(RpcController controller, OpKey request,
+			RpcCallback<EmptyAnswer> done) {
+		
+		getCallback(request.getOperationKey()).onSuccess(null);
 		done.run(EmptyAnswer.newBuilder().build());
 		
 	}
