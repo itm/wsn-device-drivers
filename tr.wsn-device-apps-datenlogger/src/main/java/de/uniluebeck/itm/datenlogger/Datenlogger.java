@@ -191,7 +191,7 @@ public class Datenlogger {
 				@Override
 				public void onMessagePacketReceived(
 						de.uniluebeck.itm.devicedriver.event.MessageEvent<MessagePacket> event) {
-					// TODO Auto-generated method stub
+					System.out.println("Message: " + new String(event.getMessage().getContent()));
 					
 				}
 			}, PacketType.LOG);
