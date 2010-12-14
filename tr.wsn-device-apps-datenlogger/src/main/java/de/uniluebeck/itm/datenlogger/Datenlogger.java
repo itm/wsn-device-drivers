@@ -75,7 +75,6 @@ public class Datenlogger {
 				//do nothing
 			}else if(character.equals(")")){
 				if(!ausdruck.equals("")){
-					System.out.println(ausdruck);
 					Predicate<CharSequence> predicate = new Klammer_Predicate(ausdruck);
 					ausdruecke.push(predicate);
 					ausdruck = "";
@@ -156,51 +155,49 @@ public class Datenlogger {
 		
 		gestartet = true;
 		System.out.println("\nStarte das Loggen des Knotens....");
-		String erhaltene_Daten = "5";
+
+		final OperationQueue queue = new SingleThreadOperationQueue();
+		final MockConnection connection = new MockConnection();
+		final Device device = new MockDevice(connection);
 		
-		//Filtern
-		boolean matches = false;
+		connection.connect("MockPort");
+		System.out.println("Connected");
 		
-		//(Datentyp, Beginn, Wert)-Filter
-		if(klammer_filter != null){
-			matches = parse_klammer_filter(klammer_filter).apply(erhaltene_Daten);
-		}
-			
-		//Reg-Ausdruck-Filter
-		//"[+-]?[0-9]+"
-		if(regex_filter != null){
-			Pattern p = Pattern.compile(regex_filter);
-			Matcher m = p.matcher(erhaltene_Daten);
-			matches = m.matches();
-		}	
+		final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
 		
-		if(!matches){
-			//logge Daten
-			System.out.println("Daten werden geloggt.");
-			final OperationQueue queue = new SingleThreadOperationQueue();
-			final MockConnection connection = new MockConnection();
-			final Device device = new MockDevice(connection);
-			
-			connection.connect("MockPort");
-			System.out.println("Connected");
-			
-			final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
-			
-			System.out.println("Message packet listener added");
-			deviceAsync.addListener(new MessagePacketListener() {
-				@Override
-				public void onMessagePacketReceived(
-						de.uniluebeck.itm.devicedriver.event.MessageEvent<MessagePacket> event) {
-					System.out.println("Message: " + new String(event.getMessage().getContent()));
-					
+		System.out.println("Message packet listener added");
+		deviceAsync.addListener(new MessagePacketListener() {
+			@Override
+			public void onMessagePacketReceived(
+					de.uniluebeck.itm.devicedriver.event.MessageEvent<MessagePacket> event) {
+				String erhaltene_Daten = new String(event.getMessage().getContent());
+				
+				//Filtern
+				boolean matches = false;
+				
+				//(Datentyp, Beginn, Wert)-Filter
+				if(klammer_filter != null){
+					matches = parse_klammer_filter(klammer_filter).apply(erhaltene_Daten);
 				}
-			}, PacketType.LOG);
-			//writeToDatabase();
-			//writeToXmlFile();
-		}
-		else{
-			System.out.println("Daten werden nicht geloggt.");
-		}
+					
+				//Reg-Ausdruck-Filter
+				//"[+-]?[0-9]+"
+				if(regex_filter != null){
+					Pattern p = Pattern.compile(regex_filter);
+					Matcher m = p.matcher(erhaltene_Daten);
+					matches = m.matches();
+				}	
+				
+				if(!matches){
+					System.out.println("Message: " + erhaltene_Daten);
+					//writeToDatabase();
+					//writeToXmlFile();
+				}
+				else{
+					System.out.println("Daten werden nicht geloggt.");
+				}
+			}
+		}, PacketType.LOG);
 
 		try {
             Thread.sleep(1000);

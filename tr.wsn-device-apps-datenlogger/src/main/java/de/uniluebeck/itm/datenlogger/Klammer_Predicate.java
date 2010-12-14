@@ -15,7 +15,6 @@ public class Klammer_Predicate implements Predicate<CharSequence>, Serializable 
 	}
 
 	public boolean apply(CharSequence erhaltene_Daten) {
-		System.out.println("APPLY!!!!!!!!!!!!!!!!!!!!!");
 		boolean ergebnis = true;
 		String[] einzelne_filter = filter.split(",");
 		//matche Datentyp
@@ -24,8 +23,6 @@ public class Klammer_Predicate implements Predicate<CharSequence>, Serializable 
 		}
 		//matche Wert
 		int beginn = Integer.parseInt(einzelne_filter[1]);
-		System.out.println(einzelne_filter[2]);
-		System.out.println(erhaltene_Daten.charAt(beginn + 6));
 		if(einzelne_filter[2].charAt(0) != erhaltene_Daten.charAt(beginn + 6)){
 			ergebnis = false;
 		}

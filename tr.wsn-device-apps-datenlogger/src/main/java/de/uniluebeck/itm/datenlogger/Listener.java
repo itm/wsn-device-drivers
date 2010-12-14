@@ -27,15 +27,15 @@ public class Listener extends Thread{
                 	logger.add_regex_filter(tokens[1]);
                 }else if(input.equals("stoplog")){
                 	logger.stoplog();
-                	notStop = false;
+                	System.exit(0);
                 }
-                else if(input.startsWith("-loction")){
+                else if(input.startsWith("-location")){
                 	String delims = " ";
             		String[] tokens = input.split(delims);
                 	logger.setLocation(tokens[1]);
                 }
                 else if(input.startsWith("exit")){
-                	notStop = false;
+                	System.exit(0);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
