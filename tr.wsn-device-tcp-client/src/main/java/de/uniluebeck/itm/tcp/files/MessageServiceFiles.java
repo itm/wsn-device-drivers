@@ -8,41 +8,286 @@ public final class MessageServiceFiles {
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistry registry) {
   }
-  public static final class VOID extends
+  public static final class EmptyAnswer extends
       com.google.protobuf.GeneratedMessage {
-    // Use VOID.newBuilder() to construct.
-    private VOID() {
+    // Use EmptyAnswer.newBuilder() to construct.
+    private EmptyAnswer() {
       initFields();
     }
-    private VOID(boolean noInit) {}
+    private EmptyAnswer(boolean noInit) {}
     
-    private static final VOID defaultInstance;
-    public static VOID getDefaultInstance() {
+    private static final EmptyAnswer defaultInstance;
+    public static EmptyAnswer getDefaultInstance() {
       return defaultInstance;
     }
     
-    public VOID getDefaultInstanceForType() {
+    public EmptyAnswer getDefaultInstanceForType() {
       return defaultInstance;
     }
     
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return de.uniluebeck.itm.tcp.files.MessageServiceFiles.internal_static_VOID_descriptor;
+      return de.uniluebeck.itm.tcp.files.MessageServiceFiles.internal_static_EmptyAnswer_descriptor;
     }
     
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return de.uniluebeck.itm.tcp.files.MessageServiceFiles.internal_static_VOID_fieldAccessorTable;
+      return de.uniluebeck.itm.tcp.files.MessageServiceFiles.internal_static_EmptyAnswer_fieldAccessorTable;
     }
     
-    // optional int64 timeout = 1;
+    private void initFields() {
+    }
+    public final boolean isInitialized() {
+      return true;
+    }
+    
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      getUnknownFields().writeTo(output);
+    }
+    
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+    
+      size = 0;
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+    
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+    
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> {
+      private de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer result;
+      
+      // Construct using de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.newBuilder()
+      private Builder() {}
+      
+      private static Builder create() {
+        Builder builder = new Builder();
+        builder.result = new de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer();
+        return builder;
+      }
+      
+      protected de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer internalGetResult() {
+        return result;
+      }
+      
+      public Builder clear() {
+        if (result == null) {
+          throw new IllegalStateException(
+            "Cannot call clear() after build().");
+        }
+        result = new de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer();
+        return this;
+      }
+      
+      public Builder clone() {
+        return create().mergeFrom(result);
+      }
+      
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDescriptor();
+      }
+      
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer getDefaultInstanceForType() {
+        return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
+      }
+      
+      public boolean isInitialized() {
+        return result.isInitialized();
+      }
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer build() {
+        if (result != null && !isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return buildPartial();
+      }
+      
+      private de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer buildParsed()
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        if (!isInitialized()) {
+          throw newUninitializedMessageException(
+            result).asInvalidProtocolBufferException();
+        }
+        return buildPartial();
+      }
+      
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer buildPartial() {
+        if (result == null) {
+          throw new IllegalStateException(
+            "build() has already been called on this Builder.");
+        }
+        de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer returnMe = result;
+        result = null;
+        return returnMe;
+      }
+      
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) {
+          return mergeFrom((de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+      
+      public Builder mergeFrom(de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer other) {
+        if (other == de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance()) return this;
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+      
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder(
+            this.getUnknownFields());
+        while (true) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              this.setUnknownFields(unknownFields.build());
+              return this;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                this.setUnknownFields(unknownFields.build());
+                return this;
+              }
+              break;
+            }
+          }
+        }
+      }
+      
+      
+      // @@protoc_insertion_point(builder_scope:EmptyAnswer)
+    }
+    
+    static {
+      defaultInstance = new EmptyAnswer(true);
+      de.uniluebeck.itm.tcp.files.MessageServiceFiles.internalForceInit();
+      defaultInstance.initFields();
+    }
+    
+    // @@protoc_insertion_point(class_scope:EmptyAnswer)
+  }
+  
+  public static final class Timeout extends
+      com.google.protobuf.GeneratedMessage {
+    // Use Timeout.newBuilder() to construct.
+    private Timeout() {
+      initFields();
+    }
+    private Timeout(boolean noInit) {}
+    
+    private static final Timeout defaultInstance;
+    public static Timeout getDefaultInstance() {
+      return defaultInstance;
+    }
+    
+    public Timeout getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+    
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return de.uniluebeck.itm.tcp.files.MessageServiceFiles.internal_static_Timeout_descriptor;
+    }
+    
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return de.uniluebeck.itm.tcp.files.MessageServiceFiles.internal_static_Timeout_fieldAccessorTable;
+    }
+    
+    // required int64 timeout = 1;
     public static final int TIMEOUT_FIELD_NUMBER = 1;
     private boolean hasTimeout;
     private long timeout_ = 0L;
     public boolean hasTimeout() { return hasTimeout; }
     public long getTimeout() { return timeout_; }
     
-    // optional string OperationKey = 2;
+    // required string OperationKey = 2;
     public static final int OPERATIONKEY_FIELD_NUMBER = 2;
     private boolean hasOperationKey;
     private java.lang.String operationKey_ = "";
@@ -52,6 +297,8 @@ public final class MessageServiceFiles {
     private void initFields() {
     }
     public final boolean isInitialized() {
+      if (!hasTimeout) return false;
+      if (!hasOperationKey) return false;
       return true;
     }
     
@@ -86,41 +333,41 @@ public final class MessageServiceFiles {
       return size;
     }
     
-    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID parseFrom(
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID parseFrom(
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID parseFrom(byte[] data)
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID parseFrom(
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID parseFrom(java.io.InputStream input)
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID parseFrom(
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input, extensionRegistry)
                .buildParsed();
     }
-    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID parseDelimitedFrom(java.io.InputStream input)
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       Builder builder = newBuilder();
       if (builder.mergeDelimitedFrom(input)) {
@@ -129,7 +376,7 @@ public final class MessageServiceFiles {
         return null;
       }
     }
-    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID parseDelimitedFrom(
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -140,12 +387,12 @@ public final class MessageServiceFiles {
         return null;
       }
     }
-    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID parseFrom(
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID parseFrom(
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -155,25 +402,25 @@ public final class MessageServiceFiles {
     
     public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID prototype) {
+    public static Builder newBuilder(de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout prototype) {
       return newBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() { return newBuilder(this); }
     
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
-      private de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID result;
+      private de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout result;
       
-      // Construct using rpc_pro.rpcPrototype.files.MessageServiceFiles.VOID.newBuilder()
+      // Construct using de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout.newBuilder()
       private Builder() {}
       
       private static Builder create() {
         Builder builder = new Builder();
-        builder.result = new de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID();
+        builder.result = new de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout();
         return builder;
       }
       
-      protected de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID internalGetResult() {
+      protected de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout internalGetResult() {
         return result;
       }
       
@@ -182,7 +429,7 @@ public final class MessageServiceFiles {
           throw new IllegalStateException(
             "Cannot call clear() after build().");
         }
-        result = new de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID();
+        result = new de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout();
         return this;
       }
       
@@ -192,24 +439,24 @@ public final class MessageServiceFiles {
       
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDescriptor();
+        return de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout.getDescriptor();
       }
       
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID getDefaultInstanceForType() {
-        return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout getDefaultInstanceForType() {
+        return de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout.getDefaultInstance();
       }
       
       public boolean isInitialized() {
         return result.isInitialized();
       }
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID build() {
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout build() {
         if (result != null && !isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return buildPartial();
       }
       
-      private de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID buildParsed()
+      private de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout buildParsed()
           throws com.google.protobuf.InvalidProtocolBufferException {
         if (!isInitialized()) {
           throw newUninitializedMessageException(
@@ -218,27 +465,27 @@ public final class MessageServiceFiles {
         return buildPartial();
       }
       
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID buildPartial() {
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout buildPartial() {
         if (result == null) {
           throw new IllegalStateException(
             "build() has already been called on this Builder.");
         }
-        de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID returnMe = result;
+        de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout returnMe = result;
         result = null;
         return returnMe;
       }
       
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID) {
-          return mergeFrom((de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID)other);
+        if (other instanceof de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout) {
+          return mergeFrom((de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
       
-      public Builder mergeFrom(de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID other) {
-        if (other == de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance()) return this;
+      public Builder mergeFrom(de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout other) {
+        if (other == de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout.getDefaultInstance()) return this;
         if (other.hasTimeout()) {
           setTimeout(other.getTimeout());
         }
@@ -283,7 +530,7 @@ public final class MessageServiceFiles {
       }
       
       
-      // optional int64 timeout = 1;
+      // required int64 timeout = 1;
       public boolean hasTimeout() {
         return result.hasTimeout();
       }
@@ -301,7 +548,7 @@ public final class MessageServiceFiles {
         return this;
       }
       
-      // optional string OperationKey = 2;
+      // required string OperationKey = 2;
       public boolean hasOperationKey() {
         return result.hasOperationKey();
       }
@@ -322,16 +569,304 @@ public final class MessageServiceFiles {
         return this;
       }
       
-      // @@protoc_insertion_point(builder_scope:VOID)
+      // @@protoc_insertion_point(builder_scope:Timeout)
     }
     
     static {
-      defaultInstance = new VOID(true);
+      defaultInstance = new Timeout(true);
       de.uniluebeck.itm.tcp.files.MessageServiceFiles.internalForceInit();
       defaultInstance.initFields();
     }
     
-    // @@protoc_insertion_point(class_scope:VOID)
+    // @@protoc_insertion_point(class_scope:Timeout)
+  }
+  
+  public static final class OpKey extends
+      com.google.protobuf.GeneratedMessage {
+    // Use OpKey.newBuilder() to construct.
+    private OpKey() {
+      initFields();
+    }
+    private OpKey(boolean noInit) {}
+    
+    private static final OpKey defaultInstance;
+    public static OpKey getDefaultInstance() {
+      return defaultInstance;
+    }
+    
+    public OpKey getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+    
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return de.uniluebeck.itm.tcp.files.MessageServiceFiles.internal_static_OpKey_descriptor;
+    }
+    
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return de.uniluebeck.itm.tcp.files.MessageServiceFiles.internal_static_OpKey_fieldAccessorTable;
+    }
+    
+    // required string OperationKey = 1;
+    public static final int OPERATIONKEY_FIELD_NUMBER = 1;
+    private boolean hasOperationKey;
+    private java.lang.String operationKey_ = "";
+    public boolean hasOperationKey() { return hasOperationKey; }
+    public java.lang.String getOperationKey() { return operationKey_; }
+    
+    private void initFields() {
+    }
+    public final boolean isInitialized() {
+      if (!hasOperationKey) return false;
+      return true;
+    }
+    
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (hasOperationKey()) {
+        output.writeString(1, getOperationKey());
+      }
+      getUnknownFields().writeTo(output);
+    }
+    
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+    
+      size = 0;
+      if (hasOperationKey()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeStringSize(1, getOperationKey());
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+    
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+    
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> {
+      private de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey result;
+      
+      // Construct using de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey.newBuilder()
+      private Builder() {}
+      
+      private static Builder create() {
+        Builder builder = new Builder();
+        builder.result = new de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey();
+        return builder;
+      }
+      
+      protected de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey internalGetResult() {
+        return result;
+      }
+      
+      public Builder clear() {
+        if (result == null) {
+          throw new IllegalStateException(
+            "Cannot call clear() after build().");
+        }
+        result = new de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey();
+        return this;
+      }
+      
+      public Builder clone() {
+        return create().mergeFrom(result);
+      }
+      
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey.getDescriptor();
+      }
+      
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey getDefaultInstanceForType() {
+        return de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey.getDefaultInstance();
+      }
+      
+      public boolean isInitialized() {
+        return result.isInitialized();
+      }
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey build() {
+        if (result != null && !isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return buildPartial();
+      }
+      
+      private de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey buildParsed()
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        if (!isInitialized()) {
+          throw newUninitializedMessageException(
+            result).asInvalidProtocolBufferException();
+        }
+        return buildPartial();
+      }
+      
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey buildPartial() {
+        if (result == null) {
+          throw new IllegalStateException(
+            "build() has already been called on this Builder.");
+        }
+        de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey returnMe = result;
+        result = null;
+        return returnMe;
+      }
+      
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey) {
+          return mergeFrom((de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+      
+      public Builder mergeFrom(de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey other) {
+        if (other == de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey.getDefaultInstance()) return this;
+        if (other.hasOperationKey()) {
+          setOperationKey(other.getOperationKey());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+      
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder(
+            this.getUnknownFields());
+        while (true) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              this.setUnknownFields(unknownFields.build());
+              return this;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                this.setUnknownFields(unknownFields.build());
+                return this;
+              }
+              break;
+            }
+            case 10: {
+              setOperationKey(input.readString());
+              break;
+            }
+          }
+        }
+      }
+      
+      
+      // required string OperationKey = 1;
+      public boolean hasOperationKey() {
+        return result.hasOperationKey();
+      }
+      public java.lang.String getOperationKey() {
+        return result.getOperationKey();
+      }
+      public Builder setOperationKey(java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  result.hasOperationKey = true;
+        result.operationKey_ = value;
+        return this;
+      }
+      public Builder clearOperationKey() {
+        result.hasOperationKey = false;
+        result.operationKey_ = getDefaultInstance().getOperationKey();
+        return this;
+      }
+      
+      // @@protoc_insertion_point(builder_scope:OpKey)
+    }
+    
+    static {
+      defaultInstance = new OpKey(true);
+      de.uniluebeck.itm.tcp.files.MessageServiceFiles.internalForceInit();
+      defaultInstance.initFields();
+    }
+    
+    // @@protoc_insertion_point(class_scope:OpKey)
   }
   
   public static final class STRING extends
@@ -368,13 +903,6 @@ public final class MessageServiceFiles {
     public boolean hasQuery() { return hasQuery; }
     public java.lang.String getQuery() { return query_; }
     
-    // optional string OperationKey = 2;
-    public static final int OPERATIONKEY_FIELD_NUMBER = 2;
-    private boolean hasOperationKey;
-    private java.lang.String operationKey_ = "";
-    public boolean hasOperationKey() { return hasOperationKey; }
-    public java.lang.String getOperationKey() { return operationKey_; }
-    
     private void initFields() {
     }
     public final boolean isInitialized() {
@@ -388,9 +916,6 @@ public final class MessageServiceFiles {
       if (hasQuery()) {
         output.writeString(1, getQuery());
       }
-      if (hasOperationKey()) {
-        output.writeString(2, getOperationKey());
-      }
       getUnknownFields().writeTo(output);
     }
     
@@ -403,10 +928,6 @@ public final class MessageServiceFiles {
       if (hasQuery()) {
         size += com.google.protobuf.CodedOutputStream
           .computeStringSize(1, getQuery());
-      }
-      if (hasOperationKey()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeStringSize(2, getOperationKey());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -491,7 +1012,7 @@ public final class MessageServiceFiles {
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
       private de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING result;
       
-      // Construct using rpc_pro.rpcPrototype.files.MessageServiceFiles.STRING.newBuilder()
+      // Construct using de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING.newBuilder()
       private Builder() {}
       
       private static Builder create() {
@@ -569,9 +1090,6 @@ public final class MessageServiceFiles {
         if (other.hasQuery()) {
           setQuery(other.getQuery());
         }
-        if (other.hasOperationKey()) {
-          setOperationKey(other.getOperationKey());
-        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
@@ -601,10 +1119,6 @@ public final class MessageServiceFiles {
               setQuery(input.readString());
               break;
             }
-            case 18: {
-              setOperationKey(input.readString());
-              break;
-            }
           }
         }
       }
@@ -631,7 +1145,296 @@ public final class MessageServiceFiles {
         return this;
       }
       
-      // optional string OperationKey = 2;
+      // @@protoc_insertion_point(builder_scope:STRING)
+    }
+    
+    static {
+      defaultInstance = new STRING(true);
+      de.uniluebeck.itm.tcp.files.MessageServiceFiles.internalForceInit();
+      defaultInstance.initFields();
+    }
+    
+    // @@protoc_insertion_point(class_scope:STRING)
+  }
+  
+  public static final class clientMessage extends
+      com.google.protobuf.GeneratedMessage {
+    // Use clientMessage.newBuilder() to construct.
+    private clientMessage() {
+      initFields();
+    }
+    private clientMessage(boolean noInit) {}
+    
+    private static final clientMessage defaultInstance;
+    public static clientMessage getDefaultInstance() {
+      return defaultInstance;
+    }
+    
+    public clientMessage getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+    
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return de.uniluebeck.itm.tcp.files.MessageServiceFiles.internal_static_clientMessage_descriptor;
+    }
+    
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return de.uniluebeck.itm.tcp.files.MessageServiceFiles.internal_static_clientMessage_fieldAccessorTable;
+    }
+    
+    // required string OperationKey = 1;
+    public static final int OPERATIONKEY_FIELD_NUMBER = 1;
+    private boolean hasOperationKey;
+    private java.lang.String operationKey_ = "";
+    public boolean hasOperationKey() { return hasOperationKey; }
+    public java.lang.String getOperationKey() { return operationKey_; }
+    
+    // required string query = 2;
+    public static final int QUERY_FIELD_NUMBER = 2;
+    private boolean hasQuery;
+    private java.lang.String query_ = "";
+    public boolean hasQuery() { return hasQuery; }
+    public java.lang.String getQuery() { return query_; }
+    
+    private void initFields() {
+    }
+    public final boolean isInitialized() {
+      if (!hasOperationKey) return false;
+      if (!hasQuery) return false;
+      return true;
+    }
+    
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (hasOperationKey()) {
+        output.writeString(1, getOperationKey());
+      }
+      if (hasQuery()) {
+        output.writeString(2, getQuery());
+      }
+      getUnknownFields().writeTo(output);
+    }
+    
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+    
+      size = 0;
+      if (hasOperationKey()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeStringSize(1, getOperationKey());
+      }
+      if (hasQuery()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeStringSize(2, getQuery());
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+    
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+    
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> {
+      private de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage result;
+      
+      // Construct using de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage.newBuilder()
+      private Builder() {}
+      
+      private static Builder create() {
+        Builder builder = new Builder();
+        builder.result = new de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage();
+        return builder;
+      }
+      
+      protected de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage internalGetResult() {
+        return result;
+      }
+      
+      public Builder clear() {
+        if (result == null) {
+          throw new IllegalStateException(
+            "Cannot call clear() after build().");
+        }
+        result = new de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage();
+        return this;
+      }
+      
+      public Builder clone() {
+        return create().mergeFrom(result);
+      }
+      
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage.getDescriptor();
+      }
+      
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage getDefaultInstanceForType() {
+        return de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage.getDefaultInstance();
+      }
+      
+      public boolean isInitialized() {
+        return result.isInitialized();
+      }
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage build() {
+        if (result != null && !isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return buildPartial();
+      }
+      
+      private de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage buildParsed()
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        if (!isInitialized()) {
+          throw newUninitializedMessageException(
+            result).asInvalidProtocolBufferException();
+        }
+        return buildPartial();
+      }
+      
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage buildPartial() {
+        if (result == null) {
+          throw new IllegalStateException(
+            "build() has already been called on this Builder.");
+        }
+        de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage returnMe = result;
+        result = null;
+        return returnMe;
+      }
+      
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage) {
+          return mergeFrom((de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+      
+      public Builder mergeFrom(de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage other) {
+        if (other == de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage.getDefaultInstance()) return this;
+        if (other.hasOperationKey()) {
+          setOperationKey(other.getOperationKey());
+        }
+        if (other.hasQuery()) {
+          setQuery(other.getQuery());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+      
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder(
+            this.getUnknownFields());
+        while (true) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              this.setUnknownFields(unknownFields.build());
+              return this;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                this.setUnknownFields(unknownFields.build());
+                return this;
+              }
+              break;
+            }
+            case 10: {
+              setOperationKey(input.readString());
+              break;
+            }
+            case 18: {
+              setQuery(input.readString());
+              break;
+            }
+          }
+        }
+      }
+      
+      
+      // required string OperationKey = 1;
       public boolean hasOperationKey() {
         return result.hasOperationKey();
       }
@@ -652,16 +1455,322 @@ public final class MessageServiceFiles {
         return this;
       }
       
-      // @@protoc_insertion_point(builder_scope:STRING)
+      // required string query = 2;
+      public boolean hasQuery() {
+        return result.hasQuery();
+      }
+      public java.lang.String getQuery() {
+        return result.getQuery();
+      }
+      public Builder setQuery(java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  result.hasQuery = true;
+        result.query_ = value;
+        return this;
+      }
+      public Builder clearQuery() {
+        result.hasQuery = false;
+        result.query_ = getDefaultInstance().getQuery();
+        return this;
+      }
+      
+      // @@protoc_insertion_point(builder_scope:clientMessage)
     }
     
     static {
-      defaultInstance = new STRING(true);
+      defaultInstance = new clientMessage(true);
       de.uniluebeck.itm.tcp.files.MessageServiceFiles.internalForceInit();
       defaultInstance.initFields();
     }
     
-    // @@protoc_insertion_point(class_scope:STRING)
+    // @@protoc_insertion_point(class_scope:clientMessage)
+  }
+  
+  public static final class ChipType extends
+      com.google.protobuf.GeneratedMessage {
+    // Use ChipType.newBuilder() to construct.
+    private ChipType() {
+      initFields();
+    }
+    private ChipType(boolean noInit) {}
+    
+    private static final ChipType defaultInstance;
+    public static ChipType getDefaultInstance() {
+      return defaultInstance;
+    }
+    
+    public ChipType getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+    
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return de.uniluebeck.itm.tcp.files.MessageServiceFiles.internal_static_ChipType_descriptor;
+    }
+    
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return de.uniluebeck.itm.tcp.files.MessageServiceFiles.internal_static_ChipType_fieldAccessorTable;
+    }
+    
+    // required int32 type = 1;
+    public static final int TYPE_FIELD_NUMBER = 1;
+    private boolean hasType;
+    private int type_ = 0;
+    public boolean hasType() { return hasType; }
+    public int getType() { return type_; }
+    
+    private void initFields() {
+    }
+    public final boolean isInitialized() {
+      if (!hasType) return false;
+      return true;
+    }
+    
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (hasType()) {
+        output.writeInt32(1, getType());
+      }
+      getUnknownFields().writeTo(output);
+    }
+    
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+    
+      size = 0;
+      if (hasType()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(1, getType());
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+    
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+    
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> {
+      private de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType result;
+      
+      // Construct using de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType.newBuilder()
+      private Builder() {}
+      
+      private static Builder create() {
+        Builder builder = new Builder();
+        builder.result = new de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType();
+        return builder;
+      }
+      
+      protected de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType internalGetResult() {
+        return result;
+      }
+      
+      public Builder clear() {
+        if (result == null) {
+          throw new IllegalStateException(
+            "Cannot call clear() after build().");
+        }
+        result = new de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType();
+        return this;
+      }
+      
+      public Builder clone() {
+        return create().mergeFrom(result);
+      }
+      
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType.getDescriptor();
+      }
+      
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType getDefaultInstanceForType() {
+        return de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType.getDefaultInstance();
+      }
+      
+      public boolean isInitialized() {
+        return result.isInitialized();
+      }
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType build() {
+        if (result != null && !isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return buildPartial();
+      }
+      
+      private de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType buildParsed()
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        if (!isInitialized()) {
+          throw newUninitializedMessageException(
+            result).asInvalidProtocolBufferException();
+        }
+        return buildPartial();
+      }
+      
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType buildPartial() {
+        if (result == null) {
+          throw new IllegalStateException(
+            "build() has already been called on this Builder.");
+        }
+        de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType returnMe = result;
+        result = null;
+        return returnMe;
+      }
+      
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType) {
+          return mergeFrom((de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+      
+      public Builder mergeFrom(de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType other) {
+        if (other == de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType.getDefaultInstance()) return this;
+        if (other.hasType()) {
+          setType(other.getType());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+      
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder(
+            this.getUnknownFields());
+        while (true) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              this.setUnknownFields(unknownFields.build());
+              return this;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                this.setUnknownFields(unknownFields.build());
+                return this;
+              }
+              break;
+            }
+            case 8: {
+              setType(input.readInt32());
+              break;
+            }
+          }
+        }
+      }
+      
+      
+      // required int32 type = 1;
+      public boolean hasType() {
+        return result.hasType();
+      }
+      public int getType() {
+        return result.getType();
+      }
+      public Builder setType(int value) {
+        result.hasType = true;
+        result.type_ = value;
+        return this;
+      }
+      public Builder clearType() {
+        result.hasType = false;
+        result.type_ = 0;
+        return this;
+      }
+      
+      // @@protoc_insertion_point(builder_scope:ChipType)
+    }
+    
+    static {
+      defaultInstance = new ChipType(true);
+      de.uniluebeck.itm.tcp.files.MessageServiceFiles.internalForceInit();
+      defaultInstance.initFields();
+    }
+    
+    // @@protoc_insertion_point(class_scope:ChipType)
   }
   
   public static final class Identification extends
@@ -691,15 +1800,22 @@ public final class MessageServiceFiles {
       return de.uniluebeck.itm.tcp.files.MessageServiceFiles.internal_static_Identification_fieldAccessorTable;
     }
     
-    // required string username = 1;
-    public static final int USERNAME_FIELD_NUMBER = 1;
+    // required string deviceID = 1;
+    public static final int DEVICEID_FIELD_NUMBER = 1;
+    private boolean hasDeviceID;
+    private java.lang.String deviceID_ = "";
+    public boolean hasDeviceID() { return hasDeviceID; }
+    public java.lang.String getDeviceID() { return deviceID_; }
+    
+    // required string username = 2;
+    public static final int USERNAME_FIELD_NUMBER = 2;
     private boolean hasUsername;
     private java.lang.String username_ = "";
     public boolean hasUsername() { return hasUsername; }
     public java.lang.String getUsername() { return username_; }
     
-    // required string password = 2;
-    public static final int PASSWORD_FIELD_NUMBER = 2;
+    // required string password = 3;
+    public static final int PASSWORD_FIELD_NUMBER = 3;
     private boolean hasPassword;
     private java.lang.String password_ = "";
     public boolean hasPassword() { return hasPassword; }
@@ -708,6 +1824,7 @@ public final class MessageServiceFiles {
     private void initFields() {
     }
     public final boolean isInitialized() {
+      if (!hasDeviceID) return false;
       if (!hasUsername) return false;
       if (!hasPassword) return false;
       return true;
@@ -716,11 +1833,14 @@ public final class MessageServiceFiles {
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
+      if (hasDeviceID()) {
+        output.writeString(1, getDeviceID());
+      }
       if (hasUsername()) {
-        output.writeString(1, getUsername());
+        output.writeString(2, getUsername());
       }
       if (hasPassword()) {
-        output.writeString(2, getPassword());
+        output.writeString(3, getPassword());
       }
       getUnknownFields().writeTo(output);
     }
@@ -731,13 +1851,17 @@ public final class MessageServiceFiles {
       if (size != -1) return size;
     
       size = 0;
+      if (hasDeviceID()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeStringSize(1, getDeviceID());
+      }
       if (hasUsername()) {
         size += com.google.protobuf.CodedOutputStream
-          .computeStringSize(1, getUsername());
+          .computeStringSize(2, getUsername());
       }
       if (hasPassword()) {
         size += com.google.protobuf.CodedOutputStream
-          .computeStringSize(2, getPassword());
+          .computeStringSize(3, getPassword());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -822,7 +1946,7 @@ public final class MessageServiceFiles {
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
       private de.uniluebeck.itm.tcp.files.MessageServiceFiles.Identification result;
       
-      // Construct using rpc_pro.rpcPrototype.files.MessageServiceFiles.Identification.newBuilder()
+      // Construct using de.uniluebeck.itm.tcp.files.MessageServiceFiles.Identification.newBuilder()
       private Builder() {}
       
       private static Builder create() {
@@ -897,6 +2021,9 @@ public final class MessageServiceFiles {
       
       public Builder mergeFrom(de.uniluebeck.itm.tcp.files.MessageServiceFiles.Identification other) {
         if (other == de.uniluebeck.itm.tcp.files.MessageServiceFiles.Identification.getDefaultInstance()) return this;
+        if (other.hasDeviceID()) {
+          setDeviceID(other.getDeviceID());
+        }
         if (other.hasUsername()) {
           setUsername(other.getUsername());
         }
@@ -929,10 +2056,14 @@ public final class MessageServiceFiles {
               break;
             }
             case 10: {
-              setUsername(input.readString());
+              setDeviceID(input.readString());
               break;
             }
             case 18: {
+              setUsername(input.readString());
+              break;
+            }
+            case 26: {
               setPassword(input.readString());
               break;
             }
@@ -941,7 +2072,28 @@ public final class MessageServiceFiles {
       }
       
       
-      // required string username = 1;
+      // required string deviceID = 1;
+      public boolean hasDeviceID() {
+        return result.hasDeviceID();
+      }
+      public java.lang.String getDeviceID() {
+        return result.getDeviceID();
+      }
+      public Builder setDeviceID(java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  result.hasDeviceID = true;
+        result.deviceID_ = value;
+        return this;
+      }
+      public Builder clearDeviceID() {
+        result.hasDeviceID = false;
+        result.deviceID_ = getDefaultInstance().getDeviceID();
+        return this;
+      }
+      
+      // required string username = 2;
       public boolean hasUsername() {
         return result.hasUsername();
       }
@@ -962,7 +2114,7 @@ public final class MessageServiceFiles {
         return this;
       }
       
-      // required string password = 2;
+      // required string password = 3;
       public boolean hasPassword() {
         return result.hasPassword();
       }
@@ -1041,7 +2193,7 @@ public final class MessageServiceFiles {
     public boolean hasTimeout() { return hasTimeout; }
     public long getTimeout() { return timeout_; }
     
-    // optional string OperationKey = 3;
+    // required string OperationKey = 3;
     public static final int OPERATIONKEY_FIELD_NUMBER = 3;
     private boolean hasOperationKey;
     private java.lang.String operationKey_ = "";
@@ -1052,6 +2204,7 @@ public final class MessageServiceFiles {
     }
     public final boolean isInitialized() {
       if (!hasTimeout) return false;
+      if (!hasOperationKey) return false;
       return true;
     }
     
@@ -1176,7 +2329,7 @@ public final class MessageServiceFiles {
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
       private de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket result;
       
-      // Construct using rpc_pro.rpcPrototype.files.MessageServiceFiles.ProgramPacket.newBuilder()
+      // Construct using de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket.newBuilder()
       private Builder() {}
       
       private static Builder create() {
@@ -1367,7 +2520,7 @@ public final class MessageServiceFiles {
         return this;
       }
       
-      // optional string OperationKey = 3;
+      // required string OperationKey = 3;
       public boolean hasOperationKey() {
         return result.hasOperationKey();
       }
@@ -1580,7 +2733,7 @@ public final class MessageServiceFiles {
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
       private de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData result;
       
-      // Construct using rpc_pro.rpcPrototype.files.MessageServiceFiles.MacData.newBuilder()
+      // Construct using de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData.newBuilder()
       private Builder() {}
       
       private static Builder create() {
@@ -1864,7 +3017,7 @@ public final class MessageServiceFiles {
     public boolean hasTimeout() { return hasTimeout; }
     public long getTimeout() { return timeout_; }
     
-    // optional string OperationKey = 5;
+    // required string OperationKey = 5;
     public static final int OPERATIONKEY_FIELD_NUMBER = 5;
     private boolean hasOperationKey;
     private java.lang.String operationKey_ = "";
@@ -1877,6 +3030,7 @@ public final class MessageServiceFiles {
       if (!hasAddress) return false;
       if (!hasLength) return false;
       if (!hasTimeout) return false;
+      if (!hasOperationKey) return false;
       return true;
     }
     
@@ -2015,7 +3169,7 @@ public final class MessageServiceFiles {
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
       private de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData result;
       
-      // Construct using rpc_pro.rpcPrototype.files.MessageServiceFiles.FlashData.newBuilder()
+      // Construct using de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData.newBuilder()
       private Builder() {}
       
       private static Builder create() {
@@ -2256,7 +3410,7 @@ public final class MessageServiceFiles {
         return this;
       }
       
-      // optional string OperationKey = 5;
+      // required string OperationKey = 5;
       public boolean hasOperationKey() {
         return result.hasOperationKey();
       }
@@ -2342,7 +3496,7 @@ public final class MessageServiceFiles {
     public boolean hasTimeout() { return hasTimeout; }
     public long getTimeout() { return timeout_; }
     
-    // optional string OperationKey = 4;
+    // required string OperationKey = 4;
     public static final int OPERATIONKEY_FIELD_NUMBER = 4;
     private boolean hasOperationKey;
     private java.lang.String operationKey_ = "";
@@ -2353,6 +3507,7 @@ public final class MessageServiceFiles {
     }
     public final boolean isInitialized() {
       if (!hasType) return false;
+      if (!hasOperationKey) return false;
       return true;
     }
     
@@ -2484,7 +3639,7 @@ public final class MessageServiceFiles {
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
       private de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData result;
       
-      // Construct using rpc_pro.rpcPrototype.files.MessageServiceFiles.sendData.newBuilder()
+      // Construct using de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData.newBuilder()
       private Builder() {}
       
       private static Builder create() {
@@ -2700,7 +3855,7 @@ public final class MessageServiceFiles {
         return this;
       }
       
-      // optional string OperationKey = 4;
+      // required string OperationKey = 4;
       public boolean hasOperationKey() {
         return result.hasOperationKey();
       }
@@ -2731,6 +3886,455 @@ public final class MessageServiceFiles {
     }
     
     // @@protoc_insertion_point(class_scope:sendData)
+  }
+  
+  public static final class ListenerData extends
+      com.google.protobuf.GeneratedMessage {
+    // Use ListenerData.newBuilder() to construct.
+    private ListenerData() {
+      initFields();
+    }
+    private ListenerData(boolean noInit) {}
+    
+    private static final ListenerData defaultInstance;
+    public static ListenerData getDefaultInstance() {
+      return defaultInstance;
+    }
+    
+    public ListenerData getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+    
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return de.uniluebeck.itm.tcp.files.MessageServiceFiles.internal_static_ListenerData_descriptor;
+    }
+    
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return de.uniluebeck.itm.tcp.files.MessageServiceFiles.internal_static_ListenerData_fieldAccessorTable;
+    }
+    
+    // required string source = 1;
+    public static final int SOURCE_FIELD_NUMBER = 1;
+    private boolean hasSource;
+    private java.lang.String source_ = "";
+    public boolean hasSource() { return hasSource; }
+    public java.lang.String getSource() { return source_; }
+    
+    // required int32 type = 2;
+    public static final int TYPE_FIELD_NUMBER = 2;
+    private boolean hasType;
+    private int type_ = 0;
+    public boolean hasType() { return hasType; }
+    public int getType() { return type_; }
+    
+    // repeated bytes data = 3;
+    public static final int DATA_FIELD_NUMBER = 3;
+    private java.util.List<com.google.protobuf.ByteString> data_ =
+      java.util.Collections.emptyList();
+    public java.util.List<com.google.protobuf.ByteString> getDataList() {
+      return data_;
+    }
+    public int getDataCount() { return data_.size(); }
+    public com.google.protobuf.ByteString getData(int index) {
+      return data_.get(index);
+    }
+    
+    // required string OperationKey = 4;
+    public static final int OPERATIONKEY_FIELD_NUMBER = 4;
+    private boolean hasOperationKey;
+    private java.lang.String operationKey_ = "";
+    public boolean hasOperationKey() { return hasOperationKey; }
+    public java.lang.String getOperationKey() { return operationKey_; }
+    
+    private void initFields() {
+    }
+    public final boolean isInitialized() {
+      if (!hasSource) return false;
+      if (!hasType) return false;
+      if (!hasOperationKey) return false;
+      return true;
+    }
+    
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (hasSource()) {
+        output.writeString(1, getSource());
+      }
+      if (hasType()) {
+        output.writeInt32(2, getType());
+      }
+      for (com.google.protobuf.ByteString element : getDataList()) {
+        output.writeBytes(3, element);
+      }
+      if (hasOperationKey()) {
+        output.writeString(4, getOperationKey());
+      }
+      getUnknownFields().writeTo(output);
+    }
+    
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+    
+      size = 0;
+      if (hasSource()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeStringSize(1, getSource());
+      }
+      if (hasType()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(2, getType());
+      }
+      {
+        int dataSize = 0;
+        for (com.google.protobuf.ByteString element : getDataList()) {
+          dataSize += com.google.protobuf.CodedOutputStream
+            .computeBytesSizeNoTag(element);
+        }
+        size += dataSize;
+        size += 1 * getDataList().size();
+      }
+      if (hasOperationKey()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeStringSize(4, getOperationKey());
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+    
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+    
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> {
+      private de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData result;
+      
+      // Construct using de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData.newBuilder()
+      private Builder() {}
+      
+      private static Builder create() {
+        Builder builder = new Builder();
+        builder.result = new de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData();
+        return builder;
+      }
+      
+      protected de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData internalGetResult() {
+        return result;
+      }
+      
+      public Builder clear() {
+        if (result == null) {
+          throw new IllegalStateException(
+            "Cannot call clear() after build().");
+        }
+        result = new de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData();
+        return this;
+      }
+      
+      public Builder clone() {
+        return create().mergeFrom(result);
+      }
+      
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData.getDescriptor();
+      }
+      
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData getDefaultInstanceForType() {
+        return de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData.getDefaultInstance();
+      }
+      
+      public boolean isInitialized() {
+        return result.isInitialized();
+      }
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData build() {
+        if (result != null && !isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return buildPartial();
+      }
+      
+      private de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData buildParsed()
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        if (!isInitialized()) {
+          throw newUninitializedMessageException(
+            result).asInvalidProtocolBufferException();
+        }
+        return buildPartial();
+      }
+      
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData buildPartial() {
+        if (result == null) {
+          throw new IllegalStateException(
+            "build() has already been called on this Builder.");
+        }
+        if (result.data_ != java.util.Collections.EMPTY_LIST) {
+          result.data_ =
+            java.util.Collections.unmodifiableList(result.data_);
+        }
+        de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData returnMe = result;
+        result = null;
+        return returnMe;
+      }
+      
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData) {
+          return mergeFrom((de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+      
+      public Builder mergeFrom(de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData other) {
+        if (other == de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData.getDefaultInstance()) return this;
+        if (other.hasSource()) {
+          setSource(other.getSource());
+        }
+        if (other.hasType()) {
+          setType(other.getType());
+        }
+        if (!other.data_.isEmpty()) {
+          if (result.data_.isEmpty()) {
+            result.data_ = new java.util.ArrayList<com.google.protobuf.ByteString>();
+          }
+          result.data_.addAll(other.data_);
+        }
+        if (other.hasOperationKey()) {
+          setOperationKey(other.getOperationKey());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+      
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder(
+            this.getUnknownFields());
+        while (true) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              this.setUnknownFields(unknownFields.build());
+              return this;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                this.setUnknownFields(unknownFields.build());
+                return this;
+              }
+              break;
+            }
+            case 10: {
+              setSource(input.readString());
+              break;
+            }
+            case 16: {
+              setType(input.readInt32());
+              break;
+            }
+            case 26: {
+              addData(input.readBytes());
+              break;
+            }
+            case 34: {
+              setOperationKey(input.readString());
+              break;
+            }
+          }
+        }
+      }
+      
+      
+      // required string source = 1;
+      public boolean hasSource() {
+        return result.hasSource();
+      }
+      public java.lang.String getSource() {
+        return result.getSource();
+      }
+      public Builder setSource(java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  result.hasSource = true;
+        result.source_ = value;
+        return this;
+      }
+      public Builder clearSource() {
+        result.hasSource = false;
+        result.source_ = getDefaultInstance().getSource();
+        return this;
+      }
+      
+      // required int32 type = 2;
+      public boolean hasType() {
+        return result.hasType();
+      }
+      public int getType() {
+        return result.getType();
+      }
+      public Builder setType(int value) {
+        result.hasType = true;
+        result.type_ = value;
+        return this;
+      }
+      public Builder clearType() {
+        result.hasType = false;
+        result.type_ = 0;
+        return this;
+      }
+      
+      // repeated bytes data = 3;
+      public java.util.List<com.google.protobuf.ByteString> getDataList() {
+        return java.util.Collections.unmodifiableList(result.data_);
+      }
+      public int getDataCount() {
+        return result.getDataCount();
+      }
+      public com.google.protobuf.ByteString getData(int index) {
+        return result.getData(index);
+      }
+      public Builder setData(int index, com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  result.data_.set(index, value);
+        return this;
+      }
+      public Builder addData(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  if (result.data_.isEmpty()) {
+          result.data_ = new java.util.ArrayList<com.google.protobuf.ByteString>();
+        }
+        result.data_.add(value);
+        return this;
+      }
+      public Builder addAllData(
+          java.lang.Iterable<? extends com.google.protobuf.ByteString> values) {
+        if (result.data_.isEmpty()) {
+          result.data_ = new java.util.ArrayList<com.google.protobuf.ByteString>();
+        }
+        super.addAll(values, result.data_);
+        return this;
+      }
+      public Builder clearData() {
+        result.data_ = java.util.Collections.emptyList();
+        return this;
+      }
+      
+      // required string OperationKey = 4;
+      public boolean hasOperationKey() {
+        return result.hasOperationKey();
+      }
+      public java.lang.String getOperationKey() {
+        return result.getOperationKey();
+      }
+      public Builder setOperationKey(java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  result.hasOperationKey = true;
+        result.operationKey_ = value;
+        return this;
+      }
+      public Builder clearOperationKey() {
+        result.hasOperationKey = false;
+        result.operationKey_ = getDefaultInstance().getOperationKey();
+        return this;
+      }
+      
+      // @@protoc_insertion_point(builder_scope:ListenerData)
+    }
+    
+    static {
+      defaultInstance = new ListenerData(true);
+      de.uniluebeck.itm.tcp.files.MessageServiceFiles.internalForceInit();
+      defaultInstance.initFields();
+    }
+    
+    // @@protoc_insertion_point(class_scope:ListenerData)
   }
   
   public static final class ByteData extends
@@ -2772,13 +4376,6 @@ public final class MessageServiceFiles {
       return data_.get(index);
     }
     
-    // optional string OperationKey = 2;
-    public static final int OPERATIONKEY_FIELD_NUMBER = 2;
-    private boolean hasOperationKey;
-    private java.lang.String operationKey_ = "";
-    public boolean hasOperationKey() { return hasOperationKey; }
-    public java.lang.String getOperationKey() { return operationKey_; }
-    
     private void initFields() {
     }
     public final boolean isInitialized() {
@@ -2790,9 +4387,6 @@ public final class MessageServiceFiles {
       getSerializedSize();
       for (com.google.protobuf.ByteString element : getDataList()) {
         output.writeBytes(1, element);
-      }
-      if (hasOperationKey()) {
-        output.writeString(2, getOperationKey());
       }
       getUnknownFields().writeTo(output);
     }
@@ -2811,10 +4405,6 @@ public final class MessageServiceFiles {
         }
         size += dataSize;
         size += 1 * getDataList().size();
-      }
-      if (hasOperationKey()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeStringSize(2, getOperationKey());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -2899,7 +4489,7 @@ public final class MessageServiceFiles {
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
       private de.uniluebeck.itm.tcp.files.MessageServiceFiles.ByteData result;
       
-      // Construct using rpc_pro.rpcPrototype.files.MessageServiceFiles.ByteData.newBuilder()
+      // Construct using de.uniluebeck.itm.tcp.files.MessageServiceFiles.ByteData.newBuilder()
       private Builder() {}
       
       private static Builder create() {
@@ -2984,9 +4574,6 @@ public final class MessageServiceFiles {
           }
           result.data_.addAll(other.data_);
         }
-        if (other.hasOperationKey()) {
-          setOperationKey(other.getOperationKey());
-        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
@@ -3014,10 +4601,6 @@ public final class MessageServiceFiles {
             }
             case 10: {
               addData(input.readBytes());
-              break;
-            }
-            case 18: {
-              setOperationKey(input.readString());
               break;
             }
           }
@@ -3062,27 +4645,6 @@ public final class MessageServiceFiles {
       }
       public Builder clearData() {
         result.data_ = java.util.Collections.emptyList();
-        return this;
-      }
-      
-      // optional string OperationKey = 2;
-      public boolean hasOperationKey() {
-        return result.hasOperationKey();
-      }
-      public java.lang.String getOperationKey() {
-        return result.getOperationKey();
-      }
-      public Builder setOperationKey(java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  result.hasOperationKey = true;
-        result.operationKey_ = value;
-        return this;
-      }
-      public Builder clearOperationKey() {
-        result.hasOperationKey = false;
-        result.operationKey_ = getDefaultInstance().getOperationKey();
         return this;
       }
       
@@ -3137,7 +4699,7 @@ public final class MessageServiceFiles {
       return type_.get(index);
     }
     
-    // optional string OperationKey = 2;
+    // required string OperationKey = 2;
     public static final int OPERATIONKEY_FIELD_NUMBER = 2;
     private boolean hasOperationKey;
     private java.lang.String operationKey_ = "";
@@ -3147,6 +4709,7 @@ public final class MessageServiceFiles {
     private void initFields() {
     }
     public final boolean isInitialized() {
+      if (!hasOperationKey) return false;
       return true;
     }
     
@@ -3264,7 +4827,7 @@ public final class MessageServiceFiles {
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
       private de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketTypeData result;
       
-      // Construct using rpc_pro.rpcPrototype.files.MessageServiceFiles.PacketTypeData.newBuilder()
+      // Construct using de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketTypeData.newBuilder()
       private Builder() {}
       
       private static Builder create() {
@@ -3433,7 +4996,7 @@ public final class MessageServiceFiles {
         return this;
       }
       
-      // optional string OperationKey = 2;
+      // required string OperationKey = 2;
       public boolean hasOperationKey() {
         return result.hasOperationKey();
       }
@@ -3466,292 +5029,6 @@ public final class MessageServiceFiles {
     // @@protoc_insertion_point(class_scope:PacketTypeData)
   }
   
-  public static abstract class TestOperations
-      implements com.google.protobuf.Service {
-    protected TestOperations() {}
-    
-    public interface Interface {
-      public abstract void setMessage(
-          com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING request,
-          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done);
-      
-      public abstract void getMessage(
-          com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
-          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING> done);
-      
-    }
-    
-    public static com.google.protobuf.Service newReflectiveService(
-        final Interface impl) {
-      return new TestOperations() {
-        @Override
-        public  void setMessage(
-            com.google.protobuf.RpcController controller,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING request,
-            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done) {
-          impl.setMessage(controller, request, done);
-        }
-        
-        @Override
-        public  void getMessage(
-            com.google.protobuf.RpcController controller,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
-            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING> done) {
-          impl.getMessage(controller, request, done);
-        }
-        
-      };
-    }
-    
-    public static com.google.protobuf.BlockingService
-        newReflectiveBlockingService(final BlockingInterface impl) {
-      return new com.google.protobuf.BlockingService() {
-        public final com.google.protobuf.Descriptors.ServiceDescriptor
-            getDescriptorForType() {
-          return getDescriptor();
-        }
-        
-        public final com.google.protobuf.Message callBlockingMethod(
-            com.google.protobuf.Descriptors.MethodDescriptor method,
-            com.google.protobuf.RpcController controller,
-            com.google.protobuf.Message request)
-            throws com.google.protobuf.ServiceException {
-          if (method.getService() != getDescriptor()) {
-            throw new java.lang.IllegalArgumentException(
-              "Service.callBlockingMethod() given method descriptor for " +
-              "wrong service type.");
-          }
-          switch(method.getIndex()) {
-            case 0:
-              return impl.setMessage(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING)request);
-            case 1:
-              return impl.getMessage(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID)request);
-            default:
-              throw new java.lang.AssertionError("Can't get here.");
-          }
-        }
-        
-        public final com.google.protobuf.Message
-            getRequestPrototype(
-            com.google.protobuf.Descriptors.MethodDescriptor method) {
-          if (method.getService() != getDescriptor()) {
-            throw new java.lang.IllegalArgumentException(
-              "Service.getRequestPrototype() given method " +
-              "descriptor for wrong service type.");
-          }
-          switch(method.getIndex()) {
-            case 0:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING.getDefaultInstance();
-            case 1:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
-            default:
-              throw new java.lang.AssertionError("Can't get here.");
-          }
-        }
-        
-        public final com.google.protobuf.Message
-            getResponsePrototype(
-            com.google.protobuf.Descriptors.MethodDescriptor method) {
-          if (method.getService() != getDescriptor()) {
-            throw new java.lang.IllegalArgumentException(
-              "Service.getResponsePrototype() given method " +
-              "descriptor for wrong service type.");
-          }
-          switch(method.getIndex()) {
-            case 0:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
-            case 1:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING.getDefaultInstance();
-            default:
-              throw new java.lang.AssertionError("Can't get here.");
-          }
-        }
-        
-      };
-    }
-    
-    public abstract void setMessage(
-        com.google.protobuf.RpcController controller,
-        de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING request,
-        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done);
-    
-    public abstract void getMessage(
-        com.google.protobuf.RpcController controller,
-        de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
-        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING> done);
-    
-    public static final
-        com.google.protobuf.Descriptors.ServiceDescriptor
-        getDescriptor() {
-      return de.uniluebeck.itm.tcp.files.MessageServiceFiles.getDescriptor().getServices().get(0);
-    }
-    public final com.google.protobuf.Descriptors.ServiceDescriptor
-        getDescriptorForType() {
-      return getDescriptor();
-    }
-    
-    public final void callMethod(
-        com.google.protobuf.Descriptors.MethodDescriptor method,
-        com.google.protobuf.RpcController controller,
-        com.google.protobuf.Message request,
-        com.google.protobuf.RpcCallback<
-          com.google.protobuf.Message> done) {
-      if (method.getService() != getDescriptor()) {
-        throw new java.lang.IllegalArgumentException(
-          "Service.callMethod() given method descriptor for wrong " +
-          "service type.");
-      }
-      switch(method.getIndex()) {
-        case 0:
-          this.setMessage(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING)request,
-            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID>specializeCallback(
-              done));
-          return;
-        case 1:
-          this.getMessage(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID)request,
-            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING>specializeCallback(
-              done));
-          return;
-        default:
-          throw new java.lang.AssertionError("Can't get here.");
-      }
-    }
-    
-    public final com.google.protobuf.Message
-        getRequestPrototype(
-        com.google.protobuf.Descriptors.MethodDescriptor method) {
-      if (method.getService() != getDescriptor()) {
-        throw new java.lang.IllegalArgumentException(
-          "Service.getRequestPrototype() given method " +
-          "descriptor for wrong service type.");
-      }
-      switch(method.getIndex()) {
-        case 0:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING.getDefaultInstance();
-        case 1:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
-        default:
-          throw new java.lang.AssertionError("Can't get here.");
-      }
-    }
-    
-    public final com.google.protobuf.Message
-        getResponsePrototype(
-        com.google.protobuf.Descriptors.MethodDescriptor method) {
-      if (method.getService() != getDescriptor()) {
-        throw new java.lang.IllegalArgumentException(
-          "Service.getResponsePrototype() given method " +
-          "descriptor for wrong service type.");
-      }
-      switch(method.getIndex()) {
-        case 0:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
-        case 1:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING.getDefaultInstance();
-        default:
-          throw new java.lang.AssertionError("Can't get here.");
-      }
-    }
-    
-    public static Stub newStub(
-        com.google.protobuf.RpcChannel channel) {
-      return new Stub(channel);
-    }
-    
-    public static final class Stub extends de.uniluebeck.itm.tcp.files.MessageServiceFiles.TestOperations implements Interface {
-      private Stub(com.google.protobuf.RpcChannel channel) {
-        this.channel = channel;
-      }
-      
-      private final com.google.protobuf.RpcChannel channel;
-      
-      public com.google.protobuf.RpcChannel getChannel() {
-        return channel;
-      }
-      
-      public  void setMessage(
-          com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING request,
-          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done) {
-        channel.callMethod(
-          getDescriptor().getMethods().get(0),
-          controller,
-          request,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance(),
-          com.google.protobuf.RpcUtil.generalizeCallback(
-            done,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.class,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance()));
-      }
-      
-      public  void getMessage(
-          com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
-          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING> done) {
-        channel.callMethod(
-          getDescriptor().getMethods().get(1),
-          controller,
-          request,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING.getDefaultInstance(),
-          com.google.protobuf.RpcUtil.generalizeCallback(
-            done,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING.class,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING.getDefaultInstance()));
-      }
-    }
-    
-    public static BlockingInterface newBlockingStub(
-        com.google.protobuf.BlockingRpcChannel channel) {
-      return new BlockingStub(channel);
-    }
-    
-    public interface BlockingInterface {
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID setMessage(
-          com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING request)
-          throws com.google.protobuf.ServiceException;
-      
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING getMessage(
-          com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request)
-          throws com.google.protobuf.ServiceException;
-    }
-    
-    private static final class BlockingStub implements BlockingInterface {
-      private BlockingStub(com.google.protobuf.BlockingRpcChannel channel) {
-        this.channel = channel;
-      }
-      
-      private final com.google.protobuf.BlockingRpcChannel channel;
-      
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID setMessage(
-          com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING request)
-          throws com.google.protobuf.ServiceException {
-        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID) channel.callBlockingMethod(
-          getDescriptor().getMethods().get(0),
-          controller,
-          request,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance());
-      }
-      
-      
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING getMessage(
-          com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request)
-          throws com.google.protobuf.ServiceException {
-        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING) channel.callBlockingMethod(
-          getDescriptor().getMethods().get(1),
-          controller,
-          request,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING.getDefaultInstance());
-      }
-      
-    }
-  }
-  
   public static abstract class Operations
       implements com.google.protobuf.Service {
     protected Operations() {}
@@ -3760,17 +5037,17 @@ public final class MessageServiceFiles {
       public abstract void connect(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.Identification request,
-          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done);
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
       
       public abstract void program(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket request,
-          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done);
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
       
       public abstract void eraseFlash(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
-          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done);
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
       
       public abstract void readFlash(
           com.google.protobuf.RpcController controller,
@@ -3779,42 +5056,47 @@ public final class MessageServiceFiles {
       
       public abstract void readMac(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
-          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData> done);
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
       
       public abstract void reset(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
-          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done);
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
       
       public abstract void send(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData request,
-          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done);
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
       
       public abstract void writeFlash(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData request,
-          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done);
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
       
       public abstract void writeMac(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData request,
-          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done);
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
+      
+      public abstract void getChipType(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType> done);
       
       public abstract void cancelHandle(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
-          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done);
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
       
       public abstract void getHandle(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
-          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done);
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
       
       public abstract void getState(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request,
           com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING> done);
       
     }
@@ -3826,7 +5108,7 @@ public final class MessageServiceFiles {
         public  void connect(
             com.google.protobuf.RpcController controller,
             de.uniluebeck.itm.tcp.files.MessageServiceFiles.Identification request,
-            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done) {
+            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
           impl.connect(controller, request, done);
         }
         
@@ -3834,15 +5116,15 @@ public final class MessageServiceFiles {
         public  void program(
             com.google.protobuf.RpcController controller,
             de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket request,
-            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done) {
+            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
           impl.program(controller, request, done);
         }
         
         @Override
         public  void eraseFlash(
             com.google.protobuf.RpcController controller,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
-            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done) {
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request,
+            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
           impl.eraseFlash(controller, request, done);
         }
         
@@ -3857,16 +5139,16 @@ public final class MessageServiceFiles {
         @Override
         public  void readMac(
             com.google.protobuf.RpcController controller,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
-            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData> done) {
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request,
+            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
           impl.readMac(controller, request, done);
         }
         
         @Override
         public  void reset(
             com.google.protobuf.RpcController controller,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
-            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done) {
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request,
+            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
           impl.reset(controller, request, done);
         }
         
@@ -3874,7 +5156,7 @@ public final class MessageServiceFiles {
         public  void send(
             com.google.protobuf.RpcController controller,
             de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData request,
-            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done) {
+            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
           impl.send(controller, request, done);
         }
         
@@ -3882,7 +5164,7 @@ public final class MessageServiceFiles {
         public  void writeFlash(
             com.google.protobuf.RpcController controller,
             de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData request,
-            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done) {
+            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
           impl.writeFlash(controller, request, done);
         }
         
@@ -3890,30 +5172,38 @@ public final class MessageServiceFiles {
         public  void writeMac(
             com.google.protobuf.RpcController controller,
             de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData request,
-            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done) {
+            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
           impl.writeMac(controller, request, done);
+        }
+        
+        @Override
+        public  void getChipType(
+            com.google.protobuf.RpcController controller,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request,
+            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType> done) {
+          impl.getChipType(controller, request, done);
         }
         
         @Override
         public  void cancelHandle(
             com.google.protobuf.RpcController controller,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
-            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done) {
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request,
+            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
           impl.cancelHandle(controller, request, done);
         }
         
         @Override
         public  void getHandle(
             com.google.protobuf.RpcController controller,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
-            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done) {
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request,
+            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
           impl.getHandle(controller, request, done);
         }
         
         @Override
         public  void getState(
             com.google.protobuf.RpcController controller,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request,
             com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING> done) {
           impl.getState(controller, request, done);
         }
@@ -3945,13 +5235,13 @@ public final class MessageServiceFiles {
             case 1:
               return impl.program(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket)request);
             case 2:
-              return impl.eraseFlash(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID)request);
+              return impl.eraseFlash(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout)request);
             case 3:
               return impl.readFlash(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData)request);
             case 4:
-              return impl.readMac(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID)request);
+              return impl.readMac(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout)request);
             case 5:
-              return impl.reset(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID)request);
+              return impl.reset(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout)request);
             case 6:
               return impl.send(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData)request);
             case 7:
@@ -3959,11 +5249,13 @@ public final class MessageServiceFiles {
             case 8:
               return impl.writeMac(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData)request);
             case 9:
-              return impl.cancelHandle(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID)request);
+              return impl.getChipType(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout)request);
             case 10:
-              return impl.getHandle(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID)request);
+              return impl.cancelHandle(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey)request);
             case 11:
-              return impl.getState(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID)request);
+              return impl.getHandle(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey)request);
+            case 12:
+              return impl.getState(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey)request);
             default:
               throw new java.lang.AssertionError("Can't get here.");
           }
@@ -3983,13 +5275,13 @@ public final class MessageServiceFiles {
             case 1:
               return de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket.getDefaultInstance();
             case 2:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout.getDefaultInstance();
             case 3:
               return de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData.getDefaultInstance();
             case 4:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout.getDefaultInstance();
             case 5:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout.getDefaultInstance();
             case 6:
               return de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData.getDefaultInstance();
             case 7:
@@ -3997,11 +5289,13 @@ public final class MessageServiceFiles {
             case 8:
               return de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData.getDefaultInstance();
             case 9:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout.getDefaultInstance();
             case 10:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey.getDefaultInstance();
             case 11:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey.getDefaultInstance();
+            case 12:
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
           }
@@ -4017,28 +5311,30 @@ public final class MessageServiceFiles {
           }
           switch(method.getIndex()) {
             case 0:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
             case 1:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
             case 2:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
             case 3:
               return de.uniluebeck.itm.tcp.files.MessageServiceFiles.ByteData.getDefaultInstance();
             case 4:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData.getDefaultInstance();
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
             case 5:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
             case 6:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
             case 7:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
             case 8:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
             case 9:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType.getDefaultInstance();
             case 10:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
             case 11:
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
+            case 12:
               return de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
@@ -4051,17 +5347,17 @@ public final class MessageServiceFiles {
     public abstract void connect(
         com.google.protobuf.RpcController controller,
         de.uniluebeck.itm.tcp.files.MessageServiceFiles.Identification request,
-        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done);
+        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
     
     public abstract void program(
         com.google.protobuf.RpcController controller,
         de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket request,
-        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done);
+        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
     
     public abstract void eraseFlash(
         com.google.protobuf.RpcController controller,
-        de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
-        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done);
+        de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request,
+        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
     
     public abstract void readFlash(
         com.google.protobuf.RpcController controller,
@@ -4070,48 +5366,53 @@ public final class MessageServiceFiles {
     
     public abstract void readMac(
         com.google.protobuf.RpcController controller,
-        de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
-        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData> done);
+        de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request,
+        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
     
     public abstract void reset(
         com.google.protobuf.RpcController controller,
-        de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
-        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done);
+        de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request,
+        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
     
     public abstract void send(
         com.google.protobuf.RpcController controller,
         de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData request,
-        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done);
+        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
     
     public abstract void writeFlash(
         com.google.protobuf.RpcController controller,
         de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData request,
-        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done);
+        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
     
     public abstract void writeMac(
         com.google.protobuf.RpcController controller,
         de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData request,
-        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done);
+        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
+    
+    public abstract void getChipType(
+        com.google.protobuf.RpcController controller,
+        de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request,
+        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType> done);
     
     public abstract void cancelHandle(
         com.google.protobuf.RpcController controller,
-        de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
-        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done);
+        de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request,
+        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
     
     public abstract void getHandle(
         com.google.protobuf.RpcController controller,
-        de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
-        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done);
+        de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request,
+        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
     
     public abstract void getState(
         com.google.protobuf.RpcController controller,
-        de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
+        de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request,
         com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING> done);
     
     public static final
         com.google.protobuf.Descriptors.ServiceDescriptor
         getDescriptor() {
-      return de.uniluebeck.itm.tcp.files.MessageServiceFiles.getDescriptor().getServices().get(1);
+      return de.uniluebeck.itm.tcp.files.MessageServiceFiles.getDescriptor().getServices().get(0);
     }
     public final com.google.protobuf.Descriptors.ServiceDescriptor
         getDescriptorForType() {
@@ -4132,17 +5433,17 @@ public final class MessageServiceFiles {
       switch(method.getIndex()) {
         case 0:
           this.connect(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.Identification)request,
-            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID>specializeCallback(
+            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
               done));
           return;
         case 1:
           this.program(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket)request,
-            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID>specializeCallback(
+            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
               done));
           return;
         case 2:
-          this.eraseFlash(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID)request,
-            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID>specializeCallback(
+          this.eraseFlash(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout)request,
+            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
               done));
           return;
         case 3:
@@ -4151,42 +5452,47 @@ public final class MessageServiceFiles {
               done));
           return;
         case 4:
-          this.readMac(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID)request,
-            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData>specializeCallback(
+          this.readMac(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout)request,
+            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
               done));
           return;
         case 5:
-          this.reset(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID)request,
-            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID>specializeCallback(
+          this.reset(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout)request,
+            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
               done));
           return;
         case 6:
           this.send(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData)request,
-            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID>specializeCallback(
+            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
               done));
           return;
         case 7:
           this.writeFlash(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData)request,
-            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID>specializeCallback(
+            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
               done));
           return;
         case 8:
           this.writeMac(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData)request,
-            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID>specializeCallback(
+            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
               done));
           return;
         case 9:
-          this.cancelHandle(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID)request,
-            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID>specializeCallback(
+          this.getChipType(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout)request,
+            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType>specializeCallback(
               done));
           return;
         case 10:
-          this.getHandle(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID)request,
-            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID>specializeCallback(
+          this.cancelHandle(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey)request,
+            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
               done));
           return;
         case 11:
-          this.getState(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID)request,
+          this.getHandle(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey)request,
+            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
+              done));
+          return;
+        case 12:
+          this.getState(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey)request,
             com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING>specializeCallback(
               done));
           return;
@@ -4209,13 +5515,13 @@ public final class MessageServiceFiles {
         case 1:
           return de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket.getDefaultInstance();
         case 2:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout.getDefaultInstance();
         case 3:
           return de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData.getDefaultInstance();
         case 4:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout.getDefaultInstance();
         case 5:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout.getDefaultInstance();
         case 6:
           return de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData.getDefaultInstance();
         case 7:
@@ -4223,11 +5529,13 @@ public final class MessageServiceFiles {
         case 8:
           return de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData.getDefaultInstance();
         case 9:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout.getDefaultInstance();
         case 10:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey.getDefaultInstance();
         case 11:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey.getDefaultInstance();
+        case 12:
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
       }
@@ -4243,28 +5551,30 @@ public final class MessageServiceFiles {
       }
       switch(method.getIndex()) {
         case 0:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
         case 1:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
         case 2:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
         case 3:
           return de.uniluebeck.itm.tcp.files.MessageServiceFiles.ByteData.getDefaultInstance();
         case 4:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData.getDefaultInstance();
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
         case 5:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
         case 6:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
         case 7:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
         case 8:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
         case 9:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType.getDefaultInstance();
         case 10:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
         case 11:
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
+        case 12:
           return de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
@@ -4290,46 +5600,46 @@ public final class MessageServiceFiles {
       public  void connect(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.Identification request,
-          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done) {
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
         channel.callMethod(
           getDescriptor().getMethods().get(0),
           controller,
           request,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance(),
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
           com.google.protobuf.RpcUtil.generalizeCallback(
             done,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.class,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance()));
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.class,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance()));
       }
       
       public  void program(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket request,
-          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done) {
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
         channel.callMethod(
           getDescriptor().getMethods().get(1),
           controller,
           request,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance(),
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
           com.google.protobuf.RpcUtil.generalizeCallback(
             done,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.class,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance()));
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.class,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance()));
       }
       
       public  void eraseFlash(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
-          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done) {
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
         channel.callMethod(
           getDescriptor().getMethods().get(2),
           controller,
           request,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance(),
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
           com.google.protobuf.RpcUtil.generalizeCallback(
             done,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.class,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance()));
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.class,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance()));
       }
       
       public  void readFlash(
@@ -4349,115 +5659,130 @@ public final class MessageServiceFiles {
       
       public  void readMac(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
-          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData> done) {
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
         channel.callMethod(
           getDescriptor().getMethods().get(4),
           controller,
           request,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData.getDefaultInstance(),
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
           com.google.protobuf.RpcUtil.generalizeCallback(
             done,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData.class,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData.getDefaultInstance()));
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.class,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance()));
       }
       
       public  void reset(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
-          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done) {
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
         channel.callMethod(
           getDescriptor().getMethods().get(5),
           controller,
           request,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance(),
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
           com.google.protobuf.RpcUtil.generalizeCallback(
             done,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.class,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance()));
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.class,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance()));
       }
       
       public  void send(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData request,
-          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done) {
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
         channel.callMethod(
           getDescriptor().getMethods().get(6),
           controller,
           request,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance(),
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
           com.google.protobuf.RpcUtil.generalizeCallback(
             done,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.class,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance()));
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.class,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance()));
       }
       
       public  void writeFlash(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData request,
-          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done) {
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
         channel.callMethod(
           getDescriptor().getMethods().get(7),
           controller,
           request,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance(),
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
           com.google.protobuf.RpcUtil.generalizeCallback(
             done,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.class,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance()));
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.class,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance()));
       }
       
       public  void writeMac(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData request,
-          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done) {
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
         channel.callMethod(
           getDescriptor().getMethods().get(8),
           controller,
           request,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance(),
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
           com.google.protobuf.RpcUtil.generalizeCallback(
             done,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.class,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance()));
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.class,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance()));
       }
       
-      public  void cancelHandle(
+      public  void getChipType(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
-          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done) {
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType> done) {
         channel.callMethod(
           getDescriptor().getMethods().get(9),
           controller,
           request,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance(),
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType.getDefaultInstance(),
           com.google.protobuf.RpcUtil.generalizeCallback(
             done,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.class,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance()));
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType.class,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType.getDefaultInstance()));
       }
       
-      public  void getHandle(
+      public  void cancelHandle(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
-          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done) {
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
         channel.callMethod(
           getDescriptor().getMethods().get(10),
           controller,
           request,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance(),
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
           com.google.protobuf.RpcUtil.generalizeCallback(
             done,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.class,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance()));
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.class,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance()));
+      }
+      
+      public  void getHandle(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
+        channel.callMethod(
+          getDescriptor().getMethods().get(11),
+          controller,
+          request,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
+          com.google.protobuf.RpcUtil.generalizeCallback(
+            done,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.class,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance()));
       }
       
       public  void getState(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request,
           com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING> done) {
         channel.callMethod(
-          getDescriptor().getMethods().get(11),
+          getDescriptor().getMethods().get(12),
           controller,
           request,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING.getDefaultInstance(),
@@ -4474,19 +5799,19 @@ public final class MessageServiceFiles {
     }
     
     public interface BlockingInterface {
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID connect(
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer connect(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.Identification request)
           throws com.google.protobuf.ServiceException;
       
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID program(
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer program(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket request)
           throws com.google.protobuf.ServiceException;
       
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID eraseFlash(
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer eraseFlash(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request)
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request)
           throws com.google.protobuf.ServiceException;
       
       public de.uniluebeck.itm.tcp.files.MessageServiceFiles.ByteData readFlash(
@@ -4494,44 +5819,49 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData request)
           throws com.google.protobuf.ServiceException;
       
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData readMac(
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer readMac(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request)
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request)
           throws com.google.protobuf.ServiceException;
       
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID reset(
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer reset(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request)
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request)
           throws com.google.protobuf.ServiceException;
       
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID send(
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer send(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData request)
           throws com.google.protobuf.ServiceException;
       
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID writeFlash(
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer writeFlash(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData request)
           throws com.google.protobuf.ServiceException;
       
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID writeMac(
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer writeMac(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData request)
           throws com.google.protobuf.ServiceException;
       
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID cancelHandle(
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType getChipType(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request)
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request)
           throws com.google.protobuf.ServiceException;
       
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID getHandle(
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer cancelHandle(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request)
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request)
+          throws com.google.protobuf.ServiceException;
+      
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer getHandle(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request)
           throws com.google.protobuf.ServiceException;
       
       public de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING getState(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request)
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request)
           throws com.google.protobuf.ServiceException;
     }
     
@@ -4542,39 +5872,39 @@ public final class MessageServiceFiles {
       
       private final com.google.protobuf.BlockingRpcChannel channel;
       
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID connect(
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer connect(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.Identification request)
           throws com.google.protobuf.ServiceException {
-        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID) channel.callBlockingMethod(
+        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
           getDescriptor().getMethods().get(0),
           controller,
           request,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance());
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
       }
       
       
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID program(
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer program(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket request)
           throws com.google.protobuf.ServiceException {
-        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID) channel.callBlockingMethod(
+        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
           getDescriptor().getMethods().get(1),
           controller,
           request,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance());
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
       }
       
       
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID eraseFlash(
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer eraseFlash(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request)
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request)
           throws com.google.protobuf.ServiceException {
-        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID) channel.callBlockingMethod(
+        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
           getDescriptor().getMethods().get(2),
           controller,
           request,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance());
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
       }
       
       
@@ -4590,96 +5920,108 @@ public final class MessageServiceFiles {
       }
       
       
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData readMac(
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer readMac(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request)
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request)
           throws com.google.protobuf.ServiceException {
-        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData) channel.callBlockingMethod(
+        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
           getDescriptor().getMethods().get(4),
           controller,
           request,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData.getDefaultInstance());
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
       }
       
       
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID reset(
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer reset(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request)
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request)
           throws com.google.protobuf.ServiceException {
-        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID) channel.callBlockingMethod(
+        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
           getDescriptor().getMethods().get(5),
           controller,
           request,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance());
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
       }
       
       
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID send(
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer send(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData request)
           throws com.google.protobuf.ServiceException {
-        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID) channel.callBlockingMethod(
+        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
           getDescriptor().getMethods().get(6),
           controller,
           request,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance());
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
       }
       
       
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID writeFlash(
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer writeFlash(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData request)
           throws com.google.protobuf.ServiceException {
-        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID) channel.callBlockingMethod(
+        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
           getDescriptor().getMethods().get(7),
           controller,
           request,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance());
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
       }
       
       
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID writeMac(
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer writeMac(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData request)
           throws com.google.protobuf.ServiceException {
-        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID) channel.callBlockingMethod(
+        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
           getDescriptor().getMethods().get(8),
           controller,
           request,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance());
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
       }
       
       
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID cancelHandle(
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType getChipType(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request)
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request)
           throws com.google.protobuf.ServiceException {
-        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID) channel.callBlockingMethod(
+        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType) channel.callBlockingMethod(
           getDescriptor().getMethods().get(9),
           controller,
           request,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance());
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType.getDefaultInstance());
       }
       
       
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID getHandle(
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer cancelHandle(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request)
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request)
           throws com.google.protobuf.ServiceException {
-        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID) channel.callBlockingMethod(
+        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
           getDescriptor().getMethods().get(10),
           controller,
           request,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance());
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
+      }
+      
+      
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer getHandle(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request)
+          throws com.google.protobuf.ServiceException {
+        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
+          getDescriptor().getMethods().get(11),
+          controller,
+          request,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
       }
       
       
       public de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING getState(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request)
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request)
           throws com.google.protobuf.ServiceException {
         return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING) channel.callBlockingMethod(
-          getDescriptor().getMethods().get(11),
+          getDescriptor().getMethods().get(12),
           controller,
           request,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING.getDefaultInstance());
@@ -4696,12 +6038,22 @@ public final class MessageServiceFiles {
       public abstract void addMessagePacketListener(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketTypeData request,
-          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done);
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
+      
+      public abstract void addMessagePlainTextListener(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketTypeData request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
       
       public abstract void removeMessagePacketListener(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
-          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done);
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
+      
+      public abstract void removeMessagePlainTextListener(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
       
     }
     
@@ -4712,16 +6064,32 @@ public final class MessageServiceFiles {
         public  void addMessagePacketListener(
             com.google.protobuf.RpcController controller,
             de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketTypeData request,
-            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done) {
+            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
           impl.addMessagePacketListener(controller, request, done);
+        }
+        
+        @Override
+        public  void addMessagePlainTextListener(
+            com.google.protobuf.RpcController controller,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketTypeData request,
+            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
+          impl.addMessagePlainTextListener(controller, request, done);
         }
         
         @Override
         public  void removeMessagePacketListener(
             com.google.protobuf.RpcController controller,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
-            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done) {
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request,
+            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
           impl.removeMessagePacketListener(controller, request, done);
+        }
+        
+        @Override
+        public  void removeMessagePlainTextListener(
+            com.google.protobuf.RpcController controller,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request,
+            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
+          impl.removeMessagePlainTextListener(controller, request, done);
         }
         
       };
@@ -4749,7 +6117,11 @@ public final class MessageServiceFiles {
             case 0:
               return impl.addMessagePacketListener(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketTypeData)request);
             case 1:
-              return impl.removeMessagePacketListener(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID)request);
+              return impl.addMessagePlainTextListener(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketTypeData)request);
+            case 2:
+              return impl.removeMessagePacketListener(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey)request);
+            case 3:
+              return impl.removeMessagePlainTextListener(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey)request);
             default:
               throw new java.lang.AssertionError("Can't get here.");
           }
@@ -4767,7 +6139,11 @@ public final class MessageServiceFiles {
             case 0:
               return de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketTypeData.getDefaultInstance();
             case 1:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketTypeData.getDefaultInstance();
+            case 2:
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey.getDefaultInstance();
+            case 3:
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
           }
@@ -4783,9 +6159,13 @@ public final class MessageServiceFiles {
           }
           switch(method.getIndex()) {
             case 0:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
             case 1:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
+            case 2:
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
+            case 3:
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
           }
@@ -4797,17 +6177,27 @@ public final class MessageServiceFiles {
     public abstract void addMessagePacketListener(
         com.google.protobuf.RpcController controller,
         de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketTypeData request,
-        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done);
+        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
+    
+    public abstract void addMessagePlainTextListener(
+        com.google.protobuf.RpcController controller,
+        de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketTypeData request,
+        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
     
     public abstract void removeMessagePacketListener(
         com.google.protobuf.RpcController controller,
-        de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
-        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done);
+        de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request,
+        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
+    
+    public abstract void removeMessagePlainTextListener(
+        com.google.protobuf.RpcController controller,
+        de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request,
+        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
     
     public static final
         com.google.protobuf.Descriptors.ServiceDescriptor
         getDescriptor() {
-      return de.uniluebeck.itm.tcp.files.MessageServiceFiles.getDescriptor().getServices().get(2);
+      return de.uniluebeck.itm.tcp.files.MessageServiceFiles.getDescriptor().getServices().get(1);
     }
     public final com.google.protobuf.Descriptors.ServiceDescriptor
         getDescriptorForType() {
@@ -4828,12 +6218,22 @@ public final class MessageServiceFiles {
       switch(method.getIndex()) {
         case 0:
           this.addMessagePacketListener(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketTypeData)request,
-            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID>specializeCallback(
+            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
               done));
           return;
         case 1:
-          this.removeMessagePacketListener(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID)request,
-            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID>specializeCallback(
+          this.addMessagePlainTextListener(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketTypeData)request,
+            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
+              done));
+          return;
+        case 2:
+          this.removeMessagePacketListener(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey)request,
+            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
+              done));
+          return;
+        case 3:
+          this.removeMessagePlainTextListener(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey)request,
+            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
               done));
           return;
         default:
@@ -4853,7 +6253,11 @@ public final class MessageServiceFiles {
         case 0:
           return de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketTypeData.getDefaultInstance();
         case 1:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketTypeData.getDefaultInstance();
+        case 2:
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey.getDefaultInstance();
+        case 3:
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
       }
@@ -4869,9 +6273,13 @@ public final class MessageServiceFiles {
       }
       switch(method.getIndex()) {
         case 0:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
         case 1:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
+        case 2:
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
+        case 3:
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
       }
@@ -4896,31 +6304,61 @@ public final class MessageServiceFiles {
       public  void addMessagePacketListener(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketTypeData request,
-          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done) {
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
         channel.callMethod(
           getDescriptor().getMethods().get(0),
           controller,
           request,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance(),
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
           com.google.protobuf.RpcUtil.generalizeCallback(
             done,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.class,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance()));
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.class,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance()));
       }
       
-      public  void removeMessagePacketListener(
+      public  void addMessagePlainTextListener(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request,
-          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done) {
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketTypeData request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
         channel.callMethod(
           getDescriptor().getMethods().get(1),
           controller,
           request,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance(),
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
           com.google.protobuf.RpcUtil.generalizeCallback(
             done,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.class,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance()));
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.class,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance()));
+      }
+      
+      public  void removeMessagePacketListener(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
+        channel.callMethod(
+          getDescriptor().getMethods().get(2),
+          controller,
+          request,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
+          com.google.protobuf.RpcUtil.generalizeCallback(
+            done,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.class,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance()));
+      }
+      
+      public  void removeMessagePlainTextListener(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
+        channel.callMethod(
+          getDescriptor().getMethods().get(3),
+          controller,
+          request,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
+          com.google.protobuf.RpcUtil.generalizeCallback(
+            done,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.class,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance()));
       }
     }
     
@@ -4930,14 +6368,24 @@ public final class MessageServiceFiles {
     }
     
     public interface BlockingInterface {
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID addMessagePacketListener(
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer addMessagePacketListener(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketTypeData request)
           throws com.google.protobuf.ServiceException;
       
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID removeMessagePacketListener(
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer addMessagePlainTextListener(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request)
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketTypeData request)
+          throws com.google.protobuf.ServiceException;
+      
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer removeMessagePacketListener(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request)
+          throws com.google.protobuf.ServiceException;
+      
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer removeMessagePlainTextListener(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request)
           throws com.google.protobuf.ServiceException;
     }
     
@@ -4948,27 +6396,51 @@ public final class MessageServiceFiles {
       
       private final com.google.protobuf.BlockingRpcChannel channel;
       
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID addMessagePacketListener(
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer addMessagePacketListener(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketTypeData request)
           throws com.google.protobuf.ServiceException {
-        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID) channel.callBlockingMethod(
+        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
           getDescriptor().getMethods().get(0),
           controller,
           request,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance());
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
       }
       
       
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID removeMessagePacketListener(
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer addMessagePlainTextListener(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID request)
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketTypeData request)
           throws com.google.protobuf.ServiceException {
-        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID) channel.callBlockingMethod(
+        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
           getDescriptor().getMethods().get(1),
           controller,
           request,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance());
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
+      }
+      
+      
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer removeMessagePacketListener(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request)
+          throws com.google.protobuf.ServiceException {
+        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
+          getDescriptor().getMethods().get(2),
+          controller,
+          request,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
+      }
+      
+      
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer removeMessagePlainTextListener(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request)
+          throws com.google.protobuf.ServiceException {
+        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
+          getDescriptor().getMethods().get(3),
+          controller,
+          request,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
       }
       
     }
@@ -4979,10 +6451,25 @@ public final class MessageServiceFiles {
     protected PacketServiceAnswer() {}
     
     public interface Interface {
+      public abstract void sendReversePacketMessage(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
+      
+      public abstract void sendReversePlainTextMessage(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
+      
       public abstract void sendReverseMessage(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData request,
-          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done);
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
+      
+      public abstract void reverseReadMac(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
       
     }
     
@@ -4990,11 +6477,35 @@ public final class MessageServiceFiles {
         final Interface impl) {
       return new PacketServiceAnswer() {
         @Override
+        public  void sendReversePacketMessage(
+            com.google.protobuf.RpcController controller,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData request,
+            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
+          impl.sendReversePacketMessage(controller, request, done);
+        }
+        
+        @Override
+        public  void sendReversePlainTextMessage(
+            com.google.protobuf.RpcController controller,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData request,
+            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
+          impl.sendReversePlainTextMessage(controller, request, done);
+        }
+        
+        @Override
         public  void sendReverseMessage(
             com.google.protobuf.RpcController controller,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData request,
-            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done) {
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage request,
+            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
           impl.sendReverseMessage(controller, request, done);
+        }
+        
+        @Override
+        public  void reverseReadMac(
+            com.google.protobuf.RpcController controller,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData request,
+            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
+          impl.reverseReadMac(controller, request, done);
         }
         
       };
@@ -5020,7 +6531,13 @@ public final class MessageServiceFiles {
           }
           switch(method.getIndex()) {
             case 0:
-              return impl.sendReverseMessage(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData)request);
+              return impl.sendReversePacketMessage(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData)request);
+            case 1:
+              return impl.sendReversePlainTextMessage(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData)request);
+            case 2:
+              return impl.sendReverseMessage(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage)request);
+            case 3:
+              return impl.reverseReadMac(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData)request);
             default:
               throw new java.lang.AssertionError("Can't get here.");
           }
@@ -5036,7 +6553,13 @@ public final class MessageServiceFiles {
           }
           switch(method.getIndex()) {
             case 0:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData.getDefaultInstance();
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData.getDefaultInstance();
+            case 1:
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData.getDefaultInstance();
+            case 2:
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage.getDefaultInstance();
+            case 3:
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
           }
@@ -5052,7 +6575,13 @@ public final class MessageServiceFiles {
           }
           switch(method.getIndex()) {
             case 0:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
+            case 1:
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
+            case 2:
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
+            case 3:
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
           }
@@ -5061,15 +6590,30 @@ public final class MessageServiceFiles {
       };
     }
     
+    public abstract void sendReversePacketMessage(
+        com.google.protobuf.RpcController controller,
+        de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData request,
+        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
+    
+    public abstract void sendReversePlainTextMessage(
+        com.google.protobuf.RpcController controller,
+        de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData request,
+        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
+    
     public abstract void sendReverseMessage(
         com.google.protobuf.RpcController controller,
-        de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData request,
-        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done);
+        de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage request,
+        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
+    
+    public abstract void reverseReadMac(
+        com.google.protobuf.RpcController controller,
+        de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData request,
+        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
     
     public static final
         com.google.protobuf.Descriptors.ServiceDescriptor
         getDescriptor() {
-      return de.uniluebeck.itm.tcp.files.MessageServiceFiles.getDescriptor().getServices().get(3);
+      return de.uniluebeck.itm.tcp.files.MessageServiceFiles.getDescriptor().getServices().get(2);
     }
     public final com.google.protobuf.Descriptors.ServiceDescriptor
         getDescriptorForType() {
@@ -5089,8 +6633,23 @@ public final class MessageServiceFiles {
       }
       switch(method.getIndex()) {
         case 0:
-          this.sendReverseMessage(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData)request,
-            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID>specializeCallback(
+          this.sendReversePacketMessage(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData)request,
+            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
+              done));
+          return;
+        case 1:
+          this.sendReversePlainTextMessage(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData)request,
+            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
+              done));
+          return;
+        case 2:
+          this.sendReverseMessage(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage)request,
+            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
+              done));
+          return;
+        case 3:
+          this.reverseReadMac(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData)request,
+            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
               done));
           return;
         default:
@@ -5108,7 +6667,13 @@ public final class MessageServiceFiles {
       }
       switch(method.getIndex()) {
         case 0:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData.getDefaultInstance();
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData.getDefaultInstance();
+        case 1:
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData.getDefaultInstance();
+        case 2:
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage.getDefaultInstance();
+        case 3:
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
       }
@@ -5124,7 +6689,13 @@ public final class MessageServiceFiles {
       }
       switch(method.getIndex()) {
         case 0:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance();
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
+        case 1:
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
+        case 2:
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
+        case 3:
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
       }
@@ -5146,19 +6717,64 @@ public final class MessageServiceFiles {
         return channel;
       }
       
-      public  void sendReverseMessage(
+      public  void sendReversePacketMessage(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData request,
-          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID> done) {
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
         channel.callMethod(
           getDescriptor().getMethods().get(0),
           controller,
           request,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance(),
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
           com.google.protobuf.RpcUtil.generalizeCallback(
             done,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.class,
-            de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance()));
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.class,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance()));
+      }
+      
+      public  void sendReversePlainTextMessage(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
+        channel.callMethod(
+          getDescriptor().getMethods().get(1),
+          controller,
+          request,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
+          com.google.protobuf.RpcUtil.generalizeCallback(
+            done,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.class,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance()));
+      }
+      
+      public  void sendReverseMessage(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
+        channel.callMethod(
+          getDescriptor().getMethods().get(2),
+          controller,
+          request,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
+          com.google.protobuf.RpcUtil.generalizeCallback(
+            done,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.class,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance()));
+      }
+      
+      public  void reverseReadMac(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
+        channel.callMethod(
+          getDescriptor().getMethods().get(3),
+          controller,
+          request,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
+          com.google.protobuf.RpcUtil.generalizeCallback(
+            done,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.class,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance()));
       }
     }
     
@@ -5168,9 +6784,24 @@ public final class MessageServiceFiles {
     }
     
     public interface BlockingInterface {
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID sendReverseMessage(
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer sendReversePacketMessage(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData request)
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData request)
+          throws com.google.protobuf.ServiceException;
+      
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer sendReversePlainTextMessage(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData request)
+          throws com.google.protobuf.ServiceException;
+      
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer sendReverseMessage(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage request)
+          throws com.google.protobuf.ServiceException;
+      
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer reverseReadMac(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData request)
           throws com.google.protobuf.ServiceException;
     }
     
@@ -5181,15 +6812,51 @@ public final class MessageServiceFiles {
       
       private final com.google.protobuf.BlockingRpcChannel channel;
       
-      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID sendReverseMessage(
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer sendReversePacketMessage(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData request)
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData request)
           throws com.google.protobuf.ServiceException {
-        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID) channel.callBlockingMethod(
+        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
           getDescriptor().getMethods().get(0),
           controller,
           request,
-          de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.getDefaultInstance());
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
+      }
+      
+      
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer sendReversePlainTextMessage(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData request)
+          throws com.google.protobuf.ServiceException {
+        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
+          getDescriptor().getMethods().get(1),
+          controller,
+          request,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
+      }
+      
+      
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer sendReverseMessage(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage request)
+          throws com.google.protobuf.ServiceException {
+        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
+          getDescriptor().getMethods().get(2),
+          controller,
+          request,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
+      }
+      
+      
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer reverseReadMac(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData request)
+          throws com.google.protobuf.ServiceException {
+        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
+          getDescriptor().getMethods().get(3),
+          controller,
+          request,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
       }
       
     }
@@ -5266,7 +6933,7 @@ public final class MessageServiceFiles {
     public static final
         com.google.protobuf.Descriptors.ServiceDescriptor
         getDescriptor() {
-      return de.uniluebeck.itm.tcp.files.MessageServiceFiles.getDescriptor().getServices().get(4);
+      return de.uniluebeck.itm.tcp.files.MessageServiceFiles.getDescriptor().getServices().get(3);
     }
     public final com.google.protobuf.Descriptors.ServiceDescriptor
         getDescriptorForType() {
@@ -5352,15 +7019,35 @@ public final class MessageServiceFiles {
   }
   
   private static com.google.protobuf.Descriptors.Descriptor
-    internal_static_VOID_descriptor;
+    internal_static_EmptyAnswer_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_VOID_fieldAccessorTable;
+      internal_static_EmptyAnswer_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_Timeout_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_Timeout_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_OpKey_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_OpKey_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
     internal_static_STRING_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_STRING_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_clientMessage_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_clientMessage_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_ChipType_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_ChipType_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
     internal_static_Identification_descriptor;
   private static
@@ -5387,6 +7074,11 @@ public final class MessageServiceFiles {
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_sendData_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_ListenerData_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_ListenerData_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
     internal_static_ByteData_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
@@ -5405,71 +7097,116 @@ public final class MessageServiceFiles {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\022WSN-Services.proto\"-\n\004VOID\022\017\n\007timeout\030" +
-      "\001 \001(\003\022\024\n\014OperationKey\030\002 \001(\t\"-\n\006STRING\022\r\n" +
-      "\005query\030\001 \002(\t\022\024\n\014OperationKey\030\002 \001(\t\"4\n\016Id" +
-      "entification\022\020\n\010username\030\001 \002(\t\022\020\n\010passwo" +
-      "rd\030\002 \002(\t\"L\n\rProgramPacket\022\024\n\014BinaryPacke" +
-      "t\030\001 \003(\014\022\017\n\007timeout\030\002 \002(\003\022\024\n\014OperationKey" +
-      "\030\003 \001(\t\"D\n\007MacData\022\022\n\nMACADDRESS\030\001 \003(\014\022\017\n" +
-      "\007timeout\030\002 \001(\003\022\024\n\014OperationKey\030\003 \001(\t\"a\n\t" +
-      "FlashData\022\017\n\007address\030\001 \002(\005\022\014\n\004data\030\002 \003(\014" +
-      "\022\016\n\006length\030\003 \002(\005\022\017\n\007timeout\030\004 \002(\003\022\024\n\014Ope",
-      "rationKey\030\005 \001(\t\"M\n\010sendData\022\014\n\004type\030\001 \002(" +
-      "\005\022\014\n\004data\030\002 \003(\014\022\017\n\007timeout\030\003 \001(\003\022\024\n\014Oper" +
-      "ationKey\030\004 \001(\t\".\n\010ByteData\022\014\n\004data\030\001 \003(\014" +
-      "\022\024\n\014OperationKey\030\002 \001(\t\"4\n\016PacketTypeData" +
-      "\022\014\n\004type\030\001 \003(\005\022\024\n\014OperationKey\030\002 \001(\t2L\n\016" +
-      "TestOperations\022\034\n\nsetMessage\022\007.STRING\032\005." +
-      "VOID\022\034\n\ngetMessage\022\005.VOID\032\007.STRING2\361\002\n\nO" +
-      "perations\022!\n\007connect\022\017.Identification\032\005." +
-      "VOID\022 \n\007program\022\016.ProgramPacket\032\005.VOID\022\032" +
-      "\n\neraseFlash\022\005.VOID\032\005.VOID\022\"\n\treadFlash\022",
-      "\n.FlashData\032\t.ByteData\022\032\n\007readMac\022\005.VOID" +
-      "\032\010.MacData\022\025\n\005reset\022\005.VOID\032\005.VOID\022\030\n\004sen" +
-      "d\022\t.sendData\032\005.VOID\022\037\n\nwriteFlash\022\n.Flas" +
-      "hData\032\005.VOID\022\033\n\010writeMac\022\010.MacData\032\005.VOI" +
-      "D\022\034\n\014cancelHandle\022\005.VOID\032\005.VOID\022\031\n\tgetHa" +
-      "ndle\022\005.VOID\032\005.VOID\022\032\n\010getState\022\005.VOID\032\007." +
-      "STRING2p\n\rPacketService\0222\n\030addMessagePac" +
-      "ketListener\022\017.PacketTypeData\032\005.VOID\022+\n\033r" +
-      "emoveMessagePacketListener\022\005.VOID\032\005.VOID" +
-      "2=\n\023PacketServiceAnswer\022&\n\022sendReverseMe",
-      "ssage\022\t.sendData\032\005.VOID2\022\n\020RemoteOperati" +
-      "onsB1\n\032rpc_pro.rpcPrototype.filesB\023Messa" +
-      "geServiceFiles"
+      "\n\022WSN-Services.proto\"\r\n\013EmptyAnswer\"0\n\007T" +
+      "imeout\022\017\n\007timeout\030\001 \002(\003\022\024\n\014OperationKey\030" +
+      "\002 \002(\t\"\035\n\005OpKey\022\024\n\014OperationKey\030\001 \002(\t\"\027\n\006" +
+      "STRING\022\r\n\005query\030\001 \002(\t\"4\n\rclientMessage\022\024" +
+      "\n\014OperationKey\030\001 \002(\t\022\r\n\005query\030\002 \002(\t\"\030\n\010C" +
+      "hipType\022\014\n\004type\030\001 \002(\005\"F\n\016Identification\022" +
+      "\020\n\010deviceID\030\001 \002(\t\022\020\n\010username\030\002 \002(\t\022\020\n\010p" +
+      "assword\030\003 \002(\t\"L\n\rProgramPacket\022\024\n\014Binary" +
+      "Packet\030\001 \003(\014\022\017\n\007timeout\030\002 \002(\003\022\024\n\014Operati" +
+      "onKey\030\003 \002(\t\"D\n\007MacData\022\022\n\nMACADDRESS\030\001 \003",
+      "(\014\022\017\n\007timeout\030\002 \001(\003\022\024\n\014OperationKey\030\003 \001(" +
+      "\t\"a\n\tFlashData\022\017\n\007address\030\001 \002(\005\022\014\n\004data\030" +
+      "\002 \003(\014\022\016\n\006length\030\003 \002(\005\022\017\n\007timeout\030\004 \002(\003\022\024" +
+      "\n\014OperationKey\030\005 \002(\t\"M\n\010sendData\022\014\n\004type" +
+      "\030\001 \002(\005\022\014\n\004data\030\002 \003(\014\022\017\n\007timeout\030\003 \001(\003\022\024\n" +
+      "\014OperationKey\030\004 \002(\t\"P\n\014ListenerData\022\016\n\006s" +
+      "ource\030\001 \002(\t\022\014\n\004type\030\002 \002(\005\022\014\n\004data\030\003 \003(\014\022" +
+      "\024\n\014OperationKey\030\004 \002(\t\"\030\n\010ByteData\022\014\n\004dat" +
+      "a\030\001 \003(\014\"4\n\016PacketTypeData\022\014\n\004type\030\001 \003(\005\022" +
+      "\024\n\014OperationKey\030\002 \002(\t2\344\003\n\nOperations\022(\n\007",
+      "connect\022\017.Identification\032\014.EmptyAnswer\022\'" +
+      "\n\007program\022\016.ProgramPacket\032\014.EmptyAnswer\022" +
+      "$\n\neraseFlash\022\010.Timeout\032\014.EmptyAnswer\022\"\n" +
+      "\treadFlash\022\n.FlashData\032\t.ByteData\022!\n\007rea" +
+      "dMac\022\010.Timeout\032\014.EmptyAnswer\022\037\n\005reset\022\010." +
+      "Timeout\032\014.EmptyAnswer\022\037\n\004send\022\t.sendData" +
+      "\032\014.EmptyAnswer\022&\n\nwriteFlash\022\n.FlashData" +
+      "\032\014.EmptyAnswer\022\"\n\010writeMac\022\010.MacData\032\014.E" +
+      "mptyAnswer\022\"\n\013getChipType\022\010.Timeout\032\t.Ch" +
+      "ipType\022$\n\014cancelHandle\022\006.OpKey\032\014.EmptyAn",
+      "swer\022!\n\tgetHandle\022\006.OpKey\032\014.EmptyAnswer\022" +
+      "\033\n\010getState\022\006.OpKey\032\007.STRING2\365\001\n\rPacketS" +
+      "ervice\0229\n\030addMessagePacketListener\022\017.Pac" +
+      "ketTypeData\032\014.EmptyAnswer\022<\n\033addMessageP" +
+      "lainTextListener\022\017.PacketTypeData\032\014.Empt" +
+      "yAnswer\0223\n\033removeMessagePacketListener\022\006" +
+      ".OpKey\032\014.EmptyAnswer\0226\n\036removeMessagePla" +
+      "inTextListener\022\006.OpKey\032\014.EmptyAnswer2\350\001\n" +
+      "\023PacketServiceAnswer\0227\n\030sendReversePacke" +
+      "tMessage\022\r.ListenerData\032\014.EmptyAnswer\022:\n",
+      "\033sendReversePlainTextMessage\022\r.ListenerD" +
+      "ata\032\014.EmptyAnswer\0222\n\022sendReverseMessage\022" +
+      "\016.clientMessage\032\014.EmptyAnswer\022(\n\016reverse" +
+      "ReadMac\022\010.MacData\032\014.EmptyAnswer2\022\n\020Remot" +
+      "eOperationsB2\n\033de.uniluebeck.itm.tcp.fil" +
+      "esB\023MessageServiceFiles"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
         public com.google.protobuf.ExtensionRegistry assignDescriptors(
             com.google.protobuf.Descriptors.FileDescriptor root) {
           descriptor = root;
-          internal_static_VOID_descriptor =
+          internal_static_EmptyAnswer_descriptor =
             getDescriptor().getMessageTypes().get(0);
-          internal_static_VOID_fieldAccessorTable = new
+          internal_static_EmptyAnswer_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_VOID_descriptor,
-              new java.lang.String[] { "Timeout", "OperationKey", },
-              de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.class,
-              de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID.Builder.class);
-          internal_static_STRING_descriptor =
+              internal_static_EmptyAnswer_descriptor,
+              new java.lang.String[] { },
+              de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.class,
+              de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.Builder.class);
+          internal_static_Timeout_descriptor =
             getDescriptor().getMessageTypes().get(1);
+          internal_static_Timeout_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_Timeout_descriptor,
+              new java.lang.String[] { "Timeout", "OperationKey", },
+              de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout.class,
+              de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout.Builder.class);
+          internal_static_OpKey_descriptor =
+            getDescriptor().getMessageTypes().get(2);
+          internal_static_OpKey_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_OpKey_descriptor,
+              new java.lang.String[] { "OperationKey", },
+              de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey.class,
+              de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey.Builder.class);
+          internal_static_STRING_descriptor =
+            getDescriptor().getMessageTypes().get(3);
           internal_static_STRING_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_STRING_descriptor,
-              new java.lang.String[] { "Query", "OperationKey", },
+              new java.lang.String[] { "Query", },
               de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING.class,
               de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING.Builder.class);
+          internal_static_clientMessage_descriptor =
+            getDescriptor().getMessageTypes().get(4);
+          internal_static_clientMessage_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_clientMessage_descriptor,
+              new java.lang.String[] { "OperationKey", "Query", },
+              de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage.class,
+              de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage.Builder.class);
+          internal_static_ChipType_descriptor =
+            getDescriptor().getMessageTypes().get(5);
+          internal_static_ChipType_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_ChipType_descriptor,
+              new java.lang.String[] { "Type", },
+              de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType.class,
+              de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType.Builder.class);
           internal_static_Identification_descriptor =
-            getDescriptor().getMessageTypes().get(2);
+            getDescriptor().getMessageTypes().get(6);
           internal_static_Identification_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_Identification_descriptor,
-              new java.lang.String[] { "Username", "Password", },
+              new java.lang.String[] { "DeviceID", "Username", "Password", },
               de.uniluebeck.itm.tcp.files.MessageServiceFiles.Identification.class,
               de.uniluebeck.itm.tcp.files.MessageServiceFiles.Identification.Builder.class);
           internal_static_ProgramPacket_descriptor =
-            getDescriptor().getMessageTypes().get(3);
+            getDescriptor().getMessageTypes().get(7);
           internal_static_ProgramPacket_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_ProgramPacket_descriptor,
@@ -5477,7 +7214,7 @@ public final class MessageServiceFiles {
               de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket.class,
               de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket.Builder.class);
           internal_static_MacData_descriptor =
-            getDescriptor().getMessageTypes().get(4);
+            getDescriptor().getMessageTypes().get(8);
           internal_static_MacData_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_MacData_descriptor,
@@ -5485,7 +7222,7 @@ public final class MessageServiceFiles {
               de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData.class,
               de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData.Builder.class);
           internal_static_FlashData_descriptor =
-            getDescriptor().getMessageTypes().get(5);
+            getDescriptor().getMessageTypes().get(9);
           internal_static_FlashData_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_FlashData_descriptor,
@@ -5493,23 +7230,31 @@ public final class MessageServiceFiles {
               de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData.class,
               de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData.Builder.class);
           internal_static_sendData_descriptor =
-            getDescriptor().getMessageTypes().get(6);
+            getDescriptor().getMessageTypes().get(10);
           internal_static_sendData_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_sendData_descriptor,
               new java.lang.String[] { "Type", "Data", "Timeout", "OperationKey", },
               de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData.class,
               de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData.Builder.class);
+          internal_static_ListenerData_descriptor =
+            getDescriptor().getMessageTypes().get(11);
+          internal_static_ListenerData_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_ListenerData_descriptor,
+              new java.lang.String[] { "Source", "Type", "Data", "OperationKey", },
+              de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData.class,
+              de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData.Builder.class);
           internal_static_ByteData_descriptor =
-            getDescriptor().getMessageTypes().get(7);
+            getDescriptor().getMessageTypes().get(12);
           internal_static_ByteData_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_ByteData_descriptor,
-              new java.lang.String[] { "Data", "OperationKey", },
+              new java.lang.String[] { "Data", },
               de.uniluebeck.itm.tcp.files.MessageServiceFiles.ByteData.class,
               de.uniluebeck.itm.tcp.files.MessageServiceFiles.ByteData.Builder.class);
           internal_static_PacketTypeData_descriptor =
-            getDescriptor().getMessageTypes().get(8);
+            getDescriptor().getMessageTypes().get(13);
           internal_static_PacketTypeData_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_PacketTypeData_descriptor,

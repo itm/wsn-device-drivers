@@ -5,45 +5,101 @@ import java.util.HashMap;
 import com.google.protobuf.RpcCallback;
 import com.google.protobuf.RpcController;
 
+import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.MessagePacketListener;
 import de.uniluebeck.itm.devicedriver.MessagePlainText;
+import de.uniluebeck.itm.devicedriver.MessagePlainTextListener;
+import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
+import de.uniluebeck.itm.devicedriver.event.MessageEvent;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketServiceAnswer;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.VOID;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData;
-
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage;
 
 // Implementierung der Methoden fuer das ReverseRPC
-public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface{
+public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 
-	private HashMap<String,MessagePacketListener> listenerList = new HashMap<String,MessagePacketListener>();
-	
+	private HashMap<String, MessagePacketListener> packetListenerList = new HashMap<String, MessagePacketListener>();
+	private HashMap<String, MessagePlainTextListener> plainTextListenerList = new HashMap<String, MessagePlainTextListener>();
+	@SuppressWarnings("unchecked")
+	private HashMap<String, AsyncCallback> callbackList = new HashMap<String, AsyncCallback>();
+
 	public PacketServiceAnswerImpl() {
 	}
 
-	@Override
-	public void sendReverseMessage(RpcController controller, sendData request,
-			RpcCallback<VOID> done) {
+	public void addPacketListener(String key, MessagePacketListener listener) {
+		packetListenerList.put(key, listener);
+	}
 
-		if(request.hasType()){
-			MessagePacket message = new MessagePacket(request.getType(),request.toByteArray());
-			listenerList.get(request.getOperationKey()).onMessagePacketReceived(message);
-		}
-		else {
-			MessagePlainText message = new MessagePlainText(request.toByteArray());
-			listenerList.get(request.getOperationKey()).onMessagePlainTextReceived(message);
-		}
+	public void addPlainTextListener(String key,
+			MessagePlainTextListener listener) {
+		plainTextListenerList.put(key, listener);
+	}
+
+	public void removePacketListener(String key) {
+		packetListenerList.remove(key);
+	}
+
+	public void removePlainTextListener(String key) {
+		plainTextListenerList.remove(key);
+	}
+
+	public AsyncCallback getCallback(String key) {
+		return callbackList.get(key);
+	}
+
+	public void addCallback(String key, AsyncCallback callback) {
+		this.callbackList.put(key, callback);
+	}
+
+	@Override
+	public void sendReversePacketMessage(RpcController controller,
+			ListenerData request, RpcCallback<EmptyAnswer> done) {
+
+		packetListenerList.get(request.getOperationKey())
+				.onMessagePacketReceived(
+						new MessageEvent<MessagePacket>(request.getSource(),
+								new MessagePacket(request.getType(), request
+										.toByteArray())));
+		done.run(EmptyAnswer.newBuilder().build());
+
+	}
+
+	@Override
+	public void sendReversePlainTextMessage(RpcController controller,
+			ListenerData request, RpcCallback<EmptyAnswer> done) {
+
+		plainTextListenerList.get(request.getOperationKey())
+				.onMessagePlainTextReceived(
+						new MessageEvent<MessagePlainText>(request.getSource(),
+								new MessagePlainText(request.toByteArray())));
+		done.run(EmptyAnswer.newBuilder().build());
+
+	}
+
+	@Override
+	public void sendReverseMessage(RpcController controller,
+			clientMessage request, RpcCallback<EmptyAnswer> done) {
 		
-		done.run(VOID.newBuilder().build());
+		getCallback(request.getOperationKey()).onProgressChange(Float.parseFloat(request.getQuery()));
+		
+		done.run(EmptyAnswer.newBuilder().build());
+		
+	}
+
+	@Override
+	public void reverseReadMac(RpcController controller, MacData request,
+			RpcCallback<EmptyAnswer> done) {
+		
+		getCallback(request.getOperationKey()).onSuccess(new MacAddress(request.getMACADDRESSList().get(0).toByteArray()));
+		
+		done.run(EmptyAnswer.newBuilder().build());
 		
 	}
 	
-	public void setListener(String key, MessagePacketListener listener){
-		listenerList.put(key, listener);
-	}
 	
-	public void removeListener(String key){
-		listenerList.remove(key);
-	}
-		
+
 }

@@ -1,23 +1,31 @@
 package de.uniluebeck.itm.tcp.client;
 
+import java.net.URL;
+
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
-import de.uniluebeck.itm.tcp.client.Stub;
+import de.uniluebeck.itm.tcp.client.RemoteDevice;
 
 public class StubTest {
 
 	public static void main(String[] args) throws Exception {
 
-		/* Gemeinsamer ClientManager */
-		Stub stub1 = new Stub("testUser", "testPassword", "localhost", 8080);
-		// mehrmaliges login durch aendern des ClientPorts
-		//Stub stub2 = new Stub("testUser", "testPassword", "localhost", 8080, 2345);
-		Stub stub2 = new Stub("testUser2", "testPassword", "localhost", 8080);
+//		/* Gemeinsamer ClientManager */
+//		RemoteDevice stub1 = new RemoteDevice("testUser", "testPassword", "localhost", 8080);
+//		// mehrmaliges login durch aendern des ClientPorts
+//		//Stub stub2 = new Stub("testUser", "testPassword", "localhost", 8080, 2345);
+//		RemoteDevice stub2 = new RemoteDevice("testUser2", "testPassword", "localhost", 8080);
+		
+		RemoteConnection con1 = new RemoteConnection();
+		con1.connect("1:testUser:testPassword@localhost:8080");
+		RemoteDevice stub1 = new RemoteDevice(con1);
+		RemoteConnection con2 = new RemoteConnection();
+		con2.connect("1:testUser:testPassword@localhost:8080");
+		RemoteDevice stub2 = new RemoteDevice(con2);
 		
 		int i=0;
 		int j=0;
-		
-		
+
 		OperationHandle<Void> handle1 = null;
 		OperationHandle<Void> handle2 = null;
 		OperationHandle<Void> handle3 = null;
@@ -31,98 +39,20 @@ public class StubTest {
 			
 			// 1 druecken
 			case 49:
-				handle1 = stub1.setMessage("Dies ist Nachricht Nr.: "+i+" von Client1",new AsyncCallback<Void>(){
-					@Override
-					public void onCancel() {
-					}
-					@Override
-					public void onFailure(Throwable throwable) {
-						System.out.println(throwable.getMessage());
-					}
-					@Override
-					public void onSuccess(Void result) {
-						System.out.println("Nachricht uebertragen");
-					}
-					@Override
-					public void onProgressChange(float fraction) {
-					}
-					@Override
-					public void onExecute() {
-						// TODO Auto-generated method stub
-						
-					}});
-				i++;
+				
 				break;
 				
 			// 2 druecken
 			case 50:
-				handle2 = stub1.getMessage(new AsyncCallback<String>(){	
-					@Override
-					public void onCancel() {
-					}
-					@Override
-					public void onFailure(Throwable throwable) {
-						System.out.println(throwable.getMessage());
-					}
-					@Override
-					public void onSuccess(String result) {
-						System.out.println(result);
-					}
-					@Override
-					public void onProgressChange(float fraction) {
-					}
-					@Override
-					public void onExecute() {
-						// TODO Auto-generated method stub
-						
-					}});
+
 				break;
 				
 			case 51:
-				handle3 = stub2.setMessage("Dies ist Nachricht Nr.: "+j+" von Client2",new AsyncCallback<Void>(){
-					@Override
-					public void onCancel() {
-					}
-					@Override
-					public void onFailure(Throwable throwable) {
-						System.out.println(throwable.getMessage());
-					}
-					@Override
-					public void onSuccess(Void result) {
-						System.out.println("Nachricht uebertragen");
-					}
-					@Override
-					public void onProgressChange(float fraction) {
-					}
-					@Override
-					public void onExecute() {
-						// TODO Auto-generated method stub
-						
-					}});
-				j++;
+	
 				break;	
 
 			case 52:
-				handle4 = stub2.getMessage(new AsyncCallback<String>(){
-					@Override
-					public void onCancel() {
-					}
-					@Override
-					public void onFailure(Throwable throwable) {
-						System.out.println(throwable.getMessage());
-					}
-					@Override
-					public void onSuccess(String result) {
-						System.out.println(result);
-					}
-					@Override
-					public void onProgressChange(float fraction) {
-					}
-					@Override
-					public void onExecute() {
-						// TODO Auto-generated method stub
-						
-					}});
+
 				break;
 				
 //			case 53:
