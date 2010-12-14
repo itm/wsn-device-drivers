@@ -10,7 +10,7 @@
 	</parent>
 
   <groupId>de.uniluebeck.itm</groupId>
-  <artifactId>FlashLoader</artifactId>
+  <artifactId>tr.wsn-device-apps-flashloader</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
