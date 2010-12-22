@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.devicedriver.Monitor;
 import de.uniluebeck.itm.devicedriver.operation.AbstractReadFlashOperation;
-import de.uniluebeck.itm.devicedriver.util.StringUtils;
+import de.uniluebeck.itm.tr.util.StringUtils;
 
 public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 

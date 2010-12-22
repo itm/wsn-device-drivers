@@ -29,7 +29,7 @@ import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortEnterProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortLeaveProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortSendOperation;
-import de.uniluebeck.itm.devicedriver.util.StringUtils;
+import de.uniluebeck.itm.tr.util.StringUtils;
 
 public class PacemateDevice extends AbstractSerialPortDevice implements Programable {
 

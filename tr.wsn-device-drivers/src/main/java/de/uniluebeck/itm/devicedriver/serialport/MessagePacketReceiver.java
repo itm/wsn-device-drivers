@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import de.uniluebeck.itm.devicedriver.Device;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.event.MessageEvent;
-import de.uniluebeck.itm.devicedriver.util.StringUtils;
+import de.uniluebeck.itm.tr.util.StringUtils;
 
 public class MessagePacketReceiver implements ByteReceiver {
 

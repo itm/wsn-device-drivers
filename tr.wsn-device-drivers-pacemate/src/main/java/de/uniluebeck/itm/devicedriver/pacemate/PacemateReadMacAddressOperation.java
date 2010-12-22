@@ -10,7 +10,7 @@ import de.uniluebeck.itm.devicedriver.operation.AbstractOperation;
 import de.uniluebeck.itm.devicedriver.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.devicedriver.operation.ReadFlashOperation;
 import de.uniluebeck.itm.devicedriver.operation.ReadMacAddressOperation;
-import de.uniluebeck.itm.devicedriver.util.StringUtils;
+import de.uniluebeck.itm.tr.util.StringUtils;
 
 public class PacemateReadMacAddressOperation extends AbstractOperation<MacAddress> implements ReadMacAddressOperation {
 

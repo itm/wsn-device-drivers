@@ -11,7 +11,7 @@ import de.uniluebeck.itm.devicedriver.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.devicedriver.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.operation.ReadFlashOperation;
 import de.uniluebeck.itm.devicedriver.operation.WriteFlashOperation;
-import de.uniluebeck.itm.devicedriver.util.StringUtils;
+import de.uniluebeck.itm.tr.util.StringUtils;
 
 public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOperation {
 

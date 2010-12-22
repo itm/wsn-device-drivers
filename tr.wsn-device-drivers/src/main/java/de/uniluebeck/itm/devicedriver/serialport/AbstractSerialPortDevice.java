@@ -18,7 +18,7 @@ import de.uniluebeck.itm.devicedriver.ConnectionListener;
 import de.uniluebeck.itm.devicedriver.ObserverableDevice;
 import de.uniluebeck.itm.devicedriver.exception.TimeoutException;
 import de.uniluebeck.itm.devicedriver.operation.RunningOperationsMonitor;
-import de.uniluebeck.itm.devicedriver.util.TimeDiff;
+import de.uniluebeck.itm.tr.util.TimeDiff;
 
 
 /**

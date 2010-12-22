@@ -35,6 +35,12 @@
 			</dependency>
 
 			<dependency>
+				<groupId>de.uniluebeck.itm</groupId>
+				<artifactId>tr.util</artifactId>
+				<version>0.5.3</version>
+			</dependency>
+
+			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
 				<version>1.5.8</version>
@@ -85,31 +91,31 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	
+
 	<build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-        </plugins>
-        <pluginManagement>
-        	<plugins>
-        		<plugin>
-        			<groupId>org.apache.maven.plugins</groupId>
-        			<artifactId>maven-compiler-plugin</artifactId>
-        			<version>2.3.2</version>
-        			<configuration>
-                    	<source>1.6</source>
-                    	<target>1.6</target>
-                	</configuration>
-        		</plugin>
-        	</plugins>
-        </pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>2.3.2</version>
+					<configuration>
+						<source>1.6</source>
+						<target>1.6</target>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
-    
-    <!-- To use the report goals in your POM or parent POM -->
-    <reporting>
+
+	<!-- To use the report goals in your POM or parent POM -->
+	<reporting>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -120,6 +126,16 @@
 	</reporting>
 
 	<repositories>
+		<repository>
+			<id>itm-maven-repository-releases</id>
+			<url>http://www.itm.uni-luebeck.de/projects/maven/releases/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
 		<repository>
 			<id>repository.jboss.org</id>
 			<url>http://repository.jboss.org/nexus/content/groups/public/</url>
