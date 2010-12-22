@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.devicedriver.jennic;
+package de.uniluebeck.itm.devicedrivier.exmaple;
 
 import de.uniluebeck.itm.devicedriver.ConnectionEvent;
 import de.uniluebeck.itm.devicedriver.ConnectionListener;
