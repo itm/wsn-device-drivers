@@ -23,6 +23,8 @@ public abstract class AbstractConnection implements Connection {
 	
 	private OutputStream outputStream;
 	
+	private String uri;
+	
 	protected void setConnected(boolean connected) {
 		this.connected = connected;
 		fireConnectionChange(connected);
@@ -30,7 +32,7 @@ public abstract class AbstractConnection implements Connection {
 	
 	protected void fireConnectionChange(boolean connected) {
 		log.debug(connected ? "Connected" : "Disconnected");
-		final ConnectionEvent event = new ConnectionEvent(this, connected);
+		final ConnectionEvent event = new ConnectionEvent(this, uri, connected);
 		for (final ConnectionListener listener : listeners.toArray(new ConnectionListener[listeners.size()])) {
 			listener.onConnectionChange(event);
 		}
@@ -42,6 +44,10 @@ public abstract class AbstractConnection implements Connection {
 	
 	protected void setOutputStream(OutputStream outputStream) {
 		this.outputStream = outputStream;
+	}
+	
+	protected void setUri(String uri) {
+		this.uri = uri;
 	}
 	
 	@Override

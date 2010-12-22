@@ -11,12 +11,19 @@ public class ConnectionEvent extends EventObject {
 	
 	private final boolean connected;
 	
-	public ConnectionEvent(Object source, boolean connected) {
+	private final String uri;
+	
+	public ConnectionEvent(Object source, String uri, boolean connected) {
 		super(source);
+		this.uri = uri;
 		this.connected = connected;
 	}
 	
 	public boolean isConnected() {
 		return connected;
+	}
+	
+	public String getUri() {
+		return uri;
 	}
 }

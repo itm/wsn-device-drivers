@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.devicedriver.AbstractConnection;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection;
+import de.uniluebeck.itm.devicedriver.util.JarUtil;
 
 public class iSenseSerialPortConnection extends AbstractConnection implements SerialPortConnection {
 	
@@ -37,6 +38,11 @@ public class iSenseSerialPortConnection extends AbstractConnection implements Se
 	private final int parityBit = SerialPort.PARITY_NONE;
 	
 	private SerialPort serialPort = null;
+	
+	static {
+		log.debug("Loading rxtxSerial from jar file");
+		JarUtil.loadLibrary("rxtxSerial");
+	}
 	
 	@Override
 	public SerialPort getSerialPort() {
@@ -105,6 +111,7 @@ public class iSenseSerialPortConnection extends AbstractConnection implements Se
 
 		setOutputStream(new BufferedOutputStream(serialPort.getOutputStream()));
 		setInputStream(new BufferedInputStream(serialPort.getInputStream()));
+		setUri(port);
 		setConnected(true);
 	}
 	

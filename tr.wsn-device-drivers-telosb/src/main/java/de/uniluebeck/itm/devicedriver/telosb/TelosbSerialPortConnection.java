@@ -115,6 +115,7 @@ public class TelosbSerialPortConnection extends AbstractConnection implements Se
 		}
 		
 		serialPort.notifyOnDataAvailable(true);
+		setUri(uri);
 		setConnected(true);
 		log.debug("Device connected to serial port " + serialPort.getName());
 	}

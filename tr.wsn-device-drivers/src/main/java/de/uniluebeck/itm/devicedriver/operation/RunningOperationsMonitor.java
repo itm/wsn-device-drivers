@@ -1,7 +1,7 @@
 package de.uniluebeck.itm.devicedriver.operation;
 
+import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 import de.uniluebeck.itm.devicedriver.State;
 import de.uniluebeck.itm.devicedriver.event.StateChangedEvent;
@@ -16,7 +16,7 @@ public class RunningOperationsMonitor {
 	/**
 	 * Set that store all running operations.
 	 */
-	private final Set<Operation<?>> operations = new TreeSet<Operation<?>>();
+	private final Set<Operation<?>> operations = new HashSet<Operation<?>>();
 	
 	/**
 	 * Register a new operation for state observation.
