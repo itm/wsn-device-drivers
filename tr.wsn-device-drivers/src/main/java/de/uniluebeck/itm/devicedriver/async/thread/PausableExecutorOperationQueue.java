@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.devicedriver.async.singlethread;
+package de.uniluebeck.itm.devicedriver.async.thread;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

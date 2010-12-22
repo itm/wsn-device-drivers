@@ -11,7 +11,7 @@ import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.OperationQueue;
 import de.uniluebeck.itm.devicedriver.async.QueuedDeviceAsync;
-import de.uniluebeck.itm.devicedriver.async.singlethread.PausableExecutorOperationQueue;
+import de.uniluebeck.itm.devicedriver.async.thread.PausableExecutorOperationQueue;
 import de.uniluebeck.itm.devicedriver.event.MessageEvent;
 import de.uniluebeck.itm.devicedriver.mockdevice.MockConnection;
 import de.uniluebeck.itm.devicedriver.mockdevice.MockDevice;
