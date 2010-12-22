@@ -63,7 +63,7 @@ public class MessagePacketReceiver implements ByteReceiver {
 				//log.debug("ETX received in DLE mode");
 
 				// Parse message and notify listeners
-				MessagePacket p = MessagePacket.parse(packet, 0, packetLength);
+				final MessagePacket p = MessagePacket.parse(packet, 0, packetLength);
 				// p.setIsenseDevice(this);
 				//log.debug("Packet found: " + p);
 				device.fireMessagePacketEvent(new MessageEvent<MessagePacket>(this, p));

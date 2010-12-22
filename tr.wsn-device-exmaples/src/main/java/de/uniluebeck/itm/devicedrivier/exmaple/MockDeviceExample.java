@@ -9,36 +9,38 @@ import de.uniluebeck.itm.devicedriver.PacketType;
 import de.uniluebeck.itm.devicedriver.async.AsyncAdapter;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
-import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 import de.uniluebeck.itm.devicedriver.async.OperationQueue;
 import de.uniluebeck.itm.devicedriver.async.QueuedDeviceAsync;
-import de.uniluebeck.itm.devicedriver.async.singlethread.SingleThreadOperationQueue;
+import de.uniluebeck.itm.devicedriver.async.singlethread.PausableExecutorOperationQueue;
 import de.uniluebeck.itm.devicedriver.event.MessageEvent;
 import de.uniluebeck.itm.devicedriver.mockdevice.MockConnection;
 import de.uniluebeck.itm.devicedriver.mockdevice.MockDevice;
 
 public class MockDeviceExample {
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		final OperationQueue queue = new SingleThreadOperationQueue();
-		final MockConnection connection = new MockConnection();
-		final Device device = new MockDevice(connection);
-		
-		connection.connect("MockPort");
-		System.out.println("Connected");
-		
-		final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
-		
+	private final OperationQueue queue = new PausableExecutorOperationQueue();
+	
+	private final MockConnection connection = new MockConnection();
+	
+	private final Device device = new MockDevice(connection);
+	
+	private final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
+	
+	public MockDeviceExample() {
 		System.out.println("Message packet listener added");
 		deviceAsync.addListener(new MessagePacketListener() {
 			public void onMessagePacketReceived(MessageEvent<MessagePacket> event) {
 				System.out.println("Message: " + new String(event.getMessage().getContent()));
 			}
 		}, PacketType.LOG);
-		
+	}
+	
+	public void connect() {
+		connection.connect("MockPort");
+		System.out.println("Connected");
+	}
+	
+	public void exampleMacAddressOperations() {
 		System.out.println("Reading mac address...");
 		
 		final AsyncCallback<MacAddress> callback = new AsyncAdapter<MacAddress>() {
@@ -78,13 +80,20 @@ public class MockDeviceExample {
 			}
 		});
 		deviceAsync.readMac(10000, callback);
-		
-		final OperationHandle<ChipType> handle = deviceAsync.getChipType(10000, new AsyncAdapter<ChipType>() {
+	}
+	
+	public void exampleChipTypeOperation() {
+		deviceAsync.getChipType(10000, new AsyncAdapter<ChipType>() {
 
 			@Override
 			public void onProgressChange(float fraction) {
 				final int percent = (int) (fraction * 100.0);
 				System.out.println("Reading chip type progress: " + percent + "%");
+			}
+			
+			@Override
+			public void onSuccess(ChipType result) {
+				System.out.println("Chip Type: " + result);
 			}
 
 			@Override
@@ -92,12 +101,34 @@ public class MockDeviceExample {
 				throwable.printStackTrace();
 			}
 		});
-		
-		System.out.println("Chip Type: " + handle.get());
-		queue.shutdown(true);
+	}
+	
+	public void finish() {
+		// Wait until the queue is empty.
+		while (!queue.getOperations().isEmpty()) {
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		System.out.println("Shutting down queue...");
+		queue.shutdown(false);
 		System.out.println("Queue terminated");
+		System.out.println("Closing connection...");
 		connection.shutdown(true);
 		System.out.println("Connection closed");
+	}
+	
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		final MockDeviceExample example = new MockDeviceExample();
+		example.connect();
+		example.exampleMacAddressOperations();
+		example.exampleChipTypeOperation();
+		example.finish();
 	}
 
 }

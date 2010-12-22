@@ -20,7 +20,7 @@ public class SingleThreadOperationQueueTest {
 	
 	@Before
 	public void setUp() {
-		queue = new SingleThreadOperationQueue();
+		queue = new PausableExecutorOperationQueue();
 	}
 	
 	@Test

@@ -25,12 +25,12 @@ import de.uniluebeck.itm.devicedriver.operation.OperationListener;
  * 
  * @author Malte Legenhausen
  */
-public class SingleThreadOperationQueue implements OperationQueue {
+public class PausableExecutorOperationQueue implements OperationQueue {
 	
 	/**
 	 * Logger for this class.
 	 */
-	private static final Logger logger = LoggerFactory.getLogger(SingleThreadOperationQueue.class);
+	private static final Logger logger = LoggerFactory.getLogger(PausableExecutorOperationQueue.class);
 	
 	/**
 	 * List that contains all listeners.
@@ -50,7 +50,7 @@ public class SingleThreadOperationQueue implements OperationQueue {
 	/**
 	 * Constructor.
 	 */
-	public SingleThreadOperationQueue() {
+	public PausableExecutorOperationQueue() {
 		this(new PausableSingleThreadExecutor());
 	}
 	
@@ -59,8 +59,17 @@ public class SingleThreadOperationQueue implements OperationQueue {
 	 * 
 	 * @param executor Set a custom <code>PausableExecutorService</code>.
 	 */
-	public SingleThreadOperationQueue(final PausableExecutorService executor) {
+	public PausableExecutorOperationQueue(final PausableExecutorService executor) {
 		this.executor = executor;
+	}
+	
+	/**
+	 * Returns the executor used by this queue.
+	 * 
+	 * @return The executor for this queue.
+	 */
+	public PausableExecutorService getExecutorService() {
+		return executor;
 	}
 	
 	@Override
