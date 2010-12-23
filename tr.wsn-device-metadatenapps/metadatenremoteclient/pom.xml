@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<artifactId>metadatenapp</artifactId>
+		<artifactId>tr.wsn-device-metadatenapp</artifactId>
 		<groupId>de.uniluebeck.itm.metadaten</groupId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
@@ -27,15 +27,6 @@
 		<dependency>
 			<groupId>org.simpleframework</groupId>
 			<artifactId>simple-xml</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>cglib</groupId>
-			<artifactId>cglib</artifactId>
 		</dependency>
 		<dependency>
 				<groupId>org.rxtx</groupId>

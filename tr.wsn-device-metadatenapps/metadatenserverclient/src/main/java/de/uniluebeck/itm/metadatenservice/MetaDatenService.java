@@ -1,13 +1,18 @@
 package de.uniluebeck.itm.metadatenservice;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.simpleframework.xml.Serializer;
+import org.simpleframework.xml.load.Persister;
+
+
+import de.uniluebeck.itm.entity.ConfigData;
 import de.uniluebeck.itm.entity.Node;
 import de.uniluebeck.itm.metadatacollector.IMetaDataCollector;
-import de.uniluebeck.itm.metadatacollector.MetaDataCollector;
 
 public class MetaDatenService extends TimerTask implements iMetaDatenService{
 	
@@ -16,8 +21,11 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService{
 	Timer timer = new Timer();
 	
 	MetaDatenService () throws Exception {
-		//TODO Konfig.-Daten aus Configfile auslesen
-		stub=new ClientStub("testUser", "testPassword", "localhost", 8080);
+
+//		ConfigData config = loadConfig("C:\\uni hl\\workspace\\fallstudie2010\\sources\\tr.wsn-device-metadatenapps\\metadatenserverclient\\src\\main\\java\\resources\\config.xml");
+		ConfigData config = loadConfig("config.xml");
+		
+		stub=new ClientStub(config.getUsername(), config.getPassword(), config.getServerIP(), config.getPort());
 		
 	    // nach 2 Sek geht’s los
 //	      timer.schedule  ( new Task(), 2000 );
@@ -26,47 +34,47 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService{
 	      timer.schedule  ( this, 1000, 5000 );
 	}
 	
-//	public static void main(String[] args) throws Exception {
-//
-//		/*Collection von MetaDatenCollectors*/
-//		
-//		/* Gemeinsamer ClientManager */
-//		Stub stub1 = new Stub("testUser", "testPassword", "localhost", 8080);
-//        Node node = new Node();
-//        
-//		node.setId("123");
-//		node.setIpAddress("192.168.8.102");
-//		node.setMicrocontroller("TelosB");
-//		node.setDescription("Solar2000");
-//		while(true){
-//			System.out.println("in: ");
-//			int input = System.in.read();
-//			
-//			switch (input){
-//			
-//			// 1 druecken
-//			case 49:
-//				stub1.add(node, new AsyncCallback<String>(){
-//					@Override
-//					public void onCancel() {
-//					}
-//					@Override
-//					public void onFailure(Throwable throwable) {
-//						System.out.println(throwable.getMessage());
-//					}
-//					@Override
-//					public void onSuccess(String result) {
-//						System.out.println(result);
-//						
-//					}
-//					@Override
-//					public void onProgressChange(float fraction) {
-//					
-//				}});
-//			}
-//		}
-//	}
-//	
+	public static void main(String[] args) throws Exception {
+
+		/*Collection von MetaDatenCollectors*/
+		
+		/* Gemeinsamer ClientManager */
+		Stub stub1 = new Stub("testUser", "testPassword", "localhost", 8080);
+        Node node = new Node();
+        
+		node.setId("1236");
+		node.setIpAddress("192.168.8.102");
+		node.setMicrocontroller("TelosB");
+		node.setDescription("Solar2000");
+		while(true){
+			System.out.println("in: ");
+			int input = System.in.read();
+			
+			switch (input){
+			
+			// 1 druecken
+			case 49:
+				stub1.add(node, new AsyncCallback<String>(){
+					@Override
+					public void onCancel() {
+					}
+					@Override
+					public void onFailure(Throwable throwable) {
+						System.out.println(throwable.getMessage());
+					}
+					@Override
+					public void onSuccess(String result) {
+						System.out.println(result);
+						
+					}
+					@Override
+					public void onProgressChange(float fraction) {
+					
+				}});
+			}
+		}
+	}
+	
 
 
 	@Override
@@ -94,7 +102,36 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService{
 		
 	}
 
+	public void writeConfig(ConfigData config){
+		File result = new File("configschreiben.xml");
+		Serializer serial=new Persister();
+		try {
+			serial.write(config, result);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	/**
+	 * Load of  ConfigData needed for communication
+	 * @param fileurl
+	 * @return
+	 */
+	public ConfigData loadConfig(String fileurl){
+		ConfigData config = new ConfigData();
+		Serializer serializer = new Persister();
+		File source = new File(fileurl);
 
+		 try {
+			config = serializer.read(de.uniluebeck.itm.entity.ConfigData.class, source);
+//			serializer.read(ConfigData, source);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		System.out.println("Config:" + config.getPassword() + config.getServerIP() + config.getUsername() + config.getPort() + config.getClientport());
+		return config;
+	}
 
 	@Override
 	public void addNode(Node node, final AsyncCallback<String> callback) {
@@ -189,7 +226,21 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService{
 	@Override
 	public void addMetaDataCollector(IMetaDataCollector mdcollector) {
 		collector.add(mdcollector);
-		
+		stub.add(mdcollector.collect(), new AsyncCallback<String>(){
+			@Override
+			public void onCancel() {
+			}
+			@Override
+			public void onFailure(Throwable throwable) {
+				System.out.println(throwable.getMessage());
+			}
+			@Override
+			public void onSuccess(String result) {	
+			}
+			@Override
+			public void onProgressChange(float fraction) {
+			
+		}});
 	}
 
 	@Override

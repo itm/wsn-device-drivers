@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
@@ -14,13 +16,7 @@ import org.apache.shiro.config.IniSecurityManagerFactory;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.Factory;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.cfg.AnnotationConfiguration;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
-
-
 
 import com.google.protobuf.RpcCallback;
 import com.google.protobuf.RpcController;
@@ -33,21 +29,21 @@ import com.googlecode.protobuf.pro.duplex.execute.ThreadPoolCallExecutor;
 import com.googlecode.protobuf.pro.duplex.listener.RpcConnectionEventListener;
 import com.googlecode.protobuf.pro.duplex.server.DuplexTcpServerBootstrap;
 
-import de.uniluebeck.itm.metadaten.files.MetaDataService.Identification;
-//import de.uniluebeck.itm.metadaten.files.MetaDataService.Node;
 import de.uniluebeck.itm.metadaten.entities.Node;
+import de.uniluebeck.itm.metadaten.files.MetaDataService.Identification;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.NODE;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Operations;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.SearchRequest;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.SearchResponse;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.VOID;
+import de.uniluebeck.itm.metadaten.server.helper.NodeHelper;
+import de.uniluebeck.itm.persistence.DatabaseToStore;
 import de.uniluebeck.itm.persistence.StoreToDatabase;
 import de.uniluebeck.itm.tr.util.TimedCache;
 
 public class MetaDatenServer {
 
-	//private static Log log = LogFactory.getLog(MetaDatenServer.class);
-	
+	private static Log log = LogFactory.getLog(MetaDatenServer.class);
 	// werden nach 30 min alle eintraege des Cache geloescht?
 	// wie Timeout fuer einen Eintrag neu starten?
 	private static TimedCache<RpcClientChannel,ClientID> idList = new TimedCache<RpcClientChannel,ClientID>();
@@ -57,7 +53,9 @@ public class MetaDatenServer {
 	public static void main (String[] args){
 		
 		//BasicConfigurator.configure();
-		System.out.println("Initialisierung des Servers");
+		log.info("Initialisierung des Servers");
+		CleanRepository cleaner = new CleanRepository(900000);
+		cleaner.timer.schedule(cleaner,1000, 5000);
 		// setzen der server-Informationen
 		PeerInfo serverInfo = new PeerInfo("localhost", 8080);
 		
@@ -78,12 +76,12 @@ public class MetaDatenServer {
 				
 				@Override
 				public void connectionReestablished(RpcClientChannel clientChannel) {
-					System.out.println("connectionReestablished " + clientChannel);
+					log.info("connectionReestablished " + clientChannel);
 				}
 				
 				@Override
 				public void connectionOpened(RpcClientChannel clientChannel) {
-					System.out.println("connectionOpened " + clientChannel);	
+					log.info("connectionOpened " + clientChannel);	
 				}
 				
 				@Override
@@ -118,73 +116,20 @@ public class MetaDatenServer {
 			
 	}
 	
-//	// Testklassen
-//	static class TestOperationsImpl implements TestOperations.Interface {
-//
-//		// setzen einer Nachricht auf dem MetaDatenServer
-//		@Override
-//		public void setMessage(RpcController controller, STRING request,
-//				RpcCallback<VOID> done) {
-//			
-//			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
-//			if(user==null || !user.isAuthenticated()){
-//				controller.setFailed("Sie sind nicht authentifiziert!");
-//				done.run(null);
-//				return;
-//			}
-//			
-//			// erstellen einer Klasse zum Testen der OperationHandle
-//			Main test = new Main();
-//			
-//			// herausfinden des TCP-Channel und finden der Userspezifischen Klasse
-//			// ein Channel kann fuer mehrere Operationen offen bleiben
-//			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
-//			
-//			// aber die handle muessen zu jeder Operation eindeutig zuweisbar sein
-//			
-//			// erzeugen eines OperationHandle zur der Operation
-//			OperationHandle<Void> handle = test.setMessage();
-//			
-//			// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
-//			id.setHandleList(request.getOperationKey(), handle);
-//			// setzen der Nachricht auf dem MetaDatenServer
-//			id.setMessage(request.getQuery());
-//			
-//			// ausfuehren des Callbacks
-//			done.run(VOID.newBuilder().build());
-//		}
-//
-//		// abrufen einer Nachricht vom MetaDatenServer
-//		@Override
-//		public void getMessage(RpcController controller, VOID request,
-//				RpcCallback<STRING> done) {
-//			
-//			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
-//			if(user==null || !user.isAuthenticated()){
-//				controller.setFailed("Sie sind nicht authentifiziert!");
-//				done.run(null);
-//				return;
-//			}
-//			
-//			// erstellen einer Klasse zum Testen der OperationHandle
-//			Main test = new Main();
-//			
-//			// identifizieren des Users mit dem Channel
-//			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
-//			
-//			// erzeugen eines OperationHandle zur der Operation
-//			OperationHandle<Void> handle = test.getMessage();
-//			
-//			// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
-//			id.setHandleList(request.getOperationKey(), handle);
-//			
-//			// ausfuehren des Callbacks mit der Nachricht
-//			done.run(STRING.newBuilder().setQuery(id.getMessage()).setOperationKey(controller.toString()).build());
-//
-//		}
-//	}f
+	private void deleteNode(Node node){
+		StoreToDatabase storeDB = new StoreToDatabase();
+		try{
+			storeDB.deleteNode(node);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
-	// eigentliche Operationen, die spaeter verwendet werden sollen
+	/**
+	 * Class implements the operations used of client and server
+	 * @author tora
+	 *
+	 */
 	static class OperationsImpl implements Operations.Interface {
 		
 		// Methode zum verbinden auf den MetaDatenServer
@@ -243,7 +188,8 @@ public class MetaDatenServer {
 		@Override
 		public void add(RpcController controller, NODE request,
 				RpcCallback<VOID> done) {
-			// TODO Auto-generated method stub
+			NodeHelper nhelper = new NodeHelper();
+			Node node = new Node();
 			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
 			if(user==null || !user.isAuthenticated()){
 				controller.setFailed("Sie sind nicht authentifiziert!");
@@ -252,75 +198,96 @@ public class MetaDatenServer {
 				return;
 			}
 			
-			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
-			Node node = new Node();
-			node.setDescription(request.getDescription());
-//			node.setId(request.getKnotenid());
-			node.setIpAddress(request.getIp());
-			node.setMicrocontroller(request.getMicrocontroller());
-			knotenliste.add(node);
-			System.out.println("Knoten mit Micocontroller: " +request.getMicrocontroller() + "wurde dem Verzeichnis zugefügt");
-			done.run(VOID.newBuilder().build());
-			
-//			SessionFactory sessionFactory;
-//			try {
-//	            sessionFactory = new AnnotationConfiguration().
-//	                    configure("hibernate.cfg.xml").
-//	                    buildSessionFactory();
-//	        }
-//	        catch (Throwable ex) {
-//	            throw new ExceptionInInitializerError(ex);
-//	        }
-//			StoreToDatabase storeDB = new StoreToDatabase();
-//	        
-////	        node.setId("urn:wisebed:node:cti:gw2:n4");
-//	        storeDB.storeNode(node);
-//	        final Session session = sessionFactory.openSession();
-//	        Transaction tr = session.beginTransaction();
-//	        tr.commit();
+//			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
+			node= nhelper.changeToNode(request);
+			StoreToDatabase storeDB = new StoreToDatabase();
+	        try {
+				storeDB.storeNode(node);
+			} catch (Exception e) {
+				e.printStackTrace();
+				controller.setFailed("Error saving Node: "+e.getMessage());
+				done.run(VOID.newBuilder().build());
+			}
+	        log.info("Knoten mit ID: " +node.getId() + "wurde dem Verzeichnis zugefügt");
+	      
+	        done.run(VOID.newBuilder().build());
 
 		}
 
 		@Override
 		public void remove(RpcController controller,NODE request,
 				RpcCallback<VOID> done) {
-			// TODO Auto-generated method stub
+			NodeHelper nhelper = new NodeHelper();
+			Node node = new Node();
+			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
+			if(user==null || !user.isAuthenticated()){
+				controller.setFailed("Sie sind nicht authentifiziert!");
+				done.run(null);
+				
+				return;
+			}
+			
+//			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
+			node= nhelper.changeToNode(request);
+			StoreToDatabase storeDB = new StoreToDatabase();
+	        try {
+	        	storeDB.deleteNode(node);
+			} catch (Exception e) {
+				e.printStackTrace();
+				controller.setFailed("Error deleting Node: "+e.getMessage());
+				done.run(VOID.newBuilder().build());
+			}
+	        log.info("Knoten mit ID: " +node.getId() + "wurde dem Verzeichnis zugefügt");
+	      
+	        done.run(VOID.newBuilder().build());
 			
 		}
 
 		@Override
 		public void refresh(RpcController controller,NODE request,
 				RpcCallback<VOID> done) {
-			// TODO Auto-generated method stub
-			
+			NodeHelper nhelper = new NodeHelper();
+			Node node = new Node();
+			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
+			if(user==null || !user.isAuthenticated()){
+				controller.setFailed("Sie sind nicht authentifiziert!");
+				done.run(null);
+				
+				return;
+			}		
+//			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
+			node= nhelper.changeToNode(request);
+			StoreToDatabase storeDB = new StoreToDatabase();
+	        try {
+				storeDB.updateNode(node);
+			} catch (Exception e) {
+				e.printStackTrace();
+				controller.setFailed("Error updating Node: "+e.getMessage());
+				done.run(VOID.newBuilder().build());
+			}
+	        log.info("Knoten mit ID: " +node.getId() + "wurde im Verzeichnis aktualisiert");
+	        
+	        done.run(VOID.newBuilder().build());
 		}
 
 		@Override
 		public void search(RpcController controller, SearchRequest request,
 				RpcCallback<SearchResponse> done) {
 			System.out.println("Suche gestartet");
-			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
+//			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
+			DatabaseToStore getfromDB = new DatabaseToStore();
+	        Node getnode = new Node();
+	        List <Node> resultlist = new ArrayList<Node>();
+	        getnode.setId("124");
+	        resultlist=getfromDB.getNodes(getnode);
+	       
 			
-//			List<Node> responsenodes = new ArrayList<Node>(); 
-//			if (!(request.getQueryMs()==null))
-//			{
-//				Node node = this.changeToNode(request.getQueryMs());
-//				for (int i=0;i< knotenliste.size();i++)
-//				{
-//					//TODO DB Query zusammenschrauben, wo ich die Argumente reinpacke, die im gesuchten Knoten
-//					// vorhanden sein müssen (example)
-//					System.out.println("Anfrage mit QueryExample bekommen");
-//					if (knotenliste.get(i).getId() == node.getId())
-//					{responsenodes.add(node);}
-//					else if (knotenliste.get(i).getIpAddress() == node.getIpAddress())
-//					{responsenodes.add(node);}
-//					else if (knotenliste.get(i).getDescription().matches(node.getDescription()))
-//					{responsenodes.add(node);}
-//					else if (knotenliste.get(i).getIpAddress() == node.getIpAddress())
-//					{responsenodes.add(node);}
-//				}
-//				
-//			}
+			List<Node> responsenodes = new ArrayList<Node>(); 
+			if (!(request.getQueryMs()==null))
+			{
+				Node node = this.changeToNode(request.getQueryMs());
+				resultlist = getfromDB.getNodes(node);			
+			}
 //			if (!(request.getQueryString()==null))
 //			{
 //				//TODO
@@ -331,7 +298,7 @@ public class MetaDatenServer {
 			System.out.println("Knotenlistenmenge" + knotenliste.size());
 			NODE respnode = NODE.newBuilder().setIp("192.168.9.102").setDescription("Solar").setKnotenid("123").setMicrocontroller("Telos").setSensoren("Viele").build();
 			SearchResponse.Builder responsebuilder = SearchResponse.newBuilder().addResponse(respnode);
-			System.out.println("Finales mopped erstellen");
+			log.info("Finales mopped erstellen");
 			SearchResponse response = responsebuilder.build();
 			System.out.println("Menge Responses" +response.getResponseCount());
 			System.out.println("absenden");

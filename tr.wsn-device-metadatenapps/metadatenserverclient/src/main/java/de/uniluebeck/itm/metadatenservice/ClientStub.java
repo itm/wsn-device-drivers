@@ -3,15 +3,9 @@ package de.uniluebeck.itm.metadatenservice;
 import java.io.IOException;
 import java.util.concurrent.Executors;
 
-
-//import org.apache.commons.logging.Log;
-//import org.apache.commons.logging.LogFactory;
-//import org.apache.log4j.BasicConfigurator;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
-
-
-
 
 import com.google.protobuf.RpcCallback;
 import com.google.protobuf.RpcController;
@@ -20,24 +14,19 @@ import com.googlecode.protobuf.pro.duplex.RpcClientChannel;
 import com.googlecode.protobuf.pro.duplex.client.DuplexTcpClientBootstrap;
 import com.googlecode.protobuf.pro.duplex.execute.ThreadPoolCallExecutor;
 
-
+import de.uniluebeck.itm.entity.ConfigData;
 import de.uniluebeck.itm.entity.Node;
-//import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
-//import de.uniluebeck.itm.devicedriver.async.OperationHandle;
-import de.uniluebeck.itm.metadataclienthelper.NodeHelper;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Identification;
-import de.uniluebeck.itm.metadaten.files.MetaDataService.NODE;
-import de.uniluebeck.itm.metadaten.files.MetaDataService.SearchResponse;
-
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Operations;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.VOID;
+import de.uniluebeck.itm.metadaten.serverclient.metadataclienthelper.NodeHelper;
 
 
 
 public class ClientStub  {
 	//TODO connect gleich im Konstruktor oder soll Verbindung für jeden Refresh/add-Zyklus extra
 	//durchgeführt werden?
-	//private static Log log = LogFactory.getLog(Client.class);
+	private static Log log = LogFactory.getLog(ClientStub.class);
 	
 	PeerInfo server = null;
 	PeerInfo client = null;
@@ -46,7 +35,9 @@ public class ClientStub  {
 	RpcClientChannel channel = null;
 	Operations.Interface operationService = null;
 
-	
+	ClientStub (ConfigData config) throws Exception{
+		this(config.getUsername(), config.getPassword(), config.getServerIP(), config.getPort(), config.getClientport());
+	}
 	ClientStub (String userName, String passWord, String uri, int port) throws Exception{
 		this(userName,passWord,uri,port,1234);
 	}
@@ -59,6 +50,7 @@ public class ClientStub  {
 		client = new PeerInfo(userName+"client",clientPort);
 		
 		// aufruf des initialen Connects
+		log.info("Start connecting to MetaDataServer");
 		connect(userName, passWord, new AsyncCallback<String>() {
 
 			@Override
@@ -86,7 +78,7 @@ public class ClientStub  {
 	private void connect(String userName, String passWord, final AsyncCallback<String> callback){
 		
 		// setzen des Thread-Pools
-		System.out.println("Setzen des Threadpools CLient");
+		log.info("set of Threadpool Metadataservice");
 		executor = new ThreadPoolCallExecutor(3, 10);
 		//setzen des bootstraps
 		bootstrap = new DuplexTcpClientBootstrap(
@@ -108,6 +100,7 @@ public class ClientStub  {
 		
 		try {
 			// herstellen der Verbindung zum Server
+			log.info("connect to Server: " + server );
 			channel = bootstrap.peerWith(server);
 		} catch (IOException e) {
 			callback.onFailure(e);
@@ -131,6 +124,7 @@ public class ClientStub  {
 			public void run(VOID arg0) {
 				if(!controller.failed()){
 					callback.onSuccess("Meldung vom Server: Die Authentifikation war erfolgreich");
+					log.info("connection to " + server + " established");
 				}
 				else{
 					callback.onFailure(new Throwable(controller.errorText()));

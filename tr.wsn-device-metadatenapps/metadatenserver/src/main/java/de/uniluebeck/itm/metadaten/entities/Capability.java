@@ -1,11 +1,27 @@
 package de.uniluebeck.itm.metadaten.entities;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 import org.simpleframework.xml.Element;
 
 /**
  * This class describes a capability entity, required in wiseml file.
  */
+@Entity
+@Table(catalog = "metadaten_db", name = "capability")
 public class Capability {
+	
+	@ManyToOne
+	Node parentnode;
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Integer id;
 
     @Element
     private String name;
@@ -18,6 +34,10 @@ public class Capability {
 
     @Element
     private int defaults;
+    
+
+
+
 
     /**
      * Requires function for deserializing objects.
@@ -78,6 +98,23 @@ public class Capability {
     public void setDatatype(String datatype) {
         this.datatype = datatype;
     }
+    
+    /**
+     * Get the NodeID
+     */
+    public Node getNode ()
+    {
+    	return this.parentnode;
+    }
+    
+    /**
+     * Sets the nodeId to which the Capability belongs
+     * @param nodeId
+     */
+    public void setNode (Node node)
+    {
+    	this.parentnode=node;
+    }
 
 
     /**
@@ -115,5 +152,15 @@ public class Capability {
     public void setCapDefault(int capDefault) {
         this.defaults = capDefault;
     }
+
+
+	public Integer getId() {
+		return id;
+	}
+
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
 }

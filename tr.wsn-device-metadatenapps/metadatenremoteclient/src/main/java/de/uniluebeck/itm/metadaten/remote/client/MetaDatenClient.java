@@ -151,7 +151,6 @@ public class MetaDatenClient implements MetaDataClient {
 			System.out.println("Größe des Results: " + result.size());
 			for (int i=0 ;i < result.size(); i++)
 				{
-					System.out.println("Knoten hinzufügen");
 					nodelist.add(nhelper.changeToNode(result.get(i)));
 				}
 		} catch (ServiceException e) {
