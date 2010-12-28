@@ -1314,6 +1314,498 @@ public final class MetaDataService {
     // @@protoc_insertion_point(class_scope:SearchResponse)
   }
   
+  public static final class Capabilities extends
+      com.google.protobuf.GeneratedMessage {
+    // Use Capabilities.newBuilder() to construct.
+    private Capabilities() {
+      initFields();
+    }
+    private Capabilities(boolean noInit) {}
+    
+    private static final Capabilities defaultInstance;
+    public static Capabilities getDefaultInstance() {
+      return defaultInstance;
+    }
+    
+    public Capabilities getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+    
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return de.uniluebeck.itm.metadaten.files.MetaDataService.internal_static_Capabilities_descriptor;
+    }
+    
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return de.uniluebeck.itm.metadaten.files.MetaDataService.internal_static_Capabilities_fieldAccessorTable;
+    }
+    
+    // required string parentnode_id = 1;
+    public static final int PARENTNODE_ID_FIELD_NUMBER = 1;
+    private boolean hasParentnodeId;
+    private java.lang.String parentnodeId_ = "";
+    public boolean hasParentnodeId() { return hasParentnodeId; }
+    public java.lang.String getParentnodeId() { return parentnodeId_; }
+    
+    // optional int32 id = 2;
+    public static final int ID_FIELD_NUMBER = 2;
+    private boolean hasId;
+    private int id_ = 0;
+    public boolean hasId() { return hasId; }
+    public int getId() { return id_; }
+    
+    // optional string name = 3;
+    public static final int NAME_FIELD_NUMBER = 3;
+    private boolean hasName;
+    private java.lang.String name_ = "";
+    public boolean hasName() { return hasName; }
+    public java.lang.String getName() { return name_; }
+    
+    // optional string unit = 4;
+    public static final int UNIT_FIELD_NUMBER = 4;
+    private boolean hasUnit;
+    private java.lang.String unit_ = "";
+    public boolean hasUnit() { return hasUnit; }
+    public java.lang.String getUnit() { return unit_; }
+    
+    // optional int32 defaults = 5;
+    public static final int DEFAULTS_FIELD_NUMBER = 5;
+    private boolean hasDefaults;
+    private int defaults_ = 0;
+    public boolean hasDefaults() { return hasDefaults; }
+    public int getDefaults() { return defaults_; }
+    
+    // optional string datatype = 6;
+    public static final int DATATYPE_FIELD_NUMBER = 6;
+    private boolean hasDatatype;
+    private java.lang.String datatype_ = "";
+    public boolean hasDatatype() { return hasDatatype; }
+    public java.lang.String getDatatype() { return datatype_; }
+    
+    private void initFields() {
+    }
+    public final boolean isInitialized() {
+      if (!hasParentnodeId) return false;
+      return true;
+    }
+    
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (hasParentnodeId()) {
+        output.writeString(1, getParentnodeId());
+      }
+      if (hasId()) {
+        output.writeInt32(2, getId());
+      }
+      if (hasName()) {
+        output.writeString(3, getName());
+      }
+      if (hasUnit()) {
+        output.writeString(4, getUnit());
+      }
+      if (hasDefaults()) {
+        output.writeInt32(5, getDefaults());
+      }
+      if (hasDatatype()) {
+        output.writeString(6, getDatatype());
+      }
+      getUnknownFields().writeTo(output);
+    }
+    
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+    
+      size = 0;
+      if (hasParentnodeId()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeStringSize(1, getParentnodeId());
+      }
+      if (hasId()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(2, getId());
+      }
+      if (hasName()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeStringSize(3, getName());
+      }
+      if (hasUnit()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeStringSize(4, getUnit());
+      }
+      if (hasDefaults()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(5, getDefaults());
+      }
+      if (hasDatatype()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeStringSize(6, getDatatype());
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+    
+    public static de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    public static de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+    
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> {
+      private de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities result;
+      
+      // Construct using de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities.newBuilder()
+      private Builder() {}
+      
+      private static Builder create() {
+        Builder builder = new Builder();
+        builder.result = new de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities();
+        return builder;
+      }
+      
+      protected de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities internalGetResult() {
+        return result;
+      }
+      
+      public Builder clear() {
+        if (result == null) {
+          throw new IllegalStateException(
+            "Cannot call clear() after build().");
+        }
+        result = new de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities();
+        return this;
+      }
+      
+      public Builder clone() {
+        return create().mergeFrom(result);
+      }
+      
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities.getDescriptor();
+      }
+      
+      public de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities getDefaultInstanceForType() {
+        return de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities.getDefaultInstance();
+      }
+      
+      public boolean isInitialized() {
+        return result.isInitialized();
+      }
+      public de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities build() {
+        if (result != null && !isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return buildPartial();
+      }
+      
+      private de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities buildParsed()
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        if (!isInitialized()) {
+          throw newUninitializedMessageException(
+            result).asInvalidProtocolBufferException();
+        }
+        return buildPartial();
+      }
+      
+      public de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities buildPartial() {
+        if (result == null) {
+          throw new IllegalStateException(
+            "build() has already been called on this Builder.");
+        }
+        de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities returnMe = result;
+        result = null;
+        return returnMe;
+      }
+      
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities) {
+          return mergeFrom((de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+      
+      public Builder mergeFrom(de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities other) {
+        if (other == de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities.getDefaultInstance()) return this;
+        if (other.hasParentnodeId()) {
+          setParentnodeId(other.getParentnodeId());
+        }
+        if (other.hasId()) {
+          setId(other.getId());
+        }
+        if (other.hasName()) {
+          setName(other.getName());
+        }
+        if (other.hasUnit()) {
+          setUnit(other.getUnit());
+        }
+        if (other.hasDefaults()) {
+          setDefaults(other.getDefaults());
+        }
+        if (other.hasDatatype()) {
+          setDatatype(other.getDatatype());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+      
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder(
+            this.getUnknownFields());
+        while (true) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              this.setUnknownFields(unknownFields.build());
+              return this;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                this.setUnknownFields(unknownFields.build());
+                return this;
+              }
+              break;
+            }
+            case 10: {
+              setParentnodeId(input.readString());
+              break;
+            }
+            case 16: {
+              setId(input.readInt32());
+              break;
+            }
+            case 26: {
+              setName(input.readString());
+              break;
+            }
+            case 34: {
+              setUnit(input.readString());
+              break;
+            }
+            case 40: {
+              setDefaults(input.readInt32());
+              break;
+            }
+            case 50: {
+              setDatatype(input.readString());
+              break;
+            }
+          }
+        }
+      }
+      
+      
+      // required string parentnode_id = 1;
+      public boolean hasParentnodeId() {
+        return result.hasParentnodeId();
+      }
+      public java.lang.String getParentnodeId() {
+        return result.getParentnodeId();
+      }
+      public Builder setParentnodeId(java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  result.hasParentnodeId = true;
+        result.parentnodeId_ = value;
+        return this;
+      }
+      public Builder clearParentnodeId() {
+        result.hasParentnodeId = false;
+        result.parentnodeId_ = getDefaultInstance().getParentnodeId();
+        return this;
+      }
+      
+      // optional int32 id = 2;
+      public boolean hasId() {
+        return result.hasId();
+      }
+      public int getId() {
+        return result.getId();
+      }
+      public Builder setId(int value) {
+        result.hasId = true;
+        result.id_ = value;
+        return this;
+      }
+      public Builder clearId() {
+        result.hasId = false;
+        result.id_ = 0;
+        return this;
+      }
+      
+      // optional string name = 3;
+      public boolean hasName() {
+        return result.hasName();
+      }
+      public java.lang.String getName() {
+        return result.getName();
+      }
+      public Builder setName(java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  result.hasName = true;
+        result.name_ = value;
+        return this;
+      }
+      public Builder clearName() {
+        result.hasName = false;
+        result.name_ = getDefaultInstance().getName();
+        return this;
+      }
+      
+      // optional string unit = 4;
+      public boolean hasUnit() {
+        return result.hasUnit();
+      }
+      public java.lang.String getUnit() {
+        return result.getUnit();
+      }
+      public Builder setUnit(java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  result.hasUnit = true;
+        result.unit_ = value;
+        return this;
+      }
+      public Builder clearUnit() {
+        result.hasUnit = false;
+        result.unit_ = getDefaultInstance().getUnit();
+        return this;
+      }
+      
+      // optional int32 defaults = 5;
+      public boolean hasDefaults() {
+        return result.hasDefaults();
+      }
+      public int getDefaults() {
+        return result.getDefaults();
+      }
+      public Builder setDefaults(int value) {
+        result.hasDefaults = true;
+        result.defaults_ = value;
+        return this;
+      }
+      public Builder clearDefaults() {
+        result.hasDefaults = false;
+        result.defaults_ = 0;
+        return this;
+      }
+      
+      // optional string datatype = 6;
+      public boolean hasDatatype() {
+        return result.hasDatatype();
+      }
+      public java.lang.String getDatatype() {
+        return result.getDatatype();
+      }
+      public Builder setDatatype(java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  result.hasDatatype = true;
+        result.datatype_ = value;
+        return this;
+      }
+      public Builder clearDatatype() {
+        result.hasDatatype = false;
+        result.datatype_ = getDefaultInstance().getDatatype();
+        return this;
+      }
+      
+      // @@protoc_insertion_point(builder_scope:Capabilities)
+    }
+    
+    static {
+      defaultInstance = new Capabilities(true);
+      de.uniluebeck.itm.metadaten.files.MetaDataService.internalForceInit();
+      defaultInstance.initFields();
+    }
+    
+    // @@protoc_insertion_point(class_scope:Capabilities)
+  }
+  
   public static final class NODE extends
       com.google.protobuf.GeneratedMessage {
     // Use NODE.newBuilder() to construct.
@@ -1362,24 +1854,32 @@ public final class MetaDataService {
     public boolean hasDescription() { return hasDescription; }
     public java.lang.String getDescription() { return description_; }
     
-    // optional string sensoren = 4;
-    public static final int SENSOREN_FIELD_NUMBER = 4;
-    private boolean hasSensoren;
-    private java.lang.String sensoren_ = "";
-    public boolean hasSensoren() { return hasSensoren; }
-    public java.lang.String getSensoren() { return sensoren_; }
-    
-    // optional string ip = 5;
-    public static final int IP_FIELD_NUMBER = 5;
+    // optional string ip = 4;
+    public static final int IP_FIELD_NUMBER = 4;
     private boolean hasIp;
     private java.lang.String ip_ = "";
     public boolean hasIp() { return hasIp; }
     public java.lang.String getIp() { return ip_; }
     
+    // repeated .Capabilities capabilityList = 5;
+    public static final int CAPABILITYLIST_FIELD_NUMBER = 5;
+    private java.util.List<de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities> capabilityList_ =
+      java.util.Collections.emptyList();
+    public java.util.List<de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities> getCapabilityListList() {
+      return capabilityList_;
+    }
+    public int getCapabilityListCount() { return capabilityList_.size(); }
+    public de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities getCapabilityList(int index) {
+      return capabilityList_.get(index);
+    }
+    
     private void initFields() {
     }
     public final boolean isInitialized() {
       if (!hasKnotenid) return false;
+      for (de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities element : getCapabilityListList()) {
+        if (!element.isInitialized()) return false;
+      }
       return true;
     }
     
@@ -1395,11 +1895,11 @@ public final class MetaDataService {
       if (hasDescription()) {
         output.writeString(3, getDescription());
       }
-      if (hasSensoren()) {
-        output.writeString(4, getSensoren());
-      }
       if (hasIp()) {
-        output.writeString(5, getIp());
+        output.writeString(4, getIp());
+      }
+      for (de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities element : getCapabilityListList()) {
+        output.writeMessage(5, element);
       }
       getUnknownFields().writeTo(output);
     }
@@ -1422,13 +1922,13 @@ public final class MetaDataService {
         size += com.google.protobuf.CodedOutputStream
           .computeStringSize(3, getDescription());
       }
-      if (hasSensoren()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeStringSize(4, getSensoren());
-      }
       if (hasIp()) {
         size += com.google.protobuf.CodedOutputStream
-          .computeStringSize(5, getIp());
+          .computeStringSize(4, getIp());
+      }
+      for (de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities element : getCapabilityListList()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(5, element);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -1572,6 +2072,10 @@ public final class MetaDataService {
           throw new IllegalStateException(
             "build() has already been called on this Builder.");
         }
+        if (result.capabilityList_ != java.util.Collections.EMPTY_LIST) {
+          result.capabilityList_ =
+            java.util.Collections.unmodifiableList(result.capabilityList_);
+        }
         de.uniluebeck.itm.metadaten.files.MetaDataService.NODE returnMe = result;
         result = null;
         return returnMe;
@@ -1597,11 +2101,14 @@ public final class MetaDataService {
         if (other.hasDescription()) {
           setDescription(other.getDescription());
         }
-        if (other.hasSensoren()) {
-          setSensoren(other.getSensoren());
-        }
         if (other.hasIp()) {
           setIp(other.getIp());
+        }
+        if (!other.capabilityList_.isEmpty()) {
+          if (result.capabilityList_.isEmpty()) {
+            result.capabilityList_ = new java.util.ArrayList<de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities>();
+          }
+          result.capabilityList_.addAll(other.capabilityList_);
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -1641,11 +2148,13 @@ public final class MetaDataService {
               break;
             }
             case 34: {
-              setSensoren(input.readString());
+              setIp(input.readString());
               break;
             }
             case 42: {
-              setIp(input.readString());
+              de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities.Builder subBuilder = de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities.newBuilder();
+              input.readMessage(subBuilder, extensionRegistry);
+              addCapabilityList(subBuilder.buildPartial());
               break;
             }
           }
@@ -1716,28 +2225,7 @@ public final class MetaDataService {
         return this;
       }
       
-      // optional string sensoren = 4;
-      public boolean hasSensoren() {
-        return result.hasSensoren();
-      }
-      public java.lang.String getSensoren() {
-        return result.getSensoren();
-      }
-      public Builder setSensoren(java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  result.hasSensoren = true;
-        result.sensoren_ = value;
-        return this;
-      }
-      public Builder clearSensoren() {
-        result.hasSensoren = false;
-        result.sensoren_ = getDefaultInstance().getSensoren();
-        return this;
-      }
-      
-      // optional string ip = 5;
+      // optional string ip = 4;
       public boolean hasIp() {
         return result.hasIp();
       }
@@ -1755,6 +2243,57 @@ public final class MetaDataService {
       public Builder clearIp() {
         result.hasIp = false;
         result.ip_ = getDefaultInstance().getIp();
+        return this;
+      }
+      
+      // repeated .Capabilities capabilityList = 5;
+      public java.util.List<de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities> getCapabilityListList() {
+        return java.util.Collections.unmodifiableList(result.capabilityList_);
+      }
+      public int getCapabilityListCount() {
+        return result.getCapabilityListCount();
+      }
+      public de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities getCapabilityList(int index) {
+        return result.getCapabilityList(index);
+      }
+      public Builder setCapabilityList(int index, de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        result.capabilityList_.set(index, value);
+        return this;
+      }
+      public Builder setCapabilityList(int index, de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities.Builder builderForValue) {
+        result.capabilityList_.set(index, builderForValue.build());
+        return this;
+      }
+      public Builder addCapabilityList(de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        if (result.capabilityList_.isEmpty()) {
+          result.capabilityList_ = new java.util.ArrayList<de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities>();
+        }
+        result.capabilityList_.add(value);
+        return this;
+      }
+      public Builder addCapabilityList(de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities.Builder builderForValue) {
+        if (result.capabilityList_.isEmpty()) {
+          result.capabilityList_ = new java.util.ArrayList<de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities>();
+        }
+        result.capabilityList_.add(builderForValue.build());
+        return this;
+      }
+      public Builder addAllCapabilityList(
+          java.lang.Iterable<? extends de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities> values) {
+        if (result.capabilityList_.isEmpty()) {
+          result.capabilityList_ = new java.util.ArrayList<de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities>();
+        }
+        super.addAll(values, result.capabilityList_);
+        return this;
+      }
+      public Builder clearCapabilityList() {
+        result.capabilityList_ = java.util.Collections.emptyList();
         return this;
       }
       
@@ -2272,6 +2811,11 @@ public final class MetaDataService {
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_SearchResponse_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_Capabilities_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_Capabilities_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
     internal_static_NODE_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
@@ -2290,15 +2834,18 @@ public final class MetaDataService {
       "\002(\t\022\020\n\010password\030\002 \002(\t\">\n\rSearchRequest\022\027" +
       "\n\010query_ms\030\001 \001(\0132\005.NODE\022\024\n\014query_string\030" +
       "\002 \001(\t\")\n\016SearchResponse\022\027\n\010response\030\001 \003(" +
-      "\0132\005.NODE\"d\n\004NODE\022\020\n\010knotenid\030\001 \002(\t\022\027\n\017mi" +
-      "crocontroller\030\002 \001(\t\022\023\n\013description\030\003 \001(\t" +
-      "\022\020\n\010sensoren\030\004 \001(\t\022\n\n\002ip\030\005 \001(\t2\240\001\n\nOpera" +
-      "tions\022!\n\007connect\022\017.Identification\032\005.VOID" +
-      "\022\023\n\003add\022\005.NODE\032\005.VOID\022\026\n\006remove\022\005.NODE\032\005",
-      ".VOID\022\027\n\007refresh\022\005.NODE\032\005.VOID\022)\n\006search" +
-      "\022\016.SearchRequest\032\017.SearchResponseB4\n!de." +
-      "uniluebeck.itm.metadaten.filesB\017MetaData" +
-      "Service"
+      "\0132\005.NODE\"q\n\014Capabilities\022\025\n\rparentnode_i" +
+      "d\030\001 \002(\t\022\n\n\002id\030\002 \001(\005\022\014\n\004name\030\003 \001(\t\022\014\n\004uni" +
+      "t\030\004 \001(\t\022\020\n\010defaults\030\005 \001(\005\022\020\n\010datatype\030\006 " +
+      "\001(\t\"y\n\004NODE\022\020\n\010knotenid\030\001 \002(\t\022\027\n\017microco" +
+      "ntroller\030\002 \001(\t\022\023\n\013description\030\003 \001(\t\022\n\n\002i",
+      "p\030\004 \001(\t\022%\n\016capabilityList\030\005 \003(\0132\r.Capabi" +
+      "lities2\240\001\n\nOperations\022!\n\007connect\022\017.Ident" +
+      "ification\032\005.VOID\022\023\n\003add\022\005.NODE\032\005.VOID\022\026\n" +
+      "\006remove\022\005.NODE\032\005.VOID\022\027\n\007refresh\022\005.NODE\032" +
+      "\005.VOID\022)\n\006search\022\016.SearchRequest\032\017.Searc" +
+      "hResponseB4\n!de.uniluebeck.itm.metadaten" +
+      ".filesB\017MetaDataService"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -2337,12 +2884,20 @@ public final class MetaDataService {
               new java.lang.String[] { "Response", },
               de.uniluebeck.itm.metadaten.files.MetaDataService.SearchResponse.class,
               de.uniluebeck.itm.metadaten.files.MetaDataService.SearchResponse.Builder.class);
-          internal_static_NODE_descriptor =
+          internal_static_Capabilities_descriptor =
             getDescriptor().getMessageTypes().get(4);
+          internal_static_Capabilities_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_Capabilities_descriptor,
+              new java.lang.String[] { "ParentnodeId", "Id", "Name", "Unit", "Defaults", "Datatype", },
+              de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities.class,
+              de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities.Builder.class);
+          internal_static_NODE_descriptor =
+            getDescriptor().getMessageTypes().get(5);
           internal_static_NODE_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_NODE_descriptor,
-              new java.lang.String[] { "Knotenid", "Microcontroller", "Description", "Sensoren", "Ip", },
+              new java.lang.String[] { "Knotenid", "Microcontroller", "Description", "Ip", "CapabilityList", },
               de.uniluebeck.itm.metadaten.files.MetaDataService.NODE.class,
               de.uniluebeck.itm.metadaten.files.MetaDataService.NODE.Builder.class);
           return null;

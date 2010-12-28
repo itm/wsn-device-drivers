@@ -155,6 +155,35 @@ public class ClientStub  {
 			}});
 		
 	}
+	
+	/**
+	 * Refreshes nodeentry in the Metadatarepository
+	 * @param node
+	 * @param callback
+	 */
+	 // Hinzufügen eines Knotens in das MetaDatenverzeichnis
+	public void refresh(final Node node, final AsyncCallback<String> callback) {
+
+		// erzeugen eines Controllers fuer diese Operation
+		final RpcController controller = channel.newRpcController();
+		// Node für die Übertragung erzeugen
+		NodeHelper nhelper = new NodeHelper();
+		
+		//ausfuehren des async RPCs
+		operationService.refresh(controller, nhelper.changetoNODE(node), new RpcCallback<VOID>(){
+
+			// callback aufruf des Servers
+			@Override
+			public void run(VOID arg0) {
+				if(!controller.failed()){
+					callback.onSuccess("Knoten " + node.getId() + "erfolgreich dem Verzeichnis hinzugefügt");
+				}
+				else{
+					callback.onFailure(new Throwable(controller.errorText()));
+				}
+			}});
+		
+	}
 
 	
 }

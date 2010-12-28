@@ -1,119 +1,156 @@
 package de.uniluebeck.itm.entity;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 import org.simpleframework.xml.Element;
 
 /**
  * This class describes a capability entity, required in wiseml file.
  */
+@Entity
+@Table(catalog = "metadaten_db", name = "capability")
 public class Capability {
 
-    @Element
-    private String name;
+	@ManyToOne
+	Node parentnode;
 
-    @Element
-    private String datatype;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Integer id;
 
-    @Element
-    private String unit;
+	@Element
+	private String name = "";
 
-    @Element
-    private int defaults;
+	@Element
+	private String datatype = "";
 
-    /**
-     * Requires function for deserializing objects.
-     */
-    public Capability() {
-        super();
-    }
+	@Element
+	private String unit = "";
 
+	@Element
+	private int defaults = 0;
 
-    /**
-     * Constructor Method.
-     *
-     * @param name
-     * @param dtype
-     * @param unit
-     * @param defaults
-     */
-    public Capability(String name, String dtype, String unit, int defaults) {
-        setName(name);
-        setDatatype(dtype);
-        setUnit(unit);
-        setCapDefault(defaults);
-    }
+	/**
+	 * Requires function for deserializing objects.
+	 */
+	public Capability() {
+		super();
+	}
 
-    /**
-     * Get the name entity.
-     *
-     * @return String.
-     */
-    public String getName() {
-        return this.name;
-    }
+	/**
+	 * Constructor Method.
+	 * 
+	 * @param name
+	 * @param dtype
+	 * @param unit
+	 * @param defaults
+	 */
+	public Capability(String name, String dtype, String unit, int defaults) {
+		setName(name);
+		setDatatype(dtype);
+		setUnit(unit);
+		setCapDefault(defaults);
+	}
 
-    /**
-     * Set the name entity.
-     *
-     * @param name
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
+	/**
+	 * Get the name entity.
+	 * 
+	 * @return String.
+	 */
+	public String getName() {
+		return this.name;
+	}
 
+	/**
+	 * Set the name entity.
+	 * 
+	 * @param name
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    /**
-     * Get the datatype entity.
-     *
-     * @return
-     */
-    public String getDatatype() {
-        return this.datatype;
-    }
+	/**
+	 * Get the datatype entity.
+	 * 
+	 * @return
+	 */
+	public String getDatatype() {
+		return this.datatype;
+	}
 
-    /**
-     * Set the datatype entity.
-     *
-     * @param datatype
-     */
-    public void setDatatype(String datatype) {
-        this.datatype = datatype;
-    }
+	/**
+	 * Set the datatype entity.
+	 * 
+	 * @param datatype
+	 */
+	public void setDatatype(String datatype) {
+		this.datatype = datatype;
+	}
 
+	/**
+	 * Get the NodeID
+	 */
+	public Node getNode() {
+		return this.parentnode;
+	}
 
-    /**
-     * Get the unit entity.
-     *
-     * @return String.
-     */
-    public String getUnit() {
-        return this.unit;
-    }
+	/**
+	 * Sets the nodeId to which the Capability belongs
+	 * 
+	 * @param nodeId
+	 */
+	public void setNode(Node node) {
+		this.parentnode = node;
+	}
 
-    /**
-     * Set the unit entity.
-     *
-     * @param unit
-     */
-    public void setUnit(String unit) {
-        this.unit = unit;
-    }
+	/**
+	 * Get the unit entity.
+	 * 
+	 * @return String.
+	 */
+	public String getUnit() {
+		return this.unit;
+	}
 
-    /**
-     * Get the capability default entity.
-     *
-     * @return int capabilityDefault.
-     */
-    public int getCapDefault() {
-        return this.defaults;
-    }
+	/**
+	 * Set the unit entity.
+	 * 
+	 * @param unit
+	 */
+	public void setUnit(String unit) {
+		this.unit = unit;
+	}
 
-    /**
-     * Set the capability Default entity.
-     *
-     * @param capDefault
-     */
-    public void setCapDefault(int capDefault) {
-        this.defaults = capDefault;
-    }
+	/**
+	 * Get the capability default entity.
+	 * 
+	 * @return int capabilityDefault.
+	 */
+	public int getCapDefault() {
+		return this.defaults;
+	}
+
+	/**
+	 * Set the capability Default entity.
+	 * 
+	 * @param capDefault
+	 */
+	public void setCapDefault(int capDefault) {
+		this.defaults = capDefault;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
 }

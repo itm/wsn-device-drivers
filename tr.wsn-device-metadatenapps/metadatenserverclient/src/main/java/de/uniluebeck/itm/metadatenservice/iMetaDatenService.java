@@ -44,12 +44,6 @@ public interface iMetaDatenService {
 	 */
 	public void refreshNode (Node node, final AsyncCallback<String> callback );
 	
-	/**
-	 * Aktualisiert die Daten des Sensorknotens im Verezeichnis
-	 * @param node
-	 * @param callback
-	 */
-	public void updateNode (Node node, final AsyncCallback<String> callback );
 	
 	
 

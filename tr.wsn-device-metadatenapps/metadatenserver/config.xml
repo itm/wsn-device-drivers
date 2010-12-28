@@ -1,0 +1,14 @@
+<configData>
+	<!-- IP on which the server listens for requests -->
+   <serverIP>localhost</serverIP>
+   <!-- Port on which the server listens for requests -->
+   <port>8080</port>
+   <!-- Nodeentries in the repository will be deleted if theri Timestamp is older
+	 than the given overagetime in ms -->
+   <overagetime>900000</overagetime>
+   <!-- delay for the starting time in ms of the timer who cleans the repository
+	  from old entries -->
+   <timerdelay>1000</timerdelay>
+   <!-- Interval for the timer who cleans the repository from old entries -->
+   <timerinterval>5000</timerinterval>
+</configData>

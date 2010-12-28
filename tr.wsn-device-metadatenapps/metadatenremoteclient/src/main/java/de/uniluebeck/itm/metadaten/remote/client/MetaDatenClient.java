@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 
 import com.google.protobuf.RpcController;
@@ -33,7 +35,7 @@ import de.uniluebeck.itm.metadaten.remote.metadataclienthelper.NodeHelper;
 
 public class MetaDatenClient implements MetaDataClient {
 	
-//private static Log log = LogFactory.getLog(Client.class);
+	private static Log log = LogFactory.getLog(MetaDatenClient.class);
 	
 	PeerInfo server = null;
 	PeerInfo client = null;
@@ -169,11 +171,9 @@ public class MetaDatenClient implements MetaDataClient {
 		this.connect(user, password);
 		// erzeugen eines Controllers fuer diese Operation
 		final RpcController controller = channel.newRpcController();
-		NodeHelper nhelper = new NodeHelper();
-		// Node für die Übertragung erzeugen
-		NODE noderequest = NODE.newBuilder().setIp(queryexmpl.getIpAddress()).setDescription(queryexmpl.getDescription()).setKnotenid(queryexmpl.getId()).setMicrocontroller(queryexmpl.getMicrocontroller()).setSensoren("Viele").build();
-		//Result erzugen
-		SearchRequest request = SearchRequest.newBuilder().setQueryMs(noderequest).setQueryString("123").build();
+		NodeHelper nhelper = new NodeHelper();	
+		
+		SearchRequest request = SearchRequest.newBuilder().setQueryMs(nhelper.changetoNODE(queryexmpl)).setQueryString(query).build();
 	
 		// erzeugen eines synchronen RPC-Objekts fuer die Operationen
 		BlockingInterface blockOperationService =  Operations.newBlockingStub(channel);

@@ -18,13 +18,22 @@ message SearchRequest {
 message SearchResponse {
 	repeated NODE response = 1;
 }
+message Capabilities {
+	required string parentnode_id = 1;
+	optional int32 id = 2;
+	optional string name = 3;
+	optional string unit = 4;
+	optional int32 defaults = 5;
+	optional string datatype = 6;
+}
+
 
 message NODE {
 	required string knotenid = 1;
 	optional string microcontroller = 2;
 	optional string description = 3;
-	optional string sensoren = 4;
-	optional string ip = 5;
+	optional string ip = 4;
+	repeated Capabilities capabilityList = 5;
 }
 
 service Operations {

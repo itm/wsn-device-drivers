@@ -1,12 +1,14 @@
-package de.uniluebeck.itm.metadaten.remote.metadataclienthelper;
+package de.uniluebeck.itm.metadaten.server.helper;
+
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import de.uniluebeck.itm.metadaten.entities.Capability;
+import de.uniluebeck.itm.metadaten.entities.Node;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.NODE;
-import de.uniluebeck.itm.metadaten.remote.entity.Capability;
-import de.uniluebeck.itm.metadaten.remote.entity.Node;
 
 public class NodeHelper {
 
@@ -52,7 +54,7 @@ public class NodeHelper {
 	}
 
 	/**
-	 * Wandelt NODE-Message zur Übertragung per RPC in WiseMlNode um
+	 * Transforms NODE-Message for RPC to WiseMlNode
 	 * 
 	 * @param nodein
 	 * @return
@@ -63,6 +65,7 @@ public class NodeHelper {
 		List<Capability> capResultList = new ArrayList<Capability>();
 		nodeout.setId(nodein.getKnotenid());
 		nodeout.setIpAddress(nodein.getIp());
+		nodeout.setTimestamp(new Date());
 		nodeout.setMicrocontroller(nodein.getMicrocontroller());
 		nodeout.setDescription(nodein.getDescription());
 		for (int i = 0; i < nodein.getCapabilityListCount(); i++) {

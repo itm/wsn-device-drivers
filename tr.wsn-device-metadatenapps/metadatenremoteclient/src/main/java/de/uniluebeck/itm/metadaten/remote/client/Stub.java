@@ -20,6 +20,7 @@ import de.uniluebeck.itm.metadaten.files.MetaDataService.SearchRequest;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.SearchResponse;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.VOID;
 import de.uniluebeck.itm.metadaten.remote.entity.Node;
+import de.uniluebeck.itm.metadaten.remote.metadataclienthelper.NodeHelper;
 
 
 
@@ -130,12 +131,13 @@ public class Stub {
 
 		// erzeugen eines Controllers fuer diese Operation
 		final RpcController controller = channel.newRpcController();
+		NodeHelper nhelper = new NodeHelper();
 		// erzeugen einer Nachricht, der OperationKey wird aus der controllerID erzeugt
 //		STRING request = STRING.newBuilder().setQuery(setMessage).setOperationKey(controller.toString()).build();
 		// Node für die Übertragung erzeugen
-		NODE noderequest = NODE.newBuilder().setIp(node.getIpAddress()).setDescription(node.getDescription()).setKnotenid(node.getId()).setMicrocontroller(node.getMicrocontroller()).setSensoren("Viele").build();
+		
 		//Result erzugen
-		SearchRequest request = SearchRequest.newBuilder().setQueryMs(noderequest).setQueryString("123").build();
+		SearchRequest request = SearchRequest.newBuilder().setQueryMs(nhelper.changetoNODE(node)).setQueryString("123").build();
 		//ausfuehren des async RPCs
 //		operationService.add(controller, request, new RpcCallback<VOID>(){
 		operationService.search(controller, request,  new RpcCallback<SearchResponse>(){

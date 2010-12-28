@@ -5,6 +5,6 @@ import de.uniluebeck.itm.entity.Node;
 
 public interface IMetaDataCollector {
 
-	public Node collect();
+	public Node collect(String wisemlFile);
 
 }

@@ -27,7 +27,7 @@ public class MetaDatenCollector {
 			e.printStackTrace();
 		}
 		node = new DeviceCollector ().devicecollect(device, node);
-		node = new FileCollector().filecollect(node);
+//		node = new FileCollector().filecollect(node);
 		return node;
 	}
 

@@ -1,12 +1,12 @@
-package de.uniluebeck.itm.metadaten.remote.metadataclienthelper;
+package de.uniluebeck.itm.metadaten.helper;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniluebeck.itm.metadaten.entities.Capability;
+import de.uniluebeck.itm.metadaten.entities.Node;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.NODE;
-import de.uniluebeck.itm.metadaten.remote.entity.Capability;
-import de.uniluebeck.itm.metadaten.remote.entity.Node;
 
 public class NodeHelper {
 

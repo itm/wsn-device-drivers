@@ -3,15 +3,7 @@ package de.uniluebeck.itm.metadatenservice;
 import java.io.IOException;
 import java.util.concurrent.Executors;
 
-
-//import org.apache.commons.logging.Log;
-//import org.apache.commons.logging.LogFactory;
-//import org.apache.log4j.BasicConfigurator;
-
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
-
-
-
 
 import com.google.protobuf.RpcCallback;
 import com.google.protobuf.RpcController;
@@ -20,15 +12,12 @@ import com.googlecode.protobuf.pro.duplex.RpcClientChannel;
 import com.googlecode.protobuf.pro.duplex.client.DuplexTcpClientBootstrap;
 import com.googlecode.protobuf.pro.duplex.execute.ThreadPoolCallExecutor;
 
-
 import de.uniluebeck.itm.entity.Node;
-//import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
-//import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Identification;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.NODE;
-
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Operations;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.VOID;
+import de.uniluebeck.itm.metadaten.serverclient.metadataclienthelper.NodeHelper;
 
 
 
@@ -141,14 +130,12 @@ public class Stub  {
 
 		// erzeugen eines Controllers fuer diese Operation
 		final RpcController controller = channel.newRpcController();
+		NodeHelper nhelper = new NodeHelper();
 		// erzeugen einer Nachricht, der OperationKey wird aus der controllerID erzeugt
 //		STRING request = STRING.newBuilder().setQuery(setMessage).setOperationKey(controller.toString()).build();
-		// Node für die Übertragung erzeugen
-		NODE request = NODE.newBuilder().setIp(node.getIpAddress()).setDescription(node.getDescription()).setKnotenid(node.getId()).setMicrocontroller(node.getMicrocontroller()).setSensoren("Viele").build();
-		//Result erezugen
-			
+		
 		//ausfuehren des async RPCs
-		operationService.add(controller, request, new RpcCallback<VOID>(){
+		operationService.add(controller, nhelper.changetoNODE(node), new RpcCallback<VOID>(){
 
 			// callback aufruf des Servers
 			@Override

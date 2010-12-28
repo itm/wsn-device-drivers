@@ -2,6 +2,7 @@ package de.uniluebeck.itm.metadatenservice;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -10,6 +11,7 @@ import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.load.Persister;
 
 
+import de.uniluebeck.itm.entity.Capability;
 import de.uniluebeck.itm.entity.ConfigData;
 import de.uniluebeck.itm.entity.Node;
 import de.uniluebeck.itm.metadatacollector.IMetaDataCollector;
@@ -18,12 +20,13 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService{
 	
 	private ClientStub stub = null;
 	private List<IMetaDataCollector> collector = new ArrayList<IMetaDataCollector> ();
+	ConfigData config = new ConfigData();
 	Timer timer = new Timer();
 	
 	MetaDatenService () throws Exception {
 
 //		ConfigData config = loadConfig("C:\\uni hl\\workspace\\fallstudie2010\\sources\\tr.wsn-device-metadatenapps\\metadatenserverclient\\src\\main\\java\\resources\\config.xml");
-		ConfigData config = loadConfig("config.xml");
+		config = loadConfig("config.xml");
 		
 		stub=new ClientStub(config.getUsername(), config.getPassword(), config.getServerIP(), config.getPort());
 		
@@ -39,21 +42,37 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService{
 		/*Collection von MetaDatenCollectors*/
 		
 		/* Gemeinsamer ClientManager */
-		Stub stub1 = new Stub("testUser", "testPassword", "localhost", 8080);
+		ClientStub stub1 = new ClientStub("testUser", "testPassword", "localhost", 8080);
         Node node = new Node();
         
-		node.setId("1236");
+		node.setId("1237");
 		node.setIpAddress("192.168.8.102");
 		node.setMicrocontroller("TelosB");
 		node.setDescription("Solar2000");
-		while(true){
-			System.out.println("in: ");
-			int input = System.in.read();
-			
-			switch (input){
-			
-			// 1 druecken
-			case 49:
+
+		node.setIpAddress("192.168.8.102");
+		node.setMicrocontroller("TelosB");
+		node.setDescription("Solar2002");
+		node.setTimestamp(new Date());
+		Capability cap = new Capability ();
+		Capability cap2 = new Capability ();
+		cap.setDatatype("int");
+		cap.setName("Temperatur");
+		cap.setNode(node);
+		cap.setUnit("Grad Fahre");
+//		cap.setId(1);
+		List <Capability> capList = new ArrayList <Capability>();
+		capList.add(cap);
+		cap2.setDatatype("double");
+		cap2.setName("Licht");
+		cap2.setUnit("Luchs");
+//		cap2.setId(2);
+		cap2.setNode(node);
+		capList.add(cap2);
+		node.setCapabilityList(capList);
+		node.setPort((short)1234);
+		node.setTimestamp(new Date());
+		
 				stub1.add(node, new AsyncCallback<String>(){
 					@Override
 					public void onCancel() {
@@ -71,8 +90,8 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService{
 					public void onProgressChange(float fraction) {
 					
 				}});
-			}
-		}
+			
+		
 	}
 	
 
@@ -82,8 +101,8 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService{
 		
 		for(int i=0; i<collector.size();i++)
 		{
-			System.out.println("Die Knotens mit ID: " +collector.get(i).collect().getId()+"wird dem Verzeichnis hinzugefügt");
-			refreshNode(collector.get(i).collect(), new AsyncCallback<String>(){
+			System.out.println("Die Knotens mit ID: " +collector.get(i).collect(config.getWisemlFile()).getId()+"wird dem Verzeichnis hinzugefügt");
+			refreshNode(collector.get(i).collect(config.getWisemlFile()), new AsyncCallback<String>(){
 			@Override
 			public void onCancel() {
 			}
@@ -165,34 +184,34 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService{
 
 
 
-	@Override
-	public void refreshNode(Node node,final AsyncCallback<String> callback) {
-		// TODO Ersetzt die Methode UpdateNode?
-		stub.add(node, new AsyncCallback<String>(){
-			@Override
-			public void onCancel() {
-			}
-			@Override
-			public void onFailure(Throwable throwable) {
-				callback.onFailure(throwable);
-			}
-			@Override
-			public void onSuccess(String result) {
-				callback.onSuccess(result);
-				
-			}
-			@Override
-			public void onProgressChange(float fraction) {
-			
-		}});
-	}
+//	@Override
+//	public void refreshNode(Node node,final AsyncCallback<String> callback) {
+//		// TODO Ersetzt die Methode UpdateNode?
+//		stub.add(node, new AsyncCallback<String>(){
+//			@Override
+//			public void onCancel() {
+//			}
+//			@Override
+//			public void onFailure(Throwable throwable) {
+//				callback.onFailure(throwable);
+//			}
+//			@Override
+//			public void onSuccess(String result) {
+//				callback.onSuccess(result);
+//				
+//			}
+//			@Override
+//			public void onProgressChange(float fraction) {
+//			
+//		}});
+//	}
 
 
 
 	@Override
-	public void updateNode(Node node, final AsyncCallback<String> callback) {
+	public void refreshNode(Node node, final AsyncCallback<String> callback) {
 		// TODO Updatemethode im Stub implementieren
-		stub.add(node, new AsyncCallback<String>(){
+		stub.refresh(node, new AsyncCallback<String>(){
 			@Override
 			public void onCancel() {
 			}
@@ -226,7 +245,7 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService{
 	@Override
 	public void addMetaDataCollector(IMetaDataCollector mdcollector) {
 		collector.add(mdcollector);
-		stub.add(mdcollector.collect(), new AsyncCallback<String>(){
+		stub.add(mdcollector.collect(config.getWisemlFile()), new AsyncCallback<String>(){
 			@Override
 			public void onCancel() {
 			}
