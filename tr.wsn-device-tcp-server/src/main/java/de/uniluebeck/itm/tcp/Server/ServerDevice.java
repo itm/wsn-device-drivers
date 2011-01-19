@@ -82,6 +82,7 @@ public class ServerDevice {
 	/**
 	 * creates a connection instance of the type specified in the devices.xml .
 	 */
+	@SuppressWarnings("unchecked")
 	private Connection createConnection(String ConnectionType) {
 		
 		Connection connection = null;
@@ -108,6 +109,7 @@ public class ServerDevice {
 	/**
 	 * creates a device instance of the type specified in the devices.xml .
 	 */
+	@SuppressWarnings("unchecked")
 	private Device createDevice(String DeviceName, Connection con) {
 
 		Device device = null;

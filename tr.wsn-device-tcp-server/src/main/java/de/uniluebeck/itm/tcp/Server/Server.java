@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+import com.google.protobuf.ByteString;
 import com.google.protobuf.RpcCallback;
 import com.google.protobuf.RpcController;
 import com.googlecode.protobuf.pro.duplex.PeerInfo;
@@ -32,6 +33,7 @@ import com.googlecode.protobuf.pro.duplex.listener.RpcConnectionEventListener;
 import com.googlecode.protobuf.pro.duplex.server.DuplexTcpServerBootstrap;
 
 import de.uniluebeck.itm.Impl.Main;
+import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.MessagePacketListener;
@@ -41,10 +43,10 @@ import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 import de.uniluebeck.itm.devicedriver.event.MessageEvent;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipType;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.ByteData;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.GetHandleAnswers;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.Identification;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey;
@@ -55,6 +57,9 @@ import de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketService;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData;
+import de.uniluebeck.itm.tcp.operations.getChipTypeOperation;
+import de.uniluebeck.itm.tcp.operations.readMacOperation;
+import de.uniluebeck.itm.tcp.operations.writeMacOperation;
 import de.uniluebeck.itm.tr.util.TimedCache;
 
 public class Server {
@@ -139,6 +144,7 @@ public class Server {
 				
 				@Override
 				public void connectionLost(RpcClientChannel clientChannel) {
+					idList.remove(clientChannel);
 					log.info("connectionLost " + clientChannel);
 				}
 				
@@ -224,6 +230,7 @@ public class Server {
 
 		}
 
+		//TODO
 		// Methode um Device zu Programmieren
 		@Override
 		public void program(RpcController controller, ProgramPacket request,
@@ -278,7 +285,7 @@ public class Server {
 				}});
 			
 			// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
-			id.setHandleVoidList(request.getOperationKey(), handle);
+			id.setHandleElement(request.getOperationKey(), handle);
 			
 			// ausfuehren des Callbacks
 			done.run(EmptyAnswer.newBuilder().build());
@@ -286,105 +293,113 @@ public class Server {
 
 		// reagieren auf ein getState-Aufruf
 		@Override
-		public void getState(RpcController controller, OpKey request,
-				RpcCallback<STRING> done) {
+		public void getState(final RpcController controller, final OpKey request,
+				final RpcCallback<STRING> done) {
 			
-			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
-			OperationHandle<Void> handle = id.getHandleVoidList(request.getOperationKey());			
-			done.run(STRING.newBuilder().setQuery(handle.getState().getName()).build());
+			new Runnable(){
+				@Override
+				public void run() {
+					ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
+					if(id != null){
+						OperationHandle<?> handle = id.getHandleElement(request.getOperationKey());
+						done.run(STRING.newBuilder().setQuery(handle.getState().getName()).build());
+					}
+					else {
+						controller.setFailed("Internal Error, please reconnect and try it again! ");
+						done.run(null);
+					}
+				}}.run();
 		}
 
 		// reagieren auf ein cancel-Aufruf
 		@Override
-		public void cancelHandle(RpcController controller, OpKey request,
-				RpcCallback<EmptyAnswer> done) {
+		public void cancelHandle(final RpcController controller, final OpKey request,
+				final RpcCallback<EmptyAnswer> done) {
 	
-			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
-			OperationHandle<Void> handle = id.getHandleVoidList(request.getOperationKey());
-			System.out.println("canceled: "+controller.isCanceled());
-			if(controller.isCanceled()){
-				handle.cancel();
-				done.run(EmptyAnswer.newBuilder().build());
-			}
+			new Runnable(){
+
+				@Override
+				public void run() {
+					ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
+					if(id != null){
+						OperationHandle<?> handle = id.getHandleElement(request.getOperationKey());
+						handle.cancel();
+						id.deleteHandleElement(handle);
+						done.run(EmptyAnswer.newBuilder().build());
+					}
+					else {
+						controller.setFailed("Internal Error, please reconnect and try it again! ");
+						done.run(null);
+					}
+					
+				}}.run();
 		}
 
 		// reagieren auf ein get-Aufruf
 		@Override
-		public void getHandle(RpcController controller, OpKey request,
-				RpcCallback<EmptyAnswer> done) {
+		public void getHandle(final RpcController controller, final OpKey request,
+				final RpcCallback<GetHandleAnswers> done) {
+
+
+			new Runnable(){
+
+				@Override
+				public void run() {
+					
+					ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
+					id.setCalledGet(true);
+					OperationHandle<?> handle = null;
+					
+					try {
+						//TODO wenn der Aufruf zu schnell passiert, bleibt handle null, deswegen muss man ein wenig warten
+						Thread.sleep(100);
+
+						handle = id.getHandleElement(request.getOperationKey());
+						Object a = handle.get();
+						
+						GetHandleAnswers response = null;
+						
+						if(a == null ){
+							response = GetHandleAnswers.newBuilder().setEmptyAnswer(EmptyAnswer.newBuilder().build()).build();
+						}
+						else if(a.getClass().getName().contains("ChipType")){
+							
+							response = GetHandleAnswers.newBuilder().setChipData(STRING.newBuilder().setQuery(((ChipType) a).name()).build()).build();
+						}
+						else if(a.getClass().getName().contains("MacAddress")){
+							MacData mac = MacData.newBuilder().addMACADDRESS(ByteString.copyFrom(((MacAddress) a).getMacBytes())).build();
+							response = GetHandleAnswers.newBuilder().setMacAddress(mac).build();
+						}
+						else if(a.getClass().getName().contains("[B")){
+							ByteData bytes = ByteData.newBuilder().addData(ByteString.copyFrom(((byte[]) a).clone())).build();
+							response = GetHandleAnswers.newBuilder().setData(bytes).build();
+						}
+						done.run(response);
+					} catch(Exception e){
+						controller.setFailed("Error in get()-Operation");
+						done.run(null);
+					}
+					id.deleteHandleElement(handle);
+					
+				}}.run();
 			
-			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
-			OperationHandle<Void> handle = id.getHandleVoidList(request.getOperationKey());
-			handle.get();
-			done.run(EmptyAnswer.newBuilder().build());
 		}
 
 		
 		@Override
-		public void writeMac(final RpcController controller, MacData request,
+		public void writeMac(final RpcController controller, final MacData request,
 				final RpcCallback<EmptyAnswer> done) {
 			
 			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
-			if(user==null || !user.isAuthenticated()){
-				controller.setFailed("Sie sind nicht authentifiziert!");
-				done.run(null);
-				return;
-			}
-			
-			if (!user.isPermitted("write:mac")) {
-				controller.setFailed("Sie haben nicht die noetigen Rechte!");
-				done.run(null);
-				return;
-			}
 			
 			// identifizieren des Users mit dem Channel
 			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
 			
-			// erstellen einer Klasse zum Testen der OperationHandle
-			DeviceAsync deviceAsync = id.getDevice();
-			
-			final ReverseMessage message = new ReverseMessage(request.getOperationKey(),ServerRpcController.getRpcChannel(controller));
-			
-			// erzeugen eines OperationHandle zur der Operation
-			OperationHandle <Void> handle = deviceAsync.writeMac(new MacAddress(request.getMACADDRESSList().get(0).toByteArray()), request.getTimeout(), new AsyncCallback<Void>(){
-				@Override
-				public void onCancel() {
-					//TODO bessere Fehlermeldung
-					controller.setFailed("writeMac wurde vom Device abgebrochen");
-					done.run(null);
-				}
-
-				@Override
-				public void onFailure(Throwable throwable) {
-					controller.setFailed(throwable.getMessage());
-					done.run(null);
-				}
-
-				@Override
-				public void onProgressChange(float fraction) {
-					message.sendReverseMessage(String.valueOf(fraction));
-				}
-
-				@Override
-				public void onSuccess(Void result) {
-					// ausfuehren des Callbacks
-					message.reverseSuccessMessage();
-				}
-
-				//TODO wozu onExecute und wo wird es abgefangen
-				@Override
-				public void onExecute() {
-					
-				}});
-			
-			// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
-			id.setHandleVoidList(request.getOperationKey(), handle);
-			
-			// ausfuehren des Callbacks
-			done.run(EmptyAnswer.newBuilder().build());
+			new writeMacOperation(controller, done, user, id, request).run();
 			
 		}
 
+		//TODO
 		@Override
 		public void writeFlash(RpcController controller, FlashData request,
 				RpcCallback<EmptyAnswer> done) {
@@ -438,13 +453,14 @@ public class Server {
 				}});
 			
 			// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
-			id.setHandleVoidList(request.getOperationKey(), handle);
+			id.setHandleElement(request.getOperationKey(), handle);
 			
 			// ausfuehren des Callbacks
 			done.run(EmptyAnswer.newBuilder().build());
 			
 		}
 
+		//TODO
 		@Override
 		public void eraseFlash(RpcController controller, Timeout request,
 				RpcCallback<EmptyAnswer> done) {
@@ -452,6 +468,7 @@ public class Server {
 			
 		}
 
+		//TODO
 		@Override
 		public void readFlash(RpcController controller, FlashData request,
 				RpcCallback<ByteData> done) {
@@ -464,66 +481,15 @@ public class Server {
 				final RpcCallback<EmptyAnswer> done) {
 			
 			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
-			if(user==null || !user.isAuthenticated()){
-				controller.setFailed("Sie sind nicht authentifiziert!");
-				done.run(null);
-				return;
-			}
-			
-			if (!user.isPermitted("write:program")) {
-				controller.setFailed("Sie haben nicht die noetigen Rechte!");
-				done.run(null);
-				return;
-			}
 			
 			// identifizieren des Users mit dem Channel
 			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
 			
-			// erstellen einer Klasse zum Testen der OperationHandle
-			DeviceAsync deviceAsync = id.getDevice();
-			
-			final ReverseMessage message = new ReverseMessage(request.getOperationKey(),ServerRpcController.getRpcChannel(controller));
-
-			// erzeugen eines OperationHandle zur der Operation
-			OperationHandle <MacAddress> handle = deviceAsync.readMac(request.getTimeout(), new AsyncCallback<MacAddress>(){
-
-				@Override
-				public void onCancel() {
-					//TODO bessere Fehlermeldung
-					controller.setFailed("readMac wurde vom Device abgebrochen");
-					done.run(null);
-				}
-
-				@Override
-				public void onFailure(Throwable throwable) {
-					controller.setFailed(throwable.getMessage());
-					done.run(null);
-				}
-
-				@Override
-				public void onProgressChange(float fraction) {
-					message.sendReverseMessage(String.valueOf(fraction));
-				}
-
-				@Override
-				public void onSuccess(MacAddress result) {
-					// ausfuehren des Callbacks
-					message.reverseSuccessMac(result);
-				}
-
-				//TODO wozu onExecute und wo wird es abgefangen
-				@Override
-				public void onExecute() {
-					
-				}});
-			
-			// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
-			id.setHandleMacList(request.getOperationKey(), handle);
-			
-			done.run(EmptyAnswer.newBuilder().build());
+			new readMacOperation(controller, id, done, user, request).run();
 			
 		}
 
+		//TODO
 		@Override
 		public void reset(RpcController controller, Timeout request,
 				RpcCallback<EmptyAnswer> done) {
@@ -531,6 +497,7 @@ public class Server {
 			
 		}
 
+		//TODO
 		@Override
 		public void send(RpcController controller, sendData request,
 				RpcCallback<EmptyAnswer> done) {
@@ -539,10 +506,15 @@ public class Server {
 		}
 
 		@Override
-		public void getChipType(RpcController controller, Timeout request,
-				RpcCallback<ChipType> done) {
-			// TODO Auto-generated method stub
+		public void getChipType(final RpcController controller, final Timeout request,
+				final RpcCallback<EmptyAnswer> done) {
 			
+			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
+			
+			// identifizieren des Users mit dem Channel
+			ClientID id = idList.get(ServerRpcController.getRpcChannel(controller));
+			
+			new getChipTypeOperation(controller, done, user, id, request).run();
 		}
 	}
 	
@@ -551,7 +523,7 @@ public class Server {
 
 		@Override
 		public void addMessagePacketListener(final RpcController controller,
-				final PacketTypeData request, RpcCallback<EmptyAnswer> done) {
+				final PacketTypeData request, final RpcCallback<EmptyAnswer> done) {
 
 			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
 			if(user==null || !user.isAuthenticated()){
@@ -560,33 +532,39 @@ public class Server {
 				return;
 			}
 			
-			int[] types = new int[request.getTypeCount()];
-			for (int i=0;i<request.getTypeCount();i++){
-				types[i] = request.getType(i);
-			}
-	
-			MessagePacketListener listener = new MessagePacketListener() {
-				
+			new Runnable(){
+
 				@Override
-				public void onMessagePacketReceived(MessageEvent<MessagePacket> event) {
-					RemoteMessagePacketListener remoteListener = new RemoteMessagePacketListener(request.getOperationKey(),ServerRpcController.getRpcChannel(controller));
-					remoteListener.onMessagePacketReceived(event);
-				}
-			};
+				public void run() {
+					
+					int[] types = new int[request.getTypeCount()];
+					for (int i=0;i<request.getTypeCount();i++){
+						types[i] = request.getType(i);
+					}
 			
-			// erstellen einer Klasse zum Testen der OperationHandle
-			DeviceAsync deviceAsync = idList.get(ServerRpcController.getRpcChannel(controller)).getDevice();
-			deviceAsync.addListener(listener, types);
-			
-			packetListenerList.put(request.getOperationKey(), listener);
-			
-			done.run(EmptyAnswer.newBuilder().build());
-			
+					MessagePacketListener listener = new MessagePacketListener() {
+						
+						@Override
+						public void onMessagePacketReceived(MessageEvent<MessagePacket> event) {
+							RemoteMessagePacketListener remoteListener = new RemoteMessagePacketListener(request.getOperationKey(),ServerRpcController.getRpcChannel(controller));
+							remoteListener.onMessagePacketReceived(event);
+						}
+					};
+					
+					// erstellen einer Klasse zum Testen der OperationHandle
+					DeviceAsync deviceAsync = idList.get(ServerRpcController.getRpcChannel(controller)).getDevice();
+					deviceAsync.addListener(listener, types);
+					
+					packetListenerList.put(request.getOperationKey(), listener);
+					
+					done.run(EmptyAnswer.newBuilder().build());
+					
+				}}.run();
 		}
 
 		@Override
 		public void addMessagePlainTextListener(final RpcController controller,
-				final PacketTypeData request, RpcCallback<EmptyAnswer> done) {
+				final PacketTypeData request, final RpcCallback<EmptyAnswer> done) {
 			
 			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
 			if(user==null || !user.isAuthenticated()){
@@ -595,32 +573,36 @@ public class Server {
 				return;
 			}
 			
-
-			MessagePlainTextListener listener = new MessagePlainTextListener() {
+			new Runnable(){
 
 				@Override
-				public void onMessagePlainTextReceived(
-						MessageEvent<MessagePlainText> message) {
+				public void run() {
 					
-					RemoteMessagePlainTextListener remoteListener = new RemoteMessagePlainTextListener(request.getOperationKey(),ServerRpcController.getRpcChannel(controller));
-					remoteListener.onMessagePlainTextReceived(message);
-				}
-			};
-			
-			// erstellen einer Klasse zum Testen der OperationHandle
-			DeviceAsync deviceAsync = idList.get(ServerRpcController.getRpcChannel(controller)).getDevice();
-			deviceAsync.addListener(listener);
-			
-			plainTextListenerList.put(request.getOperationKey(), listener);
-			
-			done.run(EmptyAnswer.newBuilder().build());
-			
-			
+					MessagePlainTextListener listener = new MessagePlainTextListener() {
+
+						@Override
+						public void onMessagePlainTextReceived(
+								MessageEvent<MessagePlainText> message) {
+							
+							RemoteMessagePlainTextListener remoteListener = new RemoteMessagePlainTextListener(request.getOperationKey(),ServerRpcController.getRpcChannel(controller));
+							remoteListener.onMessagePlainTextReceived(message);
+						}
+					};
+					
+					// erstellen einer Klasse zum Testen der OperationHandle
+					DeviceAsync deviceAsync = idList.get(ServerRpcController.getRpcChannel(controller)).getDevice();
+					deviceAsync.addListener(listener);
+					
+					plainTextListenerList.put(request.getOperationKey(), listener);
+					
+					done.run(EmptyAnswer.newBuilder().build());
+					
+				}}.run();
 		}
 
 		@Override
-		public void removeMessagePacketListener(RpcController controller,
-				OpKey request, RpcCallback<EmptyAnswer> done) {
+		public void removeMessagePacketListener(final RpcController controller,
+				final OpKey request, final RpcCallback<EmptyAnswer> done) {
 			
 			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
 			if(user==null || !user.isAuthenticated()){
@@ -629,17 +611,22 @@ public class Server {
 				return;
 			}
 			
-			DeviceAsync deviceAsync = idList.get(ServerRpcController.getRpcChannel(controller)).getDevice();
+			new Runnable(){
 
-			deviceAsync.removeListener(packetListenerList.get(request.getOperationKey()));
-			packetListenerList.remove(request.getOperationKey());
-			done.run(EmptyAnswer.newBuilder().build());
-			
+				@Override
+				public void run() {
+					
+					DeviceAsync deviceAsync = idList.get(ServerRpcController.getRpcChannel(controller)).getDevice();
+					deviceAsync.removeListener(packetListenerList.get(request.getOperationKey()));
+					packetListenerList.remove(request.getOperationKey());
+					done.run(EmptyAnswer.newBuilder().build());
+					
+				}}.run();
 		}
 		
 		@Override
-		public void removeMessagePlainTextListener(RpcController controller,
-				OpKey request, RpcCallback<EmptyAnswer> done) {
+		public void removeMessagePlainTextListener(final RpcController controller,
+				final OpKey request, final RpcCallback<EmptyAnswer> done) {
 			
 			Subject user = authList.get(ServerRpcController.getRpcChannel(controller));
 			if(user==null || !user.isAuthenticated()){
@@ -648,10 +635,15 @@ public class Server {
 				return;
 			}
 
-			DeviceAsync deviceAsync = idList.get(ServerRpcController.getRpcChannel(controller)).getDevice();
-			deviceAsync.removeListener(plainTextListenerList.get(request.getOperationKey()));
-			plainTextListenerList.remove(request.getOperationKey());
-			done.run(EmptyAnswer.newBuilder().build());
+			new Runnable(){
+
+				@Override
+				public void run() {
+					DeviceAsync deviceAsync = idList.get(ServerRpcController.getRpcChannel(controller)).getDevice();
+					deviceAsync.removeListener(plainTextListenerList.get(request.getOperationKey()));
+					plainTextListenerList.remove(request.getOperationKey());
+					done.run(EmptyAnswer.newBuilder().build());
+				}}.run();
 		}
 	}
 

@@ -23,8 +23,9 @@ message clientMessage {
 	required string query = 2;
 }
 
-message ChipType {
-	required int32 type = 1;
+message ChipData {
+	required string type = 1;
+	required string OperationKey = 2;
 }
 
 message Identification {
@@ -69,11 +70,26 @@ message ListenerData {
 
 message ByteData {
 	repeated bytes data = 1;
+	optional string OperationKey = 2;
 }
 
 message PacketTypeData {
 	repeated int32 type = 1;
 	required string OperationKey = 2;
+}
+
+message GetHandleAnswers {
+	optional STRING chipData = 1;
+	optional EmptyAnswer emptyAnswer = 2;
+	optional MacData MacAddress = 3;
+	optional ByteData data = 4;
+}
+
+message ReverseAnswer {
+	optional ChipData chipData = 1;
+	optional OpKey success = 2;
+	optional MacData MacAddress = 3;
+	optional ByteData data = 4;
 }
 
 service Operations {
@@ -87,10 +103,10 @@ service Operations {
 	rpc send (sendData) returns (EmptyAnswer);
 	rpc writeFlash (FlashData) returns (EmptyAnswer);
 	rpc writeMac (MacData) returns (EmptyAnswer); 
-	rpc getChipType (Timeout) returns (ChipType);
+	rpc getChipType (Timeout) returns (EmptyAnswer);
 	
 	rpc cancelHandle (OpKey) returns (EmptyAnswer);
-	rpc getHandle (OpKey) returns (EmptyAnswer);
+	rpc getHandle (OpKey) returns (GetHandleAnswers);
 	rpc getState (OpKey) returns (STRING);
 }
 
@@ -105,9 +121,8 @@ service PacketServiceAnswer{
 	rpc sendReversePacketMessage (ListenerData) returns (EmptyAnswer);
 	rpc sendReversePlainTextMessage (ListenerData) returns (EmptyAnswer);
 	
-	rpc sendReverseMessage (clientMessage) returns (EmptyAnswer);
-	rpc reverseSuccessMac (MacData) returns (EmptyAnswer);
-	rpc reverseSuccessMessage (OpKey) returns (EmptyAnswer);
+	rpc reverseProgressChange (clientMessage) returns (EmptyAnswer);
+	rpc reverseSuccess (ReverseAnswer) returns (EmptyAnswer);
 	
 }
 
