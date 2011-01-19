@@ -109,7 +109,7 @@ public class MockDeviceExample {
 		System.out.println("Chip Type: " + handle.get());
 		//queue.shutdown(true);
 		//System.out.println("Queue terminated");
-		//connection.shutdown(true);
+		connection.shutdown(false);
 		System.out.println("Connection closed");
 	}
 

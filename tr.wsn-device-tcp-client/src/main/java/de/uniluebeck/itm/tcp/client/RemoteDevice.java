@@ -38,7 +38,6 @@ import de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketTypeData;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.Operations.BlockingInterface;
 import de.uniluebeck.itm.tcp.operations.getChipTypeOperation;
 import de.uniluebeck.itm.tcp.operations.readMacAddressOperation;

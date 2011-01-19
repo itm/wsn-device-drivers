@@ -6138,6 +6138,11 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.Identification request,
           com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
       
+      public abstract void shutdown(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
+      
       public abstract void program(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket request,
@@ -6209,6 +6214,14 @@ public final class MessageServiceFiles {
             de.uniluebeck.itm.tcp.files.MessageServiceFiles.Identification request,
             com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
           impl.connect(controller, request, done);
+        }
+        
+        @Override
+        public  void shutdown(
+            com.google.protobuf.RpcController controller,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer request,
+            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
+          impl.shutdown(controller, request, done);
         }
         
         @Override
@@ -6332,28 +6345,30 @@ public final class MessageServiceFiles {
             case 0:
               return impl.connect(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.Identification)request);
             case 1:
-              return impl.program(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket)request);
+              return impl.shutdown(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer)request);
             case 2:
-              return impl.eraseFlash(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout)request);
+              return impl.program(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket)request);
             case 3:
-              return impl.readFlash(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData)request);
+              return impl.eraseFlash(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout)request);
             case 4:
-              return impl.readMac(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout)request);
+              return impl.readFlash(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData)request);
             case 5:
-              return impl.reset(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout)request);
+              return impl.readMac(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout)request);
             case 6:
-              return impl.send(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData)request);
+              return impl.reset(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout)request);
             case 7:
-              return impl.writeFlash(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData)request);
+              return impl.send(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData)request);
             case 8:
-              return impl.writeMac(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData)request);
+              return impl.writeFlash(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData)request);
             case 9:
-              return impl.getChipType(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout)request);
+              return impl.writeMac(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData)request);
             case 10:
-              return impl.cancelHandle(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey)request);
+              return impl.getChipType(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout)request);
             case 11:
-              return impl.getHandle(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey)request);
+              return impl.cancelHandle(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey)request);
             case 12:
+              return impl.getHandle(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey)request);
+            case 13:
               return impl.getState(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey)request);
             default:
               throw new java.lang.AssertionError("Can't get here.");
@@ -6372,28 +6387,30 @@ public final class MessageServiceFiles {
             case 0:
               return de.uniluebeck.itm.tcp.files.MessageServiceFiles.Identification.getDefaultInstance();
             case 1:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket.getDefaultInstance();
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
             case 2:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout.getDefaultInstance();
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket.getDefaultInstance();
             case 3:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData.getDefaultInstance();
-            case 4:
               return de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout.getDefaultInstance();
+            case 4:
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData.getDefaultInstance();
             case 5:
               return de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout.getDefaultInstance();
             case 6:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData.getDefaultInstance();
-            case 7:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData.getDefaultInstance();
-            case 8:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData.getDefaultInstance();
-            case 9:
               return de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout.getDefaultInstance();
+            case 7:
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData.getDefaultInstance();
+            case 8:
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData.getDefaultInstance();
+            case 9:
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData.getDefaultInstance();
             case 10:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey.getDefaultInstance();
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout.getDefaultInstance();
             case 11:
               return de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey.getDefaultInstance();
             case 12:
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey.getDefaultInstance();
+            case 13:
               return de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
@@ -6416,9 +6433,9 @@ public final class MessageServiceFiles {
             case 2:
               return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
             case 3:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.ByteData.getDefaultInstance();
-            case 4:
               return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
+            case 4:
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.ByteData.getDefaultInstance();
             case 5:
               return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
             case 6:
@@ -6432,8 +6449,10 @@ public final class MessageServiceFiles {
             case 10:
               return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
             case 11:
-              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.GetHandleAnswers.getDefaultInstance();
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
             case 12:
+              return de.uniluebeck.itm.tcp.files.MessageServiceFiles.GetHandleAnswers.getDefaultInstance();
+            case 13:
               return de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
@@ -6446,6 +6465,11 @@ public final class MessageServiceFiles {
     public abstract void connect(
         com.google.protobuf.RpcController controller,
         de.uniluebeck.itm.tcp.files.MessageServiceFiles.Identification request,
+        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
+    
+    public abstract void shutdown(
+        com.google.protobuf.RpcController controller,
+        de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer request,
         com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done);
     
     public abstract void program(
@@ -6536,61 +6560,66 @@ public final class MessageServiceFiles {
               done));
           return;
         case 1:
-          this.program(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket)request,
+          this.shutdown(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer)request,
             com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
               done));
           return;
         case 2:
-          this.eraseFlash(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout)request,
+          this.program(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket)request,
             com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
               done));
           return;
         case 3:
+          this.eraseFlash(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout)request,
+            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
+              done));
+          return;
+        case 4:
           this.readFlash(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData)request,
             com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.ByteData>specializeCallback(
               done));
           return;
-        case 4:
+        case 5:
           this.readMac(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout)request,
             com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
               done));
           return;
-        case 5:
+        case 6:
           this.reset(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout)request,
             com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
               done));
           return;
-        case 6:
+        case 7:
           this.send(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData)request,
             com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
               done));
           return;
-        case 7:
+        case 8:
           this.writeFlash(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData)request,
             com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
               done));
           return;
-        case 8:
+        case 9:
           this.writeMac(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData)request,
             com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
               done));
           return;
-        case 9:
+        case 10:
           this.getChipType(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout)request,
             com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
               done));
           return;
-        case 10:
+        case 11:
           this.cancelHandle(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey)request,
             com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
               done));
           return;
-        case 11:
+        case 12:
           this.getHandle(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey)request,
             com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.GetHandleAnswers>specializeCallback(
               done));
           return;
-        case 12:
+        case 13:
           this.getState(controller, (de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey)request,
             com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING>specializeCallback(
               done));
@@ -6612,28 +6641,30 @@ public final class MessageServiceFiles {
         case 0:
           return de.uniluebeck.itm.tcp.files.MessageServiceFiles.Identification.getDefaultInstance();
         case 1:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket.getDefaultInstance();
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
         case 2:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout.getDefaultInstance();
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket.getDefaultInstance();
         case 3:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData.getDefaultInstance();
-        case 4:
           return de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout.getDefaultInstance();
+        case 4:
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData.getDefaultInstance();
         case 5:
           return de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout.getDefaultInstance();
         case 6:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData.getDefaultInstance();
-        case 7:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData.getDefaultInstance();
-        case 8:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData.getDefaultInstance();
-        case 9:
           return de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout.getDefaultInstance();
+        case 7:
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData.getDefaultInstance();
+        case 8:
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData.getDefaultInstance();
+        case 9:
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData.getDefaultInstance();
         case 10:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey.getDefaultInstance();
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout.getDefaultInstance();
         case 11:
           return de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey.getDefaultInstance();
         case 12:
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey.getDefaultInstance();
+        case 13:
           return de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
@@ -6656,9 +6687,9 @@ public final class MessageServiceFiles {
         case 2:
           return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
         case 3:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.ByteData.getDefaultInstance();
-        case 4:
           return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
+        case 4:
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.ByteData.getDefaultInstance();
         case 5:
           return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
         case 6:
@@ -6672,8 +6703,10 @@ public final class MessageServiceFiles {
         case 10:
           return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
         case 11:
-          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.GetHandleAnswers.getDefaultInstance();
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
         case 12:
+          return de.uniluebeck.itm.tcp.files.MessageServiceFiles.GetHandleAnswers.getDefaultInstance();
+        case 13:
           return de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
@@ -6711,12 +6744,27 @@ public final class MessageServiceFiles {
             de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance()));
       }
       
+      public  void shutdown(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
+        channel.callMethod(
+          getDescriptor().getMethods().get(1),
+          controller,
+          request,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
+          com.google.protobuf.RpcUtil.generalizeCallback(
+            done,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.class,
+            de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance()));
+      }
+      
       public  void program(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket request,
           com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
         channel.callMethod(
-          getDescriptor().getMethods().get(1),
+          getDescriptor().getMethods().get(2),
           controller,
           request,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
@@ -6731,7 +6779,7 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request,
           com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
         channel.callMethod(
-          getDescriptor().getMethods().get(2),
+          getDescriptor().getMethods().get(3),
           controller,
           request,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
@@ -6746,7 +6794,7 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData request,
           com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.ByteData> done) {
         channel.callMethod(
-          getDescriptor().getMethods().get(3),
+          getDescriptor().getMethods().get(4),
           controller,
           request,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.ByteData.getDefaultInstance(),
@@ -6761,7 +6809,7 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request,
           com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
         channel.callMethod(
-          getDescriptor().getMethods().get(4),
+          getDescriptor().getMethods().get(5),
           controller,
           request,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
@@ -6776,7 +6824,7 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request,
           com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
         channel.callMethod(
-          getDescriptor().getMethods().get(5),
+          getDescriptor().getMethods().get(6),
           controller,
           request,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
@@ -6791,7 +6839,7 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData request,
           com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
         channel.callMethod(
-          getDescriptor().getMethods().get(6),
+          getDescriptor().getMethods().get(7),
           controller,
           request,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
@@ -6806,7 +6854,7 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData request,
           com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
         channel.callMethod(
-          getDescriptor().getMethods().get(7),
+          getDescriptor().getMethods().get(8),
           controller,
           request,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
@@ -6821,7 +6869,7 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData request,
           com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
         channel.callMethod(
-          getDescriptor().getMethods().get(8),
+          getDescriptor().getMethods().get(9),
           controller,
           request,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
@@ -6836,7 +6884,7 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request,
           com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
         channel.callMethod(
-          getDescriptor().getMethods().get(9),
+          getDescriptor().getMethods().get(10),
           controller,
           request,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
@@ -6851,7 +6899,7 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request,
           com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer> done) {
         channel.callMethod(
-          getDescriptor().getMethods().get(10),
+          getDescriptor().getMethods().get(11),
           controller,
           request,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
@@ -6866,7 +6914,7 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request,
           com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.GetHandleAnswers> done) {
         channel.callMethod(
-          getDescriptor().getMethods().get(11),
+          getDescriptor().getMethods().get(12),
           controller,
           request,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.GetHandleAnswers.getDefaultInstance(),
@@ -6881,7 +6929,7 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request,
           com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING> done) {
         channel.callMethod(
-          getDescriptor().getMethods().get(12),
+          getDescriptor().getMethods().get(13),
           controller,
           request,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING.getDefaultInstance(),
@@ -6901,6 +6949,11 @@ public final class MessageServiceFiles {
       public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer connect(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.Identification request)
+          throws com.google.protobuf.ServiceException;
+      
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer shutdown(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer request)
           throws com.google.protobuf.ServiceException;
       
       public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer program(
@@ -6983,12 +7036,24 @@ public final class MessageServiceFiles {
       }
       
       
+      public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer shutdown(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer request)
+          throws com.google.protobuf.ServiceException {
+        return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
+          getDescriptor().getMethods().get(1),
+          controller,
+          request,
+          de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
+      }
+      
+      
       public de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer program(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket request)
           throws com.google.protobuf.ServiceException {
         return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
-          getDescriptor().getMethods().get(1),
+          getDescriptor().getMethods().get(2),
           controller,
           request,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
@@ -7000,7 +7065,7 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request)
           throws com.google.protobuf.ServiceException {
         return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
-          getDescriptor().getMethods().get(2),
+          getDescriptor().getMethods().get(3),
           controller,
           request,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
@@ -7012,7 +7077,7 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData request)
           throws com.google.protobuf.ServiceException {
         return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.ByteData) channel.callBlockingMethod(
-          getDescriptor().getMethods().get(3),
+          getDescriptor().getMethods().get(4),
           controller,
           request,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.ByteData.getDefaultInstance());
@@ -7024,7 +7089,7 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request)
           throws com.google.protobuf.ServiceException {
         return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
-          getDescriptor().getMethods().get(4),
+          getDescriptor().getMethods().get(5),
           controller,
           request,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
@@ -7036,7 +7101,7 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request)
           throws com.google.protobuf.ServiceException {
         return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
-          getDescriptor().getMethods().get(5),
+          getDescriptor().getMethods().get(6),
           controller,
           request,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
@@ -7048,7 +7113,7 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData request)
           throws com.google.protobuf.ServiceException {
         return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
-          getDescriptor().getMethods().get(6),
+          getDescriptor().getMethods().get(7),
           controller,
           request,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
@@ -7060,7 +7125,7 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData request)
           throws com.google.protobuf.ServiceException {
         return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
-          getDescriptor().getMethods().get(7),
+          getDescriptor().getMethods().get(8),
           controller,
           request,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
@@ -7072,7 +7137,7 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData request)
           throws com.google.protobuf.ServiceException {
         return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
-          getDescriptor().getMethods().get(8),
+          getDescriptor().getMethods().get(9),
           controller,
           request,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
@@ -7084,7 +7149,7 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout request)
           throws com.google.protobuf.ServiceException {
         return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
-          getDescriptor().getMethods().get(9),
+          getDescriptor().getMethods().get(10),
           controller,
           request,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
@@ -7096,7 +7161,7 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request)
           throws com.google.protobuf.ServiceException {
         return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
-          getDescriptor().getMethods().get(10),
+          getDescriptor().getMethods().get(11),
           controller,
           request,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
@@ -7108,7 +7173,7 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request)
           throws com.google.protobuf.ServiceException {
         return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.GetHandleAnswers) channel.callBlockingMethod(
-          getDescriptor().getMethods().get(11),
+          getDescriptor().getMethods().get(12),
           controller,
           request,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.GetHandleAnswers.getDefaultInstance());
@@ -7120,7 +7185,7 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey request)
           throws com.google.protobuf.ServiceException {
         return (de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING) channel.callBlockingMethod(
-          getDescriptor().getMethods().get(12),
+          getDescriptor().getMethods().get(13),
           controller,
           request,
           de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING.getDefaultInstance());
@@ -8233,9 +8298,10 @@ public final class MessageServiceFiles {
       "ata\"|\n\rReverseAnswer\022\033\n\010chipData\030\001 \001(\0132\t" +
       ".ChipData\022\027\n\007success\030\002 \001(\0132\006.OpKey\022\034\n\nMa" +
       "cAddress\030\003 \001(\0132\010.MacData\022\027\n\004data\030\004 \001(\0132\t" +
-      ".ByteData2\354\003\n\nOperations\022(\n\007connect\022\017.Id" +
-      "entification\032\014.EmptyAnswer\022\'\n\007program\022\016." +
-      "ProgramPacket\032\014.EmptyAnswer\022$\n\neraseFlas",
+      ".ByteData2\224\004\n\nOperations\022(\n\007connect\022\017.Id" +
+      "entification\032\014.EmptyAnswer\022&\n\010shutdown\022\014" +
+      ".EmptyAnswer\032\014.EmptyAnswer\022\'\n\007program\022\016.",
+      "ProgramPacket\032\014.EmptyAnswer\022$\n\neraseFlas" +
       "h\022\010.Timeout\032\014.EmptyAnswer\022\"\n\treadFlash\022\n" +
       ".FlashData\032\t.ByteData\022!\n\007readMac\022\010.Timeo" +
       "ut\032\014.EmptyAnswer\022\037\n\005reset\022\010.Timeout\032\014.Em" +
@@ -8244,8 +8310,8 @@ public final class MessageServiceFiles {
       "er\022\"\n\010writeMac\022\010.MacData\032\014.EmptyAnswer\022%" +
       "\n\013getChipType\022\010.Timeout\032\014.EmptyAnswer\022$\n" +
       "\014cancelHandle\022\006.OpKey\032\014.EmptyAnswer\022&\n\tg" +
-      "etHandle\022\006.OpKey\032\021.GetHandleAnswers\022\033\n\010g" +
-      "etState\022\006.OpKey\032\007.STRING2\365\001\n\rPacketServi",
+      "etHandle\022\006.OpKey\032\021.GetHandleAnswers\022\033\n\010g",
+      "etState\022\006.OpKey\032\007.STRING2\365\001\n\rPacketServi" +
       "ce\0229\n\030addMessagePacketListener\022\017.PacketT" +
       "ypeData\032\014.EmptyAnswer\022<\n\033addMessagePlain" +
       "TextListener\022\017.PacketTypeData\032\014.EmptyAns" +
@@ -8254,8 +8320,8 @@ public final class MessageServiceFiles {
       "xtListener\022\006.OpKey\032\014.EmptyAnswer2\361\001\n\023Pac" +
       "ketServiceAnswer\0227\n\030sendReversePacketMes" +
       "sage\022\r.ListenerData\032\014.EmptyAnswer\022:\n\033sen" +
-      "dReversePlainTextMessage\022\r.ListenerData\032" +
-      "\014.EmptyAnswer\0225\n\025reverseProgressChange\022\016",
+      "dReversePlainTextMessage\022\r.ListenerData\032",
+      "\014.EmptyAnswer\0225\n\025reverseProgressChange\022\016" +
       ".clientMessage\032\014.EmptyAnswer\022.\n\016reverseS" +
       "uccess\022\016.ReverseAnswer\032\014.EmptyAnswer2\022\n\020" +
       "RemoteOperationsB2\n\033de.uniluebeck.itm.tc" +
