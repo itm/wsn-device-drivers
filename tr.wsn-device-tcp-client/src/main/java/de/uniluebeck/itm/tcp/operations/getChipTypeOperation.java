@@ -33,9 +33,6 @@ public class getChipTypeOperation extends Operation<ChipType> {
 				if(controller.failed()){
 					callback.onFailure(new Throwable(controller.errorText()));
 				}
-				else{
-					System.out.println("Ausgabe");
-				}
 			}
 		});
 		return getHandle();
