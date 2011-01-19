@@ -15,7 +15,7 @@ import de.uniluebeck.itm.devicedriver.Connection;
 import de.uniluebeck.itm.devicedriver.Device;
 import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.QueuedDeviceAsync;
-import de.uniluebeck.itm.devicedriver.async.singlethread.SingleThreadOperationQueue;
+import de.uniluebeck.itm.devicedriver.async.thread.PausableExecutorOperationQueue;
 import de.uniluebeck.itm.tcp.Server.JaxbDevices.ConfigReader;
 import de.uniluebeck.itm.tcp.Server.JaxbDevices.JaxbDevice;
 import de.uniluebeck.itm.tcp.Server.JaxbDevices.JaxbDeviceList;
@@ -150,7 +150,7 @@ public class ServerDevice {
 	 */
 	private DeviceAsync createDeviceAsync(Device device){
 		
-		return new QueuedDeviceAsync(new SingleThreadOperationQueue(), device);
+		return new QueuedDeviceAsync(new PausableExecutorOperationQueue(), device);
 	}
 	
 	/**
