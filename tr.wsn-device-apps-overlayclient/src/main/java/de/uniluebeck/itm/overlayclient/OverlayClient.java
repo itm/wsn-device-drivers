@@ -1,5 +1,12 @@
 package de.uniluebeck.itm.overlayclient;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import de.uniluebeck.itm.metadaten.remote.client.MetaDatenClient;
+import de.uniluebeck.itm.metadaten.remote.entity.Capability;
+import de.uniluebeck.itm.metadaten.remote.entity.Node;
+
 public class OverlayClient {
 
 	private String server;
@@ -13,14 +20,65 @@ public class OverlayClient {
 	}
 	
 	public void sucheKnotenMitID(String ID){
-		System.out.println("Der Knoten mit der ID: " +ID+ " wird gesucht...");
+		MetaDatenClient client = new MetaDatenClient();
+		Node queryExample = new Node();
+		queryExample.setId(ID);
+		String query = "";		//TODO Welche Query?
+		List<Node> results = new ArrayList<Node>();
+		try {
+			results = client.search(queryExample, query);
+		} catch (Exception e) {
+			System.out.println("Fehler!");
+		}
+		System.out.println("Anzahl der Ergebnisse: " + results.size());
+		for(Node node:results){
+			System.out.println(node.getId());
+			System.out.println(node.getPort());
+			System.out.println(node.getIpAddress());
+			System.out.println();
+		}
 	}
 	
 	public void sucheKnotenMitMicrocontroller(String microcontroller){
-		System.out.println("Die Knoten mit dem Microconroller: " +microcontroller+ " werden gesucht...");
+		MetaDatenClient client = new MetaDatenClient();
+		Node queryExample = new Node();
+		queryExample.setMicrocontroller(microcontroller);
+		String query = "";		//TODO Welche Query?
+		List<Node> results = new ArrayList<Node>();
+		try {
+			results = client.search(queryExample, query);
+		} catch (Exception e) {
+			System.out.println("Fehler!");
+		}
+		System.out.println("Anzahl der Ergebnisse: " + results.size());
+		for(Node node:results){
+			System.out.println(node.getId());
+			System.out.println(node.getPort());
+			System.out.println(node.getIpAddress());
+			System.out.println();
+		}
 	}
 	
 	public void sucheKnotenMitSensor(String sensor){
-		System.out.println("Die Knoten mit dem Sensor: " +sensor+ " werden gesucht...");
+		List<Capability> sensoren = new ArrayList<Capability>();
+		Capability capability = new Capability(sensor, null, null, 0);
+		sensoren.add(capability);
+		MetaDatenClient client = new MetaDatenClient();
+		Node queryExample = new Node();
+		queryExample.setCapabilityList(sensoren);
+		String query = "";		//TODO Welche Query?
+		List<Node> results = new ArrayList<Node>();
+		try {
+			results = client.search(queryExample, query);
+		} catch (Exception e) {
+			System.out.println("Fehler!");
+		}
+		System.out.println("Anzahl der Ergebnisse: " + results.size());
+		for(Node node:results){
+			System.out.println(node.getId());
+			System.out.println(node.getPort());
+			System.out.println(node.getIpAddress());
+			System.out.println();
+		}
 	}
 }
