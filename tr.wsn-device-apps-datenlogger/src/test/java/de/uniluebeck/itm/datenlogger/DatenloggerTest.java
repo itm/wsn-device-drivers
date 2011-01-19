@@ -50,5 +50,38 @@ public class DatenloggerTest extends TestCase {
 		logger.startlog();
 		assertEquals("true", logger.gestartet);
 	}
+	
+	public void testStoplog(){
+		Datenlogger logger = new Datenlogger();
+		logger.startlog();
+		logger.stoplog();
+		assertEquals("false", logger.gestartet);
+	}
+	
+	public void testAdd_klammer_filter(){
+		Datenlogger logger = new Datenlogger();
+		logger.setKlammer_filter("(uint32,6,28)");
+		logger.add_klammer_filter("&(uint32,5,17)|(int16,0,3)");
+		assertEquals("(uint32,6,28)(uint32,5,17)|(int16,0,3)", logger.klammer_filter);
+	}
+	
+	public void testAdd_regex_filter(){
+		Datenlogger logger = new Datenlogger();
+		logger.setRegex_filter("(a&b)");
+		logger.add_regex_filter("|c");
+		assertEquals("(a&b)|c", logger.regex_filter);
+	}
+	
+	public void testWriteToXmlFile(){
+		Datenlogger logger = new Datenlogger();
+		logger.writeToXmlFile();
+		//TODO ...
+	}
+	
+	public void testWriteToDatabase(){
+		Datenlogger logger = new Datenlogger();
+		logger.writeToDatabase();
+		//TODO ...
+	}
 }
 

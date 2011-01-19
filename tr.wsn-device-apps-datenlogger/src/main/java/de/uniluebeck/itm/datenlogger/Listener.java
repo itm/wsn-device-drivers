@@ -14,7 +14,7 @@ public class Listener extends Thread{
     public void run(){
         while(notStop){
             try {
-                Thread.sleep(1000);
+                //Thread.sleep(1000);
                 BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
                 String input = in.readLine();
                 if(input.startsWith("-klammer_filter")){

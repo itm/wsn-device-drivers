@@ -44,7 +44,7 @@ import de.uniluebeck.itm.devicedriver.PacketType;
 import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.OperationQueue;
 import de.uniluebeck.itm.devicedriver.async.QueuedDeviceAsync;
-import de.uniluebeck.itm.devicedriver.async.singlethread.SingleThreadOperationQueue;
+import de.uniluebeck.itm.devicedriver.async.thread.PausableExecutorOperationQueue;
 import de.uniluebeck.itm.devicedriver.mockdevice.MockConnection;
 import de.uniluebeck.itm.devicedriver.mockdevice.MockDevice;
 
@@ -144,8 +144,6 @@ public class Datenlogger {
 	}	
 	
 	public void startlog(){
-		new Listener(this).start();
-		
 		System.out.println("Parameter:");
 		System.out.println("Port: " + port);
 		System.out.println("Server: " + server);
@@ -156,7 +154,7 @@ public class Datenlogger {
 		gestartet = true;
 		System.out.println("\nStarte das Loggen des Knotens....");
 
-		final OperationQueue queue = new SingleThreadOperationQueue();
+		final OperationQueue queue = new PausableExecutorOperationQueue();
 		final MockConnection connection = new MockConnection();
 		final Device device = new MockDevice(connection);
 		
@@ -198,12 +196,6 @@ public class Datenlogger {
 				}
 			}
 		}, PacketType.LOG);
-
-		try {
-            Thread.sleep(1000);
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
-        }
 	}	
 	
 	public void stoplog(){
@@ -230,7 +222,7 @@ public class Datenlogger {
 		System.out.println("Filter hinzugefuegt");
 	}
 	
-	private void writeToXmlFile(){
+	public void writeToXmlFile(){
 		//Read the xml file
         CreateXML create = new CreateXML();
 
@@ -252,8 +244,7 @@ public class Datenlogger {
         Position position = new Position(1.23, 1.56, 1.77);
         Data data = new Data("urn:wisebed:node:capability:time");
 
-        Node node1 = new Node("urn:wisebed:node:tud:M4FTR", position, "gw1", "blinkfast.tnode",
-                "fast blinking node", "TNide v4", capList, data);
+        Node node1 = new Node("urn:wisebed:node:tud:M4FTR", "gw1", "123.456.79", "ein Knoten", capList);
         nodeList.add(node1);
 
         Rssi rssi = new Rssi("decimal", "dBam", "-120");
@@ -285,7 +276,8 @@ public class Datenlogger {
         create.writeXML("test.xml", setup, scenario, trace);
 	}
 	
-	private void writeToDatabase(){
+	public void writeToDatabase(){
+		System.out.println("Knoten soll gespeichert werden...");
 		SessionFactory sessionFactory;
 		try {
             sessionFactory = new AnnotationConfiguration().
@@ -303,5 +295,6 @@ public class Datenlogger {
         final Session session = sessionFactory.openSession();
         Transaction tr = session.beginTransaction();
         tr.commit();
+        System.out.println("Knoten gespeichert.");
 	}
 }

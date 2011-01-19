@@ -14,11 +14,13 @@ public class Main {
 		// create Options object
 		Option help_option = new Option( "help", "print this message" );
 		Option version_option = new Option( "version", "print the version information" );
+		Option interactive = new Option("i", "interactive mode");
 		
 		Options options = new Options();
 		
 		options.addOption(help_option);
 		options.addOption(version_option);
+		options.addOption(interactive);
 
 		// add options for Datenlogger
 		options.addOption("port", true, "port");
@@ -38,6 +40,12 @@ public class Main {
 			System.out.println("Diese Option gibt es nicht.");
 		}
 		if(cmd != null){
+			Datenlogger datenlogger = new Datenlogger();
+			
+			if(cmd.hasOption("i")){
+				new Listener(datenlogger).start();
+			}
+			
 			//standard-options
 			if(cmd.hasOption("help")){
 				System.out.println("Aufrufbeispiele:");
@@ -56,7 +64,6 @@ public class Main {
 				String port = cmd.getOptionValue("port");
 				String server = cmd.getOptionValue("server");
 				
-				Datenlogger datenlogger = new Datenlogger();
 				datenlogger.setPort(port);
 				datenlogger.setServer(server);
 				datenlogger.getloggers();
@@ -70,7 +77,6 @@ public class Main {
 				String regex_filter = cmd.getOptionValue("regex_filter");
 				String location = cmd.getOptionValue("location");
 				
-				Datenlogger datenlogger = new Datenlogger();
 				datenlogger.setPort(port);
 				datenlogger.setServer(server);
 				datenlogger.setKlammer_filter(klammer_filter);

@@ -1,237 +1,150 @@
 package model;
 
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
-import org.simpleframework.xml.ElementList;
-
-import java.util.List;
 
 /**
  * A Node Entity is described.
  */
+
+@Entity
+@Table(catalog = "metadaten_db", name = "node")
 public class Node implements Key {
 
-    @Attribute
-    private String id;
+	@Id
+	@Attribute
+	@Column(name = "id", nullable = false, length = 100)
+	private String id;
 
+	/**
+	 * Node Defaults Elements.
+	 */
 
-    /**
-     * Node Defaults Elements.
-     */
+	@Element
+	@Basic
+	@Column(name = "microcontroller", length = 100)
+	private String microcontroller;
 
-    @Element
-    private Position position;
+	@Element
+	@Basic
+	@Column(name = "ipAdress", length = 100)
+	private String ipAddress;
 
-    @Element
-    private String gateway;
+	@Element
+	@Basic
+	@Column(name = "description", length = 100)
+	private String description;
 
-    @Element
-    private String image;
+	@Element
+	private short port;
 
-    @Element
-    private String nodetype;
+	@Element
+	private Date timestamp;
 
-    @Element
-    private String description;
+	/**
+	 * List with the capability elements of the entity.
+	 */
+	//@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "parentnode")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "parentnode")
+	// @OneToMany(mappedBy = "nodeId")
+	private List<Capability> capabilityList;
 
-    @Element
-    private Data data;
+	/**
+	 * Requires function for deserializing objects.
+	 */
+	public Node() {
+		super();
+	}
 
+	/**
+	 * Constructor Method.
+	 * 
+	 * @param microcontoller
+	 * @param ipAddress
+	 * @param softwareRevision
+	 * @param otapVersion
+	 * @param description
+	 * @param capList
+	 */
+	public Node(String identity, String microcontoller, String IpAddress,
+			String description, List capList) {
+		setID(identity);
+		setMicrocontroller(microcontoller);
+		setIpAddress(IpAddress);
 
-    /**
-     * List with the capability elements of the entity.
-     */
-    @ElementList(inline = true)
-    private List<Capability> capabilityList;
+		setDescription(description);
+		setCapabilityList(capList);
+	}
 
+	public String getID() {
+		return id;
+	}
 
-    /**
-     * Requires function for deserializing objects.
-     */
-    public Node() {
-        super();
-    }
+	public void setID(final String id) {
+		this.id = id;
+	}
 
+	public String getMicrocontroller() {
+		return microcontroller;
+	}
 
-    /**
-     * Constructor Method.
-     *
-     * @param identity
-     * @param position
-     * @param gateway
-     * @param image
-     * @param nodetype
-     * @param description
-     * @param capList
-     * @param data
-     */
-    public Node(String identity, Position position, String gateway, String image,
-                String nodetype, String description, List capList, Data data) {
-        setID(identity);
-        setPosition(position);
-        setGW(gateway);
-        setImage(image);
-        setNodeType(nodetype);
-        setDescription(description);
-        setCapabilityList(capList);
-        setData(data);
-    }
+	public void setMicrocontroller(String microcontroller) {
+		this.microcontroller = microcontroller;
+	}
 
-    /**
-     * Returns the identity of this entity.
-     *
-     * @return the identity.
-     */
-    public String getID() {
-        return this.id;
-    }
+	public void setIpAddress(String ipAddress) {
+		this.ipAddress = ipAddress;
+	}
 
+	public String getIpAddress() {
+		return ipAddress;
+	}
 
-    /**
-     * Sets the id for this entity.
-     *
-     * @param newId the new name.
-     */
-    public void setID(final String newId) {
-        this.id = newId;
-    }
+	public String getDescription() {
+		return description;
+	}
 
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    /**
-     * Get the position entity.
-     *
-     * @return Position element.
-     */
-    public Position getPosition() {
-        return this.position;
-    }
+	public void setPort(short port) {
+		this.port = port;
+	}
 
-    /**
-     * Set the position entity.
-     *
-     * @param position
-     */
-    public void setPosition(Position position) {
-        this.position = position;
-    }
+	public short getPort() {
+		return this.port;
+	}
 
-    /**
-     * Get the gateway entity.
-     *
-     * @return String.
-     */
-    public String getGW() {
-        return this.gateway;
-    }
+	public void setTimestamp(Date timestamp) {
+		this.timestamp = timestamp;
+	}
 
-    /**
-     * Set the gateway entity.
-     *
-     * @param gateway
-     */
-    public void setGW(String gateway) {
-        this.gateway = gateway;
-    }
+	public Date getTimestamp() {
+		return this.timestamp;
+	}
 
+	public List<Capability> getCapabilityList() {
+		return capabilityList;
+	}
 
-    /**
-     * Get the image entity.
-     *
-     * @return String.
-     */
-    public String getImage() {
-        return this.image;
-    }
+	public void setCapabilityList(List<Capability> capabilityList) {
+		this.capabilityList = capabilityList;
+	}
 
-    /**
-     * Set the image entity.
-     *
-     * @param image
-     */
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    /**
-     * Get the nodetype entity.
-     *
-     * @return String.
-     */
-    public String getNodeType() {
-        return this.nodetype;
-    }
-
-    /**
-     * Set the nodetype entity.
-     *
-     * @param type
-     */
-    public void setNodeType(String type) {
-        this.nodetype = type;
-    }
-
-
-    /**
-     * Get the description entity.
-     *
-     * @return String.
-     */
-    public String getDescription() {
-        return this.description;
-    }
-
-    /**
-     * Set the description entity.
-     *
-     * @param description
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-
-    /**
-     * Get the data entity.
-     *
-     * @return Data data.
-     */
-    public Data getData() {
-        return this.data;
-    }
-
-    /**
-     * Set the data entity.
-     *
-     * @param data
-     */
-    public void setData(Data data) {
-        this.data = data;
-    }
-
-    /**
-     * Returns a List of capabilities.
-     *
-     * @return
-     */
-    public List getCapabilityList() {
-        return this.capabilityList;
-    }
-
-    /**
-     * Set the list of capabilities.
-     *
-     * @param capList
-     */
-    public void setCapabilityList(List capList) {
-        this.capabilityList = capList;
-    }
-
-    /**
-     * impements the getKey function from Interface Key.
-     *
-     * @return the Object(integer) Key of the entity Node.
-     */
-    public Object getKey() {
-        return getID();
-    }
+	@Override
+	public Object getKey() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
