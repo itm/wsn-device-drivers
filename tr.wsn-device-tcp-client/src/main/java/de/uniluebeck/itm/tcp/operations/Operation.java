@@ -4,10 +4,13 @@ import com.google.protobuf.RpcController;
 import com.google.protobuf.ServiceException;
 import com.googlecode.protobuf.pro.duplex.RpcClientChannel;
 
+import de.uniluebeck.itm.devicedriver.ChipType;
+import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.State;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 import de.uniluebeck.itm.tcp.files.PacketServiceAnswerImpl;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.GetHandleAnswers;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.Operations;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING;
@@ -46,11 +49,12 @@ public abstract class Operation<T> {
 		        	blockOperationService.cancelHandle(controller, OpKey.newBuilder().setOperationKey(controller.toString()).build());
 		        	controller.startCancel();
 				} catch (ServiceException e) {
-					e.printStackTrace();
+					//TODO vernuenftige Fehlermeldung
 				}
 			}
 
 			// aufruf bei get (User-seitig)
+			@SuppressWarnings("unchecked")
 			@Override
 			public T get() {
 
@@ -60,21 +64,30 @@ public abstract class Operation<T> {
 		        BlockingInterface blockOperationService =  Operations.newBlockingStub(channel);
 		        try {
 		        	// sync RPC-Aufruf
-		        	blockOperationService.getHandle(controller, OpKey.newBuilder().setOperationKey(controller.toString()).build());
+		        	GetHandleAnswers response = blockOperationService.getHandle(controller, OpKey.newBuilder().setOperationKey(controller.toString()).build());
+		        	
+		        	T obj = null;
+
+		        	if(response.hasMacAddress()){
+		        		obj = (T) new MacAddress(response.getMacAddress().getMACADDRESSList().get(0).toByteArray());
+		        	}
+		        	else if(response.hasChipData()){
+		        		obj = (T) ChipType.valueOf(response.getChipData().getQuery());
+		        	}
+		        	else if(response.hasData()){
+		        		obj = (T) response.getData().getDataList().get(0).toByteArray();
+		        	}
+		        	return obj;
+		        	
 				} catch (ServiceException e) {
-					e.printStackTrace();
+					//TODO vernuenftige Fehlermeldung
+					return null;
 				}
-				return null;//TODO MacAdresse zurueckgeben
 			}
 			
 			// aufruf bei getState (User-seitig)
 			@Override
 			public State getState() {
-				
-				// erzeugen eines State-Objekts
-				State state = null;
-
-				// Blockierender Aufruf fuer getState in Ordnung?
 				
 				// erzeugen eines sync RPC-Objekts fuer die Operationen
 				BlockingInterface blockOperationService =  Operations.newBlockingStub(channel);
@@ -82,12 +95,11 @@ public abstract class Operation<T> {
 					// sync RPC-Aufruf
 					STRING result = blockOperationService.getState(controller,  OpKey.newBuilder().setOperationKey(controller.toString()).build());
 					// erzeugen eines State aus dem result-String
-					state = State.fromName(result.getQuery());
+					return State.fromName(result.getQuery());
 				} catch (ServiceException e) {
-					e.printStackTrace();
+					//TODO vernuenftige Fehlermeldung
+					return null;
 				}
-				
-				return state;
 			}};
 	}
 	

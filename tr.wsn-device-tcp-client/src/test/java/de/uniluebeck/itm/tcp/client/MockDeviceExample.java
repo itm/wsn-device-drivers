@@ -6,6 +6,7 @@ import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.MessagePacketListener;
 import de.uniluebeck.itm.devicedriver.PacketType;
+import de.uniluebeck.itm.devicedriver.State;
 import de.uniluebeck.itm.devicedriver.async.AsyncAdapter;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
@@ -31,7 +32,7 @@ public class MockDeviceExample {
 		//connection.connect("MockPort");
 		connection.connect("1:testUser:testPassword@localhost:8080");
 		System.out.println("Connected");
-		
+
 		//final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
 		
 		final DeviceAsync deviceAsync = new RemoteDevice(connection);
@@ -81,9 +82,13 @@ public class MockDeviceExample {
 				throwable.printStackTrace();
 			}
 		});
-		deviceAsync.readMac(10000000, callback);
 		
-		final OperationHandle<ChipType> handle = deviceAsync.getChipType(10000, new AsyncAdapter<ChipType>() {
+		OperationHandle<MacAddress> han = deviceAsync.readMac(10000000, callback);
+		System.out.println(han.get());
+		
+		System.out.println();
+		
+		final OperationHandle<ChipType> handle = deviceAsync.getChipType(100000, new AsyncAdapter<ChipType>() {
 
 			@Override
 			public void onProgressChange(float fraction) {
@@ -95,12 +100,16 @@ public class MockDeviceExample {
 			public void onFailure(Throwable throwable) {
 				throwable.printStackTrace();
 			}
+			@Override
+			public void onSuccess(ChipType result) {
+				System.out.println("Chip Type onSuccess: " + result.getName());
+			}
 		});
 		
 		System.out.println("Chip Type: " + handle.get());
 		//queue.shutdown(true);
 		//System.out.println("Queue terminated");
-		connection.shutdown(true);
+		//connection.shutdown(true);
 		System.out.println("Connection closed");
 	}
 

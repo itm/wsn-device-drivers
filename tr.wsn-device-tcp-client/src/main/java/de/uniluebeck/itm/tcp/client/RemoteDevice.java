@@ -40,6 +40,7 @@ import de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.Operations.BlockingInterface;
+import de.uniluebeck.itm.tcp.operations.getChipTypeOperation;
 import de.uniluebeck.itm.tcp.operations.readMacAddressOperation;
 
 /**
@@ -361,9 +362,9 @@ public class RemoteDevice implements DeviceAsync{
 
 	@Override
 	public OperationHandle<ChipType> getChipType(long timeout,
-			AsyncCallback<ChipType> callback) {
-		// TODO Auto-generated method stub
-		return null;
+			final AsyncCallback<ChipType> callback) {
+		
+		return new getChipTypeOperation(channel, callback, operationService, packetServiceAnswerImpl, timeout).operate();
 	}
 
 	@Override

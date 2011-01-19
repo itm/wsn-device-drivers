@@ -5,6 +5,7 @@ import java.util.HashMap;
 import com.google.protobuf.RpcCallback;
 import com.google.protobuf.RpcController;
 
+import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.MessagePacketListener;
@@ -14,9 +15,8 @@ import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.event.MessageEvent;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketServiceAnswer;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.ReverseAnswer;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage;
 
 // Implementierung der Methoden fuer das ReverseRPC
@@ -24,7 +24,7 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 
 	private HashMap<String, MessagePacketListener> packetListenerList = new HashMap<String, MessagePacketListener>();
 	private HashMap<String, MessagePlainTextListener> plainTextListenerList = new HashMap<String, MessagePlainTextListener>();
-	//@SuppressWarnings("unchecked")
+
 	private HashMap<String, AsyncCallback<?>> callbackList = new HashMap<String, AsyncCallback<?>>();
 
 	public PacketServiceAnswerImpl() {
@@ -47,13 +47,11 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 		plainTextListenerList.remove(key);
 	}
 
-	//@SuppressWarnings("unchecked")
 	public AsyncCallback<?> getCallback(String key) {
 		return callbackList.get(key);
 	}
 
-	@SuppressWarnings("unchecked")
-	public void addCallback(String key, AsyncCallback callback) {
+	public void addCallback(String key, AsyncCallback<?> callback) {
 		this.callbackList.put(key, callback);
 	}
 
@@ -83,36 +81,35 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 	}
 
 	@Override
-	public void sendReverseMessage(RpcController controller,
+	public void reverseProgressChange(RpcController controller,
 			clientMessage request, RpcCallback<EmptyAnswer> done) {
 		
 		getCallback(request.getOperationKey()).onProgressChange(Float.parseFloat(request.getQuery()));
-		
 		done.run(EmptyAnswer.newBuilder().build());
 		
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void reverseSuccessMac(RpcController controller, MacData request,
+	public void reverseSuccess(RpcController controller, ReverseAnswer request,
 			RpcCallback<EmptyAnswer> done) {
-		
-		AsyncCallback<MacAddress> call = (AsyncCallback<MacAddress>) getCallback(request.getOperationKey());
-		call.onSuccess(new MacAddress(request.getMACADDRESSList().get(0).toByteArray()));
-		
-		done.run(EmptyAnswer.newBuilder().build());
+
+		if(request.hasSuccess()){
+			AsyncCallback<Void> call = (AsyncCallback<Void>) getCallback(request.getSuccess().getOperationKey());
+			call.onSuccess(null);
+		}
+		else if(request.hasChipData()){
+			AsyncCallback<ChipType> call = (AsyncCallback<ChipType>) getCallback(request.getChipData().getOperationKey());
+			call.onSuccess(ChipType.valueOf(request.getChipData().getType()));
+		}
+		else if(request.hasMacAddress()){
+			AsyncCallback<MacAddress> call = (AsyncCallback<MacAddress>) getCallback(request.getMacAddress().getOperationKey());
+			call.onSuccess(new MacAddress(request.getMacAddress().getMACADDRESSList().get(0).toByteArray()));
+		}
+		else if(request.hasData()){
+			AsyncCallback<byte[]> call = (AsyncCallback<byte[]>) getCallback(request.getData().getOperationKey());
+			call.onSuccess(request.getData().getDataList().get(0).toByteArray());
+		}
 		
 	}
-
-	@Override
-	public void reverseSuccessMessage(RpcController controller, OpKey request,
-			RpcCallback<EmptyAnswer> done) {
-		
-		getCallback(request.getOperationKey()).onSuccess(null);
-		done.run(EmptyAnswer.newBuilder().build());
-		
-	}
-	
-	
-
 }
