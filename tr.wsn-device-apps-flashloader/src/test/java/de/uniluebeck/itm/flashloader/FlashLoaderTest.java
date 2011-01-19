@@ -17,9 +17,10 @@ public class FlashLoaderTest extends TestCase {
 	    assertEquals("123", flashloader.server);
 	}
 	
-	public void testSend(){
+	public void testFlash(){
 		FlashLoader flashloader = new FlashLoader();
 		flashloader.flash("123");
+		assertEquals(true, flashloader.geflasht);
 	}
 	
 	public void testWriteReadMac(){
@@ -27,10 +28,12 @@ public class FlashLoaderTest extends TestCase {
 		MacAddress macAdresse = new MacAddress(1024);
 		flashloader.writemac(macAdresse);
 		flashloader.readmac();
+		assertEquals(macAdresse, flashloader.current_mac_adress);
 	}
 	
 	public void testReset(){
 		FlashLoader flashloader = new FlashLoader();
 		flashloader.reset();
+		assertEquals(true, flashloader.geresetet);
 	}
 }

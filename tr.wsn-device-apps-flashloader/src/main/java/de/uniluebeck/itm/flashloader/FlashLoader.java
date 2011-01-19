@@ -10,7 +10,7 @@ import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.OperationQueue;
 import de.uniluebeck.itm.devicedriver.async.QueuedDeviceAsync;
-import de.uniluebeck.itm.devicedriver.async.singlethread.SingleThreadOperationQueue;
+import de.uniluebeck.itm.devicedriver.async.thread.PausableExecutorOperationQueue;
 import de.uniluebeck.itm.devicedriver.event.MessageEvent;
 import de.uniluebeck.itm.devicedriver.mockdevice.MockConnection;
 import de.uniluebeck.itm.devicedriver.mockdevice.MockDevice;
@@ -19,9 +19,13 @@ public class FlashLoader {
 	
 	String port;
 	String server;
+	boolean geflasht = false;	//für den Test
+	String current_mac_adress;		//für den Test
+	boolean geresetet = false;		//für den Test
+	
 	
 	public FlashLoader(){
-		
+
 	}
 	
 	public void setPort(String port) {
@@ -38,7 +42,7 @@ public class FlashLoader {
 		System.out.println("Server: " + server);
 		System.out.println("File: " + file);
 		
-		final OperationQueue queue = new SingleThreadOperationQueue();
+		final OperationQueue queue = new PausableExecutorOperationQueue();
 		final MockConnection connection = new MockConnection();
 		final Device device = new MockDevice(connection);
 		
@@ -65,6 +69,7 @@ public class FlashLoader {
 			@Override
 			public void onSuccess(Void result) {
 				System.out.println("The Device has been flashed.");
+				geflasht = true;         //für den Test
 				System.exit(0);
 			}
 
@@ -81,7 +86,7 @@ public class FlashLoader {
 		System.out.println("Port: " + port);
 		System.out.println("Server: " + server);
 		
-		final OperationQueue queue = new SingleThreadOperationQueue();
+		final OperationQueue queue = new PausableExecutorOperationQueue();
 		final MockConnection connection = new MockConnection();
 		final Device device = new MockDevice(connection);
 		
@@ -107,6 +112,7 @@ public class FlashLoader {
 			
 			public void onSuccess(MacAddress result) {
 				System.out.println("Mac Address: " + result.getMacString());
+				current_mac_adress = result.getMacString();
 				System.exit(0);
 			}
 			
@@ -124,7 +130,7 @@ public class FlashLoader {
 		System.out.println("Port: " + port);
 		System.out.println("Server: " + server);
 		
-		final OperationQueue queue = new SingleThreadOperationQueue();
+		final OperationQueue queue = new PausableExecutorOperationQueue();
 		final MockConnection connection = new MockConnection();
 		final Device device = new MockDevice(connection);
 		
@@ -168,7 +174,7 @@ public class FlashLoader {
 		System.out.println("Port: " + port);
 		System.out.println("Server: " + server);
 		
-		final OperationQueue queue = new SingleThreadOperationQueue();
+		final OperationQueue queue = new PausableExecutorOperationQueue();
 		final MockConnection connection = new MockConnection();
 		final Device device = new MockDevice(connection);
 		
@@ -196,6 +202,7 @@ public class FlashLoader {
 			@Override
 			public void onSuccess(Void result) {
 				System.out.println("Device has been reseted");
+				geresetet = true;		//für den Test
 				System.exit(0);
 			}
 
