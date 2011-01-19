@@ -24,8 +24,8 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 
 	private HashMap<String, MessagePacketListener> packetListenerList = new HashMap<String, MessagePacketListener>();
 	private HashMap<String, MessagePlainTextListener> plainTextListenerList = new HashMap<String, MessagePlainTextListener>();
-	@SuppressWarnings("unchecked")
-	private HashMap<String, AsyncCallback> callbackList = new HashMap<String, AsyncCallback>();
+	//@SuppressWarnings("unchecked")
+	private HashMap<String, AsyncCallback<?>> callbackList = new HashMap<String, AsyncCallback<?>>();
 
 	public PacketServiceAnswerImpl() {
 	}
@@ -47,8 +47,8 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 		plainTextListenerList.remove(key);
 	}
 
-	@SuppressWarnings("unchecked")
-	public AsyncCallback getCallback(String key) {
+	//@SuppressWarnings("unchecked")
+	public AsyncCallback<?> getCallback(String key) {
 		return callbackList.get(key);
 	}
 
@@ -92,11 +92,13 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void reverseSuccessMac(RpcController controller, MacData request,
 			RpcCallback<EmptyAnswer> done) {
 		
-		getCallback(request.getOperationKey()).onSuccess(new MacAddress(request.getMACADDRESSList().get(0).toByteArray()));
+		AsyncCallback<MacAddress> call = (AsyncCallback<MacAddress>) getCallback(request.getOperationKey());
+		call.onSuccess(new MacAddress(request.getMACADDRESSList().get(0).toByteArray()));
 		
 		done.run(EmptyAnswer.newBuilder().build());
 		

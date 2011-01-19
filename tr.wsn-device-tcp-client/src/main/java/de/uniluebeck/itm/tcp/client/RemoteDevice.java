@@ -40,6 +40,7 @@ import de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.Operations.BlockingInterface;
+import de.uniluebeck.itm.tcp.operations.readMacAddressOperation;
 
 /**
  * The RemoteDevice represents one device on the server acting as a stub.
@@ -174,72 +175,7 @@ public class RemoteDevice implements DeviceAsync{
 	public OperationHandle<MacAddress> readMac(long timeout,
 			final AsyncCallback<MacAddress> callback) {
 		
-		final RpcController controller = channel.newRpcController();
-		
-		Timeout request = Timeout.newBuilder().setOperationKey(controller.toString()).setTimeout(timeout).build();
-
-		packetServiceAnswerImpl.addCallback(request.getOperationKey(), callback);
-		
-		operationService.readMac(controller, request, new RpcCallback<EmptyAnswer>() {
-			@Override
-			public void run(EmptyAnswer parameter) {
-				if(controller.failed()){
-					callback.onFailure(new Throwable(controller.errorText()));
-				}
-				else{
-					System.out.println("Ausgabe");
-				}
-			}
-		});
-		
-		// Rueckgabe eines OperationHandle
-		return new OperationHandle<MacAddress>(){
-
-			// aufruf bei cancel (User-seitig)
-			@Override
-			public void cancel() {
-				controller.startCancel();
-			}
-
-			// aufruf bei get (User-seitig)
-			@Override
-			public MacAddress get() {
-
-				//TODO get genauer anschauen
-				
-				// erzeugen eines sync RPC-Objekts fuer die Operationen
-		        BlockingInterface blockOperationService =  Operations.newBlockingStub(channel);
-		        try {
-		        	// sync RPC-Aufruf
-		        	blockOperationService.getHandle(controller, OpKey.newBuilder().setOperationKey(controller.toString()).build());
-				} catch (ServiceException e) {
-					e.printStackTrace();
-				}
-				return null;//TODO MacAdresse zurueckgeben
-			}
-			
-			// aufruf bei getState (User-seitig)
-			@Override
-			public State getState() {
-				
-				// erzeugen eines State-Objekts
-				State state = null;
-
-				// Blockierender Aufruf fuer getState in Ordnung?
-				
-				// erzeugen eines sync RPC-Objekts fuer die Operationen
-				BlockingInterface blockOperationService =  Operations.newBlockingStub(channel);
-				try {
-					// sync RPC-Aufruf
-					STRING result = blockOperationService.getState(controller,  OpKey.newBuilder().setOperationKey(controller.toString()).build());
-					// erzeugen eines State aus dem result-String
-					state = State.fromName(result.getQuery());
-				} catch (ServiceException e) {
-					e.printStackTrace();
-				}
-				
-				return state;
-			}};
+		return new readMacAddressOperation(channel, callback, operationService, packetServiceAnswerImpl,timeout).operate();
 	}
 
 	@Override
