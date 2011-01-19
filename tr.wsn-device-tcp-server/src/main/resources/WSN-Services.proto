@@ -94,6 +94,7 @@ message ReverseAnswer {
 
 service Operations {
 	rpc connect (Identification) returns (EmptyAnswer);
+	rpc shutdown (EmptyAnswer) returns (EmptyAnswer);
 	
 	rpc program (ProgramPacket) returns (EmptyAnswer);
 	rpc eraseFlash (Timeout) returns (EmptyAnswer);
