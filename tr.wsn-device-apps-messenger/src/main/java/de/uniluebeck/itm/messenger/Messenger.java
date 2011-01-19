@@ -8,7 +8,7 @@ import de.uniluebeck.itm.devicedriver.async.AsyncAdapter;
 import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.OperationQueue;
 import de.uniluebeck.itm.devicedriver.async.QueuedDeviceAsync;
-import de.uniluebeck.itm.devicedriver.async.singlethread.SingleThreadOperationQueue;
+import de.uniluebeck.itm.devicedriver.async.thread.PausableExecutorOperationQueue;
 import de.uniluebeck.itm.devicedriver.event.MessageEvent;
 import de.uniluebeck.itm.devicedriver.mockdevice.MockConnection;
 import de.uniluebeck.itm.devicedriver.mockdevice.MockDevice;
@@ -17,6 +17,7 @@ public class Messenger {
 	
 	String port;
 	String server;
+	boolean gesendet = false; 		//für den Test
 	
 	public Messenger(){
 
@@ -36,7 +37,7 @@ public class Messenger {
 		System.out.println("Server: " + server);
 		System.out.println("Message: " + message);
 		
-		final OperationQueue queue = new SingleThreadOperationQueue();
+		final OperationQueue queue = new PausableExecutorOperationQueue();
 		final MockConnection connection = new MockConnection();
 		final Device device = new MockDevice(connection);
 		
@@ -65,6 +66,7 @@ public class Messenger {
 			@Override
 			public void onSuccess(Void result) {
 				System.out.println("Message send");
+				gesendet = true;		//für den Test
 				System.exit(0);
 			}
 
