@@ -16,14 +16,14 @@ public class readMacAddressOperation extends Operation<MacAddress> {
 
 	long timeout = 0L;
 	
-	public readMacAddressOperation(RpcClientChannel channel, AsyncCallback<MacAddress> callback, Operations.Interface operationService, PacketServiceAnswerImpl packetServiceAnswerImpl, long timeout){
-		super(channel,packetServiceAnswerImpl, operationService, callback);
+	public readMacAddressOperation(int opKeyCounter, RpcClientChannel channel, AsyncCallback<MacAddress> callback, Operations.Interface operationService, PacketServiceAnswerImpl packetServiceAnswerImpl, long timeout){
+		super(opKeyCounter, channel,packetServiceAnswerImpl, operationService, callback);
 		this.timeout = timeout;
 	}
 	
 	public OperationHandle<MacAddress> operate(){
 		
-		Timeout request = Timeout.newBuilder().setOperationKey(controller.toString()).setTimeout(timeout).build();
+		Timeout request = Timeout.newBuilder().setOperationKey(String.valueOf(opKeyCounter)).setTimeout(timeout).build();
 
 		packetServiceAnswerImpl.addCallback(request.getOperationKey(), callback);
 		

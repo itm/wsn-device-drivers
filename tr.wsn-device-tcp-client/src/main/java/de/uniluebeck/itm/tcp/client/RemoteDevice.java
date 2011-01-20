@@ -59,8 +59,9 @@ public class RemoteDevice implements DeviceAsync{
 	PacketService.Interface packetService = null;
 	PacketServiceAnswerImpl packetServiceAnswerImpl = null;
 	RemoteConnection connection = null;
+	private int counter = 0;
 
-	RemoteDevice(RemoteConnection connection){
+	public RemoteDevice(RemoteConnection connection){
 		this.connection = connection;
 		
 		this.channel = connection.getChannel();
@@ -99,7 +100,9 @@ public class RemoteDevice implements DeviceAsync{
 	public OperationHandle<MacAddress> readMac(long timeout,
 			final AsyncCallback<MacAddress> callback) {
 		
-		return new readMacAddressOperation(channel, callback, operationService, packetServiceAnswerImpl,timeout).operate();
+		counter++;
+		
+		return new readMacAddressOperation(counter, channel, callback, operationService, packetServiceAnswerImpl,timeout).operate();
 	}
 
 	@Override
@@ -134,7 +137,9 @@ public class RemoteDevice implements DeviceAsync{
 	public OperationHandle<ChipType> getChipType(long timeout,
 			final AsyncCallback<ChipType> callback) {
 		
-		return new getChipTypeOperation(channel, callback, operationService, packetServiceAnswerImpl, timeout).operate();
+		counter++;
+		
+		return new getChipTypeOperation(counter, channel, callback, operationService, packetServiceAnswerImpl, timeout).operate();
 	}
 
 	@Override

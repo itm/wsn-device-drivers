@@ -49,9 +49,6 @@ public class programOperation {
 				if(controller.failed()){
 					callback.onFailure(new Throwable(controller.errorText()));
 				}
-				else{
-					callback.onSuccess(null);
-				}
 			}
 		});
 		

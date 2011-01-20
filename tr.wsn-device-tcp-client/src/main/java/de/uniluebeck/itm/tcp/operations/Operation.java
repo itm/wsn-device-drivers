@@ -24,10 +24,12 @@ public abstract class Operation<T> {
 	Operations.Interface operationService = null;
 	AsyncCallback<T> callback = null;
 	final RpcController controller;
+	int opKeyCounter = 0;
 	
-	public Operation(RpcClientChannel channel,
+	public Operation(int counter, RpcClientChannel channel,
 			PacketServiceAnswerImpl packetServiceAnswerImpl,
 			Interface operationService, AsyncCallback<T> callback) {
+		this.opKeyCounter = counter;
 		this.channel = channel;
 		this.packetServiceAnswerImpl = packetServiceAnswerImpl;
 		this.operationService = operationService;
