@@ -38,6 +38,7 @@ message ProgramPacket {
 	repeated bytes BinaryPacket = 1;
 	required int64 timeout = 2;
 	required string OperationKey = 3;
+	required int64 md5Hash = 4;
 }
 
 message MacData{
@@ -98,7 +99,7 @@ service Operations {
 	
 	rpc program (ProgramPacket) returns (EmptyAnswer);
 	rpc eraseFlash (Timeout) returns (EmptyAnswer);
-	rpc readFlash (FlashData) returns (ByteData);
+	rpc readFlash (FlashData) returns (EmptyAnswer);
 	rpc readMac (Timeout) returns (EmptyAnswer);
 	rpc reset (Timeout) returns (EmptyAnswer);
 	rpc send (sendData) returns (EmptyAnswer);
