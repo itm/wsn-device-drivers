@@ -55,7 +55,6 @@ public class RemoteDevice implements DeviceAsync{
 
 	public RemoteDevice(RemoteConnection connection){
 		this.connection = connection;
-		
 		this.channel = connection.getChannel();
 		this.bootstrap = connection.getBootstrap();
 		//operationService = Operations.newStub(channel);

@@ -50,7 +50,10 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 	public AsyncCallback<?> getCallback(String key) {
 		return callbackList.get(key);
 	}
-
+	public HashMap<String, AsyncCallback<?>> getCallbackMap() {
+		return callbackList;
+	}
+	
 	public void addCallback(String key, AsyncCallback<?> callback) {
 		this.callbackList.put(key, callback);
 	}

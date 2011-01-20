@@ -31,7 +31,8 @@ public class RemoteConnection extends AbstractConnection{
 	private ThreadPoolCallExecutor executor = null;
 	private DuplexTcpClientBootstrap bootstrap = null;
 	private RpcClientChannel channel = null;
-	
+	BlockingInterface syncOperationService = null;
+
 	/**
 	 * establishes a connection to the server running on the given host.
 	 * @param uri: ConnectionString der Form DeviceID:Username:password@host:port
@@ -94,7 +95,7 @@ public class RemoteConnection extends AbstractConnection{
 		final RpcController controller = channel.newRpcController();
 		
 		// erzeugen eines sync RPC-Objekts fuer die Operationen
-		BlockingInterface syncOperationService = Operations.newBlockingStub(channel);
+		this.syncOperationService = Operations.newBlockingStub(channel);
 		
 		// aufbauen eines Identification-Packets
 		Identification id = Identification.newBuilder().setDeviceID(deviceID).setUsername(username).setPassword(password).build();
@@ -121,11 +122,8 @@ public class RemoteConnection extends AbstractConnection{
 			// erzeugen eines Controlles fuer diese Operation
 			final RpcController controller = channel.newRpcController();
 			
-			// erzeugen eines sync RPC-Objekts fuer die Operationen
-			BlockingInterface syncOperationService = Operations.newBlockingStub(channel);
-			
 			try {
-				syncOperationService.shutdown(controller, EmptyAnswer.newBuilder().build());
+				this.syncOperationService.shutdown(controller, EmptyAnswer.newBuilder().build());
 				controller.startCancel();
 				channel.close();
 				server = null;
@@ -145,5 +143,5 @@ public class RemoteConnection extends AbstractConnection{
 	public RpcClientChannel getChannel() {
 		return channel;
 	}
-
+	
 }

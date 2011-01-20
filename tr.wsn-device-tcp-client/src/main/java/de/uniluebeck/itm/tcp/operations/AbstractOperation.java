@@ -50,12 +50,12 @@ public abstract class AbstractOperation<T> {
 		
 		try {
 			operate();
+			return getHandle();
 		} catch (ServiceException e) {
 			callback.onFailure(new Throwable(controller.errorText()));
 			packetServiceAnswerImpl.removeCallback(getOperationKey());
+			return null;
 		}
-		
-		return getHandle();
 	}
 	
 	private OperationHandle<T> getHandle() {
@@ -87,8 +87,9 @@ public abstract class AbstractOperation<T> {
         	blockOperationService.cancelHandle(controller, OpKey.newBuilder().setOperationKey(controller.toString()).build());
         	controller.startCancel();
 		} catch (ServiceException e) {
-			//TODO vernuenftige Fehlermeldung
+			callback.onFailure(new Throwable(controller.errorText()));
 		}
+		packetServiceAnswerImpl.removeCallback(getOperationKey());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -110,10 +111,12 @@ public abstract class AbstractOperation<T> {
         	else if(response.hasData()){
         		obj = (T) response.getData().getDataList().get(0).toByteArray();
         	}
+        	packetServiceAnswerImpl.removeCallback(getOperationKey());
         	return obj;
         	
 		} catch (ServiceException e) {
-			//TODO vernuenftige Fehlermeldung
+			callback.onFailure(new Throwable(controller.errorText()));
+			packetServiceAnswerImpl.removeCallback(getOperationKey());
 			return null;
 		}
 	}
@@ -125,9 +128,11 @@ public abstract class AbstractOperation<T> {
 			// sync RPC-Aufruf
 			STRING result = blockOperationService.getState(controller,  OpKey.newBuilder().setOperationKey(controller.toString()).build());
 			// erzeugen eines State aus dem result-String
+			packetServiceAnswerImpl.removeCallback(getOperationKey());
 			return State.fromName(result.getQuery());
 		} catch (ServiceException e) {
-			//TODO vernuenftige Fehlermeldung
+			callback.onFailure(new Throwable(controller.errorText()));
+			packetServiceAnswerImpl.removeCallback(getOperationKey());
 			return null;
 		}
 	}
