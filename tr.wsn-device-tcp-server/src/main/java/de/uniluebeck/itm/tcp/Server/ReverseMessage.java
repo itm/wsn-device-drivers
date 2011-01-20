@@ -5,6 +5,7 @@ import com.google.protobuf.RpcController;
 import com.googlecode.protobuf.pro.duplex.RpcClientChannel;
 
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketServiceAnswer;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.ReverseAnswer;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage;;
@@ -21,6 +22,17 @@ public class ReverseMessage {
 		answer = PacketServiceAnswer.newStub(channel);
 	}
 
+	public void reverseExecute(){
+		
+		final RpcController controller = channel.newRpcController();
+		
+		OpKey request = OpKey.newBuilder().setOperationKey(OperationKey).build();
+		answer.reverseExecuteEvent(controller, request, new RpcCallback<EmptyAnswer>(){
+
+			@Override
+			public void run(EmptyAnswer parameter) {
+			}});
+	}
 	
 	public void reverseChangeEvent(String message, boolean failed){
 		
@@ -31,7 +43,7 @@ public class ReverseMessage {
 		}
 		
 		clientMessage request = clientMessage.newBuilder().setOperationKey(OperationKey).setQuery(message).build();
-		answer.reverseProgressChange(controller, request, new RpcCallback<EmptyAnswer>(){
+		answer.reverseChangeEvent(controller, request, new RpcCallback<EmptyAnswer>(){
 
 			@Override
 			public void run(EmptyAnswer parameter) {

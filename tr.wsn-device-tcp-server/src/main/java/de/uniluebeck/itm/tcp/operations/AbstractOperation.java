@@ -46,7 +46,7 @@ public abstract class AbstractOperation<T,R> implements Runnable {
 	public abstract void setOnSuccess(R result);
 	
 	public void setOnExecute(){
-		//TODO implementieren
+		message.reverseExecute();
 	}
 	public void setOnCancel(){
 		message.reverseChangeEvent("Operation was canceled by the Device",true);

@@ -6,17 +6,12 @@
     elementFormDefault="qualified">
     <xsd:complexType name="jaxbDevice">
         <xsd:sequence>
+        	<xsd:element name="DeviceId" type="xsd:string" minOccurs="0"></xsd:element>
             <xsd:element name="DeviceName" type="xsd:string" minOccurs="0"></xsd:element>
             <xsd:element name="DeviceType" type="xsd:string" minOccurs="1" maxOccurs="1"></xsd:element>
             <xsd:element name="ConnectionType" type="xsd:string" minOccurs="1" maxOccurs="1"></xsd:element>
             <xsd:element name="Port" type="xsd:string" minOccurs="1" maxOccurs="1"></xsd:element>
             <xsd:element name="TestBed" type="xsd:string" minOccurs="0"></xsd:element>
-            <xsd:element name="Sensors" type="tns:jaxbSensors" minOccurs="0"></xsd:element>
-        </xsd:sequence>
-    </xsd:complexType>
-    <xsd:complexType name="jaxbSensors">
-        <xsd:sequence>
-            <xsd:element name="Sensor" type="xsd:string" maxOccurs="unbounded" minOccurs="1"></xsd:element>
         </xsd:sequence>
     </xsd:complexType>
     <xsd:complexType name="jaxbDeviceList">

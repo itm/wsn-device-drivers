@@ -2,7 +2,6 @@ package de.uniluebeck.itm.tcp.Server;
 
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,10 +47,7 @@ public class ServerDevice {
 			JaxbDeviceList list = readDevices();
 			
 			for(JaxbDevice jaxDevice : list.getJaxbDevice()){
-				//String key = createID();
-				
-				String key="1"; //TODO nur zum testen
-				//Connection con = createConnection(jaxDevice.getKnotenTyp());
+				String key = createID(jaxDevice);
 				Connection con = createConnection(jaxDevice.getConnectionType());
 				con.connect(jaxDevice.getPort());
 				Device device = createDevice(jaxDevice.getDeviceType(), con);
@@ -61,11 +57,8 @@ public class ServerDevice {
 			}
 			
 		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
 			log.error(e.getMessage());
 		}
-		System.out.println();
-		
 	}
 	
 	/**
@@ -91,15 +84,8 @@ public class ServerDevice {
 		try {
 			con = Class.forName(ConnectionType);
 			connection = (Connection) con.newInstance();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			log.error(e.getMessage());
 		}
 		return  connection;
 	}
@@ -119,27 +105,8 @@ public class ServerDevice {
 			deviceClass = Class.forName(DeviceName);
 			Constructor ConncectionArgsConstructor = deviceClass.getConstructor(new Class[] {con.getClass()});
 			device = (Device) ConncectionArgsConstructor.newInstance(new Object[] {con});
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			log.error(e.getMessage());
 		}
 	    
 		return device;
@@ -159,12 +126,16 @@ public class ServerDevice {
 	 * creates a distinct id for the devices.
 	 * @return
 	 */
-	private String createID(){
+	private String createID(JaxbDevice jaxDevice){
 		
-		double rand;
+		if(jaxDevice.getDeviceId() != null){
+			return jaxDevice.getDeviceId();
+		}
+		
+		int rand;
 		
 		do{
-			rand = Math.random()%1000;
+			rand = (int) (Math.random()*1000)%1000;
 		}while(DeviceList.containsKey(String.valueOf(rand)));
 		
 		return String.valueOf(rand);

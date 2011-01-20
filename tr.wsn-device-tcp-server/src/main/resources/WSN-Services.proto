@@ -122,7 +122,8 @@ service PacketServiceAnswer{
 	rpc sendReversePacketMessage (ListenerData) returns (EmptyAnswer);
 	rpc sendReversePlainTextMessage (ListenerData) returns (EmptyAnswer);
 	
-	rpc reverseProgressChange (clientMessage) returns (EmptyAnswer);
+	rpc reverseExecuteEvent (OpKey) returns (EmptyAnswer);
+	rpc reverseChangeEvent (clientMessage) returns (EmptyAnswer);
 	rpc reverseSuccess (ReverseAnswer) returns (EmptyAnswer);
 	
 }

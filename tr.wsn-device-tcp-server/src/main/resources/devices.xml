@@ -4,16 +4,27 @@
 		xsi:schemaLocation="de/uniluebeck/itm/schema/devices devices.xsd ">
  
  	<ns0:jaxbDevice>
+ 		<ns0:DeviceId>1</ns0:DeviceId>
         <ns0:DeviceName>mokDevice</ns0:DeviceName>
         <ns0:DeviceType>de.uniluebeck.itm.devicedriver.mockdevice.MockDevice</ns0:DeviceType>
         <ns0:ConnectionType>de.uniluebeck.itm.devicedriver.mockdevice.MockConnection</ns0:ConnectionType>
         <ns0:Port>1111</ns0:Port>
-        <ns0:Sensors>
-            <ns0:Sensor>temp</ns0:Sensor>
-            <ns0:Sensor>hydro</ns0:Sensor>
-        </ns0:Sensors>
+    </ns0:jaxbDevice>
+    <ns0:jaxbDevice>
+ 		<ns0:DeviceId>2</ns0:DeviceId>
+        <ns0:DeviceName>mokDevice</ns0:DeviceName>
+        <ns0:DeviceType>de.uniluebeck.itm.devicedriver.mockdevice.MockDevice</ns0:DeviceType>
+        <ns0:ConnectionType>de.uniluebeck.itm.devicedriver.mockdevice.MockConnection</ns0:ConnectionType>
+        <ns0:Port>1112</ns0:Port>
     </ns0:jaxbDevice>
     <!--  
+     <ns0:jaxbDevice>
+        <ns0:DeviceName>JenicDevice</ns0:DeviceName>
+        <ns0:DeviceType>de.uniluebeck.itm.devicedriver.jennic.JennicDevice</ns0:DeviceType>
+        <ns0:ConnectionType>de.uniluebeck.itm.devicedriver.generic.iSenseSerialPortConnection</ns0:ConnectionType>
+        <ns0:Port>COM19</ns0:Port>
+    </ns0:jaxbDevice>
+    
     <ns0:jaxbDevice>
         <ns0:DeviceName>jennic</ns0:DeviceName>
         <ns0:DeviceType>de.uniluebeck.itm.devicedriver.jennic.JennicDevice</ns0:DeviceType>
