@@ -31,9 +31,13 @@ import de.uniluebeck.itm.tcp.files.MessageServiceFiles.Operations;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketService;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketServiceAnswer;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketTypeData;
+import de.uniluebeck.itm.tcp.operations.eraseFlashOperation;
 import de.uniluebeck.itm.tcp.operations.getChipTypeOperation;
 import de.uniluebeck.itm.tcp.operations.programOperation;
+import de.uniluebeck.itm.tcp.operations.readFlashOperation;
 import de.uniluebeck.itm.tcp.operations.readMacAddressOperation;
+import de.uniluebeck.itm.tcp.operations.resetOperation;
+import de.uniluebeck.itm.tcp.operations.sendOperation;
 import de.uniluebeck.itm.tcp.operations.writeFlashOperation;
 import de.uniluebeck.itm.tcp.operations.writeMacOperation;
 
@@ -77,15 +81,15 @@ public class RemoteDevice implements DeviceAsync{
 	@Override
 	public OperationHandle<Void> eraseFlash(long timeout,
 			AsyncCallback<Void> callback) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return new eraseFlashOperation(channel, callback, operationService, packetServiceAnswerImpl, timeout).execute();
 	}
 
 	@Override
 	public OperationHandle<byte[]> readFlash(int address, int length,
 			long timeout, AsyncCallback<byte[]> callback) {
-		// TODO Auto-generated method stub
-		return null;
+
+		return new readFlashOperation(channel, callback, operationService, packetServiceAnswerImpl, address, length, timeout).execute();
 	}
 
 	@Override
@@ -98,15 +102,15 @@ public class RemoteDevice implements DeviceAsync{
 	@Override
 	public OperationHandle<Void> reset(long timeout,
 			AsyncCallback<Void> callback) {
-		// TODO Auto-generated method stub
-		return null;
+
+		return new resetOperation(channel, callback, operationService, packetServiceAnswerImpl, timeout).execute();
 	}
 
 	@Override
 	public OperationHandle<Void> send(MessagePacket packet, long timeout,
 			AsyncCallback<Void> callback) {
-		// TODO Auto-generated method stub
-		return null;
+
+		return new sendOperation(channel, callback, operationService, packetServiceAnswerImpl, packet, timeout).execute();
 	}
 
 	@Override
