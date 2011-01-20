@@ -1,5 +1,8 @@
 package de.uniluebeck.itm.tcp.operations;
 
+import java.util.zip.CRC32;
+import java.util.zip.Checksum;
+
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ServiceException;
 import com.googlecode.protobuf.pro.duplex.RpcClientChannel;
@@ -21,10 +24,15 @@ public class programOperation extends AbstractOperation<Void> {
 	}
 
 	public void operate() throws ServiceException {
-		ProgramPacket packet = ProgramPacket.newBuilder().addBinaryPacket(ByteString.copyFrom(bytes)).setTimeout(timeout).setOperationKey(controller.toString()).build();
+		
+		
+		Checksum checksum = new CRC32();
+		checksum.update(bytes,0,bytes.length);
+		
+		ProgramPacket packet = ProgramPacket.newBuilder().addBinaryPacket(ByteString.copyFrom(bytes)).setMd5Hash(checksum.getValue()).setTimeout(timeout).setOperationKey(controller.toString()).build();
 		
 		setOperationKey(packet.getOperationKey());
-		
+
 		packetServiceAnswerImpl.addCallback(packet.getOperationKey(), callback);
 		
 		
