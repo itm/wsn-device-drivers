@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.tcp.operations;
+package de.uniluebeck.itm.tcp.client.operations;
 
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
@@ -8,9 +8,9 @@ import com.google.protobuf.ServiceException;
 import com.googlecode.protobuf.pro.duplex.RpcClientChannel;
 
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
-import de.uniluebeck.itm.tcp.files.PacketServiceAnswerImpl;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.Operations.BlockingInterface;
+import de.uniluebeck.itm.tcp.client.files.PacketServiceAnswerImpl;
+import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ProgramPacket;
+import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations.BlockingInterface;
 
 public class programOperation extends AbstractOperation<Void> {
 	

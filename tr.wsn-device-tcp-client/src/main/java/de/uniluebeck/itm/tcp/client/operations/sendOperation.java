@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.tcp.operations;
+package de.uniluebeck.itm.tcp.client.operations;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ServiceException;
@@ -6,9 +6,9 @@ import com.googlecode.protobuf.pro.duplex.RpcClientChannel;
 
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.Operations.BlockingInterface;
-import de.uniluebeck.itm.tcp.files.PacketServiceAnswerImpl;
+import de.uniluebeck.itm.tcp.client.files.PacketServiceAnswerImpl;
+import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.sendData;
+import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations.BlockingInterface;
 
 public class sendOperation extends AbstractOperation<Void> {
 

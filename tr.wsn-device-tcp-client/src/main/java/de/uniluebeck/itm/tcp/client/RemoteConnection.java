@@ -17,10 +17,10 @@ import com.googlecode.protobuf.pro.duplex.client.DuplexTcpClientBootstrap;
 import com.googlecode.protobuf.pro.duplex.execute.ThreadPoolCallExecutor;
 
 import de.uniluebeck.itm.devicedriver.AbstractConnection;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.Identification;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.Operations;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.Operations.BlockingInterface;
+import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer;
+import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Identification;
+import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations;
+import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations.BlockingInterface;
 
 public class RemoteConnection extends AbstractConnection{
 

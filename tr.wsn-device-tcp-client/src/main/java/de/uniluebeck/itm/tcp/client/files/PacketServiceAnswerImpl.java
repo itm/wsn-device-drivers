@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.tcp.files;
+package de.uniluebeck.itm.tcp.client.files;
 
 import java.util.HashMap;
 
@@ -13,12 +13,12 @@ import de.uniluebeck.itm.devicedriver.MessagePlainText;
 import de.uniluebeck.itm.devicedriver.MessagePlainTextListener;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.event.MessageEvent;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketServiceAnswer;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.ReverseAnswer;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage;
+import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer;
+import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ListenerData;
+import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey;
+import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.PacketServiceAnswer;
+import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ReverseAnswer;
+import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage;
 
 // Implementierung der Methoden fuer das ReverseRPC
 public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {

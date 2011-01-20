@@ -24,22 +24,22 @@ import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 import de.uniluebeck.itm.devicedriver.event.MessageEvent;
-import de.uniluebeck.itm.tcp.files.PacketServiceAnswerImpl;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.Operations;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketService;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketServiceAnswer;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketTypeData;
-import de.uniluebeck.itm.tcp.operations.eraseFlashOperation;
-import de.uniluebeck.itm.tcp.operations.getChipTypeOperation;
-import de.uniluebeck.itm.tcp.operations.programOperation;
-import de.uniluebeck.itm.tcp.operations.readFlashOperation;
-import de.uniluebeck.itm.tcp.operations.readMacAddressOperation;
-import de.uniluebeck.itm.tcp.operations.resetOperation;
-import de.uniluebeck.itm.tcp.operations.sendOperation;
-import de.uniluebeck.itm.tcp.operations.writeFlashOperation;
-import de.uniluebeck.itm.tcp.operations.writeMacOperation;
+import de.uniluebeck.itm.tcp.client.files.PacketServiceAnswerImpl;
+import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer;
+import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey;
+import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations;
+import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.PacketService;
+import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.PacketServiceAnswer;
+import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.PacketTypeData;
+import de.uniluebeck.itm.tcp.client.operations.eraseFlashOperation;
+import de.uniluebeck.itm.tcp.client.operations.getChipTypeOperation;
+import de.uniluebeck.itm.tcp.client.operations.programOperation;
+import de.uniluebeck.itm.tcp.client.operations.readFlashOperation;
+import de.uniluebeck.itm.tcp.client.operations.readMacAddressOperation;
+import de.uniluebeck.itm.tcp.client.operations.resetOperation;
+import de.uniluebeck.itm.tcp.client.operations.sendOperation;
+import de.uniluebeck.itm.tcp.client.operations.writeFlashOperation;
+import de.uniluebeck.itm.tcp.client.operations.writeMacOperation;
 
 /**
  * The RemoteDevice represents one device on the server acting as a stub.
