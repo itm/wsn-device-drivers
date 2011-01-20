@@ -54,6 +54,9 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 	public void addCallback(String key, AsyncCallback<?> callback) {
 		this.callbackList.put(key, callback);
 	}
+	public void removeCallback(String key){
+		this.callbackList.remove(key);
+	}
 
 	@Override
 	public void sendReversePacketMessage(RpcController controller,
@@ -97,18 +100,26 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 		if(request.hasSuccess()){
 			AsyncCallback<Void> call = (AsyncCallback<Void>) getCallback(request.getSuccess().getOperationKey());
 			call.onSuccess(null);
+			removeCallback(request.getSuccess().getOperationKey());
+			call = null;
 		}
 		else if(request.hasChipData()){
 			AsyncCallback<ChipType> call = (AsyncCallback<ChipType>) getCallback(request.getChipData().getOperationKey());
 			call.onSuccess(ChipType.valueOf(request.getChipData().getType()));
+			removeCallback(request.getSuccess().getOperationKey());
+			call = null;
 		}
 		else if(request.hasMacAddress()){
 			AsyncCallback<MacAddress> call = (AsyncCallback<MacAddress>) getCallback(request.getMacAddress().getOperationKey());
 			call.onSuccess(new MacAddress(request.getMacAddress().getMACADDRESSList().get(0).toByteArray()));
+			removeCallback(request.getSuccess().getOperationKey());
+			call = null;
 		}
 		else if(request.hasData()){
 			AsyncCallback<byte[]> call = (AsyncCallback<byte[]>) getCallback(request.getData().getOperationKey());
 			call.onSuccess(request.getData().getDataList().get(0).toByteArray());
+			removeCallback(request.getSuccess().getOperationKey());
+			call = null;
 		}
 		
 	}

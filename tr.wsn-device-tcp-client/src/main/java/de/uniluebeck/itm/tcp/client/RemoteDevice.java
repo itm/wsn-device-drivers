@@ -7,10 +7,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.protobuf.ByteString;
 import com.google.protobuf.RpcCallback;
 import com.google.protobuf.RpcController;
-import com.google.protobuf.ServiceException;
 import com.googlecode.protobuf.pro.duplex.RpcClientChannel;
 import com.googlecode.protobuf.pro.duplex.client.DuplexTcpClientBootstrap;
 import com.googlecode.protobuf.pro.duplex.execute.ThreadPoolCallExecutor;
@@ -22,23 +20,17 @@ import de.uniluebeck.itm.devicedriver.MessagePacketListener;
 import de.uniluebeck.itm.devicedriver.MessagePlainText;
 import de.uniluebeck.itm.devicedriver.MessagePlainTextListener;
 import de.uniluebeck.itm.devicedriver.PacketType;
-import de.uniluebeck.itm.devicedriver.State;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 import de.uniluebeck.itm.devicedriver.event.MessageEvent;
 import de.uniluebeck.itm.tcp.files.PacketServiceAnswerImpl;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.Operations;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketService;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketServiceAnswer;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketTypeData;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer;
-import de.uniluebeck.itm.tcp.files.MessageServiceFiles.Operations.BlockingInterface;
 import de.uniluebeck.itm.tcp.operations.getChipTypeOperation;
 import de.uniluebeck.itm.tcp.operations.programOperation;
 import de.uniluebeck.itm.tcp.operations.readMacAddressOperation;
@@ -55,18 +47,19 @@ public class RemoteDevice implements DeviceAsync{
 	ThreadPoolCallExecutor executor = null;
 	DuplexTcpClientBootstrap bootstrap = null;
 	RpcClientChannel channel = null;
-	Operations.Interface operationService = null;
+	//Operations.Interface operationService = null;
+	Operations.BlockingInterface operationService = null;
 	PacketService.Interface packetService = null;
 	PacketServiceAnswerImpl packetServiceAnswerImpl = null;
 	RemoteConnection connection = null;
-	private int counter = 0;
 
 	public RemoteDevice(RemoteConnection connection){
 		this.connection = connection;
 		
 		this.channel = connection.getChannel();
 		this.bootstrap = connection.getBootstrap();
-		operationService = Operations.newStub(channel);
+		//operationService = Operations.newStub(channel);
+		operationService = Operations.newBlockingStub(channel);
 		packetService = PacketService.newStub(channel);
 		packetServiceAnswerImpl = new PacketServiceAnswerImpl();
 		
@@ -79,7 +72,7 @@ public class RemoteDevice implements DeviceAsync{
 	public OperationHandle<Void> program(byte[] bytes,
 			long timeout, final AsyncCallback<Void> callback) {
 		
-		return new programOperation(channel, operationService, callback, bytes, timeout).operate();		
+		return new programOperation(channel, callback, operationService, packetServiceAnswerImpl, bytes, timeout).execute();		
 	}
 
 	@Override
@@ -100,9 +93,7 @@ public class RemoteDevice implements DeviceAsync{
 	public OperationHandle<MacAddress> readMac(long timeout,
 			final AsyncCallback<MacAddress> callback) {
 		
-		counter++;
-		
-		return new readMacAddressOperation(counter, channel, callback, operationService, packetServiceAnswerImpl,timeout).operate();
+		return new readMacAddressOperation(channel, callback, operationService, packetServiceAnswerImpl,timeout).execute();
 	}
 
 	@Override
@@ -123,23 +114,21 @@ public class RemoteDevice implements DeviceAsync{
 	public OperationHandle<Void> writeFlash(int address, byte[] data,
 			int length, long timeout, final AsyncCallback<Void> callback) {
 		
-		return new writeFlashOperation(channel, operationService, address, data, length, timeout, callback).operate();		
+		return new writeFlashOperation(channel, callback, operationService, packetServiceAnswerImpl,address,data,length,timeout).execute();		
 	}
 
 	@Override
 	public OperationHandle<Void> writeMac(MacAddress macAddress, long timeout,
 			final AsyncCallback<Void> callback) {
 
-		return new writeMacOperation(channel, packetServiceAnswerImpl, operationService, callback, macAddress, timeout).operate();
+		return new writeMacOperation(channel, packetServiceAnswerImpl, operationService, callback, macAddress, timeout).execute();
 	}
 
 	@Override
 	public OperationHandle<ChipType> getChipType(long timeout,
 			final AsyncCallback<ChipType> callback) {
 		
-		counter++;
-		
-		return new getChipTypeOperation(counter, channel, callback, operationService, packetServiceAnswerImpl, timeout).operate();
+		return new getChipTypeOperation(channel, callback, operationService, packetServiceAnswerImpl, timeout).execute();
 	}
 
 	@Override

@@ -63,53 +63,53 @@ public class MockDeviceExample {
 		
 		deviceAsync.readMac(1000000, callback);
 		
-		System.out.println("Setting Mac Address");
-		deviceAsync.writeMac(new MacAddress(1024), 10000, new AsyncAdapter<Void>() {
-
-			@Override
-			public void onProgressChange(float fraction) {
-				final int percent = (int) (fraction * 100.0);
-				System.out.println("Writing mac address progress: " + percent + "%");
-			}
-
-			@Override
-			public void onSuccess(Void result) {
-				System.out.println("Mac Address written");
-			}
-
-			@Override
-			public void onFailure(Throwable throwable) {
-				throwable.printStackTrace();
-			}
-		});
+//		System.out.println("Setting Mac Address");
+//		deviceAsync.writeMac(new MacAddress(1024), 10000, new AsyncAdapter<Void>() {
+//
+//			@Override
+//			public void onProgressChange(float fraction) {
+//				final int percent = (int) (fraction * 100.0);
+//				System.out.println("Writing mac address progress: " + percent + "%");
+//			}
+//
+//			@Override
+//			public void onSuccess(Void result) {
+//				System.out.println("Mac Address written");
+//			}
+//
+//			@Override
+//			public void onFailure(Throwable throwable) {
+//				throwable.printStackTrace();
+//			}
+//		});
 		
-		OperationHandle<MacAddress> han = deviceAsync.readMac(10000000, callback);
-		System.out.println(han.get());
+		//OperationHandle<MacAddress> han = deviceAsync.readMac(10000000, callback);
+		//System.out.println(han.get());
 		
-		System.out.println();
-		
-		final OperationHandle<ChipType> handle = deviceAsync.getChipType(100000, new AsyncAdapter<ChipType>() {
-
-			@Override
-			public void onProgressChange(float fraction) {
-				final int percent = (int) (fraction * 100.0);
-				System.out.println("Reading chip type progress: " + percent + "%");
-			}
-
-			@Override
-			public void onFailure(Throwable throwable) {
-				throwable.printStackTrace();
-			}
-			@Override
-			public void onSuccess(ChipType result) {
-				System.out.println("Chip Type onSuccess: " + result.getName());
-			}
-		});
-		
-		System.out.println("Chip Type: " + handle.get());
+//		System.out.println();
+//		
+//		final OperationHandle<ChipType> handle = deviceAsync.getChipType(100000, new AsyncAdapter<ChipType>() {
+//
+//			@Override
+//			public void onProgressChange(float fraction) {
+//				final int percent = (int) (fraction * 100.0);
+//				System.out.println("Reading chip type progress: " + percent + "%");
+//			}
+//
+//			@Override
+//			public void onFailure(Throwable throwable) {
+//				throwable.printStackTrace();
+//			}
+//			@Override
+//			public void onSuccess(ChipType result) {
+//				System.out.println("Chip Type onSuccess: " + result.getName());
+//			}
+//		});
+//		
+//		System.out.println("Chip Type: " + handle.get());
 		//queue.shutdown(true);
 		//System.out.println("Queue terminated");
-		connection.shutdown(false);
+		//connection.shutdown(false);
 		System.out.println("Connection closed");
 	}
 
