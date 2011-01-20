@@ -1,5 +1,5 @@
 
-option java_package = "de.uniluebeck.itm.tcp.files";
+option java_package = "de.uniluebeck.itm.tcp.server.utils";
 option java_outer_classname = "MessageServiceFiles";
 
 message EmptyAnswer {
