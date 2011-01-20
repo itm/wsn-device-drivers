@@ -34,6 +34,8 @@ public abstract class Operation<T> {
 		this.callback = callback;
 		this.controller = channel.newRpcController();
 	}
+	
+	
 
 	public abstract OperationHandle<T> operate();
 	
