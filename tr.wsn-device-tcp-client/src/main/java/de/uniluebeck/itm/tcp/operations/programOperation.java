@@ -29,7 +29,7 @@ public class programOperation extends AbstractOperation<Void> {
 		Checksum checksum = new CRC32();
 		checksum.update(bytes,0,bytes.length);
 		
-		ProgramPacket packet = ProgramPacket.newBuilder().addBinaryPacket(ByteString.copyFrom(bytes)).setMd5Hash(checksum.getValue()).setTimeout(timeout).setOperationKey(controller.toString()).build();
+		ProgramPacket packet = ProgramPacket.newBuilder().addBinaryPacket(ByteString.copyFrom(bytes)).setCrc(checksum.getValue()).setTimeout(timeout).setOperationKey(controller.toString()).build();
 		
 		setOperationKey(packet.getOperationKey());
 

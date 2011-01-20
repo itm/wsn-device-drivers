@@ -1,5 +1,8 @@
 package de.uniluebeck.itm.tcp.operations;
 
+import java.util.zip.CRC32;
+import java.util.zip.Checksum;
+
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ServiceException;
 import com.googlecode.protobuf.pro.duplex.RpcClientChannel;
@@ -28,7 +31,11 @@ public class writeFlashOperation extends AbstractOperation<Void> {
 	}
 
 	public void operate() throws ServiceException {
-		FlashData request = FlashData.newBuilder().setAddress(address).addData(ByteString.copyFrom(data)).setLength(length).setTimeout(timeout).setOperationKey(controller.toString()).build();
+		
+		Checksum checksum = new CRC32();
+		checksum.update(data,0,data.length);
+		
+		FlashData request = FlashData.newBuilder().setAddress(address).addData(ByteString.copyFrom(data)).setLength(length).setTimeout(timeout).setCrc(checksum.getValue()).setOperationKey(controller.toString()).build();
 		
 		setOperationKey(request.getOperationKey());
 		
