@@ -22,9 +22,14 @@ public class ReverseMessage {
 	}
 
 	
-	public void reverseProgressChange(String message){
+	public void reverseChangeEvent(String message, boolean failed){
 		
 		final RpcController controller = channel.newRpcController();
+		
+		if (failed){
+			controller.setFailed(message);
+		}
+		
 		clientMessage request = clientMessage.newBuilder().setOperationKey(OperationKey).setQuery(message).build();
 		answer.reverseProgressChange(controller, request, new RpcCallback<EmptyAnswer>(){
 
