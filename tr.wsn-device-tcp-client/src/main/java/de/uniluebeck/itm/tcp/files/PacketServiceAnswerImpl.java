@@ -15,6 +15,7 @@ import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.event.MessageEvent;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData;
+import de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketServiceAnswer;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.ReverseAnswer;
 import de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage;
@@ -87,10 +88,29 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 	}
 
 	@Override
-	public void reverseProgressChange(RpcController controller,
+	public void reverseExecuteEvent(RpcController controller, OpKey request,
+			RpcCallback<EmptyAnswer> done) {
+		
+		getCallback(request.getOperationKey()).onExecute();
+		done.run(EmptyAnswer.newBuilder().build());
+	}
+	
+	@Override
+	public void reverseChangeEvent(RpcController controller,
 			clientMessage request, RpcCallback<EmptyAnswer> done) {
 		
-		getCallback(request.getOperationKey()).onProgressChange(Float.parseFloat(request.getQuery()));
+		if(controller.isCanceled()){
+			if(controller.errorText().contains("cancel")){
+				getCallback(request.getOperationKey()).onCancel();
+			}
+			else{
+				getCallback(request.getOperationKey()).onFailure(new Throwable(controller.errorText()));
+			}
+			removeCallback(request.getOperationKey());
+		}
+		else{
+			getCallback(request.getOperationKey()).onProgressChange(Float.parseFloat(request.getQuery()));
+		}
 		done.run(EmptyAnswer.newBuilder().build());
 		
 	}
@@ -103,27 +123,20 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 		if(request.hasSuccess()){
 			AsyncCallback<Void> call = (AsyncCallback<Void>) getCallback(request.getSuccess().getOperationKey());
 			call.onSuccess(null);
-			removeCallback(request.getSuccess().getOperationKey());
-			call = null;
 		}
 		else if(request.hasChipData()){
 			AsyncCallback<ChipType> call = (AsyncCallback<ChipType>) getCallback(request.getChipData().getOperationKey());
 			call.onSuccess(ChipType.valueOf(request.getChipData().getType()));
-			removeCallback(request.getSuccess().getOperationKey());
-			call = null;
 		}
 		else if(request.hasMacAddress()){
 			AsyncCallback<MacAddress> call = (AsyncCallback<MacAddress>) getCallback(request.getMacAddress().getOperationKey());
 			call.onSuccess(new MacAddress(request.getMacAddress().getMACADDRESSList().get(0).toByteArray()));
-			removeCallback(request.getSuccess().getOperationKey());
-			call = null;
 		}
 		else if(request.hasData()){
 			AsyncCallback<byte[]> call = (AsyncCallback<byte[]>) getCallback(request.getData().getOperationKey());
 			call.onSuccess(request.getData().getDataList().get(0).toByteArray());
-			removeCallback(request.getSuccess().getOperationKey());
-			call = null;
 		}
+		removeCallback(request.getSuccess().getOperationKey());
 		
 	}
 }
