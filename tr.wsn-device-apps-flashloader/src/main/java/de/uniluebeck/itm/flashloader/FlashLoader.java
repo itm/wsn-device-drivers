@@ -74,47 +74,49 @@ public class FlashLoader {
 			final MockConnection connection = new MockConnection();
 			Device device = new MockDevice(connection);
 			
-			if(device_parameter.equals("isense")){
-				//TODO
-			}
-			else if(device_parameter.equals("jennec")){
-				SerialPortConnection jennic_connection = new iSenseSerialPortConnection();
-				jennic_connection.addListener(new ConnectionListener() {
-					@Override
-					public void onConnectionChange(ConnectionEvent event) {
-						if (event.isConnected()) {
-							System.out.println("Connection established with port " + event.getUri());
-						}				
-					}
-				});
-				device = new JennicDevice(jennic_connection);	
-				jennic_connection.connect("COM19");	
-			}
-			else if(device_parameter.equals("pacemate")){
-				SerialPortConnection pacemate_connection = new iSenseSerialPortConnection();
-				pacemate_connection.addListener(new ConnectionListener() {
-					@Override
-					public void onConnectionChange(ConnectionEvent event) {
-						if (event.isConnected()) {
-							System.out.println("Connection established with port " + event.getUri());
-						}				
-					}
-				});
-				device = new PacemateDevice(pacemate_connection);	
-				pacemate_connection.connect("COM19");
-			}
-			else if(device_parameter.equals("telosb")){
-				SerialPortConnection telosb_connection = new iSenseSerialPortConnection();
-				telosb_connection.addListener(new ConnectionListener() {
-					@Override
-					public void onConnectionChange(ConnectionEvent event) {
-						if (event.isConnected()) {
-							System.out.println("Connection established with port " + event.getUri());
-						}				
-					}
-				});
-				device = new TelosbDevice(telosb_connection);	
-				telosb_connection.connect("COM19");
+			if(device_parameter != null){
+					if(device_parameter.equals("isense")){
+					//TODO
+				}
+				else if(device_parameter.equals("jennec")){
+					SerialPortConnection jennic_connection = new iSenseSerialPortConnection();
+					jennic_connection.addListener(new ConnectionListener() {
+						@Override
+						public void onConnectionChange(ConnectionEvent event) {
+							if (event.isConnected()) {
+								System.out.println("Connection established with port " + event.getUri());
+							}				
+						}
+					});
+					device = new JennicDevice(jennic_connection);	
+					jennic_connection.connect("COM19");	
+				}
+				else if(device_parameter.equals("pacemate")){
+					SerialPortConnection pacemate_connection = new iSenseSerialPortConnection();
+					pacemate_connection.addListener(new ConnectionListener() {
+						@Override
+						public void onConnectionChange(ConnectionEvent event) {
+							if (event.isConnected()) {
+								System.out.println("Connection established with port " + event.getUri());
+							}				
+						}
+					});
+					device = new PacemateDevice(pacemate_connection);	
+					pacemate_connection.connect("COM19");
+				}
+				else if(device_parameter.equals("telosb")){
+					SerialPortConnection telosb_connection = new iSenseSerialPortConnection();
+					telosb_connection.addListener(new ConnectionListener() {
+						@Override
+						public void onConnectionChange(ConnectionEvent event) {
+							if (event.isConnected()) {
+								System.out.println("Connection established with port " + event.getUri());
+							}				
+						}
+					});
+					device = new TelosbDevice(telosb_connection);	
+					telosb_connection.connect("COM19");
+				}
 			}
 			deviceAsync = new QueuedDeviceAsync(queue, device);
 			
