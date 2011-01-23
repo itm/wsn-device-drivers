@@ -30,6 +30,9 @@ public class Main {
 		options.addOption("port", true, "port");
 		options.addOption("server", true, "server");
 		options.addOption("file", true, "Enthält das Programm, das geflasht werden soll");
+		options.addOption("user", true, "Benutzername, um sich auf einen Server zu verbinden");
+		options.addOption("passwd", true, "Passwort, um sich auf einen Server zu verbinden");
+		options.addOption("device", true, "Art des Geräts im lokalen Fall: isense, jennec, telosb oder pacemate");
 
 		// for help statement
 		HelpFormatter formatter = new HelpFormatter();
@@ -60,46 +63,93 @@ public class Main {
 				String port = cmd.getOptionValue("port");
 				String server = cmd.getOptionValue("server");
 				String file = cmd.getOptionValue("file");
+				String user = cmd.getOptionValue("user");
+				String passwort = cmd.getOptionValue("passwd");
+				String device = cmd.getOptionValue("device");
 				
-				FlashLoader flashLoader = new FlashLoader();
-				flashLoader.setPort(port);
-				flashLoader.setServer(server);
-				flashLoader.flash(file);	
+				if(server != null && (user == null || passwort == null)){
+					System.out.println("Bitte geben Sie Benutzername und Passwort ein, um sich zu dem Server zu verbinden.");
+				}
+				else{
+					FlashLoader flashLoader = new FlashLoader();
+					flashLoader.setPort(port);
+					flashLoader.setServer(server);
+					flashLoader.setUser(user);
+					flashLoader.setPasswort(passwort);
+					flashLoader.setDevice(device);
+					flashLoader.connect();
+					flashLoader.flash(file);	
+				}
 				
 			}else if(args[0].equals("readmac")) {
 				System.out.println("starte FlashLoader...");
 				
 				String port = cmd.getOptionValue("port");
 				String server = cmd.getOptionValue("server");
+				String user = cmd.getOptionValue("user");
+				String passwort = cmd.getOptionValue("passwd");
+				String device = cmd.getOptionValue("device");
 				
-				FlashLoader flashLoader = new FlashLoader();
-				flashLoader.setPort(port);
-				flashLoader.setServer(server);
-				flashLoader.readmac();	
+				if(server != null && (user == null || passwort == null)){
+					System.out.println("Bitte geben Sie Benutzername und Passwort ein, um sich zu dem Server zu verbinden.");
+				}
+				else{				
+					FlashLoader flashLoader = new FlashLoader();
+					flashLoader.setPort(port);
+					flashLoader.setServer(server);
+					flashLoader.setUser(user);
+					flashLoader.setPasswort(passwort);
+					flashLoader.setDevice(device);
+					flashLoader.connect();
+					flashLoader.readmac();	
+				}
 				
 			}else if(args[0].equals("writemac")) {
 				System.out.println("starte FlashLoader...");
 				
 				String port = cmd.getOptionValue("port");
 				String server = cmd.getOptionValue("server");
+				String user = cmd.getOptionValue("user");
+				String passwort = cmd.getOptionValue("passwd");
+				String device = cmd.getOptionValue("device");
 				
-				FlashLoader flashLoader = new FlashLoader();
-				flashLoader.setPort(port);
-				flashLoader.setServer(server);
-				MacAddress macAdresse = new MacAddress(1024);
-				flashLoader.writemac(macAdresse);
+				if(server != null && (user == null || passwort == null)){
+					System.out.println("Bitte geben Sie Benutzername und Passwort ein, um sich zu dem Server zu verbinden.");
+				}
+				else{
+					FlashLoader flashLoader = new FlashLoader();
+					flashLoader.setPort(port);
+					flashLoader.setServer(server);
+					MacAddress macAdresse = new MacAddress(1024);
+					flashLoader.setUser(user);
+					flashLoader.setPasswort(passwort);
+					flashLoader.setDevice(device);
+					flashLoader.connect();
+					flashLoader.writemac(macAdresse);
+				}
 				
 			}else if(args[0].equals("reset")) {
 				System.out.println("starte FlashLoader...");
 				
 				String port = cmd.getOptionValue("port");
 				String server = cmd.getOptionValue("server");
+				String user = cmd.getOptionValue("user");
+				String passwort = cmd.getOptionValue("passwd");
+				String device = cmd.getOptionValue("device");
 				
-				FlashLoader flashLoader = new FlashLoader();
-				flashLoader.setPort(port);
-				flashLoader.setServer(server);
-				flashLoader.reset();	
-				
+				if(server != null && (user == null || passwort == null)){
+					System.out.println("Bitte geben Sie Benutzername und Passwort ein, um sich zu dem Server zu verbinden.");
+				}
+				else{
+					FlashLoader flashLoader = new FlashLoader();
+					flashLoader.setPort(port);
+					flashLoader.setServer(server);
+					flashLoader.setUser(user);
+					flashLoader.setPasswort(passwort);
+					flashLoader.setDevice(device);
+					flashLoader.connect();
+					flashLoader.reset();	
+				}	
 			}
 		}
 	}
