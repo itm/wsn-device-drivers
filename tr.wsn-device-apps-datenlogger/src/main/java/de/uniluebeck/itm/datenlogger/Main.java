@@ -1,8 +1,6 @@
 package de.uniluebeck.itm.datenlogger;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 import org.apache.commons.cli.*;
 
@@ -28,6 +26,9 @@ public class Main {
 		options.addOption("location", true, "Ausgabeziel der Daten, die geloggt werden");
 		options.addOption("klammer_filter", true, "Kombination der Filtertypen: (Datentyp,Beginn,Wert)-Filter");
 		options.addOption("regex_filter", true, "Kombination der Filtertypen: Regular Expression-Filter");
+		options.addOption("user", true, "Benutzername, um sich auf einen Server zu verbinden");
+		options.addOption("passwd", true, "Passwort, um sich auf einen Server zu verbinden");
+		options.addOption("device", true, "Art des Geräts im lokalen Fall: isense, jennec, telosb oder pacemate");
 		
 		// for help statement
 		HelpFormatter formatter = new HelpFormatter();
@@ -63,10 +64,22 @@ public class Main {
 	
 				String port = cmd.getOptionValue("port");
 				String server = cmd.getOptionValue("server");
+				String user = cmd.getOptionValue("user");
+				String passwort = cmd.getOptionValue("passwd");
+				String device = cmd.getOptionValue("device");
 				
-				datenlogger.setPort(port);
-				datenlogger.setServer(server);
-				datenlogger.getloggers();
+				if(server != null && (user == null || passwort == null)){
+					System.out.println("Bitte geben Sie Benutzername und Passwort ein, um sich zu dem Server zu verbinden.");
+				}
+				else{
+					datenlogger.setPort(port);
+					datenlogger.setServer(server);
+					datenlogger.setUser(user);
+					datenlogger.setPasswort(passwort);
+					datenlogger.setDevice(device);
+					datenlogger.connect();
+					datenlogger.getloggers();
+				}
 				
 			}else if(args[0].equals("startlog")) {
 				System.out.println("starte Datenlogger...");
@@ -76,14 +89,25 @@ public class Main {
 				String klammer_filter = cmd.getOptionValue("klammer_filter");
 				String regex_filter = cmd.getOptionValue("regex_filter");
 				String location = cmd.getOptionValue("location");
+				String user = cmd.getOptionValue("user");
+				String passwort = cmd.getOptionValue("passwd");
+				String device = cmd.getOptionValue("device");
 				
-				datenlogger.setPort(port);
-				datenlogger.setServer(server);
-				datenlogger.setKlammer_filter(klammer_filter);
-				datenlogger.setRegex_filter(regex_filter);
-				datenlogger.setLocation(location);
-				datenlogger.startlog();
-				
+				if(server != null && (user == null || passwort == null)){
+					System.out.println("Bitte geben Sie Benutzername und Passwort ein, um sich zu dem Server zu verbinden.");
+				}
+				else{
+					datenlogger.setPort(port);
+					datenlogger.setServer(server);
+					datenlogger.setKlammer_filter(klammer_filter);
+					datenlogger.setRegex_filter(regex_filter);
+					datenlogger.setLocation(location);
+					datenlogger.setUser(user);
+					datenlogger.setPasswort(passwort);
+					datenlogger.setDevice(device);
+					datenlogger.connect();
+					datenlogger.startlog();
+				}	
 			}
 		}
 	}

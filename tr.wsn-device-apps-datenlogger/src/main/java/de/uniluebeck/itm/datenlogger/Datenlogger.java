@@ -10,7 +10,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import model.Capability;
-import model.Data;
 import model.DisableLink;
 import model.DisableNode;
 import model.EnableLink;
@@ -26,17 +25,12 @@ import model.Scenario;
 import model.Setup;
 import model.Timeinfo;
 import model.Trace;
-
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.cfg.AnnotationConfiguration;
-
 import viewer.CreateXML;
-import viewer.StoreToDatabase;
 
 import com.google.common.base.Predicate;
 
+import de.uniluebeck.itm.devicedriver.ConnectionEvent;
+import de.uniluebeck.itm.devicedriver.ConnectionListener;
 import de.uniluebeck.itm.devicedriver.Device;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.MessagePacketListener;
@@ -45,8 +39,15 @@ import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.OperationQueue;
 import de.uniluebeck.itm.devicedriver.async.QueuedDeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.thread.PausableExecutorOperationQueue;
+import de.uniluebeck.itm.devicedriver.generic.iSenseSerialPortConnection;
+import de.uniluebeck.itm.devicedriver.jennic.JennicDevice;
 import de.uniluebeck.itm.devicedriver.mockdevice.MockConnection;
 import de.uniluebeck.itm.devicedriver.mockdevice.MockDevice;
+import de.uniluebeck.itm.devicedriver.pacemate.PacemateDevice;
+import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection;
+import de.uniluebeck.itm.devicedriver.telosb.TelosbDevice;
+import de.uniluebeck.itm.tcp.client.RemoteConnection;
+import de.uniluebeck.itm.tcp.client.RemoteDevice;
 
 public class Datenlogger {
 	
@@ -55,12 +56,15 @@ public class Datenlogger {
 	String klammer_filter;
 	String regex_filter;
 	String location;
+	String user;
+	String passwort;
 	boolean gestartet = false;
+	String device_parameter;
+	DeviceAsync deviceAsync;
 
 	public Datenlogger(){
-		
 	}
-	
+
 	public Predicate<CharSequence> parse_klammer_filter(String klammer_filter){
 		Stack<Predicate<CharSequence>> ausdruecke = new Stack<Predicate<CharSequence>>();
 		Stack<String> operatoren = new Stack<String>();
@@ -109,6 +113,18 @@ public class Datenlogger {
 		return ausdruecke.pop();
 	}
 	
+	public void setDevice(String device){
+		this.device_parameter = device;
+	}
+	
+	public void setUser(String user) {
+		this.user = user;
+	}
+
+	public void setPasswort(String passwort) {
+		this.passwort = passwort;
+	}
+	
 	public void setPort(String port) {
 		this.port = port;
 	}
@@ -143,25 +159,76 @@ public class Datenlogger {
 		System.out.println("Server: " + server);
 	}	
 	
-	public void startlog(){
-		System.out.println("Parameter:");
-		System.out.println("Port: " + port);
-		System.out.println("Server: " + server);
-		System.out.println("Klammer-Filter: " + klammer_filter);
-		System.out.println("Regex-Filter: " + regex_filter);
-		System.out.println("Location: " + location);
-		
-		gestartet = true;
-		System.out.println("\nStarte das Loggen des Knotens....");
+	public void connect(){
+		if(server != null){
+			final RemoteConnection connection = new RemoteConnection();
+			
+			connection.connect("1:"+user+":"+passwort+"@localhost:8080");
+			System.out.println("Connected");
+			
+			deviceAsync = new RemoteDevice(connection);
+		}
+		else{
+			final OperationQueue queue = new PausableExecutorOperationQueue();
+			final Device device;
 
-		final OperationQueue queue = new PausableExecutorOperationQueue();
-		final MockConnection connection = new MockConnection();
-		final Device device = new MockDevice(connection);
-		
-		connection.connect("MockPort");
-		System.out.println("Connected");
-		
-		final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
+			if(device_parameter.equals("isense")){
+				//TODO
+				final MockConnection connection = new MockConnection();
+				device = new MockDevice(connection);
+			}
+			else if(device_parameter.equals("jennec")){
+				SerialPortConnection connection = new iSenseSerialPortConnection();
+				connection.addListener(new ConnectionListener() {
+					@Override
+					public void onConnectionChange(ConnectionEvent event) {
+						if (event.isConnected()) {
+							System.out.println("Connection established with port " + event.getUri());
+						}				
+					}
+				});
+				device = new JennicDevice(connection);	
+				connection.connect("COM19");	
+			}
+			else if(device_parameter.equals("pacemate")){
+				SerialPortConnection connection = new iSenseSerialPortConnection();
+				connection.addListener(new ConnectionListener() {
+					@Override
+					public void onConnectionChange(ConnectionEvent event) {
+						if (event.isConnected()) {
+							System.out.println("Connection established with port " + event.getUri());
+						}				
+					}
+				});
+				device = new PacemateDevice(connection);	
+				connection.connect("COM19");
+			}
+			else if(device_parameter.equals("telosb")){
+				SerialPortConnection connection = new iSenseSerialPortConnection();
+				connection.addListener(new ConnectionListener() {
+					@Override
+					public void onConnectionChange(ConnectionEvent event) {
+						if (event.isConnected()) {
+							System.out.println("Connection established with port " + event.getUri());
+						}				
+					}
+				});
+				device = new TelosbDevice(connection);	
+				connection.connect("COM19");
+			}
+			else{
+				final MockConnection connection = new MockConnection();
+				device = new MockDevice(connection);
+				
+				connection.connect("MockPort");
+			}
+			
+			deviceAsync = new QueuedDeviceAsync(queue, device);	
+		}
+	}
+	
+	public void startlog(){
+		gestartet = true;
 		
 		System.out.println("Message packet listener added");
 		deviceAsync.addListener(new MessagePacketListener() {
@@ -188,7 +255,6 @@ public class Datenlogger {
 				
 				if(!matches){
 					System.out.println("Message: " + erhaltene_Daten);
-					//writeToDatabase();
 					//writeToXmlFile();
 				}
 				else{
@@ -199,26 +265,17 @@ public class Datenlogger {
 	}	
 	
 	public void stoplog(){
-		System.out.println("Parameter:");
-		System.out.println("Port: " + port);
-		System.out.println("Server: " + server);
 		gestartet = false;
 		System.out.println("\nDas Loggen des Knotens wurde beendet.");
 	}
 	
 	public void add_klammer_filter(String filter){
-		System.out.println("Parameter:");
-		System.out.println("Port: " + port);
 		klammer_filter = klammer_filter + filter;
-		System.out.println("Klammer-Filter: " + klammer_filter);
 		System.out.println("Filter hinzugefuegt");
 	}
 	
 	public void add_regex_filter(String filter){
-		System.out.println("Parameter:");
-		System.out.println("Port: " + port);
 		regex_filter = regex_filter + filter;
-		System.out.println("Regex-Filter: " + regex_filter);
 		System.out.println("Filter hinzugefuegt");
 	}
 	
@@ -242,7 +299,7 @@ public class Datenlogger {
          * Create all the required elemets for the setup section of a wiseml file.
          */
         Position position = new Position(1.23, 1.56, 1.77);
-        Data data = new Data("urn:wisebed:node:capability:time");
+        //Data data = new Data("urn:wisebed:node:capability:time");
 
         Node node1 = new Node("urn:wisebed:node:tud:M4FTR", "gw1", "123.456.79", "ein Knoten", capList);
         nodeList.add(node1);
@@ -274,27 +331,5 @@ public class Datenlogger {
          * Create the final wiseml file.
          */
         create.writeXML("test.xml", setup, scenario, trace);
-	}
-	
-	public void writeToDatabase(){
-		System.out.println("Knoten soll gespeichert werden...");
-		SessionFactory sessionFactory;
-		try {
-            sessionFactory = new AnnotationConfiguration().
-                    configure("hibernate.cfg.xml").
-                    buildSessionFactory();
-        }
-        catch (Throwable ex) {
-            throw new ExceptionInInitializerError(ex);
-        }
-		
-		StoreToDatabase storeDB = new StoreToDatabase();
-        Node node = new Node();
-        node.setID("urn:wisebed:node:cti:gw2:n4");
-        storeDB.storeNode(node);
-        final Session session = sessionFactory.openSession();
-        Transaction tr = session.beginTransaction();
-        tr.commit();
-        System.out.println("Knoten gespeichert.");
 	}
 }

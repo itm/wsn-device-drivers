@@ -80,7 +80,6 @@ public class DatenloggerTest extends TestCase {
 	
 	public void testWriteToDatabase(){
 		Datenlogger logger = new Datenlogger();
-		logger.writeToDatabase();
 		//TODO ...
 	}
 }
