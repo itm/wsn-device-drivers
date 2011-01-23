@@ -24,6 +24,9 @@ public class Main {
 		options.addOption("port", true, "port");
 		options.addOption("server", true, "server");
 		options.addOption("message", true, "Die Nachricht, die verschickt werden soll in Hex-Code");
+		options.addOption("user", true, "Benutzername, um sich auf einen Server zu verbinden");
+		options.addOption("passwd", true, "Passwort, um sich auf einen Server zu verbinden");
+		options.addOption("device", true, "Art des Geräts im lokalen Fall: isense, jennec, telosb oder pacemate");
 		
 		// for help statement
 		HelpFormatter formatter = new HelpFormatter();
@@ -54,11 +57,23 @@ public class Main {
 				String port = cmd.getOptionValue("port");
 				String server = cmd.getOptionValue("server");
 				String message = cmd.getOptionValue("message");
+				String user = cmd.getOptionValue("user");
+				String passwort = cmd.getOptionValue("passwd");
+				String device = cmd.getOptionValue("device");
 				
-				Messenger messenger = new Messenger();
-				messenger.setPort(port);
-				messenger.setServer(server);
-				messenger.send(message);							
+				if(server != null && (user == null || passwort == null)){
+					System.out.println("Bitte geben Sie Benutzername und Passwort ein, um sich zu dem Server zu verbinden.");
+				}
+				else{				
+					Messenger messenger = new Messenger();
+					messenger.setPort(port);
+					messenger.setServer(server);
+					messenger.setUser(user);
+					messenger.setPasswort(passwort);
+					messenger.setDevice(device);
+					messenger.connect();
+					messenger.send(message);	
+				}						
 			}
 		}
 	}

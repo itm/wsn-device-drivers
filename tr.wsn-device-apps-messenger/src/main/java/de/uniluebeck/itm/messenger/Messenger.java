@@ -1,5 +1,7 @@
 package de.uniluebeck.itm.messenger;
 
+import de.uniluebeck.itm.devicedriver.ConnectionEvent;
+import de.uniluebeck.itm.devicedriver.ConnectionListener;
 import de.uniluebeck.itm.devicedriver.Device;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.MessagePacketListener;
@@ -10,17 +12,40 @@ import de.uniluebeck.itm.devicedriver.async.OperationQueue;
 import de.uniluebeck.itm.devicedriver.async.QueuedDeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.thread.PausableExecutorOperationQueue;
 import de.uniluebeck.itm.devicedriver.event.MessageEvent;
+import de.uniluebeck.itm.devicedriver.generic.iSenseSerialPortConnection;
+import de.uniluebeck.itm.devicedriver.jennic.JennicDevice;
 import de.uniluebeck.itm.devicedriver.mockdevice.MockConnection;
 import de.uniluebeck.itm.devicedriver.mockdevice.MockDevice;
+import de.uniluebeck.itm.devicedriver.pacemate.PacemateDevice;
+import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection;
+import de.uniluebeck.itm.devicedriver.telosb.TelosbDevice;
+import de.uniluebeck.itm.tcp.client.RemoteConnection;
+import de.uniluebeck.itm.tcp.client.RemoteDevice;
 
 public class Messenger {
 	
 	String port;
 	String server;
+	String user;
+	String passwort;
+	String device_parameter;
 	boolean gesendet = false; 		//für den Test
+	DeviceAsync deviceAsync;
 	
 	public Messenger(){
 
+	}
+	
+	public void setDevice(String device) {
+		this.device_parameter = device;
+	}
+
+	public void setUser(String user) {
+		this.user = user;
+	}
+
+	public void setPasswort(String passwort) {
+		this.passwort = passwort;
 	}
 
 	public void setPort(String port) {
@@ -31,29 +56,87 @@ public class Messenger {
 		this.server = server;
 	}
 	
+	public void connect(){
+		if(server != null){
+			final RemoteConnection connection = new RemoteConnection();
+			
+			connection.connect("1:"+user+":"+passwort+"@localhost:8080");
+			System.out.println("Connected");
+			
+			deviceAsync = new RemoteDevice(connection);
+		}
+		else{
+			final OperationQueue queue = new PausableExecutorOperationQueue();
+			final Device device;
+
+			if(device_parameter.equals("isense")){
+				//TODO
+				final MockConnection connection = new MockConnection();
+				device = new MockDevice(connection);
+			}
+			else if(device_parameter.equals("jennec")){
+				SerialPortConnection connection = new iSenseSerialPortConnection();
+				connection.addListener(new ConnectionListener() {
+					@Override
+					public void onConnectionChange(ConnectionEvent event) {
+						if (event.isConnected()) {
+							System.out.println("Connection established with port " + event.getUri());
+						}				
+					}
+				});
+				device = new JennicDevice(connection);	
+				connection.connect("COM19");	
+			}
+			else if(device_parameter.equals("pacemate")){
+				SerialPortConnection connection = new iSenseSerialPortConnection();
+				connection.addListener(new ConnectionListener() {
+					@Override
+					public void onConnectionChange(ConnectionEvent event) {
+						if (event.isConnected()) {
+							System.out.println("Connection established with port " + event.getUri());
+						}				
+					}
+				});
+				device = new PacemateDevice(connection);	
+				connection.connect("COM19");
+			}
+			else if(device_parameter.equals("telosb")){
+				SerialPortConnection connection = new iSenseSerialPortConnection();
+				connection.addListener(new ConnectionListener() {
+					@Override
+					public void onConnectionChange(ConnectionEvent event) {
+						if (event.isConnected()) {
+							System.out.println("Connection established with port " + event.getUri());
+						}				
+					}
+				});
+				device = new TelosbDevice(connection);	
+				connection.connect("COM19");
+			}
+			else{
+				final MockConnection connection = new MockConnection();
+				device = new MockDevice(connection);
+				
+				connection.connect("MockPort");
+			}
+			
+			deviceAsync = new QueuedDeviceAsync(queue, device);	
+		}
+	}
+	
 	public void send(String message){
 		System.out.println("Parameter:");
 		System.out.println("Port: " + port);
 		System.out.println("Server: " + server);
 		System.out.println("Message: " + message);
 		
-		final OperationQueue queue = new PausableExecutorOperationQueue();
-		final MockConnection connection = new MockConnection();
-		final Device device = new MockDevice(connection);
-		
-		connection.connect("MockPort");
-		System.out.println("Connected");
-		
-		final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
-		
 		System.out.println("Message packet listener added");
 		deviceAsync.addListener(new MessagePacketListener() {
 			public void onMessagePacketReceived(MessageEvent<MessagePacket> event) {
 				System.out.println("Message: " + new String(event.getMessage().getContent()));
 			}
-		}, PacketType.LOG);
+		},PacketType.LOG);
 		
-		System.out.println("Send Message");
 		MessagePacket packet = new MessagePacket(0, message.getBytes());
 		deviceAsync.send(packet, 100000, new AsyncAdapter<Void>() {
 

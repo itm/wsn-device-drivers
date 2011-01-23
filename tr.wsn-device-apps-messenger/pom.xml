@@ -46,5 +46,25 @@
     	<groupId>de.uni-luebeck.itm</groupId>
     	<artifactId>tr.wsn-device-drivers</artifactId>
     </dependency>
+    <dependency>
+    	<groupId>de.uni-luebeck.itm</groupId>
+    	<artifactId>tr.wsn-device-tcp-client</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>de.uni-luebeck.itm</groupId>
+    	<artifactId>tr.wsn-device-drivers-isense</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>de.uni-luebeck.itm</groupId>
+    	<artifactId>tr.wsn-device-drivers-jennec</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>de.uni-luebeck.itm</groupId>
+    	<artifactId>tr.wsn-device-drivers-pacemate</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>de.uni-luebeck.itm</groupId>
+    	<artifactId>tr.wsn-device-drivers-telosb</artifactId>
+    </dependency>
   </dependencies>
 </project>
