@@ -71,16 +71,15 @@ public class FlashLoader {
 		}
 		else{
 			final OperationQueue queue = new PausableExecutorOperationQueue();
-			final Device device;
-
+			final MockConnection connection = new MockConnection();
+			Device device = new MockDevice(connection);
+			
 			if(device_parameter.equals("isense")){
 				//TODO
-				final MockConnection connection = new MockConnection();
-				device = new MockDevice(connection);
 			}
 			else if(device_parameter.equals("jennec")){
-				SerialPortConnection connection = new iSenseSerialPortConnection();
-				connection.addListener(new ConnectionListener() {
+				SerialPortConnection jennic_connection = new iSenseSerialPortConnection();
+				jennic_connection.addListener(new ConnectionListener() {
 					@Override
 					public void onConnectionChange(ConnectionEvent event) {
 						if (event.isConnected()) {
@@ -88,12 +87,12 @@ public class FlashLoader {
 						}				
 					}
 				});
-				device = new JennicDevice(connection);	
-				connection.connect("COM19");	
+				device = new JennicDevice(jennic_connection);	
+				jennic_connection.connect("COM19");	
 			}
 			else if(device_parameter.equals("pacemate")){
-				SerialPortConnection connection = new iSenseSerialPortConnection();
-				connection.addListener(new ConnectionListener() {
+				SerialPortConnection pacemate_connection = new iSenseSerialPortConnection();
+				pacemate_connection.addListener(new ConnectionListener() {
 					@Override
 					public void onConnectionChange(ConnectionEvent event) {
 						if (event.isConnected()) {
@@ -101,12 +100,12 @@ public class FlashLoader {
 						}				
 					}
 				});
-				device = new PacemateDevice(connection);	
-				connection.connect("COM19");
+				device = new PacemateDevice(pacemate_connection);	
+				pacemate_connection.connect("COM19");
 			}
 			else if(device_parameter.equals("telosb")){
-				SerialPortConnection connection = new iSenseSerialPortConnection();
-				connection.addListener(new ConnectionListener() {
+				SerialPortConnection telosb_connection = new iSenseSerialPortConnection();
+				telosb_connection.addListener(new ConnectionListener() {
 					@Override
 					public void onConnectionChange(ConnectionEvent event) {
 						if (event.isConnected()) {
@@ -114,17 +113,17 @@ public class FlashLoader {
 						}				
 					}
 				});
-				device = new TelosbDevice(connection);	
-				connection.connect("COM19");
+				device = new TelosbDevice(telosb_connection);	
+				telosb_connection.connect("COM19");
 			}
-			else{
-				final MockConnection connection = new MockConnection();
-				device = new MockDevice(connection);
-				
-				connection.connect("MockPort");
-			}
+			deviceAsync = new QueuedDeviceAsync(queue, device);
 			
-			deviceAsync = new QueuedDeviceAsync(queue, device);	
+			System.out.println("Message packet listener added");
+			deviceAsync.addListener(new MessagePacketListener() {
+				public void onMessagePacketReceived(MessageEvent<MessagePacket> event) {
+					System.out.println("Message: " + new String(event.getMessage().getContent()));
+				}
+			}, PacketType.LOG);
 		}
 	}
 	
@@ -133,13 +132,6 @@ public class FlashLoader {
 		System.out.println("Port: " + port);
 		System.out.println("Server: " + server);
 		System.out.println("File: " + file);
-		
-		System.out.println("Message packet listener added");
-		deviceAsync.addListener(new MessagePacketListener() {
-			public void onMessagePacketReceived(MessageEvent<MessagePacket> event) {
-				System.out.println("Message: " + new String(event.getMessage().getContent()));
-			}
-		}, PacketType.LOG);
 		
 		System.out.println("Program the Device");
 		deviceAsync.program(file.getBytes(), 100000, new AsyncAdapter<Void>() {
@@ -169,13 +161,6 @@ public class FlashLoader {
 		System.out.println("Port: " + port);
 		System.out.println("Server: " + server);
 		
-		System.out.println("Message packet listener added");
-		deviceAsync.addListener(new MessagePacketListener() {
-			public void onMessagePacketReceived(MessageEvent<MessagePacket> event) {
-				System.out.println("Message: " + new String(event.getMessage().getContent()));
-			}
-		}, PacketType.LOG);
-		
 		System.out.println("Reading mac address...");
 		
 		final AsyncCallback<MacAddress> callback = new AsyncAdapter<MacAddress>() {
@@ -204,13 +189,6 @@ public class FlashLoader {
 		System.out.println("Port: " + port);
 		System.out.println("Server: " + server);
 		
-		System.out.println("Message packet listener added");
-		deviceAsync.addListener(new MessagePacketListener() {
-			public void onMessagePacketReceived(MessageEvent<MessagePacket> event) {
-				System.out.println("Message: " + new String(event.getMessage().getContent()));
-			}
-		}, PacketType.LOG);
-		
 		System.out.println("Setting Mac Address");
 		deviceAsync.writeMac(new MacAddress(1024), 10000, new AsyncAdapter<Void>() {
 
@@ -238,13 +216,6 @@ public class FlashLoader {
 		System.out.println("Parameter:");
 		System.out.println("Port: " + port);
 		System.out.println("Server: " + server);
-		
-		System.out.println("Message packet listener added");
-		deviceAsync.addListener(new MessagePacketListener() {
-			public void onMessagePacketReceived(MessageEvent<MessagePacket> event) {
-				System.out.println("Message: " + new String(event.getMessage().getContent()));
-			}
-		}, PacketType.LOG);
 		
 		System.out.println("Reset");
 		deviceAsync.reset(10000, new AsyncAdapter<Void>() {
