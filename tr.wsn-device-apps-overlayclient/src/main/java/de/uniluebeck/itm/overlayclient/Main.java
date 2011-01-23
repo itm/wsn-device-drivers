@@ -1,8 +1,6 @@
 package de.uniluebeck.itm.overlayclient;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 import org.apache.commons.cli.*;
 
@@ -23,9 +21,9 @@ public class Main {
 		// add options for Meta-Service
 		options.addOption("port", true, "port");
 		options.addOption("server", true, "server");
-		options.addOption("id", true, "Enthält die ID, nach der gesucht werden soll");
-		options.addOption("microcontroller", true, "Enthält den Mircrocontroller, nach dem gesucht werden soll");
-		options.addOption("sensor", true, "Enthält den Sensor, nach dem gesucht werden soll");
+		options.addOption("id", true, "Enthï¿½lt die ID, nach der gesucht werden soll");
+		options.addOption("microcontroller", true, "Enthï¿½lt den Mircrocontroller, nach dem gesucht werden soll");
+		options.addOption("sensor", true, "Enthï¿½lt den Sensor, nach dem gesucht werden soll");
 		
 		// for help statement
 		HelpFormatter formatter = new HelpFormatter();

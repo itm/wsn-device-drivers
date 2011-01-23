@@ -3,9 +3,8 @@ package de.uniluebeck.itm.overlayclient;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniluebeck.itm.metadaten.remote.client.MetaDatenClient;
-import de.uniluebeck.itm.metadaten.remote.entity.Capability;
-import de.uniluebeck.itm.metadaten.remote.entity.Node;
+import de.uniluebeck.itm.metadaten.remote.client.*;
+import de.uniluebeck.itm.metadaten.remote.entity.*;
 
 public class OverlayClient {
 
