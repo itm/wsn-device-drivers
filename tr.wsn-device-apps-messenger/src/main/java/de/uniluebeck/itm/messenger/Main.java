@@ -26,7 +26,7 @@ public class Main {
 		options.addOption("message", true, "Die Nachricht, die verschickt werden soll in Hex-Code");
 		options.addOption("user", true, "Benutzername, um sich auf einen Server zu verbinden");
 		options.addOption("passwd", true, "Passwort, um sich auf einen Server zu verbinden");
-		options.addOption("device", true, "Art des Geräts im lokalen Fall: isense, jennec, telosb oder pacemate");
+		options.addOption("device", true, "Art des Geraets im lokalen Fall: isense, jennec, telosb oder pacemate");
 		
 		// for help statement
 		HelpFormatter formatter = new HelpFormatter();

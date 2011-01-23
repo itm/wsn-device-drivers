@@ -29,7 +29,7 @@ public class Messenger {
 	String user;
 	String passwort;
 	String device_parameter;
-	boolean gesendet = false; 		//für den Test
+	boolean gesendet = false; 		//fuer den Test
 	DeviceAsync deviceAsync;
 	
 	public Messenger(){
@@ -149,7 +149,7 @@ public class Messenger {
 			@Override
 			public void onSuccess(Void result) {
 				System.out.println("Message send");
-				gesendet = true;		//für den Test
+				gesendet = true;		//fuer den Test
 				System.exit(0);
 			}
 
