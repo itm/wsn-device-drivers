@@ -34,7 +34,7 @@ public class Listener extends Thread{
             		String[] tokens = input.split(delims);
                 	logger.setLocation(tokens[1]);
                 }
-                else if(input.startsWith("exit")){
+                else if(input.startsWith("e")){
                 	System.exit(0);
                 }
             } catch (Exception ex) {

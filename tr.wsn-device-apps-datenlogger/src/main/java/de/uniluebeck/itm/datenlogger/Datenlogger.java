@@ -61,6 +61,7 @@ public class Datenlogger {
 	boolean gestartet = false;
 	String device_parameter;
 	DeviceAsync deviceAsync;
+	MessagePacketListener listener;
 
 	public Datenlogger(){
 	}
@@ -231,7 +232,7 @@ public class Datenlogger {
 		gestartet = true;
 		
 		System.out.println("Message packet listener added");
-		deviceAsync.addListener(new MessagePacketListener() {
+		listener = new MessagePacketListener() {
 			@Override
 			public void onMessagePacketReceived(
 					de.uniluebeck.itm.devicedriver.event.MessageEvent<MessagePacket> event) {
@@ -258,13 +259,15 @@ public class Datenlogger {
 					//writeToXmlFile();
 				}
 				else{
-					System.out.println("Daten werden nicht geloggt.");
+					System.out.println("Daten wurden gefiltert.");
 				}
 			}
-		}, PacketType.LOG);
+		};
+		deviceAsync.addListener(listener, PacketType.LOG);
 	}	
 	
 	public void stoplog(){
+		deviceAsync.removeListener(listener);
 		gestartet = false;
 		System.out.println("\nDas Loggen des Knotens wurde beendet.");
 	}
