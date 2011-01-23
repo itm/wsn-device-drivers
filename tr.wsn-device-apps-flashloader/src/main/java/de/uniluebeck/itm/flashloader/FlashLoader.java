@@ -30,9 +30,9 @@ public class FlashLoader {
 	String server;
 	String user;
 	String passwort;
-	boolean geflasht = false;	//für den Test
-	String current_mac_adress;		//für den Test
-	boolean geresetet = false;		//für den Test
+	boolean geflasht = false;	//fuer den Test
+	String current_mac_adress;		//fuer den Test
+	boolean geresetet = false;		//fuer den Test
 	String device_parameter;
 	DeviceAsync deviceAsync;
 	
@@ -152,7 +152,7 @@ public class FlashLoader {
 			@Override
 			public void onSuccess(Void result) {
 				System.out.println("The Device has been flashed.");
-				geflasht = true;         //für den Test
+				geflasht = true;         //fuer den Test
 				System.exit(0);
 			}
 
@@ -258,7 +258,7 @@ public class FlashLoader {
 			@Override
 			public void onSuccess(Void result) {
 				System.out.println("Device has been reseted");
-				geresetet = true;		//für den Test
+				geresetet = true;		//fuer den Test
 				System.exit(0);
 			}
 
