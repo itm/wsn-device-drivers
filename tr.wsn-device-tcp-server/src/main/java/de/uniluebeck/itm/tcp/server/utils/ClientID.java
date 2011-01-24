@@ -9,7 +9,6 @@ import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 public class ClientID {
 
 	String Message = "init";
-	Boolean calledGet = false;
 	
 	private HashMap<String,OperationHandle<?>> handleList = new HashMap<String,OperationHandle<?>>();
 	private HashMap<String,Boolean> getList = new HashMap<String,Boolean>();
@@ -38,9 +37,14 @@ public class ClientID {
 	}
 
 	public Boolean getCalledGet(String key) {
-		if(null != this.getList.get(key) || this.getList.get(key) == true  ){
+		
+		if(this.getList.isEmpty() ){
+			return false;
+		}
+		
+		if(this.getList.get(key) == true ){
 			return true;
-		}else{
+		}else {
 			return false;
 		}
 	}
