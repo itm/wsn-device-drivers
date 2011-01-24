@@ -81,8 +81,10 @@ public abstract class ObserverableDevice implements Device {
 	 */
 	public void fireMessagePacketEvent(MessageEvent<MessagePacket> event) {
 		final List<MessagePacketListener> listeners = this.messagePacketMap.get(event.getMessage().getType());
-		for (final MessagePacketListener listener : listeners.toArray(new MessagePacketListener[listeners.size()])) {
-			listener.onMessagePacketReceived(event);
+		if (listeners != null) {
+			for (final MessagePacketListener listener : listeners.toArray(new MessagePacketListener[listeners.size()])) {
+				listener.onMessagePacketReceived(event);
+			}
 		}
 		for (final MessagePacketListener listener : messagePacketListener.toArray(new MessagePacketListener[messagePacketListener.size()])) {
 			listener.onMessagePacketReceived(event);

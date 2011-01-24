@@ -329,7 +329,7 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 
 	public void sendBootLoaderMessage(byte[] message) throws IOException {
 		// Allocate buffer for message + CR and LF
-		byte[] data = new byte[message.length + 2];
+		final byte[] data = new byte[message.length + 2];
 
 		// Copy message into the buffer
 		System.arraycopy(message, 0, data, 0, message.length);
@@ -342,7 +342,7 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 		// log.debug("Sending boot loader msg: " + Tools.toHexString(data));
 
 		// Send message
-		OutputStream stream = connection.getOutputStream();
+		final OutputStream stream = connection.getOutputStream();
 		stream.write(data);
 		stream.flush();
 	}
@@ -513,15 +513,15 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 	/**
 	 * Pacemate style
 	 */
-	public byte[] writeToRAM(long address, int len) throws Exception {
+	public byte[] writeToRAM(long address, int length) throws Exception {
 		// Send flash program request
-		// log.debug("Sending program request for address " + address + " with " + data.length + " bytes");
-		sendBootLoaderMessage(Messages.writeToRAMRequestMessage(address, len));
+		log.debug("Sending program request for address " + address + " with " + length + " bytes");
+		sendBootLoaderMessage(Messages.writeToRAMRequestMessage(address, length));
 
 		// Read flash program response
 		byte[] response = receiveBootLoaderReply(Messages.CMD_SUCCESS);
 
-		// log.debug("write to RAM ok");
+		log.debug("write to RAM ok");
 
 		return response;
 	}

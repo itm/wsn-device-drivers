@@ -27,7 +27,7 @@ public class PacemateGetChipTypeOperation extends AbstractOperation<ChipType> im
 		device.sendBootLoaderMessage(Messages.ReadPartIDRequestMessage());
 
 		// Read chip type read response
-		byte[] response = device.receiveBootLoaderReply(Messages.CMD_SUCCESS);
+		final byte[] response = device.receiveBootLoaderReply(Messages.CMD_SUCCESS);
 
 		ChipType chipType = ChipType.UNKNOWN;
 		int chipid = 0;

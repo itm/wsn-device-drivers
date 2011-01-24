@@ -11,6 +11,7 @@ import de.uniluebeck.itm.devicedriver.operation.AbstractProgramOperation;
 import de.uniluebeck.itm.devicedriver.operation.EraseFlashOperation;
 import de.uniluebeck.itm.devicedriver.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.devicedriver.util.BinDataBlock;
+import de.uniluebeck.itm.tr.util.StringUtils;
 
 public class PacemateProgramOperation extends AbstractProgramOperation {
 
@@ -28,6 +29,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 	@Override
 	public Void execute(Monitor monitor) throws Exception {
 		// Enter programming mode
+		log.debug("Switching to program mode...");
 		executeSubOperation(device.createEnterProgramModeOperation());
 		
 		device.clearStreamData();
@@ -36,8 +38,9 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 		// device.echoOff();
 
 		// Wait for a connection
-		while (!isCanceled() && !device.waitForConnection())
+		while (!isCanceled() && !device.waitForConnection()) {
 			log.info("Still waiting for a connection");
+		}
 
 		// Return with success if the user has requested to cancel this
 		// operation
@@ -47,9 +50,10 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 		}
 
 		// Connection established, determine chip type
+		log.debug("Getting Chip Type...");
 		GetChipTypeOperation getChipTypeOperation = device.createGetChipTypeOperation();
 		ChipType chipType = executeSubOperation(getChipTypeOperation);
-		// log.debug("Chip type is " + chipType);
+		log.debug("Chip type is " + chipType);
 
 		final PacemateBinData binData = new PacemateBinData(binaryImage);
 		// Check if file and current chip match
@@ -60,42 +64,48 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 
 		// pacemateProgram.changeStrangeBytePattern();
 
+		log.debug("Configuring flash...");
 		try {
 			device.configureFlash();
 		} catch (Exception e) {
-			log.debug("Error while configure flash! Operation will be cancelled!");
+			log.error("Error while configure flash! Operation will be cancelled!");
 			throw e;
 		}
 
+		log.debug("Erasing flash...");
 		try {
 			EraseFlashOperation eraseFlashOperation = device.createEraseFlashOperation();
 			executeSubOperation(eraseFlashOperation);
-		} catch (Exception e) {
-			log.debug("Error while erasing! Operation will be cancelled!");
+		} catch (final Exception e) {
+			log.error("Error while erasing! Operation will be cancelled!");
 			throw e;
 		}
 
-		int flashCRC = binData.calcCRC();
+		log.debug("Calculating CRC...");
+		final int flashCRC = binData.calcCRC();
+		log.debug("CRC " + flashCRC);
 
-		System.out.println("CRC " + flashCRC);
-
+		log.debug("Writing CRC to flash...");
 		try {
 			device.writeCRCtoFlash(flashCRC);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			log.debug("Error while write CRC to Flash! Operation will be cancelled!");
 			throw e;
 		}
 
 		// Write program to flash
+		log.debug("Writing image...");
+		log.debug("BinData block count: " + binData.getBlockCount());
 		BinDataBlock block = null;
 		int blockCount = 3;
 		int blockNumber = 3; // blockNumber != blockCount because block 8 & 9 == 32 kb all other 4 kb
 		while ((block = binData.getNextBlock()) != null) {
+			log.debug("Writing block: " + StringUtils.toHexString(block.data));
 			try {
 				device.writeToRAM(PacemateDevice.START_ADDRESS_IN_RAM, block.data.length);
 			} catch (Exception e) {
-				log.debug("Error while write to RAM! Operation will be cancelled!");
-				return null;
+				log.error("Error while write to RAM! Operation will be cancelled!");
+				throw e;
 			}
 
 			int counter = 0;
@@ -157,19 +167,20 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 
 			try {
 				// if block is completed copy data from RAM to Flash
-				System.out.println("Prepare Flash and Copy Ram to Flash " + blockCount + " " + blockNumber + " "
+				log.debug("Prepare Flash and Copy Ram to Flash " + blockCount + " " + blockNumber + " "
 						+ block.address);
 				device.configureFlash(blockNumber, blockNumber);
-				if (block.data.length > 1024)
+				if (block.data.length > 1024) {
 					device.copyRAMToFlash(block.address, PacemateDevice.START_ADDRESS_IN_RAM, 4096);
-				else if (block.data.length > 512)
+				} else if (block.data.length > 512) {
 					device.copyRAMToFlash(block.address, PacemateDevice.START_ADDRESS_IN_RAM, 1024);
-				else if (block.data.length > 512)
+				} else if (block.data.length > 512) {
 					device.copyRAMToFlash(block.address, PacemateDevice.START_ADDRESS_IN_RAM, 512);
-				else
+				} else {
 					device.copyRAMToFlash(block.address, PacemateDevice.START_ADDRESS_IN_RAM, 256);
+				}
 			} catch (Exception e) {
-				log.debug("Error while copy RAM to Flash! Operation will be cancelled!");
+				log.error("Error while copy RAM to Flash! Operation will be cancelled!");
 				return null;
 			}
 
@@ -212,8 +223,10 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 			}
 		}
 		
+		log.debug("Leaving program mode...");
 		executeSubOperation(device.createLeaveProgramModeOperation());
-		
+
+		log.debug("Program operation finsihed");
 		return null;
 	}
 
