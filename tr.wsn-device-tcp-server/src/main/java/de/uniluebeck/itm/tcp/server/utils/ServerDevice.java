@@ -57,6 +57,7 @@ public class ServerDevice {
 			
 		} catch (JAXBException e) {
 			log.error(e.getMessage());
+			System.exit(-1);
 		}
 	}
 	
@@ -106,6 +107,7 @@ public class ServerDevice {
 			device = (Device) ConncectionArgsConstructor.newInstance(new Object[] {con});
 		} catch (Exception e) {
 			log.error(e.getMessage());
+			System.exit(-1);
 		}
 	    
 		return device;
