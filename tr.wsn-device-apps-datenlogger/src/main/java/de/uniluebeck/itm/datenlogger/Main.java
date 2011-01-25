@@ -1,6 +1,8 @@
 package de.uniluebeck.itm.datenlogger;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import org.apache.commons.cli.*;
 
@@ -28,7 +30,7 @@ public class Main {
 		options.addOption("regex_filter", true, "Kombination der Filtertypen: Regular Expression-Filter");
 		options.addOption("user", true, "Benutzername, um sich auf einen Server zu verbinden");
 		options.addOption("passwd", true, "Passwort, um sich auf einen Server zu verbinden");
-		options.addOption("device", true, "Art des Geräts im lokalen Fall: isense, jennec, telosb oder pacemate");
+		options.addOption("device", true, "Art des Gerï¿½ts im lokalen Fall: isense, jennec, telosb oder pacemate");
 		
 		// for help statement
 		HelpFormatter formatter = new HelpFormatter();
@@ -41,11 +43,7 @@ public class Main {
 			System.out.println("Diese Option gibt es nicht.");
 		}
 		if(cmd != null){
-			Datenlogger datenlogger = new Datenlogger();
-			
-			if(cmd.hasOption("i")){
-				new Listener(datenlogger).start();
-			}
+			Datenlogger datenlogger = new Datenlogger();		
 			
 			//standard-options
 			if(cmd.hasOption("help")){
@@ -108,6 +106,36 @@ public class Main {
 					datenlogger.connect();
 					datenlogger.startlog();
 				}	
+			}
+			if(cmd.hasOption("i")){
+				while(true){
+		            try {
+		                BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+		                String input = in.readLine();
+		                if(input.startsWith("-klammer_filter")){
+		                	String delims = " ";
+		            		String[] tokens = input.split(delims);
+		                	datenlogger.add_klammer_filter(tokens[1]);
+		                }else if(input.startsWith("-regex_filter")){
+		                	String delims = " ";
+		            		String[] tokens = input.split(delims);
+		            		datenlogger.add_regex_filter(tokens[1]);
+		                }else if(input.equals("stoplog")){
+		                	datenlogger.stoplog();
+		                	System.exit(0);
+		                }
+		                else if(input.startsWith("-location")){
+		                	String delims = " ";
+		            		String[] tokens = input.split(delims);
+		            		datenlogger.setLocation(tokens[1]);
+		                }
+		                else if(input.startsWith("e")){
+		                	System.exit(0);
+		                }
+		            } catch (Exception ex) {
+		                ex.printStackTrace();
+		            }          
+		        }
 			}
 		}
 	}

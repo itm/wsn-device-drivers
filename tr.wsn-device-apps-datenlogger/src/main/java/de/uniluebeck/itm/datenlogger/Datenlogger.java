@@ -35,6 +35,7 @@ import de.uniluebeck.itm.devicedriver.Device;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.MessagePacketListener;
 import de.uniluebeck.itm.devicedriver.PacketType;
+import de.uniluebeck.itm.devicedriver.async.AsyncAdapter;
 import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.OperationQueue;
 import de.uniluebeck.itm.devicedriver.async.QueuedDeviceAsync;
@@ -171,6 +172,7 @@ public class Datenlogger {
 			deviceAsync = new RemoteDevice(connection);
 		}
 		else{
+			
 			final OperationQueue queue = new PausableExecutorOperationQueue();
 			final MockConnection connection = new MockConnection();
 			Device device = new MockDevice(connection);
@@ -219,10 +221,20 @@ public class Datenlogger {
 					telosb_connection.connect("COM19");
 				}
 			}
+			connection.connect("MockPort");
+			System.out.println("Connected");
+			
 			deviceAsync = new QueuedDeviceAsync(queue, device);
+			
+			System.out.println("Message packet listener added");
+			deviceAsync.addListener(new MessagePacketListener() {
+				public void onMessagePacketReceived(MessageEvent<MessagePacket> event) {
+					System.out.println("Message: " + new String(event.getMessage().getContent()));
+				}
+			}, PacketType.LOG);
 		}
 	}
-	
+
 	public void startlog(){
 		gestartet = true;
 		
