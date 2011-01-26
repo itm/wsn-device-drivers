@@ -1,10 +1,14 @@
-package de.uniluebeck.itm.metadatacollector;
+package de.uniluebeck.itm.metadaten.metadatenservice.metadatacollector;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.load.Persister;
-import de.uniluebeck.itm.entity.Node;
-import de.uniluebeck.itm.entity.Setup;
+
+import de.uniluebeck.itm.metadaten.metadatenservice.entity.Node;
+import de.uniluebeck.itm.metadaten.metadatenservice.entity.Setup;
 
 public class FileCollector {
 
@@ -14,7 +18,7 @@ public class FileCollector {
 		
 	 Node node = new Node();
 	 node.setId("Test281220101");
-	 
+	 //TODO Classloader
 	 FileCollector collect = new FileCollector();
 		node= collect.filecollect(node, "sensors.xml");
 		System.out.println("Ergbenis"+ node.getDescription());
@@ -30,10 +34,16 @@ public class FileCollector {
 	public Node filecollect(Node node, String wisemlurl) {
 		// TODO Informationen überschreiben? IP zum Beispiel ja eher nicht
 		Serializer serializer = new Persister();
-		File source = new File(wisemlurl);
 		Setup setup = new Setup();
+		URI fileuri = null;
 		try {
-			setup = serializer.read(de.uniluebeck.itm.entity.Setup.class,
+			fileuri = ClassLoader.getSystemResource(wisemlurl).toURI();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		File source = new File(fileuri);
+		try {
+			setup = serializer.read(de.uniluebeck.itm.metadaten.metadatenservice.entity.Setup.class,
 					source);
 			// serializer.read(ConfigData, source);
 		} catch (Exception e1) {

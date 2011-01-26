@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.entity;
+package de.uniluebeck.itm.metadaten.metadatenservice.entity;
 
 import org.simpleframework.xml.Element;
 
@@ -14,7 +14,7 @@ public class ConfigData {
 	private String username;
 	@Element
 	private String password;
-	@Element
+	@Element (required=false)
 	private String wisemlFile;
 	
 	public String getServerIP() {

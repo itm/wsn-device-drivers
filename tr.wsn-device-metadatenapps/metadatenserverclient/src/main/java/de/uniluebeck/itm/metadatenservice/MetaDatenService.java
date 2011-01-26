@@ -1,23 +1,28 @@
 package de.uniluebeck.itm.metadatenservice;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.load.Persister;
 
+import de.uniluebeck.itm.metadaten.metadatenservice.entity.Capability;
+import de.uniluebeck.itm.metadaten.metadatenservice.entity.ConfigData;
+import de.uniluebeck.itm.metadaten.metadatenservice.entity.Node;
+import de.uniluebeck.itm.metadaten.metadatenservice.metadatacollector.IMetaDataCollector;
 
-import de.uniluebeck.itm.entity.Capability;
-import de.uniluebeck.itm.entity.ConfigData;
-import de.uniluebeck.itm.entity.Node;
-import de.uniluebeck.itm.metadatacollector.IMetaDataCollector;
 
 public class MetaDatenService extends TimerTask implements iMetaDatenService{
 	
+	private static Log log = LogFactory.getLog(MetaDatenService.class);
 	private ClientStub stub = null;
 	private List<IMetaDataCollector> collector = new ArrayList<IMetaDataCollector> ();
 	ConfigData config = new ConfigData();
@@ -37,62 +42,62 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService{
 	      timer.schedule  ( this, 1000, 5000 );
 	}
 	
-	public static void main(String[] args) throws Exception {
-
-		/*Collection von MetaDatenCollectors*/
-		
-		/* Gemeinsamer ClientManager */
-		ClientStub stub1 = new ClientStub("testUser", "testPassword", "localhost", 8080);
-        Node node = new Node();
-        
-		node.setId("1237");
-		node.setIpAddress("192.168.8.102");
-		node.setMicrocontroller("TelosB");
-		node.setDescription("Solar2000");
-
-		node.setIpAddress("192.168.8.102");
-		node.setMicrocontroller("TelosB");
-		node.setDescription("Solar2002");
-		node.setTimestamp(new Date());
-		Capability cap = new Capability ();
-		Capability cap2 = new Capability ();
-		cap.setDatatype("int");
-		cap.setName("Temperatur");
-		cap.setNode(node);
-		cap.setUnit("Grad Fahre");
-//		cap.setId(1);
-		List <Capability> capList = new ArrayList <Capability>();
-		capList.add(cap);
-		cap2.setDatatype("double");
-		cap2.setName("Licht");
-		cap2.setUnit("Luchs");
-//		cap2.setId(2);
-		cap2.setNode(node);
-		capList.add(cap2);
-		node.setCapabilityList(capList);
-		node.setPort((short)1234);
-		node.setTimestamp(new Date());
-		
-				stub1.add(node, new AsyncCallback<String>(){
-					@Override
-					public void onCancel() {
-					}
-					@Override
-					public void onFailure(Throwable throwable) {
-						System.out.println(throwable.getMessage());
-					}
-					@Override
-					public void onSuccess(String result) {
-						System.out.println(result);
-						
-					}
-					@Override
-					public void onProgressChange(float fraction) {
-					
-				}});
-			
-		
-	}
+//	public static void main(String[] args) throws Exception {
+//
+//		/*Collection von MetaDatenCollectors*/
+//		
+//		/* Gemeinsamer ClientManager */
+//		ClientStub stub1 = new ClientStub("testUser", "testPassword", "localhost", 8080);
+//        Node node = new Node();
+//        
+//		node.setId("1237");
+//		node.setIpAddress("192.168.8.102");
+//		node.setMicrocontroller("TelosB");
+//		node.setDescription("Solar2000");
+//
+//		node.setIpAddress("192.168.8.102");
+//		node.setMicrocontroller("TelosB");
+//		node.setDescription("Solar2002");
+//		node.setTimestamp(new Date());
+//		Capability cap = new Capability ();
+//		Capability cap2 = new Capability ();
+//		cap.setDatatype("int");
+//		cap.setName("Temperatur");
+//		cap.setNode(node);
+//		cap.setUnit("Grad Fahre");
+////		cap.setId(1);
+//		List <Capability> capList = new ArrayList <Capability>();
+//		capList.add(cap);
+//		cap2.setDatatype("double");
+//		cap2.setName("Licht");
+//		cap2.setUnit("Luchs");
+////		cap2.setId(2);
+//		cap2.setNode(node);
+//		capList.add(cap2);
+//		node.setCapabilityList(capList);
+//		node.setPort((short)1234);
+//		node.setTimestamp(new Date());
+//		
+//				stub1.add(node, new AsyncCallback<String>(){
+//					@Override
+//					public void onCancel() {
+//					}
+//					@Override
+//					public void onFailure(Throwable throwable) {
+//						System.out.println(throwable.getMessage());
+//					}
+//					@Override
+//					public void onSuccess(String result) {
+//						System.out.println(result);
+//						
+//					}
+//					@Override
+//					public void onProgressChange(float fraction) {
+//					
+//				}});
+//			
+//		
+//	}
 	
 
 
@@ -139,10 +144,16 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService{
 	public ConfigData loadConfig(String fileurl){
 		ConfigData config = new ConfigData();
 		Serializer serializer = new Persister();
-		File source = new File(fileurl);
-
+		URI fileuri = null;
+		try {
+			fileuri = ClassLoader.getSystemResource(fileurl).toURI();
+		} catch (URISyntaxException e) {
+			log.error(e.getMessage());
+		}
+		File source = new File(fileuri);
+		System.out.println("File:" + source.getName() + source.toString());
 		 try {
-			config = serializer.read(de.uniluebeck.itm.entity.ConfigData.class, source);
+			config = serializer.read(de.uniluebeck.itm.metadaten.metadatenservice.entity.ConfigData.class, source);
 //			serializer.read(ConfigData, source);
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block

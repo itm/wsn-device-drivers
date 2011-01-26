@@ -4,5 +4,4 @@
    <clientport>1234</clientport>
    <username>testUser</username>
    <password>testPassword</password>
-   <wisemlFile>sensors.xml</wisemlFile>
 </configData>

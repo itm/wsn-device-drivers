@@ -12,11 +12,10 @@ import com.googlecode.protobuf.pro.duplex.RpcClientChannel;
 import com.googlecode.protobuf.pro.duplex.client.DuplexTcpClientBootstrap;
 import com.googlecode.protobuf.pro.duplex.execute.ThreadPoolCallExecutor;
 
-import de.uniluebeck.itm.entity.Node;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Identification;
-import de.uniluebeck.itm.metadaten.files.MetaDataService.NODE;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Operations;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.VOID;
+import de.uniluebeck.itm.metadaten.metadatenservice.entity.Node;
 import de.uniluebeck.itm.metadaten.serverclient.metadataclienthelper.NodeHelper;
 
 

@@ -1,10 +1,7 @@
 package de.uniluebeck.itm.metadatenservice;
 
-import java.util.List;
-
-import de.uniluebeck.itm.entity.Node;
-import de.uniluebeck.itm.metadatacollector.IMetaDataCollector;
-import de.uniluebeck.itm.metadatacollector.MetaDataCollector;
+import de.uniluebeck.itm.metadaten.metadatenservice.entity.Node;
+import de.uniluebeck.itm.metadaten.metadatenservice.metadatacollector.IMetaDataCollector;
 
 public interface iMetaDatenService {
 	//TODO i groﬂ 

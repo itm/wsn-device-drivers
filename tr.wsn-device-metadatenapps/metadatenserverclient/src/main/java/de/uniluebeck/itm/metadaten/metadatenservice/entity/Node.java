@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.entity;
+package de.uniluebeck.itm.metadaten.metadatenservice.entity;
 
 
 import java.util.Collections;

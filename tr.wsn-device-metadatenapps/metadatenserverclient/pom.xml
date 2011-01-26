@@ -9,7 +9,7 @@
 	</parent>
 
 	<groupId>de.uniluebeck.itm.metadaten</groupId>
-	<artifactId>metadatenserverclient</artifactId>
+	<artifactId>metadatenservice</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Metadaten Serverclient Component</name>
 	<packaging>jar</packaging>

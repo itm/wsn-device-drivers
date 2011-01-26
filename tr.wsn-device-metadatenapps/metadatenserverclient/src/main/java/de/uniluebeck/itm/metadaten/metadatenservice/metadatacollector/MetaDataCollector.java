@@ -1,10 +1,10 @@
-package de.uniluebeck.itm.metadatacollector;
+package de.uniluebeck.itm.metadaten.metadatenservice.metadatacollector;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import de.uniluebeck.itm.devicedriver.Device;
-import de.uniluebeck.itm.entity.Node;
+import de.uniluebeck.itm.metadaten.metadatenservice.entity.Node;
 
 public class MetaDataCollector implements IMetaDataCollector {
 	private Device device = null;

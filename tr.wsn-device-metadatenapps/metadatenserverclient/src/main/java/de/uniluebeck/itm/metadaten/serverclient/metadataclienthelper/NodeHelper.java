@@ -4,10 +4,10 @@ package de.uniluebeck.itm.metadaten.serverclient.metadataclienthelper;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniluebeck.itm.entity.Capability;
-import de.uniluebeck.itm.entity.Node;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.NODE;
+import de.uniluebeck.itm.metadaten.metadatenservice.entity.Capability;
+import de.uniluebeck.itm.metadaten.metadatenservice.entity.Node;
 
 public class NodeHelper {
 
