@@ -9,7 +9,7 @@
 	</parent>
 
 	<groupId>de.uniluebeck.itm.metadaten</groupId>
-	<artifactId>metadatenremoteclient</artifactId>
+	<artifactId>remote</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Metadaten RemoteClient Component</name>
 	<packaging>jar</packaging>

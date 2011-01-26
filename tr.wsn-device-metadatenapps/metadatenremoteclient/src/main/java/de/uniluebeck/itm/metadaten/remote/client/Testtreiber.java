@@ -22,11 +22,12 @@ public class Testtreiber {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		System.out.println("Node wird gebaut");
 		Node node = new Node();
-        node.setId("123");
-		node.setIpAddress("192.168.8.102");
-		node.setMicrocontroller("TelosB");
-		node.setDescription("Solar2000");
+        node.setId("111296050613777");
+		node.setIpAddress("192.168.8.101");
+		node.setMicrocontroller("mic1");
+//		node.setDescription("Solar2000");
 		String queryString = "123";
 		List <Node> nodes = new ArrayList<Node>();
 		try {

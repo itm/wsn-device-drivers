@@ -106,17 +106,20 @@ public class MetaDatenClient implements MetaDataClient {
 			
 			// erzeugen eines async RPC-Objekts fuer die Operationen
 			operationService = Operations.newStub(channel);
-			
+			log.info("create Identification");
 			// aufbauen eines Identification-Packets
 			Identification id = Identification.newBuilder().setUsername(userName).setPassword(passWord).build();
 			// erzeugen eines synchronen RPC-Objekts fuer den connect
+			log.info("Connect to server");
 			BlockingInterface blockOperationService =  Operations.newBlockingStub(channel);
 			try {
+				log.info("sync RPC-call");
 				// sync RPC-Aufruf
 				 blockOperationService.connect(controller, id);
 			} catch (ServiceException e) {
 				e.printStackTrace();
 			}
+			log.info("Connection to server established");
 		}
 		
 		

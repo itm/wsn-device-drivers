@@ -24,14 +24,14 @@ public class NodeHelper {
 		if (!node.getId().isEmpty()) {
 			nodebuilder.setKnotenid(node.getId());
 		}
-		if (!node.getIpAddress().isEmpty()) {
+		if (!(node.getIpAddress() == null)) {
 			nodebuilder.setIp(node.getIpAddress());
 		}
-		if (!node.getDescription().isEmpty()) {
+		if (!(node.getDescription()==null)) {
 			nodebuilder.setDescription(node.getDescription());
 		}
 		;
-		if (!node.getMicrocontroller().isEmpty()) {
+		if (!(node.getMicrocontroller()== null)) {
 			nodebuilder.setMicrocontroller(node.getMicrocontroller());
 		}
 		;
