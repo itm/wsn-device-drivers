@@ -1,8 +1,10 @@
 package de.uniluebeck.itm.metadaten.metadatenserver;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
-import de.uniluebeck.itm.metadaten.entities.ConfigData;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executors;
 
@@ -32,6 +34,8 @@ import com.googlecode.protobuf.pro.duplex.execute.ServerRpcController;
 import com.googlecode.protobuf.pro.duplex.execute.ThreadPoolCallExecutor;
 import com.googlecode.protobuf.pro.duplex.listener.RpcConnectionEventListener;
 import com.googlecode.protobuf.pro.duplex.server.DuplexTcpServerBootstrap;
+
+import de.uniluebeck.itm.metadaten.entities.ConfigData;
 import de.uniluebeck.itm.metadaten.entities.Node;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Identification;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.NODE;
@@ -53,7 +57,7 @@ public class MetaDatenServer {
 	private static TimedCache<RpcClientChannel, Subject> authList = new TimedCache<RpcClientChannel, Subject>();
 	public static List<Node> knotenliste = new ArrayList<Node>();
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws URISyntaxException {
 
 		ConfigData config = loadConfig("config.xml");
 		log.info("Startup Server!");
@@ -111,9 +115,16 @@ public class MetaDatenServer {
 		System.out.println("Serving started: " + bootstrap);
 
 		/* Initialiesieren von Shiro */
+//		URI fileuri = null;
+//		try {
+//			fileuri = ClassLoader.getSystemResource("shiro.ini").getPath().toURI();
+//		} catch (URISyntaxException e) {
+//			log.error(e.getMessage());
+//		}
+//		File source = new File(fileuri);
 
 		Factory<SecurityManager> factory = new IniSecurityManagerFactory(
-				"shiro.ini");
+				 ClassLoader.getSystemResource("shiro.ini").toURI().getPath());
 		SecurityManager securityManager = factory.getInstance();
 		SecurityUtils.setSecurityManager(securityManager);
 		
@@ -126,7 +137,13 @@ public class MetaDatenServer {
 	public static ConfigData loadConfig(String fileurl){
 		ConfigData config = new ConfigData();
 		Serializer serializer = new Persister();
-		File source = new File(fileurl);
+		URI fileuri = null;
+		try {
+			fileuri = ClassLoader.getSystemResource(fileurl).toURI();
+		} catch (URISyntaxException e) {
+			log.error(e.getMessage());
+		}
+		File source = new File(fileuri);
 
 		 try {
 			config = serializer.read(ConfigData.class, source);
@@ -224,6 +241,7 @@ public class MetaDatenServer {
 			// ClientID id =
 			// idList.get(ServerRpcController.getRpcChannel(controller));
 			node = nhelper.changeToNode(request);
+			node.setTimestamp(new Date());
 			StoreToDatabase storeDB = new StoreToDatabase();
 			try {
 				storeDB.storeNode(node);
@@ -282,6 +300,7 @@ public class MetaDatenServer {
 			// ClientID id =
 			// idList.get(ServerRpcController.getRpcChannel(controller));
 			node = nhelper.changeToNode(request);
+			node.setTimestamp(new Date());
 			StoreToDatabase storeDB = new StoreToDatabase();
 			try {
 				storeDB.updateNode(node);
@@ -301,6 +320,7 @@ public class MetaDatenServer {
 			log.info("Searchquery by Client: "
 					+ ServerRpcController.getRpcChannel(controller)
 							.getPeerInfo().getHostName() + " started");
+			log.info("NodeID vom CLient" + request.getQueryMs().getKnotenid());
 			// ClientID id =
 			// idList.get(ServerRpcController.getRpcChannel(controller));
 			DatabaseToStore getfromDB = new DatabaseToStore();
@@ -309,6 +329,7 @@ public class MetaDatenServer {
 			SearchResponse.Builder responsebuilder = SearchResponse
 					.newBuilder();
 			if (!(request.getQueryMs() == null)) {
+				log.info("Im request querynode if");
 				Node node = nhelper.changeToNode(request.getQueryMs());
 				resultlist = getfromDB.getNodes(node);
 			}
@@ -316,9 +337,12 @@ public class MetaDatenServer {
 				// TODO
 				log.info("Operation: search by QueryString - Not supported yet");
 			}
+			log.info("Result Größe!!!" + resultlist.size());
 			for (Node result : resultlist) {
+				log.info("Result" + result.getId());
 				responsebuilder.addResponse(nhelper.changetoNODE(result));
 			}
+			
 			log.info("Finales mopped erstellen");
 			SearchResponse response = responsebuilder.build();
 			log.info("Send searchResponse to client: "

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="rpc_pro/rpcPrototype/schema/devices"
+    xmlns:tns="rpc_pro/rpcPrototype/schema/devices"
+    elementFormDefault="qualified">
+    <xsd:complexType name="ServiceConfig">      
+            <xsd:element name="ServerIP" type="xsd:string" maxOccurs="1" minOccurs="1"></xsd:element>
+            <xsd:element name="Port" type="xsd:short" maxOccurs="1" minOccurs="1"></xsd:element>
+            <xsd:element name="Client" type="xsd:string" minOccurs="1"></xsd:element>
+            <xsd:element name="ClientPort" type="tns:short" minOccurs="1"></xsd:element>
+    </xsd:complexType>
+    <xsd:complexType name="UserData">
+        <xsd:sequence>
+            <xsd:element name="Username" type="xsd:string" maxOccurs="unbounded" minOccurs="1"></xsd:element>
+			<xsd:element name="password" type="xsd:string" maxOccurs="unbounded" minOccurs="1"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>

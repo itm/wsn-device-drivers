@@ -1,6 +1,7 @@
 package de.uniluebeck.itm.persistence;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,17 +23,18 @@ public class StoreToDatabase {
 	static File datafile = new File(
 			"C:\\uni hl\\workspace\\fallstudie2010\\sources\\tr.wsn-device-metadatenapps\\metadatenserver\\hibernate.cfg.xml");
 
-	private static final SessionFactory ourSessionFactory;
+	 private static final SessionFactory ourSessionFactory;
+	    private static final URL url = ClassLoader.getSystemResource("hibernate.cfg.xml");
 
-	static {
-		try {
-			ourSessionFactory = new AnnotationConfiguration().configure(
-					datafile).buildSessionFactory();
-		} catch (Throwable ex) {
-			throw new ExceptionInInitializerError(ex);
-		}
-	}
-
+	    static {
+	        try {
+	            ourSessionFactory = new AnnotationConfiguration().configure(url).
+	                    buildSessionFactory();
+	        }
+	        catch (Exception ex) {
+	            throw new ExceptionInInitializerError(ex);
+	        }
+	    }
 	/**
 	 * This functions creates a Hibernate Session.
 	 * 

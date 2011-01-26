@@ -65,7 +65,7 @@ public class NodeHelper {
 		List<Capability> capResultList = new ArrayList<Capability>();
 		nodeout.setId(nodein.getKnotenid());
 		nodeout.setIpAddress(nodein.getIp());
-		nodeout.setTimestamp(new Date());
+//		
 		nodeout.setMicrocontroller(nodein.getMicrocontroller());
 		nodeout.setDescription(nodein.getDescription());
 		for (int i = 0; i < nodein.getCapabilityListCount(); i++) {

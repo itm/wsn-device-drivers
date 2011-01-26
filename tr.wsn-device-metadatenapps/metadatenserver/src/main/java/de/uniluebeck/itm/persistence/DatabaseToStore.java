@@ -1,7 +1,7 @@
 package de.uniluebeck.itm.persistence;
 
 
-import java.io.File;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,14 +27,13 @@ import de.uniluebeck.itm.metadaten.entities.NodeCapability;
  */
 
 public class DatabaseToStore {
-	static File datafile = new File("C:\\uni hl\\workspace\\fallstudie2010\\sources\\tr.wsn-device-metadatenapps\\metadatenserver\\hibernate.cfg.xml");
+//	static File datafile = new File("C:\\uni hl\\workspace\\fallstudie2010\\sources\\tr.wsn-device-metadatenapps\\metadatenserver\\hibernate.cfg.xml");
     private static final SessionFactory ourSessionFactory;
-
+    private static final URL url = ClassLoader.getSystemResource("hibernate.cfg.xml");
 
     static {
         try {
-            ourSessionFactory = new AnnotationConfiguration().
-                    configure(datafile).
+            ourSessionFactory = new AnnotationConfiguration().configure(url).
                     buildSessionFactory();
         }
         catch (Exception ex) {
@@ -59,10 +58,14 @@ public class DatabaseToStore {
      * @param nodeId
      */
 
-    public List <Node> getNodes(Node nodeexample) {
+    @SuppressWarnings("unchecked")
+	public List <Node> getNodes(Node nodeexample) {
     	List <Node> resultlist = new ArrayList<Node>();
     	final Session session = getSession();
-	   	 
+    	  Node getnode = new Node();
+	   	getnode.setId(nodeexample.getDescription());
+	   	getnode.setMicrocontroller(nodeexample.getMicrocontroller());
+	   	getnode.setIpAddress(nodeexample.getMicrocontroller());
         Transaction transaction = session.beginTransaction();
 //        resultlist = session.createQuery("select  from Node parentnode where id="+parentnode.getId()).list();
         Criteria crit = session.createCriteria(Node.class);
@@ -71,6 +74,14 @@ public class DatabaseToStore {
 //        final List <NodeEntity> nodeIds = session.createQuery("from NodeEntity parentnode where id =" + parentnode.getId()).list();
         crit.add(exampleNode);
         resultlist = crit.list();      
+        System.out.println("Example" + resultlist.size());
+       	if (resultlist.size() > 0){
+    		for (Node nod: resultlist){
+//        		nod.setCapabilityList(session.createQuery("from Capability where parentnode_id ="+ nod.getId()).list());
+    			nod.getCapabilityList().size();
+        	}
+    		
+    	}
         transaction.commit();
         session.close();
         return resultlist;

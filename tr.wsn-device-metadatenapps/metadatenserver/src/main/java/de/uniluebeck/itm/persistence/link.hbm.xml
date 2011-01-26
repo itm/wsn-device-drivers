@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+   
+
+    <class name="de.uniluebeck.itm.entities.NodeEntity" table="node" catalog="graph">
+
+        <id name="id">
+            <column name="id" sql-type="varchar" length="100" precision="0" not-null="true"/>
+        </id>
+        <property name="gateway">
+            <column name="gateway" sql-type="varchar" length="100" precision="0" not-null="true"/>
+        </property>
+        <property name="nodeName">
+            <column name="nodeName" sql-type="varchar" length="100" precision="0" not-null="true"/>
+        </property>
+
+
+    </class>
+
+
+    <class name="de.uniluebeck.itm.entities.NodecapabilityEntity" table="nodecapability" catalog="graph">
+        <id name="id">
+            <column name="id" sql-type="int" length="100" precision="0" not-null="true"/>
+        </id>
+        <property name="name">
+            <column name="name" sql-type="varchar" length="100" precision="0" not-null="true"/>
+        </property>
+        <property name="nodeid">
+            <column name="nodeId" sql-type="varchar" length="100" precision="0" not-null="true"/>
+        </property>
+        <property name="value">
+            <column name="value" sql-type="varchar" length="100" precision="0" not-null="true"/>
+        </property>
+    </class>
+
+   
+
+
+</hibernate-mapping>
