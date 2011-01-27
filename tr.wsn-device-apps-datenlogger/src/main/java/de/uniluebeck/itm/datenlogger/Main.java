@@ -14,13 +14,11 @@ public class Main {
 		// create Options object
 		Option help_option = new Option( "help", "print this message" );
 		Option version_option = new Option( "version", "print the version information" );
-		Option interactive = new Option("i", "interactive mode");
 		
 		Options options = new Options();
 		
 		options.addOption(help_option);
 		options.addOption(version_option);
-		options.addOption(interactive);
 
 		// add options for Datenlogger
 		options.addOption("port", true, "port");
@@ -107,36 +105,34 @@ public class Main {
 					datenlogger.startlog();
 				}	
 			}
-			if(cmd.hasOption("i")){
-				while(true){
-		            try {
-		                BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-		                String input = in.readLine();
-		                if(input.startsWith("-klammer_filter")){
-		                	String delims = " ";
-		            		String[] tokens = input.split(delims);
-		                	datenlogger.add_klammer_filter(tokens[1]);
-		                }else if(input.startsWith("-regex_filter")){
-		                	String delims = " ";
-		            		String[] tokens = input.split(delims);
-		            		datenlogger.add_regex_filter(tokens[1]);
-		                }else if(input.equals("stoplog")){
-		                	datenlogger.stoplog();
-		                	System.exit(0);
-		                }
-		                else if(input.startsWith("-location")){
-		                	String delims = " ";
-		            		String[] tokens = input.split(delims);
-		            		datenlogger.setLocation(tokens[1]);
-		                }
-		                else if(input.startsWith("e")){
-		                	System.exit(0);
-		                }
-		            } catch (Exception ex) {
-		                ex.printStackTrace();
-		            }          
-		        }
-			}
+			while(true){
+	            try {
+	                BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+	                String input = in.readLine();
+	                if(input.startsWith("-klammer_filter")){
+	                	String delims = " ";
+	            		String[] tokens = input.split(delims);
+	                	datenlogger.add_klammer_filter(tokens[1]);
+	                }else if(input.startsWith("-regex_filter")){
+	                	String delims = " ";
+	            		String[] tokens = input.split(delims);
+	            		datenlogger.add_regex_filter(tokens[1]);
+	                }else if(input.equals("stoplog")){
+	                	datenlogger.stoplog();
+	                	System.exit(0);
+	                }
+	                else if(input.startsWith("-location")){
+	                	String delims = " ";
+	            		String[] tokens = input.split(delims);
+	            		datenlogger.setLocation(tokens[1]);
+	                }
+	                else if(input.startsWith("e")){
+	                	System.exit(0);
+	                }
+	            } catch (Exception ex) {
+	                ex.printStackTrace();
+	            }          
+	        }
 		}
 	}
 }

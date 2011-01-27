@@ -163,7 +163,7 @@ public class Datenlogger {
 	}	
 	
 	public void connect(){
-		if(server != null){
+		if(server != null){	
 			final RemoteConnection connection = new RemoteConnection();
 			
 			connection.connect("1:"+user+":"+passwort+"@localhost:8080");

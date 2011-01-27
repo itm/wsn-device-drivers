@@ -77,10 +77,5 @@ public class DatenloggerTest extends TestCase {
 		logger.writeToXmlFile();
 		//TODO ...
 	}
-	
-	public void testWriteToDatabase(){
-		Datenlogger logger = new Datenlogger();
-		//TODO ...
-	}
 }
 
