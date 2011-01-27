@@ -1,62 +1,61 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
-		<artifactId>tr.wsn-device</artifactId>
 		<groupId>de.uni-luebeck.itm</groupId>
+		<artifactId>tr.wsn-device</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
-	<modelVersion>4.0.0</modelVersion>
 
-  <groupId>de.uni-luebeck.itm</groupId>
-  <artifactId>tr.wsn-device-tcp-client</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+	<groupId>de.uni-luebeck.itm</groupId>
+	<artifactId>tr.wsn-device-tcp-client</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>TR :: WSN TCP Client</name>
 
-  <name>TR :: WSN TCP Client</name>
+	<dependencies>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
+		<dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java</artifactId>
+		</dependency>
 
-  <build>
-  	<plugins>
-  		<plugin>
-  			<groupId>org.apache.maven.plugins</groupId>
-  			<artifactId>maven-compiler-plugin</artifactId>
-  		</plugin>
-  	</plugins>
-  </build>
-  <dependencies>
-  	<dependency>
-		<groupId>com.google.protobuf</groupId>
-		<artifactId>protobuf-java</artifactId>
-	</dependency>
-	<dependency>
-		<groupId>com.googlecode.protobuf.pro</groupId>
-		<artifactId>protobuf-rpc-pro-duplex</artifactId>
-		<version>1.1.0</version>
-		<scope>system</scope>
-		<systemPath>${basedir}/lib/protobuf-rpc-pro-duplex-1.1.0.jar</systemPath>
-	</dependency>
-	<dependency>
-		<groupId>org.jboss.netty</groupId>
-		<artifactId>netty</artifactId>
-	</dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-    	<groupId>commons-logging</groupId>
-    	<artifactId>commons-logging</artifactId>
-    	<version>1.1.1</version>
-    	<type>jar</type>
-    	<scope>compile</scope>
-    </dependency>
-    <dependency>
-    	<groupId>de.uni-luebeck.itm</groupId>
-    	<artifactId>tr.wsn-device-drivers</artifactId>
-    </dependency>
-  </dependencies>
+		<dependency>
+			<groupId>com.googlecode.protobuf.pro</groupId>
+			<artifactId>protobuf-rpc-pro-duplex</artifactId>
+			<version>1.1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.netty</groupId>
+			<artifactId>netty</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>de.uni-luebeck.itm</groupId>
+			<artifactId>tr.wsn-device-drivers</artifactId>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
 </project>
