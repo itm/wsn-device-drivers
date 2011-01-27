@@ -48,8 +48,8 @@ public class ServerDevice {
 			for(JaxbDevice jaxDevice : list.getJaxbDevice()){
 				String key = createID(jaxDevice);
 				Connection con = createConnection(jaxDevice.getConnectionType());
-				con.connect(jaxDevice.getPort());
 				Device device = createDevice(jaxDevice.getDeviceType(), con);
+				con.connect(jaxDevice.getPort());
 				DeviceAsync deviceAsync = createDeviceAsync(device);
 				DeviceList.put(key, deviceAsync);
 				

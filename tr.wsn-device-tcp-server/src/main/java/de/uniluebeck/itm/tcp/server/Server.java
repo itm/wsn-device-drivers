@@ -213,7 +213,6 @@ public class Server {
 	            UsernamePasswordToken token = new UsernamePasswordToken(request.getUsername(), request.getPassword());
 	            token.setRememberMe(true);
 	            try {
-	            	
 	                currentUser.login(token);
 	                // eintragen der ClientID-Instanz zusammen mit den benutzten Channel in eine Liste
 					idList.put(channel, id);
