@@ -3,6 +3,8 @@ package de.uniluebeck.itm.datenlogger;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.or;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -35,7 +37,6 @@ import de.uniluebeck.itm.devicedriver.Device;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.MessagePacketListener;
 import de.uniluebeck.itm.devicedriver.PacketType;
-import de.uniluebeck.itm.devicedriver.async.AsyncAdapter;
 import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.OperationQueue;
 import de.uniluebeck.itm.devicedriver.async.QueuedDeviceAsync;
@@ -64,6 +65,7 @@ public class Datenlogger {
 	String device_parameter;
 	DeviceAsync deviceAsync;
 	MessagePacketListener listener;
+	FileWriter writer;
 
 	public Datenlogger(){
 	}
@@ -225,18 +227,20 @@ public class Datenlogger {
 			System.out.println("Connected");
 			
 			deviceAsync = new QueuedDeviceAsync(queue, device);
-			
-			System.out.println("Message packet listener added");
-			deviceAsync.addListener(new MessagePacketListener() {
-				public void onMessagePacketReceived(MessageEvent<MessagePacket> event) {
-					System.out.println("Message: " + new String(event.getMessage().getContent()));
-				}
-			}, PacketType.LOG);
 		}
 	}
 
 	public void startlog(){
 		gestartet = true;
+		
+		if(location != null){
+			try {
+				writer = new FileWriter(location);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 		System.out.println("Message packet listener added");
 		listener = new MessagePacketListener() {
@@ -244,7 +248,6 @@ public class Datenlogger {
 			public void onMessagePacketReceived(
 					de.uniluebeck.itm.devicedriver.event.MessageEvent<MessagePacket> event) {
 				String erhaltene_Daten = new String(event.getMessage().getContent());
-				System.out.println("Daten erhalten");
 				//Filtern
 				boolean matches = false;
 				
@@ -262,8 +265,17 @@ public class Datenlogger {
 				}	
 				
 				if(!matches){
-					System.out.println("Message: " + erhaltene_Daten);
-					//writeToXmlFile();
+					if(location != null){
+						try {
+							writer.write(erhaltene_Daten);
+							writer.write("\n");
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+					else{
+						System.out.println("Message: " + erhaltene_Daten);
+					}
 				}
 				else{
 					System.out.println("Daten wurden gefiltert.");
@@ -275,6 +287,11 @@ public class Datenlogger {
 	
 	public void stoplog(){
 		deviceAsync.removeListener(listener);
+		try {
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		gestartet = false;
 		System.out.println("\nDas Loggen des Knotens wurde beendet.");
 	}
