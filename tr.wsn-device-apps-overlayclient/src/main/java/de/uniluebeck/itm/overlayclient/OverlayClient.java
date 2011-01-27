@@ -19,6 +19,7 @@ public class OverlayClient {
 	}
 	
 	public void sucheKnotenMitID(String ID){
+		System.out.println("Starte Overlaysuche...");
 		MetaDatenClient client = new MetaDatenClient();
 		Node queryExample = new Node();
 		queryExample.setId(ID);

@@ -22,7 +22,7 @@ public class Main {
 		options.addOption("port", true, "port");
 		options.addOption("server", true, "server");
 		options.addOption("id", true, "Enth�lt die ID, nach der gesucht werden soll");
-		options.addOption("microcontroller", true, "Enth�lt den Mircrocontroller, nach dem gesucht werden soll");
+		options.addOption("microcontroller", true, "Enthaelt den Mircrocontroller, nach dem gesucht werden soll");
 		options.addOption("sensor", true, "Enth�lt den Sensor, nach dem gesucht werden soll");
 		
 		// for help statement
