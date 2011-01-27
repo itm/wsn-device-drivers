@@ -127,6 +127,7 @@ public class Main {
 	            		datenlogger.setLocation(tokens[1]);
 	                }
 	                else if(input.startsWith("e")){
+	                	datenlogger.stoplog();
 	                	System.exit(0);
 	                }
 	            } catch (Exception ex) {
