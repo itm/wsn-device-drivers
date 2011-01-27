@@ -15,9 +15,6 @@
 	<version>0.0.1-SNAPSHOT</version>
 
 	<dependencies>
-		<!-- WSN Device dependencies -->
-
-		<!-- Protobuf dependencies -->
 		<dependency>
 			<groupId>com.google.protobuf</groupId>
 			<artifactId>protobuf-java</artifactId>
@@ -29,7 +26,6 @@
 			<scope>system</scope>
 			<systemPath>${basedir}/lib/protobuf-rpc-pro-duplex-1.1.0.jar</systemPath>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.shiro</groupId>
 			<artifactId>shiro-core</artifactId>
@@ -42,12 +38,6 @@
 		<dependency>
 			<groupId>org.jboss.netty</groupId>
 			<artifactId>netty</artifactId>
-			<version>3.2.1.Final</version>
-		</dependency>
-		<dependency>
-			<groupId>de.uniluebeck.itm</groupId>
-			<artifactId>tr.util</artifactId>
-			<version>0.5.3</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-logging</groupId>
@@ -66,20 +56,16 @@
 		<dependency>
 			<groupId>de.uni-luebeck.itm</groupId>
 			<artifactId>tr.wsn-device-drivers-isense</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<type>jar</type>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>de.uni-luebeck.itm</groupId>
 			<artifactId>tr.wsn-device-drivers-jennec</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<type>jar</type>
-			<scope>compile</scope>
 		</dependency>
 	</dependencies>
-
+	
+<!--  
 	<repositories>
+	
 		<repository>
 			<id>google-maven-repository</id>
 			<name>Google Maven Repository</name>
@@ -118,8 +104,8 @@
 				<enabled>true</enabled>
 			</snapshots>
 			<layout>default</layout>
-		</repository>
-	</repositories>
+		</repository> 
+	</repositories>-->
 
 	<build>
 		<plugins>
