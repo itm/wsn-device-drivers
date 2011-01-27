@@ -153,7 +153,8 @@ public class RemoteDevice implements DeviceAsync{
 				packetServiceAnswerImpl.addPacketListener(listener.toString(),new MessagePacketListener() {
 					@Override
 					public void onMessagePacketReceived(MessageEvent<MessagePacket> event) {
-						log.info("Message: " + new String(event.getMessage().getContent()));
+						listener.onMessagePacketReceived(event);
+						//log.info("Message: " + new String(event.getMessage().getContent()));
 					}
 				});
 			}});
@@ -178,7 +179,8 @@ public class RemoteDevice implements DeviceAsync{
 				packetServiceAnswerImpl.addPacketListener(listener.toString(),new MessagePacketListener() {
 					@Override
 					public void onMessagePacketReceived(MessageEvent<MessagePacket> event) {
-						log.info("Message: " + new String(event.getMessage().getContent()));
+						listener.onMessagePacketReceived(event);
+						//log.info("Message: " + new String(event.getMessage().getContent()));
 					}
 				});
 			}});
