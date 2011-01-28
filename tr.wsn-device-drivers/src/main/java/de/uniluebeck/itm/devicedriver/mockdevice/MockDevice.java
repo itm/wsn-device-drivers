@@ -48,13 +48,14 @@ public class MockDevice extends ObserverableDevice implements MockListener {
 		connection.addListener(new ConnectionListener() {
 			@Override
 			public void onConnectionChange(ConnectionEvent event) {
-				MockDevice.this.onConnectionChange(event);
+				MockDevice.this.onConnectionChanged(event.isConnected());
 			}
 		});
+		onConnectionChanged(connection.isConnected());
 	}
 	
-	private void onConnectionChange(ConnectionEvent event) {
-		if (event.isConnected()) {
+	private void onConnectionChanged(boolean connected) {
+		if (connected) {
 			connection.addMockListener(this);
 		} else {
 			connection.removeMockListener(this);
