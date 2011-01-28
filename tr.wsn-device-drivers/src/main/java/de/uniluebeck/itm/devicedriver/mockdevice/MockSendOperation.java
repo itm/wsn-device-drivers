@@ -17,7 +17,7 @@ public class MockSendOperation extends AbstractSendOperation {
 			Thread.sleep(50);
 			monitor.onProgressChange(0.1f * i);
 		}
-		connection.sendData(messagePacket.getContent());
+		connection.sendMessage(new String(messagePacket.getContent()));
 		return null;
 	}
 }

@@ -30,7 +30,10 @@ public class MockDeviceExample {
 		System.out.println("Message packet listener added");
 		deviceAsync.addListener(new MessagePacketListener() {
 			public void onMessagePacketReceived(MessageEvent<MessagePacket> event) {
-				System.out.println("Message: " + new String(event.getMessage().getContent()));
+				final byte[] content = event.getMessage().getContent();
+				final byte[] message = new byte[content.length - 1];
+				System.arraycopy(content, 1, message, 0, message.length);
+				System.out.println("Message: " + new String(message));
 			}
 		}, PacketType.LOG);
 	}
@@ -103,6 +106,28 @@ public class MockDeviceExample {
 		});
 	}
 	
+	public void exampleSendOperation(String message){
+        MessagePacket packet = new MessagePacket(0, message.getBytes());
+        deviceAsync.send(packet, 100000, new AsyncAdapter<Void>() {
+
+            @Override
+            public void onProgressChange(float fraction) {
+                final int percent = (int) (fraction * 100.0);
+                System.out.println("Sending the message: " + percent + "%");
+            }
+
+            @Override
+            public void onSuccess(Void result) {
+                System.out.println("Message send");
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                throwable.printStackTrace();
+            }
+        });
+    } 
+	
 	public void finish() {
 		// Wait until the queue is empty.
 		while (!queue.getOperations().isEmpty()) {
@@ -128,6 +153,7 @@ public class MockDeviceExample {
 		example.connect();
 		example.exampleMacAddressOperations();
 		example.exampleChipTypeOperation();
+		example.exampleSendOperation("Hallo Welt");
 		example.finish();
 	}
 

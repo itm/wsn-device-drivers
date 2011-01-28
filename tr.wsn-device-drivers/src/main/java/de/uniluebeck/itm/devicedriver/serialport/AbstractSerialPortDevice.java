@@ -117,6 +117,8 @@ public abstract class AbstractSerialPortDevice extends ObserverableDevice implem
 	 * @throws IOException
 	 */
 	public int waitDataAvailable(final int timeout) throws TimeoutException, IOException {
+		log.debug("Waiting for data...");
+		
 		final InputStream inputStream = connection.getInputStream();
 		final TimeDiff timeDiff = new TimeDiff();
 		int available = 0;
@@ -139,6 +141,7 @@ public abstract class AbstractSerialPortDevice extends ObserverableDevice implem
 	}
 	
 	private void receivePacket(InputStream inStream) {
+		log.debug("Receiving Packet");
 		try {
 			beforeReceive();
 			while (inStream != null && inStream.available() > 0) {

@@ -240,7 +240,8 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 	}
 
 	public byte[] receiveBootLoaderReply(String type) throws TimeoutException, UnexpectedResponseException, InvalidChecksumException, IOException, NullPointerException {
-
+		log.debug("Boot Loader Reply: " + type);
+		
 		// Allocate message buffer max 255 bytes to read
 		byte[] message = new byte[255];
 

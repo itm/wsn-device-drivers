@@ -58,7 +58,7 @@ public class MockConnection extends AbstractConnection {
 	private TimeUnit aliveTimeUnit = TimeUnit.SECONDS;
 	
 	protected void fireData(byte[] bytes) {
-		for (MockListener listener : listeners.toArray(new MockListener[listeners.size()])) {
+		for (final MockListener listener : listeners.toArray(new MockListener[listeners.size()])) {
 			listener.onData(bytes);
 		}
 	}

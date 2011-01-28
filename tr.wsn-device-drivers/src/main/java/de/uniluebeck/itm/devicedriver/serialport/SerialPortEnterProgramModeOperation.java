@@ -9,6 +9,7 @@ import de.uniluebeck.itm.devicedriver.Monitor;
 import de.uniluebeck.itm.devicedriver.exception.EnterProgramModeException;
 import de.uniluebeck.itm.devicedriver.operation.AbstractOperation;
 import de.uniluebeck.itm.devicedriver.operation.EnterProgramModeOperation;
+import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection.SerialPortMode;
 
 public class SerialPortEnterProgramModeOperation extends AbstractOperation<Void> implements EnterProgramModeOperation {
 
@@ -17,15 +18,19 @@ public class SerialPortEnterProgramModeOperation extends AbstractOperation<Void>
 	 */
 	private static final Logger log = LoggerFactory.getLogger(SerialPortEnterProgramModeOperation.class);
 	
+	private final SerialPortConnection connection;
+	
 	private final SerialPort serialPort;
 	
 	public SerialPortEnterProgramModeOperation(SerialPortConnection connection) {
+		this.connection = connection;
 		this.serialPort = connection.getSerialPort();
 	}
 	
 	@Override
 	public Void execute(Monitor monitor) throws Exception {
 		log.debug("Entering program mode");
+		connection.setSerialPortMode(SerialPortMode.PROGRAM);
 		try {
 			serialPort.setDTR(true);
 			monitor.onProgressChange(0.25f);
@@ -39,7 +44,7 @@ public class SerialPortEnterProgramModeOperation extends AbstractOperation<Void>
 			serialPort.setRTS(false);
 			monitor.onProgressChange(1.0f);
 		} catch (Exception e) {
-			log.error("Unable to enter program mode.");
+			log.error("Unable to enter program mode.", e);
 			throw new EnterProgramModeException("Unable to enter program mode.");
 		}
 		log.debug("Program mode entered");
