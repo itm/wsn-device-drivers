@@ -183,6 +183,15 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 	
 	public void sendOperation() {
 		final MessagePacket packet = new MessagePacket(11, new byte[] { 17 });
+		deviceAsync.send(packet, 10000, new AsyncAdapter<Void>() {
+			public void onExecute() {
+				System.out.println("Sending message");
+			}
+			
+			public void onSuccess(Void result) {
+				System.out.println("Message send");
+			}
+		});
 	}
 	
 	public void finish() {
@@ -212,6 +221,7 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 			macAddressOperations();
 			readFlashOperation();
 			chipTypeOperation();
+			sendOperation();
 			finish();
 		//} catch (IOException e) {
 		//	e.printStackTrace();
