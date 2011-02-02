@@ -217,11 +217,11 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 			connect();
 			
 			programImage();
-			resetOperation();
 			macAddressOperations();
 			readFlashOperation();
 			chipTypeOperation();
 			sendOperation();
+			resetOperation();
 			finish();
 		} catch (IOException e) {
 			e.printStackTrace();
