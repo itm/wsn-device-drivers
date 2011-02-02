@@ -3,11 +3,9 @@ package de.uniluebeck.itm.devicedriver.pacemate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.Monitor;
 import de.uniluebeck.itm.devicedriver.operation.AbstractOperation;
-import de.uniluebeck.itm.devicedriver.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.devicedriver.operation.ReadFlashOperation;
 import de.uniluebeck.itm.devicedriver.operation.ReadMacAddressOperation;
 import de.uniluebeck.itm.tr.util.StringUtils;
@@ -25,42 +23,22 @@ public class PacemateReadMacAddressOperation extends AbstractOperation<MacAddres
 		this.device = device;
 	}
 	
-	private MacAddress readMacAddress(Monitor monitor) throws Exception {
-		// Enter programming mode
-		executeSubOperation(device.createEnterProgramModeOperation());
-		device.clearStreamData();
-		device.autobaud();
-
-		// Wait for a connection
-		while (!isCanceled() && !device.waitForConnection())
-			log.info("Still waiting for a connection");
-
-		// Return with success if the user has requested to cancel this
-		// operation
-		if (isCanceled()) {
-			log.debug("Operation has been cancelled");
-			return null;
-		}
-
-		// Connection established, determine chip type
-		GetChipTypeOperation getChipTypeOperation = device.createGetChipTypeOperation();
-		ChipType chipType = executeSubOperation(getChipTypeOperation);
-		log.debug("Chip type is " + chipType);
-
+	@Override
+	public MacAddress execute(Monitor monitor) throws Exception {
 		// Connection established, read flash header
-		int macStart = 0x2ff8;
-		int macLength = 8;
+		final int macStart = 0x2ff8;
+		final int macLength = 8;
 		
-		ReadFlashOperation readFlashOperation = device.createReadFlashOperation();
+		final ReadFlashOperation readFlashOperation = device.createReadFlashOperation();
 		readFlashOperation.setAddress(macStart, macLength);
 		byte[] header = executeSubOperation(readFlashOperation);
 		
 		byte[] macUUcode = new byte[4];
 		byte[] mac = new byte[8];
 		
-		byte[] checksum = new byte[header.length - 13 -2 -2];
-		System.arraycopy(header, 15, checksum, 0, header.length -13 -2 -2);
-		System.out.println(StringUtils.toHexString(checksum));
+		byte[] checksum = new byte[header.length - 13 - 2 - 2];
+		System.arraycopy(header, 15, checksum, 0, header.length -13 - 2 - 2);
+		log.debug("Checksum: " + StringUtils.toHexString(checksum));
 		
 		System.arraycopy(header, 1, macUUcode, 0, 4);
 		byte[] macpart2 = decode(macUUcode);
@@ -80,29 +58,15 @@ public class PacemateReadMacAddressOperation extends AbstractOperation<MacAddres
 		mac[7] = macpart2[1];
 
 		log.debug("Read raw MAC: " + StringUtils.toHexString(mac));
-		MacAddress macAddress = new MacAddress(mac);
+		final MacAddress macAddress = new MacAddress(mac);
 		log.debug("Read MAC: " + macAddress);
 
 		log.debug("Done, result is: " + macAddress);
-		
-		executeSubOperation(device.createLeaveProgramModeOperation());
-		
 		return macAddress;
-	}
-	
-	@Override
-	public MacAddress execute(Monitor monitor) throws Exception {
-		MacAddress address = null;
-		try {
-			address = readMacAddress(monitor);
-		} finally {
-			executeSubOperation(device.createLeaveProgramModeOperation());
-		}
-		return address;
 	}
 
 	private static byte[] decode(byte[] temp) {
-		byte [] outbyte = new byte[3];
+		final byte [] outbyte = new byte[3];
 		outbyte [0] = decodeByte (temp [0]);
 	    outbyte [1] = decodeByte (temp [1]);
 	    outbyte [0] <<= 2;
@@ -118,11 +82,7 @@ public class PacemateReadMacAddressOperation extends AbstractOperation<MacAddres
 	    return outbyte;
 	}
 	
-	private static byte decodeByte(byte b)
-	{
-		if(b == 0x60) 
-			return 0;
-		else
-			return (byte)(b - 0x20);
+	private static byte decodeByte(final byte b) {
+		return b == 0x60 ? 0 : (byte)(b - 0x20); 
 	}
 }

@@ -137,6 +137,9 @@ public class PausableExecutorOperationQueue implements OperationQueue {
 	private <T> void cancelOperation(final Operation<T> operation, final Future<T> future) {
 		final long timeout = operation.getTimeout();
 		logger.warn("Operation " + operation + " will be canceled cause timeout of " + timeout + "ms was reached");
+		// Try to cancel in a normal way.
+		operation.cancel();
+		// Now kill the thread hard.
 		future.cancel(true);
 	}
 	

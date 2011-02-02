@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.devicedriver.State;
+import de.uniluebeck.itm.devicedriver.async.AsyncAdapter;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.event.StateChangedEvent;
 import de.uniluebeck.itm.devicedriver.exception.TimeoutException;
@@ -62,7 +63,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	/**
 	 * <code>Timer</code> that executes the timeout operation.
 	 */
-	private final Timer timer = new Timer(getClass().getName());
+	private Timer timer = null;
 	
 	/**
 	 * Boolean thats stores if the operatio has to be canceled.
@@ -140,6 +141,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	}
 	
 	private void scheduleTimeout() {
+		timer = new Timer(getClass().getName());
 		logger.debug("Schduling timeout timer (Timout: + " + timeout + "ms");
 		timer.schedule(task, timeout);
 	}
@@ -159,6 +161,12 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	 */
 	protected <R> R executeSubOperation(Operation<R> operation) throws Exception {
 		subOperation = operation;
+		operation.setAsyncCallback(new AsyncAdapter<R>() {
+			@Override
+			public void onProgressChange(float fraction) {
+				callback.onProgressChange(fraction);
+			}
+		});
 		final R result = operation.execute(callback);
 		subOperation = null;
 		return result;
@@ -236,10 +244,5 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	@Override
 	public boolean isCanceled() {
 		return canceled;
-	}
-	
-	@Override
-	protected void finalize() {
-		timer.cancel();
 	}
 }

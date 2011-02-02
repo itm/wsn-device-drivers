@@ -115,7 +115,7 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 			}
 		};
 		
-		deviceAsync.readMac(10000, callback);
+		deviceAsync.readMac(100000, callback);
 		
 		
 		deviceAsync.writeMac(new MacAddress(1024), 10000, new AsyncAdapter<Void>() {
@@ -149,7 +149,7 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 			
 			@Override
 			public void onProgressChange(float fraction) {
-				System.out.println("Reading flash progress: " + fraction + "%");
+				System.out.println("Reading flash progress: " + fraction * 100 + "%");
 			}
 			
 			@Override
@@ -161,7 +161,7 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 	}
 	
 	public void chipTypeOperation() {
-		deviceAsync.getChipType(10000, new AsyncAdapter<ChipType>() {
+		deviceAsync.getChipType(100000, new AsyncAdapter<ChipType>() {
 
 			@Override
 			public void onExecute() {
@@ -179,6 +179,10 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 				System.out.println("Chip Type: " + result);
 			}
 		});
+	}
+	
+	public void sendOperation() {
+		final MessagePacket packet = new MessagePacket(11, new byte[] { 17 });
 	}
 	
 	public void finish() {
@@ -200,18 +204,18 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 	
 	public void run() {
 		init();
-		try {
+		//try {
 			connect();
 			
-			programImage();
+			//programImage();
 			//resetOperation();
-			//macAddressOperations();
-			//readFlashOperation();
-			//chipTypeOperation();
+			macAddressOperations();
+			readFlashOperation();
+			chipTypeOperation();
 			finish();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		//} catch (IOException e) {
+		//	e.printStackTrace();
+		//}
 	}
 	
 	@Override

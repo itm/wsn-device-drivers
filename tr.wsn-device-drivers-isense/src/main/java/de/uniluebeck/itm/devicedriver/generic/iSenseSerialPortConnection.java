@@ -118,14 +118,17 @@ public class iSenseSerialPortConnection extends AbstractConnection implements Se
 	@Override
 	public void setSerialPortMode(SerialPortMode mode) {
 		int baudrate = mode == SerialPortMode.PROGRAM ? PROGRAM_BAUDRATE : NORMAL_BAUDRATE;
+
+		log.debug("Set com port " + baudrate + " " + databits + " " + stopbits + " " + parityBit);
 		try {
 			serialPort.setSerialPortParams(baudrate, databits, stopbits, parityBit);
 		} catch (UnsupportedCommOperationException e) {
-			log.error(mode + " is not supported");
-			throw new RuntimeException(e);
+			log.warn("Problem while setting serial port params", e);
 		}
-		// Go into programming mode (jennic eval kit style)
-		serialPort.setRTS(mode == SerialPortMode.PROGRAM);
+
+		serialPort.setDTR(false);
+		serialPort.setRTS(false);
+		log.debug("Setting COM-Port parameters (new style): baudrate: " + serialPort.getBaudRate());
 	}
 
 	@Override

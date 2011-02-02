@@ -21,34 +21,49 @@ public class PacemateGetChipTypeOperation extends AbstractOperation<ChipType> im
 		this.device = device;
 	}
 	
-	@Override
-	public ChipType execute(Monitor monitor) throws Exception {
+	private ChipType getChipType() throws Exception {
+		device.clearStreamData();
+		device.autobaud();
+
+		// Wait for a connection
+		while (!isCanceled() && !device.waitForConnection()) {
+			log.info("Still waiting for a connection");
+		}
+
+		// Return with success if the user has requested to cancel this
+		// operation
+		if (isCanceled()) {
+			return null;
+		}
+		
 		// Send chip type read request
 		device.sendBootLoaderMessage(Messages.ReadPartIDRequestMessage());
 
 		// Read chip type read response
-		final byte[] response = device.receiveBootLoaderReply(Messages.CMD_SUCCESS);
+		final String response = device.receiveBootLoaderReplySuccess(Messages.CMD_SUCCESS);
 
 		ChipType chipType = ChipType.UNKNOWN;
-		int chipid = 0;
 
-		if (response.length > 6) {
-			int i = 6;
-			while ((i < response.length) && (response[i] != 0xd)) {
-				chipid = chipid * 10;
-				chipid = chipid + (response[i] - 0x30);
-				i++;
-			}
-		}
-
-		if (chipid == 196387)
+		if (response.compareTo("196387") == 0) {
 			chipType = ChipType.LPC2136;
-		else {
-			log.error("Defaulted to chip type LPC2136 (Pacemate). Identification may be wrong." + chipid);
+		} else {
+			log.error("Defaulted to chip type LPC2136 (Pacemate). Identification may be wrong." + response);
 			chipType = ChipType.LPC2136;
 		}
 
-		log.debug("Chip identified as " + chipType + " (received " + chipid + ")");
+		log.debug("Chip identified as " + chipType + " (received " + response + ")");
+		return chipType;
+	}
+	
+	@Override
+	public ChipType execute(Monitor monitor) throws Exception {
+		executeSubOperation(device.createEnterProgramModeOperation());
+		ChipType chipType = ChipType.UNKNOWN;
+		try {
+			chipType = getChipType();
+		} finally {
+			executeSubOperation(device.createLeaveProgramModeOperation());
+		}
 		return chipType;
 	}
 
