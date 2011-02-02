@@ -35,7 +35,7 @@ public class JennicReadMacAddressOperation extends AbstractOperation<MacAddress>
 		log.debug("Reading MAC Adress");
 		// Enter programming mode
 		EnterProgramModeOperation enterProgramModeOperation = device.createEnterProgramModeOperation();
-		executeSubOperation(enterProgramModeOperation);
+		executeSubOperation(enterProgramModeOperation, monitor);
 
 		connection.flush();
 
@@ -52,20 +52,20 @@ public class JennicReadMacAddressOperation extends AbstractOperation<MacAddress>
 
 		// Connection established, determine chip type
 		final GetChipTypeOperation getChipTypeOperation = device.createGetChipTypeOperation();
-		final ChipType chipType = executeSubOperation(getChipTypeOperation);
+		final ChipType chipType = executeSubOperation(getChipTypeOperation, monitor);
 		log.debug("Chip type is " + chipType);
 
 		// Connection established, read flash header
 		final int address = chipType.getMacInFlashStart();
 		final ReadFlashOperation readFlashOperation = device.createReadFlashOperation();
 		readFlashOperation.setAddress(address, 8);
-		final byte[] header = executeSubOperation(readFlashOperation);
+		final byte[] header = executeSubOperation(readFlashOperation, monitor);
 
 		final MacAddress macAddress = new MacAddress(header);
 		log.debug("Done, result is: " + macAddress);
 		
 		final LeaveProgramModeOperation leaveProgramModeOperation = device.createLeaveProgramModeOperation();
-		executeSubOperation(leaveProgramModeOperation);
+		executeSubOperation(leaveProgramModeOperation, monitor);
 		
 		return macAddress;
 	}

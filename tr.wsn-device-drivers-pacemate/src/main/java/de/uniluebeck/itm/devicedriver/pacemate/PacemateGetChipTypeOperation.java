@@ -21,7 +21,7 @@ public class PacemateGetChipTypeOperation extends AbstractOperation<ChipType> im
 		this.device = device;
 	}
 	
-	private ChipType getChipType() throws Exception {
+	private ChipType getChipType(final Monitor monitor) throws Exception {
 		device.clearStreamData();
 		device.autobaud();
 
@@ -41,14 +41,10 @@ public class PacemateGetChipTypeOperation extends AbstractOperation<ChipType> im
 
 		// Read chip type read response
 		final String response = device.receiveBootLoaderReplySuccess(Messages.CMD_SUCCESS);
+		final ChipType chipType = ChipType.LPC2136;
 
-		ChipType chipType = ChipType.UNKNOWN;
-
-		if (response.compareTo("196387") == 0) {
-			chipType = ChipType.LPC2136;
-		} else {
+		if (response.compareTo("196387") != 0) {
 			log.error("Defaulted to chip type LPC2136 (Pacemate). Identification may be wrong." + response);
-			chipType = ChipType.LPC2136;
 		}
 
 		log.debug("Chip identified as " + chipType + " (received " + response + ")");
@@ -56,13 +52,13 @@ public class PacemateGetChipTypeOperation extends AbstractOperation<ChipType> im
 	}
 	
 	@Override
-	public ChipType execute(Monitor monitor) throws Exception {
-		executeSubOperation(device.createEnterProgramModeOperation());
+	public ChipType execute(final Monitor monitor) throws Exception {
+		executeSubOperation(device.createEnterProgramModeOperation(), monitor);
 		ChipType chipType = ChipType.UNKNOWN;
 		try {
-			chipType = getChipType();
+			chipType = getChipType(monitor);
 		} finally {
-			executeSubOperation(device.createLeaveProgramModeOperation());
+			executeSubOperation(device.createLeaveProgramModeOperation(), monitor);
 		}
 		return chipType;
 	}

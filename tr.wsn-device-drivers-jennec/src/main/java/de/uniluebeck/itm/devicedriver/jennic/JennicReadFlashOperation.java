@@ -23,7 +23,7 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 	@Override
 	public byte[] execute(Monitor monitor) throws Exception {
 		// Enter programming mode
-		executeSubOperation(device.createEnterProgramModeOperation());
+		executeSubOperation(device.createEnterProgramModeOperation(), monitor);
 
 		// Wait for a connection
 		while (!isCanceled() && !device.waitForConnection()) {
@@ -63,7 +63,7 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 			log.error("Error while reading flash contents: " + e, e);
 			throw e;
 		} finally {
-			executeSubOperation(device.createLeaveProgramModeOperation());
+			executeSubOperation(device.createLeaveProgramModeOperation(), monitor);
 		}
 		return flashData;
 	}

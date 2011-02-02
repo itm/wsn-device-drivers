@@ -17,7 +17,7 @@ public class JennicGetFlashHeaderOperation extends AbstractOperation<byte[]> imp
 	@Override
 	public byte[] execute(Monitor monitor) throws Exception {
 		final GetChipTypeOperation getChipTypeOperation = device.createGetChipTypeOperation(); 
-		ChipType chipType = executeSubOperation(getChipTypeOperation);
+		ChipType chipType = executeSubOperation(getChipTypeOperation, monitor);
 		monitor.onProgressChange(0.5f);
 		
 		final int address = chipType.getHeaderStart();
@@ -25,7 +25,7 @@ public class JennicGetFlashHeaderOperation extends AbstractOperation<byte[]> imp
 		
 		final ReadFlashOperation readFlashOperation = device.createReadFlashOperation();
 		readFlashOperation.setAddress(address, length);
-		final byte[] result = executeSubOperation(readFlashOperation);
+		final byte[] result = executeSubOperation(readFlashOperation, monitor);
 		monitor.onProgressChange(1.0f);
 		return result;
 	}

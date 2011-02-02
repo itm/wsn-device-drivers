@@ -16,6 +16,10 @@ public class PacemateReadMacAddressOperation extends AbstractOperation<MacAddres
 	 * Logger for this class.
 	 */
 	private static final Logger log = LoggerFactory.getLogger(PacemateReadMacAddressOperation.class);
+
+	private static final int MAC_START = 0x2ff8;
+	
+	private static final int MAC_LENGTH = 8;
 	
 	private final PacemateDevice device;
 	
@@ -25,13 +29,9 @@ public class PacemateReadMacAddressOperation extends AbstractOperation<MacAddres
 	
 	@Override
 	public MacAddress execute(Monitor monitor) throws Exception {
-		// Connection established, read flash header
-		final int macStart = 0x2ff8;
-		final int macLength = 8;
-		
 		final ReadFlashOperation readFlashOperation = device.createReadFlashOperation();
-		readFlashOperation.setAddress(macStart, macLength);
-		byte[] header = executeSubOperation(readFlashOperation);
+		readFlashOperation.setAddress(MAC_START, MAC_LENGTH);
+		byte[] header = executeSubOperation(readFlashOperation, monitor);
 		
 		byte[] macUUcode = new byte[4];
 		byte[] mac = new byte[8];

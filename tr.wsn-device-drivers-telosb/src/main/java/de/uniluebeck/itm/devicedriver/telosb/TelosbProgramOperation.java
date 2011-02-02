@@ -12,8 +12,6 @@ import de.uniluebeck.itm.devicedriver.exception.ProgramChipMismatchException;
 import de.uniluebeck.itm.devicedriver.operation.AbstractProgramOperation;
 import de.uniluebeck.itm.devicedriver.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.operation.GetChipTypeOperation;
-import de.uniluebeck.itm.devicedriver.operation.LeaveProgramModeOperation;
-import de.uniluebeck.itm.devicedriver.operation.ResetOperation;
 import de.uniluebeck.itm.devicedriver.operation.WriteFlashOperation;
 import de.uniluebeck.itm.devicedriver.util.BinDataBlock;
 
@@ -31,14 +29,14 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 	}
 	
 	@Override
-	public Void execute(Monitor monitor) throws Exception {		
+	public Void execute(final Monitor monitor) throws Exception {		
 		// enter programming mode
 		final EnterProgramModeOperation enterProgramModeOperation = device.createEnterProgramModeOperation();
-		executeSubOperation(enterProgramModeOperation);
+		executeSubOperation(enterProgramModeOperation, monitor);
 		
 		// Check if file and current chip match
 		final GetChipTypeOperation getChipTypeOperation = device.createGetChipTypeOperation();
-		final ChipType chipType = executeSubOperation(getChipTypeOperation);
+		final ChipType chipType = executeSubOperation(getChipTypeOperation, monitor);
 		final TelosbBinData binData = new TelosbBinData(binaryImage);
 		if ( !binData.isCompatible(chipType) ) {
 			log.error("Chip type(" + chipType + ") and bin-program type(" + binData.getChipType() + ") do not match");
@@ -57,7 +55,7 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 			try {
 				WriteFlashOperation writeFlashOperation = device.createWriteFlashOperation();
 				writeFlashOperation.setData(block.address, block.data, block.data.length);
-				executeSubOperation(writeFlashOperation);
+				executeSubOperation(writeFlashOperation, monitor);
 			} catch (FlashProgramFailedException e) {
 				log.error(String.format("Error writing %d bytes into flash " +
 						"at address 0x%02x: " + e + ". Programmed " + bytesProgrammed + " bytes so far. "+
@@ -85,13 +83,11 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 		
 		// reset device (exit boot loader)
 		log.info("Resetting device.");
-		ResetOperation resetOperation = device.createResetOperation();
-		executeSubOperation(resetOperation);
+		executeSubOperation(device.createResetOperation(), monitor);
 		
 		log.debug("Programmed " + bytesProgrammed + " bytes.");
 		
-		LeaveProgramModeOperation leaveProgramModeOperation = device.createLeaveProgramModeOperation();
-		executeSubOperation(leaveProgramModeOperation);
+		executeSubOperation(device.createLeaveProgramModeOperation(), monitor);
 		return null;
 	}
 

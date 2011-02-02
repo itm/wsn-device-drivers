@@ -48,12 +48,12 @@ public class PacemateReadFlashOperation extends AbstractReadFlashOperation {
 	
 	@Override
 	public byte[] execute(Monitor monitor) throws Exception {
-		executeSubOperation(device.createEnterProgramModeOperation());
+		executeSubOperation(device.createEnterProgramModeOperation(), monitor);
 		byte[] result = null;
 		try {
 			result = readFlash(monitor);
 		} finally {
-			executeSubOperation(device.createLeaveProgramModeOperation());
+			executeSubOperation(device.createLeaveProgramModeOperation(), monitor);
 		}
 		return result;
 	}

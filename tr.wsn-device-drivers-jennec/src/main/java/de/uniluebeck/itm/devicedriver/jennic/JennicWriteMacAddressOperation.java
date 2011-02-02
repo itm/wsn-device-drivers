@@ -32,7 +32,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 	public Void execute(Monitor monitor) throws Exception {
 		// Enter programming mode
 		EnterProgramModeOperation enterProgramModeOperation = device.createEnterProgramModeOperation();
-		executeSubOperation(enterProgramModeOperation);
+		executeSubOperation(enterProgramModeOperation, monitor);
 
 		// Wait for a connection
 		while (!isCanceled() && !device.waitForConnection()) {
@@ -49,7 +49,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 		// Connection established, determine chip type and configure the Flash
 		// chip
 		GetChipTypeOperation getChipTypeOperation = device.createGetChipTypeOperation();
-		ChipType chipType = executeSubOperation(getChipTypeOperation);
+		ChipType chipType = executeSubOperation(getChipTypeOperation, monitor);
 		log.debug("Chip type is " + chipType);
 
 		// Check if the user has cancelled the operation
@@ -86,7 +86,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 		log.debug("Done, written MAC Address: " + macAddress);
 		
 		final LeaveProgramModeOperation leaveProgramModeOperation = device.createLeaveProgramModeOperation();
-		executeSubOperation(leaveProgramModeOperation);
+		executeSubOperation(leaveProgramModeOperation, monitor);
 		
 		return null;
 	}
@@ -109,7 +109,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 		for (int readBlocks = 0; readBlocks < totalBlocks; readBlocks++) {
 			final ReadFlashOperation readFlashOperation = device.createReadFlashOperation();
 			readFlashOperation.setAddress(address, BLOCKSIZE);
-			sector[readBlocks] = executeSubOperation(readFlashOperation);
+			sector[readBlocks] = executeSubOperation(readFlashOperation, monitor);
 			address += BLOCKSIZE;
 
 			float progress = ((float) readBlocks) / ((float) (totalBlocks * 2));
@@ -126,7 +126,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 		if (residue > 0) {
 			final ReadFlashOperation readFlashOperation = device.createReadFlashOperation();
 			readFlashOperation.setAddress(address, residue);
-			sector[sector.length - 1] = executeSubOperation(readFlashOperation);
+			sector[sector.length - 1] = executeSubOperation(readFlashOperation, monitor);
 		}
 		return sector;
 	}
@@ -138,7 +138,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 			
 			WriteFlashOperation writeFlashOperation = device.createWriteFlashOperation();
 			writeFlashOperation.setData(address, sector[i], sector[i].length);
-			executeSubOperation(writeFlashOperation);
+			executeSubOperation(writeFlashOperation, monitor);
 			
 			address += sector[i].length;
 			float progress = 0.5f + (i + 1.0f) / (sector.length * 2.0f);

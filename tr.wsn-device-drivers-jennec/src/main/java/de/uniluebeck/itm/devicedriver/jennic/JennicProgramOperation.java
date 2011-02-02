@@ -25,7 +25,7 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 	
 	public Void execute(Monitor monitor) throws Exception {
 		// Enter programming mode
-		executeSubOperation(device.createEnterProgramModeOperation());
+		executeSubOperation(device.createEnterProgramModeOperation(), monitor);
 
 		// Wait for a connection
 		while (!isCanceled() && !device.waitForConnection()) {
@@ -40,7 +40,7 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 		}
 
 		// Connection established, determine chip type
-		final ChipType chipType = executeSubOperation(device.createGetChipTypeOperation());
+		final ChipType chipType = executeSubOperation(device.createGetChipTypeOperation(), monitor);
 		//log.debug("Chip type is " + chipType);
 
 		final JennicBinData binData = new JennicBinData(binaryImage);
@@ -53,7 +53,7 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 		// insert flash header of device
 		try {
 			final GetFlashHeaderOperation getFlashHeaderOperation = device.createGetFlashHeaderOperation();
-			final byte[] flashHeader = executeSubOperation(getFlashHeaderOperation);
+			final byte[] flashHeader = executeSubOperation(getFlashHeaderOperation, monitor);
 			if (!binData.insertHeader(flashHeader)) {
 				log.error("Unable to write flash header to binary file.");
 				return null;
@@ -75,7 +75,7 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 			try {
 				WriteFlashOperation operation = device.createWriteFlashOperation();
 				operation.setData(block.address, block.data, block.data.length);
-				executeSubOperation(operation);
+				executeSubOperation(operation, monitor);
 			} catch (Exception e) {
 				log.debug("Error while reading flash! Operation will be cancelled!");
 				throw e;
@@ -95,7 +95,7 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 			blockCount++;
 		}
 		
-		executeSubOperation(device.createLeaveProgramModeOperation());
+		executeSubOperation(device.createLeaveProgramModeOperation(), monitor);
 		
 		return null;
 	}

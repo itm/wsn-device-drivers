@@ -8,8 +8,8 @@ import java.util.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniluebeck.itm.devicedriver.Monitor;
 import de.uniluebeck.itm.devicedriver.State;
-import de.uniluebeck.itm.devicedriver.async.AsyncAdapter;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.event.StateChangedEvent;
 import de.uniluebeck.itm.devicedriver.exception.TimeoutException;
@@ -159,15 +159,9 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	 * @param operation The sub <code>Operation</code> that has to be executed.
 	 * @return The result of the sub <code>Operation</code>.
 	 */
-	protected <R> R executeSubOperation(Operation<R> operation) throws Exception {
+	protected <R> R executeSubOperation(final Operation<R> operation, final Monitor monitor) throws Exception {
 		subOperation = operation;
-		operation.setAsyncCallback(new AsyncAdapter<R>() {
-			@Override
-			public void onProgressChange(float fraction) {
-				callback.onProgressChange(fraction);
-			}
-		});
-		final R result = operation.execute(callback);
+		final R result = operation.execute(monitor);
 		subOperation = null;
 		return result;
 	}
