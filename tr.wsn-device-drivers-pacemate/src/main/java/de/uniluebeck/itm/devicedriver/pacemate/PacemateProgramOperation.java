@@ -21,7 +21,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 		this.device = device;
 	}
 	
-	private void program(final Monitor monitor) throws Exception {
+	private void program(final Monitor monitor) throws Exception {		
 		device.clearStreamData();
 		device.autobaud();
 
@@ -35,9 +35,6 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 		if (isCanceled()) {
 			return;
 		}
-
-		// Erase the complete flash
-		executeSubOperation(device.createEraseFlashOperation(), monitor);
 
 		// Create pacemate image
 		final PacemateBinData binData = new PacemateBinData(binaryImage);
@@ -173,7 +170,10 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 	@Override
 	public Void execute(final Monitor monitor) throws Exception {
 		log.debug("Prgramming operation executing...");
-		// Enter programming mode
+		// Erase the complete flash
+		executeSubOperation(device.createEraseFlashOperation(), monitor);
+		
+		// Now program the device
 		executeSubOperation(device.createEnterProgramModeOperation(), monitor);
 		try {
 			program(monitor);

@@ -19,21 +19,20 @@ public class PacemateResetOperation extends AbstractOperation<Void> implements R
 	
 	private final SerialPortConnection connection;
 	
-	public PacemateResetOperation(SerialPortConnection connection) {
+	public PacemateResetOperation(final SerialPortConnection connection) {
 		this.connection = connection;
 	}
 	
 	@Override
-	public Void execute(Monitor monitor) throws Exception {
-		log.debug("Resetting device Pacemate style");
-		
+	public Void execute(final Monitor monitor) throws Exception {
+		log.debug("Resetting device device...");
 		SerialPort serialPort = connection.getSerialPort();
 		serialPort.setDTR(true);
-		try {
-			Thread.sleep(200);
-		} catch (InterruptedException e) {
-		}
+		monitor.onProgressChange(0.5f);
+		Thread.sleep(200);
 		serialPort.setDTR(false);
+		monitor.onProgressChange(1.0f);
+		log.debug("Device resetted");
 		return null;
 	}
 

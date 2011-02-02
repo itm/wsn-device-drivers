@@ -213,19 +213,19 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 	
 	public void run() {
 		init();
-		//try {
+		try {
 			connect();
 			
-			//programImage();
-			//resetOperation();
+			programImage();
+			resetOperation();
 			macAddressOperations();
 			readFlashOperation();
 			chipTypeOperation();
 			sendOperation();
 			finish();
-		//} catch (IOException e) {
-		//	e.printStackTrace();
-		//}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
