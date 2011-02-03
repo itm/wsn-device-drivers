@@ -21,10 +21,9 @@ public class JennicEraseFlashOperation extends AbstractOperation<Void> implement
 		this.device = device;
 	}
 	
-	@Override
-	public Void execute(Monitor monitor) throws Exception {
+	private void eraseFlash(final Monitor monitor) throws Exception {
 		device.sendBootLoaderMessage(Messages.statusRegisterWriteMessage((byte) 0x00));
-
+		monitor.onProgressChange(0.25f);
 		byte[] response = device.receiveBootLoaderReply(Messages.WRITE_SR_RESPONSE);
 
 		if (response[1] != 0x0) {
@@ -33,9 +32,10 @@ public class JennicEraseFlashOperation extends AbstractOperation<Void> implement
 		}
 		
 		if (isCanceled()) {
-			return null;
+			return;
 		}
 		
+		monitor.onProgressChange(0.5f);
 		log.debug("Erasing flash");
 		device.sendBootLoaderMessage(Messages.flashEraseRequestMessage());
 		response = device.receiveBootLoaderReply(Messages.FLASH_ERASE_RESPONSE);
@@ -43,6 +43,17 @@ public class JennicEraseFlashOperation extends AbstractOperation<Void> implement
 		if (response[1] != 0x0) {
 			log.error("Failed to erase flash.");
 			throw new FlashEraseFailedException();
+		}
+		monitor.onProgressChange(1.0f);
+	}
+	
+	@Override
+	public Void execute(Monitor monitor) throws Exception {
+		executeSubOperation(device.createEnterProgramModeOperation(), monitor);
+		try {
+			eraseFlash(monitor);
+		} finally {
+			executeSubOperation(device.createLeaveProgramModeOperation(), monitor);
 		}
 		return null;
 	}

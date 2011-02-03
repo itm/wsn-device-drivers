@@ -7,7 +7,6 @@ import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.Monitor;
 import de.uniluebeck.itm.devicedriver.exception.ProgramChipMismatchException;
 import de.uniluebeck.itm.devicedriver.operation.AbstractProgramOperation;
-import de.uniluebeck.itm.devicedriver.operation.WriteFlashOperation;
 import de.uniluebeck.itm.devicedriver.util.BinDataBlock;
 
 public class JennicProgramOperation extends AbstractProgramOperation {
@@ -23,10 +22,7 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 		this.device = device;
 	}
 	
-	public Void execute(Monitor monitor) throws Exception {
-		// Enter programming mode
-		executeSubOperation(device.createEnterProgramModeOperation(), monitor);
-
+	private void program(final ChipType chipType, final JennicBinData binData, final Monitor monitor) throws Exception {
 		// Wait for a connection
 		while (!isCanceled() && !device.waitForConnection()) {
 			log.info("Still waiting for a connection");
@@ -35,34 +31,9 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 		// Return with success if the user has requested to cancel this
 		// operation
 		if (isCanceled()) {
-			log.debug("Operation has been cancelled");
-			return null;
-		}
-
-		// Connection established, determine chip type
-		final ChipType chipType = executeSubOperation(device.createGetChipTypeOperation(), monitor);
-		//log.debug("Chip type is " + chipType);
-
-		final JennicBinData binData = new JennicBinData(binaryImage);
-		// Check if file and current chip match
-		if (!binData.isCompatible(chipType)) {
-			log.error("Chip type(" + chipType + ") and bin-program type(" + binData.getChipType() + ") do not match");
-			throw new ProgramChipMismatchException(chipType, binData.getChipType());
-		}
+			return;
+		}		
 		
-		// insert flash header of device
-		try {
-			final GetFlashHeaderOperation getFlashHeaderOperation = device.createGetFlashHeaderOperation();
-			final byte[] flashHeader = executeSubOperation(getFlashHeaderOperation, monitor);
-			if (!binData.insertHeader(flashHeader)) {
-				log.error("Unable to write flash header to binary file.");
-				return null;
-			}
-		} catch (ClassCastException e) {
-			log.error("Supplied binary file for programming the jennic device was not a jennic file. Unable to insert flash header.");
-			return null;
-		}
-
 		device.configureFlash(chipType);
 		device.eraseFlash(Sector.FIRST);
 		device.eraseFlash(Sector.SECOND);
@@ -72,14 +43,7 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 		BinDataBlock block = null;
 		int blockCount = 0;
 		while ((block = binData.getNextBlock()) != null) {
-			try {
-				WriteFlashOperation operation = device.createWriteFlashOperation();
-				operation.setData(block.address, block.data, block.data.length);
-				executeSubOperation(operation, monitor);
-			} catch (Exception e) {
-				log.debug("Error while reading flash! Operation will be cancelled!");
-				throw e;
-			}
+			device.writeFlash(block.address, block.data);
 			
 			// Notify listeners of the new status
 			float progress = ((float) blockCount) / ((float) binData.getBlockCount());
@@ -88,15 +52,40 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 			// Return with success if the user has requested to cancel this
 			// operation
 			if (isCanceled()) {
-				log.debug("Operation has been cancelled");
-				return null;
+				return;
 			}
 			
 			blockCount++;
+		}	
+	}
+	
+	private JennicBinData validateImage(final ChipType chipType, final Monitor monitor) throws Exception {
+		final JennicBinData binData = new JennicBinData(binaryImage);
+		// Check if file and current chip match
+		if (!binData.isCompatible(chipType)) {
+			log.error("Chip type(" + chipType + ") and bin-program type(" + binData.getChipType() + ") do not match");
+			throw new ProgramChipMismatchException(chipType, binData.getChipType());
 		}
+		return binData;
+	}
+	
+	private void insertFlashHeaderToImage(JennicBinData binData, final Monitor monitor) throws Exception {
+		// insert flash header of device
+		final byte[] flashHeader = executeSubOperation(device.createGetFlashHeaderOperation(), monitor);
+		binData.insertHeader(flashHeader);
+	}
+	
+	public Void execute(Monitor monitor) throws Exception {
+		final ChipType chipType = executeSubOperation(device.createGetChipTypeOperation(), monitor);
+		final JennicBinData binData = validateImage(chipType, monitor);
+		insertFlashHeaderToImage(binData, monitor);
 		
-		executeSubOperation(device.createLeaveProgramModeOperation(), monitor);
-		
+		executeSubOperation(device.createEnterProgramModeOperation(), monitor);
+		try {
+			program(chipType, binData, monitor);
+		} finally {
+			executeSubOperation(device.createLeaveProgramModeOperation(), monitor);
+		}
 		return null;
 	}
 }

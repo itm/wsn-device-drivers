@@ -11,6 +11,7 @@ import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.Programable;
 import de.uniluebeck.itm.devicedriver.exception.FlashConfigurationFailedException;
 import de.uniluebeck.itm.devicedriver.exception.FlashEraseFailedException;
+import de.uniluebeck.itm.devicedriver.exception.FlashProgramFailedException;
 import de.uniluebeck.itm.devicedriver.exception.FlashTypeReadFailedException;
 import de.uniluebeck.itm.devicedriver.exception.InvalidChecksumException;
 import de.uniluebeck.itm.devicedriver.exception.TimeoutException;
@@ -303,5 +304,22 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 
 		connection.flush();
 		return false;
+	}
+	
+	public void writeFlash(int address, byte[] data) throws IOException, NullPointerException, TimeoutException, UnexpectedResponseException, InvalidChecksumException, FlashProgramFailedException {
+		// Send flash program request
+		// log.debug("Sending program request for address " + address + " with " + data.length + " bytes");
+		sendBootLoaderMessage(Messages.flashProgramRequestMessage(address, data));
+
+		// Read flash program response
+		byte[] response = receiveBootLoaderReply(Messages.FLASH_PROGRAM_RESPONSE);
+
+		// Throw error if writing failed
+		if (response[1] != 0x0) {
+			log.error(String.format("Failed to write to flash: Response should be 0x00, yet it is: 0x%02x", response[1]));
+			throw new FlashProgramFailedException();
+		} else {
+			log.debug("Received Ack");
+		}
 	}
 }

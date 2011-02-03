@@ -20,11 +20,7 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 		this.device = device;
 	}
 	
-	@Override
-	public byte[] execute(Monitor monitor) throws Exception {
-		// Enter programming mode
-		executeSubOperation(device.createEnterProgramModeOperation(), monitor);
-
+	private byte[] readFlash(final Monitor monitor) throws Exception {
 		// Wait for a connection
 		while (!isCanceled() && !device.waitForConnection()) {
 			log.info("Still waiting for a connection");
@@ -38,33 +34,26 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 
 		// Read all sectors
 		byte flashData[] = new byte[length];
-		try {
-			int sectorStart = address;
-			int sectorEnd = address + length;
+		int sectorStart = address;
+		int sectorEnd = address + length;
 
-			while (sectorStart < sectorEnd) {
-				// Determine length of the data block to read
-				final int blockSize = sectorStart + 32 > sectorEnd ? length : 32;
+		while (sectorStart < sectorEnd) {
+			// Determine length of the data block to read
+			final int blockSize = sectorStart + 32 > sectorEnd ? length : 32;
 
-				// Read data block
-				byte[] data = readFlash(sectorStart, blockSize);
-				System.arraycopy(data, 0, flashData, sectorStart - address, data.length);
-				
-				// Notify listeners
-				float progress = ((float) (sectorStart - address)) / length;
-				monitor.onProgressChange(progress);
+			// Read data block
+			byte[] data = readFlash(sectorStart, blockSize);
+			System.arraycopy(data, 0, flashData, sectorStart - address, data.length);
+			
+			// Notify listeners
+			float progress = ((float) (sectorStart - address)) / length;
+			monitor.onProgressChange(progress);
 
-				// Increment start address
-				sectorStart += blockSize;
+			// Increment start address
+			sectorStart += blockSize;
 
-			}
-			log.debug("Done, result is: " + StringUtils.toHexString(flashData));
-		} catch (Exception e) {
-			log.error("Error while reading flash contents: " + e, e);
-			throw e;
-		} finally {
-			executeSubOperation(device.createLeaveProgramModeOperation(), monitor);
 		}
+		log.debug("Done, result is: " + StringUtils.toHexString(flashData));
 		return flashData;
 	}
 	
@@ -82,5 +71,20 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 		// Return data
 		return data;
 	}
+	
+	@Override
+	public byte[] execute(Monitor monitor) throws Exception {
+		byte[] data = null;
+		// Enter programming mode
+		executeSubOperation(device.createEnterProgramModeOperation(), monitor);
+		try {
+			data = readFlash(monitor);
+		} finally {
+			executeSubOperation(device.createLeaveProgramModeOperation(), monitor);
+		}
+		return data;
+	}
+	
+
 
 }

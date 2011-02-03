@@ -39,13 +39,12 @@ public class JennicGetChipTypeOperation extends AbstractOperation<ChipType> impl
 		return chipType;
 	}
 	
-	@Override
-	public ChipType execute(Monitor monitor) throws Exception {
+	private ChipType getChipType(final Monitor monitor) throws Exception {
 		// Send chip type read request
 		device.sendBootLoaderMessage(Messages.ramReadRequestMessage(0x100000FC, 0x0004));
 
 		// Read chip type read response
-		byte[] response = device.receiveBootLoaderReply(Messages.RAM_READ_RESPONSE);
+		final byte[] response = device.receiveBootLoaderReply(Messages.RAM_READ_RESPONSE);
 
 		// Throw error if reading failed
 		if (response[1] != 0x00) {
@@ -53,10 +52,22 @@ public class JennicGetChipTypeOperation extends AbstractOperation<ChipType> impl
 			throw new RamReadFailedException();
 		}
 
-		ChipType chipType = determineChipType(response[2], response[3]);
+		final ChipType chipType = determineChipType(response[2], response[3]);
 
 		log.debug("Chip identified as " + chipType + " (received " + StringUtils.toHexString(response[2]) + " "
 				+ StringUtils.toHexString(response[3]) + ")");
+		return chipType;
+	}
+	
+	@Override
+	public ChipType execute(Monitor monitor) throws Exception {
+		ChipType chipType = null;
+		executeSubOperation(device.createEnterProgramModeOperation(), monitor);
+		try {
+			chipType = getChipType(monitor);
+		} finally {
+			executeSubOperation(device.createLeaveProgramModeOperation(), monitor);
+		}
 		return chipType;
 	}
 

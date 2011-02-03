@@ -7,12 +7,9 @@ import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.Monitor;
 import de.uniluebeck.itm.devicedriver.operation.AbstractOperation;
-import de.uniluebeck.itm.devicedriver.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.operation.GetChipTypeOperation;
-import de.uniluebeck.itm.devicedriver.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.operation.ReadFlashOperation;
 import de.uniluebeck.itm.devicedriver.operation.ReadMacAddressOperation;
-import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection;
 
 public class JennicReadMacAddressOperation extends AbstractOperation<MacAddress>implements ReadMacAddressOperation {
 
@@ -21,35 +18,15 @@ public class JennicReadMacAddressOperation extends AbstractOperation<MacAddress>
 	 */
 	private static final Logger log = LoggerFactory.getLogger(JennicReadMacAddressOperation.class);
 	
-	private final SerialPortConnection connection;
-	
 	private final JennicDevice device;
 	
 	public JennicReadMacAddressOperation(JennicDevice device) {
 		this.device = device;
-		connection = (SerialPortConnection) device.getConnection();
 	}
 	
 	@Override
-	public MacAddress execute(Monitor monitor) throws Exception {
+	public MacAddress execute(final Monitor monitor) throws Exception {
 		log.debug("Reading MAC Adress");
-		// Enter programming mode
-		EnterProgramModeOperation enterProgramModeOperation = device.createEnterProgramModeOperation();
-		executeSubOperation(enterProgramModeOperation, monitor);
-
-		connection.flush();
-
-		// Wait for a connection
-		while (!isCanceled() && !device.waitForConnection())
-			log.info("Still waiting for a connection");
-
-		// Return with success if the user has requested to cancel this
-		// operation
-		if (isCanceled()) {
-			log.debug("Operation has been cancelled");
-			return null;
-		}
-
 		// Connection established, determine chip type
 		final GetChipTypeOperation getChipTypeOperation = device.createGetChipTypeOperation();
 		final ChipType chipType = executeSubOperation(getChipTypeOperation, monitor);
@@ -63,10 +40,6 @@ public class JennicReadMacAddressOperation extends AbstractOperation<MacAddress>
 
 		final MacAddress macAddress = new MacAddress(header);
 		log.debug("Done, result is: " + macAddress);
-		
-		final LeaveProgramModeOperation leaveProgramModeOperation = device.createLeaveProgramModeOperation();
-		executeSubOperation(leaveProgramModeOperation, monitor);
-		
 		return macAddress;
 	}
 

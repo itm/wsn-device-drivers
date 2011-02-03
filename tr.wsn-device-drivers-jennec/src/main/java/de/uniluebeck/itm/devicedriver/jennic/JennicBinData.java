@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.devicedriver.ChipType;
+import de.uniluebeck.itm.devicedriver.exception.ProgramChipMismatchException;
 import de.uniluebeck.itm.devicedriver.util.BinDataBlock;
 
 /**
@@ -115,7 +116,7 @@ public class JennicBinData {
 	 *
 	 * @return
 	 */
-	public boolean insertHeader(byte[] b) {
+	public void insertHeader(byte[] b) throws ProgramChipMismatchException {
 		ChipType chipType = getChipType();
 		int headerStart = chipType.getHeaderStart();
 		int headerLength = chipType.getHeaderLength();
@@ -123,11 +124,9 @@ public class JennicBinData {
 		if (headerStart >= 0 && headerLength > 0) {
 			log.debug("Writing header for chip type " + chipType + ": " + headerLength + "bytes @ " + headerStart);
 			insertAt(headerStart, headerLength, b);
-			return true;
+			return;
 		}
-
-		log.error("Unknown chip type " + chipType.toString());
-		return false;
+		throw new ProgramChipMismatchException(ChipType.UNKNOWN, chipType);
 	}
 
 	private void insertAt(int address, int len, byte[] b) {
