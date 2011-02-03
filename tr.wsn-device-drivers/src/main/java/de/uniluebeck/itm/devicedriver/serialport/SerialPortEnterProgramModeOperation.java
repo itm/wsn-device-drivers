@@ -20,17 +20,16 @@ public class SerialPortEnterProgramModeOperation extends AbstractOperation<Void>
 	
 	private final SerialPortConnection connection;
 	
-	private final SerialPort serialPort;
-	
 	public SerialPortEnterProgramModeOperation(SerialPortConnection connection) {
 		this.connection = connection;
-		this.serialPort = connection.getSerialPort();
 	}
 	
 	@Override
 	public Void execute(Monitor monitor) throws Exception {
 		log.debug("Entering program mode");
 		connection.setSerialPortMode(SerialPortMode.PROGRAM);
+		
+		final SerialPort serialPort = connection.getSerialPort();
 		try {
 			serialPort.setDTR(true);
 			monitor.onProgressChange(0.25f);
