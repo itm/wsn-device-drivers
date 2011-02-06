@@ -78,7 +78,7 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 		
 		final byte[] bytes = FileUtil.fileToBytes(image);
 		System.out.println("Image length: " + bytes.length);
-	    deviceAsync.program(bytes, 300000, callback);
+	    deviceAsync.program(bytes, 600000, callback);
 	}
 	
 	public void resetOperation() {
