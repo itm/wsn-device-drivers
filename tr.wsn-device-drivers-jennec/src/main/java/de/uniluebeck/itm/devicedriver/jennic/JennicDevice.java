@@ -17,6 +17,7 @@ import de.uniluebeck.itm.devicedriver.exception.InvalidChecksumException;
 import de.uniluebeck.itm.devicedriver.exception.TimeoutException;
 import de.uniluebeck.itm.devicedriver.exception.UnexpectedResponseException;
 import de.uniluebeck.itm.devicedriver.generic.FlashType;
+import de.uniluebeck.itm.devicedriver.generic.iSenseResetOperation;
 import de.uniluebeck.itm.devicedriver.jennic.exception.SectorEraseException;
 import de.uniluebeck.itm.devicedriver.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.operation.EraseFlashOperation;
@@ -105,7 +106,7 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 
 	@Override
 	public ResetOperation createResetOperation() {
-		final ResetOperation operation = new JennicResetOperation(connection);
+		final ResetOperation operation = new iSenseResetOperation(connection);
 		monitor.monitorState(operation);
 		return operation;
 	}
@@ -294,7 +295,7 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 			// device is supposed to respond)
 			sendBootLoaderMessage(Messages.flashReadRequestMessage(0x24, 0x20));
 			receiveBootLoaderReply(Messages.FLASH_READ_RESPONSE);
-			log.info("Device connection established");
+			log.debug("Device connection established");
 			return true;
 		} catch (TimeoutException e) {
 			log.warn("Still waiting for a connection.");

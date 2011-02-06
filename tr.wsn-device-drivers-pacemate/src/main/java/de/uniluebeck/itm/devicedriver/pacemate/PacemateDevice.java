@@ -12,6 +12,7 @@ import de.uniluebeck.itm.devicedriver.Programable;
 import de.uniluebeck.itm.devicedriver.exception.InvalidChecksumException;
 import de.uniluebeck.itm.devicedriver.exception.TimeoutException;
 import de.uniluebeck.itm.devicedriver.exception.UnexpectedResponseException;
+import de.uniluebeck.itm.devicedriver.generic.iSenseResetOperation;
 import de.uniluebeck.itm.devicedriver.operation.AbstractWriteMacAddressOperation;
 import de.uniluebeck.itm.devicedriver.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.operation.EraseFlashOperation;
@@ -125,7 +126,7 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 
 	@Override
 	public ResetOperation createResetOperation() {
-		final ResetOperation operation = new PacemateResetOperation(connection);
+		final ResetOperation operation = new iSenseResetOperation(connection);
 		monitor.monitorState(operation);
 		return operation;
 	}
