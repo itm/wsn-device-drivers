@@ -296,14 +296,30 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 			receiveBootLoaderReply(Messages.FLASH_READ_RESPONSE);
 			log.info("Device connection established");
 			return true;
-		} catch (TimeoutException to) {
-			log.debug("Still waiting for a connection.");
-		} catch (Exception error) {
-			log.warn("Exception while waiting for connection", error);
+		} catch (TimeoutException e) {
+			log.warn("Still waiting for a connection.");
+		} catch (Exception e) {
+			log.error("Exception while waiting for connection", e);
 		}
 
 		connection.flush();
 		return false;
+	}
+	
+	public byte[] readFlash(int address, int len) throws Exception {
+
+		// Send flash program request
+		sendBootLoaderMessage(Messages.flashReadRequestMessage(address, len));
+
+		// Read flash program response
+		byte[] response = receiveBootLoaderReply(Messages.FLASH_READ_RESPONSE);
+
+		// Remove type and success octet
+		byte[] data = new byte[response.length - 2];
+		System.arraycopy(response, 2, data, 0, response.length - 2);
+
+		// Return data
+		return data;
 	}
 	
 	public void writeFlash(int address, byte[] data) throws IOException, NullPointerException, TimeoutException, UnexpectedResponseException, InvalidChecksumException, FlashProgramFailedException {

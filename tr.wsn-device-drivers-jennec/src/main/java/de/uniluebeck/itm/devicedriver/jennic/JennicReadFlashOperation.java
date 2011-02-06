@@ -42,7 +42,7 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 			final int blockSize = sectorStart + 32 > sectorEnd ? length : 32;
 
 			// Read data block
-			byte[] data = readFlash(sectorStart, blockSize);
+			byte[] data = device.readFlash(sectorStart, blockSize);
 			System.arraycopy(data, 0, flashData, sectorStart - address, data.length);
 			
 			// Notify listeners
@@ -55,21 +55,6 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 		}
 		log.debug("Done, result is: " + StringUtils.toHexString(flashData));
 		return flashData;
-	}
-	
-	public byte[] readFlash(int address, int len) throws Exception {
-		// Send flash program request
-		device.sendBootLoaderMessage(Messages.flashReadRequestMessage(address, len));
-
-		// Read flash program response
-		byte[] response = device.receiveBootLoaderReply(Messages.FLASH_READ_RESPONSE);
-
-		// Remove type and success octet
-		byte[] data = new byte[response.length - 2];
-		System.arraycopy(response, 2, data, 0, response.length - 2);
-
-		// Return data
-		return data;
 	}
 	
 	@Override

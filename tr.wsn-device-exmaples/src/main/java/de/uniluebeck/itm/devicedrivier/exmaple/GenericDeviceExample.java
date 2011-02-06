@@ -118,7 +118,7 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 		deviceAsync.readMac(100000, callback);
 		
 		
-		deviceAsync.writeMac(new MacAddress(1024), 10000, new AsyncAdapter<Void>() {
+		deviceAsync.writeMac(new MacAddress(1024), 300000, new AsyncAdapter<Void>() {
 
 			@Override
 			public void onExecute() {
