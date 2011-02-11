@@ -24,9 +24,6 @@
 package de.uniluebeck.itm.devicedriver;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniluebeck.itm.tr.util.StringUtils;
 
 /**

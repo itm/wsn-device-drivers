@@ -46,7 +46,6 @@
             <property name="max" value="3"/>
         </module>
         <module name="NoClone"/>
-        <module name="IllegalCatch"/>
         <module name="IllegalThrows"/>
         <module name="PackageDeclaration"/>
         <module name="ReturnCount">

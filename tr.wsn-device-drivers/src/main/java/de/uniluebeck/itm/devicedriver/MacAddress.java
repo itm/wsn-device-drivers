@@ -129,8 +129,7 @@ public class MacAddress {
 	 * @return Returns the last two bytes of the mac address.
 	 */
 	public int getMacLowest16() {
-		final byte[] address = getMacBytes();
-		return address[6] * 256 + address[7];
+		return getMacBytes()[6] * 256 + getMacBytes()[7];
 	}
 
 	/**
