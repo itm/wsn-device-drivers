@@ -29,7 +29,6 @@ package de.uniluebeck.itm.devicedriver.exception;
 */
 @SuppressWarnings("serial")
 public class InvalidChecksumException extends Exception {
-	private String msg = null;
 	
 	/**
 	 * Constructor
@@ -42,15 +41,7 @@ public class InvalidChecksumException extends Exception {
 	 * Constructor
 	 * @param msg
 	 */
-	public InvalidChecksumException(String msg) {
-		this.msg = msg;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Throwable#getMessage()
-	 */
-	@Override
-	public String getMessage() {
-		return msg;
+	public InvalidChecksumException(final String msg) {
+		super(msg);
 	}
 }

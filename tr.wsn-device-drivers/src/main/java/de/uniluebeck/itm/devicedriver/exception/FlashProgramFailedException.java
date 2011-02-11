@@ -41,7 +41,7 @@ public class FlashProgramFailedException extends Exception {
 	/**
 	 * @param msg
 	 */
-	public FlashProgramFailedException(String msg) {
+	public FlashProgramFailedException(final String msg) {
 		this.msg = msg;
 	}
 

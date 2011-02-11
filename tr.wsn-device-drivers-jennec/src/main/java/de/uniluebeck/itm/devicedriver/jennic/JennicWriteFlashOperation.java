@@ -24,7 +24,7 @@ public class JennicWriteFlashOperation extends AbstractWriteFlashOperation {
 		log.debug("Writing to flash...");
 		executeSubOperation(device.createEnterProgramModeOperation(), monitor);
 		try {
-			device.writeFlash(address, data);
+			device.writeFlash(getAddress(), getData());
 		} finally {
 			executeSubOperation(device.createLeaveProgramModeOperation(), monitor);
 		}

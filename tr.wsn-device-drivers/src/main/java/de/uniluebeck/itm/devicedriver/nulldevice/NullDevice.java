@@ -28,8 +28,8 @@ public class NullDevice extends ObserverableDevice {
 
 	private class NullEraseFlashOperation extends AbstractOperation<Void> implements EraseFlashOperation {
 		@Override
-		public Void execute(Monitor monitor) {
-			logger.warn("Null device is used. EraseFlashOperation does nothing.");
+		public Void execute(final Monitor monitor) {
+			LOG.warn("Null device is used. EraseFlashOperation does nothing.");
 			monitor.onProgressChange(1.0f);
 			return null;
 		}
@@ -37,8 +37,8 @@ public class NullDevice extends ObserverableDevice {
 	
 	private class NullGetChipTypeOperation extends AbstractOperation<ChipType> implements GetChipTypeOperation {
 		@Override
-		public ChipType execute(Monitor monitor) {
-			logger.warn("Null device is used. GetChipTypeOperation does nothing.");
+		public ChipType execute(final Monitor monitor) {
+			LOG.warn("Null device is used. GetChipTypeOperation does nothing.");
 			monitor.onProgressChange(1.0f);
 			return ChipType.UNKNOWN;
 		}
@@ -46,8 +46,8 @@ public class NullDevice extends ObserverableDevice {
 	
 	private class NullReadMacAddressOperation extends AbstractOperation<MacAddress> implements ReadMacAddressOperation {
 		@Override
-		public MacAddress execute(Monitor monitor) {
-			logger.warn("Null device is used. ReadMacAddressOperation does nothing.");
+		public MacAddress execute(final Monitor monitor) {
+			LOG.warn("Null device is used. ReadMacAddressOperation does nothing.");
 			monitor.onProgressChange(1.0f);
 			return new MacAddress();
 		}
@@ -55,8 +55,8 @@ public class NullDevice extends ObserverableDevice {
 	
 	private class NullResetOperation extends AbstractOperation<Void> implements ResetOperation {
 		@Override
-		public Void execute(Monitor monitor) {
-			logger.warn("Null device is used. ResetOperation does nothing.");
+		public Void execute(final Monitor monitor) {
+			LOG.warn("Null device is used. ResetOperation does nothing.");
 			monitor.onProgressChange(1.0f);
 			return null;
 		}
@@ -65,7 +65,9 @@ public class NullDevice extends ObserverableDevice {
 	/**
 	 * Logger for this class.
 	 */
-	private static final Logger logger = LoggerFactory.getLogger(NullDevice.class);
+	private static final Logger LOG = LoggerFactory.getLogger(NullDevice.class);
+	
+	private static final int[] CHANNELS = new int[] { 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26 };
 	
 	@Override
 	public EraseFlashOperation createEraseFlashOperation() {
@@ -81,8 +83,8 @@ public class NullDevice extends ObserverableDevice {
 	public ProgramOperation createProgramOperation() {
 		return new AbstractProgramOperation() {
 			@Override
-			public Void execute(Monitor monitor) {
-				logger.warn("Null device is used. ProgramOperation does nothing.");
+			public Void execute(final Monitor monitor) {
+				LOG.warn("Null device is used. ProgramOperation does nothing.");
 				monitor.onProgressChange(1.0f);
 				return null;
 			}
@@ -93,8 +95,8 @@ public class NullDevice extends ObserverableDevice {
 	public ReadFlashOperation createReadFlashOperation() {
 		return new AbstractReadFlashOperation() {
 			@Override
-			public byte[] execute(Monitor monitor) {
-				logger.warn("Null device is used. ReadFlashOperation does nothing.");
+			public byte[] execute(final Monitor monitor) {
+				LOG.warn("Null device is used. ReadFlashOperation does nothing.");
 				monitor.onProgressChange(1.0f);
 				return new byte[] {};
 			}
@@ -103,7 +105,7 @@ public class NullDevice extends ObserverableDevice {
 
 	@Override
 	public int[] getChannels() {
-		return new int[] { 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26 };
+		return CHANNELS;
 	}
 
 	@Override
@@ -125,8 +127,8 @@ public class NullDevice extends ObserverableDevice {
 	public SendOperation createSendOperation() {
 		return new AbstractSendOperation() {
 			@Override
-			public Void execute(Monitor monitor) {
-				logger.warn("Null device is used. SendOperation does nothing.");
+			public Void execute(final Monitor monitor) {
+				LOG.warn("Null device is used. SendOperation does nothing.");
 				monitor.onProgressChange(1.0f);
 				return null;
 			}
@@ -137,8 +139,8 @@ public class NullDevice extends ObserverableDevice {
 	public WriteFlashOperation createWriteFlashOperation() {
 		return new AbstractWriteFlashOperation() {
 			@Override
-			public Void execute(Monitor monitor) {
-				logger.warn("Null device is used. WriteFlashOperation does nothing.");
+			public Void execute(final Monitor monitor) {
+				LOG.warn("Null device is used. WriteFlashOperation does nothing.");
 				monitor.onProgressChange(1.0f);
 				return null;
 			}
@@ -149,8 +151,8 @@ public class NullDevice extends ObserverableDevice {
 	public WriteMacAddressOperation createWriteMacAddressOperation() {
 		return new AbstractWriteMacAddressOperation() {
 			@Override
-			public Void execute(Monitor monitor) {
-				logger.warn("Null device is used. WriteMacAddressOperation does nothing.");
+			public Void execute(final Monitor monitor) {
+				LOG.warn("Null device is used. WriteMacAddressOperation does nothing.");
 				monitor.onProgressChange(1.0f);
 				return null;
 			}

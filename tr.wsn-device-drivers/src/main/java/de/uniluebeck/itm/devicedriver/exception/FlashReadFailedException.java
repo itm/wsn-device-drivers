@@ -42,13 +42,10 @@ public class FlashReadFailedException extends Exception {
 	/**
 	 * @param msg
 	 */
-	public FlashReadFailedException(String msg) {
+	public FlashReadFailedException(final String msg) {
 		this.msg = msg;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Throwable#getMessage()
-	 */
 	@Override
 	public String getMessage() {
 		return msg;

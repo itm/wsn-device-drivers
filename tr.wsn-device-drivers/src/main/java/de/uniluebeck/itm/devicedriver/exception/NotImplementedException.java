@@ -30,20 +30,20 @@ package de.uniluebeck.itm.devicedriver.exception;
  */
 @SuppressWarnings("serial")
 public class NotImplementedException extends Exception {
-	private String msg = null;
+	private final String msg;
 	
 	/**
 	 * Constructor
 	 */
 	public NotImplementedException() {
-		
+		this.msg = null;
 	}
 	
 	/**
 	 * Constructor
 	 * @param msg
 	 */
-	public NotImplementedException(String msg) {
+	public NotImplementedException(final String msg) {
 		this.msg = msg;
 	}
 

@@ -22,6 +22,10 @@ public class TelosbWriteFlashOperation extends AbstractWriteFlashOperation {
 	
 	@Override
 	public Void execute(Monitor monitor) throws Exception {
+		final int address = getAddress();
+		final byte[] data = getData();
+		final int length = getLength();
+		
 		// verify if block range is erased
 		if (!bsl.verifyBlock(address, length, null)) {
 			throw new FlashProgramFailedException("Failed to program flash: block range is not erased completely");

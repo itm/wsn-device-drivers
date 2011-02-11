@@ -30,21 +30,13 @@ import org.slf4j.LoggerFactory;
 import de.uniluebeck.itm.tr.util.StringUtils;
 
 /**
- * 
+ * A message packet returned by a isense device.
  * 
  * @author Malte Legenhausen
  */
 
 public class MessagePacket implements Message {
 	
-	/** 
-	 * 
-	 */
-	protected static Logger log = LoggerFactory.getLogger(MessagePacket.class);
-
-	/** */
-	private static long nextIdCounter = 0;
-
 	/** Special character */
 	public static final byte STX = 0x02;
 
@@ -65,6 +57,9 @@ public class MessagePacket implements Message {
 	public static final byte LF = 0x0A;
 
 	/** */
+	private static long nextIdCounter = 0;
+
+	/** */
 	private byte[] content;
 
 	/** */
@@ -73,23 +68,20 @@ public class MessagePacket implements Message {
 	/** */
 	private long id = nextId();
 
-	// -------------------------------------------------------------------------
 	/**
 	 * 
 	 */
 	protected MessagePacket() {
 	}
 
-	// -------------------------------------------------------------------------
 	/**
 	 * 
 	 */
-	public MessagePacket(int type, byte[] content) {
+	public MessagePacket(final int type, final byte[] content) {
 		setType(type);
 		setContent(content);
 	}
 
-	// -------------------------------------------------------------------------
 	/**
 	 * 
 	 */
@@ -99,13 +91,12 @@ public class MessagePacket implements Message {
 
 		return ++nextIdCounter;
 	}
-
-	// -------------------------------------------------------------------------
+	
 	/**
 	 * 
 	 */
-	public static MessagePacket parse(byte[] buffer, int offset, int length) {
-		MessagePacket p = new MessagePacket();
+	public static MessagePacket parse(final byte[] buffer, final int offset, final int length) {
+		final MessagePacket p = new MessagePacket();
 
 		// Determine message type
 		p.type = 0xFF & ((int) buffer[offset]);
@@ -117,14 +108,13 @@ public class MessagePacket implements Message {
 		return p;
 	}
 
-	// -------------------------------------------------------------------------
-	/**
-	 * 
-	 */
+	@Override
 	public String toString() {
 		return "Packet ID[" + id + "]: Type: [" + type + "], content: hex[" + StringUtils.toHexString(content) + "], string[" + new String(content) + "]";
 	}
 
+	
+	@Override
 	public byte[] getContent() {
 		return content;
 	}
@@ -134,7 +124,7 @@ public class MessagePacket implements Message {
 	 * 
 	 * @param content
 	 */
-	public void setContent(byte[] content) {
+	public void setContent(final byte[] content) {
 		this.content = new byte[content.length];
 		System.arraycopy(content, 0, this.content, 0, content.length);
 	}
@@ -153,7 +143,7 @@ public class MessagePacket implements Message {
 	 * 
 	 * @param type
 	 */
-	public void setType(int type) {
+	public void setType(final int type) {
 		this.type = type;
 	}
 

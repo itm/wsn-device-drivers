@@ -24,10 +24,10 @@ public class RunningOperationsMonitor {
 	 * @param <T> The return type of the operation.
 	 * @param operation The operation that has to be observed.
 	 */
-	public <T> void monitorState(Operation<T> operation) {
+	public <T> void monitorState(final Operation<T> operation) {
 		operation.addListener(new OperationListener<T>() {
 			@Override
-			public void onStateChanged(StateChangedEvent<T> event) {
+			public void onStateChanged(final StateChangedEvent<T> event) {
 				RunningOperationsMonitor.this.onStateChanged(event);
 			}
 		});
@@ -41,7 +41,7 @@ public class RunningOperationsMonitor {
 	 * @param oldState The state before.
 	 * @param newState The new state.
 	 */
-	private void onStateChanged(StateChangedEvent<?> event) {
+	private void onStateChanged(final StateChangedEvent<?> event) {
 		final Operation<?> operation = (Operation<?>) event.getSource();
 		synchronized (operations) {
 			if (event.getNewState() == State.RUNNING) {

@@ -29,11 +29,9 @@ package de.uniluebeck.itm.devicedriver.exception;
 */
 @SuppressWarnings("serial")
 public class UnexpectedResponseException extends Exception {
-	protected int expectedType = -1;
+	private int expectedType = -1;
 
-	protected int receivedType = -1;
-	
-	private String msg = null;
+	private int receivedType = -1;
 
 	/**
 	 * Constructor
@@ -41,7 +39,7 @@ public class UnexpectedResponseException extends Exception {
 	 * @param expectedType
 	 * @param receivedType
 	 */
-	public UnexpectedResponseException(int expectedType, int receivedType) {
+	public UnexpectedResponseException(final int expectedType, final int receivedType) {
 		this.expectedType = expectedType;
 		this.expectedType = receivedType;
 	}
@@ -51,8 +49,8 @@ public class UnexpectedResponseException extends Exception {
 	 * @param expectedType
 	 * @param receivedType
 	 */
-	public UnexpectedResponseException(String msg, int expectedType, int receivedType) {
-		this.msg = msg;
+	public UnexpectedResponseException(final String msg, final int expectedType, final int receivedType) {
+		super(msg);
 		this.expectedType = expectedType;
 		this.expectedType = receivedType;
 	}
@@ -81,9 +79,9 @@ public class UnexpectedResponseException extends Exception {
 	@Override
 	public String getMessage() {
 		if (expectedType == -1 || receivedType == -1) {
-			return msg;
+			return getMessage();
 		} else {
-			return String.format(msg + " Expected type: 0x%02x, received type: 0x%02x.",expectedType, receivedType);
+			return String.format(getMessage() + " Expected type: 0x%02x, received type: 0x%02x.",expectedType, receivedType);
 		}
 	}
 	

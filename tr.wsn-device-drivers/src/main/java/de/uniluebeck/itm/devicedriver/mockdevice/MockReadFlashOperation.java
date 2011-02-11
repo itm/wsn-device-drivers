@@ -5,20 +5,25 @@ import de.uniluebeck.itm.devicedriver.operation.AbstractReadFlashOperation;
 
 public class MockReadFlashOperation extends AbstractReadFlashOperation {
 
+	private static final int STEPS = 10;
+	
+	private static final int SLEEP = 100;
+	
 	private final MockConfiguration configuration;
 	
-	public MockReadFlashOperation(MockConfiguration configuration) {
+	public MockReadFlashOperation(final MockConfiguration configuration) {
 		this.configuration = configuration;
 	}
 	
 	@Override
-	public byte[] execute(Monitor monitor) throws Exception {
-		for(int i = 1; i <= 10 && !isCanceled(); ++i) {
-			Thread.sleep(100 * i);
-			monitor.onProgressChange(0.1f * i);
+	public byte[] execute(final Monitor monitor) throws Exception {
+		for(int i = 1; i <= STEPS && !isCanceled(); ++i) {
+			Thread.sleep(SLEEP);
+			final float progress = 0.1f * i;
+			monitor.onProgressChange(progress);
 		}
-		byte[] result = new byte[length];
-		System.arraycopy(configuration.getFlashRom(), address, result, 0, length);
+		final byte[] result = new byte[getLength()];
+		System.arraycopy(configuration.getFlashRom(), getAddress(), result, 0, getLength());
 		return result;
 	}
 

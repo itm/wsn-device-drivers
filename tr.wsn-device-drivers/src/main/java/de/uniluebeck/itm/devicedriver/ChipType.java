@@ -41,7 +41,7 @@ public enum ChipType {
 	/**
 	 * Mode for JN513XR1 platform
 	 */
-	JN513XR1("JN513xR1", 2, 0x24 + 0x0C, 0x20, 0x30),
+	JN513XR1("JN513xR1", 2, 0x30, 0x20, 0x30),
 	/**
 	 * Mode for Shawn simulator
 	 */
@@ -75,7 +75,7 @@ public enum ChipType {
 	 * @param name The name of the chip.
 	 * @param type The short representation of the chip.
 	 */
-	private ChipType(String name, int type) {
+	private ChipType(final String name, final int type) {
 		this(name, type, -1, -1, -1);
 	}
 	
@@ -88,7 +88,7 @@ public enum ChipType {
 	 * @param headerLength Length of the header.
 	 * @param macInFlashStart 
 	 */
-	private ChipType(String name, int type, int headerStart, int headerLength, int macInFlashStart) {
+	private ChipType(final String name, final int type, final int headerStart, final int headerLength, final int macInFlashStart) {
 		this.name = name;
 		this.type = (short) type;
 		this.headerStart = headerStart;
@@ -127,7 +127,7 @@ public enum ChipType {
 	 * @param type Short of the ChipType that has to be returned.
 	 * @return ChipType associated with the given type.
 	 */
-	public static ChipType getChipType(short type) {
+	public static ChipType getChipType(final short type) {
 		for (ChipType chipType : ChipType.values()) {
 			if (chipType.getType() == type) {
 				return chipType;

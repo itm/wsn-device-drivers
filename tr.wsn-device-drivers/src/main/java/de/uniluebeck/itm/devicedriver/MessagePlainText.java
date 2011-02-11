@@ -40,12 +40,12 @@ public class MessagePlainText implements Message {
 	 * 
 	 * @param content The content of the message.
 	 */
-	public MessagePlainText(byte[] content) {
+	public MessagePlainText(final byte[] content) {
 		this.content = new byte[content.length];
 		System.arraycopy(content, 0, this.content, 0, content.length);
 	}
 
-	
+	@Override
 	public byte[] getContent() {
 		return content;
 	}

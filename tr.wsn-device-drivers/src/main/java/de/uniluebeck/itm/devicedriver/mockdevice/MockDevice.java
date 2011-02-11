@@ -31,30 +31,30 @@ public class MockDevice extends ObserverableDevice implements MockListener {
 	/**
 	 * Logger for this class.
 	 */
-	private static final Logger logger = LoggerFactory.getLogger(MockDevice.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MockDevice.class);
 	
 	private final MockConfiguration configuration;
 	
 	private final MockConnection connection;
 	
-	public MockDevice(MockConnection connection) {
+	public MockDevice(final MockConnection connection) {
 		this(new MockConfiguration(), connection);
 	}
 	
-	public MockDevice(MockConfiguration configuration, MockConnection connection) {
+	public MockDevice(final MockConfiguration configuration, final MockConnection connection) {
 		this.configuration = configuration;
 		this.connection = connection;
 		
 		connection.addListener(new ConnectionListener() {
 			@Override
-			public void onConnectionChange(ConnectionEvent event) {
+			public void onConnectionChange(final ConnectionEvent event) {
 				MockDevice.this.onConnectionChanged(event.isConnected());
 			}
 		});
 		onConnectionChanged(connection.isConnected());
 	}
 	
-	private void onConnectionChanged(boolean connected) {
+	private void onConnectionChanged(final boolean connected) {
 		if (connected) {
 			connection.addMockListener(this);
 		} else {
@@ -118,9 +118,9 @@ public class MockDevice extends ObserverableDevice implements MockListener {
 	}
 
 	@Override
-	public void onData(byte[] bytes) {
-		MessagePacket messagePacket = MessagePacket.parse(bytes, 0, bytes.length);
-		logger.debug("Emitting message packet: {}", messagePacket);
+	public void onData(final byte[] bytes) {
+		final MessagePacket messagePacket = MessagePacket.parse(bytes, 0, bytes.length);
+		LOG.debug("Emitting message packet: {}", messagePacket);
 		fireMessagePacketEvent(new MessageEvent<MessagePacket>(this, messagePacket));
 	}
 }

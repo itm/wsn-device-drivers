@@ -20,12 +20,18 @@ public abstract class ObserverableDevice implements Device {
 	 */
 	private final Map<Integer, List<MessagePacketListener>> messagePacketMap = new TreeMap<Integer, List<MessagePacketListener>>();
 	
+	/**
+	 * A list of message packet listener that want to be notified when any type of message packet has arrived.
+	 */
 	private final List<MessagePacketListener> messagePacketListener = new ArrayList<MessagePacketListener>();
 	
+	/**
+	 * A list of plaintext listener that will be notified when a plain text message was receivced.
+	 */
 	private final List<MessagePlainTextListener> messagePlainTextListener = new ArrayList<MessagePlainTextListener>();
 	
 	@Override
-	public void addListener(MessagePacketListener listener, int... types) {
+	public void addListener(final MessagePacketListener listener, final int... types) {
 		for (final int type : types) {
 			if (!messagePacketMap.containsKey(type)) {
 				messagePacketMap.put(type, new ArrayList<MessagePacketListener>());
@@ -35,7 +41,7 @@ public abstract class ObserverableDevice implements Device {
 	}
 	
 	@Override
-	public void addListener(MessagePacketListener listener, PacketType... packetTypes) {
+	public void addListener(final MessagePacketListener listener, final PacketType... packetTypes) {
 		final int[] types = new int[packetTypes.length];
 		int i = 0;
 		for (PacketType type : packetTypes) {
@@ -45,17 +51,17 @@ public abstract class ObserverableDevice implements Device {
 	}
 	
 	@Override
-	public void addListener(MessagePacketListener listener) {
+	public void addListener(final MessagePacketListener listener) {
 		messagePacketListener.add(listener);
 	}
 	
 	@Override
-	public void addListener(MessagePlainTextListener listener) {
+	public void addListener(final MessagePlainTextListener listener) {
 		messagePlainTextListener.add(listener);
 	}
 	
 	@Override
-	public void removeListener(MessagePacketListener listener) {
+	public void removeListener(final MessagePacketListener listener) {
 		if (messagePacketListener.contains(listener)) {
 			messagePacketListener.remove(listener);
 		} else {
@@ -68,7 +74,7 @@ public abstract class ObserverableDevice implements Device {
 	}
 	
 	@Override
-	public void removeListener(MessagePlainTextListener listener) {
+	public void removeListener(final MessagePlainTextListener listener) {
 		if (messagePlainTextListener.contains(listener)) {
 			messagePlainTextListener.remove(listener);
 		}
@@ -79,7 +85,7 @@ public abstract class ObserverableDevice implements Device {
 	 * 
 	 * @param packet The message packet that has to be send to all listeners of the packet type.
 	 */
-	public void fireMessagePacketEvent(MessageEvent<MessagePacket> event) {
+	public void fireMessagePacketEvent(final MessageEvent<MessagePacket> event) {
 		final List<MessagePacketListener> listeners = this.messagePacketMap.get(event.getMessage().getType());
 		if (listeners != null) {
 			for (final MessagePacketListener listener : listeners.toArray(new MessagePacketListener[listeners.size()])) {
@@ -91,11 +97,14 @@ public abstract class ObserverableDevice implements Device {
 		}
 	}
 	
-	public void fireMessagePlainTextEvent(MessageEvent<MessagePlainText> event) {
+	/**
+	 * Fire the given event to all listeners.
+	 * 
+	 * @param event A message event.
+	 */
+	public void fireMessagePlainTextEvent(final MessageEvent<MessagePlainText> event) {
 		for (final MessagePlainTextListener listener : messagePlainTextListener.toArray(new MessagePlainTextListener[messagePlainTextListener.size()])) {
 			listener.onMessagePlainTextReceived(event);
 		}
 	}
-	
-	
 }

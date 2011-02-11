@@ -38,7 +38,9 @@ public class MacAddress {
 	/** 
 	 * Logger for this class.
 	 */
-	private static final Logger logger = LoggerFactory.getLogger(MacAddress.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MacAddress.class);
+	
+	private static final int LENGTH = 8;
 
 	/**
 	 * Suppose the MAC address is: 00:15:8D:00:00:04:7D:50. Then 0x00 will be
@@ -59,8 +61,8 @@ public class MacAddress {
 	 * 
 	 * @param lower16 The last two bytes of the mac address.
 	 */
-	public MacAddress(int lower16) {
-		address = new byte[8];
+	public MacAddress(final int lower16) {
+		address = new byte[LENGTH];
 		for (int i = 0; i < address.length; ++i) {
 			address[i] = 0;
 		}
@@ -74,7 +76,7 @@ public class MacAddress {
 	 * 
 	 * @param address Address as byte array.
 	 */
-	public MacAddress(byte[] address) {
+	public MacAddress(final byte[] address) {
 		setMacBytes(address);
 	}
 
@@ -84,8 +86,8 @@ public class MacAddress {
 	 * @param address The address as byte array.
 	 * @param offset The mac address offset.
 	 */
-	public MacAddress(byte[] address, int offset) {
-		byte mac[] = new byte[8];
+	public MacAddress(final byte[] address, final int offset) {
+		final byte mac[] = new byte[LENGTH];
 		System.arraycopy(address, offset, mac, 0, mac.length);
 		setMacBytes(mac);
 	}
@@ -103,7 +105,7 @@ public class MacAddress {
 	 * @return The mac address as byte array.
 	 */
 	public byte[] getMacBytes() {
-		byte[] tmp = new byte[address.length];
+		final byte[] tmp = new byte[address.length];
 		System.arraycopy(address, 0, tmp, 0, address.length);
 		return tmp;
 	}
@@ -113,11 +115,11 @@ public class MacAddress {
 	 * 
 	 * @param address The mac address as byte array.
 	 */
-	public void setMacBytes(byte[] address) {
-		this.address = new byte[8];
+	public void setMacBytes(final byte[] address) {
+		this.address = new byte[LENGTH];
 		System.arraycopy(address, 0, this.address, 0, address.length);
-		if (address.length > 8) {
-			logger.warn("Supplied address is longer than 8 byte. Trimmed to 8.");
+		if (address.length > LENGTH) {
+			LOG.warn("Supplied address is longer than 8 byte. Trimmed to 8.");
 		}
 	}
 
@@ -127,7 +129,7 @@ public class MacAddress {
 	 * @return Returns the last two bytes of the mac address.
 	 */
 	public int getMacLowest16() {
-		byte[] address = getMacBytes();
+		final byte[] address = getMacBytes();
 		return address[6] * 256 + address[7];
 	}
 
@@ -136,14 +138,14 @@ public class MacAddress {
 	 * 
 	 * @return True if equal else false.
 	 */
-	public boolean equalsLower16(int id) {
+	public boolean equalsLower16(final int id) {
 		return id == getMacLowest16();
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(final Object o) {
 		if (o != null && o instanceof MacAddress) {
-			MacAddress m = (MacAddress) o;
+			final MacAddress m = (MacAddress) o;
 			m.getMacString().equals(getMacString());
 		}
 		return super.equals(o);

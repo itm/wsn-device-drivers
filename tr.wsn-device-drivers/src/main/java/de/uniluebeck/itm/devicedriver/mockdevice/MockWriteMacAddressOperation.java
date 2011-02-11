@@ -8,25 +8,30 @@ import de.uniluebeck.itm.devicedriver.operation.AbstractWriteMacAddressOperation
 
 public class MockWriteMacAddressOperation extends AbstractWriteMacAddressOperation {
 
+	private static final int STEPS = 10;
+	
+	private static final int SLEEP = 100;
+	
 	/**
 	 * Logger for this class.
 	 */
-	private static final Logger log = LoggerFactory.getLogger(MockWriteMacAddressOperation.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MockWriteMacAddressOperation.class);
 	
 	private final MockConfiguration configuration;
 	
-	public MockWriteMacAddressOperation(MockConfiguration configuration) {
+	public MockWriteMacAddressOperation(final MockConfiguration configuration) {
 		this.configuration = configuration;
 	}
 	
 	@Override
-	public Void execute(Monitor monitor) throws Exception {
-		for(int i = 1; i <= 10 && !isCanceled(); ++i) {
-			Thread.sleep(100);
-			monitor.onProgressChange(0.1f * i);
+	public Void execute(final Monitor monitor) throws Exception {
+		for(int i = 1; i <= STEPS && !isCanceled(); ++i) {
+			Thread.sleep(SLEEP);
+			final float progress = 0.1f * i;
+			monitor.onProgressChange(progress);
 		}
-		log.debug("Writing mac address: " + macAddress.getMacString());
-		configuration.setMacAddress(macAddress);
+		LOG.debug("Writing mac address: " + getMacAddress().getMacString());
+		configuration.setMacAddress(getMacAddress());
 		return null;
 	}
 

@@ -29,14 +29,14 @@ package de.uniluebeck.itm.devicedriver.exception;
 */
 @SuppressWarnings("serial")
 public class InvalidMacAddressException extends Exception {
-	protected byte[] address;
+	private final byte[] address;
 
 	/**
 	 * Constructor
 	 * 
 	 * @param address
 	 */
-	public InvalidMacAddressException(byte[] address) {
+	public InvalidMacAddressException(final byte[] address) {
 		this.address = address;
 	}
 

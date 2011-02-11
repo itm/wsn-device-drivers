@@ -1,5 +1,6 @@
 package de.uniluebeck.itm.devicedriver.async.thread;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import de.uniluebeck.itm.devicedriver.State;
@@ -51,7 +52,9 @@ public class FutureOperationHandle<T> implements OperationHandle<T> {
 	public T get() {
 		try {
 			return future.get();
-		} catch (Exception e) {
+		} catch(final InterruptedException e) {
+			throw new RuntimeException(e);
+		} catch (final ExecutionException e) {
 			throw new RuntimeException(e);
 		}
 	}

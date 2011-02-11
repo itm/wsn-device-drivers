@@ -14,6 +14,9 @@ public class TelosbReadFlashOperation extends AbstractReadFlashOperation {
 	
 	@Override
 	public byte[] execute(Monitor monitor) throws Exception {
+		final int address = getAddress();
+		final int length = getLength();
+		
 		byte[] reply = null;
 
 		try {

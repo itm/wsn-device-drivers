@@ -41,7 +41,7 @@ public class FlashEraseFailedException extends Exception {
 	/**
 	 * @param msg
 	 */
-	public FlashEraseFailedException(String msg) {
+	public FlashEraseFailedException(final String msg) {
 		this.msg = msg;
 	}
 

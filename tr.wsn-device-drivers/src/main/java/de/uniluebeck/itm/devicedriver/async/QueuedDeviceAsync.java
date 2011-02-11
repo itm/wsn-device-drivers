@@ -33,7 +33,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	/**
 	 * Logger for this class.
 	 */
-	private static final Logger logger = LoggerFactory.getLogger(QueuedDeviceAsync.class);
+	private static final Logger LOG = LoggerFactory.getLogger(QueuedDeviceAsync.class);
 	
 	/**
 	 * Queue that schedules all <code>Operation</code> instances.
@@ -52,105 +52,105 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	 * @param device The <code>Device</code> that provides all operations that can be executed.
 	 */
 	@Inject
-	public QueuedDeviceAsync(OperationQueue queue, Device device) {
+	public QueuedDeviceAsync(final OperationQueue queue, final Device device) {
 		this.queue = queue;
 		this.device = device;
 	}
 
 	@Override
-	public void addListener(MessagePacketListener listener, PacketType... types) {
+	public void addListener(final MessagePacketListener listener, final PacketType... types) {
 		device.addListener(listener, types);
 	}
 
 	@Override
-	public void addListener(MessagePacketListener listener, int... types) {
+	public void addListener(final MessagePacketListener listener, final int... types) {
 		device.addListener(listener, types);
 	}
 	
 	@Override
-	public void addListener(MessagePacketListener listener) {
+	public void addListener(final MessagePacketListener listener) {
 		device.addListener(listener);
 	}
 	
 	@Override
-	public void addListener(MessagePlainTextListener listener) {
+	public void addListener(final MessagePlainTextListener listener) {
 		device.addListener(listener);
 	}
 	
 	@Override
-	public void removeListener(MessagePacketListener listener) {
+	public void removeListener(final MessagePacketListener listener) {
 		device.removeListener(listener);
 	}
 	
 	@Override
-	public void removeListener(MessagePlainTextListener listener) {
+	public void removeListener(final MessagePlainTextListener listener) {
 		device.removeListener(listener);
 	}
 	
 	@Override
-	public OperationHandle<ChipType> getChipType(long timeout, AsyncCallback<ChipType> callback) {
-		logger.debug("Reading Chip Type (Timeout: " + timeout + "ms");
-		GetChipTypeOperation operation = device.createGetChipTypeOperation();
+	public OperationHandle<ChipType> getChipType(final long timeout, final AsyncCallback<ChipType> callback) {
+		LOG.debug("Reading Chip Type (Timeout: " + timeout + "ms");
+		final GetChipTypeOperation operation = device.createGetChipTypeOperation();
 		return queue.addOperation(operation, timeout, callback);
 	}
 
 	@Override
-	public OperationHandle<Void> eraseFlash(long timeout, AsyncCallback<Void> callback) {
-		logger.debug("Erase flash (Timeout: " + timeout + "ms)");
-		EraseFlashOperation operation = device.createEraseFlashOperation();
+	public OperationHandle<Void> eraseFlash(final long timeout, final AsyncCallback<Void> callback) {
+		LOG.debug("Erase flash (Timeout: " + timeout + "ms)");
+		final EraseFlashOperation operation = device.createEraseFlashOperation();
 		return queue.addOperation(operation, timeout, callback);
 	}
 
 	@Override
-	public OperationHandle<Void> program(byte[] data, long timeout, AsyncCallback<Void> callback) {
-		logger.debug("Program device (timeout: " + timeout + "ms)");
-		ProgramOperation operation = device.createProgramOperation();
+	public OperationHandle<Void> program(final byte[] data, final long timeout, final AsyncCallback<Void> callback) {
+		LOG.debug("Program device (timeout: " + timeout + "ms)");
+		final ProgramOperation operation = device.createProgramOperation();
 		operation.setBinaryImage(data);
 		return queue.addOperation(operation, timeout, callback);
 	}
 
 	@Override
-	public OperationHandle<byte[]> readFlash(int address, int length, long timeout, AsyncCallback<byte[]> callback) {
-		logger.debug("Read flash (address: " + address + ", length: " + length + ", timeout: " + timeout + "ms)");
-		ReadFlashOperation operation = device.createReadFlashOperation();
+	public OperationHandle<byte[]> readFlash(final int address, final int length, final long timeout, final AsyncCallback<byte[]> callback) {
+		LOG.debug("Read flash (address: " + address + ", length: " + length + ", timeout: " + timeout + "ms)");
+		final ReadFlashOperation operation = device.createReadFlashOperation();
 		operation.setAddress(address, length);
 		return queue.addOperation(operation, timeout, callback);
 	}
 
 	@Override
-	public OperationHandle<MacAddress> readMac(long timeout, AsyncCallback<MacAddress> callback) {
-		logger.debug("Read mac (timeout: " + timeout + "ms)");
-		ReadMacAddressOperation operation = device.createReadMacAddressOperation();
+	public OperationHandle<MacAddress> readMac(final long timeout, final AsyncCallback<MacAddress> callback) {
+		LOG.debug("Read mac (timeout: " + timeout + "ms)");
+		final ReadMacAddressOperation operation = device.createReadMacAddressOperation();
 		return queue.addOperation(operation, timeout, callback);
 	}
 
 	@Override
-	public OperationHandle<Void> reset(long timeout, AsyncCallback<Void> callback) {
-		logger.debug("Reset device (timeout: " + timeout + "ms)");
-		ResetOperation operation = device.createResetOperation();
+	public OperationHandle<Void> reset(final long timeout, final AsyncCallback<Void> callback) {
+		LOG.debug("Reset device (timeout: " + timeout + "ms)");
+		final ResetOperation operation = device.createResetOperation();
 		return queue.addOperation(operation, timeout, callback);
 	}
 
 	@Override
-	public OperationHandle<Void> send(MessagePacket packet, long timeout, AsyncCallback<Void> callback) {
-		logger.debug("Send packet to device (timeout: " + timeout + "ms)");
-		SendOperation operation = device.createSendOperation();
+	public OperationHandle<Void> send(final MessagePacket packet, final long timeout, final AsyncCallback<Void> callback) {
+		LOG.debug("Send packet to device (timeout: " + timeout + "ms)");
+		final SendOperation operation = device.createSendOperation();
 		operation.setMessagePacket(packet);
 		return queue.addOperation(operation, timeout, callback);
 	}
 
 	@Override
-	public OperationHandle<Void> writeFlash(int address, byte[] data, int length, long timeout, AsyncCallback<Void> callback) {
-		logger.debug("Write flash (address: " + address + ", length: " + length + ", timeout: " + timeout + "ms)");
-		WriteFlashOperation operation = device.createWriteFlashOperation();
+	public OperationHandle<Void> writeFlash(final int address, final byte[] data, final int length, final long timeout, final AsyncCallback<Void> callback) {
+		LOG.debug("Write flash (address: " + address + ", length: " + length + ", timeout: " + timeout + "ms)");
+		final WriteFlashOperation operation = device.createWriteFlashOperation();
 		operation.setData(address, data, length);
 		return queue.addOperation(operation, timeout, callback);
 	}
 
 	@Override
-	public OperationHandle<Void> writeMac(MacAddress macAddress, long timeout, AsyncCallback<Void> callback) {
-		logger.debug("Write mac (mac address: " + macAddress + ", timeout: " + timeout + "ms)");
-		WriteMacAddressOperation operation = device.createWriteMacAddressOperation();
+	public OperationHandle<Void> writeMac(final MacAddress macAddress, final long timeout, final AsyncCallback<Void> callback) {
+		LOG.debug("Write mac (mac address: " + macAddress + ", timeout: " + timeout + "ms)");
+		final WriteMacAddressOperation operation = device.createWriteMacAddressOperation();
 		operation.setMacAddress(macAddress);
 		return queue.addOperation(operation, timeout, callback);
 	}

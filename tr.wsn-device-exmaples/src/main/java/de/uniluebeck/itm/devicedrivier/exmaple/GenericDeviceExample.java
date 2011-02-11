@@ -157,7 +157,7 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 				System.out.println("Reading result: " + result);
 			}
 		};
-		deviceAsync.readFlash(0, 32, 10000, callback);
+		deviceAsync.readFlash(128, 256, 10000, callback);
 	}
 	
 	public void chipTypeOperation() {
@@ -213,19 +213,18 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 	
 	public void run() {
 		init();
+		connect();
 		try {
-			connect();
-			
 			programImage();
-			macAddressOperations();
-			readFlashOperation();
-			chipTypeOperation();
-			sendOperation();
-			resetOperation();
-			finish();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		macAddressOperations();
+		readFlashOperation();
+		chipTypeOperation();
+		sendOperation();
+		resetOperation();
+		finish();
 	}
 	
 	@Override

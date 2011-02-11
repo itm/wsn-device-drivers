@@ -4,22 +4,25 @@ import de.uniluebeck.itm.devicedriver.Monitor;
 import de.uniluebeck.itm.devicedriver.operation.AbstractOperation;
 import de.uniluebeck.itm.devicedriver.operation.ResetOperation;
 
-public class MockResetOperation extends AbstractOperation<Void> implements
-		ResetOperation {
+public class MockResetOperation extends AbstractOperation<Void> implements ResetOperation {
 
-	private MockConnection connection;
+	private static final int SLEEP_TIME = 200;
 	
-	public MockResetOperation(MockConnection device) {
-		this.connection = device;
+	private static final int RESET_TIME = 1000;
+	
+	private final MockConnection connection;
+	
+	public MockResetOperation(final MockConnection connection) {
+		this.connection = connection;
 	}
 	
 	@Override
-	public Void execute(Monitor monitor) throws Exception {
-		Thread.sleep(200);
+	public Void execute(final Monitor monitor) throws Exception {
+		Thread.sleep(SLEEP_TIME);
 		connection.stopAliveRunnable();
-		Thread.sleep(1000);
+		Thread.sleep(RESET_TIME);
 		connection.sendMessage("Booting MockDevice...");
-		Thread.sleep(100);
+		Thread.sleep(SLEEP_TIME);
 		connection.scheduleAliveRunnable();
 		return null;
 	}

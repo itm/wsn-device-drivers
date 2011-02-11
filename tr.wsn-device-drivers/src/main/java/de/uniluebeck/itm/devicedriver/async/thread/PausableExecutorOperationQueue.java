@@ -30,7 +30,7 @@ public class PausableExecutorOperationQueue implements OperationQueue {
 	/**
 	 * Logger for this class.
 	 */
-	private static final Logger logger = LoggerFactory.getLogger(PausableExecutorOperationQueue.class);
+	private static final Logger LOG = LoggerFactory.getLogger(PausableExecutorOperationQueue.class);
 	
 	/**
 	 * List that contains all listeners.
@@ -80,7 +80,7 @@ public class PausableExecutorOperationQueue implements OperationQueue {
 		// Add listener for removing operation.
 		operation.addListener(new OperationListener<T>() {
 			@Override
-			public void onStateChanged(StateChangedEvent<T> event) {
+			public void onStateChanged(final StateChangedEvent<T> event) {
 				fireStateChangedEvent(event);
 				if (event.getNewState().isFinishState()) {
 					removeOperation(event.getOperation());
@@ -89,17 +89,17 @@ public class PausableExecutorOperationQueue implements OperationQueue {
 		});
 		
 		// Pause the executor to submit the operation and savely add the timeout handler.
-		logger.debug("Pause executor");
+		LOG.debug("Pause executor");
 		executor.pause();
 		
 		// Submit the operation to the executor.
-		logger.debug("Submit " + operation + " to executor queue.");
+		LOG.debug("Submit " + operation + " to executor queue.");
 		final Future<T> future = executor.submit(operation);
 		
 		// Add listener for timeout handling.
 		operation.addListener(new OperationListener<T>() {
 			@Override
-			public void onStateChanged(StateChangedEvent<T> event) {
+			public void onStateChanged(final StateChangedEvent<T> event) {
 				if (event.getNewState().equals(State.TIMEDOUT)) {
 					cancelOperation(event.getOperation(), future);
 				}
@@ -109,7 +109,7 @@ public class PausableExecutorOperationQueue implements OperationQueue {
 		addOperation(operation);
 		
 		// Resume executor to execute new submitted operations.
-		logger.debug("Resume executor");
+		LOG.debug("Resume executor");
 		executor.resume();
 		
 		return new FutureOperationHandle<T>(future, operation);
@@ -123,7 +123,7 @@ public class PausableExecutorOperationQueue implements OperationQueue {
 	 */
 	private <T> void addOperation(final Operation<T> operation) {
 		operations.add(operation);
-		logger.debug("Operation added to internal operation list");
+		LOG.debug("Operation added to internal operation list");
 		fireAddedEvent(new AddedEvent<T>(this, operation));
 	}
 	
@@ -136,7 +136,7 @@ public class PausableExecutorOperationQueue implements OperationQueue {
 	 */
 	private <T> void cancelOperation(final Operation<T> operation, final Future<T> future) {
 		final long timeout = operation.getTimeout();
-		logger.warn("Operation " + operation + " will be canceled cause timeout of " + timeout + "ms was reached");
+		LOG.warn("Operation " + operation + " will be canceled cause timeout of " + timeout + "ms was reached");
 		// Try to cancel in a normal way.
 		operation.cancel();
 		// Now kill the thread hard.
@@ -151,7 +151,7 @@ public class PausableExecutorOperationQueue implements OperationQueue {
 	 */
 	private <T> void removeOperation(final Operation<T> operation) {
 		operations.remove(operation);
-		logger.debug("Operation removed from internal operation list");
+		LOG.debug("Operation removed from internal operation list");
 		fireRemovedEvent(new RemovedEvent<T>(this, operation));
 	}
 

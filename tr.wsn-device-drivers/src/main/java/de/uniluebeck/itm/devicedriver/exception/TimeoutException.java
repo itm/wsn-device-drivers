@@ -29,28 +29,19 @@ package de.uniluebeck.itm.devicedriver.exception;
 */
 @SuppressWarnings("serial")
 public class TimeoutException extends Exception {
-	private String msg = null;
 	
 	/**
 	 * Constructor
 	 */
 	public TimeoutException() {
-		
+		super();
 	}
 	
 	/**
 	 * Constructor
 	 * @param msg
 	 */
-	public TimeoutException(String msg) {
-		this.msg = msg;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Throwable#getMessage()
-	 */
-	@Override
-	public String getMessage() {
-		return msg;
+	public TimeoutException(final String msg) {
+		super(msg);
 	}
 }

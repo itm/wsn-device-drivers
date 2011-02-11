@@ -3,16 +3,28 @@ package de.uniluebeck.itm.devicedriver.operation;
 
 public abstract class AbstractWriteFlashOperation extends AbstractOperation<Void> implements WriteFlashOperation {
 
-	protected int address;
+	private int address;
 	
-	protected byte[] data;
+	private byte[] data;
 	
-	protected int length;
+	private int length;
 	
 	@Override
-	public void setData(int address, byte[] data, int length) {
+	public void setData(final int address, final byte[] data, final int length) {
 		this.address = address;
 		this.data = data;
 		this.length = length;
+	}
+	
+	public int getAddress() {
+		return address;
+	}
+	
+	public byte[] getData() {
+		return data;
+	}
+	
+	public int getLength() {
+		return length;
 	}
 }

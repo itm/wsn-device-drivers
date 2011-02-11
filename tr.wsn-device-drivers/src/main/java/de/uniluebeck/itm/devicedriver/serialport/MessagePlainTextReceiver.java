@@ -16,7 +16,7 @@ public class MessagePlainTextReceiver implements ByteReceiver {
 	private AbstractSerialPortDevice device;
 	
 	@Override
-	public void setDevice(Device device) {
+	public void setDevice(final Device device) {
 		this.device = (AbstractSerialPortDevice) device;
 	}
 
@@ -26,7 +26,7 @@ public class MessagePlainTextReceiver implements ByteReceiver {
 	}
 
 	@Override
-	public void onReceive(byte data) {
+	public void onReceive(final byte data) {
 		if (buffer.hasRemaining()) {
 			buffer.put(data);
 		} else {

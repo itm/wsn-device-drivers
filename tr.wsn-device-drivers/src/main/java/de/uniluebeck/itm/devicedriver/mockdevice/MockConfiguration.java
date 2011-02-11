@@ -5,16 +5,21 @@ import de.uniluebeck.itm.devicedriver.MacAddress;
 
 public class MockConfiguration {
 
+	private static final int[] DEFAULT_CHANNELS = new int[] {11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26};
+	
+	private static final int LENGTH = 1024;
+	
+	private int[] channels = DEFAULT_CHANNELS;
+	
 	private MacAddress macAddress;
 	
 	private ChipType chipType;
 	
 	private byte[] flashRom;
-	
-	private int[] channels = new int[] {11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26};
+
 
 	public MockConfiguration() {
-		flashRom = new byte[1024];
+		flashRom = new byte[LENGTH];
 		chipType = ChipType.UNKNOWN;
 		macAddress = new MacAddress(0);
 	}
@@ -23,7 +28,7 @@ public class MockConfiguration {
 		return macAddress;
 	}
 
-	public void setMacAddress(MacAddress macAddress) {
+	public void setMacAddress(final MacAddress macAddress) {
 		this.macAddress = macAddress;
 	}
 
@@ -31,7 +36,7 @@ public class MockConfiguration {
 		return chipType;
 	}
 
-	public void setChipType(ChipType chipType) {
+	public void setChipType(final ChipType chipType) {
 		this.chipType = chipType;
 	}
 
@@ -39,7 +44,7 @@ public class MockConfiguration {
 		return flashRom;
 	}
 
-	public void setFlashRom(byte[] flashRom) {
+	public void setFlashRom(final byte[] flashRom) {
 		this.flashRom = flashRom;
 	}
 
@@ -47,7 +52,7 @@ public class MockConfiguration {
 		return channels;
 	}
 
-	public void setChannels(int[] channels) {
+	public void setChannels(final int[] channels) {
 		this.channels = channels;
 	}
 }

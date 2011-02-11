@@ -60,7 +60,7 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 	}
 	
 	private JennicBinData validateImage(final ChipType chipType, final Monitor monitor) throws Exception {
-		final JennicBinData binData = new JennicBinData(binaryImage);
+		final JennicBinData binData = new JennicBinData(getBinaryImage());
 		// Check if file and current chip match
 		if (!binData.isCompatible(chipType)) {
 			log.error("Chip type(" + chipType + ") and bin-program type(" + binData.getChipType() + ") do not match");

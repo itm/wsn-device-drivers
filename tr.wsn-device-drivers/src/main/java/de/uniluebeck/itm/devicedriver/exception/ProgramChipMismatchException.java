@@ -33,26 +33,23 @@ import de.uniluebeck.itm.devicedriver.ChipType;
 @SuppressWarnings("serial")
 public class ProgramChipMismatchException extends Exception {
 
-	private ChipType chipType;
+	private final ChipType chipType;
 
-	private ChipType programType;
+	private final ChipType programType;
 
-	// -------------------------------------------------------------------------
 	/**
 	 */
-	public ProgramChipMismatchException(ChipType chipType, ChipType programType) {
+	public ProgramChipMismatchException(final ChipType chipType, final ChipType programType) {
 		this.chipType = chipType;
 		this.programType = programType;
 	}
 
-	// -------------------------------------------------------------------------
 	/**
 	 */
 	public ChipType getChipType() {
 		return chipType;
 	}
 
-	// -------------------------------------------------------------------------
 	/**
 	 */
 	public ChipType getProgramType() {

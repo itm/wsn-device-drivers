@@ -4,10 +4,10 @@ import de.uniluebeck.itm.devicedriver.MessagePacket;
 
 public abstract class AbstractSendOperation extends AbstractOperation<Void> implements SendOperation {
 	
-	protected MessagePacket messagePacket;
+	private MessagePacket messagePacket;
 	
 	@Override
-	public void setMessagePacket(MessagePacket messagePacket) {
+	public void setMessagePacket(final MessagePacket messagePacket) {
 		this.messagePacket = messagePacket;
 	}
 	

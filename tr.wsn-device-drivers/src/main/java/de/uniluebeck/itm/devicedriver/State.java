@@ -47,7 +47,7 @@ public enum State {
 	 * 
 	 * @param name The name of the state.
 	 */
-	private State(String name) {
+	private State(final String name) {
 		this.name = name;
 	}
 	
@@ -75,7 +75,7 @@ public enum State {
 	 * @param name The name of the state that has to be retuned.
 	 * @return The state with the given name or null.
 	 */
-	public static State fromName(String name) {
+	public static State fromName(final String name) {
 		for (State state : State.values()) {
 			if (state.getName().equals(name)) {
 				return state;
@@ -90,7 +90,7 @@ public enum State {
 	 * @param value The string representing the State.
 	 * @return The appropriate String.
 	 */
-	public static State fromString(String value) {
+	public static State fromString(final String value) {
 		return State.valueOf(value);
 	}
 }

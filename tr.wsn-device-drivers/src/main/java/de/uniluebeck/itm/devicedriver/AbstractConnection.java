@@ -13,7 +13,7 @@ public abstract class AbstractConnection implements Connection {
 	/**
 	 * Logger for this class.
 	 */
-	private static final Logger log = LoggerFactory.getLogger(AbstractConnection.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractConnection.class);
 	
 	private final List<ConnectionListener> listeners = new ArrayList<ConnectionListener>();
 	
@@ -25,28 +25,28 @@ public abstract class AbstractConnection implements Connection {
 	
 	private String uri;
 	
-	protected void setConnected(boolean connected) {
+	protected void setConnected(final boolean connected) {
 		this.connected = connected;
 		fireConnectionChange(connected);
 	}
 	
-	protected void fireConnectionChange(boolean connected) {
-		log.debug(connected ? "Connected" : "Disconnected");
+	protected void fireConnectionChange(final boolean connected) {
+		LOG.debug(connected ? "Connected" : "Disconnected");
 		final ConnectionEvent event = new ConnectionEvent(this, uri, connected);
 		for (final ConnectionListener listener : listeners.toArray(new ConnectionListener[listeners.size()])) {
 			listener.onConnectionChange(event);
 		}
 	}
 	
-	protected void setInputStream(InputStream inputStream) {
+	protected void setInputStream(final InputStream inputStream) {
 		this.inputStream = inputStream;
 	}
 	
-	protected void setOutputStream(OutputStream outputStream) {
+	protected void setOutputStream(final OutputStream outputStream) {
 		this.outputStream = outputStream;
 	}
 	
-	protected void setUri(String uri) {
+	protected void setUri(final String uri) {
 		this.uri = uri;
 	}
 	
@@ -66,12 +66,12 @@ public abstract class AbstractConnection implements Connection {
 	}
 
 	@Override
-	public void addListener(ConnectionListener listener) {
+	public void addListener(final ConnectionListener listener) {
 		listeners.add(listener);
 	}
 
 	@Override
-	public void removeListener(ConnectionListener listener) {
+	public void removeListener(final ConnectionListener listener) {
 		listeners.remove(listener);
 	}
 }

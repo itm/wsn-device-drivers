@@ -35,7 +35,7 @@ public class PacemateReadFlashOperation extends AbstractReadFlashOperation {
 		}
 		
 		// Send flash program request
-		device.sendBootLoaderMessage(Messages.flashReadRequestMessage(address, length));
+		device.sendBootLoaderMessage(Messages.flashReadRequestMessage(getAddress(), getLength()));
 		monitor.onProgressChange(0.5f);
 		
 		// Read flash program response

@@ -9,16 +9,21 @@ import de.uniluebeck.itm.devicedriver.event.MessageEvent;
 import de.uniluebeck.itm.tr.util.StringUtils;
 
 public class MessagePacketReceiver implements ByteReceiver {
-
+	
 	/**
 	 * Logger for this class.
 	 */
-	private static final Logger log = LoggerFactory.getLogger(MessagePacketReceiver.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MessagePacketReceiver.class);
+	
+	/**
+	 * The maximum length of a message packet.
+	 */
+	private static final int LENGTH = 2048;
 	
 	/**
 	 * Data buffer for <code>MessagePacket</code> objects.
 	 */
-	private byte[] packet = new byte[2048];
+	private byte[] packet = new byte[LENGTH];
 
 	/** 
 	 * Current packetLength of the received packet.
@@ -41,7 +46,7 @@ public class MessagePacketReceiver implements ByteReceiver {
 	private AbstractSerialPortDevice device;
 	
 	@Override
-	public void setDevice(Device device) {
+	public void setDevice(final Device device) {
 		this.device = (AbstractSerialPortDevice) device;
 	}
 
@@ -51,7 +56,7 @@ public class MessagePacketReceiver implements ByteReceiver {
 	}
 
 	@Override
-	public void onReceive(byte input) {
+	public void onReceive(final byte input) {
 		// Check if DLE was found
 		if (foundDLE) {
 			foundDLE = false;
@@ -76,12 +81,12 @@ public class MessagePacketReceiver implements ByteReceiver {
 				ensureBufferSize();
 				packet[packetLength++] = MessagePacket.DLE;
 			} else {
-				log.error("Incomplete packet received: " + StringUtils.toHexString(this.packet, 0, packetLength));
+				LOG.error("Incomplete packet received: " + StringUtils.toHexString(this.packet, 0, packetLength));
 				clearPacket();
 			}
 		} else {
 			if (input == MessagePacket.DLE) {
-				log.debug("Plain DLE received");
+				LOG.debug("Plain DLE received");
 				foundDLE = true;
 			} else if (foundPacket) {
 				ensureBufferSize();
@@ -109,7 +114,7 @@ public class MessagePacketReceiver implements ByteReceiver {
 	 */
 	private void ensureBufferSize() {
 		if (packetLength + 1 >= this.packet.length) {
-			byte tmp[] = new byte[packetLength + 100];
+			final byte tmp[] = new byte[packetLength + 100];
 			System.arraycopy(this.packet, 0, tmp, 0, packetLength);
 			this.packet = tmp;
 		}

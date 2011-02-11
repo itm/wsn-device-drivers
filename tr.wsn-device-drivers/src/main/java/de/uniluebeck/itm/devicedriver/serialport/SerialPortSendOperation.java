@@ -13,7 +13,7 @@ public class SerialPortSendOperation extends AbstractSendOperation {
 	/**
 	 * Logger for this class.
 	 */
-	private static final Logger log = LoggerFactory.getLogger(SerialPortSendOperation.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SerialPortSendOperation.class);
 	
 	/**
 	 *  
@@ -30,40 +30,44 @@ public class SerialPortSendOperation extends AbstractSendOperation {
 	 */
 	private static final byte[] DLE_ETX = new byte[] { DLE, 0x03 };
 	
+	private static final int MAX_LENGTH = 150;
+	
+	private static final byte EMPTY_TYPE = (byte) 0xFF;
+	
 	private SerialPortConnection connection;
 	
-	public SerialPortSendOperation(SerialPortConnection connection) {
+	public SerialPortSendOperation(final SerialPortConnection connection) {
 		this.connection = connection;
 	}
 	
 	@Override
 	public Void execute(final Monitor monitor) throws Exception {
-		log.debug("Executing send operation");
+		LOG.debug("Executing send operation");
 		
-		final byte type = (byte) (0xFF & messagePacket.getType());
-		final byte content[] = messagePacket.getContent();
+		final byte type = (byte) (EMPTY_TYPE & getMessagePacket().getType());
+		final byte content[] = getMessagePacket().getContent();
 
-		if (content == null || type > 0xFF) {
-			log.warn("Skipping empty packet or type > 0xFF.");
+		if (content == null || type > EMPTY_TYPE) {
+			LOG.warn("Skipping empty packet or type > 0xFF.");
 			return null;
 		}
-		if (content.length > 150) {
-			log.warn("Skipping too large packet (length " + content.length + ")");
+		if (content.length > MAX_LENGTH) {
+			LOG.warn("Skipping too large packet (length " + content.length + ")");
 			return null;
 		}
 
 		final OutputStream outputStream = connection.getOutputStream();
 		
-		log.debug("Sending start signal DLE STX");
+		LOG.debug("Sending start signal DLE STX");
 		outputStream.write(DLE_STX);
 
-		log.debug("Sending the type escaped");
+		LOG.debug("Sending the type escaped");
 		outputStream.write(type);
 		if (type == DLE) {
 			outputStream.write(DLE);
 		}
 
-		log.debug("Transmiting each byte escaped");
+		LOG.debug("Transmiting each byte escaped");
 		for (int i = 0; i < content.length; ++i) {
 			outputStream.write(content[i]);
 			if (content[i] == DLE) {
@@ -71,10 +75,10 @@ public class SerialPortSendOperation extends AbstractSendOperation {
 			}
 		}
 
-		log.debug("Sending final DLT ETX");
+		LOG.debug("Sending final DLT ETX");
 		outputStream.write(DLE_ETX);
 		outputStream.flush();
-		log.debug("Send operation finished");
+		LOG.debug("Send operation finished");
 		return null;
 	}
 

@@ -5,6 +5,10 @@ import de.uniluebeck.itm.devicedriver.operation.AbstractSendOperation;
 
 public class MockSendOperation extends AbstractSendOperation {
 
+	private static final int STEPS = 10;
+	
+	private static final int SLEEP = 50;
+	
 	private final MockConnection connection;
 	
 	public MockSendOperation(final MockConnection connection) {
@@ -12,12 +16,13 @@ public class MockSendOperation extends AbstractSendOperation {
 	}
 	
 	@Override
-	public Void execute(Monitor monitor) throws Exception {
-		for (int i = 0; i < 10; ++i) {
-			Thread.sleep(50);
-			monitor.onProgressChange(0.1f * i);
+	public Void execute(final Monitor monitor) throws Exception {
+		for (int i = 0; i < STEPS; ++i) {
+			Thread.sleep(SLEEP);
+			final float progress = 0.1f * i;
+			monitor.onProgressChange(progress);
 		}
-		connection.sendMessage(new String(messagePacket.getContent()));
+		connection.sendMessage(new String(getMessagePacket().getContent()));
 		return null;
 	}
 }

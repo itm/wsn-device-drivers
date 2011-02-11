@@ -37,15 +37,15 @@ public class PausableSingleThreadExecutor extends ThreadPoolExecutor implements 
 	}
 
 	@Override
-	protected void beforeExecute(final Thread t, final Runnable r) {
-		super.beforeExecute(t, r);
+	protected void beforeExecute(final Thread thread, final Runnable runnable) {
+		super.beforeExecute(thread, runnable);
 		pauseLock.lock();
 		try {
 			while (isPaused) {
 				unpaused.await();
 			}
-		} catch (InterruptedException ie) {
-			t.interrupt();
+		} catch (final InterruptedException e) {
+			thread.interrupt();
 		} finally {
 			pauseLock.unlock();
 		}

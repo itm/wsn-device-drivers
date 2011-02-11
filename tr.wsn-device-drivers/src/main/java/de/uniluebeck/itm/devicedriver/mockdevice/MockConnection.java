@@ -20,6 +20,8 @@ public class MockConnection extends AbstractConnection {
 	
 	private class AliveRunnable implements Runnable {
 		
+		private static final int MILL = 1000;
+		
 		private int i = 0;
 
 		private final Long started;
@@ -30,7 +32,7 @@ public class MockConnection extends AbstractConnection {
 
 		@Override
 		public void run() {
-			final Long diff = (Calendar.getInstance().getTimeInMillis() - started) / 1000;
+			final Long diff = (Calendar.getInstance().getTimeInMillis() - started) / MILL;
 			sendMessage("MockDevice alive since " + diff + " seconds (update #" + (++i) + ")");
 		}
 	}
@@ -57,28 +59,28 @@ public class MockConnection extends AbstractConnection {
 	 */
 	private TimeUnit aliveTimeUnit = TimeUnit.SECONDS;
 	
-	protected void fireData(byte[] bytes) {
+	protected void fireData(final byte[] bytes) {
 		for (final MockListener listener : listeners.toArray(new MockListener[listeners.size()])) {
 			listener.onData(bytes);
 		}
 	}
 	
-	public void addMockListener(MockListener listener) {
+	public void addMockListener(final MockListener listener) {
 		listeners.add(listener);
 	}
 	
-	public void removeMockListener(MockListener listener) {
+	public void removeMockListener(final MockListener listener) {
 		listeners.remove(listener);
 	}
 	
 	@Override
-	public void connect(String uri) {
+	public void connect(final String uri) {
 		setConnected(true);
 		scheduleAliveRunnable();
 	}
 
 	@Override
-	public void shutdown(boolean force) {
+	public void shutdown(final boolean force) {
 		scheduleAliveRunnable();
 		executorService.shutdown();
 	}
@@ -98,16 +100,16 @@ public class MockConnection extends AbstractConnection {
 		}
 	}
 	
-	public void sendMessage(String message) {
-		byte[] msgBytes = message.getBytes();
-		byte[] bytes = new byte[msgBytes.length + 2];
+	public void sendMessage(final String message) {
+		final byte[] msgBytes = message.getBytes();
+		final byte[] bytes = new byte[msgBytes.length + 2];
 		bytes[0] = (byte) PacketType.LOG.getValue();
 		bytes[1] = (byte) PacketType.LogType.DEBUG.getValue();
 		System.arraycopy(msgBytes, 0, bytes, 2, msgBytes.length);
 		fireData(bytes);
 	}
 	
-	public void sendData(byte[] bytes) {
+	public void sendData(final byte[] bytes) {
 		fireData(bytes);
 	}
 }

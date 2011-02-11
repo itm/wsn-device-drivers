@@ -5,19 +5,24 @@ import de.uniluebeck.itm.devicedriver.operation.AbstractWriteFlashOperation;
 
 public class MockWriteFlashOperation extends AbstractWriteFlashOperation {
 
+	private static final int STEPS = 10;
+	
+	private static final int SLEEP = 500;
+	
 	private final MockConfiguration configuration;
 	
-	public MockWriteFlashOperation(MockConfiguration flashRom) {
+	public MockWriteFlashOperation(final MockConfiguration flashRom) {
 		this.configuration = flashRom;
 	}
 	
 	@Override
-	public Void execute(Monitor monitor) throws Exception {
-		for(int i = 1; i <= 10 && !isCanceled(); ++i) {
-			Thread.sleep(500 * i);
-			monitor.onProgressChange(0.1f * i);
+	public Void execute(final Monitor monitor) throws Exception {
+		for(int i = 1; i <= STEPS && !isCanceled(); ++i) {
+			Thread.sleep(SLEEP);
+			final float progress = 0.1f * i;
+			monitor.onProgressChange(progress);
 		}
-		System.arraycopy(data, 0, configuration.getFlashRom(), address, length);
+		System.arraycopy(getData(), 0, configuration.getFlashRom(), getAddress(), getLength());
 		return null;
 	}
 

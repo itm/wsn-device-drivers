@@ -5,13 +5,9 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.Monitor;
 import de.uniluebeck.itm.devicedriver.exception.FlashProgramFailedException;
-import de.uniluebeck.itm.devicedriver.exception.ProgramChipMismatchException;
 import de.uniluebeck.itm.devicedriver.operation.AbstractProgramOperation;
-import de.uniluebeck.itm.devicedriver.operation.EnterProgramModeOperation;
-import de.uniluebeck.itm.devicedriver.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.devicedriver.operation.WriteFlashOperation;
 import de.uniluebeck.itm.devicedriver.util.BinDataBlock;
 
@@ -28,21 +24,8 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 		this.device = device;
 	}
 	
-	@Override
-	public Void execute(final Monitor monitor) throws Exception {		
-		// enter programming mode
-		final EnterProgramModeOperation enterProgramModeOperation = device.createEnterProgramModeOperation();
-		executeSubOperation(enterProgramModeOperation, monitor);
-		
-		// Check if file and current chip match
-		final GetChipTypeOperation getChipTypeOperation = device.createGetChipTypeOperation();
-		final ChipType chipType = executeSubOperation(getChipTypeOperation, monitor);
-		final TelosbBinData binData = new TelosbBinData(binaryImage);
-		if ( !binData.isCompatible(chipType) ) {
-			log.error("Chip type(" + chipType + ") and bin-program type(" + binData.getChipType() + ") do not match");
-			throw new ProgramChipMismatchException(chipType, binData.getChipType());
-		}
-		
+	private void program(final Monitor monitor) throws Exception {
+		final TelosbBinData binData = new TelosbBinData(getBinaryImage());
 		// Write program to flash
 		log.info("Starting to write program into flash memory...");
 		
@@ -53,7 +36,7 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 			
 			// write single block
 			try {
-				WriteFlashOperation writeFlashOperation = device.createWriteFlashOperation();
+				final WriteFlashOperation writeFlashOperation = device.createWriteFlashOperation();
 				writeFlashOperation.setData(block.address, block.data, block.data.length);
 				executeSubOperation(writeFlashOperation, monitor);
 			} catch (FlashProgramFailedException e) {
@@ -70,12 +53,12 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 			bytesProgrammed += block.data.length;
 			
 			// Notify listeners of the new status
-			float progress = ((float) blockCount) / ((float) binData.getBlockCount());
+			final float progress = ((float) blockCount) / ((float) binData.getBlockCount());
 			monitor.onProgressChange(progress);
 			
 			// Return if the user has requested to cancel this operation
 			if (isCanceled()) {
-				return null;
+				return;
 			}
 			
 			blockCount++;
@@ -86,8 +69,16 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 		executeSubOperation(device.createResetOperation(), monitor);
 		
 		log.debug("Programmed " + bytesProgrammed + " bytes.");
-		
-		executeSubOperation(device.createLeaveProgramModeOperation(), monitor);
+	}
+	
+	@Override
+	public Void execute(final Monitor monitor) throws Exception {
+		executeSubOperation(device.createEnterProgramModeOperation(), monitor);
+		try {
+			program(monitor);
+		} finally {
+			executeSubOperation(device.createLeaveProgramModeOperation(), monitor);
+		}
 		return null;
 	}
 

@@ -37,7 +37,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 		}
 
 		// Create pacemate image
-		final PacemateBinData binData = new PacemateBinData(binaryImage);
+		final PacemateBinData binData = new PacemateBinData(getBinaryImage());
 		// Calc CRC and write it to the flash
 		final int flashCRC = binData.calcCRC();
 		log.debug("CRC: " + flashCRC);

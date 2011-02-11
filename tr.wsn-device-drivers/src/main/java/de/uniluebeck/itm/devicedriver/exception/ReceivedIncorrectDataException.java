@@ -30,28 +30,19 @@ package de.uniluebeck.itm.devicedriver.exception;
  */
 @SuppressWarnings("serial")
 public class ReceivedIncorrectDataException extends Exception {
-	private String msg = null;
 	
 	/**
 	 * Constructor
 	 */
 	public ReceivedIncorrectDataException() {
-		
+		super();
 	}
 	
 	/**
 	 * Constructor
 	 * @param msg
 	 */
-	public ReceivedIncorrectDataException(String msg) {
-		this.msg = msg;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Throwable#getMessage()
-	 */
-	@Override
-	public String getMessage() {
-		return msg;
+	public ReceivedIncorrectDataException(final String msg) {
+		super(msg);
 	}
 }

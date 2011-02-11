@@ -31,7 +31,7 @@ public abstract class AbstractSerialPortDevice extends ObserverableDevice implem
 	/**
 	 * Logger for this class.
 	 */
-	private static final Logger log = LoggerFactory.getLogger(AbstractSerialPortDevice.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractSerialPortDevice.class);
 	
 	/**
 	 * List for all handlers that process byte income from the device.
@@ -93,7 +93,7 @@ public abstract class AbstractSerialPortDevice extends ObserverableDevice implem
 			}
 			break;
 		default:
-			log.debug("Serial event (other than data available): " + event);
+			LOG.debug("Serial event (other than data available): " + event);
 			break;
 		}
 	}
@@ -103,8 +103,8 @@ public abstract class AbstractSerialPortDevice extends ObserverableDevice implem
 		if (event.isConnected()) {
 			try {
 				this.connection.getSerialPort().addEventListener(this);
-			} catch (TooManyListenersException e) {
-				log.error("Can not register serial port listener", e);
+			} catch (final TooManyListenersException e) {
+				LOG.error("Can not register serial port listener", e);
 			}
 		}
 	}
@@ -117,7 +117,7 @@ public abstract class AbstractSerialPortDevice extends ObserverableDevice implem
 	 * @throws IOException
 	 */
 	public int waitDataAvailable(final int timeout) throws TimeoutException, IOException {
-		log.debug("Waiting for data...");
+		LOG.debug("Waiting for data...");
 		
 		final InputStream inputStream = connection.getInputStream();
 		final TimeDiff timeDiff = new TimeDiff();
@@ -125,23 +125,23 @@ public abstract class AbstractSerialPortDevice extends ObserverableDevice implem
 
 		while (inputStream != null && (available = inputStream.available()) == 0) {
 			if (timeout > 0 && timeDiff.ms() >= timeout) {
-				log.warn("Timeout waiting for data (waited: " + timeDiff.ms() + ", timeoutMs:" + timeout + ")");
+				LOG.warn("Timeout waiting for data (waited: " + timeDiff.ms() + ", timeoutMs:" + timeout + ")");
 				throw new TimeoutException();
 			}
 
 			synchronized (dataAvailableMonitor) {
 				try {
 					dataAvailableMonitor.wait(50);
-				} catch (InterruptedException e) {
-					log.error("Interrupted: " + e, e);
+				} catch (final InterruptedException e) {
+					LOG.error("Interrupted: " + e, e);
 				}
 			}
 		}
 		return available;
 	}
 	
-	private void receivePacket(InputStream inStream) {
-		log.debug("Receiving Packet");
+	private void receivePacket(final InputStream inStream) {
+		LOG.debug("Receiving Packet");
 		try {
 			beforeReceive();
 			while (inStream != null && inStream.available() > 0) {
@@ -149,12 +149,12 @@ public abstract class AbstractSerialPortDevice extends ObserverableDevice implem
 				onReceive(input);
 			}
 			afterReceive();
-		} catch (IOException error) {
-			log.error("Error on rx (Retry in 1s): " + error, error);
+		} catch (final IOException error) {
+			LOG.error("Error on rx (Retry in 1s): " + error, error);
 			try {
 				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				log.warn(e.getMessage());
+			} catch (final InterruptedException e) {
+				LOG.warn(e.getMessage());
 			}
 		}
 	}

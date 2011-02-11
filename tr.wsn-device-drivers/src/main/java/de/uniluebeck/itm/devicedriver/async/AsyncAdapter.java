@@ -16,12 +16,12 @@ public class AsyncAdapter<T> implements AsyncCallback<T> {
 	}
 	
 	@Override
-	public void onProgressChange(float fraction) {
+	public void onProgressChange(final float fraction) {
 		
 	}
 
 	@Override
-	public void onSuccess(T result) {
+	public void onSuccess(final T result) {
 		
 	}
 
@@ -31,7 +31,7 @@ public class AsyncAdapter<T> implements AsyncCallback<T> {
 	}
 
 	@Override
-	public void onFailure(Throwable throwable) {
+	public void onFailure(final Throwable throwable) {
 		
 	}
 }

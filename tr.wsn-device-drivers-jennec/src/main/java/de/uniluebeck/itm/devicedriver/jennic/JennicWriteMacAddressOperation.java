@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.devicedriver.ChipType;
+import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.Monitor;
 import de.uniluebeck.itm.devicedriver.operation.AbstractWriteMacAddressOperation;
 import de.uniluebeck.itm.tr.util.StringUtils;
@@ -24,6 +25,8 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 	}
 	
 	private void writeMacAddress(final ChipType chipType, final Monitor monitor) throws Exception {
+		final MacAddress macAddress = getMacAddress();
+		
 		// Wait for a connection
 		while (!isCanceled() && !device.waitForConnection()) {
 			log.info("Still waiting for a connection");
@@ -75,7 +78,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 		} finally {
 			executeSubOperation(device.createLeaveProgramModeOperation(), monitor);
 		}
-		log.debug("Done, written MAC Address: " + macAddress);
+		log.debug("Done, written MAC Address: " + getMacAddress());
 		return null;
 	}
 	

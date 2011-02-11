@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.2//EN"
+        "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+<module name="Checker">
+    <property name="severity" value="warning"/>
+    <module name="TreeWalker">
+        <property name="tabWidth" value="4"/>
+        <module name="AvoidStarImport"/>
+        <module name="ConstantName"/>
+        <module name="EmptyBlock"/>
+        <module name="MethodLength">
+            <property name="max" value="120"/>
+        </module>
+        <module name="VisibilityModifier">
+            <property name="publicMemberPattern" value="^$"/>
+        </module>
+        <module name="ArrayTrailingComma"/>
+        <module name="CovariantEquals"/>
+        <module name="EqualsAvoidNull"/>
+        <module name="EqualsHashCode"/>
+        <module name="FinalLocalVariable">
+            <property name="tokens" value="VARIABLE_DEF,PARAMETER_DEF"/>
+        </module>
+        <module name="HiddenField">
+            <property name="tokens" value="VARIABLE_DEF"/>
+        </module>
+        <module name="IllegalToken">
+            <property name="tokens" value="LITERAL_NATIVE"/>
+        </module>
+        <module name="InnerAssignment">
+            <property name="tokens" value="ASSIGN,PLUS_ASSIGN,MINUS_ASSIGN"/>
+        </module>
+        <module name="MagicNumber"/>
+        <module name="MissingSwitchDefault"/>
+        <module name="ModifiedControlVariable"/>
+        <module name="RedundantThrows">
+            <property name="allowUnchecked" value="true"/>
+        </module>
+        <module name="SimplifyBooleanExpression"/>
+        <module name="SimplifyBooleanReturn"/>
+        <module name="StringLiteralEquality"/>
+        <module name="NestedIfDepth">
+            <property name="max" value="3"/>
+        </module>
+        <module name="NestedTryDepth">
+            <property name="max" value="3"/>
+        </module>
+        <module name="NoClone"/>
+        <module name="IllegalCatch"/>
+        <module name="IllegalThrows"/>
+        <module name="PackageDeclaration"/>
+        <module name="ReturnCount">
+            <property name="max" value="3"/>
+        </module>
+        <module name="DeclarationOrder"/>
+        <module name="ParameterAssignment"/>
+        <module name="DefaultComesLast"/>
+        <module name="UnnecessaryParentheses"/>
+    </module>
+</module>

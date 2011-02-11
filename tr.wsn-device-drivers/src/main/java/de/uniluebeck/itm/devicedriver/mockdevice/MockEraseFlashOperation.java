@@ -9,16 +9,16 @@ public class MockEraseFlashOperation extends AbstractOperation<Void> implements
 
 	private MockConfiguration configuration;
 	
-	public MockEraseFlashOperation(MockConfiguration flashRom) {
+	public MockEraseFlashOperation(final MockConfiguration flashRom) {
 		this.configuration = flashRom;
 	}
 	
 	@Override
-	public Void execute(Monitor monitor) throws Exception {
-		byte[] flashRom = configuration.getFlashRom();
+	public Void execute(final Monitor monitor) throws Exception {
+		final byte[] flashRom = configuration.getFlashRom();
 		for (int i = 0; i < flashRom.length; ++i) {
 			flashRom[i] = 0x00;
-			float progress = (i * 1.0f) / flashRom.length;
+			final float progress = (i * 1.0f) / flashRom.length;
 			monitor.onProgressChange(progress);
 		}
 		configuration.setFlashRom(flashRom);

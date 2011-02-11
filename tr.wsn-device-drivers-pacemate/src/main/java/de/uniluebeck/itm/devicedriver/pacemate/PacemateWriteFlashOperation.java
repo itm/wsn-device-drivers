@@ -39,7 +39,7 @@ public class PacemateWriteFlashOperation extends AbstractWriteFlashOperation {
 		// Erase the complete flash
 		executeSubOperation(device.createEraseFlashOperation(), monitor);
 
-		final PacemateBinData binData = new PacemateBinData(address, data);
+		final PacemateBinData binData = new PacemateBinData(getAddress(), getData());
 		final int flashCRC = binData.calcCRC();
 		log.debug("CRC: " + flashCRC);
 

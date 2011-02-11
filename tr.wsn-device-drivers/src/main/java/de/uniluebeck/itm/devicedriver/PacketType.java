@@ -94,7 +94,7 @@ public enum PacketType {
 	
 	private final int value;
 	
-	private PacketType(int value) {
+	private PacketType(final int value) {
 		this.value = value;
 	}
 
@@ -113,7 +113,7 @@ public enum PacketType {
 		
 		private final int value;
 		
-		private LogType(int value) {
+		private LogType(final int value) {
 			this.value = value;
 		}
 		
@@ -133,7 +133,7 @@ public enum PacketType {
 		
 		private final int value;
 		
-		private ISenseCommands(int value) {
+		private ISenseCommands(final int value) {
 			this.value = value;
 		}
 
@@ -148,7 +148,7 @@ public enum PacketType {
 		
 		private final int value;
 		
-		private ISenseRoutings(int value) {
+		private ISenseRoutings(final int value) {
 			this.value = value;
 		}
 		

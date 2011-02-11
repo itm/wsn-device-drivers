@@ -33,9 +33,11 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 		}
 
 		// Read all sectors
-		byte flashData[] = new byte[length];
+		final int address = getAddress();
+		final int length = getLength();
+		final byte flashData[] = new byte[length];
+		final int sectorEnd = address + length;
 		int sectorStart = address;
-		int sectorEnd = address + length;
 
 		while (sectorStart < sectorEnd) {
 			// Determine length of the data block to read
