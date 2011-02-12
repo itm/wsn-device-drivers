@@ -59,14 +59,29 @@ public enum ChipType {
 	 */
 	UNKNOWN("Unknown", -1);
 
+	/**
+	 * Human readable representation of the chip type.
+	 */
 	private final String name;
 	
+	/**
+	 * Chip type in short representation.
+	 */
 	private final short type;
 	
+	/**
+	 * Start address of the header.
+	 */
 	private final int headerStart;
 	
+	/**
+	 * Length of the header.
+	 */
 	private final int headerLength;
 	
+	/**
+	 * Start address of the mac address.
+	 */
 	private final int macInFlashStart;
 	
 	/**
@@ -96,22 +111,47 @@ public enum ChipType {
 		this.macInFlashStart = macInFlashStart;
 	}
 	
+	/**
+	 * Getter for the human readable name.
+	 * 
+	 * @return The name as string.
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * Getter for the short representation of the chip type.
+	 * 
+	 * @return Short representation of the chip type.
+	 */
 	public short getType() {
 		return type;
 	}
 
+	/**
+	 * Getter for the header start address.
+	 * 
+	 * @return The header start address.
+	 */
 	public int getHeaderStart() {
 		return headerStart;
 	}
 
+	/**
+	 * Getter for the header length.
+	 * 
+	 * @return The header length.
+	 */
 	public int getHeaderLength() {
 		return headerLength;
 	}
 
+	/**
+	 * Getter for the start address of the mac address.
+	 * 
+	 * @return The start address of the mac address.
+	 */
 	public int getMacInFlashStart() {
 		return macInFlashStart;
 	}

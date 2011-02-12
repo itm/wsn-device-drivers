@@ -42,19 +42,21 @@ public interface Device extends MessageObserverable {
 	/**
 	 * Create a program operation for this device with the given binaryImage without removing the current MAC address.
 	 * 
-	 * @param binaryImage The image that has to be flashed on the device.
+	 * @return The operation for programming the device.
 	 */
 	ProgramOperation createProgramOperation();
 	
 	/**
 	 * Create a operation that remove all data from the flash memory of the device.
+	 * 
+	 * @return The operation for erasing the whole flash of the device.
 	 */
 	EraseFlashOperation createEraseFlashOperation();
 	
 	/**
 	 * Write a given amount of bytes to the given address in the flash memory.
 	 * 
-	 * @return 
+	 * @return The operation for writing in the flash of the device.
 	 */
 	WriteFlashOperation createWriteFlashOperation();
 	
@@ -75,19 +77,21 @@ public interface Device extends MessageObserverable {
 	/**
 	 * Writes the MAC address to the connected iSense device.
 	 * 
-	 * @param macAddress A <code>MacAddress</code> object representing the new mac address of the device.
+	 * @return The operation for writing a new mac address.
 	 */
 	WriteMacAddressOperation createWriteMacAddressOperation();
 	
 	/**
 	 * Restart the connected iSense device.
+	 * 
+	 * @return The operation for resetting the device.
 	 */
 	ResetOperation createResetOperation();
 	
 	/**
 	 * Sends the <code>MessagePacket</code> to the connected iSense device.
 	 * 
-	 * @param packet The <code>MessagePacket</code> that has to be send to the device.
+	 * @return The operation for sending a message packet to the device.
 	 */
 	SendOperation createSendOperation();
 }

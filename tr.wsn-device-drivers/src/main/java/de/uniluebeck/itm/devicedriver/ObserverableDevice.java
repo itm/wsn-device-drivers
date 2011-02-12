@@ -81,9 +81,9 @@ public abstract class ObserverableDevice implements Device {
 	}
 	
 	/**
-	 * Notify all listeners about the given <code>MessagePacket</code>.
+	 * Notify all listeners about the given Event that contains the <code>MessagePacket</code>.
 	 * 
-	 * @param packet The message packet that has to be send to all listeners of the packet type.
+	 * @param event The event that has to be send to all listeners.
 	 */
 	public void fireMessagePacketEvent(final MessageEvent<MessagePacket> event) {
 		final List<MessagePacketListener> listeners = this.messagePacketMap.get(event.getMessage().getType());

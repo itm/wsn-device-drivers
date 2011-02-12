@@ -155,6 +155,11 @@ public class QueuedDeviceAsync implements DeviceAsync {
 		return queue.addOperation(operation, timeout, callback);
 	}
 	
+	/**
+	 * Getter for the queue that is used by this class.
+	 * 
+	 * @return The <code>OperationQueue</code> instance.
+	 */
 	public OperationQueue getOperationQueue() {
 		return queue;
 	}

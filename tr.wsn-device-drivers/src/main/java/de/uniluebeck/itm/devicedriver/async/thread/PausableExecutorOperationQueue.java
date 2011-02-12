@@ -183,9 +183,8 @@ public class PausableExecutorOperationQueue implements OperationQueue {
 	/**
 	 * Notify all listeners that the state of a operation has changed.
 	 * 
-	 * @param operation The operation that has changed the state.
-	 * @param oldState The old state of the operation.
-	 * @param newState The new state of the operation.
+	 * @param <T> The type of the operation.
+	 * @param event The event that will notify about the state change.
 	 */
 	private <T> void fireStateChangedEvent(final StateChangedEvent<T> event) {
 		for (final OperationQueueListener<T> listener : listeners.toArray(new OperationQueueListener[listeners.size()])) {
@@ -196,7 +195,8 @@ public class PausableExecutorOperationQueue implements OperationQueue {
 	/**
 	 * Notify all listeners that a operation was added to the queue.
 	 * 
-	 * @param operation The added operation.
+	 * @param <T> The type of the operation.
+	 * @param event The event that will notify about the add of an operation.
 	 */
 	private <T> void fireAddedEvent(final AddedEvent<T> event) {
 		for (final OperationQueueListener<T> listener : listeners.toArray(new OperationQueueListener[listeners.size()])) {
@@ -207,7 +207,8 @@ public class PausableExecutorOperationQueue implements OperationQueue {
 	/**
 	 * Notify all listeners that a operation was removed from the queue.
 	 * 
-	 * @param operation The removed operation.
+	 * @param <T> THe type of the operation.
+	 * @param event The event that will notify about the remove of an operation.
 	 */
 	private <T> void fireRemovedEvent(final RemovedEvent<T> event) {
 		for (final OperationQueueListener<T> listener : listeners.toArray(new OperationQueueListener[listeners.size()])) {

@@ -9,6 +9,8 @@ import de.uniluebeck.itm.devicedriver.event.StateChangedEvent;
  * Listener for observing <code>OperationQueue</code> changes.
  * 
  * @author Malte Legenhausen
+ * 
+ * @param <T> The type of the operation.
  */
 public interface OperationQueueListener<T> {
 	

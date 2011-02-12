@@ -16,6 +16,8 @@ public interface OperationQueue {
 	 * 
 	 * @param <T> The return type of the operation.
 	 * @param operation The operation that has to be added to the queue.
+	 * @param timeout The timeout of the operation execution.
+	 * @param callback The callback that is called during the operation execution.
 	 * @return A <code>OperationHandle</code> for controlling the operation.
 	 */
 	<T> OperationHandle<T> addOperation(Operation<T> operation, long timeout, AsyncCallback<T> callback);

@@ -27,8 +27,7 @@ public interface DeviceAsync extends MessageObserverable {
 	/**
 	 * Programms a iSense device with the given binaryImage without removing the current MAC address.
 	 * 
-	 * @param binaryImage The image that has to be flashed on the device.
-	 * @param monitor A callback interface that is called during the flashing operation.
+	 * @param data The image that has to be flashed on the device.
 	 * @param timeout Maximum operation time before the method will be canceled in milliseconds.
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationHandle</code> for controlling the async operation.
@@ -51,7 +50,6 @@ public interface DeviceAsync extends MessageObserverable {
 	 * @param data The data that has to be written.
 	 * @param length The amount of bytes that has to be wirtten.
 	 * @param timeout Maximum operation time before the method will be canceled in milliseconds.
-	 * @param monitor A callback interface that is called during the flash operation.
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationHandle</code> for controlling the async operation.
 	 */

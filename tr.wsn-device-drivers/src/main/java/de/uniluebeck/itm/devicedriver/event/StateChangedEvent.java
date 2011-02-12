@@ -31,9 +31,9 @@ public class StateChangedEvent<T> extends OperationEvent<T> {
 	/**
 	 * Constructor.
 	 * 
-	 * @param operation
-	 * @param oldState
-	 * @param newState
+	 * @param operation The operation that has changed.
+	 * @param oldState The old state of the operation.
+	 * @param newState The new state of the operation.
 	 */
 	public StateChangedEvent(final Operation<T> operation, final State oldState, final State newState) {
 		this(operation, operation, oldState, newState);
@@ -42,10 +42,10 @@ public class StateChangedEvent<T> extends OperationEvent<T> {
 	/**
 	 * Use this constructor if the source of the event is not the operation.
 	 * 
-	 * @param source
-	 * @param operation
-	 * @param oldState
-	 * @param newState
+	 * @param source The source of the event.
+	 * @param operation The operation that has changed.
+	 * @param oldState The old state of the operation.
+	 * @param newState The new state of the operation.
 	 */
 	public StateChangedEvent(final Object source, final Operation<T> operation, final State oldState, final State newState) {
 		super(source, operation);

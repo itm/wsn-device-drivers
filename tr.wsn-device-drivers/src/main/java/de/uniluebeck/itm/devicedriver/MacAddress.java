@@ -40,6 +40,9 @@ public class MacAddress {
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(MacAddress.class);
 	
+	/**
+	 * The length of a mac address.
+	 */
 	private static final int LENGTH = 8;
 
 	/**
@@ -93,7 +96,9 @@ public class MacAddress {
 	}
 
 	/**
-	 * Returns the MAC address as string in hex format
+	 * Returns the MAC address as string in hex format.
+	 * 
+	 * @return the mac address as string.
 	 */
 	public String getMacString() {
 		return StringUtils.toHexString(getMacBytes());
@@ -135,6 +140,7 @@ public class MacAddress {
 	/**
 	 * Checks if the lowest 16 bit of the address equals to the given integer id.
 	 * 
+	 * @param id The low 2 bytes.
 	 * @return True if equal else false.
 	 */
 	public boolean equalsLower16(final int id) {
