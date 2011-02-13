@@ -43,7 +43,7 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 		BinDataBlock block = null;
 		int blockCount = 0;
 		while ((block = binData.getNextBlock()) != null) {
-			device.writeFlash(block.address, block.data);
+			device.writeFlash(block.getAddress(), block.getData());
 			
 			// Notify listeners of the new status
 			float progress = ((float) blockCount) / ((float) binData.getBlockCount());

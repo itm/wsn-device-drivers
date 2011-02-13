@@ -11,6 +11,12 @@ import de.uniluebeck.itm.devicedriver.operation.AbstractOperation;
 import de.uniluebeck.itm.devicedriver.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection.SerialPortMode;
 
+
+/**
+ * <code>EnterProgrammingModeOperation</code> implementation for <code>SerialPort</code> attached devices.
+ * 
+ * @author Malte Legenhausen
+ */
 public class SerialPortEnterProgramModeOperation extends AbstractOperation<Void> implements EnterProgramModeOperation {
 
 	/**
@@ -18,10 +24,21 @@ public class SerialPortEnterProgramModeOperation extends AbstractOperation<Void>
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(SerialPortEnterProgramModeOperation.class);
 	
+	/**
+	 * Sleep time between setting DTR and RTS.
+	 */
 	private static final int SLEEP = 200;
 	
+	/**
+	 * The used serial port connection.
+	 */
 	private final SerialPortConnection connection;
 	
+	/**
+	 * Constructor.
+	 * 
+	 * @param connection The SerialPortConnection used for entering the programming mode.
+	 */
 	public SerialPortEnterProgramModeOperation(final SerialPortConnection connection) {
 		this.connection = connection;
 	}

@@ -14,7 +14,16 @@ public interface SerialPortConnection extends Connection {
 	 * Serial port modes for normal usage and programming.
 	 */
 	public enum SerialPortMode {
-		NORMAL, PROGRAM
+		
+		/**
+		 * Serial port mode for normal operations.
+		 */
+		NORMAL, 
+		
+		/**
+		 * Serial port mode for programming.
+		 */
+		PROGRAM
 	}
 	
 	/**

@@ -8,6 +8,12 @@ import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.event.MessageEvent;
 import de.uniluebeck.itm.tr.util.StringUtils;
 
+
+/**
+ * <code>ByteReceiver</code> implementation for receiving <code>MessagePacket</code>s.
+ * 
+ * @author Malte Legenhausen
+ */
 public class MessagePacketReceiver implements ByteReceiver {
 	
 	/**
@@ -19,6 +25,11 @@ public class MessagePacketReceiver implements ByteReceiver {
 	 * The maximum length of a message packet.
 	 */
 	private static final int LENGTH = 2048;
+	
+	/**
+	 * Length of the buffer that will be added when the message is longer than LENGTH.
+	 */
+	private static final int ADDIONAL_LENGTH = 100;
 	
 	/**
 	 * Data buffer for <code>MessagePacket</code> objects.
@@ -114,7 +125,7 @@ public class MessagePacketReceiver implements ByteReceiver {
 	 */
 	private void ensureBufferSize() {
 		if (packetLength + 1 >= this.packet.length) {
-			final byte tmp[] = new byte[packetLength + 100];
+			final byte tmp[] = new byte[packetLength + ADDIONAL_LENGTH];
 			System.arraycopy(this.packet, 0, tmp, 0, packetLength);
 			this.packet = tmp;
 		}

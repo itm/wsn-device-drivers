@@ -33,16 +33,18 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 		int blockCount = 0;
 		int bytesProgrammed = 0;
 		while ((block = binData.getNextBlock()) != null) {
+			final byte[] data = block.getData();
+			final int address = block.getAddress();
 			
 			// write single block
 			try {
 				final WriteFlashOperation writeFlashOperation = device.createWriteFlashOperation();
-				writeFlashOperation.setData(block.address, block.data, block.data.length);
+				writeFlashOperation.setData(address, data, data.length);
 				executeSubOperation(writeFlashOperation, monitor);
 			} catch (FlashProgramFailedException e) {
 				log.error(String.format("Error writing %d bytes into flash " +
 						"at address 0x%02x: " + e + ". Programmed " + bytesProgrammed + " bytes so far. "+
-						". Operation will be canceled.", block.data.length, block.address), e);
+						". Operation will be canceled.", data.length, address), e);
 				throw e;
 			} catch (IOException e) {
 				log.error("I/O error while writing flash: " +e+". Programmed "+bytesProgrammed+" bytes so far. " +
@@ -50,7 +52,7 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 				throw e;
 			}
 			
-			bytesProgrammed += block.data.length;
+			bytesProgrammed += data.length;
 			
 			// Notify listeners of the new status
 			final float progress = ((float) blockCount) / ((float) binData.getBlockCount());

@@ -11,7 +11,7 @@ public interface ProgramOperation extends Operation<Void> {
 	/**
 	 * Setter for the binary image that has to be programed.
 	 * 
-	 * @param binaryImage The binary image.
+	 * @param data The binary image as byte array.
 	 */
 	void setBinaryImage(byte[] data);
 }

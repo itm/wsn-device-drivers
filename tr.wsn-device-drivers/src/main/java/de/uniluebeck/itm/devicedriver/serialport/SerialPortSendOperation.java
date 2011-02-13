@@ -8,6 +8,12 @@ import org.slf4j.LoggerFactory;
 import de.uniluebeck.itm.devicedriver.Monitor;
 import de.uniluebeck.itm.devicedriver.operation.AbstractSendOperation;
 
+
+/**
+ * Operation for sending a <code>MessagePacket</code>.
+ * 
+ * @author Malte Legenhausen
+ */
 public class SerialPortSendOperation extends AbstractSendOperation {
 	
 	/**
@@ -30,12 +36,26 @@ public class SerialPortSendOperation extends AbstractSendOperation {
 	 */
 	private static final byte[] DLE_ETX = new byte[] { DLE, 0x03 };
 	
+	/**
+	 * Maximum length of a message.
+	 */
 	private static final int MAX_LENGTH = 150;
 	
+	/**
+	 * Empty type definition.
+	 */
 	private static final byte EMPTY_TYPE = (byte) 0xFF;
 	
+	/**
+	 * 
+	 */
 	private SerialPortConnection connection;
 	
+	/**
+	 * Constructor.
+	 * 
+	 * @param connection <code>SerialPortConnection</code> for sending the message.
+	 */
 	public SerialPortSendOperation(final SerialPortConnection connection) {
 		this.connection = connection;
 	}

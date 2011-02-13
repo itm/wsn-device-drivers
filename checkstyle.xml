@@ -30,7 +30,9 @@
         <module name="InnerAssignment">
             <property name="tokens" value="ASSIGN,PLUS_ASSIGN,MINUS_ASSIGN"/>
         </module>
-        <module name="MagicNumber"/>
+        <module name="MagicNumber">
+        	<property name="ignoreNumbers" value="-1, 0, 0.25, 0.5, 0.75, 1, 2"/>
+        </module>
         <module name="MissingSwitchDefault"/>
         <module name="ModifiedControlVariable"/>
         <module name="RedundantThrows">

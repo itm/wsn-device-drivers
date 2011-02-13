@@ -6,9 +6,26 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 
-public class JarUtil {
 
-	public static void loadLibrary(String libName) {
+/**
+ * Utility class for JAR handling.
+ * 
+ * @author Malte Legenhausen
+ */
+public class JarUtil {
+	
+	/**
+	 * Buffer size for 
+	 */
+	private static final int BUFFER_SIZE = 1048;
+
+	/**
+	 * Load a DLL or SO file that is contained in a JAR.
+	 * This method is designed to work like System.loadLibrary(libName). 
+	 * 
+	 * @param libName The name of the libary without fileextension.
+	 */
+	public static void loadLibrary(final String libName) {
 		final String system = System.getProperty("os.name");
 		final String libExtension = system.startsWith("Windows") ? ".dll" : ".so";
 		final String lib = libName + libExtension;
@@ -20,13 +37,13 @@ public class JarUtil {
 			}
 			final FileInputStream in = new FileInputStream(libUrl.getFile());
 			final FileOutputStream out = new FileOutputStream(file);
-			final byte[] buffer = new byte[1048];
+			final byte[] buffer = new byte[BUFFER_SIZE];
 			while(in.available() > 0) {
 			   final int read = in.read(buffer);
 			   out.write(buffer, 0, read);
 			}
 			out.close();
-		} catch(IOException e) {
+		} catch(final IOException e) {
 			throw new RuntimeException(e);
 		}
 		System.loadLibrary(libName);

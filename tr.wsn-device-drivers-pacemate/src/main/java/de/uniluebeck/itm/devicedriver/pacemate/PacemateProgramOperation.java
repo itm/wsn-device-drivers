@@ -49,8 +49,11 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 		int blockNumber = 3; // blockNumber != blockCount because block 8 & 9 ==
 								// 32 kb all other 4 kb
 		while ((block = binData.getNextBlock()) != null) {
+			final byte[] data = block.getData();
+			final int address = block.getAddress();
+			
 			try {
-				device.writeToRAM(PacemateDevice.START_ADDRESS_IN_RAM, block.data.length);
+				device.writeToRAM(PacemateDevice.START_ADDRESS_IN_RAM, data.length);
 			} catch (Exception e) {
 				log.error("Error while write to RAM! Operation will be cancelled!", e);
 				throw e;
@@ -62,26 +65,26 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 			byte[] line = null;
 
 			// each block is sent in parts of 20 lines a 45 bytes
-			while (counter < block.data.length) {
+			while (counter < data.length) {
 				int offset = 0;
 				int bytesNotYetProoved = 0;
-				if (counter + 45 < block.data.length) {
+				if (counter + 45 < data.length) {
 					line = new byte[PacemateBinData.LINESIZE]; // a line with 45
 																// bytes
-					System.arraycopy(block.data, counter, line, 0, PacemateBinData.LINESIZE);
+					System.arraycopy(data, counter, line, 0, PacemateBinData.LINESIZE);
 					counter = counter + PacemateBinData.LINESIZE;
 					bytesNotYetProoved = bytesNotYetProoved + PacemateBinData.LINESIZE;
 				} else {
-					if (((block.data.length - counter) % 3) == 1)
+					if (((data.length - counter) % 3) == 1)
 						offset = 2;
-					else if (((block.data.length - counter) % 3) == 2)
+					else if (((data.length - counter) % 3) == 2)
 						offset = 1;
-					line = new byte[block.data.length - counter + offset];
+					line = new byte[data.length - counter + offset];
 					line[line.length - 1] = 0;
 					line[line.length - 2] = 0;
-					System.arraycopy(block.data, counter, line, 0, block.data.length - counter);
-					counter = counter + (block.data.length - counter);
-					bytesNotYetProoved = bytesNotYetProoved + (block.data.length - counter);
+					System.arraycopy(data, counter, line, 0, data.length - counter);
+					counter = counter + (data.length - counter);
+					bytesNotYetProoved = bytesNotYetProoved + (data.length - counter);
 				}
 
 				try {
@@ -92,7 +95,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 				}
 
 				linecounter++;
-				if ((linecounter == 20) || (counter >= block.data.length)) {
+				if ((linecounter == 20) || (counter >= data.length)) {
 					try {
 						device.sendChecksum(binData.crc);
 					} catch (InvalidChecksumException e) {
@@ -112,16 +115,16 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 			try {
 				// if block is completed copy data from RAM to Flash
 				System.out.println("Prepare Flash and Copy Ram to Flash "
-						+ blockCount + " " + blockNumber + " " + block.address);
+						+ blockCount + " " + blockNumber + " " + address);
 				device.configureFlash(blockNumber, blockNumber);
-				if (block.data.length > 1024) {
-					device.copyRAMToFlash(block.address, PacemateDevice.START_ADDRESS_IN_RAM, 4096);
-				} else if (block.data.length > 512) {
-					device.copyRAMToFlash(block.address, PacemateDevice.START_ADDRESS_IN_RAM, 1024);
-				} else if (block.data.length > 512) {
-					device.copyRAMToFlash(block.address, PacemateDevice.START_ADDRESS_IN_RAM, 512);
+				if (data.length > 1024) {
+					device.copyRAMToFlash(address, PacemateDevice.START_ADDRESS_IN_RAM, 4096);
+				} else if (data.length > 512) {
+					device.copyRAMToFlash(address, PacemateDevice.START_ADDRESS_IN_RAM, 1024);
+				} else if (data.length > 512) {
+					device.copyRAMToFlash(address, PacemateDevice.START_ADDRESS_IN_RAM, 512);
 				} else {
-					device.copyRAMToFlash(block.address, PacemateDevice.START_ADDRESS_IN_RAM, 256);
+					device.copyRAMToFlash(address, PacemateDevice.START_ADDRESS_IN_RAM, 256);
 				}
 			} catch (Exception e) {
 				log.error("Error while copy RAM to Flash! Operation will be cancelled!", e);

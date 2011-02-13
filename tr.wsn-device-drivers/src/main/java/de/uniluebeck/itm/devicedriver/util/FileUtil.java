@@ -5,8 +5,21 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+
+/**
+ * Utility class for file operations.
+ * 
+ * @author Malte Legenhausen
+ */
 public class FileUtil {
 
+	/**
+	 * Convert the content of a file to byte array.
+	 * 
+	 * @param file The file that has to be converted.
+	 * @return The file content as byte array.
+	 * @throws IOException when file is to big or something happend with the input stream of the file.
+	 */
 	public static byte[] fileToBytes(final File file) throws IOException {
 		final InputStream inputStream = new FileInputStream(file);
 
@@ -18,7 +31,7 @@ public class FileUtil {
 	    // Before converting to an int type, check
 	    // to ensure that file is not larger than Integer.MAX_VALUE.
 	    if (length > Integer.MAX_VALUE) {
-	        // File is too large
+	        throw new IOException("File size to big. Max size: " + Integer.MAX_VALUE + " bytes");
 	    }
 
 	    // Create the byte array to hold the data

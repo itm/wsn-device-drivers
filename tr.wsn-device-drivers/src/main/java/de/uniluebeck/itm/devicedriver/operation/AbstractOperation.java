@@ -140,15 +140,23 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 		return result;
 	}
 	
+	/**
+	 * Start the timer with the given timeout.
+	 */
 	private void scheduleTimeout() {
 		timer = new Timer(getClass().getName());
 		LOG.debug("Schduling timeout timer (Timout: + " + timeout + "ms");
 		timer.schedule(task, timeout);
 	}
 	
+	/**
+	 * Cancel the scheduled timer.
+	 */
 	private void cancelTimeout() {
 		LOG.debug("Canceling timeout timer");
-		timer.cancel();
+		if (timer != null) {
+			timer.cancel();
+		}
 	}
 	
 	
@@ -157,7 +165,9 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	 * 
 	 * @param <R> The return type of the sub <code>Operation</code>.
 	 * @param operation The sub <code>Operation</code> that has to be executed.
+	 * @param monitor The monitor for observing the progress.
 	 * @return The result of the sub <code>Operation</code>.
+	 * @throws Exception Any exception throws be the operation.
 	 */
 	protected <R> R executeSubOperation(final Operation<R> operation, final Monitor monitor) throws Exception {
 		subOperation = operation;
@@ -182,8 +192,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	/**
 	 * Notify all listeners that the state has changed.
 	 * 
-	 * @param oldState The old state.
-	 * @param newState The new state.
+	 * @param event The state change event.
 	 */
 	private void fireStateChangedEvent(final StateChangedEvent<T> event) {
 		LOG.debug("Operation state changed from " + event.getOldState() + " to " + event.getNewState());
@@ -200,6 +209,8 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	/**
 	 * Method will throw an <code>IllegalStateException</code> when 
 	 * trying to change the timeout when the operation is in running state.
+	 * 
+	 * @param timeout The timeout of the operation.
 	 */
 	@Override
 	public void setTimeout(final long timeout) {

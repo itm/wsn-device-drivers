@@ -36,10 +36,7 @@ public class RunningOperationsMonitor {
 	/**
 	 * When an operation is in running state it is added to the internal list.
 	 * 
-	 * @param <T> The return type of the operation.
-	 * @param operation The operation that changed the state.
-	 * @param oldState The state before.
-	 * @param newState The new state.
+	 * @param event The event of an operation that changed the state.
 	 */
 	private void onStateChanged(final StateChangedEvent<?> event) {
 		final Operation<?> operation = (Operation<?>) event.getSource();

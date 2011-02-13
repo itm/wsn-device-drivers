@@ -8,12 +8,29 @@ import de.uniluebeck.itm.devicedriver.operation.AbstractOperation;
 import de.uniluebeck.itm.devicedriver.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection.SerialPortMode;
 
-public class SerialPortLeaveProgramModeOperation extends AbstractOperation<Void> implements LeaveProgramModeOperation {
 
+/**
+ * <code>LeaveProgramModeOperation</code> implementation for <code>SerialPort</code> attached devices.
+ * 
+ * @author Malte Legenhausen
+ */
+public class SerialPortLeaveProgramModeOperation extends AbstractOperation<Void> implements LeaveProgramModeOperation {
+	
+	/**
+	 * Logger for this class.
+	 */
 	private static final Logger LOG = LoggerFactory.getLogger(SerialPortLeaveProgramModeOperation.class);
 	
+	/**
+	 * Connection used for setting the serial port mode back to normal.
+	 */
 	private final SerialPortConnection connection;
 	
+	/**
+	 * Constructor.
+	 * 
+	 * @param connection Connection used for leaving the programming mode.
+	 */
 	public SerialPortLeaveProgramModeOperation(final SerialPortConnection connection) {
 		this.connection = connection;
 	}

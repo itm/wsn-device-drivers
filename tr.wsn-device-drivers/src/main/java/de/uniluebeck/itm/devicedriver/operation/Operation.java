@@ -28,6 +28,7 @@ public interface Operation<T> extends Callable<T> {
 	 * 
 	 * @param monitor The monitor for this operation.
 	 * @return The result of the <code>Operation<code> execution.
+	 * @throws Exception Any exception that can occur during an operation execution.
 	 */
 	T execute(Monitor monitor) throws Exception;
 	
