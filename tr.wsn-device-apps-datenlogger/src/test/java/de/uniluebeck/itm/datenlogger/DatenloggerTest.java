@@ -40,29 +40,26 @@ public class DatenloggerTest extends TestCase {
 	    assertEquals(logger.location, "123");
 	}
 	
-	public void testGetLoggers(){
-		Datenlogger logger = new Datenlogger();
-		logger.getloggers();
-	}
-	
 	public void testStartlog(){
 		Datenlogger logger = new Datenlogger();
+		logger.connect();
 		logger.startlog();
-		assertEquals("true", logger.started);
+		assertEquals(true, logger.started);
 	}
 	
 	public void testStoplog(){
 		Datenlogger logger = new Datenlogger();
+		logger.connect();
 		logger.startlog();
 		logger.stoplog();
-		assertEquals("false", logger.started);
+		assertEquals(false, logger.started);
 	}
 	
 	public void testAdd_klammer_filter(){
 		Datenlogger logger = new Datenlogger();
 		logger.setKlammer_filter("(uint32,6,28)");
 		logger.add_klammer_filter("&(uint32,5,17)|(int16,0,3)");
-		assertEquals("(uint32,6,28)(uint32,5,17)|(int16,0,3)", logger.klammer_filter);
+		assertEquals("(uint32,6,28)&(uint32,5,17)|(int16,0,3)", logger.klammer_filter);
 	}
 	
 	public void testAdd_regex_filter(){
