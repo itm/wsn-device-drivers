@@ -22,7 +22,6 @@ import de.uniluebeck.itm.devicedriver.telosb.TelosbDevice;
 import de.uniluebeck.itm.tcp.client.RemoteConnection;
 import de.uniluebeck.itm.tcp.client.RemoteDevice;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Messenger.
  */
