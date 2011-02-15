@@ -22,45 +22,81 @@ import de.uniluebeck.itm.devicedriver.telosb.TelosbDevice;
 import de.uniluebeck.itm.tcp.client.RemoteConnection;
 import de.uniluebeck.itm.tcp.client.RemoteDevice;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Messenger.
+ */
 public class Messenger {
 	
 	String port;
 	String server;
 	String user;
-	String passwort;
+	String password;
 	String device_parameter;
-	boolean gesendet = false; 		//fuer den Test
 	DeviceAsync deviceAsync;
+
+	boolean gesendet = false; 		//for the test-class
 	
+	/**
+	 * Instantiates a new messenger.
+	 */
 	public Messenger(){
 
 	}
 	
+	/**
+	 * Sets the device.
+	 *
+	 * @param device the new device
+	 */
 	public void setDevice(String device) {
 		this.device_parameter = device;
 	}
 
+	/**
+	 * Sets the user.
+	 *
+	 * @param user the new user
+	 */
 	public void setUser(String user) {
 		this.user = user;
 	}
 
-	public void setPasswort(String passwort) {
-		this.passwort = passwort;
+	/**
+	 * Sets the password.
+	 *
+	 * @param password the new password
+	 */
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
+	/**
+	 * Sets the port.
+	 *
+	 * @param port the new port
+	 */
 	public void setPort(String port) {
 		this.port = port;
 	}
 
+	/**
+	 * Sets the server.
+	 *
+	 * @param server the new server
+	 */
 	public void setServer(String server) {
 		this.server = server;
 	}
 	
+	/**
+	 * Connect.
+	 */
 	public void connect(){
 		if(server != null){
 			final RemoteConnection connection = new RemoteConnection();
 			
-			connection.connect("1:"+user+":"+passwort+"@localhost:8080");
+			connection.connect("1:"+user+":"+password+"@localhost:8080");
 			System.out.println("Connected");
 			
 			deviceAsync = new RemoteDevice(connection);
@@ -125,6 +161,11 @@ public class Messenger {
 		}
 	}
 	
+	/**
+	 * Send.
+	 *
+	 * @param message the message
+	 */
 	public void send(String message){
 		System.out.println("Parameter:");
 		System.out.println("Port: " + port);

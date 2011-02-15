@@ -6,10 +6,21 @@ import java.io.InputStreamReader;
 
 import org.apache.commons.cli.*;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Main.
+ */
 public class Main {
 	
+	/** The version. */
 	private static double version = 0.1;
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	public static void main(String[] args) throws IOException {
 		// create Options object
 		Option help_option = new Option( "help", "print this message" );
@@ -58,10 +69,10 @@ public class Main {
 				String server = cmd.getOptionValue("server");
 				String message = cmd.getOptionValue("message");
 				String user = cmd.getOptionValue("user");
-				String passwort = cmd.getOptionValue("passwd");
+				String password = cmd.getOptionValue("passwd");
 				String device = cmd.getOptionValue("device");
 				
-				if(server != null && (user == null || passwort == null)){
+				if(server != null && (user == null || password == null)){
 					System.out.println("Bitte geben Sie Benutzername und Passwort ein, um sich zu dem Server zu verbinden.");
 				}
 				else{				
@@ -69,7 +80,7 @@ public class Main {
 					messenger.setPort(port);
 					messenger.setServer(server);
 					messenger.setUser(user);
-					messenger.setPasswort(passwort);
+					messenger.setPassword(password);
 					messenger.setDevice(device);
 					messenger.connect();
 					messenger.send(message);	
