@@ -61,29 +61,7 @@ public class Main {
 			}
 			
 			//der Datenlogger
-			if(args[0].equals("getloggers")) {
-				System.out.println("starte Datenlogger...");
-	
-				String port = cmd.getOptionValue("port");
-				String server = cmd.getOptionValue("server");
-				String user = cmd.getOptionValue("user");
-				String password = cmd.getOptionValue("passwd");
-				String device = cmd.getOptionValue("device");
-				
-				if(server != null && (user == null || password == null)){
-					System.out.println("Bitte geben Sie Benutzername und Passwort ein, um sich zu dem Server zu verbinden.");
-				}
-				else{
-					datenlogger.setPort(port);
-					datenlogger.setServer(server);
-					datenlogger.setUser(user);
-					datenlogger.setPassword(password);
-					datenlogger.setDevice(device);
-					datenlogger.connect();
-					datenlogger.getloggers();
-				}
-				
-			}else if(args[0].equals("startlog")) {
+		    if(args[0].equals("startlog")) {
 				System.out.println("starte Datenlogger...");
 				
 				String port = cmd.getOptionValue("port");

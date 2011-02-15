@@ -222,17 +222,6 @@ public class Datenlogger {
 	}
 	
 	/**
-	 * Gets the loggers.
-	 *
-	 * @return the loggers
-	 */
-	public void getloggers(){
-		System.out.println("Parameter:");
-		System.out.println("Port: " + port);
-		System.out.println("Server: " + server);
-	}	
-	
-	/**
 	 * Connect.
 	 */
 	public void connect(){
