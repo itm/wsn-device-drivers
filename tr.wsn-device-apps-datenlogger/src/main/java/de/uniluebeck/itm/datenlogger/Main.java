@@ -10,6 +10,12 @@ public class Main {
 	
 	private static double version = 0.1;
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	public static void main(String[] args) throws IOException {
 		// create Options object
 		Option help_option = new Option( "help", "print this message" );
