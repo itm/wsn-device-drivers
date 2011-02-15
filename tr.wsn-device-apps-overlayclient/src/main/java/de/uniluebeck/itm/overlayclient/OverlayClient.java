@@ -6,18 +6,34 @@ import java.util.List;
 import de.uniluebeck.itm.metadaten.remote.client.*;
 import de.uniluebeck.itm.metadaten.remote.entity.*;
 
+/**
+ * The Class OverlayClient.
+ */
 public class OverlayClient {
 
 	private String server;
 	
+	/**
+	 * Instantiates a new overlay client.
+	 */
 	public OverlayClient(){
 		
 	}
 
+	/**
+	 * Sets the server.
+	 *
+	 * @param server the new server
+	 */
 	public void setServer(String server) {
 		this.server = server;
 	}
 	
+	/**
+	 * Suche knoten mit id.
+	 *
+	 * @param ID the iD
+	 */
 	public void sucheKnotenMitID(String ID){
 		System.out.println("Starte Overlaysuche...");
 		MetaDatenClient client = new MetaDatenClient();
@@ -39,6 +55,11 @@ public class OverlayClient {
 		}
 	}
 	
+	/**
+	 * Suche knoten mit microcontroller.
+	 *
+	 * @param microcontroller the microcontroller
+	 */
 	public void sucheKnotenMitMicrocontroller(String microcontroller){
 		MetaDatenClient client = new MetaDatenClient();
 		Node queryExample = new Node();
@@ -59,6 +80,11 @@ public class OverlayClient {
 		}
 	}
 	
+	/**
+	 * Suche knoten mit sensor.
+	 *
+	 * @param sensor the sensor
+	 */
 	public void sucheKnotenMitSensor(String sensor){
 		List<Capability> sensoren = new ArrayList<Capability>();
 		Capability capability = new Capability(sensor, null, null, 0);

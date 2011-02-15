@@ -4,10 +4,20 @@ import java.io.IOException;
 
 import org.apache.commons.cli.*;
 
+/**
+ * The Class Main.
+ */
 public class Main {
 	
+	/** The version. */
 	private static double version = 0.1;
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	public static void main(String[] args) throws IOException {
 		// create Options object
 		Option help_option = new Option( "help", "print this message" );
