@@ -18,6 +18,7 @@ public class MessengerTest extends TestCase {
 	
 	public void testSend(){
 		Messenger messenger = new Messenger();
+		messenger.connect();
 	    messenger.send("123");
 	    assertEquals(true, messenger.gesendet);
 	}
