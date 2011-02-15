@@ -24,47 +24,82 @@ import de.uniluebeck.itm.devicedriver.telosb.TelosbDevice;
 import de.uniluebeck.itm.tcp.client.RemoteConnection;
 import de.uniluebeck.itm.tcp.client.RemoteDevice;
 
+/**
+ * Class FlashLoader.
+ */
 public class FlashLoader {
 	
 	String port;
 	String server;
 	String user;
-	String passwort;
-	boolean geflasht = false;	//fuer den Test
-	String current_mac_adress;		//fuer den Test
-	boolean geresetet = false;		//fuer den Test
+	String password;
 	String device_parameter;
 	DeviceAsync deviceAsync;
 	
+	boolean flashed = false;	//for the test-class
+	String current_mac_adress;		//for the test-class
+	boolean geresetet = false;		//for the test-class
+	
+	/**
+	 * Instantiates a new flash loader.
+	 */
 	public FlashLoader(){
 
 	}
 	
+	/**
+	 * Sets the device.
+	 *
+	 * @param device the new device
+	 */
 	public void setDevice(String device){
 		this.device_parameter = device;
 	}
 	
+	/**
+	 * Sets the user.
+	 *
+	 * @param user the new user
+	 */
 	public void setUser(String user) {
 		this.user = user;
 	}
 
-	public void setPasswort(String passwort) {
-		this.passwort = passwort;
+	/**
+	 * Sets the password.
+	 *
+	 * @param password the new password
+	 */
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
+	/**
+	 * Sets the port.
+	 *
+	 * @param port the new port
+	 */
 	public void setPort(String port) {
 		this.port = port;
 	}
 
+	/**
+	 * Sets the server.
+	 *
+	 * @param server the new server
+	 */
 	public void setServer(String server) {
 		this.server = server;
 	}
 	
+	/**
+	 * Connect.
+	 */
 	public void connect(){
 		if(server != null){
 			final RemoteConnection connection = new RemoteConnection();
 			
-			connection.connect("1:"+user+":"+passwort+"@localhost:8080");
+			connection.connect("1:"+user+":"+password+"@localhost:8080");
 			System.out.println("Connected");
 			
 			deviceAsync = new RemoteDevice(connection);
@@ -129,6 +164,11 @@ public class FlashLoader {
 		}
 	}
 	
+	/**
+	 * Flash.
+	 *
+	 * @param file the file
+	 */
 	public void flash(String file){
 		System.out.println("Parameter:");
 		System.out.println("Port: " + port);
@@ -146,7 +186,7 @@ public class FlashLoader {
 			@Override
 			public void onSuccess(Void result) {
 				System.out.println("The Device has been flashed.");
-				geflasht = true;         //fuer den Test
+				flashed = true;         //fuer den Test
 				System.exit(0);
 			}
 
@@ -158,6 +198,9 @@ public class FlashLoader {
 		});
 	}
 	
+	/**
+	 * Readmac.
+	 */
 	public void readmac(){
 		System.out.println("Parameter:");
 		System.out.println("Port: " + port);
@@ -186,6 +229,11 @@ public class FlashLoader {
 		deviceAsync.readMac(10000, callback);
 	}
 	
+	/**
+	 * Writemac.
+	 *
+	 * @param macAdresse the mac adresse
+	 */
 	public void writemac(MacAddress macAdresse){
 		System.out.println("Parameter:");
 		System.out.println("Port: " + port);
@@ -214,6 +262,9 @@ public class FlashLoader {
 		});
 	}
 	
+	/**
+	 * Reset.
+	 */
 	public void reset(){
 		System.out.println("Parameter:");
 		System.out.println("Port: " + port);
