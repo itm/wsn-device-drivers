@@ -41,7 +41,6 @@ import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.OperationQueue;
 import de.uniluebeck.itm.devicedriver.async.QueuedDeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.thread.PausableExecutorOperationQueue;
-import de.uniluebeck.itm.devicedriver.event.MessageEvent;
 import de.uniluebeck.itm.devicedriver.generic.iSenseSerialPortConnection;
 import de.uniluebeck.itm.devicedriver.jennic.JennicDevice;
 import de.uniluebeck.itm.devicedriver.mockdevice.MockConnection;
@@ -52,6 +51,11 @@ import de.uniluebeck.itm.devicedriver.telosb.TelosbDevice;
 import de.uniluebeck.itm.tcp.client.RemoteConnection;
 import de.uniluebeck.itm.tcp.client.RemoteDevice;
 
+/**
+ * Class Datenlogger.
+ * Functions to registrate a Datenlogger on a sensornode 
+ * and print the messages on the console or in a file.
+ */
 public class Datenlogger {
 	
 	String port;
@@ -60,16 +64,25 @@ public class Datenlogger {
 	String regex_filter;
 	String location;
 	String user;
-	String passwort;
-	boolean gestartet = false;
+	String password;
+	boolean started = false;
 	String device_parameter;
 	DeviceAsync deviceAsync;
 	MessagePacketListener listener;
 	FileWriter writer;
 
+	/**
+	 * Instantiates a new datenlogger.
+	 */
 	public Datenlogger(){
 	}
 
+	/**
+	 * Parse_klammer_filter.
+	 *
+	 * @param klammer_filter the klammer_filter
+	 * @return the predicate
+	 */
 	public Predicate<CharSequence> parse_klammer_filter(String klammer_filter){
 		Stack<Predicate<CharSequence>> ausdruecke = new Stack<Predicate<CharSequence>>();
 		Stack<String> operatoren = new Stack<String>();
@@ -118,57 +131,115 @@ public class Datenlogger {
 		return ausdruecke.pop();
 	}
 	
+	/**
+	 * Sets the device.
+	 *
+	 * @param device the new device
+	 */
 	public void setDevice(String device){
 		this.device_parameter = device;
 	}
 	
+	/**
+	 * Sets the user.
+	 *
+	 * @param user the new user
+	 */
 	public void setUser(String user) {
 		this.user = user;
 	}
 
-	public void setPasswort(String passwort) {
-		this.passwort = passwort;
+	/**
+	 * Sets the password.
+	 *
+	 * @param passwort the new password
+	 */
+	public void setPassword(String password) {
+		this.password = password;
 	}
 	
+	/**
+	 * Sets the port.
+	 *
+	 * @param port the new port
+	 */
 	public void setPort(String port) {
 		this.port = port;
 	}
 
+	/**
+	 * Sets the server.
+	 *
+	 * @param server the new server
+	 */
 	public void setServer(String server) {
 		this.server = server;
 	}
 
+	/**
+	 * Checks if is gestartet.
+	 *
+	 * @return true, if is gestartet
+	 */
 	public boolean isGestartet() {
-		return gestartet;
+		return started;
 	}
 
-	public void setGestartet(boolean gestartet) {
-		this.gestartet = gestartet;
+	/**
+	 * Sets the started.
+	 *
+	 * @param started the new started
+	 */
+	public void setStartet(boolean started) {
+		this.started = started;
 	}
 
+	/**
+	 * Sets the klammer_filter.
+	 *
+	 * @param klammer_filter the new klammer_filter
+	 */
 	public void setKlammer_filter(String klammer_filter) {
 		this.klammer_filter = klammer_filter;
 	}
 
+	/**
+	 * Sets the regex_filter.
+	 *
+	 * @param regex_filter the new regex_filter
+	 */
 	public void setRegex_filter(String regex_filter) {
 		this.regex_filter = regex_filter;
 	}
 
+	/**
+	 * Sets the location.
+	 *
+	 * @param location the new location
+	 */
 	public void setLocation(String location) {
 		this.location = location;
 	}
 	
+	/**
+	 * Gets the loggers.
+	 *
+	 * @return the loggers
+	 */
 	public void getloggers(){
 		System.out.println("Parameter:");
 		System.out.println("Port: " + port);
 		System.out.println("Server: " + server);
 	}	
 	
+	/**
+	 * Connect.
+	 */
 	public void connect(){
 		if(server != null){	
 			final RemoteConnection connection = new RemoteConnection();
 			
-			connection.connect("1:"+user+":"+passwort+"@localhost:8080");
+			connection.connect("1:"+user+":"+password+"@localhost:8080");
 			System.out.println("Connected");
 			
 			deviceAsync = new RemoteDevice(connection);
@@ -230,8 +301,11 @@ public class Datenlogger {
 		}
 	}
 
+	/**
+	 * Startlog.
+	 */
 	public void startlog(){
-		gestartet = true;
+		started = true;
 		
 		if(location != null){
 			try {
@@ -285,27 +359,45 @@ public class Datenlogger {
 		deviceAsync.addListener(listener, PacketType.LOG);
 	}	
 	
+	/**
+	 * Stoplog.
+	 */
 	public void stoplog(){
 		deviceAsync.removeListener(listener);
-		try {
-			writer.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+		if(location != null){
+			try {
+				writer.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-		gestartet = false;
+		started = false;
 		System.out.println("\nDas Loggen des Knotens wurde beendet.");
 	}
 	
+	/**
+	 * Add_klammer_filter.
+	 *
+	 * @param filter the filter
+	 */
 	public void add_klammer_filter(String filter){
 		klammer_filter = klammer_filter + filter;
 		System.out.println("Filter hinzugefuegt");
 	}
 	
+	/**
+	 * Add_regex_filter.
+	 *
+	 * @param filter the filter
+	 */
 	public void add_regex_filter(String filter){
 		regex_filter = regex_filter + filter;
 		System.out.println("Filter hinzugefuegt");
 	}
 	
+	/**
+	 * Write to xml file.
+	 */
 	public void writeToXmlFile(){
 		//Read the xml file
         CreateXML create = new CreateXML();

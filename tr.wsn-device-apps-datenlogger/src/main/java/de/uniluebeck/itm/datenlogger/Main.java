@@ -61,17 +61,17 @@ public class Main {
 				String port = cmd.getOptionValue("port");
 				String server = cmd.getOptionValue("server");
 				String user = cmd.getOptionValue("user");
-				String passwort = cmd.getOptionValue("passwd");
+				String password = cmd.getOptionValue("passwd");
 				String device = cmd.getOptionValue("device");
 				
-				if(server != null && (user == null || passwort == null)){
+				if(server != null && (user == null || password == null)){
 					System.out.println("Bitte geben Sie Benutzername und Passwort ein, um sich zu dem Server zu verbinden.");
 				}
 				else{
 					datenlogger.setPort(port);
 					datenlogger.setServer(server);
 					datenlogger.setUser(user);
-					datenlogger.setPasswort(passwort);
+					datenlogger.setPassword(password);
 					datenlogger.setDevice(device);
 					datenlogger.connect();
 					datenlogger.getloggers();
@@ -86,10 +86,10 @@ public class Main {
 				String regex_filter = cmd.getOptionValue("regex_filter");
 				String location = cmd.getOptionValue("location");
 				String user = cmd.getOptionValue("user");
-				String passwort = cmd.getOptionValue("passwd");
+				String password = cmd.getOptionValue("passwd");
 				String device = cmd.getOptionValue("device");
 				
-				if(server != null && (user == null || passwort == null)){
+				if(server != null && (user == null || password == null)){
 					System.out.println("Bitte geben Sie Benutzername und Passwort ein, um sich zu dem Server zu verbinden.");
 				}
 				else{
@@ -99,7 +99,7 @@ public class Main {
 					datenlogger.setRegex_filter(regex_filter);
 					datenlogger.setLocation(location);
 					datenlogger.setUser(user);
-					datenlogger.setPasswort(passwort);
+					datenlogger.setPassword(password);
 					datenlogger.setDevice(device);
 					datenlogger.connect();
 					datenlogger.startlog();
