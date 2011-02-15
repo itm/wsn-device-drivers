@@ -18,8 +18,8 @@ public class DatenloggerTest extends TestCase {
 	
 	public void testSetGestartet(){
 		Datenlogger logger = new Datenlogger();
-		logger.setGestartet(true);
-	    assertEquals(logger.gestartet, true);
+		logger.setStartet(true);
+	    assertEquals(logger.started, true);
 	}
 	
 	public void testSetKlammerFilter(){
@@ -48,14 +48,14 @@ public class DatenloggerTest extends TestCase {
 	public void testStartlog(){
 		Datenlogger logger = new Datenlogger();
 		logger.startlog();
-		assertEquals("true", logger.gestartet);
+		assertEquals("true", logger.started);
 	}
 	
 	public void testStoplog(){
 		Datenlogger logger = new Datenlogger();
 		logger.startlog();
 		logger.stoplog();
-		assertEquals("false", logger.gestartet);
+		assertEquals("false", logger.started);
 	}
 	
 	public void testAdd_klammer_filter(){
