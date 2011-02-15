@@ -12,7 +12,6 @@ import org.apache.commons.cli.ParseException;
 
 import de.uniluebeck.itm.devicedriver.MacAddress;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Main.
  */
