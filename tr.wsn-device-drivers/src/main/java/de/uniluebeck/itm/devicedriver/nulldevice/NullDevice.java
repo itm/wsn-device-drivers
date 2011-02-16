@@ -69,6 +69,8 @@ public class NullDevice extends ObserverableDevice<Connection> {
 	
 	private static final int[] CHANNELS = new int[] { 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26 };
 	
+	private final Connection connection = new NullConnection();
+	
 	@Override
 	public EraseFlashOperation createEraseFlashOperation() {
 		return new NullEraseFlashOperation();
@@ -110,7 +112,7 @@ public class NullDevice extends ObserverableDevice<Connection> {
 
 	@Override
 	public Connection getConnection() {
-		return null;
+		return connection;
 	}
 
 	@Override

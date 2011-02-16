@@ -3,6 +3,7 @@ package de.uniluebeck.itm.devicedrivier.exmaple;
 import java.io.File;
 
 import de.uniluebeck.itm.devicedriver.Device;
+import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.generic.iSenseSerialPortConnection;
 import de.uniluebeck.itm.devicedriver.jennic.JennicDevice;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection;
@@ -14,7 +15,7 @@ public class JennicDeviceExample {
 	 * @param args
 	 */
 	public static void main(String[] args) {		
-		SerialPortConnection connection = new iSenseSerialPortConnection();		
+		final SerialPortConnection connection = new iSenseSerialPortConnection();		
 		final Device<SerialPortConnection> device = new JennicDevice(connection);
 		final GenericDeviceExample example = new GenericDeviceExample();
 		example.setDevice(device);
@@ -22,6 +23,9 @@ public class JennicDeviceExample {
 		
 		final File image = new File(ClassLoader.getSystemResource("de/uniluebeck/itm/devicedriver/example/jennic.bin").getPath());
 		example.setImage(image);
+		
+		final MessagePacket packet = new MessagePacket(11, new byte[] { 17 });
+		example.setMessagePacket(packet);
 		example.run();
 	}
 

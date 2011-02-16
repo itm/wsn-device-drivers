@@ -18,21 +18,25 @@ import de.uniluebeck.itm.devicedriver.async.OperationQueue;
 import de.uniluebeck.itm.devicedriver.async.QueuedDeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.thread.PausableExecutorOperationQueue;
 import de.uniluebeck.itm.devicedriver.event.MessageEvent;
+import de.uniluebeck.itm.devicedriver.nulldevice.NullConnection;
+import de.uniluebeck.itm.devicedriver.nulldevice.NullDevice;
 import de.uniluebeck.itm.devicedriver.util.FileUtil;
 
 public class GenericDeviceExample implements MessagePacketListener, ConnectionListener {
 
 	private final OperationQueue queue = new PausableExecutorOperationQueue();
 	
-	private Device<?> device;
+	private Device<?> device = new NullDevice();
 	
-	private Connection connection;
+	private Connection connection = new NullConnection();
 	
 	private DeviceAsync deviceAsync;
 	
 	private File image;
 	
 	private String uri;
+	
+	private MessagePacket messagePacket;
 
 	public void setDevice(Device<?> device) {
 		this.device = device;
@@ -44,6 +48,10 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 
 	public void setUri(String uri) {
 		this.uri = uri;
+	}
+	
+	public void setMessagePacket(MessagePacket messagePacket) {
+		this.messagePacket = messagePacket;
 	}
 
 	private void init() {
@@ -59,6 +67,11 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 	}
 	
 	public void programImage() throws IOException {
+		if (image == null) {
+			System.out.println("Program skipped cause no image set.");
+			return;
+		}
+		
 		final AsyncCallback<Void> callback = new AsyncAdapter<Void>() {
 			@Override
 			public void onExecute() {
@@ -183,8 +196,7 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 	}
 	
 	public void sendOperation() {
-		final MessagePacket packet = new MessagePacket(11, new byte[] { 17 });
-		deviceAsync.send(packet, 10000, new AsyncAdapter<Void>() {
+		deviceAsync.send(messagePacket, 10000, new AsyncAdapter<Void>() {
 			public void onExecute() {
 				System.out.println("Sending message");
 			}
