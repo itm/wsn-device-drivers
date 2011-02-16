@@ -8,6 +8,8 @@ import java.util.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
+
 import de.uniluebeck.itm.devicedriver.Monitor;
 import de.uniluebeck.itm.devicedriver.State;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
@@ -214,12 +216,8 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	 */
 	@Override
 	public void setTimeout(final long timeout) {
-		if (timeout < 0) {
-			throw new IllegalArgumentException("Negativ timeout is not allowed");
-		}
-		if (state.equals(State.RUNNING)) {
-			throw new IllegalStateException("Timeout can not be set when operation is in running state");
-		}
+		Preconditions.checkArgument(timeout >= 0, "Negativ timeout is not allowed");
+		Preconditions.checkState(!State.RUNNING.equals(state), "Timeout can not be set when operation is in running state");
 		this.timeout = timeout;
 	}
 

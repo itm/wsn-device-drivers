@@ -31,7 +31,6 @@ import de.uniluebeck.itm.tr.util.StringUtils;
  * 
  * @author Malte Legenhausen
  */
-
 public class MessagePacket implements Message {
 	
 	/** Special character */
@@ -55,6 +54,11 @@ public class MessagePacket implements Message {
 
 	/** */
 	private static long nextIdCounter = 0;
+	
+	/**
+	 * Byte mask for extracting the type.
+	 */
+	private static final int TYPE_MASK = 0xFF;
 
 	/** */
 	private byte[] content;
@@ -72,15 +76,21 @@ public class MessagePacket implements Message {
 	}
 
 	/**
+	 * Constructor.
 	 * 
+	 * @param type The message type.
+	 * @param content The content as byte array.
 	 */
 	public MessagePacket(final int type, final byte[] content) {
-		setType(type);
-		setContent(content);
+		this.type = type;
+		this.content = new byte[content.length];
+		System.arraycopy(content, 0, this.content, 0, content.length);
 	}
 
 	/**
+	 * Generates the next unique id.
 	 * 
+	 * @return A unique long id.
 	 */
 	private synchronized static long nextId() {
 		if (nextIdCounter >= Long.MAX_VALUE - 1)
@@ -90,19 +100,19 @@ public class MessagePacket implements Message {
 	}
 	
 	/**
+	 * Parse a given byte stream to a <code>MessagePacket</code>.
 	 * 
+	 * @param buffer The byte stream.
+	 * @param offset The start of the message packet in the buffer.
+	 * @param length The length of the message.
+	 * @return The parsed <code>MessagePacker</code>.
 	 */
 	public static MessagePacket parse(final byte[] buffer, final int offset, final int length) {
-		final MessagePacket p = new MessagePacket();
-
-		// Determine message type
-		p.type = 0xFF & ((int) buffer[offset]);
-
+		final int type = TYPE_MASK & ((int) buffer[offset]);
 		// Extract message content
-		p.content = new byte[length - 1];
-		System.arraycopy(buffer, offset + 1, p.content, 0, length - 1);
-
-		return p;
+		final byte[] content = new byte[length - 1];
+		System.arraycopy(buffer, offset + 1, content, 0, length - 1);		
+		return new MessagePacket(type, content);
 	}
 
 	@Override
@@ -117,37 +127,18 @@ public class MessagePacket implements Message {
 	}
 
 	/**
-	 * Sets the given content
-	 * 
-	 * @param content
-	 */
-	public void setContent(final byte[] content) {
-		this.content = new byte[content.length];
-		System.arraycopy(content, 0, this.content, 0, content.length);
-	}
-
-	/**
 	 * Returns the current type
 	 * 
-	 * @return
+	 * @return The type of the message.
 	 */
 	public int getType() {
 		return type;
 	}
 
 	/**
-	 * Sets the type
-	 * 
-	 * @param type
-	 */
-	public void setType(final int type) {
-		this.type = type;
-	}
-
-	/**
 	 * Returns the id
 	 * 
-	 * @return
+	 * @return The unique id of this message.
 	 */
 	public long getId() {
 		return id;
