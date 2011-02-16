@@ -1,10 +1,10 @@
 package de.uniluebeck.itm.devicedriver.util;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+
+import com.google.common.io.Files;
 
 
 /**
@@ -13,11 +13,6 @@ import java.net.URL;
  * @author Malte Legenhausen
  */
 public class JarUtil {
-	
-	/**
-	 * Buffer size for 
-	 */
-	private static final int BUFFER_SIZE = 1048;
 
 	/**
 	 * Load a DLL or SO file that is contained in a JAR.
@@ -29,23 +24,16 @@ public class JarUtil {
 		final String system = System.getProperty("os.name");
 		final String libExtension = system.startsWith("Windows") ? ".dll" : ".so";
 		final String lib = libName + libExtension;
-		final URL libUrl = ClassLoader.getSystemResource(lib);
-		final File file = new File(lib);
+		final URL source = ClassLoader.getSystemResource(lib);
+		final File target = new File(lib);
 		try {
-			if (!file.exists()) {
-				file.createNewFile();
+			if (!target.exists()) {
+				target.createNewFile();
 			}
-			final FileInputStream in = new FileInputStream(libUrl.getFile());
-			final FileOutputStream out = new FileOutputStream(file);
-			final byte[] buffer = new byte[BUFFER_SIZE];
-			while(in.available() > 0) {
-			   final int read = in.read(buffer);
-			   out.write(buffer, 0, read);
-			}
-			out.close();
-		} catch(final IOException e) {
+			Files.copy(new File(source.getFile()), target);
+			System.loadLibrary(libName);
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
-		System.loadLibrary(libName);
 	}
 }
