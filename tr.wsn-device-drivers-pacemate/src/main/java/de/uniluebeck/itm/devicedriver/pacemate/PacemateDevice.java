@@ -14,6 +14,7 @@ import de.uniluebeck.itm.devicedriver.exception.NotImplementedException;
 import de.uniluebeck.itm.devicedriver.exception.TimeoutException;
 import de.uniluebeck.itm.devicedriver.exception.UnexpectedResponseException;
 import de.uniluebeck.itm.devicedriver.generic.iSenseResetOperation;
+import de.uniluebeck.itm.devicedriver.operation.AbstractWriteFlashOperation;
 import de.uniluebeck.itm.devicedriver.operation.AbstractWriteMacAddressOperation;
 import de.uniluebeck.itm.devicedriver.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.operation.EraseFlashOperation;
@@ -93,8 +94,12 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 
 	@Override
 	public WriteFlashOperation createWriteFlashOperation() {
-		final WriteFlashOperation operation = new PacemateWriteFlashOperation(this);
-		monitorState(operation);
+		final WriteFlashOperation operation = new AbstractWriteFlashOperation() {
+			@Override
+			public Void execute(Monitor monitor) throws Exception {
+				throw new NotImplementedException("writeFlash is not available.");
+			}
+		};
 		return operation;
 	}
 
