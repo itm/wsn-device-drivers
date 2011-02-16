@@ -44,6 +44,11 @@ public abstract class AbstractSerialPortDevice extends ObserverableDevice<Serial
 	private static final int RECEIVE_PACKET_TIMEOUT = 1000;
 	
 	/**
+	 * Byte mask that is used after receiving a byte from the input stream.
+	 */
+	private static final int RECEIVE_MASK = 0xFF;
+	
+	/**
 	 * List for all handlers that process byte income from the device.
 	 */
 	private final List<ByteReceiver> receivers = new ArrayList<ByteReceiver>();
@@ -133,9 +138,9 @@ public abstract class AbstractSerialPortDevice extends ObserverableDevice<Serial
 		
 		final InputStream inputStream = connection.getInputStream();
 		final TimeDiff timeDiff = new TimeDiff();
-		int available = 0;
+		int available = inputStream.available();
 
-		while (inputStream != null && (available = inputStream.available()) == 0) {
+		while (available == 0) {
 			if (timeout > 0 && timeDiff.ms() >= timeout) {
 				LOG.warn("Timeout waiting for data (waited: " + timeDiff.ms() + ", timeoutMs:" + timeout + ")");
 				throw new TimeoutException();
@@ -148,6 +153,7 @@ public abstract class AbstractSerialPortDevice extends ObserverableDevice<Serial
 					LOG.error("Interrupted: " + e, e);
 				}
 			}
+			available = inputStream.available();
 		}
 		return available;
 	}
@@ -155,14 +161,14 @@ public abstract class AbstractSerialPortDevice extends ObserverableDevice<Serial
 	/**
 	 * Receive data from the input stream and redirect it to the <code>ByteReceiver</code>s.
 	 * 
-	 * @param inStream 
+	 * @param inputStream 
 	 */
-	private void receive(final InputStream inStream) {
+	private void receive(final InputStream inputStream) {
 		LOG.debug("Receiving Packet");
 		try {
 			beforeReceive();
-			while (inStream != null && inStream.available() > 0) {
-				final byte input = (byte) (0xff & inStream.read());
+			while (inputStream != null && inputStream.available() > 0) {
+				final byte input = (byte) (RECEIVE_MASK & inputStream.read());
 				onReceive(input);
 			}
 			afterReceive();
