@@ -59,56 +59,56 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 	@Override
 	public EnterProgramModeOperation createEnterProgramModeOperation() {
 		final EnterProgramModeOperation operation = new SerialPortEnterProgramModeOperation(connection);
-		monitor.monitorState(operation);
+		monitorState(operation);
 		return operation;
 	}
 	
 	@Override
 	public LeaveProgramModeOperation createLeaveProgramModeOperation() {
 		final LeaveProgramModeOperation operation = new SerialPortLeaveProgramModeOperation(connection);
-		monitor.monitorState(operation);
+		monitorState(operation);
 		return operation;
 	}
 
 	@Override
 	public GetChipTypeOperation createGetChipTypeOperation() {
 		final GetChipTypeOperation operation = new PacemateGetChipTypeOperation(this);
-		monitor.monitorState(operation);
+		monitorState(operation);
 		return operation;
 	}
 
 	@Override
 	public ProgramOperation createProgramOperation() {
 		final ProgramOperation operation = new PacemateProgramOperation(this);
-		monitor.monitorState(operation);
+		monitorState(operation);
 		return operation;
 	}
 
 	@Override
 	public EraseFlashOperation createEraseFlashOperation() {
 		final EraseFlashOperation operation = new PacemateEraseFlashOperation(this);
-		monitor.monitorState(operation);
+		monitorState(operation);
 		return operation;
 	}
 
 	@Override
 	public WriteFlashOperation createWriteFlashOperation() {
 		final WriteFlashOperation operation = new PacemateWriteFlashOperation(this);
-		monitor.monitorState(operation);
+		monitorState(operation);
 		return operation;
 	}
 
 	@Override
 	public ReadFlashOperation createReadFlashOperation() {
 		final ReadFlashOperation operation = new PacemateReadFlashOperation(this);
-		monitor.monitorState(operation);
+		monitorState(operation);
 		return operation;
 	}
 
 	@Override
 	public ReadMacAddressOperation createReadMacAddressOperation() {
 		final ReadMacAddressOperation operation = new PacemateReadMacAddressOperation(this);
-		monitor.monitorState(operation);
+		monitorState(operation);
 		return operation;
 	}
 
@@ -120,21 +120,20 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 				throw new NotImplementedException("wirteMacAddress ist not available.");
 			}
 		};
-		monitor.monitorState(operation);
 		return operation;
 	}
 
 	@Override
 	public ResetOperation createResetOperation() {
 		final ResetOperation operation = new iSenseResetOperation(connection);
-		monitor.monitorState(operation);
+		monitorState(operation);
 		return operation;
 	}
 
 	@Override
 	public SendOperation createSendOperation() {
 		final SendOperation operation = new SerialPortSendOperation(connection);
-		monitor.monitorState(operation);
+		monitorState(operation);
 		return operation;
 	}
 	

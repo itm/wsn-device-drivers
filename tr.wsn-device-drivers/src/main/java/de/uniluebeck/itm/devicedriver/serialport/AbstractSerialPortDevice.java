@@ -17,6 +17,7 @@ import de.uniluebeck.itm.devicedriver.ConnectionEvent;
 import de.uniluebeck.itm.devicedriver.ConnectionListener;
 import de.uniluebeck.itm.devicedriver.ObserverableDevice;
 import de.uniluebeck.itm.devicedriver.exception.TimeoutException;
+import de.uniluebeck.itm.devicedriver.operation.Operation;
 import de.uniluebeck.itm.devicedriver.operation.RunningOperationsMonitor;
 import de.uniluebeck.itm.tr.util.TimeDiff;
 
@@ -61,7 +62,7 @@ public abstract class AbstractSerialPortDevice extends ObserverableDevice implem
 	/**
 	 * Monitor for observe operations that are in <code>State.RUNNING</code>.
 	 */
-	protected final RunningOperationsMonitor monitor = new RunningOperationsMonitor();
+	private final RunningOperationsMonitor monitor = new RunningOperationsMonitor();
 	
 	/**
 	 * Constructor.
@@ -79,6 +80,16 @@ public abstract class AbstractSerialPortDevice extends ObserverableDevice implem
 	@Override
 	public Connection getConnection() {
 		return connection;
+	}
+	
+	/**
+	 * Register a created operation for monitoring purposes by the device.
+	 * 
+	 * @param <T> Return type of the operation.
+	 * @param operation The operation object that has to be monitored.
+	 */
+	protected <T> void monitorState(final Operation<T> operation) {
+		monitor.monitorState(operation);
 	}
 	
 	/**
