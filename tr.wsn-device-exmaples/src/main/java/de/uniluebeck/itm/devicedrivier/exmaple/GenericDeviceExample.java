@@ -3,6 +3,8 @@ package de.uniluebeck.itm.devicedrivier.exmaple;
 import java.io.File;
 import java.io.IOException;
 
+import com.google.common.io.Files;
+
 import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.Connection;
 import de.uniluebeck.itm.devicedriver.ConnectionEvent;
@@ -20,7 +22,6 @@ import de.uniluebeck.itm.devicedriver.async.thread.PausableExecutorOperationQueu
 import de.uniluebeck.itm.devicedriver.event.MessageEvent;
 import de.uniluebeck.itm.devicedriver.nulldevice.NullConnection;
 import de.uniluebeck.itm.devicedriver.nulldevice.NullDevice;
-import de.uniluebeck.itm.devicedriver.util.FileUtil;
 
 public class GenericDeviceExample implements MessagePacketListener, ConnectionListener {
 
@@ -90,7 +91,7 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 			}
 		};
 		
-		final byte[] bytes = FileUtil.fileToBytes(image);
+		final byte[] bytes = Files.toByteArray(image);
 		System.out.println("Image length: " + bytes.length);
 	    deviceAsync.program(bytes, 600000, callback);
 	}

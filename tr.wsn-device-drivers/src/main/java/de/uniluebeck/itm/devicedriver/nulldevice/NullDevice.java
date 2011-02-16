@@ -24,8 +24,19 @@ import de.uniluebeck.itm.devicedriver.operation.SendOperation;
 import de.uniluebeck.itm.devicedriver.operation.WriteFlashOperation;
 import de.uniluebeck.itm.devicedriver.operation.WriteMacAddressOperation;
 
+
+/**
+ * Null Device that makes nothing when calling a operation.
+ * 
+ * @author Malte Legenhausen
+ */
 public class NullDevice extends ObserverableDevice<Connection> {
 
+	/**
+	 * Null implementation for <code>EraseFlashOperation</code>.
+	 * 
+	 * @author Malte Legenhausen
+	 */
 	private class NullEraseFlashOperation extends AbstractOperation<Void> implements EraseFlashOperation {
 		@Override
 		public Void execute(final Monitor monitor) {
@@ -35,6 +46,11 @@ public class NullDevice extends ObserverableDevice<Connection> {
 		}
 	}
 	
+	/**
+	 * Null implementation for <code>GetChipTypeOperation</code>.
+	 * 
+	 * @author Malte Legenhausen
+	 */
 	private class NullGetChipTypeOperation extends AbstractOperation<ChipType> implements GetChipTypeOperation {
 		@Override
 		public ChipType execute(final Monitor monitor) {
@@ -44,6 +60,11 @@ public class NullDevice extends ObserverableDevice<Connection> {
 		}
 	}
 	
+	/**
+	 * Null implementation for <code>ReadMacAddressOperation</code>.
+	 * 
+	 * @author Malte Legenhausen
+	 */
 	private class NullReadMacAddressOperation extends AbstractOperation<MacAddress> implements ReadMacAddressOperation {
 		@Override
 		public MacAddress execute(final Monitor monitor) {
@@ -53,6 +74,11 @@ public class NullDevice extends ObserverableDevice<Connection> {
 		}
 	}
 	
+	/**
+	 * Null implementation for <code>ResetOperation</code>.
+	 * 
+	 * @author Malte Legenhausen
+	 */
 	private class NullResetOperation extends AbstractOperation<Void> implements ResetOperation {
 		@Override
 		public Void execute(final Monitor monitor) {
@@ -67,8 +93,14 @@ public class NullDevice extends ObserverableDevice<Connection> {
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(NullDevice.class);
 	
+	/**
+	 * All possible channels for a device.
+	 */
 	private static final int[] CHANNELS = new int[] { 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26 };
 	
+	/**
+	 * Null connection instance for this device.
+	 */
 	private final Connection connection = new NullConnection();
 	
 	@Override

@@ -6,6 +6,12 @@ import java.io.OutputStream;
 import de.uniluebeck.itm.devicedriver.Connection;
 import de.uniluebeck.itm.devicedriver.ConnectionListener;
 
+
+/**
+ * Null implementation for <code>Connection</code>.
+ * 
+ * @author Malte Legenhausen
+ */
 public class NullConnection implements Connection {
 
 	@Override
@@ -19,12 +25,12 @@ public class NullConnection implements Connection {
 	}
 
 	@Override
-	public void connect(String uri) {
+	public void connect(final String uri) {
 		
 	}
 
 	@Override
-	public void shutdown(boolean force) {
+	public void shutdown(final boolean force) {
 		
 	}
 
@@ -34,12 +40,12 @@ public class NullConnection implements Connection {
 	}
 
 	@Override
-	public void addListener(ConnectionListener listener) {
+	public void addListener(final ConnectionListener listener) {
 		
 	}
 
 	@Override
-	public void removeListener(ConnectionListener listener) {
+	public void removeListener(final ConnectionListener listener) {
 
 	}
 
