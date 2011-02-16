@@ -18,8 +18,8 @@ public class NodeHelper {
 	 */
 	public NODE changetoNODE(Node node) {
 		NODE.Builder nodebuilder = NODE.newBuilder();
-		if (node.getId().isEmpty()) {
-			throw new NullPointerException("KnotenID darf nicht null sein");
+		if (!(node.getId().isEmpty())) {
+			nodebuilder.setKnotenid(node.getId());
 		}
 		if (!node.getId().isEmpty()) {
 			nodebuilder.setKnotenid(node.getId());

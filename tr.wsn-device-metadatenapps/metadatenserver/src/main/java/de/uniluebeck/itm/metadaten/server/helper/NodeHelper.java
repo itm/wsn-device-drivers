@@ -20,20 +20,20 @@ public class NodeHelper {
 	 */
 	public NODE changetoNODE(Node node) {
 		NODE.Builder nodebuilder = NODE.newBuilder();
-		if (node.getId().isEmpty()) {
-			throw new NullPointerException("KnotenID darf nicht null sein");
+		if (!(node.getId().isEmpty())) {
+			nodebuilder.setKnotenid(node.getId());
 		}
 		if (!node.getId().isEmpty()) {
 			nodebuilder.setKnotenid(node.getId());
 		}
-		if (!node.getIpAddress().isEmpty()) {
+		if (!(node.getIpAddress() == null)) {
 			nodebuilder.setIp(node.getIpAddress());
 		}
-		if (!node.getDescription().isEmpty()) {
+		if (!(node.getDescription()==null)) {
 			nodebuilder.setDescription(node.getDescription());
 		}
 		;
-		if (!node.getMicrocontroller().isEmpty()) {
+		if (!(node.getMicrocontroller()== null)) {
 			nodebuilder.setMicrocontroller(node.getMicrocontroller());
 		}
 		;

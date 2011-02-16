@@ -126,9 +126,27 @@ public class MetaDatenClient implements MetaDataClient {
 		/**
 		 * Disconnect the Channel to the server
 		 */
-		private void disconnect ()
-		{
+		public void disconnect(String userName, String passWord) {
+			final RpcController controller = channel.newRpcController();
+
+			BlockingInterface syncOperationService = Operations
+					.newBlockingStub(channel);
+			// // aufbauen eines Identification-Packets
+			Identification id = Identification.newBuilder().setUsername(userName)
+					.setPassword(passWord).build();
+
+			try {
+				// herstellen der Verbindung zum Server
+				log.info("DisConnect from Server: " + server);
+				// channel = bootstrap.peerWith(server);
+				syncOperationService.disconnect(controller, id);
+			} catch (ServiceException e) {
+				log.error("Fehler beim disconnect" + e.getMessage());
+			}
 			channel.close();
+			executor.shutdown();
+			bootstrap.releaseExternalResources();
+			log.info("Disconnect () nach channel.close");
 		}
 	
 
@@ -144,13 +162,13 @@ public class MetaDatenClient implements MetaDataClient {
 		
 		//Result erzeugen
 		SearchRequest request = SearchRequest.newBuilder().setQueryMs(nhelper.changetoNODE(queryexmpl)).setQueryString("123").build();
-	
+		System.out.println("Was geht los sind die null" + request.getQueryMs().getMicrocontroller());
 		// erzeugen eines synchronen RPC-Objekts fuer die Operationen
 		BlockingInterface blockOperationService =  Operations.newBlockingStub(channel);
 		try {
 			// sync RPC-Aufruf
 			SearchResponse resultresp = blockOperationService.search(controller, request);
-			System.out.println("Größe der Sresponse" + resultresp.getResponseList().size());
+			System.out.println("Größe der Response" + resultresp.getResponseList().size());
 			List <NODE> result = new ArrayList<NODE>();
 			result=resultresp.getResponseList();
 			System.out.println("Größe des Results: " + result.size());
@@ -162,7 +180,7 @@ public class MetaDatenClient implements MetaDataClient {
 			e.printStackTrace();
 		}
 		
-		this.disconnect();
+		this.disconnect("frager","testPassword");
 		return nodelist;
 	}
 	/**
@@ -196,7 +214,7 @@ public class MetaDatenClient implements MetaDataClient {
 			callback.onFailure(e);
 		}
 		
-		this.disconnect();
+		this.disconnect("frager","testPassword");
 		callback.onSuccess(nodelist);
 	}
 

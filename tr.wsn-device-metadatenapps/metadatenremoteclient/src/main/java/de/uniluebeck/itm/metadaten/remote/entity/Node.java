@@ -1,57 +1,48 @@
 package de.uniluebeck.itm.metadaten.remote.entity;
 
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-
-
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
+import org.simpleframework.xml.ElementList;
 
 /**
  * A Node Entity is described.
  */
 
-//@Entity
-//@Table(catalog = "metadaten_db", name = "node")
-public class Node implements Key {
+public class Node {
 
-//	@Id
-//	@Attribute
-//	@Column(name = "id", nullable = false, length = 100)
+
+	@Attribute
 	private String id;
 
 	/**
 	 * Node Defaults Elements.
 	 */
 
-//	@Element
-//	@Basic
-//	@Column(name = "microcontroller", length = 100)
+	@Element(required= false)
 	private String microcontroller;
 
-//	@Element
-//	@Basic
-//	@Column(name = "ipAdress", length = 100)
+	@Element(required= false)
 	private String ipAddress;
 
-	@Element
-//	@Basic
-//	@Column(name = "description", length = 100)
+	@Element(required= false)
 	private String description;
 
 	@Element
 	private short port;
 
-	@Element
+	@Element(required= false)
 	private Date timestamp;
 
 	/**
 	 * List with the capability elements of the entity.
 	 */
-//	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "parentnode")
 	// @OneToMany(mappedBy = "nodeId")
+	@ElementList(inline = true)
 	private List<Capability> capabilityList;
 
 	/**
@@ -141,9 +132,4 @@ public class Node implements Key {
 		this.capabilityList = capabilityList;
 	}
 
-	@Override
-	public Object getKey() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

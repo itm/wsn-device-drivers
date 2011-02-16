@@ -8,5 +8,6 @@
 	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/tr.wsn-device-drivers"/>
 	<classpathentry kind="lib" path="/tr.wsn-device-metadatenapp/lib/protobuf-rpc-pro-duplex-1.1.0.jar"/>
+	<classpathentry kind="src" path="resources"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

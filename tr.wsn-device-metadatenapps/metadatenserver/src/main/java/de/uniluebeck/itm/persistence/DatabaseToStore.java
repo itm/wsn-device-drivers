@@ -62,10 +62,7 @@ public class DatabaseToStore {
 	public List <Node> getNodes(Node nodeexample) {
     	List <Node> resultlist = new ArrayList<Node>();
     	final Session session = getSession();
-    	  Node getnode = new Node();
-	   	getnode.setId(nodeexample.getDescription());
-	   	getnode.setMicrocontroller(nodeexample.getMicrocontroller());
-	   	getnode.setIpAddress(nodeexample.getMicrocontroller());
+    	System.err.println("Vor Criteria Bildung" + nodeexample.getId() + nodeexample.getIpAddress() + "der Rest" + nodeexample.getDescription() + nodeexample.getMicrocontroller());
         Transaction transaction = session.beginTransaction();
 //        resultlist = session.createQuery("select  from Node parentnode where id="+parentnode.getId()).list();
         Criteria crit = session.createCriteria(Node.class);

@@ -47,6 +47,12 @@ public interface iMetaDatenService {
 	 * @param node
 	 */
 	void refreshNodeSync(Node node);
+
+	/**
+	 * Entfernt alle Daten des aktuellen TCP-Servers, in dem der Metadatenservice läuft,
+	 * aus dem Metadatenverzeichnis
+	 */
+	void removeData();
 	
 	
 	

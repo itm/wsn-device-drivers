@@ -59,8 +59,8 @@ public class dbtest {
 //		}
         DatabaseToStore getfromDB = new DatabaseToStore();
         Node getnode = new Node();
-        getnode.setId("111296050613777");
-        getnode.setMicrocontroller("mic1");
+        getnode.setId("280120101");
+//        getnode.setMicrocontroller("mic1");
         getnode.setIpAddress("192.168.0.101");
 //        System.out.println("!!!!Test!!!!");
         List <Node> resultlist = new ArrayList<Node>();
