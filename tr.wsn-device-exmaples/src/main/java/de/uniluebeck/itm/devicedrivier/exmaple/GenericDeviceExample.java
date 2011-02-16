@@ -47,6 +47,7 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 	}
 
 	private void init() {
+		device.addListener(this);
 		connection = device.getConnection();
 		connection.addListener(this);
 		deviceAsync = new QueuedDeviceAsync(queue, device);
@@ -194,7 +195,7 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 		});
 	}
 	
-	public void finish() {
+	public void waitForOperationsToFinish() {
 		// Wait until the queue is empty.
 		while (!queue.getOperations().isEmpty()) {
 			try {
@@ -203,12 +204,29 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public void shutdown() {
 		System.out.println("Shutting down queue...");
 		queue.shutdown(false);
 		System.out.println("Queue terminated");
 		System.out.println("Closing connection...");
 		connection.shutdown(true);
 		System.out.println("Connection closed");
+	}
+	
+	public void waitForMessagePackets() {
+		System.out.println("Waiting for messages from the device.");
+		System.out.println("Press any key to shutdown...");
+		try {
+			while(System.in.read() == -1) {
+				Thread.sleep(50);
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void run() {
@@ -224,7 +242,9 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 		chipTypeOperation();
 		sendOperation();
 		resetOperation();
-		finish();
+		waitForOperationsToFinish();
+		waitForMessagePackets();
+		shutdown();
 	}
 	
 	@Override

@@ -41,8 +41,7 @@ public class JennicEraseFlashOperation extends AbstractOperation<Void> implement
 		response = device.receiveBootLoaderReply(Messages.FLASH_ERASE_RESPONSE);
 
 		if (response[1] != 0x0) {
-			log.error("Failed to erase flash.");
-			throw new FlashEraseFailedException();
+			throw new FlashEraseFailedException("Failed to erase flash.");
 		}
 		monitor.onProgressChange(1.0f);
 	}

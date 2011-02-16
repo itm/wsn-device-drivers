@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import de.uniluebeck.itm.devicedriver.Monitor;
 import de.uniluebeck.itm.devicedriver.Programable;
 import de.uniluebeck.itm.devicedriver.exception.InvalidChecksumException;
+import de.uniluebeck.itm.devicedriver.exception.NotImplementedException;
 import de.uniluebeck.itm.devicedriver.exception.TimeoutException;
 import de.uniluebeck.itm.devicedriver.exception.UnexpectedResponseException;
 import de.uniluebeck.itm.devicedriver.generic.iSenseResetOperation;
@@ -116,8 +117,7 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 		final WriteMacAddressOperation operation = new AbstractWriteMacAddressOperation() {
 			@Override
 			public Void execute(Monitor monitor) throws Exception {
-				log.warn("writeMacAddres is not implemented.");
-				return null;
+				throw new NotImplementedException("wirteMacAddress ist not available.");
 			}
 		};
 		monitor.monitorState(operation);
