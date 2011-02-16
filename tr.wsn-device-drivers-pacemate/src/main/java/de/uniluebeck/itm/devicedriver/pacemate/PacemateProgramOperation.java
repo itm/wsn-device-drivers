@@ -114,8 +114,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 
 			try {
 				// if block is completed copy data from RAM to Flash
-				System.out.println("Prepare Flash and Copy Ram to Flash "
-						+ blockCount + " " + blockNumber + " " + address);
+				log.debug("Prepare Flash and Copy Ram to Flash " + blockCount + " " + blockNumber + " " + address);
 				device.configureFlash(blockNumber, blockNumber);
 				if (data.length > 1024) {
 					device.copyRAMToFlash(address, PacemateDevice.START_ADDRESS_IN_RAM, 4096);

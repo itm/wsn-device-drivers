@@ -157,7 +157,7 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 				System.out.println("Reading result: " + result);
 			}
 		};
-		deviceAsync.readFlash(128, 256, 10000, callback);
+		deviceAsync.readFlash(0, 32, 10000, callback);
 	}
 	
 	public void chipTypeOperation() {
