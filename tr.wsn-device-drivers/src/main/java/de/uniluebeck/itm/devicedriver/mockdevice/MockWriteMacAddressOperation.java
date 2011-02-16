@@ -30,7 +30,7 @@ public class MockWriteMacAddressOperation extends AbstractWriteMacAddressOperati
 			final float progress = 0.1f * i;
 			monitor.onProgressChange(progress);
 		}
-		LOG.debug("Writing mac address: " + getMacAddress().getMacString());
+		LOG.debug("Writing mac address: " + getMacAddress());
 		configuration.setMacAddress(getMacAddress());
 		return null;
 	}

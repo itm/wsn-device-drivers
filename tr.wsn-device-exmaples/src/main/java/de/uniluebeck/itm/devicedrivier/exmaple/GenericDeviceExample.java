@@ -126,7 +126,7 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 			
 			@Override
 			public void onSuccess(MacAddress result) {
-				System.out.println("Mac Address: " + result.getMacString());
+				System.out.println("Mac Address: " + result);
 			}
 		};
 		

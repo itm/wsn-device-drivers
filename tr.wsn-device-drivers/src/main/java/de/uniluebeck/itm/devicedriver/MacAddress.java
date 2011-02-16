@@ -23,9 +23,6 @@
 
 package de.uniluebeck.itm.devicedriver;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniluebeck.itm.tr.util.StringUtils;
 
 /**
@@ -34,23 +31,38 @@ import de.uniluebeck.itm.tr.util.StringUtils;
  * @author Malte Legenhausen
  */
 public class MacAddress {
-
-	/** 
-	 * Logger for this class.
+	
+	/**
+	 * Bit mask for the mac address entries.
 	 */
-	private static final Logger LOG = LoggerFactory.getLogger(MacAddress.class);
+	private static final int BIT_MASK = 0xFF;
+	
+	/**
+	 * Shift for the penultimate byte fo output as int.
+	 */
+	private static final int PENULTIMATE_SHIFT = 8;
 	
 	/**
 	 * The length of a mac address.
 	 */
 	private static final int LENGTH = 8;
+	
+	/**
+	 * Index of the last element of the address.
+	 */
+	private static final int ULTIMATE = 7;
+	
+	/**
+	 * Index of the next to last element of the address.
+	 */
+	private static final int PENULTIMATE = 6;
 
 	/**
 	 * Suppose the MAC address is: 00:15:8D:00:00:04:7D:50. Then 0x00 will be
 	 * stored at address[0] and 0x50 at address[7]. The least significant value
 	 * isx50. 0x00 0x15 0x8D 0x00 0x00 0x04 0x7D 0x50 
 	 */
-	private byte[] address = {};
+	private final byte[] address = new byte[LENGTH];
 
 	/**
 	 * Constructor.
@@ -65,13 +77,8 @@ public class MacAddress {
 	 * @param lower16 The last two bytes of the mac address.
 	 */
 	public MacAddress(final int lower16) {
-		address = new byte[LENGTH];
-		for (int i = 0; i < address.length; ++i) {
-			address[i] = 0;
-		}
-		
-		address[6] = (byte) (lower16 >> 8 & 0xFF);
-		address[7] = (byte) (lower16 & 0xFF);
+		address[PENULTIMATE] = (byte) (lower16 >> PENULTIMATE_SHIFT & BIT_MASK);
+		address[ULTIMATE] = (byte) (lower16 & BIT_MASK);
 	}
 
 	/**
@@ -80,7 +87,7 @@ public class MacAddress {
 	 * @param address Address as byte array.
 	 */
 	public MacAddress(final byte[] address) {
-		setMacBytes(address);
+		this(address, 0);
 	}
 
 	/**
@@ -90,18 +97,7 @@ public class MacAddress {
 	 * @param offset The mac address offset.
 	 */
 	public MacAddress(final byte[] address, final int offset) {
-		final byte mac[] = new byte[LENGTH];
-		System.arraycopy(address, offset, mac, 0, mac.length);
-		setMacBytes(mac);
-	}
-
-	/**
-	 * Returns the MAC address as string in hex format.
-	 * 
-	 * @return the mac address as string.
-	 */
-	public String getMacString() {
-		return StringUtils.toHexString(getMacBytes());
+		System.arraycopy(address, offset, this.address, 0, LENGTH);
 	}
 
 	/**
@@ -110,22 +106,9 @@ public class MacAddress {
 	 * @return The mac address as byte array.
 	 */
 	public byte[] getMacBytes() {
-		final byte[] tmp = new byte[address.length];
-		System.arraycopy(address, 0, tmp, 0, address.length);
+		final byte[] tmp = new byte[LENGTH];
+		System.arraycopy(address, 0, tmp, 0, LENGTH);
 		return tmp;
-	}
-
-	/**
-	 * Setter for the mac address.
-	 * 
-	 * @param address The mac address as byte array.
-	 */
-	public void setMacBytes(final byte[] address) {
-		this.address = new byte[LENGTH];
-		System.arraycopy(address, 0, this.address, 0, address.length);
-		if (address.length > LENGTH) {
-			LOG.warn("Supplied address is longer than 8 byte. Trimmed to 8.");
-		}
 	}
 
 	/**
@@ -134,7 +117,7 @@ public class MacAddress {
 	 * @return Returns the last two bytes of the mac address.
 	 */
 	public int getMacLowest16() {
-		return getMacBytes()[6] * 256 + getMacBytes()[7];
+		return address[PENULTIMATE] >> PENULTIMATE_SHIFT + address[ULTIMATE];
 	}
 
 	/**
@@ -151,13 +134,18 @@ public class MacAddress {
 	public boolean equals(final Object o) {
 		if (o != null && o instanceof MacAddress) {
 			final MacAddress m = (MacAddress) o;
-			m.getMacString().equals(getMacString());
+			m.toString().equals(toString());
 		}
 		return super.equals(o);
 	}
 	
 	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
+	
+	@Override
 	public String toString() {
-		return getMacString();
+		return StringUtils.toHexString(address);
 	}
 }
