@@ -7,7 +7,7 @@ public class ConfigData {
 	@Element
 	private String serverIP;
 	@Element
-	private int port;
+	private int serverport;
 	@Element
 	private int clientport;
 	@Element
@@ -23,11 +23,11 @@ public class ConfigData {
 	public void setServerIP(String serverIP) {
 		this.serverIP = serverIP;
 	}
-	public int getPort() {
-		return port;
+	public int getServerPort() {
+		return serverport;
 	}
-	public void setPort(int port) {
-		this.port = port;
+	public void setServerPort(int port) {
+		this.serverport = port;
 	}
 	public int getClientport() {
 		return clientport;
@@ -53,5 +53,4 @@ public class ConfigData {
 	public void setWisemlFile(String wisemlFile) {
 		this.wisemlFile = wisemlFile;
 	}
-
 }

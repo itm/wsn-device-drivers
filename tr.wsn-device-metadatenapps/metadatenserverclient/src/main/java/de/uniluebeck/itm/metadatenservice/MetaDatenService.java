@@ -27,19 +27,20 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService{
 	private List<IMetaDataCollector> collector = new ArrayList<IMetaDataCollector> ();
 	ConfigData config = new ConfigData();
 	Timer timer = new Timer();
+	int count=0;
 	
 	MetaDatenService () throws Exception {
 
 //		ConfigData config = loadConfig("C:\\uni hl\\workspace\\fallstudie2010\\sources\\tr.wsn-device-metadatenapps\\metadatenserverclient\\src\\main\\java\\resources\\config.xml");
 		config = loadConfig("config.xml");
 		
-		stub=new ClientStub(config.getUsername(), config.getPassword(), config.getServerIP(), config.getPort());
+		stub=new ClientStub(config.getUsername(), config.getPassword(), config.getServerIP(), config.getServerPort(), config.getClientport());
 		
 	    // nach 2 Sek geht’s los
 //	      timer.schedule  ( new Task(), 2000 );
 		
 	    // nach 1 Sek geht’s los und dann alle 5 Sekunden
-	      timer.schedule  ( this, 1000, 5000 );
+	      timer.schedule  ( this, 10000, 5000 );
 	}
 	
 //	public static void main(String[] args) throws Exception {
@@ -103,27 +104,58 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService{
 
 	@Override
 	public void run() {
-		
+		log.info("Start Refreshrun: connecten");
+		count = 0;
+		stub.connect(config.getUsername(), config.getPassword());
+//		stub.connect(config.getUsername(), config.getPassword(),new AsyncCallback<String>() {
+//			
+//			@Override
+//			public void onCancel() {
+//				// TODO Auto-generated method stub
+//			}
+//
+//			@Override
+//			public void onFailure(Throwable throwable) {
+//				System.out.println(throwable.getMessage());
+//			}
+//
+//			@Override
+//			public void onSuccess(String result) {
+//				System.out.println(result);
+//			}
+//
+//			@Override
+//			public void onProgressChange(float fraction) {
+//			}
+//		});
+		log.info("Refreshrun connected");
 		for(int i=0; i<collector.size();i++)
 		{
-			System.out.println("Die Knotens mit ID: " +collector.get(i).collect(config.getWisemlFile()).getId()+"wird dem Verzeichnis hinzugefügt");
-			refreshNode(collector.get(i).collect(config.getWisemlFile()), new AsyncCallback<String>(){
-			@Override
-			public void onCancel() {
-			}
-			@Override
-			public void onFailure(Throwable throwable) {
-				System.out.println(throwable.getMessage());
-			}
-			@Override
-			public void onSuccess(String result) {	
-			}
-			@Override
-			public void onProgressChange(float fraction) {
-			
-		}});
+			System.out.println("Der Knoten mit ID: " +collector.get(i).collect(config.getWisemlFile()).getId()+"wird dem Verzeichnis hinzugefügt");
+			refreshNodeSync(collector.get(i).collect(config.getWisemlFile()));
+//			refreshNode(collector.get(i).collect(config.getWisemlFile()), new AsyncCallback<String>(){
+//			@Override
+//			public void onCancel() {
+//			}
+//			@Override
+//			public void onFailure(Throwable throwable) {
+//				count++;
+//				log.error((throwable.getMessage()));
+//			}
+//			@Override
+//			public void onSuccess(String result) {
+//				count++;
+//				log.info(new Date() + " Node  updated");
+//			}
+//			@Override
+//			public void onProgressChange(float fraction) {
+//			
+//		}});
 		}
-		
+//		while (count < collector.size()){
+//			System.out.println("Warte auf Ergebnisse");
+//		}
+		stub.disconnect();
 	}
 
 	public void writeConfig(ConfigData config){
@@ -151,7 +183,7 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService{
 			log.error(e.getMessage());
 		}
 		File source = new File(fileuri);
-		System.out.println("File:" + source.getName() + source.toString());
+		log.debug("ConfigFile:" + source.getName() + source.toString());
 		 try {
 			config = serializer.read(de.uniluebeck.itm.metadaten.metadatenservice.entity.ConfigData.class, source);
 //			serializer.read(ConfigData, source);
@@ -159,12 +191,15 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService{
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		System.out.println("Config:" + config.getPassword() + config.getServerIP() + config.getUsername() + config.getPort() + config.getClientport());
+		log.debug("Config:" + config.getPassword() + config.getServerIP() + config.getUsername() + config.getServerPort() + config.getClientport());
 		return config;
 	}
-
+	/**
+	 * Adds an node to the directory - no existing connection needed
+	 */
 	@Override
 	public void addNode(Node node, final AsyncCallback<String> callback) {
+//		stub.connect(config.getUsername(), config.getPassword());
 		stub.add(node, new AsyncCallback<String>(){
 			@Override
 			public void onCancel() {
@@ -172,17 +207,18 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService{
 			@Override
 			public void onFailure(Throwable throwable) {
 				callback.onFailure(throwable);
+//				stub.disconnect();
 			}
 			@Override
 			public void onSuccess(String result) {
 				callback.onSuccess(result);
+//				stub.disconnect();
 				
 			}
 			@Override
 			public void onProgressChange(float fraction) {
 			
 		}});
-		
 	}
 
 
@@ -195,40 +231,20 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService{
 
 
 
-//	@Override
-//	public void refreshNode(Node node,final AsyncCallback<String> callback) {
-//		// TODO Ersetzt die Methode UpdateNode?
-//		stub.add(node, new AsyncCallback<String>(){
-//			@Override
-//			public void onCancel() {
-//			}
-//			@Override
-//			public void onFailure(Throwable throwable) {
-//				callback.onFailure(throwable);
-//			}
-//			@Override
-//			public void onSuccess(String result) {
-//				callback.onSuccess(result);
-//				
-//			}
-//			@Override
-//			public void onProgressChange(float fraction) {
-//			
-//		}});
-//	}
-
-
-
+	/**
+	 * Refreshes the Nodeentry in the directory - Needs a existing connection to the server
+	 */
 	@Override
 	public void refreshNode(Node node, final AsyncCallback<String> callback) {
-		// TODO Updatemethode im Stub implementieren
 		stub.refresh(node, new AsyncCallback<String>(){
 			@Override
 			public void onCancel() {
 			}
 			@Override
 			public void onFailure(Throwable throwable) {
+				System.err.println(throwable.getMessage());
 				callback.onFailure(throwable);
+				
 			}
 			@Override
 			public void onSuccess(String result) {
@@ -240,6 +256,15 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService{
 			
 		}});
 	}
+	/**
+	 * Refreshes the Nodeentry in the directory - Needs a existing connection to the server
+	 * Uses sync-Operation
+	 */
+	@Override
+	public void refreshNodeSync(Node node) {
+		stub.refreshSync(node);
+	}
+
 
 
 
@@ -256,21 +281,27 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService{
 	@Override
 	public void addMetaDataCollector(IMetaDataCollector mdcollector) {
 		collector.add(mdcollector);
-		stub.add(mdcollector.collect(config.getWisemlFile()), new AsyncCallback<String>(){
-			@Override
-			public void onCancel() {
-			}
-			@Override
-			public void onFailure(Throwable throwable) {
-				System.out.println(throwable.getMessage());
-			}
-			@Override
-			public void onSuccess(String result) {	
-			}
-			@Override
-			public void onProgressChange(float fraction) {
-			
-		}});
+//		stub.connect(config.getUsername(), config.getPassword());
+//		stub.add(mdcollector.collect(config.getWisemlFile()), new AsyncCallback<String>(){
+//			@Override
+//			public void onCancel() {
+//			}
+//			@Override
+//			public void onFailure(Throwable throwable) {
+//				System.out.println(throwable.getMessage());
+////				stub.disconnect();
+//			}
+//			@Override
+//			public void onSuccess(String result) {	
+//				log.info("Gesendet");
+//				stub.disconnect();
+//				log.info("Gesendet und getrennt");
+//			}
+//			@Override
+//			public void onProgressChange(float fraction) {
+//			
+//		}});
+		log.info("und wieder neu connecten");
 	}
 
 	@Override

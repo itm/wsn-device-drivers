@@ -5,7 +5,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 
 import org.apache.commons.logging.Log;
@@ -53,12 +55,13 @@ public class MetaDatenServer {
 	private static Log log = LogFactory.getLog(MetaDatenServer.class);
 	// werden nach 30 min alle eintraege des Cache geloescht?
 	// wie Timeout fuer einen Eintrag neu starten?
-	private static TimedCache<RpcClientChannel, ClientID> idList = new TimedCache<RpcClientChannel, ClientID>();
-	private static TimedCache<RpcClientChannel, Subject> authList = new TimedCache<RpcClientChannel, Subject>();
+//	private static TimedCache<RpcClientChannel, ClientID> idList = new TimedCache<RpcClientChannel, ClientID>();
+//	private static TimedCache<RpcClientChannel, Subject> authList = new TimedCache<RpcClientChannel, Subject>();
+	private static Map <RpcClientChannel, ClientID> idList = new HashMap <RpcClientChannel, ClientID>();
+	private static Map <RpcClientChannel, Subject> authList = new HashMap <RpcClientChannel, Subject>();
 	public static List<Node> knotenliste = new ArrayList<Node>();
 
 	public static void main(String[] args) throws URISyntaxException {
-
 		ConfigData config = loadConfig("config.xml");
 		log.info("Startup Server!");
 		CleanRepository cleaner = new CleanRepository(config.getOveragetime());
@@ -173,7 +176,6 @@ public class MetaDatenServer {
 			// eine Moeglichkeit den benutzten channel zu identifizieren
 			RpcClientChannel channel = ServerRpcController
 					.getRpcChannel(controller);
-
 			// erzeugen einer channel bezogenen User Instanz
 			ClientID id = new ClientID();
 
@@ -181,8 +183,9 @@ public class MetaDatenServer {
 			log.info("Checking password");
 			/* Shiro: */
 			Subject currentUser = SecurityUtils.getSubject();
-
+			System.err.println("User logged in?" +currentUser.isAuthenticated());
 			if (!currentUser.isAuthenticated()) {
+				log.info("Saving clientdata");
 				UsernamePasswordToken token = new UsernamePasswordToken(
 						request.getUsername(), request.getPassword());
 				token.setRememberMe(true);
@@ -219,9 +222,11 @@ public class MetaDatenServer {
 					done.run(null);
 					return;
 				}
+			}else{
+				done.run(VOID.newBuilder().build());
 			}
 			/* Shiro END */
-
+			log.info("All things checked");
 		}
 
 		@Override

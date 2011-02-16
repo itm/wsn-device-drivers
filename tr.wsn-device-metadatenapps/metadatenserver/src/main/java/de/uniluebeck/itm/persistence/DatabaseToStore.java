@@ -132,7 +132,7 @@ public class DatabaseToStore {
     	}
     	 transaction.commit();
          session.close();
-         System.out.println("SIZE from DB" +  resultlist.size());
+//         System.out.println("SIZE from DB" +  resultlist.size());
     	return resultlist;
     }
 

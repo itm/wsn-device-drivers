@@ -34,7 +34,7 @@
 				<artifactId>simple-xml</artifactId>
 				<version>1.8</version>
 			</dependency>
-			<!--<dependency>
+				<!--<dependency>
 				<groupId>de.uniluebeck.itm.metadaten</groupId>
 				<artifactId>metadatenserver</artifactId>
 				<version>0.0.1-SNAPSHOT</version>

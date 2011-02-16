@@ -54,8 +54,11 @@ public class StoreToDatabase {
 	public boolean nodeinDB(Node node) {
 		boolean inDB = false;
 		DatabaseToStore db = new DatabaseToStore();
-		if (db.getNode(node).getId() == node.getId()) {
-			inDB = true;
+		String dBNode = db.getNode(node).getId();
+		if(!(dBNode == null)){
+			if (dBNode.equals((node.getId()))) {
+				inDB = true;
+			}
 		}
 		return inDB;
 	}
@@ -72,12 +75,17 @@ public class StoreToDatabase {
 		if (!nodeinDB(node)) {
 			final Session session = getSession();
 			final Transaction transaction = session.beginTransaction();
+			System.out.println("StoretoDataBase.storeNode: Saving Node");
 			session.save(node);
 			transaction.commit();
+			System.out.println("StoretoDataBase.storeNode: Saved Node");
 			session.close();
 		} else {
+			//TODO wenn bereits in DB, KNoten updaten oder Anfrage ignorieren?
+			System.out.println("Node already in DB, data will be updated");
+			updateNode(node);
 			throw new Exception(
-					"Knoten bereits in DB vorhanden. Duplicate Entry fpr this Node. Please use Refresh.");
+					"Knoten bereits in DB vorhanden. Duplicate Entry for this Node. Please use Refresh.");
 		}
 	}
 
@@ -90,17 +98,28 @@ public class StoreToDatabase {
 	public final void updateNode(final Node node) {
 		// TODO tokenizer wieder nutzen falls wir WiseML die keys generieren
 		// lassen
-		deleteCapability(node);
-		final Session session = getSession();
-		final Transaction transaction = session.beginTransaction();
-		// for (Capability cap : node.getCapabilityList()) {
-		// System.out.println("CAPPPPPPP HINZU!!!");
-		// // session.update("capability", cap);
-		// session.delete("capability", cap);
-		// }
-		session.update(node);
-		transaction.commit();
-		session.close();
+		if ((nodeinDB(node))){
+			System.out.println("!!! im refreshif, updaten des Knoten");
+			deleteCapability(node);
+			final Session session = getSession();
+			final Transaction transaction = session.beginTransaction();
+			// for (Capability cap : node.getCapabilityList()) {
+			// System.out.println("CAPPPPPPP HINZU!!!");
+			// // session.update("capability", cap);
+			// session.delete("capability", cap);
+			// }
+			session.update(node);
+			transaction.commit();
+			session.close();
+		}else {
+			try {
+				System.out.println("!!! in der refreshElse, zufügen des Knotens");
+				storeNode(node);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
 	}
 

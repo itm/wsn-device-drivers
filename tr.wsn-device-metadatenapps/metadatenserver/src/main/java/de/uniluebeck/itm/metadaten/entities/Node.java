@@ -48,6 +48,7 @@ public class Node implements Key {
 	private String description;
 
 	@Element
+	@Basic
 	private short port;
 
 	@Element

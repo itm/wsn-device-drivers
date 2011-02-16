@@ -25,7 +25,7 @@ public class Testtreiber {
 		System.out.println("Node wird gebaut");
 		Node node = new Node();
         node.setId("111296050613777");
-		node.setIpAddress("192.168.8.101");
+		node.setIpAddress("192.168.0.101");
 		node.setMicrocontroller("mic1");
 //		node.setDescription("Solar2000");
 		String queryString = "123";
@@ -40,7 +40,7 @@ public class Testtreiber {
 		System.out.println("Folgende Knoten im Verzeichnis, entsprechen Ihrer Suchanfrage:");
 		for (int i=0 ;i < nodes.size(); i++)
 		{
-			System.out.println("Knoten: " +i+1 +" :"+nodes.get(i).toString());
+			System.out.println("Knoten: " +i+1 +" :"+nodes.get(i).getId());
 		}
 		
 

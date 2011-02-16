@@ -40,6 +40,13 @@ public interface iMetaDatenService {
 	 * @param callback
 	 */
 	public void refreshNode (Node node, final AsyncCallback<String> callback );
+
+	/**
+	 * Aktualisiert den TimeStamp des Sensorknotens im Verzeichnis
+	 * nutzt das synchrone Interface
+	 * @param node
+	 */
+	void refreshNodeSync(Node node);
 	
 	
 	
