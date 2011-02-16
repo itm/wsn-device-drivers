@@ -26,7 +26,7 @@ public class MessagePlainTextReceiver implements ByteReceiver {
 	private AbstractSerialPortDevice device;
 	
 	@Override
-	public void setDevice(final Device device) {
+	public void setDevice(final Device<?> device) {
 		this.device = (AbstractSerialPortDevice) device;
 	}
 

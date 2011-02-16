@@ -12,8 +12,10 @@ import de.uniluebeck.itm.devicedriver.event.MessageEvent;
  * Abstract device with a default implementation for <code>MessagePacketListener</code> notification.
  * 
  * @author Malte Legenhausen
+ * 
+ * @param <C> The type of the connection used by this device.
  */
-public abstract class ObserverableDevice implements Device {
+public abstract class ObserverableDevice<C extends Connection> implements Device<C> {
 	
 	/**
 	 * Mapping from message packet type to a list of <code>MessagePacketListener</code> instances.

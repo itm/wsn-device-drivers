@@ -24,7 +24,7 @@ import de.uniluebeck.itm.devicedriver.operation.SendOperation;
 import de.uniluebeck.itm.devicedriver.operation.WriteFlashOperation;
 import de.uniluebeck.itm.devicedriver.operation.WriteMacAddressOperation;
 
-public class NullDevice extends ObserverableDevice {
+public class NullDevice extends ObserverableDevice<Connection> {
 
 	private class NullEraseFlashOperation extends AbstractOperation<Void> implements EraseFlashOperation {
 		@Override

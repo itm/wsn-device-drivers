@@ -24,7 +24,7 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 
 	private final OperationQueue queue = new PausableExecutorOperationQueue();
 	
-	private Device device;
+	private Device<?> device;
 	
 	private Connection connection;
 	
@@ -34,7 +34,7 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 	
 	private String uri;
 
-	public void setDevice(Device device) {
+	public void setDevice(Device<?> device) {
 		this.device = device;
 	}
 

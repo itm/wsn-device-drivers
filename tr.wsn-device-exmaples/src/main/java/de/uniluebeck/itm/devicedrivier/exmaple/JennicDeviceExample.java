@@ -15,7 +15,7 @@ public class JennicDeviceExample {
 	 */
 	public static void main(String[] args) {		
 		SerialPortConnection connection = new iSenseSerialPortConnection();		
-		final Device device = new JennicDevice(connection);
+		final Device<SerialPortConnection> device = new JennicDevice(connection);
 		final GenericDeviceExample example = new GenericDeviceExample();
 		example.setDevice(device);
 		example.setUri(args[0]);

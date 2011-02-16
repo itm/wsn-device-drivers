@@ -58,14 +58,14 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 	
 	@Override
 	public EnterProgramModeOperation createEnterProgramModeOperation() {
-		final EnterProgramModeOperation operation = new SerialPortEnterProgramModeOperation(connection);
+		final EnterProgramModeOperation operation = new SerialPortEnterProgramModeOperation(getConnection());
 		monitorState(operation);
 		return operation;
 	}
 	
 	@Override
 	public LeaveProgramModeOperation createLeaveProgramModeOperation() {
-		final LeaveProgramModeOperation operation = new SerialPortLeaveProgramModeOperation(connection);
+		final LeaveProgramModeOperation operation = new SerialPortLeaveProgramModeOperation(getConnection());
 		monitorState(operation);
 		return operation;
 	}
@@ -125,14 +125,14 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 
 	@Override
 	public ResetOperation createResetOperation() {
-		final ResetOperation operation = new iSenseResetOperation(connection);
+		final ResetOperation operation = new iSenseResetOperation(getConnection());
 		monitorState(operation);
 		return operation;
 	}
 
 	@Override
 	public SendOperation createSendOperation() {
-		final SendOperation operation = new SerialPortSendOperation(connection);
+		final SendOperation operation = new SerialPortSendOperation(getConnection());
 		monitorState(operation);
 		return operation;
 	}
@@ -160,14 +160,14 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 		data[data.length - 1] = 0x0A; // <LF>
 
 		// Send message
-		final OutputStream outputStream = connection.getOutputStream();
+		final OutputStream outputStream = getConnection().getOutputStream();
 		outputStream.write(data);
 		outputStream.flush();
 	}
 	
 	public void clearStreamData() throws IOException {
 
-		final InputStream inStream = connection.getInputStream();
+		final InputStream inStream = getConnection().getInputStream();
 		
 		// Allocate message buffer max 255 bytes to read
 		byte[] message = new byte[255];
@@ -468,7 +468,7 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 		waitDataAvailable(TIMEOUT);
 
 		// Read the message - read CRLFcount lines of response
-		final InputStream inStream = connection.getInputStream();
+		final InputStream inStream = getConnection().getInputStream();
 		while ((index < 255) && (counter < CRLFcount)) {
 			if (inStream.available() > 0) {
 				message[index] = (byte) inStream.read();
@@ -543,7 +543,7 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 			log.warn("Exception while waiting for connection", error);
 		}
 
-		connection.flush();
+		getConnection().flush();
 		return false;
 	}
 
@@ -604,9 +604,9 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 		// log.debug("Sending data msg: " + Tools.toASCIIString(data));
 
 		// Send message
-		final OutputStream outStream = connection.getOutputStream();
-		outStream.write(data);
-		outStream.flush();
+		final OutputStream outputStream = getConnection().getOutputStream();
+		outputStream.write(data);
+		outputStream.flush();
 
 		receiveBootLoaderReplySendDataEcho();
 	}

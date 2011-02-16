@@ -157,7 +157,7 @@ public class BSLTelosb {
 	 */
 	public BSLTelosb(TelosbDevice device) {
 		this.device = device;
-		this.connection = device.getSerialPortConnection();
+		this.connection = device.getConnection();
 		serialPort = connection.getSerialPort();
 		inputStream = connection.getInputStream();
 		outputStream = connection.getOutputStream();

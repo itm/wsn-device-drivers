@@ -12,7 +12,6 @@ import java.util.TooManyListenersException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.devicedriver.Connection;
 import de.uniluebeck.itm.devicedriver.ConnectionEvent;
 import de.uniluebeck.itm.devicedriver.ConnectionListener;
 import de.uniluebeck.itm.devicedriver.ObserverableDevice;
@@ -27,7 +26,7 @@ import de.uniluebeck.itm.tr.util.TimeDiff;
  * 
  * @author Malte Legenhausen
  */
-public abstract class AbstractSerialPortDevice extends ObserverableDevice implements ConnectionListener, SerialPortEventListener {
+public abstract class AbstractSerialPortDevice extends ObserverableDevice<SerialPortConnection> implements ConnectionListener, SerialPortEventListener {
 	
 	/**
 	 * Logger for this class.
@@ -57,7 +56,7 @@ public abstract class AbstractSerialPortDevice extends ObserverableDevice implem
 	/**
 	 * <code>SerialPortConnection</code> for this device.
 	 */
-	protected final SerialPortConnection connection;
+	private final SerialPortConnection connection;
 	
 	/**
 	 * Monitor for observe operations that are in <code>State.RUNNING</code>.
@@ -78,7 +77,7 @@ public abstract class AbstractSerialPortDevice extends ObserverableDevice implem
 	}
 
 	@Override
-	public Connection getConnection() {
+	public SerialPortConnection getConnection() {
 		return connection;
 	}
 	
@@ -90,15 +89,6 @@ public abstract class AbstractSerialPortDevice extends ObserverableDevice implem
 	 */
 	protected <T> void monitorState(final Operation<T> operation) {
 		monitor.monitorState(operation);
-	}
-	
-	/**
-	 * Getter for returning the internal <code>SerialPortConnection</code>.
-	 * 
-	 * @return The serial port object.
-	 */
-	public SerialPortConnection getSerialPortConnection() {
-		return connection;
 	}
 	
 	@Override

@@ -26,7 +26,7 @@ import de.uniluebeck.itm.devicedriver.operation.WriteMacAddressOperation;
  * 
  * @author Malte Legenhausen
  */
-public class MockDevice extends ObserverableDevice implements MockListener {
+public class MockDevice extends ObserverableDevice<MockConnection> implements MockListener {
 	
 	/**
 	 * Logger for this class.
@@ -63,7 +63,7 @@ public class MockDevice extends ObserverableDevice implements MockListener {
 	}
 	
 	@Override
-	public Connection getConnection() {
+	public MockConnection getConnection() {
 		return connection;
 	}
 

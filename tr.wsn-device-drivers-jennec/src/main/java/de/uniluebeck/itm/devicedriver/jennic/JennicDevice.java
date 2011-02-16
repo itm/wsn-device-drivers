@@ -51,14 +51,14 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 	
 	@Override
 	public EnterProgramModeOperation createEnterProgramModeOperation() {
-		final EnterProgramModeOperation operation = new SerialPortEnterProgramModeOperation(connection);
+		final EnterProgramModeOperation operation = new SerialPortEnterProgramModeOperation(getConnection());
 		monitorState(operation);
 		return operation;
 	}
 	
 	@Override
 	public LeaveProgramModeOperation createLeaveProgramModeOperation() {
-		final LeaveProgramModeOperation operation = new SerialPortLeaveProgramModeOperation(connection);
+		final LeaveProgramModeOperation operation = new SerialPortLeaveProgramModeOperation(getConnection());
 		monitorState(operation);
 		return operation;
 	}
@@ -106,14 +106,14 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 
 	@Override
 	public ResetOperation createResetOperation() {
-		final ResetOperation operation = new iSenseResetOperation(connection);
+		final ResetOperation operation = new iSenseResetOperation(getConnection());
 		monitorState(operation);
 		return operation;
 	}
 
 	@Override
 	public SendOperation createSendOperation() {
-		final SendOperation operation = new SerialPortSendOperation(connection);
+		final SendOperation operation = new SerialPortSendOperation(getConnection());
 		monitorState(operation);
 		return operation;
 	}
@@ -238,7 +238,7 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 		data[data.length - 1] = Messages.calculateChecksum(data, 0, data.length - 1);
 
 		// Send message
-		final OutputStream outStream = connection.getOutputStream();
+		final OutputStream outStream = getConnection().getOutputStream();
 		outStream.write(data);
 		outStream.flush();
 	}
@@ -247,7 +247,7 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 	 * 
 	 */
 	public byte[] receiveBootLoaderReply(int type) throws TimeoutException, UnexpectedResponseException, InvalidChecksumException, IOException, NullPointerException {
-		InputStream inputStream = connection.getInputStream();
+		final InputStream inputStream = getConnection().getInputStream();
 		
 		waitDataAvailable(TIMEOUT);
 		// Read message length
@@ -303,7 +303,7 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 			log.error("Exception while waiting for connection", e);
 		}
 
-		connection.flush();
+		getConnection().flush();
 		return false;
 	}
 	

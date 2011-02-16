@@ -15,7 +15,7 @@ public interface ByteReceiver {
 	 * 
 	 * @param device The device instance.
 	 */
-	void setDevice(Device device);
+	void setDevice(Device<?> device);
 	
 	/**
 	 * This method is called before data is received.

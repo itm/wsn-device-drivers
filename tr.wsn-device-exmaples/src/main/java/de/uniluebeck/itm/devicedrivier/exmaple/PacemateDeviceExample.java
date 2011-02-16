@@ -11,7 +11,7 @@ public class PacemateDeviceExample extends GenericDeviceExample {
 	
 	public static void main(String[] args) {
 		final SerialPortConnection connection = new iSenseSerialPortConnection();
-		final Device device = new PacemateDevice(connection);
+		final Device<SerialPortConnection> device = new PacemateDevice(connection);
 		final GenericDeviceExample example = new GenericDeviceExample();
 		example.setDevice(device);
 		

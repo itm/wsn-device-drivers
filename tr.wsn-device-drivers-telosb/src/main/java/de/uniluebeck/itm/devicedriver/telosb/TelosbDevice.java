@@ -36,14 +36,14 @@ public class TelosbDevice extends AbstractSerialPortDevice implements Programabl
 
 	@Override
 	public EnterProgramModeOperation createEnterProgramModeOperation() {
-		final EnterProgramModeOperation operation = new TelosbEnterProgramModeOperation(connection, bsl);
+		final EnterProgramModeOperation operation = new TelosbEnterProgramModeOperation(getConnection(), bsl);
 		monitorState(operation);
 		return operation;
 	}
 	
 	@Override
 	public LeaveProgramModeOperation createLeaveProgramModeOperation() {
-		final LeaveProgramModeOperation operation = new SerialPortLeaveProgramModeOperation(connection);
+		final LeaveProgramModeOperation operation = new SerialPortLeaveProgramModeOperation(getConnection());
 		monitorState(operation);
 		return operation;
 	}
@@ -109,7 +109,7 @@ public class TelosbDevice extends AbstractSerialPortDevice implements Programabl
 
 	@Override
 	public SendOperation createSendOperation() {
-		final SendOperation operation = new SerialPortSendOperation(connection);
+		final SendOperation operation = new SerialPortSendOperation(getConnection());
 		monitorState(operation);
 		return operation;
 	}

@@ -14,7 +14,7 @@ public class TelosbDeviceExample {
 	 */
 	public static void main(String[] args) {
 		final SerialPortConnection connection = new TelosbSerialPortConnection();		
-		final Device device = new TelosbDevice(connection);
+		final Device<SerialPortConnection> device = new TelosbDevice(connection);
 		final GenericDeviceExample example = new GenericDeviceExample();
 		example.setDevice(device);
 		example.setUri(args[0]);

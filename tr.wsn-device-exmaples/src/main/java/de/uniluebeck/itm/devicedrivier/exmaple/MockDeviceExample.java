@@ -22,7 +22,7 @@ public class MockDeviceExample {
 	
 	private final MockConnection connection = new MockConnection();
 	
-	private final Device device = new MockDevice(connection);
+	private final Device<MockConnection> device = new MockDevice(connection);
 	
 	private final DeviceAsync deviceAsync = new QueuedDeviceAsync(queue, device);
 	

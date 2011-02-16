@@ -15,15 +15,17 @@ import de.uniluebeck.itm.devicedriver.operation.WriteMacAddressOperation;
  * All create methods have to return a new operation instance.
  * 
  * @author Malte Legenhausen
+ * 
+ * @param <C> The connection type that is used by this device.
  */
-public interface Device extends MessageObserverable {
+public interface Device<C extends Connection> extends MessageObserverable {
 	
 	/**
 	 * Returns the <code>Connection</code> object for this device.
 	 * 
 	 * @return The connection which is used by this device to communicate with the real device.
 	 */
-	Connection getConnection();
+	C getConnection();
 
 	/**
 	 * Returns the wireless channels under which the device is reachable.

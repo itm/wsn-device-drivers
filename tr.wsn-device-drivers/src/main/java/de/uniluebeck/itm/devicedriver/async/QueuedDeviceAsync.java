@@ -43,7 +43,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	/**
 	 * The <code>Device</code> that has to be executed async.
 	 */
-	private final Device device;
+	private final Device<?> device;
 	
 	/**
 	 * Constructor.
@@ -52,7 +52,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	 * @param device The <code>Device</code> that provides all operations that can be executed.
 	 */
 	@Inject
-	public QueuedDeviceAsync(final OperationQueue queue, final Device device) {
+	public QueuedDeviceAsync(final OperationQueue queue, final Device<?> device) {
 		this.queue = queue;
 		this.device = device;
 	}
