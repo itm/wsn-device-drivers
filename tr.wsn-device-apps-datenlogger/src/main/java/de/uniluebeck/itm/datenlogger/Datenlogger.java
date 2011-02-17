@@ -247,10 +247,7 @@ public class Datenlogger {
 			Device device = new MockDevice(connection);
 			
 			if(device_parameter != null){
-					if(device_parameter.equals("isense")){
-					//TODO
-				}
-				else if(device_parameter.equals("jennec")){
+				if(device_parameter.equals("jennec")){
 					SerialPortConnection jennic_connection = new iSenseSerialPortConnection();
 					jennic_connection.addListener(new ConnectionListener() {
 						@Override
@@ -307,7 +304,6 @@ public class Datenlogger {
 			try {
 				writer = new FileWriter(location);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

@@ -34,7 +34,7 @@ public class Main {
 		options.addOption("regex_filter", true, "Kombination der Filtertypen: Regular Expression-Filter");
 		options.addOption("user", true, "Benutzername, um sich auf einen Server zu verbinden");
 		options.addOption("passwd", true, "Passwort, um sich auf einen Server zu verbinden");
-		options.addOption("device", true, "Art des Geraets im lokalen Fall: isense, jennec, telosb oder pacemate");
+		options.addOption("device", true, "Art des Geraets im lokalen Fall: jennec, telosb oder pacemate");
 		options.addOption("output", true, "Art der Ausgabe(Hex=1, String=0)");
 		
 		// for help statement
