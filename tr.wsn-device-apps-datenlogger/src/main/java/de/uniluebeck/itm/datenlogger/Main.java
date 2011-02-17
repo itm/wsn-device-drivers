@@ -29,14 +29,14 @@ public class Main {
 		// add options for Datenlogger
 		options.addOption("port", true, "port");
 		options.addOption("server", true, "server");
-		options.addOption("location", true, "Ausgabeziel der Daten, die geloggt werden");
-		options.addOption("klammer_filter", true, "Kombination der Filtertypen: (Datentyp,Beginn,Wert)-Filter");
-		options.addOption("regex_filter", true, "Kombination der Filtertypen: Regular Expression-Filter");
-		options.addOption("user", true, "Benutzername, um sich auf einen Server zu verbinden");
-		options.addOption("passwd", true, "Passwort, um sich auf einen Server zu verbinden");
-		options.addOption("device", true, "Art des Geraets im lokalen Fall: jennec, telosb oder pacemate");
-		options.addOption("output", true, "Art der Ausgabe(Hex=1, String=0)");
-		options.addOption("id", true, "ID des Geraets im Remote-Fall");
+		options.addOption("location", true, "path to the output file");
+		options.addOption("brackets_filter", true, "(datatype,begin,value)-filter");
+		options.addOption("regex_filter", true, "regular expression-filter");
+		options.addOption("user", true, "username to connect to the server");
+		options.addOption("passwd", true, "password to connect to the server");
+		options.addOption("device", true, "type of sensornode in local case: jennec, telosb oder pacemate");
+		options.addOption("output", true, "Coding of the output data");
+		options.addOption("id", true, "ID of the device in remote case");
 		
 		// for help statement
 		HelpFormatter formatter = new HelpFormatter();
@@ -46,15 +46,15 @@ public class Main {
 		try {
 			cmd = parser.parse(options, args);
 		} catch (ParseException e) {
-			System.out.println("Diese Option gibt es nicht.");
+			System.out.println("One of the parameters is not registered.");
 		}
 		if(cmd != null){
 			Datenlogger datenlogger = new Datenlogger();		
 			
 			//standard-options
 			if(cmd.hasOption("help")){
-				System.out.println("Aufrufbeispiele:");
-				System.out.println("Datenlogger: startlog -filter 0a, 0b, 54 -location filename.txt -port 141.83.1.546:1282");
+				System.out.println("Example:");
+				System.out.println("Datalogger: startlog -filter 0a, 0b, 54 -location filename.txt -server 141.83.1.546 -port 1282");
 				System.out.println("");
 				formatter.printHelp("help", options);
 			}
@@ -64,11 +64,11 @@ public class Main {
 			
 			//der Datenlogger
 		    if(args[0].equals("startlog")) {
-				System.out.println("starte Datenlogger...");
+				System.out.println("start Datalogger...");
 				
 				String port = cmd.getOptionValue("port");
 				String server = cmd.getOptionValue("server");
-				String klammer_filter = cmd.getOptionValue("klammer_filter");
+				String brackets_filter = cmd.getOptionValue("brackets_filter");
 				String regex_filter = cmd.getOptionValue("regex_filter");
 				String location = cmd.getOptionValue("location");
 				String user = cmd.getOptionValue("user");
@@ -78,28 +78,34 @@ public class Main {
 				String id = cmd.getOptionValue("id");
 				
 				if(server != null && (user == null || password == null)){
-					System.out.println("Bitte geben Sie Benutzername und Passwort ein, um sich zu dem Server zu verbinden.");
+					System.out.println("Username and Password is missing.");
+					BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+					System.out.print("Username: ");
+	                user = in.readLine();
+	                System.out.print("Password: ");
+	                password = in.readLine();
+	                in.close();
 				}
 				else{
-					datenlogger.setPort(port);
-					datenlogger.setServer(server);
-					datenlogger.setKlammer_filter(klammer_filter);
-					datenlogger.setRegex_filter(regex_filter);
-					datenlogger.setLocation(location);
 					datenlogger.setUser(user);
 					datenlogger.setPassword(password);
-					datenlogger.setDevice(device);
-					datenlogger.setOutput(output);
-					datenlogger.setId(id);
-					datenlogger.connect();
-					datenlogger.startlog();
 				}	
+				datenlogger.setPort(port);
+				datenlogger.setServer(server);
+				datenlogger.setKlammer_filter(brackets_filter);
+				datenlogger.setRegex_filter(regex_filter);
+				datenlogger.setLocation(location);
+				datenlogger.setDevice(device);
+				datenlogger.setOutput(output);
+				datenlogger.setId(id);
+				datenlogger.connect();
+				datenlogger.startlog();
 			}
 			while(true){
 	            try {
 	                BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 	                String input = in.readLine();
-	                if(input.startsWith("-klammer_filter")){
+	                if(input.startsWith("-brackets_filter")){
 	                	String delims = " ";
 	            		String[] tokens = input.split(delims);
 	                	datenlogger.add_klammer_filter(tokens[1]);

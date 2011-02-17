@@ -14,19 +14,19 @@ public class Klammer_Predicate implements Predicate<CharSequence>, Serializable 
 		filter = filter.substring(1, filter.length()-1);
 	}
 
-	public boolean apply(CharSequence erhaltene_Daten) {
-		boolean ergebnis = true;
-		String[] einzelne_filter = filter.split(",");
+	public boolean apply(CharSequence incoming_data) {
+		boolean result = true;
+		String[] single_filter = filter.split(",");
 		//matche Datentyp
-		if(!einzelne_filter[0].equals(erhaltene_Daten.subSequence(0, 6))){
-			ergebnis = false;
+		if(!single_filter[0].equals(incoming_data.subSequence(0, 6))){
+			result = false;
 		}
 		//matche Wert
-		int beginn = Integer.parseInt(einzelne_filter[1]);
-		if(einzelne_filter[2].charAt(0) != erhaltene_Daten.charAt(beginn + 6)){
-			ergebnis = false;
+		int beginn = Integer.parseInt(single_filter[1]);
+		if(single_filter[2].charAt(0) != incoming_data.charAt(beginn + 6)){
+			result = false;
 		}
-		return ergebnis;
+		return result;
 	}
 
 }

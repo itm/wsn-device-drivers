@@ -63,7 +63,7 @@ public class Datenlogger {
 	
 	private String port;
 	private String server;
-	private String klammer_filter;
+	private String brackets_filter;
 	private String regex_filter;
 	private String location;
 	private String user;
@@ -81,7 +81,10 @@ public class Datenlogger {
 	 */
 	public Datenlogger(){
 	}
-
+	
+	/**
+	 * Getter/Setters
+	 */
 	public String getPort(){
 		return port;
 	}
@@ -99,7 +102,7 @@ public class Datenlogger {
 	}
 
 	public String getKlammer_filter() {
-		return klammer_filter;
+		return brackets_filter;
 	}
 
 	public String getRegex_filter() {
@@ -142,83 +145,38 @@ public class Datenlogger {
 		return id;
 	}
 	
-	/**
-	 * Sets the device.
-	 *
-	 * @param device the new device
-	 */
 	public void setDevice(String device){
 		this.device_parameter = device;
 	}
 	
-	/**
-	 * Sets the user.
-	 *
-	 * @param user the new user
-	 */
 	public void setUser(String user) {
 		this.user = user;
 	}
 
-	/**
-	 * Sets the password.
-	 *
-	 * @param passwort the new password
-	 */
 	public void setPassword(String password) {
 		this.password = password;
 	}
 	
-	/**
-	 * Sets the port.
-	 *
-	 * @param port the new port
-	 */
 	public void setPort(String port) {
 		this.port = port;
 	}
 
-	/**
-	 * Sets the server.
-	 *
-	 * @param server the new server
-	 */
 	public void setServer(String server) {
 		this.server = server;
 	}
 
-	/**
-	 * Sets the started.
-	 *
-	 * @param started the new started
-	 */
 	public void setStartet(boolean started) {
 		this.started = started;
 	}
 
-	/**
-	 * Sets the klammer_filter.
-	 *
-	 * @param klammer_filter the new klammer_filter
-	 */
 	public void setKlammer_filter(String klammer_filter) {
-		this.klammer_filter = klammer_filter;
+		this.brackets_filter = klammer_filter;
 	}
 
-	/**
-	 * Sets the regex_filter.
-	 *
-	 * @param regex_filter the new regex_filter
-	 */
 	public void setRegex_filter(String regex_filter) {
 		this.regex_filter = regex_filter;
 	}
 
-	/**
-	 * Sets the location.
-	 *
-	 * @param location the new location
-	 */
 	public void setLocation(String location) {
 		this.location = location;
 	}
@@ -371,21 +329,21 @@ public class Datenlogger {
 			@Override
 			public void onMessagePacketReceived(
 					de.uniluebeck.itm.devicedriver.event.MessageEvent<MessagePacket> event) {
-				String erhaltene_Daten = new String(event.getMessage().getContent());
-				erhaltene_Daten = erhaltene_Daten.substring(1);
-				//Filtern
+				String incoming_data = new String(event.getMessage().getContent());
+				incoming_data = incoming_data.substring(1);
+				//Filter
 				boolean matches = false;
 				
-				//(Datentyp, Beginn, Wert)-Filter
-				if(klammer_filter != null){
-					matches = parse_klammer_filter(klammer_filter).apply(erhaltene_Daten);
+				//(Datatype, Begin, Value)-Filter
+				if(brackets_filter != null){
+					matches = parse_klammer_filter(brackets_filter).apply(incoming_data);
 				}
 					
-				//Reg-Ausdruck-Filter
+				//Reg-Ex-Filter
 				//"[+-]?[0-9]+"
 				if(regex_filter != null){
 					Pattern p = Pattern.compile(regex_filter);
-					Matcher m = p.matcher(erhaltene_Daten);
+					Matcher m = p.matcher(incoming_data);
 					matches = m.matches();
 				}	
 				
@@ -397,7 +355,7 @@ public class Datenlogger {
 							if(output.equals("1")){
 								writer.write(StringUtils.toHexString(bytes));
 							}else{
-								writer.write(erhaltene_Daten);
+								writer.write(incoming_data);
 								writer.write("\n");
 							}
 						} catch (IOException e) {
@@ -411,12 +369,12 @@ public class Datenlogger {
 							System.out.println(StringUtils.toHexString(bytes));
 						}
 						else{
-							System.out.println(erhaltene_Daten);
+							System.out.println(incoming_data);
 						}
 					}
 				}
 				else{
-					System.out.println("Daten wurden gefiltert.");
+					System.out.println("Data was filtered.");
 				}
 			}
 		};
@@ -436,7 +394,7 @@ public class Datenlogger {
 			}
 		}
 		started = false;
-		System.out.println("\nDas Loggen des Knotens wurde beendet.");
+		System.out.println("\nEnd of Logging.");
 	}
 	
 	/**
@@ -445,8 +403,8 @@ public class Datenlogger {
 	 * @param filter the filter
 	 */
 	public void add_klammer_filter(String filter){
-		klammer_filter = klammer_filter + filter;
-		System.out.println("Filter hinzugefuegt");
+		brackets_filter = brackets_filter + filter;
+		System.out.println("Filter added");
 	}
 	
 	/**
@@ -456,7 +414,7 @@ public class Datenlogger {
 	 */
 	public void add_regex_filter(String filter){
 		regex_filter = regex_filter + filter;
-		System.out.println("Filter hinzugefuegt");
+		System.out.println("Filter added");
 	}
 	
 	/**
