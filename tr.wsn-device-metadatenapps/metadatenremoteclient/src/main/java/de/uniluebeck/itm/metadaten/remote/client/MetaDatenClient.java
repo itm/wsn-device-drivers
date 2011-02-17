@@ -32,14 +32,14 @@ import de.uniluebeck.itm.metadaten.remote.entity.Node;
 import de.uniluebeck.itm.metadaten.remote.metadataclienthelper.NodeHelper;
 
 /**
- * 
- * @author tora
- * 
+ *  @author babel
+ * MetaDatenClient gives the possibility to search fpr node in
+ * the Metadata-Directory
  */
-
 public class MetaDatenClient implements MetaDataClient {
 
 	private static Log log = LogFactory.getLog(MetaDatenClient.class);
+	private static List<Node> nodelist = new ArrayList<Node>();
 
 	PeerInfo server = null;
 	PeerInfo client = null;
@@ -47,11 +47,10 @@ public class MetaDatenClient implements MetaDataClient {
 	DuplexTcpClientBootstrap bootstrap = null;
 	RpcClientChannel channel = null;
 	Operations.Interface operationService = null;
-	private static List<Node> nodelist = new ArrayList<Node>();
 	private String password = "testPassword";
 	private String user = "frager";
 	private ConfigData config = new ConfigData();
-
+	
 	public MetaDatenClient() {
 		//Laden der Config
 		config = loadConfig("config.xml");
@@ -63,8 +62,8 @@ public class MetaDatenClient implements MetaDataClient {
 		client = new PeerInfo(config.getUsername() + "client", config.getClientport());
 	};
 
-	public MetaDatenClient(String userName, String passWord, String uri,
-			int port, int clientPort) throws Exception {
+	public MetaDatenClient(final String userName, final String passWord, final String uri,
+			final int port, final int clientPort) throws Exception {
 
 		// setzen der Server-Infos
 		server = new PeerInfo(uri, port);
@@ -82,7 +81,7 @@ public class MetaDatenClient implements MetaDataClient {
 	 * @param passWord
 	 * @param callback
 	 */
-	private void connect(String userName, String passWord) {
+	private void connect(final String userName, final String passWord) {
 
 		// setzen des Thread-Pools
 		System.out.println("Setzen des Threadpools CLient");
@@ -102,7 +101,7 @@ public class MetaDatenClient implements MetaDataClient {
 		// herstellen der Verbindung zum Server
 		try {
 			channel = bootstrap.peerWith(server);
-		} catch (IOException e1) {
+		} catch (final IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
@@ -119,13 +118,13 @@ public class MetaDatenClient implements MetaDataClient {
 				.setPassword(passWord).build();
 		// erzeugen eines synchronen RPC-Objekts fuer den connect
 		log.info("Connect to server");
-		BlockingInterface blockOperationService = Operations
+		final BlockingInterface blockOperationService = Operations
 				.newBlockingStub(channel);
 		try {
 			log.info("sync RPC-call");
 			// sync RPC-Aufruf
 			blockOperationService.connect(controller, id);
-		} catch (ServiceException e) {
+		} catch (final ServiceException e) {
 			e.printStackTrace();
 		}
 		log.info("Connection to server established");
@@ -134,10 +133,10 @@ public class MetaDatenClient implements MetaDataClient {
 	/**
 	 * Disconnect the Channel to the server
 	 */
-	public void disconnect(String userName, String passWord) {
+	public void disconnect(final String userName, final String passWord) {
 		final RpcController controller = channel.newRpcController();
 
-		BlockingInterface syncOperationService = Operations
+		final BlockingInterface syncOperationService = Operations
 				.newBlockingStub(channel);
 		// // aufbauen eines Identification-Packets
 		Identification id = Identification.newBuilder().setUsername(userName)
@@ -148,7 +147,7 @@ public class MetaDatenClient implements MetaDataClient {
 			log.info("DisConnect from Server: " + server);
 			// channel = bootstrap.peerWith(server);
 			syncOperationService.disconnect(controller, id);
-		} catch (ServiceException e) {
+		} catch (final ServiceException e) {
 			log.error("Fehler beim disconnect" + e.getMessage());
 		}
 		channel.close();
@@ -161,35 +160,36 @@ public class MetaDatenClient implements MetaDataClient {
 	 * Load of ConfigData needed for communication
 	 * 
 	 * @param fileurl
-	 * @return
+	 * @return the config data for the client loaded from the given
+	 * url.
 	 */
-	public ConfigData loadConfig(String fileurl) {
-		ConfigData config = new ConfigData();
-		Serializer serializer = new Persister();
+	public ConfigData loadConfig(final String fileurl) {
+		ConfigData configlocal = new ConfigData();
+		final Serializer serializer = new Persister();
 		URI fileuri = null;
 		try {
 			fileuri = ClassLoader.getSystemResource(fileurl).toURI();
-		} catch (URISyntaxException e) {
+		} catch (final URISyntaxException e) {
 			log.error(e.getMessage());
 		}
-		File source = new File(fileuri);
+		final File source = new File(fileuri);
 		log.debug("ConfigFile:" + source.getName() + source.toString());
 		try {
-			config = serializer
+			configlocal = serializer
 					.read(de.uniluebeck.itm.metadaten.remote.entity.ConfigData.class,
 							source);
 			// serializer.read(ConfigData, source);
-		} catch (Exception e1) {
+		} catch (final Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		log.debug("Config:" + config.getPassword() + config.getServerIP()
-				+ config.getUsername() + config.getServerPort()
-				+ config.getClientport());
-		return config;
+		log.debug("Config:" + configlocal.getPassword() + configlocal.getServerIP()
+				+ configlocal.getUsername() + configlocal.getServerPort()
+				+ configlocal.getClientport());
+		return configlocal;
 	}
 
-	public List<Node> search(Node queryexmpl, String query) throws Exception {
+	public List<Node> search(final Node queryexmpl, final String query) throws Exception {
 
 		this.connect(user, password);
 		// erzeugen eines Controllers fuer diese Operation

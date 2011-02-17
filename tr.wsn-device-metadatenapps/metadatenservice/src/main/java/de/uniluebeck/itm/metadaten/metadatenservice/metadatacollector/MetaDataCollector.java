@@ -1,5 +1,6 @@
 package de.uniluebeck.itm.metadaten.metadatenservice.metadatacollector;
 
+import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -26,7 +27,7 @@ public class MetaDataCollector implements IMetaDataCollector {
 	 * .itm.devicedriver.Device, java.lang.String)
 	 */
 	@Override
-	public Node collect(String wisemlFile) {
+	public Node collect(File wisemlFile) {
 		Node node = new Node();
 		node.setId(knotenId);
 		try {

@@ -6,13 +6,18 @@ import java.util.List;
 import de.uniluebeck.itm.metadaten.remote.entity.Node;
 
 
-
+/**
+ * 
+ * @author tora
+ * just a test implementation
+ *
+ */
 public class Testtreiber {
 
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		// TODO Authentifizierung fuer die Abfrage von Daten?
 		
 		MetaDataClient mclient=null;

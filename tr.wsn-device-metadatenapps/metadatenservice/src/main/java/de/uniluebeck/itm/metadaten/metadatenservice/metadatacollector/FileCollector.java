@@ -19,9 +19,9 @@ public class FileCollector {
 	 Node node = new Node();
 	 node.setId("Test281220101");
 	 //TODO Classloader
-	 FileCollector collect = new FileCollector();
-		node= collect.filecollect(node, "sensors.xml");
-		System.out.println("Ergbenis"+ node.getDescription());
+//	 FileCollector collect = new FileCollector();
+//		node= collect.filecollect(node, "sensors.xml");
+//		System.out.println("Ergbenis"+ node.getDescription());
 	}
 
 	/**
@@ -31,17 +31,10 @@ public class FileCollector {
 	 * @param wisemlurl
 	 * @return node - with supplemented information
 	 */
-	public Node filecollect(Node node, String wisemlurl) {
+	public Node filecollect(Node node, File source) {
 		// TODO Informationen Ueberschreiben? IP zum Beispiel ja eher nicht
 		Serializer serializer = new Persister();
 		Setup setup = new Setup();
-		URI fileuri = null;
-		try {
-			fileuri = ClassLoader.getSystemResource(wisemlurl).toURI();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
-		File source = new File(fileuri);
 		try {
 			setup = serializer.read(de.uniluebeck.itm.metadaten.metadatenservice.entity.Setup.class,
 					source);

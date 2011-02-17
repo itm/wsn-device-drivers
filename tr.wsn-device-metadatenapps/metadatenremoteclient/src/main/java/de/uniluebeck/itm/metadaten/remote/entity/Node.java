@@ -10,6 +10,7 @@ import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 
 /**
+ * @author babel
  * A Node Entity is described.
  */
 
@@ -63,7 +64,7 @@ public class Node {
 	 * @param capList
 	 */
 	public Node(String identity, String microcontoller, String IpAddress,
-			String description, List capList) {
+			String description, List<Capability> capList) {
 		setId(identity);
 		setMicrocontroller(microcontoller);
 		setIpAddress(IpAddress);
@@ -123,7 +124,7 @@ public class Node {
 	public List<Capability> getCapabilityList() {
 //		return capabilityList;
 		if (null == capabilityList) {
-	        return Collections.EMPTY_LIST;
+	        return Collections.emptyList();
 	    }
 	    return Collections.unmodifiableList(capabilityList);
 	}

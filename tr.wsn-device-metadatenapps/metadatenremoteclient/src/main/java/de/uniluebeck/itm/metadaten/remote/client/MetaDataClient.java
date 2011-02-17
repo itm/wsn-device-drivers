@@ -4,8 +4,11 @@ import java.util.List;
 
 import de.uniluebeck.itm.metadaten.remote.entity.Node;
 
-
-
+/**
+ * @author babel
+ * The MetaDataClient can be used for searching for nodes in the 
+ * MetaDataDirectory
+ */
 public interface MetaDataClient {
 	
 	/**
@@ -13,7 +16,7 @@ public interface MetaDataClient {
 	 * Uebergebenen Sql-Query.
 	 * @param queryexmpl
 	 * @param query
-	 * @return
+	 * @return Delivers a List of nodes matching the search conditions
 	 * @throws Exception
 	 */
 	public List<Node> search (Node queryexmpl, String query) throws Exception;

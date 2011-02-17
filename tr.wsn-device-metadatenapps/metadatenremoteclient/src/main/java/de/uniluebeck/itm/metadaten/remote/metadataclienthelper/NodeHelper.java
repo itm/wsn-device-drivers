@@ -7,7 +7,12 @@ import de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.NODE;
 import de.uniluebeck.itm.metadaten.remote.entity.Capability;
 import de.uniluebeck.itm.metadaten.remote.entity.Node;
-
+/**
+ * 
+ * @author babel
+ * Delivers some methods for transforming transport objects to local objects
+ *
+ */
 public class NodeHelper {
 
 	/**
@@ -16,7 +21,7 @@ public class NodeHelper {
 	 * @param node
 	 * @return NODE
 	 */
-	public NODE changetoNODE(Node node) {
+	public NODE changetoNODE(final Node node) {
 		NODE.Builder nodebuilder = NODE.newBuilder();
 		if (!(node.getId().isEmpty())) {
 			nodebuilder.setKnotenid(node.getId());
@@ -52,10 +57,10 @@ public class NodeHelper {
 	}
 
 	/**
-	 * Wandelt NODE-Message zur Uebertragung per RPC in WiseMlNode um
+	 * Transforms NODE-Message for RPC-transmission to Local node
 	 * 
 	 * @param nodein
-	 * @return
+	 * @return Returns a Local node
 	 */
 	public Node changeToNode(NODE nodein) {
 

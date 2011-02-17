@@ -6,6 +6,7 @@ package de.uniluebeck.itm.metadaten.remote.entity;
 import org.simpleframework.xml.Element;
 
 /**
+ * @author babel
  * This class describes a capability entity, required in wiseml file.
  */
 //@Entity
@@ -46,7 +47,7 @@ public class Capability {
 	 * @param unit
 	 * @param defaults
 	 */
-	public Capability(String name, String dtype, String unit, int defaults) {
+	public Capability(final String name, final String dtype, final String unit, final int defaults) {
 		setName(name);
 		setDatatype(dtype);
 		setUnit(unit);
@@ -67,14 +68,14 @@ public class Capability {
 	 * 
 	 * @param name
 	 */
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
 	/**
 	 * Get the datatype entity.
 	 * 
-	 * @return
+	 * @return datatype of the capability
 	 */
 	public String getDatatype() {
 		return this.datatype;
@@ -85,12 +86,13 @@ public class Capability {
 	 * 
 	 * @param datatype
 	 */
-	public void setDatatype(String datatype) {
+	public void setDatatype(final String datatype) {
 		this.datatype = datatype;
 	}
 
 	/**
 	 * Get the NodeID
+	 * @return returns the corresponding parentnode
 	 */
 	public Node getNode() {
 		return this.parentnode;
@@ -101,7 +103,7 @@ public class Capability {
 	 * 
 	 * @param nodeId
 	 */
-	public void setNode(Node node) {
+	public void setNode(final Node node) {
 		this.parentnode = node;
 	}
 
@@ -119,7 +121,7 @@ public class Capability {
 	 * 
 	 * @param unit
 	 */
-	public void setUnit(String unit) {
+	public void setUnit(final String unit) {
 		this.unit = unit;
 	}
 
@@ -137,7 +139,7 @@ public class Capability {
 	 * 
 	 * @param capDefault
 	 */
-	public void setCapDefault(int capDefault) {
+	public void setCapDefault(final int capDefault) {
 		this.defaults = capDefault;
 	}
 
@@ -145,7 +147,7 @@ public class Capability {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(final Integer id) {
 		this.id = id;
 	}
 

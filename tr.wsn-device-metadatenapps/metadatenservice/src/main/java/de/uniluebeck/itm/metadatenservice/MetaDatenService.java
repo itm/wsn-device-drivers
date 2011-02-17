@@ -25,11 +25,13 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService {
 	private ClientStub stub = null;
 	private List<IMetaDataCollector> collector = new ArrayList<IMetaDataCollector>();
 	ConfigData config = new ConfigData();
+	File sensors;
 	Timer timer = new Timer();
 	int count = 0;
 
-	MetaDatenService() throws Exception {
-		config = loadConfig("config.xml");
+	public MetaDatenService(File configpath, File sensors) throws Exception {
+		this.sensors = sensors;
+		config = loadConfig(configpath);
 		log.info("remove old data of this TCP-Server");
 		stub = new ClientStub(config.getUsername(), config.getPassword(),
 				config.getServerIP(), config.getServerPort(),
@@ -51,9 +53,9 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService {
 		log.info("Refreshrun connected");
 		for (int i = 0; i < collector.size(); i++) {
 			System.out.println("Node with ID: "
-					+ collector.get(i).collect(config.getWisemlFile()).getId()
+					+ collector.get(i).collect(sensors).getId()
 					+ "refreshed in directory");
-			refreshNodeSync(collector.get(i).collect(config.getWisemlFile()));
+			refreshNodeSync(collector.get(i).collect(sensors));
 		}
 		stub.disconnect();
 	}
@@ -75,16 +77,9 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService {
 	 * @param fileurl
 	 * @return
 	 */
-	public ConfigData loadConfig(String fileurl) {
+	public ConfigData loadConfig(File source) {
 		ConfigData config = new ConfigData();
 		Serializer serializer = new Persister();
-		URI fileuri = null;
-		try {
-			fileuri = ClassLoader.getSystemResource(fileurl).toURI();
-		} catch (URISyntaxException e) {
-			log.error(e.getMessage());
-		}
-		File source = new File(fileuri);
 		log.debug("ConfigFile:" + source.getName() + source.toString());
 		try {
 			config = serializer

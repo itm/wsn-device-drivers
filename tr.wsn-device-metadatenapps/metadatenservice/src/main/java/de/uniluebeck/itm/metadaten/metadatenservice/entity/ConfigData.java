@@ -14,9 +14,7 @@ public class ConfigData {
 	private String username;
 	@Element
 	private String password;
-	@Element (required=false)
-	private String wisemlFile;
-	
+
 	public String getServerIP() {
 		return serverIP;
 	}
@@ -46,11 +44,5 @@ public class ConfigData {
 	}
 	public void setPassword(String password) {
 		this.password = password;
-	}
-	public String getWisemlFile() {
-		return wisemlFile;
-	}
-	public void setWisemlFile(String wisemlFile) {
-		this.wisemlFile = wisemlFile;
 	}
 }
