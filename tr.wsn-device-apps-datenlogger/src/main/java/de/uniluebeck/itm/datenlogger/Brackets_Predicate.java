@@ -13,7 +13,7 @@ public class Brackets_Predicate implements Predicate<CharSequence>, Serializable
 	private static final long serialVersionUID = 775543062421891927L;
 	
 	/** The filter. */
-	String filter;
+	private String filter;
 
 	/**
 	 * Instantiates a new brackets_ predicate.
