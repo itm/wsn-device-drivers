@@ -39,10 +39,10 @@ public class Main {
 		// add options for FlashLoader
 		options.addOption("port", true, "port");
 		options.addOption("server", true, "server");
-		options.addOption("file", true, "Enth�lt das Programm, das geflasht werden soll");
+		options.addOption("file", true, "Enthaelt das Programm, das geflasht werden soll");
 		options.addOption("user", true, "Benutzername, um sich auf einen Server zu verbinden");
 		options.addOption("passwd", true, "Passwort, um sich auf einen Server zu verbinden");
-		options.addOption("device", true, "Art des Ger�ts im lokalen Fall: isense, jennec, telosb oder pacemate");
+		options.addOption("device", true, "Art des Geraets im lokalen Fall: jennec, telosb oder pacemate");
 
 		// for help statement
 		HelpFormatter formatter = new HelpFormatter();
