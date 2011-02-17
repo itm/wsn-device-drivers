@@ -50,6 +50,7 @@ import de.uniluebeck.itm.devicedriver.mockdevice.MockDevice;
 import de.uniluebeck.itm.devicedriver.pacemate.PacemateDevice;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection;
 import de.uniluebeck.itm.devicedriver.telosb.TelosbDevice;
+import de.uniluebeck.itm.devicedriver.telosb.TelosbSerialPortConnection;
 import de.uniluebeck.itm.tcp.client.RemoteConnection;
 import de.uniluebeck.itm.tcp.client.RemoteDevice;
 
@@ -258,7 +259,7 @@ public class Datenlogger {
 						}
 					});
 					device = new JennicDevice(jennic_connection);	
-					jennic_connection.connect("COM19");	
+					jennic_connection.connect(port);	
 				}
 				else if(device_parameter.equals("pacemate")){
 					SerialPortConnection pacemate_connection = new iSenseSerialPortConnection();
@@ -271,10 +272,10 @@ public class Datenlogger {
 						}
 					});
 					device = new PacemateDevice(pacemate_connection);	
-					pacemate_connection.connect("COM19");
+					pacemate_connection.connect(port);
 				}
 				else if(device_parameter.equals("telosb")){
-					SerialPortConnection telosb_connection = new iSenseSerialPortConnection();
+					SerialPortConnection telosb_connection = new TelosbSerialPortConnection();
 					telosb_connection.addListener(new ConnectionListener() {
 						@Override
 						public void onConnectionChange(ConnectionEvent event) {
@@ -284,7 +285,7 @@ public class Datenlogger {
 						}
 					});
 					device = new TelosbDevice(telosb_connection);	
-					telosb_connection.connect("COM19");
+					telosb_connection.connect(port);
 				}
 			}
 			connection.connect("MockPort");
@@ -313,7 +314,7 @@ public class Datenlogger {
 			@Override
 			public void onMessagePacketReceived(
 					de.uniluebeck.itm.devicedriver.event.MessageEvent<MessagePacket> event) {
-				String erhaltene_Daten = new String(event.getMessage().getContent());
+				String erhaltene_Daten = StringUtils.toASCIIString(event.getMessage().getContent());
 				//Filtern
 				boolean matches = false;
 				
