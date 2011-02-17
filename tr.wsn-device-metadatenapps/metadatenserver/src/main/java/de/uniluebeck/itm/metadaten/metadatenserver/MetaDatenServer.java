@@ -353,10 +353,7 @@ public class MetaDatenServer {
 					.newBuilder();
 			if (!(request.getQueryMs() == null)) {
 				Node node = nhelper.changeToNode(request.getQueryMs());
-				  Node getnode = new Node();
-			        getnode.setId("280120101");
-//			        getnode.setMicrocontroller("mic1");
-			        getnode.setIpAddress("192.168.0.101");
+				 node = nhelper.removeEmptyStrings(node);
 				log.info("Im request querynode if" + node.getId() + node.getIpAddress() + "null?" + node.getMicrocontroller());
 				System.out.println("querynode size" + getfromDB.getNodes(node).size());
 				resultlist = getfromDB.getNodes(node);

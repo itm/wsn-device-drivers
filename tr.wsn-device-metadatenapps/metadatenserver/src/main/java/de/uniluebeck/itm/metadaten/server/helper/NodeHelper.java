@@ -82,5 +82,46 @@ public class NodeHelper {
 
 		return nodeout;
 	}
-
+	public Node removeEmptyStrings(Node nodein) {
+		Node nodeout = new Node();
+		List <Capability> resultlist = new ArrayList<Capability>();
+		if (!(nodein.getId().matches(""))){
+			nodeout.setId(nodein.getId());
+		}
+		if (!(nodein.getDescription().matches(""))) {
+			nodeout.setDescription(nodein.getDescription());
+		}
+		if ((!(nodein.getIpAddress().matches("")))) {
+			nodeout.setIpAddress(nodein.getIpAddress());
+		}
+		if (!(nodein.getMicrocontroller().matches(""))) {
+			nodeout.setMicrocontroller(nodein.getMicrocontroller());
+		}
+		if ((!(nodein.getPort() == 0))) {
+			nodeout.setPort(nodein.getPort());
+		}
+		for (Capability cap : nodein.getCapabilityList()) {
+			resultlist.add(removeEmptyStrings(cap));
+		}
+		nodeout.setCapabilityList(resultlist);
+		return nodeout;
+	}
+	/**
+	 * Removes empty strings from the given Capability
+	 * @param cap
+	 * @return
+	 */
+	private Capability removeEmptyStrings (Capability cap){
+		Capability capout = new Capability();
+		if (!(cap.getDatatype().matches(""))) {
+			capout.setDatatype(cap.getDatatype());
+		}
+		if (!(cap.getName().matches(""))) {
+			capout.setName(cap.getName());
+		}
+		if (!(cap.getUnit().matches(""))) {
+			capout.setUnit(cap.getUnit());
+		}
+		return capout;
+	}
 }
