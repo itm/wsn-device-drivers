@@ -21,7 +21,7 @@ import org.simpleframework.xml.Element;
 
 @Entity
 @Table(catalog = "metadaten_db", name = "node")
-public class Node implements Key {
+public class Node{
 
 	@Id
 	@Attribute
@@ -146,11 +146,5 @@ public class Node implements Key {
 
 	public void setCapabilityList(List<Capability> capabilityList) {
 		this.capabilityList = capabilityList;
-	}
-
-	@Override
-	public Object getKey() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }
