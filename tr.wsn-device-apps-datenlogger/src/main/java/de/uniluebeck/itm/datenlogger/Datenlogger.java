@@ -61,18 +61,18 @@ import de.uniluebeck.itm.tcp.client.RemoteDevice;
  */
 public class Datenlogger {
 	
-	String port;
-	String server;
-	String klammer_filter;
-	String regex_filter;
-	String location;
-	String user;
-	String password;
-	boolean started = false;
-	String device_parameter;
-	DeviceAsync deviceAsync;
-	MessagePacketListener listener;
-	FileWriter writer;
+	private String port;
+	private String server;
+	private String klammer_filter;
+	private String regex_filter;
+	private String location;
+	private String user;
+	private String password;
+	private boolean started = false;
+	private String device_parameter;
+	private DeviceAsync deviceAsync;
+	private MessagePacketListener listener;
+	private FileWriter writer;
 	private String output;
 	private String id;
 
@@ -82,6 +82,155 @@ public class Datenlogger {
 	public Datenlogger(){
 	}
 
+	public String getPort(){
+		return port;
+	}
+	
+	public boolean isStarted() {
+		return started;
+	}
+
+	public void setStarted(boolean started) {
+		this.started = started;
+	}
+
+	public String getServer() {
+		return server;
+	}
+
+	public String getKlammer_filter() {
+		return klammer_filter;
+	}
+
+	public String getRegex_filter() {
+		return regex_filter;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public String getUser() {
+		return user;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public String getDevice_parameter() {
+		return device_parameter;
+	}
+
+	public DeviceAsync getDeviceAsync() {
+		return deviceAsync;
+	}
+
+	public MessagePacketListener getListener() {
+		return listener;
+	}
+
+	public FileWriter getWriter() {
+		return writer;
+	}
+
+	public String getOutput() {
+		return output;
+	}
+
+	public String getId() {
+		return id;
+	}
+	
+	/**
+	 * Sets the device.
+	 *
+	 * @param device the new device
+	 */
+	public void setDevice(String device){
+		this.device_parameter = device;
+	}
+	
+	/**
+	 * Sets the user.
+	 *
+	 * @param user the new user
+	 */
+	public void setUser(String user) {
+		this.user = user;
+	}
+
+	/**
+	 * Sets the password.
+	 *
+	 * @param passwort the new password
+	 */
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
+	/**
+	 * Sets the port.
+	 *
+	 * @param port the new port
+	 */
+	public void setPort(String port) {
+		this.port = port;
+	}
+
+	/**
+	 * Sets the server.
+	 *
+	 * @param server the new server
+	 */
+	public void setServer(String server) {
+		this.server = server;
+	}
+
+	/**
+	 * Sets the started.
+	 *
+	 * @param started the new started
+	 */
+	public void setStartet(boolean started) {
+		this.started = started;
+	}
+
+	/**
+	 * Sets the klammer_filter.
+	 *
+	 * @param klammer_filter the new klammer_filter
+	 */
+	public void setKlammer_filter(String klammer_filter) {
+		this.klammer_filter = klammer_filter;
+	}
+
+	/**
+	 * Sets the regex_filter.
+	 *
+	 * @param regex_filter the new regex_filter
+	 */
+	public void setRegex_filter(String regex_filter) {
+		this.regex_filter = regex_filter;
+	}
+
+	/**
+	 * Sets the location.
+	 *
+	 * @param location the new location
+	 */
+	public void setLocation(String location) {
+		this.location = location;
+	}
+	
+	public void setOutput(String output) {
+		this.output = output;
+	}
+	
+	public void setId(String id) {
+		this.id = id;
+	}
+	
 	/**
 	 * Parse_klammer_filter.
 	 *
@@ -136,103 +285,6 @@ public class Datenlogger {
 		return ausdruecke.pop();
 	}
 	
-	/**
-	 * Sets the device.
-	 *
-	 * @param device the new device
-	 */
-	public void setDevice(String device){
-		this.device_parameter = device;
-	}
-	
-	/**
-	 * Sets the user.
-	 *
-	 * @param user the new user
-	 */
-	public void setUser(String user) {
-		this.user = user;
-	}
-
-	/**
-	 * Sets the password.
-	 *
-	 * @param passwort the new password
-	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	
-	/**
-	 * Sets the port.
-	 *
-	 * @param port the new port
-	 */
-	public void setPort(String port) {
-		this.port = port;
-	}
-
-	/**
-	 * Sets the server.
-	 *
-	 * @param server the new server
-	 */
-	public void setServer(String server) {
-		this.server = server;
-	}
-
-	/**
-	 * Checks if is gestartet.
-	 *
-	 * @return true, if is gestartet
-	 */
-	public boolean isGestartet() {
-		return started;
-	}
-
-	/**
-	 * Sets the started.
-	 *
-	 * @param started the new started
-	 */
-	public void setStartet(boolean started) {
-		this.started = started;
-	}
-
-	/**
-	 * Sets the klammer_filter.
-	 *
-	 * @param klammer_filter the new klammer_filter
-	 */
-	public void setKlammer_filter(String klammer_filter) {
-		this.klammer_filter = klammer_filter;
-	}
-
-	/**
-	 * Sets the regex_filter.
-	 *
-	 * @param regex_filter the new regex_filter
-	 */
-	public void setRegex_filter(String regex_filter) {
-		this.regex_filter = regex_filter;
-	}
-
-	/**
-	 * Sets the location.
-	 *
-	 * @param location the new location
-	 */
-	public void setLocation(String location) {
-		this.location = location;
-	}
-	
-	public void setOutput(String output) {
-		this.output = output;
-	}
-	
-	public void setId(String id) {
-		this.id = id;
-	}
 
 	/**
 	 * Connect.
