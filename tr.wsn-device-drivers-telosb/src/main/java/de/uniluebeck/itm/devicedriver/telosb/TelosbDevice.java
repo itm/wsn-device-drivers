@@ -1,9 +1,17 @@
 package de.uniluebeck.itm.devicedriver.telosb;
 
+import java.io.IOException;
+
 import de.uniluebeck.itm.devicedriver.ConnectionEvent;
 import de.uniluebeck.itm.devicedriver.Monitor;
 import de.uniluebeck.itm.devicedriver.Programable;
+import de.uniluebeck.itm.devicedriver.exception.FlashProgramFailedException;
+import de.uniluebeck.itm.devicedriver.exception.InvalidChecksumException;
 import de.uniluebeck.itm.devicedriver.exception.NotImplementedException;
+import de.uniluebeck.itm.devicedriver.exception.ReceivedIncorrectDataException;
+import de.uniluebeck.itm.devicedriver.exception.TimeoutException;
+import de.uniluebeck.itm.devicedriver.exception.UnexpectedResponseException;
+import de.uniluebeck.itm.devicedriver.operation.AbstractReadFlashOperation;
 import de.uniluebeck.itm.devicedriver.operation.AbstractWriteMacAddressOperation;
 import de.uniluebeck.itm.devicedriver.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.devicedriver.operation.EraseFlashOperation;
@@ -71,14 +79,18 @@ public class TelosbDevice extends AbstractSerialPortDevice implements Programabl
 
 	@Override
 	public WriteFlashOperation createWriteFlashOperation() {
-		final WriteFlashOperation operation = new TelosbWriteFlashOperation(bsl);
+		final WriteFlashOperation operation = new TelosbWriteFlashOperation(this);
 		monitorState(operation);
 		return operation;
 	}
 
 	public ReadFlashOperation createReadFlashOperation() {
-		final ReadFlashOperation operation = new TelosbReadFlashOperation(bsl);
-		monitorState(operation);
+		final ReadFlashOperation operation = new AbstractReadFlashOperation() {
+			@Override
+			public byte[] execute(Monitor monitor) throws Exception {
+				throw new NotImplementedException("readFlash is not available");
+			}
+		};
 		return operation;
 	}
 
@@ -94,7 +106,7 @@ public class TelosbDevice extends AbstractSerialPortDevice implements Programabl
 		final WriteMacAddressOperation operation = new AbstractWriteMacAddressOperation() {
 			@Override
 			public Void execute(Monitor monitor) throws Exception {
-				throw new NotImplementedException("Write mac address is not available.");
+				throw new NotImplementedException("writeMacAddress is not available");
 			}
 		};
 		return operation;
@@ -120,6 +132,29 @@ public class TelosbDevice extends AbstractSerialPortDevice implements Programabl
 		
 		if (event.isConnected()) {
 			bsl = new BSLTelosb(this);
+		}
+	}
+	
+	public void writeFlash(int address, byte[] bytes, int len) throws IOException, FlashProgramFailedException, TimeoutException, InvalidChecksumException, ReceivedIncorrectDataException, UnexpectedResponseException {
+		// verify if block range is erased
+		if (!bsl.verifyBlock(address, len, null)) {
+			throw new FlashProgramFailedException("Failed to program flash: block range is not erased completely");
+		}
+
+		// execute bsl patch first(only for BSL version <=1.10)
+		bsl.executeBSLPatch();
+
+		// program block
+		bsl.sendBSLCommand(BSLTelosb.CMD_TXDATABLOCK, address, len, bytes, false);
+
+		byte[] reply = bsl.receiveBSLReply();
+		if ((reply[0] & 0xFF) != BSLTelosb.DATA_ACK) {
+			throw new FlashProgramFailedException("Failed to program flash: received no ACK");
+		}
+
+		// verify programmed block
+		if (!bsl.verifyBlock(address, len, bytes)) {
+			throw new FlashProgramFailedException("Failed to program flash: verification of written data failed");
 		}
 	}
 }

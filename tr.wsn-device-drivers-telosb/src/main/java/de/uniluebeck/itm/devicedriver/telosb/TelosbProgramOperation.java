@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import de.uniluebeck.itm.devicedriver.Monitor;
 import de.uniluebeck.itm.devicedriver.exception.FlashProgramFailedException;
 import de.uniluebeck.itm.devicedriver.operation.AbstractProgramOperation;
-import de.uniluebeck.itm.devicedriver.operation.WriteFlashOperation;
 import de.uniluebeck.itm.devicedriver.util.BinDataBlock;
 
 public class TelosbProgramOperation extends AbstractProgramOperation {
@@ -27,20 +26,17 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 	private void program(final Monitor monitor) throws Exception {
 		final TelosbBinData binData = new TelosbBinData(getBinaryImage());
 		// Write program to flash
-		log.info("Starting to write program into flash memory...");
+		log.debug("Starting to write program into flash memory...");
 		
-		BinDataBlock block;
 		int blockCount = 0;
 		int bytesProgrammed = 0;
-		while ((block = binData.getNextBlock()) != null) {
+		for (BinDataBlock block = binData.getNextBlock(); block != null; block = binData.getNextBlock()) {
 			final byte[] data = block.getData();
 			final int address = block.getAddress();
 			
 			// write single block
 			try {
-				final WriteFlashOperation writeFlashOperation = device.createWriteFlashOperation();
-				writeFlashOperation.setData(address, data, data.length);
-				executeSubOperation(writeFlashOperation, monitor);
+				device.writeFlash(address, data, data.length);
 			} catch (FlashProgramFailedException e) {
 				log.error(String.format("Error writing %d bytes into flash " +
 						"at address 0x%02x: " + e + ". Programmed " + bytesProgrammed + " bytes so far. "+
@@ -55,7 +51,7 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 			bytesProgrammed += data.length;
 			
 			// Notify listeners of the new status
-			final float progress = ((float) blockCount) / ((float) binData.getBlockCount());
+			final float progress = ((float) blockCount) / binData.getBlockCount();
 			monitor.onProgressChange(progress);
 			
 			// Return if the user has requested to cancel this operation
@@ -64,12 +60,7 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 			}
 			
 			blockCount++;
-		}
-		
-		// reset device (exit boot loader)
-		log.info("Resetting device.");
-		executeSubOperation(device.createResetOperation(), monitor);
-		
+		}		
 		log.debug("Programmed " + bytesProgrammed + " bytes.");
 	}
 	
@@ -81,6 +72,7 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 		} finally {
 			executeSubOperation(device.createLeaveProgramModeOperation(), monitor);
 		}
+		executeSubOperation(device.createResetOperation(), monitor);
 		return null;
 	}
 

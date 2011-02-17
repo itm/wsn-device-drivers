@@ -3,7 +3,6 @@ package de.uniluebeck.itm.devicedriver.mockdevice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.devicedriver.Connection;
 import de.uniluebeck.itm.devicedriver.ConnectionEvent;
 import de.uniluebeck.itm.devicedriver.ConnectionListener;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
@@ -33,14 +32,31 @@ public class MockDevice extends ObserverableDevice<MockConnection> implements Mo
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(MockDevice.class);
 	
+	/**
+	 * The configuration of this mock device.
+	 */
 	private final MockConfiguration configuration;
 	
+	/**
+	 * The connection for this device.
+	 */
 	private final MockConnection connection;
 	
+	/**
+	 * Constructor.
+	 * 
+	 * @param connection The connection for this device.
+	 */
 	public MockDevice(final MockConnection connection) {
 		this(new MockConfiguration(), connection);
 	}
 	
+	/**
+	 * Constructor.
+	 * 
+	 * @param configuration The connection for this device.
+	 * @param connection An alternative configuration for the mock device.
+	 */
 	public MockDevice(final MockConfiguration configuration, final MockConnection connection) {
 		this.configuration = configuration;
 		this.connection = connection;
@@ -54,6 +70,11 @@ public class MockDevice extends ObserverableDevice<MockConnection> implements Mo
 		onConnectionChanged(connection.isConnected());
 	}
 	
+	/**
+	 * Register or deregister the mock listener on connection change.
+	 * 
+	 * @param connected The connection state.
+	 */
 	private void onConnectionChanged(final boolean connected) {
 		if (connected) {
 			connection.addMockListener(this);
