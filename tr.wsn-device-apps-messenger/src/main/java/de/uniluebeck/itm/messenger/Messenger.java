@@ -19,6 +19,7 @@ import de.uniluebeck.itm.devicedriver.mockdevice.MockDevice;
 import de.uniluebeck.itm.devicedriver.pacemate.PacemateDevice;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection;
 import de.uniluebeck.itm.devicedriver.telosb.TelosbDevice;
+import de.uniluebeck.itm.devicedriver.telosb.TelosbSerialPortConnection;
 import de.uniluebeck.itm.tcp.client.RemoteConnection;
 import de.uniluebeck.itm.tcp.client.RemoteDevice;
 
@@ -33,6 +34,7 @@ public class Messenger {
 	String password;
 	String device_parameter;
 	DeviceAsync deviceAsync;
+	private String id;
 
 	boolean gesendet = false; 		//for the test-class
 	
@@ -88,6 +90,10 @@ public class Messenger {
 		this.server = server;
 	}
 	
+	public void setId(String id) {
+		this.id = id;
+	}
+	
 	/**
 	 * Connect.
 	 */
@@ -95,7 +101,7 @@ public class Messenger {
 		if(server != null){
 			final RemoteConnection connection = new RemoteConnection();
 			
-			connection.connect("1:"+user+":"+password+"@localhost:8080");
+			connection.connect(id+":"+user+":"+password+"@"+server+":"+port);
 			System.out.println("Connected");
 			
 			deviceAsync = new RemoteDevice(connection);
@@ -117,7 +123,7 @@ public class Messenger {
 						}
 					});
 					device = new JennicDevice(jennic_connection);	
-					jennic_connection.connect("COM19");	
+					jennic_connection.connect(port);	
 				}
 				else if(device_parameter.equals("pacemate")){
 					SerialPortConnection pacemate_connection = new iSenseSerialPortConnection();
@@ -130,10 +136,10 @@ public class Messenger {
 						}
 					});
 					device = new PacemateDevice(pacemate_connection);	
-					pacemate_connection.connect("COM19");
+					pacemate_connection.connect(port);
 				}
 				else if(device_parameter.equals("telosb")){
-					SerialPortConnection telosb_connection = new iSenseSerialPortConnection();
+					SerialPortConnection telosb_connection = new TelosbSerialPortConnection();
 					telosb_connection.addListener(new ConnectionListener() {
 						@Override
 						public void onConnectionChange(ConnectionEvent event) {
@@ -143,7 +149,7 @@ public class Messenger {
 						}
 					});
 					device = new TelosbDevice(telosb_connection);	
-					telosb_connection.connect("COM19");
+					telosb_connection.connect(port);
 				}
 			}
 			deviceAsync = new QueuedDeviceAsync(queue, device);
@@ -186,7 +192,7 @@ public class Messenger {
 
 			@Override
 			public void onSuccess(Void result) {
-				System.out.println("Message send");
+				System.out.println("Message sent");
 				gesendet = true;		//fuer den Test
 				System.exit(0);
 			}
