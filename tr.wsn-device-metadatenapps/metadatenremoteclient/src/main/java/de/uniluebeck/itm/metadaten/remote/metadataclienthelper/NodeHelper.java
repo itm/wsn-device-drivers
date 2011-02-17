@@ -27,11 +27,11 @@ public class NodeHelper {
 		if (!(node.getIpAddress() == null)) {
 			nodebuilder.setIp(node.getIpAddress());
 		}
-		if (!(node.getDescription()==null)) {
+		if (!(node.getDescription() == null)) {
 			nodebuilder.setDescription(node.getDescription());
 		}
 		;
-		if (!(node.getMicrocontroller()== null)) {
+		if (!(node.getMicrocontroller() == null)) {
 			nodebuilder.setMicrocontroller(node.getMicrocontroller());
 		}
 		;
@@ -45,7 +45,7 @@ public class NodeHelper {
 				capbuilder.setParentnodeId(node.getId());
 				nodebuilder.addCapabilityList(capbuilder.build());
 			}
-		
+
 		}
 
 		return nodebuilder.build();
