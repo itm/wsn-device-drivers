@@ -320,6 +320,7 @@ public class Datenlogger {
 			public void onMessagePacketReceived(
 					de.uniluebeck.itm.devicedriver.event.MessageEvent<MessagePacket> event) {
 				String erhaltene_Daten = new String(event.getMessage().getContent());
+				erhaltene_Daten = erhaltene_Daten.substring(1);
 				//Filtern
 				boolean matches = false;
 				
