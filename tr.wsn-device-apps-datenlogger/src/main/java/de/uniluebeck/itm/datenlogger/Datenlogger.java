@@ -341,12 +341,11 @@ public class Datenlogger {
 						try {
 							byte[] bytes = event.getMessage().getContent();
 							
-							if(output.equals("0")){
+							if(output.equals("1")){
+								writer.write(StringUtils.toHexString(bytes));
+							}else{
 								writer.write(erhaltene_Daten);
 								writer.write("\n");
-							}
-							else if(output.equals("1")){
-								writer.write(StringUtils.toHexString(bytes));
 							}
 						} catch (IOException e) {
 							e.printStackTrace();
@@ -355,11 +354,11 @@ public class Datenlogger {
 					else{
 						byte[] bytes = event.getMessage().getContent();
 						
-						if(output.equals("0")){
-							System.out.println("Message: " + erhaltene_Daten);
-						}
-						else if(output.equals("1")){
+						if(output.equals("1")){
 							System.out.println(StringUtils.toHexString(bytes));
+						}
+						else{
+							System.out.println(erhaltene_Daten);
 						}
 					}
 				}
