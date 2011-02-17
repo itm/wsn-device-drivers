@@ -218,7 +218,7 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService {
 		// public void onProgressChange(float fraction) {
 		//
 		// }});
-		log.info("und wieder neu connecten");
+//		log.info("und wieder neu connecten");
 	}
 
 	@Override

@@ -5,12 +5,15 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import de.uniluebeck.itm.metadaten.entities.Node;
 import de.uniluebeck.itm.persistence.DatabaseToStore;
 import de.uniluebeck.itm.persistence.StoreToDatabase;
 
 public class CleanRepository extends TimerTask {
-	
+	private static Log log = LogFactory.getLog(CleanRepository.class);
 	Timer timer = new Timer();
 	int overageperiod;
 	public CleanRepository(){
@@ -28,6 +31,7 @@ public class CleanRepository extends TimerTask {
         Date olddate = new Date();
         olddate.setTime(olddate.getTime()-overageperiod);
         node.setTimestamp(actDate);
+        log.info("Deleting old nodes");
         try {
         	storeDB.deleteoldNodes(olddate);
 		} catch (Exception e) {

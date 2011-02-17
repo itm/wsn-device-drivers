@@ -108,7 +108,6 @@ public class DatabaseToStore {
         }
         transaction.commit();
         session.close();
-        System.out.println("SIZE from DB" +  resultlist.size());
         return returnnode;
     }
     public List<Node> getoldNodes(Date timestamp){
