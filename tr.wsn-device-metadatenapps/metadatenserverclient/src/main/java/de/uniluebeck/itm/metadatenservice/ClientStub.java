@@ -18,10 +18,9 @@ import com.googlecode.protobuf.pro.duplex.client.DuplexTcpClientBootstrap;
 import com.googlecode.protobuf.pro.duplex.execute.ThreadPoolCallExecutor;
 
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Identification;
-import de.uniluebeck.itm.metadaten.files.MetaDataService.NODE;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Operations;
-import de.uniluebeck.itm.metadaten.files.MetaDataService.ServerIP;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Operations.BlockingInterface;
+import de.uniluebeck.itm.metadaten.files.MetaDataService.ServerIP;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.VOID;
 import de.uniluebeck.itm.metadaten.metadatenservice.entity.ConfigData;
 import de.uniluebeck.itm.metadaten.metadatenservice.entity.Node;
@@ -49,7 +48,6 @@ public class ClientStub {
 
 	ClientStub(String userName, String passWord, String uri, int port,
 			int clientPort) throws Exception {
-
 		// setzen der Server-Infos
 		server = new PeerInfo(uri, port);
 		// setzen der Client-Infos fuer Reverse RPC

@@ -5,8 +5,7 @@ import java.util.concurrent.Executors;
 
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 
-import com.google.protobuf.RpcCallback;
-import com.google.protobuf.RpcController;
+
 import com.googlecode.protobuf.pro.duplex.PeerInfo;
 import com.googlecode.protobuf.pro.duplex.RpcClientChannel;
 import com.googlecode.protobuf.pro.duplex.client.DuplexTcpClientBootstrap;

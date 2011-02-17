@@ -357,10 +357,9 @@ public class MetaDatenServer {
 			        getnode.setId("280120101");
 //			        getnode.setMicrocontroller("mic1");
 			        getnode.setIpAddress("192.168.0.101");
-			        nhelper.changeToNode(nhelper.changetoNODE(getnode));
 				log.info("Im request querynode if" + node.getId() + node.getIpAddress() + "null?" + node.getMicrocontroller());
 				System.out.println("querynode size" + getfromDB.getNodes(node).size());
-				resultlist = getfromDB.getNodes(getnode);
+				resultlist = getfromDB.getNodes(node);
 				System.err.println("Größe der Anwtort" +resultlist.size());
 			}
 			if (!(request.getQueryString() == null)) {

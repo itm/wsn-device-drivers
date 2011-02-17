@@ -29,11 +29,8 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService {
 	int count = 0;
 
 	MetaDatenService() throws Exception {
-
-		// ConfigData config =
-		// loadConfig("C:\\uni hl\\workspace\\fallstudie2010\\sources\\tr.wsn-device-metadatenapps\\metadatenserverclient\\src\\main\\java\\resources\\config.xml");
 		config = loadConfig("config.xml");
-		log.info("Entfernen aller alten Daten");
+		log.info("remove old data of this TCP-Server");
 		stub = new ClientStub(config.getUsername(), config.getPassword(),
 				config.getServerIP(), config.getServerPort(),
 				config.getClientport());
@@ -48,14 +45,14 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService {
 
 	@Override
 	public void run() {
-		log.info("Start Refreshrun: connecten");
+		log.info("start refreshrun - connect");
 		count = 0;
 		stub.connect(config.getUsername(), config.getPassword());
 		log.info("Refreshrun connected");
 		for (int i = 0; i < collector.size(); i++) {
-			System.out.println("Der Knoten mit ID: "
+			System.out.println("Node with ID: "
 					+ collector.get(i).collect(config.getWisemlFile()).getId()
-					+ "wird dem Verzeichnis hinzugefügt");
+					+ "refreshed in directory");
 			refreshNodeSync(collector.get(i).collect(config.getWisemlFile()));
 		}
 		stub.disconnect();
