@@ -50,10 +50,6 @@
 				<version>2.0</version>
 			</dependency>
 			<!-- Kommunikation-->
-			<dependency>
-				<groupId>com.google.protobuf</groupId>
-				<artifactId>protobuf-java</artifactId>
-			</dependency>
 				<dependency>
 				<groupId>org.jboss.netty</groupId>
 				<artifactId>netty</artifactId>
