@@ -58,7 +58,9 @@
         <module name="DefaultComesLast"/>
         <module name="UnnecessaryParentheses"/>
         <module name="JavadocMethod"/>
-        <module name="JavadocType"/>
+        <module name="JavadocType">
+        	<property name="authorFormat" value="\S"/>
+        </module>
         <module name="JavadocVariable"/>
     </module>
 </module>

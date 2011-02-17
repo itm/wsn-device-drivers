@@ -7,7 +7,6 @@ import de.uniluebeck.itm.devicedriver.Monitor;
 import de.uniluebeck.itm.devicedriver.Programable;
 import de.uniluebeck.itm.devicedriver.exception.FlashProgramFailedException;
 import de.uniluebeck.itm.devicedriver.exception.InvalidChecksumException;
-import de.uniluebeck.itm.devicedriver.exception.NotImplementedException;
 import de.uniluebeck.itm.devicedriver.exception.ReceivedIncorrectDataException;
 import de.uniluebeck.itm.devicedriver.exception.TimeoutException;
 import de.uniluebeck.itm.devicedriver.exception.UnexpectedResponseException;
@@ -88,7 +87,7 @@ public class TelosbDevice extends AbstractSerialPortDevice implements Programabl
 		final ReadFlashOperation operation = new AbstractReadFlashOperation() {
 			@Override
 			public byte[] execute(Monitor monitor) throws Exception {
-				throw new NotImplementedException("readFlash is not available");
+				throw new UnsupportedOperationException("readFlash is not available");
 			}
 		};
 		return operation;
@@ -106,7 +105,7 @@ public class TelosbDevice extends AbstractSerialPortDevice implements Programabl
 		final WriteMacAddressOperation operation = new AbstractWriteMacAddressOperation() {
 			@Override
 			public Void execute(Monitor monitor) throws Exception {
-				throw new NotImplementedException("writeMacAddress is not available");
+				throw new UnsupportedOperationException("writeMacAddress is not available");
 			}
 		};
 		return operation;

@@ -25,65 +25,75 @@ package de.uniluebeck.itm.devicedriver.exception;
 
 
 /**
-*
-*/
-@SuppressWarnings("serial")
+ * Exception is thrown when a response occured that was not expected from the device.
+ * 
+ * @author Malte Legenhausen
+ */
 public class UnexpectedResponseException extends Exception {
-	private int expectedType = -1;
-
-	private int receivedType = -1;
+	
+	/**
+	 * Serial UID.
+	 */
+	private static final long serialVersionUID = 2887597938554231905L;
 
 	/**
-	 * Constructor
-	 * 
-	 * @param expectedType
-	 * @param receivedType
+	 * The expected response from the device.
 	 */
-	public UnexpectedResponseException(final int expectedType, final int receivedType) {
-		this.expectedType = expectedType;
-		this.expectedType = receivedType;
+	private int expectedResponse = -1;
+
+	/**
+	 * The unexpected received response from the device.
+	 */
+	private int receivedResponse = -1;
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param expectedResponse The expected response from the device.
+	 * @param receivedResponse The received response from the device.
+	 */
+	public UnexpectedResponseException(final int expectedResponse, final int receivedResponse) {
+		this.expectedResponse = expectedResponse;
+		this.expectedResponse = receivedResponse;
 	}
 	
 	/**
-	 * @param msg
-	 * @param expectedType
-	 * @param receivedType
+	 * Constructor.
+	 * 
+	 * @param message A exception description
+	 * @param expectedResponse The expected response from the device.
+	 * @param receivedResponse The received response from the device.
 	 */
-	public UnexpectedResponseException(final String msg, final int expectedType, final int receivedType) {
-		super(msg);
-		this.expectedType = expectedType;
-		this.expectedType = receivedType;
+	public UnexpectedResponseException(final String message, final int expectedResponse, final int receivedResponse) {
+		super(message);
+		this.expectedResponse = expectedResponse;
+		this.expectedResponse = receivedResponse;
 	}
 
 	/**
-	 * Returns the expected type
+	 * Returns the expected response.
 	 * 
-	 * @return
+	 * @return The expected response.
 	 */
-	public int getExpectedType() {
-		return expectedType;
+	public int getExpectedResponse() {
+		return expectedResponse;
 	}
 
 	/**
-	 * Returns the receivedType
+	 * Returns the received response.
 	 * 
-	 * @return
+	 * @return The received response.
 	 */
-	public int getReceivedType() {
-		return receivedType;
+	public int getReceivedResponse() {
+		return receivedResponse;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Throwable#getMessage()
-	 */
 	@Override
 	public String getMessage() {
-		if (expectedType == -1 || receivedType == -1) {
+		if (expectedResponse == -1 || receivedResponse == -1) {
 			return getMessage();
 		} else {
-			return String.format(getMessage() + " Expected type: 0x%02x, received type: 0x%02x.",expectedType, receivedType);
+			return String.format(getMessage() + " Expected type: 0x%02x, received type: 0x%02x.",expectedResponse, receivedResponse);
 		}
 	}
-	
-	
 }

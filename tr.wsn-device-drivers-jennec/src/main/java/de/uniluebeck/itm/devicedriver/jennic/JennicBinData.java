@@ -117,7 +117,7 @@ public class JennicBinData {
 	 * @return
 	 */
 	public void insertHeader(byte[] b) throws ProgramChipMismatchException {
-		ChipType chipType = getChipType();
+		final ChipType chipType = getChipType();
 		int headerStart = chipType.getHeaderStart();
 		int headerLength = chipType.getHeaderLength();
 

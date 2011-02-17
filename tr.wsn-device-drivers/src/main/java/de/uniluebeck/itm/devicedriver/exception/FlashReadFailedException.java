@@ -25,31 +25,31 @@ package de.uniluebeck.itm.devicedriver.exception;
 
 
 /**
+ * Exception that is thrown when the read of the flash storage failed.
+ * 
  * @author Friedemann Wesner
- *
+ * @author Malte Legenhausen
  */
-@SuppressWarnings("serial")
 public class FlashReadFailedException extends Exception {
-	private String msg;
 	
 	/**
-	 * 
+	 * Serial UID.
+	 */
+	private static final long serialVersionUID = -4408577919878733282L;
+
+	/**
+	 * Constructor.
 	 */
 	public FlashReadFailedException() {
 		
 	}
 	
 	/**
-	 * @param msg
+	 * Constructor.
+	 * 
+	 * @param message A description for the exception.
 	 */
-	public FlashReadFailedException(final String msg) {
-		this.msg = msg;
+	public FlashReadFailedException(final String message) {
+		super(message);
 	}
-
-	@Override
-	public String getMessage() {
-		return msg;
-	}
-	
-	
 }

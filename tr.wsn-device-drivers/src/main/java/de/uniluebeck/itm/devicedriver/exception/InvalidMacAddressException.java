@@ -25,25 +25,35 @@ package de.uniluebeck.itm.devicedriver.exception;
 
 
 /**
-*
-*/
-@SuppressWarnings("serial")
-public class InvalidMacAddressException extends Exception {
+ * This exception is thrown when an invalid mac address was tryed to created.
+ * 
+ * @author Malte Legenhausen
+ */
+public class InvalidMacAddressException extends Exception {	
+	
+	/**
+	 * Serial UID.
+	 */
+	private static final long serialVersionUID = -4543026873578392297L;
+	
+	/**
+	 * The invalid mac address.
+	 */
 	private final byte[] address;
 
 	/**
-	 * Constructor
+	 * Constructor.
 	 * 
-	 * @param address
+	 * @param address The invalid mac address.
 	 */
 	public InvalidMacAddressException(final byte[] address) {
 		this.address = address;
 	}
 
 	/**
-	 * returns the MacAddress
+	 * Returns the MacAddress
 	 * 
-	 * @return
+	 * @return The invalid mac address.
 	 */
 	public byte[] getMacAddress() {
 		return address;

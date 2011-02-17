@@ -25,12 +25,17 @@ package de.uniluebeck.itm.devicedriver.exception;
 
 
 /**
-*
-*/
-@SuppressWarnings("serial")
+ * Exception that is thrown when the flashing of an image failed.
+ * 
+ * @author Malte Legenhausen
+ */
 public class FlashProgramFailedException extends Exception {
-	private String msg = null;
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2271514942585431751L;
+
 	/**
 	 * 
 	 */
@@ -39,17 +44,11 @@ public class FlashProgramFailedException extends Exception {
 	}
 	
 	/**
-	 * @param msg
+	 * Constructor.
+	 * 
+	 * @param message A description of the exception.
 	 */
-	public FlashProgramFailedException(final String msg) {
-		this.msg = msg;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Throwable#getMessage()
-	 */
-	@Override
-	public String getMessage() {
-		return msg;
+	public FlashProgramFailedException(final String message) {
+		super(message);
 	}
 }

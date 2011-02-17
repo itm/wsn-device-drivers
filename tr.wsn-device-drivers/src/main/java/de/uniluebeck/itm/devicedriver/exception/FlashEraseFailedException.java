@@ -25,31 +25,30 @@ package de.uniluebeck.itm.devicedriver.exception;
 
 
 /**
-*
-*/
-@SuppressWarnings("serial")
+ * Exception that is thrown when the erase of the flash failed.
+ * 
+ * @author Malte Legenhausen
+ */
 public class FlashEraseFailedException extends Exception {
-	private String msg = null;
 	
 	/**
-	 * 
+	 * Serial UID.
+	 */
+	private static final long serialVersionUID = -3379086215268638369L;
+
+	/**
+	 * Constructor.
 	 */
 	public FlashEraseFailedException() {
 		
 	}
 	
 	/**
-	 * @param msg
+	 * Constructor.
+	 * 
+	 * @param message A description about the exception.
 	 */
-	public FlashEraseFailedException(final String msg) {
-		this.msg = msg;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Throwable#getMessage()
-	 */
-	@Override
-	public String getMessage() {
-		return msg;
+	public FlashEraseFailedException(final String message) {
+		super(message);
 	}
 }

@@ -25,23 +25,30 @@ package de.uniluebeck.itm.devicedriver.exception;
 
 
 /**
-*
-*/
-@SuppressWarnings("serial")
+ * Exception is thrown when a timeout occured between the driver and the device.
+ * 
+ * @author Malte Legenhausen
+ */
 public class TimeoutException extends Exception {
 	
 	/**
-	 * Constructor
+	 * Serial UID.
+	 */
+	private static final long serialVersionUID = -5289262327911684384L;
+
+	/**
+	 * Constructor.
 	 */
 	public TimeoutException() {
 		super();
 	}
 	
 	/**
-	 * Constructor
-	 * @param msg
+	 * Constructor.
+	 * 
+	 * @param message A exception description.
 	 */
-	public TimeoutException(final String msg) {
-		super(msg);
+	public TimeoutException(final String message) {
+		super(message);
 	}
 }

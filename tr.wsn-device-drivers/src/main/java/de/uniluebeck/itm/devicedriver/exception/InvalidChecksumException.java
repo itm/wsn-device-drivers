@@ -25,21 +25,27 @@ package de.uniluebeck.itm.devicedriver.exception;
 
 
 /**
-*
-*/
-@SuppressWarnings("serial")
+ * Exception that is thrown when a checksum mismatch has occured.
+ * 
+ * @author Malte Legenhausen
+ */
 public class InvalidChecksumException extends Exception {
 	
 	/**
-	 * Constructor
+	 * Serial UID.
+	 */
+	private static final long serialVersionUID = 461135913258507536L;
+
+	/**
+	 * Constructor.
 	 */
 	public InvalidChecksumException() {
 		
 	}
 	
 	/**
-	 * Constructor
-	 * @param msg
+	 * Constructor.
+	 * @param msg A description of the exception.
 	 */
 	public InvalidChecksumException(final String msg) {
 		super(msg);

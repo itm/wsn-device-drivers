@@ -25,24 +25,30 @@ package de.uniluebeck.itm.devicedriver.exception;
 
 
 /**
+ * Exception is thrown when incorrect data was received.
+ * 
  * @author Friedemann Wesner
- *
  */
-@SuppressWarnings("serial")
 public class ReceivedIncorrectDataException extends Exception {
 	
 	/**
-	 * Constructor
+	 * Serial UID.
+	 */
+	private static final long serialVersionUID = 8288670063253164576L;
+
+	/**
+	 * Constructor.
 	 */
 	public ReceivedIncorrectDataException() {
 		super();
 	}
 	
 	/**
-	 * Constructor
-	 * @param msg
+	 * Constructor.
+	 * 
+	 * @param message A exception description.
 	 */
-	public ReceivedIncorrectDataException(final String msg) {
-		super(msg);
+	public ReceivedIncorrectDataException(final String message) {
+		super(message);
 	}
 }

@@ -26,18 +26,33 @@ package de.uniluebeck.itm.devicedriver.exception;
 import de.uniluebeck.itm.devicedriver.ChipType;
 
 /**
+ * Exception is thrown when the <code>ChipType</code> of a given image differs from the device.
  * 
  * @author dp
- * 
+ * @author Malte Legenhausen
  */
-@SuppressWarnings("serial")
 public class ProgramChipMismatchException extends Exception {
 
+	/**
+	 * Serial UID.
+	 */
+	private static final long serialVersionUID = 3948904812841038294L;
+
+	/**
+	 * The <code>ChipType</code> of the device.
+	 */
 	private final ChipType chipType;
 
+	/**
+	 * The <code>ChipType</code> of the image.
+	 */
 	private final ChipType programType;
 
 	/**
+	 * Constructor.
+	 * 
+	 * @param chipType The <code>ChipType</code> of the device.
+	 * @param programType The <code>ChipType</code> of the image.
 	 */
 	public ProgramChipMismatchException(final ChipType chipType, final ChipType programType) {
 		this.chipType = chipType;
@@ -45,12 +60,18 @@ public class ProgramChipMismatchException extends Exception {
 	}
 
 	/**
+	 * Getter for the <code>ChipType</code> of the device.
+	 * 
+	 * @return The <code>ChipType</code> instance.
 	 */
 	public ChipType getChipType() {
 		return chipType;
 	}
 
 	/**
+	 * Getter for the <code>ChipType</code> of the image.
+	 * 
+	 * @return The <code>ChipType</code> instance.
 	 */
 	public ChipType getProgramType() {
 		return programType;
