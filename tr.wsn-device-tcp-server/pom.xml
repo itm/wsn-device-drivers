@@ -16,6 +16,11 @@
 
 	<dependencies>
 		<dependency>
+				<groupId>org.simpleframework</groupId>
+				<artifactId>simple-xml</artifactId>
+				<version>1.8</version>
+		</dependency>
+		<dependency>
 			<groupId>com.google.protobuf</groupId>
 			<artifactId>protobuf-java</artifactId>
 		</dependency>
@@ -69,6 +74,13 @@
 			<groupId>de.uniluebeck.itm</groupId>
 			<artifactId>tr.util</artifactId>
 			<version>0.5.5</version>
+		</dependency>
+		<dependency>
+			<groupId>de.uniluebeck.itm.metadaten</groupId>
+			<artifactId>metadatenservice</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<type>jar</type>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 	

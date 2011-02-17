@@ -1,6 +1,7 @@
 package de.uniluebeck.itm.tcp.server.utils;
 
 
+import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +16,10 @@ import de.uniluebeck.itm.devicedriver.Device;
 import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.QueuedDeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.thread.PausableExecutorOperationQueue;
+import de.uniluebeck.itm.metadaten.metadatenservice.metadatacollector.IMetaDataCollector;
+import de.uniluebeck.itm.metadaten.metadatenservice.metadatacollector.MetaDataCollector;
+import de.uniluebeck.itm.metadatenservice.MetaDatenService;
+import de.uniluebeck.itm.metadatenservice.iMetaDatenService;
 import de.uniluebeck.itm.tcp.jaxdevices.JaxbDevice;
 import de.uniluebeck.itm.tcp.jaxdevices.JaxbDeviceList;
 
@@ -43,19 +48,22 @@ public class ServerDevice {
 	public void createServerDevices() {
 		
 		try {
+			iMetaDatenService mclient = new MetaDatenService (new File("config.xml"),new File("sensors.xml"));
 			JaxbDeviceList list = readDevices();
 			
 			for(JaxbDevice jaxDevice : list.getJaxbDevice()){
 				String key = createID(jaxDevice);
 				Connection con = createConnection(jaxDevice.getConnectionType());
 				Device device = createDevice(jaxDevice.getDeviceType(), con);
+				IMetaDataCollector mcollector = new MetaDataCollector (device, key);
+				mclient.addMetaDataCollector(mcollector);
 				con.connect(jaxDevice.getPort());
 				DeviceAsync deviceAsync = createDeviceAsync(device);
 				DeviceList.put(key, deviceAsync);
 				
 			}
 			
-		} catch (JAXBException e) {
+		} catch (Exception e) {
 			log.error(e.getMessage());
 			System.exit(-1);
 		}
