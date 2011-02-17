@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.devicedriver.AbstractConnection;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection;
+import de.uniluebeck.itm.devicedriver.util.JarUtil;
 
 public class TelosbSerialPortConnection extends AbstractConnection implements SerialPortConnection {
 
@@ -39,6 +40,11 @@ public class TelosbSerialPortConnection extends AbstractConnection implements Se
 	private static final int BSL_PARITY_NONE = SerialPort.PARITY_NONE;
 	
 	private SerialPort serialPort;
+	
+	static {
+		log.debug("Loading rxtxSerial from jar file");
+		JarUtil.loadLibrary("rxtxSerial");
+	}
 
 	@Override
 	public void connect(String uri) {
