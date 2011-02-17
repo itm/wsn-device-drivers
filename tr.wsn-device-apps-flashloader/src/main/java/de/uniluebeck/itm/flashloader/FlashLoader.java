@@ -1,5 +1,10 @@
 package de.uniluebeck.itm.flashloader;
 
+import java.io.File;
+import java.io.IOException;
+
+import com.google.common.io.Files;
+
 import de.uniluebeck.itm.devicedriver.ConnectionEvent;
 import de.uniluebeck.itm.devicedriver.ConnectionListener;
 import de.uniluebeck.itm.devicedriver.Device;
@@ -21,6 +26,7 @@ import de.uniluebeck.itm.devicedriver.mockdevice.MockDevice;
 import de.uniluebeck.itm.devicedriver.pacemate.PacemateDevice;
 import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection;
 import de.uniluebeck.itm.devicedriver.telosb.TelosbDevice;
+import de.uniluebeck.itm.devicedriver.telosb.TelosbSerialPortConnection;
 import de.uniluebeck.itm.tcp.client.RemoteConnection;
 import de.uniluebeck.itm.tcp.client.RemoteDevice;
 
@@ -35,7 +41,8 @@ public class FlashLoader {
 	String password;
 	String device_parameter;
 	DeviceAsync deviceAsync;
-	
+	private String id;
+
 	boolean flashed = false;	//for the test-class
 	String current_mac_adress;		//for the test-class
 	boolean geresetet = false;		//for the test-class
@@ -92,6 +99,10 @@ public class FlashLoader {
 		this.server = server;
 	}
 	
+	public void setId(String id) {
+		this.id = id;
+	}
+	
 	/**
 	 * Connect.
 	 */
@@ -99,7 +110,7 @@ public class FlashLoader {
 		if(server != null){
 			final RemoteConnection connection = new RemoteConnection();
 			
-			connection.connect("1:"+user+":"+password+"@localhost:8080");
+			connection.connect(id+":"+user+":"+password+"@"+server+":"+port);
 			System.out.println("Connected");
 			
 			deviceAsync = new RemoteDevice(connection);
@@ -121,7 +132,7 @@ public class FlashLoader {
 						}
 					});
 					device = new JennicDevice(jennic_connection);	
-					jennic_connection.connect("COM19");	
+					jennic_connection.connect(port);	
 				}
 				else if(device_parameter.equals("pacemate")){
 					SerialPortConnection pacemate_connection = new iSenseSerialPortConnection();
@@ -134,10 +145,10 @@ public class FlashLoader {
 						}
 					});
 					device = new PacemateDevice(pacemate_connection);	
-					pacemate_connection.connect("COM19");
+					pacemate_connection.connect(port);
 				}
 				else if(device_parameter.equals("telosb")){
-					SerialPortConnection telosb_connection = new iSenseSerialPortConnection();
+					SerialPortConnection telosb_connection = new TelosbSerialPortConnection();
 					telosb_connection.addListener(new ConnectionListener() {
 						@Override
 						public void onConnectionChange(ConnectionEvent event) {
@@ -147,7 +158,7 @@ public class FlashLoader {
 						}
 					});
 					device = new TelosbDevice(telosb_connection);	
-					telosb_connection.connect("COM19");
+					telosb_connection.connect(port);
 				}
 			}
 			deviceAsync = new QueuedDeviceAsync(queue, device);
@@ -173,7 +184,19 @@ public class FlashLoader {
 		System.out.println("File: " + file);
 		
 		System.out.println("Program the Device");
-		deviceAsync.program(file.getBytes(), 100000, new AsyncAdapter<Void>() {
+		byte[] image = null;
+		try {
+			image = Files.toByteArray(new File(file));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		deviceAsync.program(image, 1000000, new AsyncAdapter<Void>() {
+			@Override
+			public void onExecute() {
+				System.out.println("Flashing is starting now...");
+			}
+			
 			@Override
 			public void onProgressChange(float fraction) {
 				final int percent = (int) (fraction * 100.0);

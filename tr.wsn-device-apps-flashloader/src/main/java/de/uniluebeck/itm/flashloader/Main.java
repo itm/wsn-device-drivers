@@ -43,6 +43,7 @@ public class Main {
 		options.addOption("user", true, "Benutzername, um sich auf einen Server zu verbinden");
 		options.addOption("passwd", true, "Passwort, um sich auf einen Server zu verbinden");
 		options.addOption("device", true, "Art des Geraets im lokalen Fall: jennec, telosb oder pacemate");
+		options.addOption("id", true, "ID des Geraets im Remote-Fall");
 
 		// for help statement
 		HelpFormatter formatter = new HelpFormatter();
@@ -76,6 +77,7 @@ public class Main {
 				String user = cmd.getOptionValue("user");
 				String password = cmd.getOptionValue("passwd");
 				String device = cmd.getOptionValue("device");
+				String id = cmd.getOptionValue("id");
 				
 				if(server != null && (user == null || password == null)){
 					System.out.println("Bitte geben Sie Benutzername und Passwort ein, um sich zu dem Server zu verbinden.");
@@ -87,6 +89,7 @@ public class Main {
 					flashLoader.setUser(user);
 					flashLoader.setPassword(password);
 					flashLoader.setDevice(device);
+					flashLoader.setId(id);
 					flashLoader.connect();
 					flashLoader.flash(file);	
 				}
@@ -99,6 +102,7 @@ public class Main {
 				String user = cmd.getOptionValue("user");
 				String password = cmd.getOptionValue("passwd");
 				String device = cmd.getOptionValue("device");
+				String id = cmd.getOptionValue("id");
 				
 				if(server != null && (user == null || password == null)){
 					System.out.println("Bitte geben Sie Benutzername und Passwort ein, um sich zu dem Server zu verbinden.");
@@ -110,6 +114,7 @@ public class Main {
 					flashLoader.setUser(user);
 					flashLoader.setPassword(password);
 					flashLoader.setDevice(device);
+					flashLoader.setId(id);
 					flashLoader.connect();
 					flashLoader.readmac();	
 				}
@@ -122,6 +127,7 @@ public class Main {
 				String user = cmd.getOptionValue("user");
 				String password = cmd.getOptionValue("passwd");
 				String device = cmd.getOptionValue("device");
+				String id = cmd.getOptionValue("id");
 				
 				if(server != null && (user == null || password == null)){
 					System.out.println("Bitte geben Sie Benutzername und Passwort ein, um sich zu dem Server zu verbinden.");
@@ -134,6 +140,7 @@ public class Main {
 					flashLoader.setUser(user);
 					flashLoader.setPassword(password);
 					flashLoader.setDevice(device);
+					flashLoader.setId(id);
 					flashLoader.connect();
 					flashLoader.writemac(macAdresse);
 				}
@@ -146,6 +153,7 @@ public class Main {
 				String user = cmd.getOptionValue("user");
 				String password = cmd.getOptionValue("passwd");
 				String device = cmd.getOptionValue("device");
+				String id = cmd.getOptionValue("id");
 				
 				if(server != null && (user == null || password == null)){
 					System.out.println("Bitte geben Sie Benutzername und Passwort ein, um sich zu dem Server zu verbinden.");
@@ -157,6 +165,7 @@ public class Main {
 					flashLoader.setUser(user);
 					flashLoader.setPassword(password);
 					flashLoader.setDevice(device);
+					flashLoader.setId(id);
 					flashLoader.connect();
 					flashLoader.reset();	
 				}	
