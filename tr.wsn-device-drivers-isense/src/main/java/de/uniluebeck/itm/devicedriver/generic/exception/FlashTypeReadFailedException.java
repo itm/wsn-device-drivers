@@ -21,13 +21,18 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                                *
  **********************************************************************************************************************/
 
-package de.uniluebeck.itm.devicedriver.exception;
+package de.uniluebeck.itm.devicedriver.generic.exception;
 
 
 /**
-*
-*/
-@SuppressWarnings("serial")
+ * Exception is thrown when the read of the flash type failed.
+ * 
+ * @author Malte Legenhausen
+ */
 public class FlashTypeReadFailedException extends Exception {
 
+	/**
+	 * Serial UID.
+	 */
+	private static final long serialVersionUID = 4481943299898099010L;
 }

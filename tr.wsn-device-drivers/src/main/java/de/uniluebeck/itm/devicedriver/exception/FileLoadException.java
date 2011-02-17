@@ -26,7 +26,13 @@ package de.uniluebeck.itm.devicedriver.exception;
 
 /**
  * Specific Exception
+ * 
+ * @author Malte Legenhausen
  */
-@SuppressWarnings("serial")
 public class FileLoadException extends Exception {
+
+	/**
+	 * Serial UID.
+	 */
+	private static final long serialVersionUID = 8940924597941881082L;
 }

@@ -26,8 +26,13 @@ package de.uniluebeck.itm.devicedriver.exception;
 
 /**
  * Specific Exception
+ * 
+ * @author Malte Legenhausen
  */
-@SuppressWarnings("serial")
 public class ChipReadFailedException extends Exception {
 
+	/**
+	 * Serial UID.
+	 */
+	private static final long serialVersionUID = -1102234489928317052L;
 }

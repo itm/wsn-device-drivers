@@ -25,9 +25,14 @@ package de.uniluebeck.itm.devicedriver.exception;
 
 
 /**
+ * Exception is thrown when the configuration of the device flash has failed.
  *
+ * @author Malte Legenhausen
  */
-@SuppressWarnings("serial")
 public class FlashConfigurationFailedException extends Exception {
 
+	/**
+	 * Serial UID.
+	 */
+	private static final long serialVersionUID = -7835785783164239573L;
 }

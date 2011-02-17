@@ -25,9 +25,14 @@ package de.uniluebeck.itm.devicedriver.exception;
 
 
 /**
-*
-*/
-@SuppressWarnings("serial")
+ * Exception is thrown when the read of the ram failed.
+ * 
+ * @author Malte Legenhausen
+ */
 public class RamReadFailedException extends Exception {
 
+	/**
+	 * Serial UID.
+	 */
+	private static final long serialVersionUID = -2718212627018108347L;
 }
