@@ -61,7 +61,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<includeTypes>dll</includeTypes>
+							<includeTypes>dll, so</includeTypes>
 							<excludeTypes>*</excludeTypes>
 							<stripVersion>true</stripVersion>
 							<silent>true</silent>
