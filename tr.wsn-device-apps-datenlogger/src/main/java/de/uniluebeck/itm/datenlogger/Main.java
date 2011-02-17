@@ -36,6 +36,7 @@ public class Main {
 		options.addOption("passwd", true, "Passwort, um sich auf einen Server zu verbinden");
 		options.addOption("device", true, "Art des Geraets im lokalen Fall: jennec, telosb oder pacemate");
 		options.addOption("output", true, "Art der Ausgabe(Hex=1, String=0)");
+		options.addOption("id", true, "ID des Geraets im Remote-Fall");
 		
 		// for help statement
 		HelpFormatter formatter = new HelpFormatter();
@@ -74,6 +75,7 @@ public class Main {
 				String password = cmd.getOptionValue("passwd");
 				String device = cmd.getOptionValue("device");
 				String output = cmd.getOptionValue("output");
+				String id = cmd.getOptionValue("id");
 				
 				if(server != null && (user == null || password == null)){
 					System.out.println("Bitte geben Sie Benutzername und Passwort ein, um sich zu dem Server zu verbinden.");
@@ -88,6 +90,7 @@ public class Main {
 					datenlogger.setPassword(password);
 					datenlogger.setDevice(device);
 					datenlogger.setOutput(output);
+					datenlogger.setId(id);
 					datenlogger.connect();
 					datenlogger.startlog();
 				}	

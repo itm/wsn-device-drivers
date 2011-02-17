@@ -74,6 +74,7 @@ public class Datenlogger {
 	MessagePacketListener listener;
 	FileWriter writer;
 	private String output;
+	private String id;
 
 	/**
 	 * Instantiates a new datenlogger.
@@ -228,6 +229,10 @@ public class Datenlogger {
 	public void setOutput(String output) {
 		this.output = output;
 	}
+	
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	/**
 	 * Connect.
@@ -236,7 +241,7 @@ public class Datenlogger {
 		if(server != null){	
 			final RemoteConnection connection = new RemoteConnection();
 			
-			connection.connect("1:"+user+":"+password+"@localhost:8080");
+			connection.connect(id+":"+user+":"+password+"@"+server+":"+port);
 			System.out.println("Connected");
 			
 			deviceAsync = new RemoteDevice(connection);
