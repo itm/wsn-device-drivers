@@ -8,33 +8,35 @@ import org.apache.commons.cli.*;
  * The Class Main.
  */
 public class Main {
-	
+
 	/** The version. */
 	private static double version = 0.1;
-	
+
 	/**
 	 * The main method.
-	 *
-	 * @param args the arguments
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @param args
+	 *            the arguments
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static void main(String[] args) throws IOException {
 		// create Options object
-		Option help_option = new Option( "help", "print this message" );
-		Option version_option = new Option( "version", "print the version information" );
-		
+		Option help_option = new Option("help", "print this message");
+		Option version_option = new Option("version",
+				"print the version information");
+
 		Options options = new Options();
-		
+
 		options.addOption(help_option);
 		options.addOption(version_option);
 
 		// add options for Meta-Service
-		options.addOption("port", true, "port");
-		options.addOption("server", true, "server");
-		options.addOption("id", true, "Enth�lt die ID, nach der gesucht werden soll");
-		options.addOption("microcontroller", true, "Enthaelt den Mircrocontroller, nach dem gesucht werden soll");
-		options.addOption("sensor", true, "Enth�lt den Sensor, nach dem gesucht werden soll");
-		
+		options.addOption("id", true, "id to search for");
+		options.addOption("microcontroller", true,
+				"microcontroller to search for");
+		options.addOption("sensor", true, "sensor to search for");
+
 		// for help statement
 		HelpFormatter formatter = new HelpFormatter();
 
@@ -43,42 +45,39 @@ public class Main {
 		try {
 			cmd = parser.parse(options, args);
 		} catch (ParseException e) {
-			System.out.println("Diese Option gibt es nicht.");
+			System.out.println("One of these options is not registered.");
 		}
-		if(cmd != null){
-			//standard-options
-			if(cmd.hasOption("help")){
-				System.out.println("Aufrufbeispiele:");
-				System.out.println("Meta-Daten Service: metadata -id 123");
+		if (cmd != null) {
+			// standard-options
+			if (cmd.hasOption("help")) {
+				System.out.println("Example:");
+				System.out.println("Meta-Data Service: metadata -id 123");
 				System.out.println("");
 				formatter.printHelp("help", options);
 			}
-			if(cmd.hasOption("version")){
+			if (cmd.hasOption("version")) {
 				System.out.println(version);
 			}
 
-			//der Meta-Daten Service
-			if(args[0].equals("metadata")) {
-				System.out.println("starte Meta-Daten Service...");
-				
+			// der Meta-Daten Service
+			if (args[0].equals("metadata")) {
+				System.out.println("start Meta-Data Service...");
+
 				String id = cmd.getOptionValue("id");
 				String microcontroller = cmd.getOptionValue("microcontroller");
 				String sensor = cmd.getOptionValue("sensor");
-				String server = cmd.getOptionValue("server");
-				
-				OverlayClient metaService = new OverlayClient();	
-				metaService.setServer(server);
-				
-				if(id != null){
-					metaService.sucheKnotenMitID(id);
-				}
-				else if(microcontroller != null){
-					metaService.sucheKnotenMitMicrocontroller(microcontroller);
-				}
-				else if(sensor != null){
-					metaService.sucheKnotenMitSensor(sensor);
+
+				OverlayClient metaService = new OverlayClient();
+
+				if (id != null) {
+					metaService.searchDeviceWithId(id);
+				} else if (microcontroller != null) {
+					metaService
+							.searchDeviceWithMicrocontroller(microcontroller);
+				} else if (sensor != null) {
+					metaService.searchDeviceWithCapability(sensor);
 				}
 			}
-		}	
+		}
 	}
 }

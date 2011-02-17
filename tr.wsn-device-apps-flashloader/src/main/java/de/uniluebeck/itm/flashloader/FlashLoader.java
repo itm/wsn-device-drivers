@@ -34,161 +34,180 @@ import de.uniluebeck.itm.tcp.client.RemoteDevice;
  * Class FlashLoader.
  */
 public class FlashLoader {
-	
-	String port;
-	String server;
-	String user;
-	String password;
-	String device_parameter;
-	DeviceAsync deviceAsync;
+
+	private String port;
+	private String server;
+	private String user;
+	private String password;
+	private String device_parameter;
+	private DeviceAsync deviceAsync;
 	private String id;
 
-	boolean flashed = false;	//for the test-class
-	String current_mac_adress;		//for the test-class
-	boolean geresetet = false;		//for the test-class
-	
+	private boolean flashed = false; // for the test-class
+	private String current_mac_adress; // for the test-class
+	private boolean resetet = false; // for the test-class
+
 	/**
 	 * Instantiates a new flash loader.
 	 */
-	public FlashLoader(){
+	public FlashLoader() {
 
 	}
-	
+
 	/**
-	 * Sets the device.
-	 *
-	 * @param device the new device
+	 * Getter/Setter
 	 */
-	public void setDevice(String device){
+	public String getPort() {
+		return port;
+	}
+
+	public String getServer() {
+		return server;
+	}
+
+	public String getUser() {
+		return user;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public String getDevice_parameter() {
+		return device_parameter;
+	}
+
+	public DeviceAsync getDeviceAsync() {
+		return deviceAsync;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public boolean isFlashed() {
+		return flashed;
+	}
+
+	public String getCurrent_mac_adress() {
+		return current_mac_adress;
+	}
+
+	public boolean isResetet() {
+		return resetet;
+	}
+	
+	public void setDevice(String device) {
 		this.device_parameter = device;
 	}
 	
-	/**
-	 * Sets the user.
-	 *
-	 * @param user the new user
-	 */
 	public void setUser(String user) {
 		this.user = user;
 	}
-
-	/**
-	 * Sets the password.
-	 *
-	 * @param password the new password
-	 */
+	
 	public void setPassword(String password) {
 		this.password = password;
 	}
 
-	/**
-	 * Sets the port.
-	 *
-	 * @param port the new port
-	 */
 	public void setPort(String port) {
 		this.port = port;
 	}
 
-	/**
-	 * Sets the server.
-	 *
-	 * @param server the new server
-	 */
 	public void setServer(String server) {
 		this.server = server;
 	}
-	
+
 	public void setId(String id) {
 		this.id = id;
 	}
-	
+
 	/**
 	 * Connect.
 	 */
-	public void connect(){
-		if(server != null){
+	public void connect() {
+		if (server != null) {
 			final RemoteConnection connection = new RemoteConnection();
-			
-			connection.connect(id+":"+user+":"+password+"@"+server+":"+port);
+
+			connection.connect(id + ":" + user + ":" + password + "@" + server
+					+ ":" + port);
 			System.out.println("Connected");
-			
+
 			deviceAsync = new RemoteDevice(connection);
-		}
-		else{
+		} else {
 			final OperationQueue queue = new PausableExecutorOperationQueue();
 			final MockConnection connection = new MockConnection();
 			Device device = new MockDevice(connection);
-			
-			if(device_parameter != null){
-				if(device_parameter.equals("jennec")){
+
+			if (device_parameter != null) {
+				if (device_parameter.equals("jennec")) {
 					SerialPortConnection jennic_connection = new iSenseSerialPortConnection();
 					jennic_connection.addListener(new ConnectionListener() {
 						@Override
 						public void onConnectionChange(ConnectionEvent event) {
 							if (event.isConnected()) {
-								System.out.println("Connection established with port " + event.getUri());
-							}				
+								System.out
+										.println("Connection established with port "
+												+ event.getUri());
+							}
 						}
 					});
-					device = new JennicDevice(jennic_connection);	
-					jennic_connection.connect(port);	
-				}
-				else if(device_parameter.equals("pacemate")){
+					device = new JennicDevice(jennic_connection);
+					jennic_connection.connect(port);
+				} else if (device_parameter.equals("pacemate")) {
 					SerialPortConnection pacemate_connection = new iSenseSerialPortConnection();
 					pacemate_connection.addListener(new ConnectionListener() {
 						@Override
 						public void onConnectionChange(ConnectionEvent event) {
 							if (event.isConnected()) {
-								System.out.println("Connection established with port " + event.getUri());
-							}				
+								System.out
+										.println("Connection established with port "
+												+ event.getUri());
+							}
 						}
 					});
-					device = new PacemateDevice(pacemate_connection);	
+					device = new PacemateDevice(pacemate_connection);
 					pacemate_connection.connect(port);
-				}
-				else if(device_parameter.equals("telosb")){
+				} else if (device_parameter.equals("telosb")) {
 					SerialPortConnection telosb_connection = new TelosbSerialPortConnection();
 					telosb_connection.addListener(new ConnectionListener() {
 						@Override
 						public void onConnectionChange(ConnectionEvent event) {
 							if (event.isConnected()) {
-								System.out.println("Connection established with port " + event.getUri());
-							}				
+								System.out
+										.println("Connection established with port "
+												+ event.getUri());
+							}
 						}
 					});
-					device = new TelosbDevice(telosb_connection);	
+					device = new TelosbDevice(telosb_connection);
 					telosb_connection.connect(port);
 				}
 			}
 			deviceAsync = new QueuedDeviceAsync(queue, device);
-			
+
 			System.out.println("Message packet listener added");
 			deviceAsync.addListener(new MessagePacketListener() {
-				public void onMessagePacketReceived(MessageEvent<MessagePacket> event) {
-					System.out.println("Message: " + new String(event.getMessage().getContent()));
+				public void onMessagePacketReceived(
+						MessageEvent<MessagePacket> event) {
+					System.out.println("Message: "
+							+ new String(event.getMessage().getContent()));
 				}
 			}, PacketType.LOG);
 		}
 	}
-	
+
 	/**
 	 * Flash.
-	 *
-	 * @param file the file
+	 * 
+	 * @param file
+	 *            the file
 	 */
-	public void flash(String file){
-		System.out.println("Parameter:");
-		System.out.println("Port: " + port);
-		System.out.println("Server: " + server);
-		System.out.println("File: " + file);
-		
+	public void flash(String file) {
 		System.out.println("Program the Device");
 		byte[] image = null;
 		try {
 			image = Files.toByteArray(new File(file));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		deviceAsync.program(image, 1000000, new AsyncAdapter<Void>() {
@@ -196,7 +215,7 @@ public class FlashLoader {
 			public void onExecute() {
 				System.out.println("Flashing is starting now...");
 			}
-			
+
 			@Override
 			public void onProgressChange(float fraction) {
 				final int percent = (int) (fraction * 100.0);
@@ -206,7 +225,7 @@ public class FlashLoader {
 			@Override
 			public void onSuccess(Void result) {
 				System.out.println("The Device has been flashed.");
-				flashed = true;         //fuer den Test
+				flashed = true; // for tests
 				System.exit(0);
 			}
 
@@ -217,79 +236,70 @@ public class FlashLoader {
 			}
 		});
 	}
-	
+
 	/**
 	 * Readmac.
 	 */
-	public void readmac(){
-		System.out.println("Parameter:");
-		System.out.println("Port: " + port);
-		System.out.println("Server: " + server);
-		
+	public void readmac() {
 		System.out.println("Reading mac address...");
-		
+
 		final AsyncCallback<MacAddress> callback = new AsyncAdapter<MacAddress>() {
 			public void onProgressChange(float fraction) {
 				final int percent = (int) (fraction * 100.0);
-				System.out.println("Reading mac address progress: " + percent + "%");
+				System.out.println("Reading mac address progress: " + percent
+						+ "%");
 			}
-			
+
 			public void onSuccess(MacAddress result) {
 				System.out.println("Mac Address: " + result.toString());
 				current_mac_adress = result.toString();
 				System.exit(0);
 			}
-			
+
 			public void onFailure(Throwable throwable) {
 				throwable.printStackTrace();
 				System.exit(0);
 			}
 		};
-		
 		deviceAsync.readMac(10000, callback);
 	}
-	
+
 	/**
 	 * Writemac.
-	 *
-	 * @param macAdresse the mac adresse
+	 * 
+	 * @param macAdresse
+	 *            the mac adresse
 	 */
-	public void writemac(MacAddress macAdresse){
-		System.out.println("Parameter:");
-		System.out.println("Port: " + port);
-		System.out.println("Server: " + server);
-		
+	public void writemac(MacAddress macAdresse) {
 		System.out.println("Setting Mac Address");
-		deviceAsync.writeMac(new MacAddress(1024), 10000, new AsyncAdapter<Void>() {
+		deviceAsync.writeMac(new MacAddress(1024), 10000,
+				new AsyncAdapter<Void>() {
 
-			@Override
-			public void onProgressChange(float fraction) {
-				final int percent = (int) (fraction * 100.0);
-				System.out.println("Writing mac address progress: " + percent + "%");
-			}
+					@Override
+					public void onProgressChange(float fraction) {
+						final int percent = (int) (fraction * 100.0);
+						System.out.println("Writing mac address progress: "
+								+ percent + "%");
+					}
 
-			@Override
-			public void onSuccess(Void result) {
-				System.out.println("Mac Address written");
-				System.exit(0);
-			}
+					@Override
+					public void onSuccess(Void result) {
+						System.out.println("Mac Address written");
+						System.exit(0);
+					}
 
-			@Override
-			public void onFailure(Throwable throwable) {
-				throwable.printStackTrace();
-				System.exit(0);
-			}
-		});
+					@Override
+					public void onFailure(Throwable throwable) {
+						throwable.printStackTrace();
+						System.exit(0);
+					}
+				});
 	}
-	
+
 	/**
 	 * Reset.
 	 */
-	public void reset(){
-		System.out.println("Parameter:");
-		System.out.println("Port: " + port);
-		System.out.println("Server: " + server);
-		
+	public void reset() {
 		System.out.println("Reset");
 		deviceAsync.reset(10000, new AsyncAdapter<Void>() {
 
@@ -302,7 +312,7 @@ public class FlashLoader {
 			@Override
 			public void onSuccess(Void result) {
 				System.out.println("Device has been reseted");
-				geresetet = true;		//fuer den Test
+				resetet = true; //for tests
 				System.exit(0);
 			}
 

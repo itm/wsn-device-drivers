@@ -10,35 +10,39 @@ import org.apache.commons.cli.*;
  * The Class Main.
  */
 public class Main {
-	
+
 	/** The version. */
 	private static double version = 0.1;
-	
+
 	/**
 	 * The main method.
-	 *
-	 * @param args the arguments
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * 
+	 * @param args
+	 *            the arguments
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static void main(String[] args) throws IOException {
 		// create Options object
-		Option help_option = new Option( "help", "print this message" );
-		Option version_option = new Option( "version", "print the version information" );
-		
+		Option help_option = new Option("help", "print this message");
+		Option version_option = new Option("version",
+				"print the version information");
+
 		Options options = new Options();
-		
+
 		options.addOption(help_option);
 		options.addOption(version_option);
-		
+
 		// add options for Messenger
 		options.addOption("port", true, "port");
 		options.addOption("server", true, "server");
-		options.addOption("message", true, "Die Nachricht, die verschickt werden soll in Hex-Code");
-		options.addOption("user", true, "Benutzername, um sich auf einen Server zu verbinden");
-		options.addOption("passwd", true, "Passwort, um sich auf einen Server zu verbinden");
-		options.addOption("device", true, "Art des Geraets im lokalen Fall: jennec, telosb oder pacemate");
-		options.addOption("id", true, "ID des Geraets im Remote-Fall");
-		
+		options.addOption("message", true, "messge to send");
+		options.addOption("user", true, "username to connect to the server");
+		options.addOption("passwd", true, "password to connect to the server");
+		options.addOption("device", true,
+				"type of the device in local case: jennec, telosb oder pacemate");
+		options.addOption("id", true, "ID of the device in remote case");
+
 		// for help statement
 		HelpFormatter formatter = new HelpFormatter();
 
@@ -47,24 +51,25 @@ public class Main {
 		try {
 			cmd = parser.parse(options, args);
 		} catch (ParseException e) {
-			System.out.println("Diese Option gibt es nicht.");
+			System.out.println("One of these options is not registered.");
 		}
-		if(cmd != null){
-			//standard-options
-			if(cmd.hasOption("help")){
-				System.out.println("Aufrufbeispiele:");
-				System.out.println("Messenger: send -message 0a 3f 41 -port 141.83.1.546:1282");
+		if (cmd != null) {
+			// standard-options
+			if (cmd.hasOption("help")) {
+				System.out.println("Example:");
+				System.out
+						.println("Messenger: send -message 0a 3f 41 -server 141.83.1.546 -port 1282");
 				System.out.println("");
 				formatter.printHelp("help", options);
 			}
-			if(cmd.hasOption("version")){
+			if (cmd.hasOption("version")) {
 				System.out.println(version);
 			}
-			
-			//der Messenger
-			if(args[0].equals("send")) {
-				System.out.println("starte Messenger...");
-				
+
+			// der Messenger
+			if (args[0].equals("send")) {
+				System.out.println("start Messenger...");
+
 				String port = cmd.getOptionValue("port");
 				String server = cmd.getOptionValue("server");
 				String message = cmd.getOptionValue("message");
@@ -72,21 +77,26 @@ public class Main {
 				String password = cmd.getOptionValue("passwd");
 				String device = cmd.getOptionValue("device");
 				String id = cmd.getOptionValue("id");
-				
-				if(server != null && (user == null || password == null)){
-					System.out.println("Bitte geben Sie Benutzername und Passwort ein, um sich zu dem Server zu verbinden.");
+
+				if (server != null && (user == null || password == null)) {
+					System.out.println("Username and Password is missing.");
+					BufferedReader in = new BufferedReader(
+							new InputStreamReader(System.in));
+					System.out.print("Username: ");
+					user = in.readLine();
+					System.out.print("Password: ");
+					password = in.readLine();
+					in.close();
 				}
-				else{				
-					Messenger messenger = new Messenger();
-					messenger.setPort(port);
-					messenger.setServer(server);
-					messenger.setUser(user);
-					messenger.setPassword(password);
-					messenger.setDevice(device);
-					messenger.setId(id);
-					messenger.connect();
-					messenger.send(message);	
-				}						
+				Messenger messenger = new Messenger();
+				messenger.setPort(port);
+				messenger.setServer(server);
+				messenger.setUser(user);
+				messenger.setPassword(password);
+				messenger.setDevice(device);
+				messenger.setId(id);
+				messenger.connect();
+				messenger.send(message);
 			}
 		}
 	}

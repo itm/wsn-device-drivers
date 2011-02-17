@@ -27,160 +27,173 @@ import de.uniluebeck.itm.tcp.client.RemoteDevice;
  * The Class Messenger.
  */
 public class Messenger {
-	
-	String port;
-	String server;
-	String user;
-	String password;
-	String device_parameter;
-	DeviceAsync deviceAsync;
-	private String id;
 
-	boolean gesendet = false; 		//for the test-class
-	
+	private String port;
+	private String server;
+	private String user;
+	private String password;
+	private String device_parameter;
+	private DeviceAsync deviceAsync;
+	private String id;
+	private boolean sent = false; // for the test-class
+
 	/**
 	 * Instantiates a new messenger.
 	 */
-	public Messenger(){
+	public Messenger() {
 
 	}
-	
+
 	/**
-	 * Sets the device.
-	 *
-	 * @param device the new device
+	 * Getter/Setter
 	 */
+	public String getPort() {
+		return port;
+	}
+
+	public String getServer() {
+		return server;
+	}
+
+	public String getUser() {
+		return user;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public String getDevice_parameter() {
+		return device_parameter;
+	}
+
+	public DeviceAsync getDeviceAsync() {
+		return deviceAsync;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public boolean isSent() {
+		return sent;
+	}
+
 	public void setDevice(String device) {
 		this.device_parameter = device;
 	}
 
-	/**
-	 * Sets the user.
-	 *
-	 * @param user the new user
-	 */
 	public void setUser(String user) {
 		this.user = user;
 	}
 
-	/**
-	 * Sets the password.
-	 *
-	 * @param password the new password
-	 */
 	public void setPassword(String password) {
 		this.password = password;
 	}
 
-	/**
-	 * Sets the port.
-	 *
-	 * @param port the new port
-	 */
 	public void setPort(String port) {
 		this.port = port;
 	}
 
-	/**
-	 * Sets the server.
-	 *
-	 * @param server the new server
-	 */
 	public void setServer(String server) {
 		this.server = server;
 	}
-	
+
 	public void setId(String id) {
 		this.id = id;
 	}
-	
+
 	/**
 	 * Connect.
 	 */
-	public void connect(){
-		if(server != null){
+	public void connect() {
+		if (server != null) {
 			final RemoteConnection connection = new RemoteConnection();
-			
-			connection.connect(id+":"+user+":"+password+"@"+server+":"+port);
+
+			connection.connect(id + ":" + user + ":" + password + "@" + server
+					+ ":" + port);
 			System.out.println("Connected");
-			
+
 			deviceAsync = new RemoteDevice(connection);
-		}
-		else{
+		} else {
 			final OperationQueue queue = new PausableExecutorOperationQueue();
 			final MockConnection connection = new MockConnection();
 			Device device = new MockDevice(connection);
-			
-			if(device_parameter != null){
-				if(device_parameter.equals("jennec")){
+
+			if (device_parameter != null) {
+				if (device_parameter.equals("jennec")) {
 					SerialPortConnection jennic_connection = new iSenseSerialPortConnection();
 					jennic_connection.addListener(new ConnectionListener() {
 						@Override
 						public void onConnectionChange(ConnectionEvent event) {
 							if (event.isConnected()) {
-								System.out.println("Connection established with port " + event.getUri());
-							}				
+								System.out
+										.println("Connection established with port "
+												+ event.getUri());
+							}
 						}
 					});
-					device = new JennicDevice(jennic_connection);	
-					jennic_connection.connect(port);	
-				}
-				else if(device_parameter.equals("pacemate")){
+					device = new JennicDevice(jennic_connection);
+					jennic_connection.connect(port);
+				} else if (device_parameter.equals("pacemate")) {
 					SerialPortConnection pacemate_connection = new iSenseSerialPortConnection();
 					pacemate_connection.addListener(new ConnectionListener() {
 						@Override
 						public void onConnectionChange(ConnectionEvent event) {
 							if (event.isConnected()) {
-								System.out.println("Connection established with port " + event.getUri());
-							}				
+								System.out
+										.println("Connection established with port "
+												+ event.getUri());
+							}
 						}
 					});
-					device = new PacemateDevice(pacemate_connection);	
+					device = new PacemateDevice(pacemate_connection);
 					pacemate_connection.connect(port);
-				}
-				else if(device_parameter.equals("telosb")){
+				} else if (device_parameter.equals("telosb")) {
 					SerialPortConnection telosb_connection = new TelosbSerialPortConnection();
 					telosb_connection.addListener(new ConnectionListener() {
 						@Override
 						public void onConnectionChange(ConnectionEvent event) {
 							if (event.isConnected()) {
-								System.out.println("Connection established with port " + event.getUri());
-							}				
+								System.out
+										.println("Connection established with port "
+												+ event.getUri());
+							}
 						}
 					});
-					device = new TelosbDevice(telosb_connection);	
+					device = new TelosbDevice(telosb_connection);
 					telosb_connection.connect(port);
 				}
 			}
 			deviceAsync = new QueuedDeviceAsync(queue, device);
-			
+
 			System.out.println("Message packet listener added");
 			deviceAsync.addListener(new MessagePacketListener() {
-				public void onMessagePacketReceived(MessageEvent<MessagePacket> event) {
-					System.out.println("Message: " + new String(event.getMessage().getContent()));
+				public void onMessagePacketReceived(
+						MessageEvent<MessagePacket> event) {
+					System.out.println("Message: "
+							+ new String(event.getMessage().getContent()));
 				}
 			}, PacketType.LOG);
 		}
 	}
-	
+
 	/**
 	 * Send.
-	 *
-	 * @param message the message
+	 * 
+	 * @param message
+	 *            the message
 	 */
-	public void send(String message){
-		System.out.println("Parameter:");
-		System.out.println("Port: " + port);
-		System.out.println("Server: " + server);
-		System.out.println("Message: " + message);
-		
+	public void send(String message) {
 		System.out.println("Message packet listener added");
 		deviceAsync.addListener(new MessagePacketListener() {
-			public void onMessagePacketReceived(MessageEvent<MessagePacket> event) {
-				System.out.println("Message: " + new String(event.getMessage().getContent()));
+			public void onMessagePacketReceived(
+					MessageEvent<MessagePacket> event) {
+				System.out.println("Message: "
+						+ new String(event.getMessage().getContent()));
 			}
-		},PacketType.LOG);
-		
+		}, PacketType.LOG);
+
 		MessagePacket packet = new MessagePacket(0, message.getBytes());
 		deviceAsync.send(packet, 100000, new AsyncAdapter<Void>() {
 
@@ -193,7 +206,7 @@ public class Messenger {
 			@Override
 			public void onSuccess(Void result) {
 				System.out.println("Message sent");
-				gesendet = true;		//fuer den Test
+				sent = true; // for tests
 				System.exit(0);
 			}
 

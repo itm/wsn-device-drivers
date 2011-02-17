@@ -92,10 +92,9 @@ public class Main {
 					System.out.print("Password: ");
 					password = in.readLine();
 					in.close();
-				} else {
-					datenlogger.setUser(user);
-					datenlogger.setPassword(password);
 				}
+				datenlogger.setUser(user);
+				datenlogger.setPassword(password);
 				datenlogger.setPort(port);
 				datenlogger.setServer(server);
 				datenlogger.setKlammer_filter(brackets_filter);
