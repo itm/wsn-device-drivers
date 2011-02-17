@@ -10,7 +10,7 @@ public interface MetaDataClient {
 	
 	/**
 	 * Sucht synchron nach Knoten die dem Beispielknoten entsprechen und/oder nach dem
-	 * übergebenen Sql-Query.
+	 * Uebergebenen Sql-Query.
 	 * @param queryexmpl
 	 * @param query
 	 * @return
@@ -20,7 +20,7 @@ public interface MetaDataClient {
 	
 	/**
 	 * Sucht asynchron nach Knoten die dem Beispielknoten entsprechen und/oder nach dem
-	 * übergebenen Sql-Query.
+	 * Uebergebenen Sql-Query.
 	 * @param queryexmpl
 	 * @param query
 	 * @return

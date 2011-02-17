@@ -47,7 +47,7 @@ public class StoreToDatabase {
 
 
     /**
-     * Überprüft ob ein Knoten bereits in der Datenbank gespeichert ist
+     * Ueberprueft ob ein Knoten bereits in der Datenbank gespeichert ist
      * @param parentnode
      * @return
      

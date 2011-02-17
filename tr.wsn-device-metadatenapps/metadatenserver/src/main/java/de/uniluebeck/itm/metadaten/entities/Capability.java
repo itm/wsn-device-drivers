@@ -24,16 +24,16 @@ public class Capability {
 	private Integer id;
 
 	@Element
-	private String name;
+	private String name = "";
 
 	@Element
-	private String datatype;
+	private String datatype = "";
 
 	@Element
-	private String unit;
+	private String unit = "";
 
 	@Element
-	private int defaults;
+	private int defaults = 0;
 
 	/**
 	 * Requires function for deserializing objects.

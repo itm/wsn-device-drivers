@@ -67,7 +67,7 @@ public class Testmethode_fuer_Andreas {
 		}
 
 		
-		datenlogger.gestartet = true;
+		datenlogger.started = true;
 		
 		System.out.println("Message packet listener added");
 		datenlogger.listener = new MessagePacketListener() {

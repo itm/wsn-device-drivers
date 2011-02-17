@@ -46,7 +46,7 @@ public class StoreToDatabase {
 	}
 
 	/**
-	 * Überprüft ob ein Knoten bereits in der Datenbank gespeichert ist
+	 * Ueberprueft ob ein Knoten bereits in der Datenbank gespeichert ist
 	 * 
 	 * @param parentnode
 	 * @return
@@ -113,7 +113,7 @@ public class StoreToDatabase {
 			session.close();
 		}else {
 			try {
-				System.out.println("!!! in der refreshElse, zufügen des Knotens");
+				System.out.println("!!! in der refreshElse, zufuegen des Knotens");
 				storeNode(node);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

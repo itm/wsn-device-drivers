@@ -11,14 +11,17 @@ import de.uniluebeck.itm.metadaten.remote.entity.Node;
 public class NodeHelper {
 
 	/**
-	 * Wandelt WiseMlNode in NODE-Message zur Übertragung per RPC um
+	 * Wandelt WiseMlNode in NODE-Message zur Uebertragung per RPC um
 	 * 
 	 * @param node
 	 * @return NODE
 	 */
 	public NODE changetoNODE(Node node) {
 		NODE.Builder nodebuilder = NODE.newBuilder();
-		if (!(node.getId() == null)) {
+		if (!(node.getId().isEmpty())) {
+			nodebuilder.setKnotenid(node.getId());
+		}
+		if (!node.getId().isEmpty()) {
 			nodebuilder.setKnotenid(node.getId());
 		}
 		if (!(node.getIpAddress() == null)) {
@@ -49,7 +52,7 @@ public class NodeHelper {
 	}
 
 	/**
-	 * Wandelt NODE-Message zur Übertragung per RPC in WiseMlNode um
+	 * Wandelt NODE-Message zur Uebertragung per RPC in WiseMlNode um
 	 * 
 	 * @param nodein
 	 * @return

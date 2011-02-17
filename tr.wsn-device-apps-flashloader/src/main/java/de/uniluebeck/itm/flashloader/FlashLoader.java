@@ -215,8 +215,8 @@ public class FlashLoader {
 			}
 			
 			public void onSuccess(MacAddress result) {
-				System.out.println("Mac Address: " + result.getMacString());
-				current_mac_adress = result.getMacString();
+				System.out.println("Mac Address: " + result.toString());
+				current_mac_adress = result.toString();
 				System.exit(0);
 			}
 			

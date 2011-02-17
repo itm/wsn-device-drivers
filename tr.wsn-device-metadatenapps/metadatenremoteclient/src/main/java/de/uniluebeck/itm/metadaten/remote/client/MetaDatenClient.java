@@ -195,7 +195,7 @@ public class MetaDatenClient implements MetaDataClient {
 		// erzeugen eines Controllers fuer diese Operation
 		final RpcController controller = channel.newRpcController();
 		NodeHelper nhelper = new NodeHelper();
-		// Node für die Übertragung erzeugen
+		// Node fuer die Uebertragung erzeugen
 
 		// Result erzeugen
 		SearchRequest request = SearchRequest.newBuilder()
@@ -210,11 +210,11 @@ public class MetaDatenClient implements MetaDataClient {
 			// sync RPC-Aufruf
 			SearchResponse resultresp = blockOperationService.search(
 					controller, request);
-			System.out.println("Größe der Response"
+			System.out.println("Groesse der Response"
 					+ resultresp.getResponseList().size());
 			List<NODE> result = new ArrayList<NODE>();
 			result = resultresp.getResponseList();
-			System.out.println("Größe des Results: " + result.size());
+			System.out.println("Groesse des Results: " + result.size());
 			for (int i = 0; i < result.size(); i++) {
 				nodelist.add(nhelper.changeToNode(result.get(i)));
 			}
@@ -248,13 +248,13 @@ public class MetaDatenClient implements MetaDataClient {
 			// synchroner RPC-Aufruf
 			SearchResponse resultresp = blockOperationService.search(
 					controller, request);
-			System.out.println("Größe der Sresponse"
+			System.out.println("Groesse der Sresponse"
 					+ resultresp.getResponseList().size());
 			List<NODE> result = new ArrayList<NODE>();
 			result = resultresp.getResponseList();
-			System.out.println("Größe des Results: " + result.size());
+			System.out.println("Groesse des Results: " + result.size());
 			for (int i = 0; i < result.size(); i++) {
-				System.out.println("Knoten hinzufügen");
+				System.out.println("Knoten hinzufuegen");
 				nodelist.add(nhelper.changeToNode(result.get(i)));
 			}
 		} catch (ServiceException e) {

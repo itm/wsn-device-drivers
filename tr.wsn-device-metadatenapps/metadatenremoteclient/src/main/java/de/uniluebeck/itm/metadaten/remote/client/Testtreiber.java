@@ -13,7 +13,7 @@ public class Testtreiber {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Authentifizierung für die Abfrage von Daten?
+		// TODO Authentifizierung fuer die Abfrage von Daten?
 		
 		MetaDataClient mclient=null;
 		try {

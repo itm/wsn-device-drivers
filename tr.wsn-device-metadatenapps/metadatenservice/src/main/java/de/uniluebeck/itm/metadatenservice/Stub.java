@@ -1,7 +1,6 @@
-package de.uniluebeck.itm.metadaten.remote.client;
+package de.uniluebeck.itm.metadatenservice;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.Executors;
 
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
@@ -14,17 +13,14 @@ import com.googlecode.protobuf.pro.duplex.client.DuplexTcpClientBootstrap;
 import com.googlecode.protobuf.pro.duplex.execute.ThreadPoolCallExecutor;
 
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Identification;
-import de.uniluebeck.itm.metadaten.files.MetaDataService.NODE;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Operations;
-import de.uniluebeck.itm.metadaten.files.MetaDataService.SearchRequest;
-import de.uniluebeck.itm.metadaten.files.MetaDataService.SearchResponse;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.VOID;
-import de.uniluebeck.itm.metadaten.remote.entity.Node;
-import de.uniluebeck.itm.metadaten.remote.metadataclienthelper.NodeHelper;
+import de.uniluebeck.itm.metadaten.metadatenservice.entity.Node;
+import de.uniluebeck.itm.metadaten.serverclient.metadataclienthelper.NodeHelper;
 
 
 
-public class Stub {
+public class Stub  {
 
 	//private static Log log = LogFactory.getLog(Client.class);
 	
@@ -38,7 +34,7 @@ public class Stub {
 //	State state = null;
 	
 	Stub (String userName, String passWord, String uri, int port) throws Exception{
-		this(userName,passWord,uri,port,1235);
+		this(userName,passWord,uri,port,1234);
 	}
 
 	Stub (String userName, String passWord, String uri, int port, int clientPort) throws Exception{
@@ -106,6 +102,8 @@ public class Stub {
 		final RpcController controller = channel.newRpcController();
 		System.out.println("RPC-Controller erzeugt");
 		
+		// erzeugen eines async RPC-Objekts fuer die TestOperationen
+//		testService = TestOperations.newStub(channel);
 		// erzeugen eines async RPC-Objekts fuer die Operationen
 		operationService = Operations.newStub(channel);
 		
@@ -126,30 +124,26 @@ public class Stub {
 			}});
 	}
 	
-	// Hinzufuegen eines Knotens in das MetaDatenverzeichnis
-	public void search(final Node node, String queryString, final AsyncCallback<List<NODE>> callback) {
+	// Hinzuf�gen eines Knotens in das MetaDatenverzeichnis
+	public void add(final Node node, final AsyncCallback<String> callback) {
 
 		// erzeugen eines Controllers fuer diese Operation
 		final RpcController controller = channel.newRpcController();
 		NodeHelper nhelper = new NodeHelper();
 		// erzeugen einer Nachricht, der OperationKey wird aus der controllerID erzeugt
 //		STRING request = STRING.newBuilder().setQuery(setMessage).setOperationKey(controller.toString()).build();
-		// Node fuer die Uebertragung erzeugen
 		
-		//Result erzugen
-		SearchRequest request = SearchRequest.newBuilder().setQueryMs(nhelper.changetoNODE(node)).setQueryString("123").build();
 		//ausfuehren des async RPCs
-//		operationService.add(controller, request, new RpcCallback<VOID>(){
-		operationService.search(controller, request,  new RpcCallback<SearchResponse>(){
-			
+		operationService.add(controller, nhelper.changetoNODE(node), new RpcCallback<VOID>(){
+
 			// callback aufruf des Servers
 			@Override
-			public void run(SearchResponse arg0) {
+			public void run(VOID arg0) {
 				if(!controller.failed()){
-					callback.onSuccess(arg0.getResponseList());
+					callback.onSuccess("Knoten " + node.getId() + "erfolgreich dem Verzeichnis hinzugef�gt");
 				}
 				else{
-					callback.onFailure(new Throwable("Fehler im Stub" + controller.errorText()));
+					callback.onFailure(new Throwable(controller.errorText()));
 				}
 			}});
 		

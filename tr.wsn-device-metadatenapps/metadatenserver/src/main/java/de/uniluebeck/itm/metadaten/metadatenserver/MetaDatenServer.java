@@ -360,13 +360,13 @@ public class MetaDatenServer {
 				log.info("Im request querynode if" + node.getId() + node.getIpAddress() + "null?" + node.getMicrocontroller());
 				System.out.println("querynode size" + getfromDB.getNodes(node).size());
 				resultlist = getfromDB.getNodes(node);
-				System.err.println("Größe der Anwtort" +resultlist.size());
+				System.err.println("Groesse der Anwtort" +resultlist.size());
 			}
 			if (!(request.getQueryString() == null)) {
 				// TODO
 				log.info("Operation: search by QueryString - Not supported yet");
 			}
-			log.info("Result Größe!!!" + resultlist.size());
+			log.info("Result Groesse!!!" + resultlist.size());
 			for (Node result : resultlist) {
 				log.info("Result" + result.getId());
 				responsebuilder.addResponse(nhelper.changetoNODE(result));

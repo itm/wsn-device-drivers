@@ -13,7 +13,7 @@ import de.uniluebeck.itm.metadaten.files.MetaDataService.NODE;
 public class NodeHelper {
 
 	/**
-	 * Wandelt WiseMlNode in NODE-Message zur Übertragung per RPC um
+	 * Wandelt WiseMlNode in NODE-Message zur Uebertragung per RPC um
 	 * 
 	 * @param node
 	 * @return NODE

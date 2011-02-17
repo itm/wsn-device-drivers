@@ -16,7 +16,7 @@
 
 	<modules>
 		<module>metadatenserver</module>
-		<module>metadatenserverclient</module>
+		<module>metadatenservice</module>
 		<module>metadatenremoteclient</module>
 	</modules>
 
