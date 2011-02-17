@@ -76,7 +76,7 @@ public class Datalogger {
 	private String id;
 
 	/**
-	 * Instantiates a new datenlogger.
+	 * Instantiates a new datalogger.
 	 */
 	public Datalogger() {
 	}
