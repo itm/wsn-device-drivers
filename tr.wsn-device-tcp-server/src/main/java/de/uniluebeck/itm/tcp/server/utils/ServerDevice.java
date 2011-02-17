@@ -86,6 +86,7 @@ public class ServerDevice {
 			connection = (Connection) con.newInstance();
 		} catch (Exception e) {
 			log.error(e.getMessage());
+			e.printStackTrace();
 		}
 		return  connection;
 	}
@@ -103,8 +104,9 @@ public class ServerDevice {
 		
 		try {
 			deviceClass = Class.forName(DeviceName);
-			Constructor ConncectionArgsConstructor = deviceClass.getConstructor(new Class[] {con.getClass()});
-			device = (Device) ConncectionArgsConstructor.newInstance(new Object[] {con});
+			
+			Constructor[] ConncectionArgsConstructor = deviceClass.getConstructors();
+			device = (Device) ConncectionArgsConstructor[0].newInstance(new Object[] {con});
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			System.exit(-1);
