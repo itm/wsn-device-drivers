@@ -31,6 +31,8 @@ import viewer.CreateXML;
 
 import com.google.common.base.Predicate;
 
+import de.uniluebeck.itm.tr.util.*;
+
 import de.uniluebeck.itm.devicedriver.ConnectionEvent;
 import de.uniluebeck.itm.devicedriver.ConnectionListener;
 import de.uniluebeck.itm.devicedriver.Device;
@@ -70,6 +72,7 @@ public class Datenlogger {
 	DeviceAsync deviceAsync;
 	MessagePacketListener listener;
 	FileWriter writer;
+	private String output;
 
 	/**
 	 * Instantiates a new datenlogger.
@@ -221,6 +224,10 @@ public class Datenlogger {
 		this.location = location;
 	}
 	
+	public void setOutput(String output) {
+		this.output = output;
+	}
+
 	/**
 	 * Connect.
 	 */
@@ -330,14 +337,28 @@ public class Datenlogger {
 				if(!matches){
 					if(location != null){
 						try {
-							writer.write(erhaltene_Daten);
-							writer.write("\n");
+							byte[] bytes = event.getMessage().getContent();
+							
+							if(output.equals("0")){
+								writer.write(erhaltene_Daten);
+								writer.write("\n");
+							}
+							else if(output.equals("1")){
+								writer.write(StringUtils.toHexString(bytes));
+							}
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
 					}
 					else{
-						System.out.println("Message: " + erhaltene_Daten);
+						byte[] bytes = event.getMessage().getContent();
+						
+						if(output.equals("0")){
+							System.out.println("Message: " + erhaltene_Daten);
+						}
+						else if(output.equals("1")){
+							System.out.println(StringUtils.toHexString(bytes));
+						}
 					}
 				}
 				else{

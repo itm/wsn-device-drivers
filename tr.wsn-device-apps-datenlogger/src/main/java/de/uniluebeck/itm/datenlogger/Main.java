@@ -34,7 +34,8 @@ public class Main {
 		options.addOption("regex_filter", true, "Kombination der Filtertypen: Regular Expression-Filter");
 		options.addOption("user", true, "Benutzername, um sich auf einen Server zu verbinden");
 		options.addOption("passwd", true, "Passwort, um sich auf einen Server zu verbinden");
-		options.addOption("device", true, "Art des Ger�ts im lokalen Fall: isense, jennec, telosb oder pacemate");
+		options.addOption("device", true, "Art des Geraets im lokalen Fall: isense, jennec, telosb oder pacemate");
+		options.addOption("output", true, "Art der Ausgabe(Hex=1, String=0)");
 		
 		// for help statement
 		HelpFormatter formatter = new HelpFormatter();
@@ -72,6 +73,7 @@ public class Main {
 				String user = cmd.getOptionValue("user");
 				String password = cmd.getOptionValue("passwd");
 				String device = cmd.getOptionValue("device");
+				String output = cmd.getOptionValue("output");
 				
 				if(server != null && (user == null || password == null)){
 					System.out.println("Bitte geben Sie Benutzername und Passwort ein, um sich zu dem Server zu verbinden.");
@@ -85,6 +87,7 @@ public class Main {
 					datenlogger.setUser(user);
 					datenlogger.setPassword(password);
 					datenlogger.setDevice(device);
+					datenlogger.setOutput(output);
 					datenlogger.connect();
 					datenlogger.startlog();
 				}	
