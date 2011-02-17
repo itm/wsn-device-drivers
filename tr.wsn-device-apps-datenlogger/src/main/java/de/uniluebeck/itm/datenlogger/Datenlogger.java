@@ -319,7 +319,7 @@ public class Datenlogger {
 			@Override
 			public void onMessagePacketReceived(
 					de.uniluebeck.itm.devicedriver.event.MessageEvent<MessagePacket> event) {
-				String erhaltene_Daten = StringUtils.toASCIIString(event.getMessage().getContent());
+				String erhaltene_Daten = new String(event.getMessage().getContent());
 				//Filtern
 				boolean matches = false;
 				
