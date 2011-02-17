@@ -55,12 +55,11 @@ import de.uniluebeck.itm.tcp.client.RemoteConnection;
 import de.uniluebeck.itm.tcp.client.RemoteDevice;
 
 /**
- * Class Datenlogger.
- * Functions to registrate a Datenlogger on a sensornode 
- * and print the messages on the console or in a file.
+ * Class Datenlogger. Functions to registrate a Datenlogger on a sensornode and
+ * print the messages on the console or in a file.
  */
-public class Datenlogger {
-	
+public class Datalogger {
+
 	private String port;
 	private String server;
 	private String brackets_filter;
@@ -79,16 +78,16 @@ public class Datenlogger {
 	/**
 	 * Instantiates a new datenlogger.
 	 */
-	public Datenlogger(){
+	public Datalogger() {
 	}
-	
+
 	/**
 	 * Getter/Setters
 	 */
-	public String getPort(){
+	public String getPort() {
 		return port;
 	}
-	
+
 	public boolean isStarted() {
 		return started;
 	}
@@ -144,11 +143,11 @@ public class Datenlogger {
 	public String getId() {
 		return id;
 	}
-	
-	public void setDevice(String device){
+
+	public void setDevice(String device) {
 		this.device_parameter = device;
 	}
-	
+
 	public void setUser(String user) {
 		this.user = user;
 	}
@@ -156,7 +155,7 @@ public class Datenlogger {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
+
 	public void setPort(String port) {
 		this.port = port;
 	}
@@ -180,132 +179,141 @@ public class Datenlogger {
 	public void setLocation(String location) {
 		this.location = location;
 	}
-	
+
 	public void setOutput(String output) {
 		this.output = output;
 	}
-	
+
 	public void setId(String id) {
 		this.id = id;
 	}
-	
+
 	/**
 	 * Parse_klammer_filter.
-	 *
-	 * @param klammer_filter the klammer_filter
+	 * 
+	 * @param klammer_filter
+	 *            the klammer_filter
 	 * @return the predicate
 	 */
-	public Predicate<CharSequence> parse_klammer_filter(String klammer_filter){
+	public Predicate<CharSequence> parse_klammer_filter(String klammer_filter) {
 		Stack<Predicate<CharSequence>> ausdruecke = new Stack<Predicate<CharSequence>>();
 		Stack<String> operatoren = new Stack<String>();
 		String ausdruck = "";
-		for(int i = 0; i < klammer_filter.length(); i++){
+		for (int i = 0; i < klammer_filter.length(); i++) {
 			String character = Character.toString(klammer_filter.charAt(i));
-			if(character.equals("|")){
+			if (character.equals("|")) {
 				operatoren.push("or");
-			}else if(character.equals("&")){
+			} else if (character.equals("&")) {
 				operatoren.push("and");
-			}else if(character.equals("(")){
-				//do nothing
-			}else if(character.equals(")")){
-				if(!ausdruck.equals("")){
-					Predicate<CharSequence> predicate = new Klammer_Predicate(ausdruck);
+			} else if (character.equals("(")) {
+				// do nothing
+			} else if (character.equals(")")) {
+				if (!ausdruck.equals("")) {
+					Predicate<CharSequence> predicate = new Brackets_Predicate(
+							ausdruck);
 					ausdruecke.push(predicate);
 					ausdruck = "";
-				}else{
+				} else {
 					Predicate<CharSequence> erster_ausdruck = ausdruecke.pop();
 					Predicate<CharSequence> zweiter_ausdruck = ausdruecke.pop();
 					String operator = operatoren.pop();
-					if(operator.equals("or")){
-						Predicate<CharSequence> ergebnis = or(erster_ausdruck, zweiter_ausdruck);
+					if (operator.equals("or")) {
+						Predicate<CharSequence> ergebnis = or(erster_ausdruck,
+								zweiter_ausdruck);
 						ausdruecke.push(ergebnis);
-					}else if(operator.equals("and")){
-						Predicate<CharSequence> ergebnis = and(erster_ausdruck, zweiter_ausdruck);
+					} else if (operator.equals("and")) {
+						Predicate<CharSequence> ergebnis = and(erster_ausdruck,
+								zweiter_ausdruck);
 						ausdruecke.push(ergebnis);
 					}
 				}
-			}else{
+			} else {
 				ausdruck = ausdruck + character;
-			}			
+			}
 		}
-		while(operatoren.size() != 0){
+		while (operatoren.size() != 0) {
 			Predicate<CharSequence> erster_ausdruck = ausdruecke.pop();
 			Predicate<CharSequence> zweiter_ausdruck = ausdruecke.pop();
 			String operator = operatoren.pop();
-			if(operator.equals("or")){
-				Predicate<CharSequence> ergebnis = or(erster_ausdruck, zweiter_ausdruck);
+			if (operator.equals("or")) {
+				Predicate<CharSequence> ergebnis = or(erster_ausdruck,
+						zweiter_ausdruck);
 				ausdruecke.push(ergebnis);
-			}else if(operator.equals("and")){
-				Predicate<CharSequence> ergebnis = and(erster_ausdruck, zweiter_ausdruck);
+			} else if (operator.equals("and")) {
+				Predicate<CharSequence> ergebnis = and(erster_ausdruck,
+						zweiter_ausdruck);
 				ausdruecke.push(ergebnis);
 			}
-		}	
+		}
 		return ausdruecke.pop();
 	}
-	
 
 	/**
 	 * Connect.
 	 */
-	public void connect(){
-		if(server != null){	
+	public void connect() {
+		if (server != null) {
 			final RemoteConnection connection = new RemoteConnection();
-			
-			connection.connect(id+":"+user+":"+password+"@"+server+":"+port);
+
+			connection.connect(id + ":" + user + ":" + password + "@" + server
+					+ ":" + port);
 			System.out.println("Connected");
-			
+
 			deviceAsync = new RemoteDevice(connection);
-		}
-		else{
-			
+		} else {
+
 			final OperationQueue queue = new PausableExecutorOperationQueue();
 			final MockConnection connection = new MockConnection();
 			Device device = new MockDevice(connection);
-			
-			if(device_parameter != null){
-				if(device_parameter.equals("jennec")){
+
+			if (device_parameter != null) {
+				if (device_parameter.equals("jennec")) {
 					SerialPortConnection jennic_connection = new iSenseSerialPortConnection();
 					jennic_connection.addListener(new ConnectionListener() {
 						@Override
 						public void onConnectionChange(ConnectionEvent event) {
 							if (event.isConnected()) {
-								System.out.println("Connection established with port " + event.getUri());
-							}				
+								System.out
+										.println("Connection established with port "
+												+ event.getUri());
+							}
 						}
 					});
-					device = new JennicDevice(jennic_connection);	
-					jennic_connection.connect(port);	
-				}
-				else if(device_parameter.equals("pacemate")){
+					device = new JennicDevice(jennic_connection);
+					jennic_connection.connect(port);
+				} else if (device_parameter.equals("pacemate")) {
 					SerialPortConnection pacemate_connection = new iSenseSerialPortConnection();
 					pacemate_connection.addListener(new ConnectionListener() {
 						@Override
 						public void onConnectionChange(ConnectionEvent event) {
 							if (event.isConnected()) {
-								System.out.println("Connection established with port " + event.getUri());
-							}				
+								System.out
+										.println("Connection established with port "
+												+ event.getUri());
+							}
 						}
 					});
-					device = new PacemateDevice(pacemate_connection);	
+					device = new PacemateDevice(pacemate_connection);
 					pacemate_connection.connect(port);
-				}
-				else if(device_parameter.equals("telosb")){
+				} else if (device_parameter.equals("telosb")) {
 					SerialPortConnection telosb_connection = new TelosbSerialPortConnection();
 					telosb_connection.addListener(new ConnectionListener() {
 						@Override
 						public void onConnectionChange(ConnectionEvent event) {
 							if (event.isConnected()) {
-								System.out.println("Connection established with port " + event.getUri());
-							}				
+								System.out
+										.println("Connection established with port "
+												+ event.getUri());
+							}
 						}
 					});
-					device = new TelosbDevice(telosb_connection);	
+					device = new TelosbDevice(telosb_connection);
 					telosb_connection.connect(port);
 				}
 			}
 			connection.connect("MockPort");
 			System.out.println("Connected");
-			
+
 			deviceAsync = new QueuedDeviceAsync(queue, device);
 		}
 	}
@@ -313,80 +321,79 @@ public class Datenlogger {
 	/**
 	 * Startlog.
 	 */
-	public void startlog(){
+	public void startlog() {
 		started = true;
-		
-		if(location != null){
+
+		if (location != null) {
 			try {
 				writer = new FileWriter(location);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		
+
 		System.out.println("Message packet listener added");
 		listener = new MessagePacketListener() {
 			@Override
 			public void onMessagePacketReceived(
 					de.uniluebeck.itm.devicedriver.event.MessageEvent<MessagePacket> event) {
-				String incoming_data = new String(event.getMessage().getContent());
+				String incoming_data = new String(event.getMessage()
+						.getContent());
 				incoming_data = incoming_data.substring(1);
-				//Filter
+				// Filter
 				boolean matches = false;
-				
-				//(Datatype, Begin, Value)-Filter
-				if(brackets_filter != null){
-					matches = parse_klammer_filter(brackets_filter).apply(incoming_data);
+
+				// (Datatype, Begin, Value)-Filter
+				if (brackets_filter != null) {
+					matches = parse_klammer_filter(brackets_filter).apply(
+							incoming_data);
 				}
-					
-				//Reg-Ex-Filter
-				//"[+-]?[0-9]+"
-				if(regex_filter != null){
+
+				// Reg-Ex-Filter
+				// "[+-]?[0-9]+"
+				if (regex_filter != null) {
 					Pattern p = Pattern.compile(regex_filter);
 					Matcher m = p.matcher(incoming_data);
 					matches = m.matches();
-				}	
-				
-				if(!matches){
-					if(location != null){
+				}
+
+				if (!matches) {
+					if (location != null) {
 						try {
 							byte[] bytes = event.getMessage().getContent();
-							
-							if(output.equals("1")){
+
+							if (output.equals("1")) {
 								writer.write(StringUtils.toHexString(bytes));
-							}else{
+							} else {
 								writer.write(incoming_data);
 								writer.write("\n");
 							}
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
-					}
-					else{
+					} else {
 						byte[] bytes = event.getMessage().getContent();
-						
-						if(output.equals("1")){
+
+						if (output.equals("1")) {
 							System.out.println(StringUtils.toHexString(bytes));
-						}
-						else{
+						} else {
 							System.out.println(incoming_data);
 						}
 					}
-				}
-				else{
+				} else {
 					System.out.println("Data was filtered.");
 				}
 			}
 		};
 		deviceAsync.addListener(listener, PacketType.LOG);
-	}	
-	
+	}
+
 	/**
 	 * Stoplog.
 	 */
-	public void stoplog(){
+	public void stoplog() {
 		deviceAsync.removeListener(listener);
-		if(location != null){
+		if (location != null) {
 			try {
 				writer.close();
 			} catch (IOException e) {
@@ -396,81 +403,92 @@ public class Datenlogger {
 		started = false;
 		System.out.println("\nEnd of Logging.");
 	}
-	
+
 	/**
 	 * Add_klammer_filter.
-	 *
-	 * @param filter the filter
+	 * 
+	 * @param filter
+	 *            the filter
 	 */
-	public void add_klammer_filter(String filter){
+	public void add_klammer_filter(String filter) {
 		brackets_filter = brackets_filter + filter;
 		System.out.println("Filter added");
 	}
-	
+
 	/**
 	 * Add_regex_filter.
-	 *
-	 * @param filter the filter
+	 * 
+	 * @param filter
+	 *            the filter
 	 */
-	public void add_regex_filter(String filter){
+	public void add_regex_filter(String filter) {
 		regex_filter = regex_filter + filter;
 		System.out.println("Filter added");
 	}
-	
+
 	/**
 	 * Write to xml file.
 	 */
-	public void writeToXmlFile(){
-		//Read the xml file
-        CreateXML create = new CreateXML();
+	public void writeToXmlFile() {
+		// Read the xml file
+		CreateXML create = new CreateXML();
 
-        List<Node> nodeList = new ArrayList<Node>();
-        List<Link> edgeList = new ArrayList<Link>();
-        List<Capability> capList = new ArrayList<Capability>();
+		List<Node> nodeList = new ArrayList<Node>();
+		List<Link> edgeList = new ArrayList<Link>();
+		List<Capability> capList = new ArrayList<Capability>();
 
-        // --- N1 ---
-        //Add Node Capabilities
+		// --- N1 ---
+		// Add Node Capabilities
 
-        Capability cap1 = new Capability("urn:wisebed:node:capability:temp", "integer", "lux", 2);
-        Capability cap2 = new Capability("urn:wisebed:node:capability:time", "Float", "lux", 0);
-        capList.add(cap1);
-        capList.add(cap2);
+		Capability cap1 = new Capability("urn:wisebed:node:capability:temp",
+				"integer", "lux", 2);
+		Capability cap2 = new Capability("urn:wisebed:node:capability:time",
+				"Float", "lux", 0);
+		capList.add(cap1);
+		capList.add(cap2);
 
-        /**
-         * Create all the required elemets for the setup section of a wiseml file.
-         */
-        Position position = new Position(1.23, 1.56, 1.77);
-        //Data data = new Data("urn:wisebed:node:capability:time");
+		/**
+		 * Create all the required elemets for the setup section of a wiseml
+		 * file.
+		 */
+		Position position = new Position(1.23, 1.56, 1.77);
+		// Data data = new Data("urn:wisebed:node:capability:time");
 
-        Node node1 = new Node("urn:wisebed:node:tud:M4FTR", "gw1", "123.456.79", "ein Knoten", capList);
-        nodeList.add(node1);
+		Node node1 = new Node("urn:wisebed:node:tud:M4FTR", "gw1",
+				"123.456.79", "ein Knoten", capList);
+		nodeList.add(node1);
 
-        Rssi rssi = new Rssi("decimal", "dBam", "-120");
+		Rssi rssi = new Rssi("decimal", "dBam", "-120");
 
-        Link edge = new Link("urn:wisebed:node:tud:330006", "urn:wisebed:node:tud:330009",
-                "true", "false", rssi, capList);
-        edgeList.add(edge);
+		Link edge = new Link("urn:wisebed:node:tud:330006",
+				"urn:wisebed:node:tud:330009", "true", "false", rssi, capList);
+		edgeList.add(edge);
 
-        Origin origin = new Origin(position, 5, 0);
-        Timeinfo time = new Timeinfo("9/7/2009", "19/12/2010", "seconds");
-        NodeDefaults ndefault = new NodeDefaults("node", node1);
-        LinkDefaults ldefault = new LinkDefaults("link", edge);
-        Setup setup = new Setup(origin, time, "cubic", "wiseml example", ndefault, ldefault, nodeList, edgeList);
+		Origin origin = new Origin(position, 5, 0);
+		Timeinfo time = new Timeinfo("9/7/2009", "19/12/2010", "seconds");
+		NodeDefaults ndefault = new NodeDefaults("node", node1);
+		LinkDefaults ldefault = new LinkDefaults("link", edge);
+		Setup setup = new Setup(origin, time, "cubic", "wiseml example",
+				ndefault, ldefault, nodeList, edgeList);
 
-        /**
-         *  Create all the required elemets for the scenario section of a wiseml file.
-         */
+		/**
+		 * Create all the required elemets for the scenario section of a wiseml
+		 * file.
+		 */
 
-        EnableNode enable = new EnableNode("urn:wisebed:node:tud:M4FTR");
-        EnableLink enablel = new EnableLink("urn:wisebed:node:tud:33000", "urn:wisebed:node:tud:330009");
-        DisableNode disable = new DisableNode("urn:wisebed:node:tud:M4FTR");
-        DisableLink disablel = new DisableLink("urn:wisebed:node:tud:33000", "urn:wisebed:node:tud:33000");
-        Scenario scenario = new Scenario("scenario_1", "23/09/09", enable, disable, enablel, disablel, node1);
-        Trace trace = new Trace("Trace_1","2/5/09", node1, edge);
+		EnableNode enable = new EnableNode("urn:wisebed:node:tud:M4FTR");
+		EnableLink enablel = new EnableLink("urn:wisebed:node:tud:33000",
+				"urn:wisebed:node:tud:330009");
+		DisableNode disable = new DisableNode("urn:wisebed:node:tud:M4FTR");
+		DisableLink disablel = new DisableLink("urn:wisebed:node:tud:33000",
+				"urn:wisebed:node:tud:33000");
+		Scenario scenario = new Scenario("scenario_1", "23/09/09", enable,
+				disable, enablel, disablel, node1);
+		Trace trace = new Trace("Trace_1", "2/5/09", node1, edge);
 
-        /**
-         * Create the final wiseml file.
-         */
-        create.writeXML("test.xml", setup, scenario, trace);
+		/**
+		 * Create the final wiseml file.
+		 */
+		create.writeXML("test.xml", setup, scenario, trace);
 	}
 }
