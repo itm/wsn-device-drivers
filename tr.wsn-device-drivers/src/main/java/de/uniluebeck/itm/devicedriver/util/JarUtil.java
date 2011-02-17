@@ -45,8 +45,8 @@ public class JarUtil {
 	 */
 	private static final String nativeLibraryName(final String libName) {
 		final String system = System.getProperty("os.name");
-		final String libExtension = system.startsWith("Windows") ? "dll" : "so";
-		return libName + "." + libExtension;
+		final String pattern = system.startsWith("Windows") ? "%s.dll" : "lib%s.so";
+		return String.format(pattern, libName);
 	}
 	
 	/**
