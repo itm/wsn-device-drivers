@@ -71,7 +71,7 @@ public class iSenseSerialPortConnection extends AbstractConnection implements Se
 				if (serialPort != null) {
 					serialPort.close();
 				}
-				log.error("Port does not exist. Connection will be removed. " + e, e);
+				log.error("Port " + port + " does not exist. Connection will be removed. " + e, e);
 				throw new RuntimeException(e);
 			}
 		}
