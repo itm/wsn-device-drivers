@@ -142,7 +142,7 @@ public class MockDeviceExample {
 			}
 			
 			public void onSuccess(MacAddress result) {
-				System.out.println("Mac Address: " + result.getMacString());
+				System.out.println("Mac Address: " + result.toString());
 			}
 			
 			public void onFailure(Throwable throwable) {
