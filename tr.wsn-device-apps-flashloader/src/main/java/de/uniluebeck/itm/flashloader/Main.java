@@ -50,7 +50,8 @@ public class Main {
 		options.addOption("device", true,
 				"type of device in local case: jennec, telosb oder pacemate");
 		options.addOption("id", true, "ID of the device in remote case");
-
+		options.addOption("timeout", true, "Timeout while flashing the device");
+		
 		// for help statement
 		HelpFormatter formatter = new HelpFormatter();
 
@@ -85,6 +86,7 @@ public class Main {
 				String password = cmd.getOptionValue("passwd");
 				String device = cmd.getOptionValue("device");
 				String id = cmd.getOptionValue("id");
+				String timeout = cmd.getOptionValue("timeout");
 
 				if (server != null && (user == null && password == null || user == null)) {
 					System.out.println("Username and Password is missing.");
@@ -111,6 +113,9 @@ public class Main {
 				flashLoader.setPassword(password);
 				flashLoader.setDevice(device);
 				flashLoader.setId(id);
+				if(timeout != null){
+					flashLoader.setTimeout(timeout);
+				}
 				flashLoader.connect();
 				flashLoader.flash(file);
 
@@ -161,6 +166,7 @@ public class Main {
 				String password = cmd.getOptionValue("passwd");
 				String device = cmd.getOptionValue("device");
 				String id = cmd.getOptionValue("id");
+				String timeout = cmd.getOptionValue("timeout");
 
 				if (server != null && (user == null && password == null || user == null)) {
 					System.out.println("Username and Password is missing.");
@@ -188,6 +194,9 @@ public class Main {
 				flashLoader.setPassword(password);
 				flashLoader.setDevice(device);
 				flashLoader.setId(id);
+				if(timeout != null){
+					flashLoader.setTimeout(timeout);
+				}
 				flashLoader.connect();
 				flashLoader.writemac(macAdresse);
 
@@ -200,6 +209,7 @@ public class Main {
 				String password = cmd.getOptionValue("passwd");
 				String device = cmd.getOptionValue("device");
 				String id = cmd.getOptionValue("id");
+				String timeout = cmd.getOptionValue("timeout");
 
 				if (server != null && (user == null && password == null || user == null)) {
 					System.out.println("Username and Password is missing.");
@@ -226,6 +236,9 @@ public class Main {
 				flashLoader.setPassword(password);
 				flashLoader.setDevice(device);
 				flashLoader.setId(id);
+				if(timeout != null){
+					flashLoader.setTimeout(timeout);
+				}
 				flashLoader.connect();
 				flashLoader.reset();
 			}

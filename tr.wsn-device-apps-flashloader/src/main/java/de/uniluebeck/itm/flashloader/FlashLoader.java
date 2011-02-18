@@ -42,6 +42,7 @@ public class FlashLoader {
 	private String device_parameter;
 	private DeviceAsync deviceAsync;
 	private String id;
+	private int timeout = 300000;
 
 	private boolean flashed = false; // for the test-class
 	private String current_mac_adress; // for the test-class
@@ -119,6 +120,10 @@ public class FlashLoader {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+	
+	public void setTimeout(String timeout){
+		this.timeout = Integer.valueOf(timeout);
 	}
 
 	/**
@@ -210,7 +215,7 @@ public class FlashLoader {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		deviceAsync.program(image, 1000000, new AsyncAdapter<Void>() {
+		deviceAsync.program(image, timeout, new AsyncAdapter<Void>() {
 			@Override
 			public void onExecute() {
 				System.out.println("Flashing is starting now...");
@@ -272,7 +277,7 @@ public class FlashLoader {
 	 */
 	public void writemac(MacAddress macAdresse) {
 		System.out.println("Setting Mac Address");
-		deviceAsync.writeMac(new MacAddress(1024), 10000,
+		deviceAsync.writeMac(new MacAddress(1024), timeout,
 				new AsyncAdapter<Void>() {
 
 					@Override
@@ -301,7 +306,7 @@ public class FlashLoader {
 	 */
 	public void reset() {
 		System.out.println("Reset");
-		deviceAsync.reset(10000, new AsyncAdapter<Void>() {
+		deviceAsync.reset(timeout, new AsyncAdapter<Void>() {
 
 			@Override
 			public void onProgressChange(float fraction) {
