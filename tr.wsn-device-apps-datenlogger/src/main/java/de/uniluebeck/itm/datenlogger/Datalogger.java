@@ -11,6 +11,10 @@ import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
+
 import model.Capability;
 import model.DisableLink;
 import model.DisableNode;
@@ -55,11 +59,12 @@ import de.uniluebeck.itm.tcp.client.RemoteConnection;
 import de.uniluebeck.itm.tcp.client.RemoteDevice;
 
 /**
- * Class Datenlogger. Functions to registrate a Datenlogger on a sensornode and
+ * Class Datalogger. Functions to registrate a Datalogger on a sensornode and
  * print the messages on the console or in a file.
  */
 public class Datalogger {
 
+	private static Log log = LogFactory.getLog(Datalogger.class);
 	private String port;
 	private String server;
 	private String brackets_filter;
@@ -328,7 +333,7 @@ public class Datalogger {
 			try {
 				writer = new FileWriter(location);
 			} catch (IOException e) {
-				e.printStackTrace();
+				log.error("Error while creating the writer.");
 			}
 		}
 
@@ -374,7 +379,7 @@ public class Datalogger {
 								writer.write("\n");
 							}
 						} catch (IOException e) {
-							e.printStackTrace();
+							log.error("Error while writing the data.");
 						}
 					} else {
 						byte[] bytes = event.getMessage().getContent();
@@ -407,7 +412,7 @@ public class Datalogger {
 			try {
 				writer.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				log.error("Error while closing the writer.");
 			}
 		}
 		started = false;

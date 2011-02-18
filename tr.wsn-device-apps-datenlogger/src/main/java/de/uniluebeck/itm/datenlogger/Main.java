@@ -5,9 +5,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import org.apache.commons.cli.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class Main {
 
+	private static Log log = LogFactory.getLog(Datalogger.class);
 	private static double version = 0.1;
 
 	/**
@@ -139,7 +142,7 @@ public class Main {
 						System.exit(0);
 					}
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					log.error("Error while reading from terminal.");
 				}
 			}
 		}
