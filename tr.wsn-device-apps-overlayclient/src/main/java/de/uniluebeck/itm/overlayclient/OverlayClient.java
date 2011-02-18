@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import de.uniluebeck.itm.flashloader.FlashLoader;
 import de.uniluebeck.itm.metadaten.remote.client.*;
 import de.uniluebeck.itm.metadaten.remote.entity.*;
 
@@ -23,23 +22,23 @@ public class OverlayClient {
 	private String client_port;
 	
 	public void setUsername(String username){
-		username = username;
+		this.username = username;
 	}
 	
 	public void setPassword(String password){
-		password = password;
+		this.password = password;
 	}
 	
 	public void setServer(String server){
-		server = server;
+		this.server = server;
 	}
 	
 	public void setServer_port(String server_port){
-		server_port = server_port;
+		this.server_port = server_port;
 	}
 	
 	public void setClient_port(String client_port){
-		client_port = client_port;
+		this.client_port = client_port;
 	}
 	/**
 	 * Instantiates a new overlay client.
@@ -56,10 +55,11 @@ public class OverlayClient {
 	 */
 	public void searchDeviceWithId(String ID) throws java.lang.Exception {
 		System.out.println("Start Overlaysuche...");
+		MetaDatenClient client;
 		if(client_port != null){
-			MetaDatenClient client = new MetaDatenClient(username, password, server, Integer.valueOf(server_port), Integer.valueOf(client_port));
+			client = new MetaDatenClient(username, password, server, Integer.valueOf(server_port), Integer.valueOf(client_port));
 		}else{
-			MetaDatenClient client = new MetaDatenClient(username, password, server, Integer.valueOf(server_port));
+			client = new MetaDatenClient(username, password, server, Integer.valueOf(server_port));
 		}
 		Node queryExample = new Node();
 		queryExample.setId(ID);
@@ -86,10 +86,11 @@ public class OverlayClient {
 	 *            the microcontroller
 	 */
 	public void searchDeviceWithMicrocontroller(String microcontroller) throws java.lang.Exception {
+		MetaDatenClient client;
 		if(client_port != null){
-			MetaDatenClient client = new MetaDatenClient(username, password, server, Integer.valueOf(server_port), Integer.valueOf(client_port));
+			client = new MetaDatenClient(username, password, server, Integer.valueOf(server_port), Integer.valueOf(client_port));
 		}else{
-			MetaDatenClient client = new MetaDatenClient(username, password, server, Integer.valueOf(server_port));
+			client = new MetaDatenClient(username, password, server, Integer.valueOf(server_port));
 		}
 		Node queryExample = new Node();
 		queryExample.setMicrocontroller(microcontroller);
@@ -119,10 +120,11 @@ public class OverlayClient {
 		List<Capability> sensoren = new ArrayList<Capability>();
 		Capability capability = new Capability(sensor, null, null, 0);
 		sensoren.add(capability);
+		MetaDatenClient client;
 		if(client_port != null){
-			MetaDatenClient client = new MetaDatenClient(username, password, server, Integer.valueOf(server_port), Integer.valueOf(client_port));
+			client = new MetaDatenClient(username, password, server, Integer.valueOf(server_port), Integer.valueOf(client_port));
 		}else{
-			MetaDatenClient client = new MetaDatenClient(username, password, server, Integer.valueOf(server_port));
+			client = new MetaDatenClient(username, password, server, Integer.valueOf(server_port));
 		}
 		Node queryExample = new Node();
 		queryExample.setCapabilityList(sensoren);
