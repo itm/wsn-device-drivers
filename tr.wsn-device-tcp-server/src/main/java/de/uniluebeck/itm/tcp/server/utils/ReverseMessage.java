@@ -14,10 +14,10 @@ import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.clientMessage;
 public class ReverseMessage {
 
 	private RpcClientChannel channel = null;
-	private PacketServiceAnswer.Interface answer;
-	private String OperationKey;
+	private final PacketServiceAnswer.Interface answer;
+	private final String OperationKey;
 
-	public ReverseMessage(String OperationKey, RpcClientChannel channel){
+	public ReverseMessage(final String OperationKey, final RpcClientChannel channel){
 		this.OperationKey = OperationKey;
 		this.channel = channel;
 		answer = PacketServiceAnswer.newStub(channel);
@@ -31,15 +31,15 @@ public class ReverseMessage {
 		
 		final RpcController controller = channel.newRpcController();
 		
-		OpKey request = OpKey.newBuilder().setOperationKey(OperationKey).build();
+		final OpKey request = OpKey.newBuilder().setOperationKey(OperationKey).build();
 		answer.reverseExecuteEvent(controller, request, new RpcCallback<EmptyAnswer>(){
 
 			@Override
-			public void run(EmptyAnswer parameter) {
+			public void run(final EmptyAnswer parameter) {
 			}});
 	}
 	
-	public void reverseChangeEvent(String message, boolean failed){
+	public void reverseChangeEvent(final String message, final boolean failed){
 		
 		final RpcController controller = channel.newRpcController();
 		
@@ -47,23 +47,23 @@ public class ReverseMessage {
 			controller.setFailed(message);
 		}
 		
-		clientMessage request = clientMessage.newBuilder().setOperationKey(OperationKey).setQuery(message).build();
+		final clientMessage request = clientMessage.newBuilder().setOperationKey(OperationKey).setQuery(message).build();
 		answer.reverseChangeEvent(controller, request, new RpcCallback<EmptyAnswer>(){
 
 			@Override
-			public void run(EmptyAnswer parameter) {
+			public void run(final EmptyAnswer parameter) {
 			}});
 		
 	}
 	
-	public void reverseSuccess(ReverseAnswer ans){
+	public void reverseSuccess(final ReverseAnswer ans){
 		
 		final RpcController controller = channel.newRpcController();
 		
 		answer.reverseSuccess(controller, ans, new RpcCallback<EmptyAnswer>(){
 
 			@Override
-			public void run(EmptyAnswer parameter) {
+			public void run(final EmptyAnswer parameter) {
 			}});
 	}
 }

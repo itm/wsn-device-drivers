@@ -23,6 +23,11 @@ import de.uniluebeck.itm.metadatenservice.iMetaDatenService;
 import de.uniluebeck.itm.tcp.jaxdevices.JaxbDevice;
 import de.uniluebeck.itm.tcp.jaxdevices.JaxbDeviceList;
 
+/**
+ * Create Devices and adds metaDatenCollectors to them
+ * @author Andreas Maier
+ *
+ */
 public class ServerDevice {
 
 	/**
@@ -33,12 +38,30 @@ public class ServerDevice {
 	/**
 	 * stores the objects representing the devices callable via the server.
 	 */
-	private static Map<String,DeviceAsync> DeviceList = new HashMap<String,DeviceAsync>();
+	private static Map<String,DeviceAsync> deviceList = new HashMap<String,DeviceAsync>();
 
+	/**
+	 * parameter for activate (true) or deactivate (false, default) the metaDaten-functions
+	 */
+	private boolean metaDaten = false;
+	
+	/**
+	 * The metaDatenService
+	 */
+	private iMetaDatenService mclient = null;
+	
 	/**
 	 * Constructor.
 	 */
 	public ServerDevice(){
+	}
+	
+	/**
+	 * Constructor.
+	 * @param meta parameter for activate (true) or deactivate (false, default) the metaDaten-functions
+	 */
+	public ServerDevice(final boolean meta){
+		this.metaDaten = meta;
 	}
 	
 	/**
@@ -48,22 +71,28 @@ public class ServerDevice {
 	public void createServerDevices() {
 		
 		try {
-			iMetaDatenService mclient = new MetaDatenService (new File("config.xml"),new File("sensors.xml"));
-			JaxbDeviceList list = readDevices();
+			if(metaDaten){
+				mclient = new MetaDatenService (new File("src/main/resources/config.xml"),new File("src/main/resources/sensors.xml"));
+			}
+			final JaxbDeviceList list = readDevices();
 			
 			for(JaxbDevice jaxDevice : list.getJaxbDevice()){
-				String key = createID(jaxDevice);
-				Connection con = createConnection(jaxDevice.getConnectionType());
-				Device device = createDevice(jaxDevice.getDeviceType(), con);
-				IMetaDataCollector mcollector = new MetaDataCollector (device, key);
-				mclient.addMetaDataCollector(mcollector);
+				final String key = createID(jaxDevice);
+				final Connection con = createConnection(jaxDevice.getConnectionType());
+				final Device<?> device = createDevice(jaxDevice.getDeviceType(), con);
+				
+				if(metaDaten){
+					final IMetaDataCollector mcollector = new MetaDataCollector (device, key);
+					mclient.addMetaDataCollector(mcollector);
+				}
+				
 				con.connect(jaxDevice.getPort());
-				DeviceAsync deviceAsync = createDeviceAsync(device);
-				DeviceList.put(key, deviceAsync);
+				final DeviceAsync deviceAsync = createDeviceAsync(device);
+				deviceList.put(key, deviceAsync);
 				
 			}
 			
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			log.error(e.getMessage());
 			System.exit(-1);
 		}
@@ -72,7 +101,7 @@ public class ServerDevice {
 	/**
 	 * readouts the devices specified in the devices.xml.
 	 * @return a JaxbDeviceList object with a list of devices in it.
-	 * @throws JAXBException
+	 * @throws JAXBException Error while try to read the devices.xml
 	 */
 	private JaxbDeviceList readDevices() throws JAXBException{
 		
@@ -82,17 +111,18 @@ public class ServerDevice {
 	//ConnectionType = de.uniluebeck.itm.devicedriver.mockdevice.MockConnection
 	/**
 	 * creates a connection instance of the type specified in the devices.xml .
+	 * @param connectionType the Type of the Connection
+	 * @return Connection for the Device
 	 */
-	@SuppressWarnings("unchecked")
-	private Connection createConnection(String ConnectionType) {
+	private Connection createConnection(final String connectionType) {
 		
 		Connection connection = null;
-		Class con;
+		Class<?> con;
 		
 		try {
-			con = Class.forName(ConnectionType);
+			con = Class.forName(connectionType);
 			connection = (Connection) con.newInstance();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			log.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -103,19 +133,27 @@ public class ServerDevice {
 	//DeviceName = de.uniluebeck.itm.devicedriver.jennic.JennicDevice
 	/**
 	 * creates a device instance of the type specified in the devices.xml .
+	 * @param deviceName the Name of the DeviceType
+	 * @param con the connection for this Device
+	 * @return Device-Instance
 	 */
-	@SuppressWarnings("unchecked")
-	private Device createDevice(String DeviceName, Connection con) {
+	private Device<?> createDevice(final String deviceName, final Connection con) {
 
-		Device device = null;
-		Class deviceClass;
+		Device<?> device = null;
+		Class<?> deviceClass;
 		
 		try {
-			deviceClass = Class.forName(DeviceName);
+			deviceClass = Class.forName(deviceName);
 			
-			Constructor[] ConncectionArgsConstructor = deviceClass.getConstructors();
-			device = (Device) ConncectionArgsConstructor[0].newInstance(new Object[] {con});
-		} catch (Exception e) {
+			for(Constructor<?> constructor : deviceClass.getConstructors()){
+				for (Class<?> type : constructor.getParameterTypes()){
+					if(type.isInstance(con) && device == null){
+						device = (Device<?>) constructor.newInstance(new Object[] {con});
+						break;
+					}
+				}
+			}
+		} catch (final Exception e) {
 			log.error(e.getMessage());
 			System.exit(-1);
 		}
@@ -128,31 +166,35 @@ public class ServerDevice {
 	 * @param device the device that shall be usable asynchronously.
 	 * @return a representation of the device which can be called asynchronously.
 	 */
-	private DeviceAsync createDeviceAsync(Device device){
+	private DeviceAsync createDeviceAsync(final Device<?> device){
 		
 		return new QueuedDeviceAsync(new PausableExecutorOperationQueue(), device);
 	}
 	
 	/**
 	 * creates a distinct id for the devices.
-	 * @return
+	 * @param jaxDevice the Device for which the Id should be created
+	 * @return the Id for a Device
 	 */
-	private String createID(JaxbDevice jaxDevice){
+	private String createID(final JaxbDevice jaxDevice){
 		
 		if(jaxDevice.getDeviceId() != null){
 			return jaxDevice.getDeviceId();
 		}
 		
 		int rand;
-		
+		final int number = 1000;
 		do{
-			rand = (int) (Math.random()*1000)%1000;
-		}while(DeviceList.containsKey(String.valueOf(rand)));
+			rand = (int) (Math.random()*number)%number;
+		}while(deviceList.containsKey(String.valueOf(rand)));
 		
 		return String.valueOf(rand);
 	}
-	
+	/**
+	 * get the List with the Devices
+	 * @return List with the Devices
+	 */
 	public Map<String, DeviceAsync> getDeviceList() {
-		return DeviceList;
+		return deviceList;
 	}
 }

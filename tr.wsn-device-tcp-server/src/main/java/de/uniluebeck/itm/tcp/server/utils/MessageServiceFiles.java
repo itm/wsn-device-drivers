@@ -8323,7 +8323,8 @@ public final class MessageServiceFiles {
         this.channel = channel;
       }
       
-      private final com.google.protobuf.BlockingRpcChannel channel;
+      @SuppressWarnings("unused")
+	private final com.google.protobuf.BlockingRpcChannel channel;
     }
   }
   

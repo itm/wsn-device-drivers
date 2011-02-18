@@ -13,14 +13,35 @@ import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.EmptyAnswer;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.ListenerData;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.PacketServiceAnswer;
 
+/**
+ * Class for sending a PlainMessagePacket back to the client
+ * @author Andreas Maier
+ *
+ */
 public class RemoteMessagePlainTextListener implements MessagePlainTextListener{
-
-	private RpcClientChannel channel = null;
-	private PacketServiceAnswer.Interface answer;
-	private String OperationKey;
 	
-	public RemoteMessagePlainTextListener(String OperationKey, RpcClientChannel channel){
-		this.OperationKey = OperationKey;
+	/**
+	 * client Channel
+	 */
+	private RpcClientChannel channel = null;
+	
+	/**
+	 * Rpc-Pro Interface for the Answer
+	 */
+	private final PacketServiceAnswer.Interface answer;
+	
+	/**
+	 * key for the Listener
+	 */
+	private final String operationKey;
+	
+	/**
+	 * Constructor
+	 * @param operationKey key for the Listener 
+	 * @param channel channel for the client
+	 */
+	public RemoteMessagePlainTextListener(final String operationKey, final RpcClientChannel channel){
+		this.operationKey = operationKey;
 		this.channel = channel;
 		answer = PacketServiceAnswer.newStub(channel);
 	}
@@ -30,12 +51,12 @@ public class RemoteMessagePlainTextListener implements MessagePlainTextListener{
 			final MessageEvent<MessagePlainText> message) {
 		
 		final RpcController controller = channel.newRpcController();
-		ListenerData request = ListenerData.newBuilder().setOperationKey(OperationKey).setSource(message.getSource().toString()).addData(ByteString.copyFrom(message.getMessage().getContent())).build();
+		final ListenerData request = ListenerData.newBuilder().setOperationKey(operationKey).setSource(message.getSource().toString()).addData(ByteString.copyFrom(message.getMessage().getContent())).build();
 
 		answer.sendReversePlainTextMessage(controller, request, new RpcCallback<EmptyAnswer>(){
 
 			@Override
-			public void run(EmptyAnswer parameter) {	
+			public void run(final EmptyAnswer parameter) {	
 			}});
 		
 	}
