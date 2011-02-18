@@ -51,22 +51,23 @@ public class MetaDatenClient implements MetaDataClient {
 	private String user = "frager";
 	private ConfigData config = new ConfigData();
 	
-	public MetaDatenClient() {
-		//Laden der Config
-		config = loadConfig("config.xml");
-		user= config.getUsername();
-		password = config.getPassword();
+	public MetaDatenClient(final String userName, final String passWord, final String serverIP,
+			final int serverPort) throws Exception {
+
 		// setzen der Server-Infos
-		server = new PeerInfo(config.getServerIP(), config.getServerPort());
+		server = new PeerInfo(serverIP, serverPort);
 		// setzen der Client-Infos fuer Reverse RPC
-		client = new PeerInfo(config.getUsername() + "client", config.getClientport());
-	};
+		client = new PeerInfo(userName + "client", 1235);
+		user = userName;
+		password = passWord;
 
-	public MetaDatenClient(final String userName, final String passWord, final String uri,
-			final int port, final int clientPort) throws Exception {
+	}
+
+	public MetaDatenClient(final String userName, final String passWord, final String serverIP,
+			final int serverPort, final int clientPort) throws Exception {
 
 		// setzen der Server-Infos
-		server = new PeerInfo(uri, port);
+		server = new PeerInfo(serverIP, serverPort);
 		// setzen der Client-Infos fuer Reverse RPC
 		client = new PeerInfo(userName + "client", clientPort);
 		user = userName;
@@ -156,39 +157,7 @@ public class MetaDatenClient implements MetaDataClient {
 		log.info("Disconnect () nach channel.close");
 	}
 
-	/**
-	 * Load of ConfigData needed for communication
-	 * 
-	 * @param fileurl
-	 * @return the config data for the client loaded from the given
-	 * url.
-	 */
-	public ConfigData loadConfig(final String fileurl) {
-		ConfigData configlocal = new ConfigData();
-		final Serializer serializer = new Persister();
-		URI fileuri = null;
-		try {
-			fileuri = ClassLoader.getSystemResource(fileurl).toURI();
-		} catch (final URISyntaxException e) {
-			log.error(e.getMessage());
-		}
-		final File source = new File(fileuri);
-		log.debug("ConfigFile:" + source.getName() + source.toString());
-		try {
-			configlocal = serializer
-					.read(de.uniluebeck.itm.metadaten.remote.entity.ConfigData.class,
-							source);
-			// serializer.read(ConfigData, source);
-		} catch (final Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		log.debug("Config:" + configlocal.getPassword() + configlocal.getServerIP()
-				+ configlocal.getUsername() + configlocal.getServerPort()
-				+ configlocal.getClientport());
-		return configlocal;
-	}
-
+	
 	public List<Node> search(final Node queryexmpl, final String query) throws Exception {
 
 		this.connect(user, password);
