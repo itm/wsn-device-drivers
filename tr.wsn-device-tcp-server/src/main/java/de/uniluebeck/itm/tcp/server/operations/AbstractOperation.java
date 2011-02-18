@@ -58,7 +58,7 @@ public abstract class AbstractOperation<T> implements Runnable {
 		message.reverseOnCancel();
 	}
 	public void setOnFailure(final Throwable throwable){
-		message.reverseOnFailure(throwable.getMessage());
+		message.reverseOnFailure(throwable);
 	}
 	public void setOnProgressChange(final float fraction){
 		message.reverseChangeEvent(String.valueOf(fraction));

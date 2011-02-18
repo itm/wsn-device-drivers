@@ -5,6 +5,7 @@ import com.google.protobuf.RpcController;
 import com.googlecode.protobuf.pro.duplex.RpcClientChannel;
 
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.EmptyAnswer;
+import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.FailureException;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.OpKey;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.PacketServiceAnswer;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.ReverseAnswer;
@@ -52,11 +53,11 @@ public class ReverseMessage {
 		
 	}
 	
-	public void reverseOnFailure(String message){
+	public void reverseOnFailure(final Throwable throwable){
 		
 		final RpcController controller = channel.newRpcController();
 		
-		final clientMessage request = clientMessage.newBuilder().setOperationKey(OperationKey).setQuery(message).build();
+		final FailureException request = FailureException.newBuilder().setOperationKey(OperationKey).setExceptionName(throwable.getClass().getName()).setExceptionMessage(throwable.getMessage()).build();
 		answer.reverseOnFailure(controller, request, new RpcCallback<EmptyAnswer>(){
 
 			@Override

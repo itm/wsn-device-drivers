@@ -18,6 +18,12 @@ message STRING {
 	required string query = 1;
 }
 
+message FailureException {
+	required string OperationKey = 1;
+	required string ExceptionName = 2;
+	required string ExceptionMessage = 3;
+}
+
 message clientMessage {
 	required string OperationKey = 1;
 	required string query = 2;
@@ -124,7 +130,7 @@ service PacketServiceAnswer{
 	rpc sendReversePacketMessage (ListenerData) returns (EmptyAnswer);
 	rpc sendReversePlainTextMessage (ListenerData) returns (EmptyAnswer);
 	
-	rpc reverseOnFailure (clientMessage) returns (EmptyAnswer);
+	rpc reverseOnFailure (FailureException) returns (EmptyAnswer);
 	rpc reverseOnCancel (OpKey) returns (EmptyAnswer);
 	rpc reverseExecuteEvent (OpKey) returns (EmptyAnswer);
 	rpc reverseChangeEvent (clientMessage) returns (EmptyAnswer);
