@@ -1,22 +1,44 @@
-
-   <setup>
-      <node id="280120101">
-	    <description>wisebed</description>
-           <capability>
-	               <name>urn:wisebed:node:capability:temp</name>
-	               <datatype>integer</datatype>
-	               <unit>celsius</unit>
-	               <defaults>2</defaults>
-	            </capability>
-	            <capability>
-	               <name>urn:wisebed:node:capability:light</name>
-	               <datatype>integer</datatype>
-	               <unit>lux</unit>
-	               <defaults>2</defaults>
-	            </capability>
-        <microcontroller>TI MSP430</microcontroller>  
-       <ipAddress></ipAddress> 
-        <port>1237</port>	
-      </node>
-   </setup>
+<?xml version="1.0" encoding="UTF-8"?>
+<ns0:nodeList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ns0="de/uniluebeck/itm/metadatenservice/config"
+	xsi:schemaLocation="de/uniluebeck/itm/metadatenservice/config sensors.xsd ">
+	<ns0:node>
+		<ns0:nodeid>1</ns0:nodeid>
+		<ns0:description>wisebed</ns0:description>
+		<ns0:microcontroller>TI MSP430</ns0:microcontroller>
+		<ns0:ipAddress></ns0:ipAddress>
+		<ns0:Port>1237</ns0:Port>
+		<ns0:capability>
+			<ns0:name>urn:wisebed:node:capability:temp</ns0:name>
+			<ns0:datatype>integer</ns0:datatype>
+			<ns0:unit>celsius</ns0:unit>
+			<ns0:default>2</ns0:default>
+		</ns0:capability>
+		<ns0:capability>
+			<ns0:name>urn:wisebed:node:capability:light</ns0:name>
+			<ns0:datatype>integer</ns0:datatype>
+			<ns0:unit>lux</ns0:unit>
+			<ns0:default>2</ns0:default>
+		</ns0:capability>
+	</ns0:node>
+	<ns0:node>
+		<ns0:nodeid>2</ns0:nodeid>
+		<ns0:description>wisebed</ns0:description>
+		<ns0:microcontroller>TI MSP430</ns0:microcontroller>
+		<ns0:ipAddress></ns0:ipAddress>
+		<ns0:Port>1237</ns0:Port>
+		<ns0:capability>
+			<ns0:name>urn:wisebed:node:capability:temp</ns0:name>
+			<ns0:datatype>integer</ns0:datatype>
+			<ns0:unit>celsius</ns0:unit>
+			<ns0:default>2</ns0:default>
+		</ns0:capability>
+		<ns0:capability>
+			<ns0:name>urn:wisebed:node:capability:light</ns0:name>
+			<ns0:datatype>integer</ns0:datatype>
+			<ns0:unit>lux</ns0:unit>
+			<ns0:default>2</ns0:default>
+		</ns0:capability>
+	</ns0:node>
+</ns0:nodeList>
 
