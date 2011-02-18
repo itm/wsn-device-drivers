@@ -15,13 +15,13 @@ import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations.Blockin
 public class writeFlashOperation extends AbstractOperation<Void> {
 
 	
-	int address = 0;
-	byte[] data = null;
-	int length = 0;
-	long timeout = 0L;
+	private int address = 0;
+	private byte[] data = null;
+	private int length = 0;
+	private long timeout = 0L;
 
-	public writeFlashOperation(RpcClientChannel channel,  AsyncCallback<Void> callback, BlockingInterface operationService, PacketServiceAnswerImpl packetServiceAnswerImpl, int address, byte[] data,
-			int length, long timeout) {
+	public writeFlashOperation(final RpcClientChannel channel, final AsyncCallback<Void> callback, final BlockingInterface operationService, final PacketServiceAnswerImpl packetServiceAnswerImpl, final int address, final byte[] data,
+			final int length, final long timeout) {
 
 		super(channel,packetServiceAnswerImpl, operationService, callback);
 		this.address = address;
@@ -32,14 +32,14 @@ public class writeFlashOperation extends AbstractOperation<Void> {
 
 	public void operate() throws ServiceException {
 		
-		Checksum checksum = new CRC32();
+		final Checksum checksum = new CRC32();
 		checksum.update(data,0,data.length);
 		
-		FlashData request = FlashData.newBuilder().setAddress(address).addData(ByteString.copyFrom(data)).setLength(length).setTimeout(timeout).setCrc(checksum.getValue()).setOperationKey(controller.toString()).build();
+		final FlashData request = FlashData.newBuilder().setAddress(address).addData(ByteString.copyFrom(data)).setLength(length).setTimeout(timeout).setCrc(checksum.getValue()).setOperationKey(this.getController().toString()).build();
 		
 		setOperationKey(request.getOperationKey());
 		
-		packetServiceAnswerImpl.addCallback(request.getOperationKey(), callback);
+		this.getPacketServiceAnswerImpl().addCallback(request.getOperationKey(), this.getCallback());
 		
 //		operationService.writeFlash(controller, flash, new RpcCallback<EmptyAnswer>() {
 //			
@@ -51,6 +51,6 @@ public class writeFlashOperation extends AbstractOperation<Void> {
 //			}
 //		});
 		
-		operationService.writeFlash(controller, request);
+		this.getOperationService().writeFlash(this.getController(), request);
 	}
 }

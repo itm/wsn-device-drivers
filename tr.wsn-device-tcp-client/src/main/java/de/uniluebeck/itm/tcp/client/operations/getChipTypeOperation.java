@@ -12,20 +12,20 @@ import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations.Blockin
 
 public class getChipTypeOperation extends AbstractOperation<ChipType> {
 
-	long timeout = 0L;
+	private long timeout = 0L;
 	
-	public getChipTypeOperation(RpcClientChannel channel, AsyncCallback<ChipType> callback, BlockingInterface operationService, PacketServiceAnswerImpl packetServiceAnswerImpl, long timeout){
+	public getChipTypeOperation(final RpcClientChannel channel, final AsyncCallback<ChipType> callback, final BlockingInterface operationService, final PacketServiceAnswerImpl packetServiceAnswerImpl, final long timeout){
 		super(channel,packetServiceAnswerImpl, operationService, callback);
 		this.timeout = timeout;
 	}
 	
 	public void operate() throws ServiceException {
 		
-		Timeout request = Timeout.newBuilder().setOperationKey(String.valueOf(controller.toString())).setTimeout(timeout).build();
+		final Timeout request = Timeout.newBuilder().setOperationKey(String.valueOf(this.getController().toString())).setTimeout(timeout).build();
 
 		setOperationKey(request.getOperationKey());
 		
-		packetServiceAnswerImpl.addCallback(request.getOperationKey(), callback);
+		this.getPacketServiceAnswerImpl().addCallback(request.getOperationKey(), this.getCallback());
 		
 		
 //		operationService.getChipType(controller, request, new RpcCallback<EmptyAnswer>() {
@@ -38,6 +38,6 @@ public class getChipTypeOperation extends AbstractOperation<ChipType> {
 //		});
 		
 		// Blockierender Aufruf, Antwort erfolgt Asynchron per CallBack
-		operationService.getChipType(controller, request);
+		this.getOperationService().getChipType(this.getController(), request);
 	}
 }

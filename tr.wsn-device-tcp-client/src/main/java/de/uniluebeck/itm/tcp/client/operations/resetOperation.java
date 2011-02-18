@@ -11,23 +11,23 @@ import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations.Blockin
 
 public class resetOperation extends AbstractOperation<Void> {
 
-	long timeout = 0L;	
+	private long timeout = 0L;	
 	
-	public resetOperation(RpcClientChannel channel, AsyncCallback<Void> callback, BlockingInterface operationService, PacketServiceAnswerImpl packetServiceAnswerImpl, long timeout){
+	public resetOperation(final RpcClientChannel channel, final AsyncCallback<Void> callback, final BlockingInterface operationService, final PacketServiceAnswerImpl packetServiceAnswerImpl, final long timeout){
 		super(channel, packetServiceAnswerImpl, operationService, callback);
 		this.timeout = timeout;
 	}
 	
 	@Override
 	public void operate() throws ServiceException {
-		Timeout request = Timeout.newBuilder().setOperationKey(String.valueOf(controller.toString())).setTimeout(timeout).build();
+		final Timeout request = Timeout.newBuilder().setOperationKey(String.valueOf(this.getController().toString())).setTimeout(timeout).build();
 
 		setOperationKey(request.getOperationKey());
 		
-		packetServiceAnswerImpl.addCallback(request.getOperationKey(), callback);
+		this.getPacketServiceAnswerImpl().addCallback(request.getOperationKey(), this.getCallback());
 		
 		// Blockierender Aufruf, Antwort erfolgt Asynchron per CallBack
-		operationService.reset(controller, request);
+		this.getOperationService().reset(this.getController(), request);
 
 	}
 

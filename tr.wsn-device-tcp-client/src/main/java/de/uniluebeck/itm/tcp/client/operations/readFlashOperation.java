@@ -11,12 +11,12 @@ import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations.Blockin
 
 public class readFlashOperation extends AbstractOperation<byte[]> {
 
-	int address = 0;
-	int length = 0;
-	long timeout = 0L;
+	private int address = 0;
+	private int length = 0;
+	private long timeout = 0L;
 	
-	public readFlashOperation(RpcClientChannel channel,  AsyncCallback<byte[]> callback, BlockingInterface operationService, PacketServiceAnswerImpl packetServiceAnswerImpl, int address,
-			int length, long timeout) {
+	public readFlashOperation(final RpcClientChannel channel, final AsyncCallback<byte[]> callback, final BlockingInterface operationService, final PacketServiceAnswerImpl packetServiceAnswerImpl, final int address,
+			final int length, final long timeout) {
 		super(channel,packetServiceAnswerImpl, operationService, callback);
 		this.address = address;
 		this.length = length;
@@ -25,13 +25,13 @@ public class readFlashOperation extends AbstractOperation<byte[]> {
 	
 	@Override
 	public void operate() throws ServiceException {
-		FlashData request = FlashData.newBuilder().setAddress(address).setLength(length).setTimeout(timeout).setOperationKey(controller.toString()).build();
+		final FlashData request = FlashData.newBuilder().setAddress(address).setLength(length).setTimeout(timeout).setOperationKey(this.getController().toString()).build();
 		
 		setOperationKey(request.getOperationKey());
 		
-		packetServiceAnswerImpl.addCallback(request.getOperationKey(), callback);
+		this.getPacketServiceAnswerImpl().addCallback(request.getOperationKey(), this.getCallback());
 		
-		operationService.readFlash(controller, request);
+		this.getOperationService().readFlash(this.getController(), request);
 
 	}
 

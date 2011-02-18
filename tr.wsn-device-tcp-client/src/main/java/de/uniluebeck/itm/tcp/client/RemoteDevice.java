@@ -43,21 +43,22 @@ import de.uniluebeck.itm.tcp.client.operations.writeMacOperation;
 
 /**
  * The RemoteDevice represents one device on the server acting as a stub.
+ * @author Schuett
  */
 public class RemoteDevice implements DeviceAsync{
 
 	private static Logger log = LoggerFactory.getLogger(RemoteDevice.class);
 	
-	ThreadPoolCallExecutor executor = null;
-	DuplexTcpClientBootstrap bootstrap = null;
-	RpcClientChannel channel = null;
+	private ThreadPoolCallExecutor executor = null;
+	private DuplexTcpClientBootstrap bootstrap = null;
+	private RpcClientChannel channel = null;
 	//Operations.Interface operationService = null;
-	Operations.BlockingInterface operationService = null;
-	PacketService.Interface packetService = null;
-	PacketServiceAnswerImpl packetServiceAnswerImpl = null;
-	RemoteConnection connection = null;
+	private Operations.BlockingInterface operationService = null;
+	private PacketService.Interface packetService = null;
+	private PacketServiceAnswerImpl packetServiceAnswerImpl = null;
+	private RemoteConnection connection = null;
 
-	public RemoteDevice(RemoteConnection connection){
+	public RemoteDevice(final RemoteConnection connection){
 		this.connection = connection;
 		this.channel = connection.getChannel();
 		this.bootstrap = connection.getBootstrap();
@@ -72,87 +73,87 @@ public class RemoteDevice implements DeviceAsync{
 	}
 
 	@Override
-	public OperationHandle<Void> program(byte[] bytes,
-			long timeout, final AsyncCallback<Void> callback) {
+	public OperationHandle<Void> program(final byte[] bytes,
+			final long timeout, final AsyncCallback<Void> callback) {
 		
 		return new programOperation(channel, callback, operationService, packetServiceAnswerImpl, bytes, timeout).execute();		
 	}
 
 	@Override
-	public OperationHandle<Void> eraseFlash(long timeout,
-			AsyncCallback<Void> callback) {
+	public OperationHandle<Void> eraseFlash(final long timeout,
+			final AsyncCallback<Void> callback) {
 		
 		return new eraseFlashOperation(channel, callback, operationService, packetServiceAnswerImpl, timeout).execute();
 	}
 
 	@Override
-	public OperationHandle<byte[]> readFlash(int address, int length,
-			long timeout, AsyncCallback<byte[]> callback) {
+	public OperationHandle<byte[]> readFlash(final int address, final int length,
+			final long timeout, final AsyncCallback<byte[]> callback) {
 
 		return new readFlashOperation(channel, callback, operationService, packetServiceAnswerImpl, address, length, timeout).execute();
 	}
 
 	@Override
-	public OperationHandle<MacAddress> readMac(long timeout,
+	public OperationHandle<MacAddress> readMac(final long timeout,
 			final AsyncCallback<MacAddress> callback) {
 		
 		return new readMacAddressOperation(channel, callback, operationService, packetServiceAnswerImpl,timeout).execute();
 	}
 
 	@Override
-	public OperationHandle<Void> reset(long timeout,
-			AsyncCallback<Void> callback) {
+	public OperationHandle<Void> reset(final long timeout,
+			final AsyncCallback<Void> callback) {
 
 		return new resetOperation(channel, callback, operationService, packetServiceAnswerImpl, timeout).execute();
 	}
 
 	@Override
-	public OperationHandle<Void> send(MessagePacket packet, long timeout,
-			AsyncCallback<Void> callback) {
+	public OperationHandle<Void> send(final MessagePacket packet, final long timeout,
+			final AsyncCallback<Void> callback) {
 
 		return new sendOperation(channel, callback, operationService, packetServiceAnswerImpl, packet, timeout).execute();
 	}
 
 	@Override
-	public OperationHandle<Void> writeFlash(int address, byte[] data,
-			int length, long timeout, final AsyncCallback<Void> callback) {
+	public OperationHandle<Void> writeFlash(final int address, final byte[] data,
+			final int length, final long timeout, final AsyncCallback<Void> callback) {
 		
 		return new writeFlashOperation(channel, callback, operationService, packetServiceAnswerImpl,address,data,length,timeout).execute();		
 	}
 
 	@Override
-	public OperationHandle<Void> writeMac(MacAddress macAddress, long timeout,
+	public OperationHandle<Void> writeMac(final MacAddress macAddress, final long timeout,
 			final AsyncCallback<Void> callback) {
 
 		return new writeMacOperation(channel, packetServiceAnswerImpl, operationService, callback, macAddress, timeout).execute();
 	}
 
 	@Override
-	public OperationHandle<ChipType> getChipType(long timeout,
+	public OperationHandle<ChipType> getChipType(final long timeout,
 			final AsyncCallback<ChipType> callback) {
 		
 		return new getChipTypeOperation(channel, callback, operationService, packetServiceAnswerImpl, timeout).execute();
 	}
 
 	@Override
-	public void addListener(final MessagePacketListener listener, PacketType... types) {
+	public void addListener(final MessagePacketListener listener, final PacketType... types) {
 		
 		final RpcController controller = channel.newRpcController();
 
-		List<Integer> alist = new ArrayList<Integer>();
+		final List<Integer> alist = new ArrayList<Integer>();
 		for(int i=0;i<types.length;i++){
 			alist.add(types[i].getValue());
 		}
 		
-		PacketTypeData request = PacketTypeData.newBuilder().addAllType(alist).setOperationKey(listener.toString()).build();
+		final PacketTypeData request = PacketTypeData.newBuilder().addAllType(alist).setOperationKey(listener.toString()).build();
 		
 		packetService.addMessagePacketListener(controller, request, new RpcCallback<EmptyAnswer>(){
 
 			@Override
-			public void run(EmptyAnswer parameter) {
+			public void run(final EmptyAnswer parameter) {
 				packetServiceAnswerImpl.addPacketListener(listener.toString(),new MessagePacketListener() {
 					@Override
-					public void onMessagePacketReceived(MessageEvent<MessagePacket> event) {
+					public void onMessagePacketReceived(final MessageEvent<MessagePacket> event) {
 						listener.onMessagePacketReceived(event);
 						//log.info("Message: " + new String(event.getMessage().getContent()));
 					}
@@ -162,7 +163,7 @@ public class RemoteDevice implements DeviceAsync{
 	}
 
 	@Override
-	public void addListener(final MessagePacketListener listener, int... types) {
+	public void addListener(final MessagePacketListener listener, final int... types) {
 		
 		final RpcController controller = channel.newRpcController();
 		
@@ -175,10 +176,10 @@ public class RemoteDevice implements DeviceAsync{
 		packetService.addMessagePacketListener(controller, request, new RpcCallback<EmptyAnswer>(){
 
 			@Override
-			public void run(EmptyAnswer parameter) {
+			public void run(final EmptyAnswer parameter) {
 				packetServiceAnswerImpl.addPacketListener(listener.toString(),new MessagePacketListener() {
 					@Override
-					public void onMessagePacketReceived(MessageEvent<MessagePacket> event) {
+					public void onMessagePacketReceived(final MessageEvent<MessagePacket> event) {
 						listener.onMessagePacketReceived(event);
 						//log.info("Message: " + new String(event.getMessage().getContent()));
 					}
@@ -191,15 +192,15 @@ public class RemoteDevice implements DeviceAsync{
 		
 		final RpcController controller = channel.newRpcController();
 		
-		PacketTypeData request = PacketTypeData.newBuilder().setOperationKey(listener.toString()).build();
+		final PacketTypeData request = PacketTypeData.newBuilder().setOperationKey(listener.toString()).build();
 		
 		packetService.addMessagePacketListener(controller, request, new RpcCallback<EmptyAnswer>(){
 
 			@Override
-			public void run(EmptyAnswer parameter) {
+			public void run(final EmptyAnswer parameter) {
 				packetServiceAnswerImpl.addPacketListener(listener.toString(),new MessagePacketListener() {
 					@Override
-					public void onMessagePacketReceived(MessageEvent<MessagePacket> event) {
+					public void onMessagePacketReceived(final MessageEvent<MessagePacket> event) {
 						log.info("Message: " + new String(event.getMessage().getContent()));
 					}
 				});
@@ -211,16 +212,16 @@ public class RemoteDevice implements DeviceAsync{
 	public void addListener(final MessagePlainTextListener listener) {
 		final RpcController controller = channel.newRpcController();
 		
-		PacketTypeData request = PacketTypeData.newBuilder().setOperationKey(listener.toString()).build();
+		final PacketTypeData request = PacketTypeData.newBuilder().setOperationKey(listener.toString()).build();
 		
 		packetService.addMessagePlainTextListener(controller, request, new RpcCallback<EmptyAnswer>(){
 
 			@Override
-			public void run(EmptyAnswer parameter) {
+			public void run(final EmptyAnswer parameter) {
 				packetServiceAnswerImpl.addPlainTextListener(listener.toString(), new MessagePlainTextListener() {
 					@Override
 					public void onMessagePlainTextReceived(
-							MessageEvent<MessagePlainText> message) {
+							final MessageEvent<MessagePlainText> message) {
 						log.info("Message: " + new String(message.getMessage().getContent()));
 						
 					}
@@ -237,7 +238,7 @@ public class RemoteDevice implements DeviceAsync{
 		packetService.removeMessagePacketListener(controller, OpKey.newBuilder().setOperationKey(listener.toString()).build(), new RpcCallback<EmptyAnswer>(){
 
 			@Override
-			public void run(EmptyAnswer parameter) {
+			public void run(final EmptyAnswer parameter) {
 				packetServiceAnswerImpl.removePacketListener(listener.toString());
 			}});
 		
@@ -251,7 +252,7 @@ public class RemoteDevice implements DeviceAsync{
 		packetService.removeMessagePlainTextListener(controller, OpKey.newBuilder().setOperationKey(listener.toString()).build(), new RpcCallback<EmptyAnswer>(){
 
 			@Override
-			public void run(EmptyAnswer parameter) {
+			public void run(final EmptyAnswer parameter) {
 				packetServiceAnswerImpl.removePlainTextListener(listener.toString());
 			}});
 		

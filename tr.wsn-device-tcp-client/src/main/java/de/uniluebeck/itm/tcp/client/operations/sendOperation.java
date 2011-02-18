@@ -12,10 +12,10 @@ import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations.Blockin
 
 public class sendOperation extends AbstractOperation<Void> {
 
-MessagePacket packet;
-long timeout = 0L;	
+	private MessagePacket packet;
+	private long timeout = 0L;	
 	
-	public sendOperation(RpcClientChannel channel, AsyncCallback<Void> callback, BlockingInterface operationService, PacketServiceAnswerImpl packetServiceAnswerImpl, MessagePacket packet, long timeout){
+	public sendOperation(final RpcClientChannel channel, final AsyncCallback<Void> callback, final BlockingInterface operationService, final PacketServiceAnswerImpl packetServiceAnswerImpl, final MessagePacket packet, final long timeout){
 		super(channel, packetServiceAnswerImpl, operationService, callback);
 		this.packet = packet;
 		this.timeout = timeout;
@@ -23,13 +23,13 @@ long timeout = 0L;
 	
 	@Override
 	public void operate() throws ServiceException {
-		sendData data = sendData.newBuilder().addData(ByteString.copyFrom(packet.getContent())).setTimeout(timeout).setType(packet.getType()).setOperationKey(String.valueOf(controller.toString())).build();
+		final sendData data = sendData.newBuilder().addData(ByteString.copyFrom(packet.getContent())).setTimeout(timeout).setType(packet.getType()).setOperationKey(String.valueOf(this.getController().toString())).build();
 		
 		setOperationKey(data.getOperationKey());
 		
-		packetServiceAnswerImpl.addCallback(data.getOperationKey(), callback);
+		this.getPacketServiceAnswerImpl().addCallback(data.getOperationKey(), this.getCallback());
 		
-		operationService.send(controller, data);
+		this.getOperationService().send(this.getController(), data);
 	}
 
 }

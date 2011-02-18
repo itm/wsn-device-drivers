@@ -12,10 +12,10 @@ import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations.Blockin
 
 public class writeMacOperation extends AbstractOperation<Void>{
 	
-	MacAddress macAddress;
-	long timeout;
+	private MacAddress macAddress;
+	private long timeout;
 
-	public writeMacOperation(RpcClientChannel channel, PacketServiceAnswerImpl packetServiceAnswerImpl, BlockingInterface operationService, AsyncCallback<Void> callback, MacAddress macAddress, long timeout) {
+	public writeMacOperation(final RpcClientChannel channel, final PacketServiceAnswerImpl packetServiceAnswerImpl, final BlockingInterface operationService, final AsyncCallback<Void> callback, final MacAddress macAddress, final long timeout) {
 		super(channel,packetServiceAnswerImpl, operationService, callback);
 		this.macAddress = macAddress;
 		this.timeout = timeout;
@@ -23,11 +23,11 @@ public class writeMacOperation extends AbstractOperation<Void>{
 
 	public void operate() throws ServiceException {
 		
-		MacData request = MacData.newBuilder().addMACADDRESS(ByteString.copyFrom(macAddress.getMacBytes())).setTimeout(timeout).setOperationKey(controller.toString()).build();
+		final MacData request = MacData.newBuilder().addMACADDRESS(ByteString.copyFrom(macAddress.getMacBytes())).setTimeout(timeout).setOperationKey(this.getController().toString()).build();
 		
 		setOperationKey(request.getOperationKey());
 		
-		packetServiceAnswerImpl.addCallback(request.getOperationKey(), callback);
+		this.getPacketServiceAnswerImpl().addCallback(request.getOperationKey(), this.getCallback());
 		
 //		operationService.writeMac(controller, address, new RpcCallback<EmptyAnswer>() {
 //			
@@ -39,6 +39,6 @@ public class writeMacOperation extends AbstractOperation<Void>{
 //			}
 //		});
 		
-		operationService.writeMac(controller, request);
+		this.getOperationService().writeMac(this.getController(), request);
 	}
 }

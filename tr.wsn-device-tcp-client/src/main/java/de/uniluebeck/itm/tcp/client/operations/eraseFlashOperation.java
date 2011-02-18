@@ -10,25 +10,23 @@ import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations.Blockin
 
 public class eraseFlashOperation extends AbstractOperation<Void> {
 
-	long timeout = 0L;	
+	private long timeout = 0L;	
 	
-	public eraseFlashOperation(RpcClientChannel channel, AsyncCallback<Void> callback, BlockingInterface operationService,
-			PacketServiceAnswerImpl packetServiceAnswerImpl,
-			
-			long timeout) {
+	public eraseFlashOperation(final RpcClientChannel channel, final AsyncCallback<Void> callback, final BlockingInterface operationService,
+			final PacketServiceAnswerImpl packetServiceAnswerImpl, final long timeout) {
 		super(channel, packetServiceAnswerImpl, operationService, callback);
 		this.timeout = timeout;
 	}
 	
 	@Override
 	public void operate() throws ServiceException {
-		Timeout request = Timeout.newBuilder().setOperationKey(String.valueOf(controller.toString())).setTimeout(timeout).build();
+		final Timeout request = Timeout.newBuilder().setOperationKey(String.valueOf(this.getController().toString())).setTimeout(timeout).build();
 
 		setOperationKey(request.getOperationKey());
 		
-		packetServiceAnswerImpl.addCallback(request.getOperationKey(), callback);
+		this.getPacketServiceAnswerImpl().addCallback(request.getOperationKey(), this.getCallback());
 
-		operationService.eraseFlash(controller, request);
+		this.getOperationService().eraseFlash(this.getController(), request);
 		
 	}
 

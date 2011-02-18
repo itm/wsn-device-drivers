@@ -12,20 +12,20 @@ import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations.Blockin
 
 public class readMacAddressOperation extends AbstractOperation<MacAddress> {
 
-	long timeout = 0L;
+	private long timeout = 0L;
 	
-	public readMacAddressOperation(RpcClientChannel channel, AsyncCallback<MacAddress> callback, BlockingInterface operationService, PacketServiceAnswerImpl packetServiceAnswerImpl, long timeout){
+	public readMacAddressOperation(final RpcClientChannel channel, final AsyncCallback<MacAddress> callback, final BlockingInterface operationService, final PacketServiceAnswerImpl packetServiceAnswerImpl, final long timeout){
 		super(channel,packetServiceAnswerImpl, operationService, callback);
 		this.timeout = timeout;
 	}
 	
 	public void operate() throws ServiceException{
 		
-		Timeout request = Timeout.newBuilder().setOperationKey(String.valueOf(controller.toString())).setTimeout(timeout).build();
+		final Timeout request = Timeout.newBuilder().setOperationKey(String.valueOf(this.getController().toString())).setTimeout(timeout).build();
 
 		setOperationKey(request.getOperationKey());
 		
-		packetServiceAnswerImpl.addCallback(request.getOperationKey(), callback);
+		this.getPacketServiceAnswerImpl().addCallback(request.getOperationKey(), this.getCallback());
 		
 //		operationService.readMac(controller, request, new RpcCallback<EmptyAnswer>() {
 //			@Override
@@ -36,6 +36,6 @@ public class readMacAddressOperation extends AbstractOperation<MacAddress> {
 //			}
 //		});
 
-		operationService.readMac(controller, request);
+		this.getOperationService().readMac(this.getController(), request);
 	}
 }

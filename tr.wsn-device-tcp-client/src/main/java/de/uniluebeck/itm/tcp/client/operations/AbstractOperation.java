@@ -18,17 +18,17 @@ import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations.Blockin
 
 public abstract class AbstractOperation<T> {
 
-	RpcClientChannel channel = null;
-	PacketServiceAnswerImpl packetServiceAnswerImpl = null;
+	private RpcClientChannel channel = null;
+	private PacketServiceAnswerImpl packetServiceAnswerImpl = null;
 	//Operations.Interface operationService = null;
-	Operations.BlockingInterface operationService = null;
-	AsyncCallback<T> callback = null;
-	final RpcController controller;
-	private String OperationKey;
+	private Operations.BlockingInterface operationService = null;
+	private AsyncCallback<T> callback = null;
+	private final RpcController controller;
+	private String operationKey;
 	
-	public AbstractOperation(RpcClientChannel channel,
-			PacketServiceAnswerImpl packetServiceAnswerImpl,
-			BlockingInterface operationService, AsyncCallback<T> callback) {
+	public AbstractOperation(final RpcClientChannel channel,
+			final PacketServiceAnswerImpl packetServiceAnswerImpl,
+			final BlockingInterface operationService, final AsyncCallback<T> callback) {
 		this.channel = channel;
 		this.packetServiceAnswerImpl = packetServiceAnswerImpl;
 		this.operationService = operationService;
@@ -38,12 +38,12 @@ public abstract class AbstractOperation<T> {
 	
 	public abstract void operate() throws ServiceException;
 	
-	public void setOperationKey(String operationKey) {
-		OperationKey = operationKey;
+	public void setOperationKey(final String operationKey) {
+		this.operationKey = operationKey;
 	}
 
 	public String getOperationKey() {
-		return OperationKey;
+		return operationKey;
 	}
 	
 	public OperationHandle<T> execute(){
@@ -51,7 +51,7 @@ public abstract class AbstractOperation<T> {
 		try {
 			operate();
 			return getHandle();
-		} catch (ServiceException e) {
+		} catch (final ServiceException e) {
 			callback.onFailure(new Throwable(controller.errorText()));
 			packetServiceAnswerImpl.removeCallback(getOperationKey());
 			return null;
@@ -81,12 +81,12 @@ public abstract class AbstractOperation<T> {
 	}
 	
 	public void getCancel(){
-		BlockingInterface blockOperationService =  Operations.newBlockingStub(channel);
+		final BlockingInterface blockOperationService =  Operations.newBlockingStub(channel);
 		try {
         	// sync RPC-Aufruf
         	blockOperationService.cancelHandle(controller, OpKey.newBuilder().setOperationKey(controller.toString()).build());
         	controller.startCancel();
-		} catch (ServiceException e) {
+		} catch (final ServiceException e) {
 			callback.onFailure(new Throwable(controller.errorText()));
 		}
 		packetServiceAnswerImpl.removeCallback(getOperationKey());
@@ -95,10 +95,10 @@ public abstract class AbstractOperation<T> {
 	@SuppressWarnings("unchecked")
 	public T getGet(){
 		// erzeugen eines sync RPC-Objekts fuer die Operationen
-        BlockingInterface blockOperationService =  Operations.newBlockingStub(channel);
+        final BlockingInterface blockOperationService =  Operations.newBlockingStub(channel);
         try {
         	// sync RPC-Aufruf
-        	GetHandleAnswers response = blockOperationService.getHandle(controller, OpKey.newBuilder().setOperationKey(controller.toString()).build());
+        	final GetHandleAnswers response = blockOperationService.getHandle(controller, OpKey.newBuilder().setOperationKey(controller.toString()).build());
         	
         	T obj = null;
 
@@ -114,7 +114,7 @@ public abstract class AbstractOperation<T> {
         	packetServiceAnswerImpl.removeCallback(getOperationKey());
         	return obj;
         	
-		} catch (ServiceException e) {
+		} catch (final ServiceException e) {
 			callback.onFailure(new Throwable(controller.errorText()));
 			packetServiceAnswerImpl.removeCallback(getOperationKey());
 			return null;
@@ -123,18 +123,59 @@ public abstract class AbstractOperation<T> {
 	
 	public State getGetState(){
 		// erzeugen eines sync RPC-Objekts fuer die Operationen
-		BlockingInterface blockOperationService =  Operations.newBlockingStub(channel);
+		final BlockingInterface blockOperationService =  Operations.newBlockingStub(channel);
 		try {
 			// sync RPC-Aufruf
-			STRING result = blockOperationService.getState(controller,  OpKey.newBuilder().setOperationKey(controller.toString()).build());
+			final STRING result = blockOperationService.getState(controller,  OpKey.newBuilder().setOperationKey(controller.toString()).build());
 			// erzeugen eines State aus dem result-String
 			packetServiceAnswerImpl.removeCallback(getOperationKey());
 			return State.fromName(result.getQuery());
-		} catch (ServiceException e) {
+		} catch (final ServiceException e) {
 			callback.onFailure(new Throwable(controller.errorText()));
 			packetServiceAnswerImpl.removeCallback(getOperationKey());
 			return null;
 		}
 	}
+
+	public RpcController getController() {
+		return controller;
+	}
+
+	public RpcClientChannel getChannel() {
+		return channel;
+	}
+
+	public void setChannel(final RpcClientChannel channel) {
+		this.channel = channel;
+	}
+
+	public PacketServiceAnswerImpl getPacketServiceAnswerImpl() {
+		return packetServiceAnswerImpl;
+	}
+
+	public void setPacketServiceAnswerImpl(
+			final PacketServiceAnswerImpl packetServiceAnswerImpl) {
+		this.packetServiceAnswerImpl = packetServiceAnswerImpl;
+	}
+
+	public Operations.BlockingInterface getOperationService() {
+		return operationService;
+	}
+
+	public void setOperationService(final Operations.BlockingInterface operationService) {
+		this.operationService = operationService;
+	}
+
+	public AsyncCallback<T> getCallback() {
+		return callback;
+	}
+
+	public void setCallback(final AsyncCallback<T> callback) {
+		this.callback = callback;
+	}
+	
+	
+	
+	
 
 }

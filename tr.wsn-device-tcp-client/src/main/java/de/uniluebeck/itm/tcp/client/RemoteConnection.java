@@ -23,6 +23,14 @@ import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations.BlockingInterface;
 
 public class RemoteConnection extends AbstractConnection{
+	
+	private static final int PORT = 1234;
+	private static final int CORE_POOL_SIZE = 3;
+	private static final int MAX_POOL_SIZE = 10;
+	
+	private static final int CONNECT_TIMEOUT = 10000;
+	private static final int CONNECT_RESPONSE_TIMEOUT = 10000;
+	private static final int RECEIVE_BUFFER_SIZE = 1048576;
 
 	private static Logger log = LoggerFactory.getLogger(RemoteConnection.class);
 	
@@ -31,32 +39,32 @@ public class RemoteConnection extends AbstractConnection{
 	private ThreadPoolCallExecutor executor = null;
 	private DuplexTcpClientBootstrap bootstrap = null;
 	private RpcClientChannel channel = null;
-	BlockingInterface syncOperationService = null;
+	private BlockingInterface syncOperationService = null;
 
 	/**
 	 * establishes a connection to the server running on the given host.
-	 * @param uri: ConnectionString der Form DeviceID:Username:password@host:port
+	 * @param uri ConnectionString der Form DeviceID:Username:password@host:port
 	 */
 	@Override
-	public void connect(String uri) {
+	public void connect(final String uri) {
 		
 		URL url = null;
 		try {
 			url = new URL("http://"+uri);
-		} catch (MalformedURLException e) {
+		} catch (final MalformedURLException e) {
 			
 			log.debug(e.getMessage());
 		}
 		
 		server = new PeerInfo(url.getHost(),url.getPort());
-		String deviceID = url.getUserInfo().split(":")[0];
-		String username = url.getUserInfo().split(":")[1];
-		String password = url.getUserInfo().split(":")[2];
+		final String deviceID = url.getUserInfo().split(":")[0];
+		final String username = url.getUserInfo().split(":")[1];
+		final String password = url.getUserInfo().split(":")[2];
 
-		client = new PeerInfo(username+"client",1234);
+		client = new PeerInfo(username+"client",RemoteConnection.PORT);
 		
 		// setzen des Thread-Pools
-		executor = new ThreadPoolCallExecutor(3, 10);
+		executor = new ThreadPoolCallExecutor(RemoteConnection.CORE_POOL_SIZE, RemoteConnection.MAX_POOL_SIZE);
 		//setzen des bootstraps
 		bootstrap = new DuplexTcpClientBootstrap(
                 client, 
@@ -66,9 +74,9 @@ public class RemoteConnection extends AbstractConnection{
         executor);
 		
 		// setzen der Verbindungs-Optionen, siehe Netty
-		bootstrap.setOption("connectTimeoutMillis",10000);
-		bootstrap.setOption("connectResponseTimeoutMillis",10000);
-		bootstrap.setOption("receiveBufferSize", 1048576);
+		bootstrap.setOption("connectTimeoutMillis",RemoteConnection.CONNECT_TIMEOUT);
+		bootstrap.setOption("connectResponseTimeoutMillis",RemoteConnection.CONNECT_RESPONSE_TIMEOUT);
+		bootstrap.setOption("receiveBufferSize", RemoteConnection.RECEIVE_BUFFER_SIZE);
 		bootstrap.setOption("tcpNoDelay", false);
 		
 		//try to connect with different client ports 
@@ -79,7 +87,7 @@ public class RemoteConnection extends AbstractConnection{
 				// herstellen der Verbindung zum Server
 				channel = bootstrap.peerWith(server);
 				peered = true;
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				if(e.getMessage().contains("ALREADY_CONNECTED")){
 					log.info(e.getMessage());
 					client = new PeerInfo(username+"client",client.getPort()+1);
@@ -98,18 +106,18 @@ public class RemoteConnection extends AbstractConnection{
 		this.syncOperationService = Operations.newBlockingStub(channel);
 		
 		// aufbauen eines Identification-Packets
-		Identification id = Identification.newBuilder().setDeviceID(deviceID).setUsername(username).setPassword(password).build();
+		final Identification id = Identification.newBuilder().setDeviceID(deviceID).setUsername(username).setPassword(password).build();
 		//durchfuehren eines RPC-calls (das connect sollte vlt blockierend sein)
 		try {
 			syncOperationService.connect(controller, id);
-		} catch (ServiceException e) {
+		} catch (final ServiceException e) {
 			log.debug(e.getMessage());
 		}
 		
 	}
 
 	@Override
-	public void shutdown(boolean force) {
+	public void shutdown(final boolean force) {
 		
 		if(force){
 			channel.close();
@@ -130,7 +138,7 @@ public class RemoteConnection extends AbstractConnection{
 				client = null;
 				executor.shutdown();
 				bootstrap.releaseExternalResources();
-			} catch (ServiceException e) {
+			} catch (final ServiceException e) {
 				log.debug(e.getMessage());
 			}
 		}

@@ -14,10 +14,10 @@ import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations.Blockin
 
 public class programOperation extends AbstractOperation<Void> {
 	
-	byte[] bytes;
-	long timeout;
+	private byte[] bytes;
+	private long timeout;
 
-	public programOperation(RpcClientChannel channel, AsyncCallback<Void> callback, BlockingInterface operationService, PacketServiceAnswerImpl packetServiceAnswerImpl, byte[] bytes, long timeout) {
+	public programOperation(final RpcClientChannel channel, final AsyncCallback<Void> callback, final BlockingInterface operationService, final PacketServiceAnswerImpl packetServiceAnswerImpl, final byte[] bytes, final long timeout) {
 		super(channel,packetServiceAnswerImpl, operationService, callback);
 		this.bytes = bytes;
 		this.timeout = timeout;
@@ -26,14 +26,14 @@ public class programOperation extends AbstractOperation<Void> {
 	public void operate() throws ServiceException {
 		
 		
-		Checksum checksum = new CRC32();
+		final Checksum checksum = new CRC32();
 		checksum.update(bytes,0,bytes.length);
 		
-		ProgramPacket packet = ProgramPacket.newBuilder().addBinaryPacket(ByteString.copyFrom(bytes)).setCrc(checksum.getValue()).setTimeout(timeout).setOperationKey(controller.toString()).build();
+		final ProgramPacket packet = ProgramPacket.newBuilder().addBinaryPacket(ByteString.copyFrom(bytes)).setCrc(checksum.getValue()).setTimeout(timeout).setOperationKey(this.getController().toString()).build();
 		
 		setOperationKey(packet.getOperationKey());
 
-		packetServiceAnswerImpl.addCallback(packet.getOperationKey(), callback);
+		this.getPacketServiceAnswerImpl().addCallback(packet.getOperationKey(), this.getCallback());
 		
 		
 		
@@ -46,6 +46,6 @@ public class programOperation extends AbstractOperation<Void> {
 //			}
 //		});
 		
-		operationService.program(controller, packet);
+		this.getOperationService().program(this.getController(), packet);
 	}
 }
