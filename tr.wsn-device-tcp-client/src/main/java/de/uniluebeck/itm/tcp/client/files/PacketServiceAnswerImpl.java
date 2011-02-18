@@ -1,5 +1,6 @@
 package de.uniluebeck.itm.tcp.client.files;
 
+import java.rmi.RemoteException;
 import java.util.HashMap;
 
 import com.google.protobuf.RpcCallback;
@@ -111,7 +112,7 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 	public void reverseOnFailure(RpcController controller,
 			clientMessage request, RpcCallback<EmptyAnswer> done) {
 		getCallback(request.getOperationKey()).onFailure(
-				new Throwable(controller.errorText()));
+				new RemoteException(request.getQuery()));
 		removeCallback(request.getOperationKey());
 		done.run(EmptyAnswer.newBuilder().build());
 	}

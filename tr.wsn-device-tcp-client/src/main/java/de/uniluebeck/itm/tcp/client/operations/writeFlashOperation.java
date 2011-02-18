@@ -14,7 +14,6 @@ import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations.Blockin
 
 public class writeFlashOperation extends AbstractOperation<Void> {
 
-	
 	private int address = 0;
 	private byte[] data = null;
 	private int length = 0;

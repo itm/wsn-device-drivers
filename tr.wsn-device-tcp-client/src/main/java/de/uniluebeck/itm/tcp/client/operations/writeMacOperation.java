@@ -12,7 +12,13 @@ import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations.Blockin
 
 public class writeMacOperation extends AbstractOperation<Void>{
 	
+	/**
+	 * MAC address to write on node. 
+	 */
 	private MacAddress macAddress;
+	/**
+	 * timeout for the operation.
+	 */
 	private long timeout;
 
 	public writeMacOperation(final RpcClientChannel channel, final PacketServiceAnswerImpl packetServiceAnswerImpl, final BlockingInterface operationService, final AsyncCallback<Void> callback, final MacAddress macAddress, final long timeout) {
@@ -21,6 +27,9 @@ public class writeMacOperation extends AbstractOperation<Void>{
 		this.timeout = timeout;
 	}
 
+	/**
+	 * writes the MAC address on the node.
+	 */
 	public void operate() throws ServiceException {
 		
 		final MacData request = MacData.newBuilder().addMACADDRESS(ByteString.copyFrom(macAddress.getMacBytes())).setTimeout(timeout).setOperationKey(this.getController().toString()).build();
