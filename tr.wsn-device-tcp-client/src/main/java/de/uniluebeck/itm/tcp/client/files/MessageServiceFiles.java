@@ -1157,6 +1157,380 @@ public final class MessageServiceFiles {
     // @@protoc_insertion_point(class_scope:STRING)
   }
   
+  public static final class FailureException extends
+      com.google.protobuf.GeneratedMessage {
+    // Use FailureException.newBuilder() to construct.
+    private FailureException() {
+      initFields();
+    }
+    private FailureException(boolean noInit) {}
+    
+    private static final FailureException defaultInstance;
+    public static FailureException getDefaultInstance() {
+      return defaultInstance;
+    }
+    
+    public FailureException getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+    
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.internal_static_FailureException_descriptor;
+    }
+    
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.internal_static_FailureException_fieldAccessorTable;
+    }
+    
+    // required string OperationKey = 1;
+    public static final int OPERATIONKEY_FIELD_NUMBER = 1;
+    private boolean hasOperationKey;
+    private java.lang.String operationKey_ = "";
+    public boolean hasOperationKey() { return hasOperationKey; }
+    public java.lang.String getOperationKey() { return operationKey_; }
+    
+    // required string ExceptionName = 2;
+    public static final int EXCEPTIONNAME_FIELD_NUMBER = 2;
+    private boolean hasExceptionName;
+    private java.lang.String exceptionName_ = "";
+    public boolean hasExceptionName() { return hasExceptionName; }
+    public java.lang.String getExceptionName() { return exceptionName_; }
+    
+    // required string ExceptionMessage = 3;
+    public static final int EXCEPTIONMESSAGE_FIELD_NUMBER = 3;
+    private boolean hasExceptionMessage;
+    private java.lang.String exceptionMessage_ = "";
+    public boolean hasExceptionMessage() { return hasExceptionMessage; }
+    public java.lang.String getExceptionMessage() { return exceptionMessage_; }
+    
+    private void initFields() {
+    }
+    public final boolean isInitialized() {
+      if (!hasOperationKey) return false;
+      if (!hasExceptionName) return false;
+      if (!hasExceptionMessage) return false;
+      return true;
+    }
+    
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (hasOperationKey()) {
+        output.writeString(1, getOperationKey());
+      }
+      if (hasExceptionName()) {
+        output.writeString(2, getExceptionName());
+      }
+      if (hasExceptionMessage()) {
+        output.writeString(3, getExceptionMessage());
+      }
+      getUnknownFields().writeTo(output);
+    }
+    
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+    
+      size = 0;
+      if (hasOperationKey()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeStringSize(1, getOperationKey());
+      }
+      if (hasExceptionName()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeStringSize(2, getExceptionName());
+      }
+      if (hasExceptionMessage()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeStringSize(3, getExceptionMessage());
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+    
+    public static de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+    
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> {
+      private de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException result;
+      
+      // Construct using de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException.newBuilder()
+      private Builder() {}
+      
+      private static Builder create() {
+        Builder builder = new Builder();
+        builder.result = new de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException();
+        return builder;
+      }
+      
+      protected de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException internalGetResult() {
+        return result;
+      }
+      
+      public Builder clear() {
+        if (result == null) {
+          throw new IllegalStateException(
+            "Cannot call clear() after build().");
+        }
+        result = new de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException();
+        return this;
+      }
+      
+      public Builder clone() {
+        return create().mergeFrom(result);
+      }
+      
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException.getDescriptor();
+      }
+      
+      public de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException getDefaultInstanceForType() {
+        return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException.getDefaultInstance();
+      }
+      
+      public boolean isInitialized() {
+        return result.isInitialized();
+      }
+      public de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException build() {
+        if (result != null && !isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return buildPartial();
+      }
+      
+      private de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException buildParsed()
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        if (!isInitialized()) {
+          throw newUninitializedMessageException(
+            result).asInvalidProtocolBufferException();
+        }
+        return buildPartial();
+      }
+      
+      public de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException buildPartial() {
+        if (result == null) {
+          throw new IllegalStateException(
+            "build() has already been called on this Builder.");
+        }
+        de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException returnMe = result;
+        result = null;
+        return returnMe;
+      }
+      
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException) {
+          return mergeFrom((de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+      
+      public Builder mergeFrom(de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException other) {
+        if (other == de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException.getDefaultInstance()) return this;
+        if (other.hasOperationKey()) {
+          setOperationKey(other.getOperationKey());
+        }
+        if (other.hasExceptionName()) {
+          setExceptionName(other.getExceptionName());
+        }
+        if (other.hasExceptionMessage()) {
+          setExceptionMessage(other.getExceptionMessage());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+      
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder(
+            this.getUnknownFields());
+        while (true) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              this.setUnknownFields(unknownFields.build());
+              return this;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                this.setUnknownFields(unknownFields.build());
+                return this;
+              }
+              break;
+            }
+            case 10: {
+              setOperationKey(input.readString());
+              break;
+            }
+            case 18: {
+              setExceptionName(input.readString());
+              break;
+            }
+            case 26: {
+              setExceptionMessage(input.readString());
+              break;
+            }
+          }
+        }
+      }
+      
+      
+      // required string OperationKey = 1;
+      public boolean hasOperationKey() {
+        return result.hasOperationKey();
+      }
+      public java.lang.String getOperationKey() {
+        return result.getOperationKey();
+      }
+      public Builder setOperationKey(java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  result.hasOperationKey = true;
+        result.operationKey_ = value;
+        return this;
+      }
+      public Builder clearOperationKey() {
+        result.hasOperationKey = false;
+        result.operationKey_ = getDefaultInstance().getOperationKey();
+        return this;
+      }
+      
+      // required string ExceptionName = 2;
+      public boolean hasExceptionName() {
+        return result.hasExceptionName();
+      }
+      public java.lang.String getExceptionName() {
+        return result.getExceptionName();
+      }
+      public Builder setExceptionName(java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  result.hasExceptionName = true;
+        result.exceptionName_ = value;
+        return this;
+      }
+      public Builder clearExceptionName() {
+        result.hasExceptionName = false;
+        result.exceptionName_ = getDefaultInstance().getExceptionName();
+        return this;
+      }
+      
+      // required string ExceptionMessage = 3;
+      public boolean hasExceptionMessage() {
+        return result.hasExceptionMessage();
+      }
+      public java.lang.String getExceptionMessage() {
+        return result.getExceptionMessage();
+      }
+      public Builder setExceptionMessage(java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  result.hasExceptionMessage = true;
+        result.exceptionMessage_ = value;
+        return this;
+      }
+      public Builder clearExceptionMessage() {
+        result.hasExceptionMessage = false;
+        result.exceptionMessage_ = getDefaultInstance().getExceptionMessage();
+        return this;
+      }
+      
+      // @@protoc_insertion_point(builder_scope:FailureException)
+    }
+    
+    static {
+      defaultInstance = new FailureException(true);
+      de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.internalForceInit();
+      defaultInstance.initFields();
+    }
+    
+    // @@protoc_insertion_point(class_scope:FailureException)
+  }
+  
   public static final class clientMessage extends
       com.google.protobuf.GeneratedMessage {
     // Use clientMessage.newBuilder() to construct.
@@ -7707,7 +8081,7 @@ public final class MessageServiceFiles {
       
       public abstract void reverseOnFailure(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage request,
+          de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException request,
           com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer> done);
       
       public abstract void reverseOnCancel(
@@ -7754,7 +8128,7 @@ public final class MessageServiceFiles {
         @Override
         public  void reverseOnFailure(
             com.google.protobuf.RpcController controller,
-            de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage request,
+            de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException request,
             com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer> done) {
           impl.reverseOnFailure(controller, request, done);
         }
@@ -7818,7 +8192,7 @@ public final class MessageServiceFiles {
             case 1:
               return impl.sendReversePlainTextMessage(controller, (de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ListenerData)request);
             case 2:
-              return impl.reverseOnFailure(controller, (de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage)request);
+              return impl.reverseOnFailure(controller, (de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException)request);
             case 3:
               return impl.reverseOnCancel(controller, (de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey)request);
             case 4:
@@ -7846,7 +8220,7 @@ public final class MessageServiceFiles {
             case 1:
               return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ListenerData.getDefaultInstance();
             case 2:
-              return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage.getDefaultInstance();
+              return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException.getDefaultInstance();
             case 3:
               return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey.getDefaultInstance();
             case 4:
@@ -7903,7 +8277,7 @@ public final class MessageServiceFiles {
     
     public abstract void reverseOnFailure(
         com.google.protobuf.RpcController controller,
-        de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage request,
+        de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException request,
         com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer> done);
     
     public abstract void reverseOnCancel(
@@ -7959,7 +8333,7 @@ public final class MessageServiceFiles {
               done));
           return;
         case 2:
-          this.reverseOnFailure(controller, (de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage)request,
+          this.reverseOnFailure(controller, (de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException)request,
             com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
               done));
           return;
@@ -8002,7 +8376,7 @@ public final class MessageServiceFiles {
         case 1:
           return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ListenerData.getDefaultInstance();
         case 2:
-          return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage.getDefaultInstance();
+          return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException.getDefaultInstance();
         case 3:
           return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey.getDefaultInstance();
         case 4:
@@ -8092,7 +8466,7 @@ public final class MessageServiceFiles {
       
       public  void reverseOnFailure(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage request,
+          de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException request,
           com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer> done) {
         channel.callMethod(
           getDescriptor().getMethods().get(2),
@@ -8184,7 +8558,7 @@ public final class MessageServiceFiles {
       
       public de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer reverseOnFailure(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage request)
+          de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException request)
           throws com.google.protobuf.ServiceException;
       
       public de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer reverseOnCancel(
@@ -8241,7 +8615,7 @@ public final class MessageServiceFiles {
       
       public de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer reverseOnFailure(
           com.google.protobuf.RpcController controller,
-          de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage request)
+          de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException request)
           throws com.google.protobuf.ServiceException {
         return (de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
           getDescriptor().getMethods().get(2),
@@ -8478,6 +8852,11 @@ public final class MessageServiceFiles {
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_STRING_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_FailureException_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_FailureException_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
     internal_static_clientMessage_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
@@ -8549,62 +8928,65 @@ public final class MessageServiceFiles {
       "\n\022WSN-Services.proto\"\r\n\013EmptyAnswer\"0\n\007T" +
       "imeout\022\017\n\007timeout\030\001 \002(\003\022\024\n\014OperationKey\030" +
       "\002 \002(\t\"\035\n\005OpKey\022\024\n\014OperationKey\030\001 \002(\t\"\027\n\006" +
-      "STRING\022\r\n\005query\030\001 \002(\t\"4\n\rclientMessage\022\024" +
-      "\n\014OperationKey\030\001 \002(\t\022\r\n\005query\030\002 \002(\t\".\n\010C" +
-      "hipData\022\014\n\004type\030\001 \002(\t\022\024\n\014OperationKey\030\002 " +
-      "\002(\t\"F\n\016Identification\022\020\n\010deviceID\030\001 \002(\t\022" +
-      "\020\n\010username\030\002 \002(\t\022\020\n\010password\030\003 \002(\t\"Y\n\rP" +
-      "rogramPacket\022\024\n\014BinaryPacket\030\001 \003(\014\022\017\n\007ti" +
-      "meout\030\002 \002(\003\022\024\n\014OperationKey\030\003 \002(\t\022\013\n\003crc",
-      "\030\006 \002(\003\"D\n\007MacData\022\022\n\nMACADDRESS\030\001 \003(\014\022\017\n" +
-      "\007timeout\030\002 \001(\003\022\024\n\014OperationKey\030\003 \001(\t\"n\n\t" +
-      "FlashData\022\017\n\007address\030\001 \002(\005\022\014\n\004data\030\002 \003(\014" +
-      "\022\016\n\006length\030\003 \002(\005\022\017\n\007timeout\030\004 \002(\003\022\024\n\014Ope" +
-      "rationKey\030\005 \002(\t\022\013\n\003crc\030\006 \002(\003\"M\n\010sendData" +
-      "\022\014\n\004type\030\001 \002(\005\022\014\n\004data\030\002 \003(\014\022\017\n\007timeout\030" +
-      "\003 \001(\003\022\024\n\014OperationKey\030\004 \002(\t\"P\n\014ListenerD" +
-      "ata\022\016\n\006source\030\001 \002(\t\022\014\n\004type\030\002 \002(\005\022\014\n\004dat" +
-      "a\030\003 \003(\014\022\024\n\014OperationKey\030\004 \002(\t\".\n\010ByteDat" +
-      "a\022\014\n\004data\030\001 \003(\014\022\024\n\014OperationKey\030\002 \001(\t\"4\n",
-      "\016PacketTypeData\022\014\n\004type\030\001 \003(\005\022\024\n\014Operati" +
-      "onKey\030\002 \002(\t\"\207\001\n\020GetHandleAnswers\022\031\n\010chip" +
-      "Data\030\001 \001(\0132\007.STRING\022!\n\013emptyAnswer\030\002 \001(\013" +
-      "2\014.EmptyAnswer\022\034\n\nMacAddress\030\003 \001(\0132\010.Mac" +
-      "Data\022\027\n\004data\030\004 \001(\0132\t.ByteData\"|\n\rReverse" +
-      "Answer\022\033\n\010chipData\030\001 \001(\0132\t.ChipData\022\027\n\007s" +
-      "uccess\030\002 \001(\0132\006.OpKey\022\034\n\nMacAddress\030\003 \001(\013" +
-      "2\010.MacData\022\027\n\004data\030\004 \001(\0132\t.ByteData2\227\004\n\n" +
-      "Operations\022(\n\007connect\022\017.Identification\032\014" +
-      ".EmptyAnswer\022&\n\010shutdown\022\014.EmptyAnswer\032\014",
-      ".EmptyAnswer\022\'\n\007program\022\016.ProgramPacket\032" +
-      "\014.EmptyAnswer\022$\n\neraseFlash\022\010.Timeout\032\014." +
-      "EmptyAnswer\022%\n\treadFlash\022\n.FlashData\032\014.E" +
-      "mptyAnswer\022!\n\007readMac\022\010.Timeout\032\014.EmptyA" +
-      "nswer\022\037\n\005reset\022\010.Timeout\032\014.EmptyAnswer\022\037" +
-      "\n\004send\022\t.sendData\032\014.EmptyAnswer\022&\n\nwrite" +
-      "Flash\022\n.FlashData\032\014.EmptyAnswer\022\"\n\010write" +
-      "Mac\022\010.MacData\032\014.EmptyAnswer\022%\n\013getChipTy" +
-      "pe\022\010.Timeout\032\014.EmptyAnswer\022$\n\014cancelHand" +
-      "le\022\006.OpKey\032\014.EmptyAnswer\022&\n\tgetHandle\022\006.",
-      "OpKey\032\021.GetHandleAnswers\022\033\n\010getState\022\006.O" +
-      "pKey\032\007.STRING2\365\001\n\rPacketService\0229\n\030addMe" +
-      "ssagePacketListener\022\017.PacketTypeData\032\014.E" +
-      "mptyAnswer\022<\n\033addMessagePlainTextListene" +
-      "r\022\017.PacketTypeData\032\014.EmptyAnswer\0223\n\033remo" +
-      "veMessagePacketListener\022\006.OpKey\032\014.EmptyA" +
-      "nswer\0226\n\036removeMessagePlainTextListener\022" +
-      "\006.OpKey\032\014.EmptyAnswer2\366\002\n\023PacketServiceA" +
-      "nswer\0227\n\030sendReversePacketMessage\022\r.List" +
-      "enerData\032\014.EmptyAnswer\022:\n\033sendReversePla",
-      "inTextMessage\022\r.ListenerData\032\014.EmptyAnsw" +
-      "er\0220\n\020reverseOnFailure\022\016.clientMessage\032\014" +
-      ".EmptyAnswer\022\'\n\017reverseOnCancel\022\006.OpKey\032" +
-      "\014.EmptyAnswer\022+\n\023reverseExecuteEvent\022\006.O" +
-      "pKey\032\014.EmptyAnswer\0222\n\022reverseChangeEvent" +
-      "\022\016.clientMessage\032\014.EmptyAnswer\022.\n\016revers" +
-      "eSuccess\022\016.ReverseAnswer\032\014.EmptyAnswer2\022" +
-      "\n\020RemoteOperationsB9\n\"de.uniluebeck.itm." +
-      "tcp.server.utilsB\023MessageServiceFiles"
+      "STRING\022\r\n\005query\030\001 \002(\t\"Y\n\020FailureExceptio" +
+      "n\022\024\n\014OperationKey\030\001 \002(\t\022\025\n\rExceptionName" +
+      "\030\002 \002(\t\022\030\n\020ExceptionMessage\030\003 \002(\t\"4\n\rclie" +
+      "ntMessage\022\024\n\014OperationKey\030\001 \002(\t\022\r\n\005query" +
+      "\030\002 \002(\t\".\n\010ChipData\022\014\n\004type\030\001 \002(\t\022\024\n\014Oper" +
+      "ationKey\030\002 \002(\t\"F\n\016Identification\022\020\n\010devi" +
+      "ceID\030\001 \002(\t\022\020\n\010username\030\002 \002(\t\022\020\n\010password",
+      "\030\003 \002(\t\"Y\n\rProgramPacket\022\024\n\014BinaryPacket\030" +
+      "\001 \003(\014\022\017\n\007timeout\030\002 \002(\003\022\024\n\014OperationKey\030\003" +
+      " \002(\t\022\013\n\003crc\030\006 \002(\003\"D\n\007MacData\022\022\n\nMACADDRE" +
+      "SS\030\001 \003(\014\022\017\n\007timeout\030\002 \001(\003\022\024\n\014OperationKe" +
+      "y\030\003 \001(\t\"n\n\tFlashData\022\017\n\007address\030\001 \002(\005\022\014\n" +
+      "\004data\030\002 \003(\014\022\016\n\006length\030\003 \002(\005\022\017\n\007timeout\030\004" +
+      " \002(\003\022\024\n\014OperationKey\030\005 \002(\t\022\013\n\003crc\030\006 \002(\003\"" +
+      "M\n\010sendData\022\014\n\004type\030\001 \002(\005\022\014\n\004data\030\002 \003(\014\022" +
+      "\017\n\007timeout\030\003 \001(\003\022\024\n\014OperationKey\030\004 \002(\t\"P" +
+      "\n\014ListenerData\022\016\n\006source\030\001 \002(\t\022\014\n\004type\030\002",
+      " \002(\005\022\014\n\004data\030\003 \003(\014\022\024\n\014OperationKey\030\004 \002(\t" +
+      "\".\n\010ByteData\022\014\n\004data\030\001 \003(\014\022\024\n\014OperationK" +
+      "ey\030\002 \001(\t\"4\n\016PacketTypeData\022\014\n\004type\030\001 \003(\005" +
+      "\022\024\n\014OperationKey\030\002 \002(\t\"\207\001\n\020GetHandleAnsw" +
+      "ers\022\031\n\010chipData\030\001 \001(\0132\007.STRING\022!\n\013emptyA" +
+      "nswer\030\002 \001(\0132\014.EmptyAnswer\022\034\n\nMacAddress\030" +
+      "\003 \001(\0132\010.MacData\022\027\n\004data\030\004 \001(\0132\t.ByteData" +
+      "\"|\n\rReverseAnswer\022\033\n\010chipData\030\001 \001(\0132\t.Ch" +
+      "ipData\022\027\n\007success\030\002 \001(\0132\006.OpKey\022\034\n\nMacAd" +
+      "dress\030\003 \001(\0132\010.MacData\022\027\n\004data\030\004 \001(\0132\t.By",
+      "teData2\227\004\n\nOperations\022(\n\007connect\022\017.Ident" +
+      "ification\032\014.EmptyAnswer\022&\n\010shutdown\022\014.Em" +
+      "ptyAnswer\032\014.EmptyAnswer\022\'\n\007program\022\016.Pro" +
+      "gramPacket\032\014.EmptyAnswer\022$\n\neraseFlash\022\010" +
+      ".Timeout\032\014.EmptyAnswer\022%\n\treadFlash\022\n.Fl" +
+      "ashData\032\014.EmptyAnswer\022!\n\007readMac\022\010.Timeo" +
+      "ut\032\014.EmptyAnswer\022\037\n\005reset\022\010.Timeout\032\014.Em" +
+      "ptyAnswer\022\037\n\004send\022\t.sendData\032\014.EmptyAnsw" +
+      "er\022&\n\nwriteFlash\022\n.FlashData\032\014.EmptyAnsw" +
+      "er\022\"\n\010writeMac\022\010.MacData\032\014.EmptyAnswer\022%",
+      "\n\013getChipType\022\010.Timeout\032\014.EmptyAnswer\022$\n" +
+      "\014cancelHandle\022\006.OpKey\032\014.EmptyAnswer\022&\n\tg" +
+      "etHandle\022\006.OpKey\032\021.GetHandleAnswers\022\033\n\010g" +
+      "etState\022\006.OpKey\032\007.STRING2\365\001\n\rPacketServi" +
+      "ce\0229\n\030addMessagePacketListener\022\017.PacketT" +
+      "ypeData\032\014.EmptyAnswer\022<\n\033addMessagePlain" +
+      "TextListener\022\017.PacketTypeData\032\014.EmptyAns" +
+      "wer\0223\n\033removeMessagePacketListener\022\006.OpK" +
+      "ey\032\014.EmptyAnswer\0226\n\036removeMessagePlainTe" +
+      "xtListener\022\006.OpKey\032\014.EmptyAnswer2\371\002\n\023Pac",
+      "ketServiceAnswer\0227\n\030sendReversePacketMes" +
+      "sage\022\r.ListenerData\032\014.EmptyAnswer\022:\n\033sen" +
+      "dReversePlainTextMessage\022\r.ListenerData\032" +
+      "\014.EmptyAnswer\0223\n\020reverseOnFailure\022\021.Fail" +
+      "ureException\032\014.EmptyAnswer\022\'\n\017reverseOnC" +
+      "ancel\022\006.OpKey\032\014.EmptyAnswer\022+\n\023reverseEx" +
+      "ecuteEvent\022\006.OpKey\032\014.EmptyAnswer\0222\n\022reve" +
+      "rseChangeEvent\022\016.clientMessage\032\014.EmptyAn" +
+      "swer\022.\n\016reverseSuccess\022\016.ReverseAnswer\032\014" +
+      ".EmptyAnswer2\022\n\020RemoteOperationsB9\n\"de.u",
+      "niluebeck.itm.tcp.server.utilsB\023MessageS" +
+      "erviceFiles"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -8643,8 +9025,16 @@ public final class MessageServiceFiles {
               new java.lang.String[] { "Query", },
               de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.STRING.class,
               de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.STRING.Builder.class);
-          internal_static_clientMessage_descriptor =
+          internal_static_FailureException_descriptor =
             getDescriptor().getMessageTypes().get(4);
+          internal_static_FailureException_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_FailureException_descriptor,
+              new java.lang.String[] { "OperationKey", "ExceptionName", "ExceptionMessage", },
+              de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException.class,
+              de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException.Builder.class);
+          internal_static_clientMessage_descriptor =
+            getDescriptor().getMessageTypes().get(5);
           internal_static_clientMessage_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_clientMessage_descriptor,
@@ -8652,7 +9042,7 @@ public final class MessageServiceFiles {
               de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage.class,
               de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage.Builder.class);
           internal_static_ChipData_descriptor =
-            getDescriptor().getMessageTypes().get(5);
+            getDescriptor().getMessageTypes().get(6);
           internal_static_ChipData_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_ChipData_descriptor,
@@ -8660,7 +9050,7 @@ public final class MessageServiceFiles {
               de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ChipData.class,
               de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ChipData.Builder.class);
           internal_static_Identification_descriptor =
-            getDescriptor().getMessageTypes().get(6);
+            getDescriptor().getMessageTypes().get(7);
           internal_static_Identification_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_Identification_descriptor,
@@ -8668,7 +9058,7 @@ public final class MessageServiceFiles {
               de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Identification.class,
               de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Identification.Builder.class);
           internal_static_ProgramPacket_descriptor =
-            getDescriptor().getMessageTypes().get(7);
+            getDescriptor().getMessageTypes().get(8);
           internal_static_ProgramPacket_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_ProgramPacket_descriptor,
@@ -8676,7 +9066,7 @@ public final class MessageServiceFiles {
               de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ProgramPacket.class,
               de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ProgramPacket.Builder.class);
           internal_static_MacData_descriptor =
-            getDescriptor().getMessageTypes().get(8);
+            getDescriptor().getMessageTypes().get(9);
           internal_static_MacData_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_MacData_descriptor,
@@ -8684,7 +9074,7 @@ public final class MessageServiceFiles {
               de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.MacData.class,
               de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.MacData.Builder.class);
           internal_static_FlashData_descriptor =
-            getDescriptor().getMessageTypes().get(9);
+            getDescriptor().getMessageTypes().get(10);
           internal_static_FlashData_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_FlashData_descriptor,
@@ -8692,7 +9082,7 @@ public final class MessageServiceFiles {
               de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FlashData.class,
               de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FlashData.Builder.class);
           internal_static_sendData_descriptor =
-            getDescriptor().getMessageTypes().get(10);
+            getDescriptor().getMessageTypes().get(11);
           internal_static_sendData_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_sendData_descriptor,
@@ -8700,7 +9090,7 @@ public final class MessageServiceFiles {
               de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.sendData.class,
               de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.sendData.Builder.class);
           internal_static_ListenerData_descriptor =
-            getDescriptor().getMessageTypes().get(11);
+            getDescriptor().getMessageTypes().get(12);
           internal_static_ListenerData_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_ListenerData_descriptor,
@@ -8708,7 +9098,7 @@ public final class MessageServiceFiles {
               de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ListenerData.class,
               de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ListenerData.Builder.class);
           internal_static_ByteData_descriptor =
-            getDescriptor().getMessageTypes().get(12);
+            getDescriptor().getMessageTypes().get(13);
           internal_static_ByteData_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_ByteData_descriptor,
@@ -8716,7 +9106,7 @@ public final class MessageServiceFiles {
               de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ByteData.class,
               de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ByteData.Builder.class);
           internal_static_PacketTypeData_descriptor =
-            getDescriptor().getMessageTypes().get(13);
+            getDescriptor().getMessageTypes().get(14);
           internal_static_PacketTypeData_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_PacketTypeData_descriptor,
@@ -8724,7 +9114,7 @@ public final class MessageServiceFiles {
               de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.PacketTypeData.class,
               de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.PacketTypeData.Builder.class);
           internal_static_GetHandleAnswers_descriptor =
-            getDescriptor().getMessageTypes().get(14);
+            getDescriptor().getMessageTypes().get(15);
           internal_static_GetHandleAnswers_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_GetHandleAnswers_descriptor,
@@ -8732,7 +9122,7 @@ public final class MessageServiceFiles {
               de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.GetHandleAnswers.class,
               de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.GetHandleAnswers.Builder.class);
           internal_static_ReverseAnswer_descriptor =
-            getDescriptor().getMessageTypes().get(15);
+            getDescriptor().getMessageTypes().get(16);
           internal_static_ReverseAnswer_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_ReverseAnswer_descriptor,

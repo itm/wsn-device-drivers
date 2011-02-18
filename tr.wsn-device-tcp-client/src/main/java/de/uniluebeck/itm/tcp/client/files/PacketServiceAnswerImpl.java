@@ -1,12 +1,17 @@
 package de.uniluebeck.itm.tcp.client.files;
 
+import java.lang.reflect.Constructor;
 import java.rmi.RemoteException;
 import java.util.HashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.protobuf.RpcCallback;
 import com.google.protobuf.RpcController;
 
 import de.uniluebeck.itm.devicedriver.ChipType;
+import de.uniluebeck.itm.devicedriver.Connection;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.MessagePacketListener;
@@ -15,6 +20,7 @@ import de.uniluebeck.itm.devicedriver.MessagePlainTextListener;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.event.MessageEvent;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer;
+import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FailureException;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ListenerData;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.PacketServiceAnswer;
@@ -24,6 +30,11 @@ import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage;
 // Implementierung der Methoden fuer das ReverseRPC
 public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 
+	/**
+	 * the logger.
+	 */
+	private static Logger log = LoggerFactory.getLogger(PacketServiceAnswerImpl.class);
+	
 	private HashMap<String, MessagePacketListener> packetListenerList = new HashMap<String, MessagePacketListener>();
 	private HashMap<String, MessagePlainTextListener> plainTextListenerList = new HashMap<String, MessagePlainTextListener>();
 
@@ -107,12 +118,25 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 		removeCallback(request.getOperationKey());
 		done.run(EmptyAnswer.newBuilder().build());
 	}
-
+	
 	@Override
 	public void reverseOnFailure(RpcController controller,
-			clientMessage request, RpcCallback<EmptyAnswer> done) {
-		getCallback(request.getOperationKey()).onFailure(
-				new RemoteException(request.getQuery()));
+			FailureException request, RpcCallback<EmptyAnswer> done) {
+		
+		Exception exception = null;
+		Class<?> except;
+
+		try {
+			except = Class.forName(request.getExceptionName());
+			Constructor<?> constructor  = except.getConstructor();
+			exception = (Exception) constructor.newInstance(new Object[] {request.getExceptionMessage()});
+		} catch (final Exception e) {
+			log.error(e.getMessage(),e);
+			e.printStackTrace();
+		}
+		
+		getCallback(request.getOperationKey()).onFailure(exception);
+		
 		removeCallback(request.getOperationKey());
 		done.run(EmptyAnswer.newBuilder().build());
 	}
