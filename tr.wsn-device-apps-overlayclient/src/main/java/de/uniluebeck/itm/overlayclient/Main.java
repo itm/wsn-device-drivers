@@ -49,70 +49,75 @@ public class Main {
 
 		CommandLineParser parser = new GnuParser();
 		CommandLine cmd = null;
-		try {
-			cmd = parser.parse(options, args);
-		} catch (ParseException e) {
-			System.out.println("One of these options is not registered.");
+		if(args.length == 0){
+			formatter.printHelp("help", options);
 		}
-		if (cmd != null) {
-			// standard-options
-			if (cmd.hasOption("help")) {
-				System.out.println("Example:");
-				System.out.println("Meta-Data Service: metadata -id 123");
-				System.out.println("");
-				formatter.printHelp("help", options);
+		else{
+			try {
+				cmd = parser.parse(options, args);
+			} catch (ParseException e) {
+				System.out.println("One of these options is not registered.");
 			}
-			if (cmd.hasOption("version")) {
-				System.out.println(version);
-			}
-
-			// der Meta-Daten Service
-			if (args[0].equals("metadata")) {
-				System.out.println("start Meta-Data Service...");
-
-				String id = cmd.getOptionValue("id");
-				String microcontroller = cmd.getOptionValue("microcontroller");
-				String sensor = cmd.getOptionValue("sensor");
-				String user = cmd.getOptionValue("username");
-				String password = cmd.getOptionValue("passwd");
-				String server = cmd.getOptionValue("server");
-				String server_port = cmd.getOptionValue("server_port");
-				String client_port = cmd.getOptionValue("client_port");
-				
-				if (server != null && (user == null && password == null || user == null)) {
-					System.out.println("Username and Password is missing.");
-					BufferedReader in = new BufferedReader(
-							new InputStreamReader(System.in));
-					System.out.print("Username: ");
-					user = in.readLine();
-					System.out.print("Password: ");
-					password = in.readLine();
-					in.close();
+			if (cmd != null) {
+				// standard-options
+				if (cmd.hasOption("help")) {
+					System.out.println("Example:");
+					System.out.println("Meta-Data Service: metadata -id 123");
+					System.out.println("");
+					formatter.printHelp("help", options);
 				}
-				if (server != null && (password == null)) {
-					System.out.println("Password is missing.");
-					BufferedReader in = new BufferedReader(
-							new InputStreamReader(System.in));
-					System.out.print("Password: ");
-					password = in.readLine();
-					in.close();
+				if (cmd.hasOption("version")) {
+					System.out.println(version);
 				}
-				
-				OverlayClient metaService = new OverlayClient();
-				
-				metaService.setUsername(user);
-				metaService.setPassword(password);
-				metaService.setServer(server);
-				metaService.setServer_port(server_port);
-				metaService.setClient_port(client_port);
 
-				if (id != null) {
-					metaService.searchDeviceWithId(id);
-				} else if (microcontroller != null) {
-					metaService
-							.searchDeviceWithMicrocontroller(microcontroller);
-				} else if (sensor != null) {
-					metaService.searchDeviceWithCapability(sensor);
+				// der Meta-Daten Service
+				if (args[0].equals("metadata")) {
+					System.out.println("start Meta-Data Service...");
+
+					String id = cmd.getOptionValue("id");
+					String microcontroller = cmd.getOptionValue("microcontroller");
+					String sensor = cmd.getOptionValue("sensor");
+					String user = cmd.getOptionValue("username");
+					String password = cmd.getOptionValue("passwd");
+					String server = cmd.getOptionValue("server");
+					String server_port = cmd.getOptionValue("server_port");
+					String client_port = cmd.getOptionValue("client_port");
+					
+					if (server != null && (user == null && password == null || user == null)) {
+						System.out.println("Username and Password is missing.");
+						BufferedReader in = new BufferedReader(
+								new InputStreamReader(System.in));
+						System.out.print("Username: ");
+						user = in.readLine();
+						System.out.print("Password: ");
+						password = in.readLine();
+						in.close();
+					}
+					if (server != null && (password == null)) {
+						System.out.println("Password is missing.");
+						BufferedReader in = new BufferedReader(
+								new InputStreamReader(System.in));
+						System.out.print("Password: ");
+						password = in.readLine();
+						in.close();
+					}
+					
+					OverlayClient metaService = new OverlayClient();
+					
+					metaService.setUsername(user);
+					metaService.setPassword(password);
+					metaService.setServer(server);
+					metaService.setServer_port(server_port);
+					metaService.setClient_port(client_port);
+
+					if (id != null) {
+						metaService.searchDeviceWithId(id);
+					} else if (microcontroller != null) {
+						metaService
+								.searchDeviceWithMicrocontroller(microcontroller);
+					} else if (sensor != null) {
+						metaService.searchDeviceWithCapability(sensor);
+					}
 				}
 			}
 		}

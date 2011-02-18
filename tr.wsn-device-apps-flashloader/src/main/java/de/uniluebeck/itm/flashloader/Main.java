@@ -57,191 +57,87 @@ public class Main {
 
 		CommandLineParser parser = new GnuParser();
 		CommandLine cmd = null;
-		try {
-			cmd = parser.parse(options, args);
-		} catch (ParseException e) {
-			System.out.println("One of these options is not registered.");
+		if(args.length == 0){
+			formatter.printHelp("help", options);
 		}
-		if (cmd != null) {
-			// standard-options
-			if (cmd.hasOption("help")) {
-				System.out.println("Example:");
-				System.out
-						.println("Flashloader: flash -port x -file programm.bin");
-				System.out.println("");
-				formatter.printHelp("help", options);
+		else{
+			try {
+				cmd = parser.parse(options, args);
+			} catch (ParseException e) {
+				System.out.println("One of these options is not registered.");
 			}
-			if (cmd.hasOption("version")) {
-				System.out.println(version);
-			}
-
-			// der FlashLoader
-			if (args[0].equals("flash")) {
-				System.out.println("start FlashLoader...");
-
-				String port = cmd.getOptionValue("port");
-				String server = cmd.getOptionValue("server");
-				String file = cmd.getOptionValue("file");
-				String user = cmd.getOptionValue("user");
-				String password = cmd.getOptionValue("passwd");
-				String device = cmd.getOptionValue("device");
-				String id = cmd.getOptionValue("id");
-				String timeout = cmd.getOptionValue("timeout");
-
-				if (server != null && (user == null && password == null || user == null)) {
-					System.out.println("Username and Password is missing.");
-					BufferedReader in = new BufferedReader(
-							new InputStreamReader(System.in));
-					System.out.print("Username: ");
-					user = in.readLine();
-					System.out.print("Password: ");
-					password = in.readLine();
-					in.close();
-				}
-				if (server != null && (password == null)) {
-					System.out.println("Password is missing.");
-					BufferedReader in = new BufferedReader(
-							new InputStreamReader(System.in));
-					System.out.print("Password: ");
-					password = in.readLine();
-					in.close();
-				}
+			if (cmd != null) {
 				FlashLoader flashLoader = new FlashLoader();
-				flashLoader.setPort(port);
-				flashLoader.setServer(server);
-				flashLoader.setUser(user);
-				flashLoader.setPassword(password);
-				flashLoader.setDevice(device);
-				flashLoader.setId(id);
-				if(timeout != null){
-					flashLoader.setTimeout(timeout);
+				// standard-options
+				if (cmd.hasOption("help")) {
+					System.out.println("Example:");
+					System.out
+							.println("Flashloader: flash -port x -file programm.bin");
+					System.out.println("");
+					formatter.printHelp("help", options);
 				}
-				flashLoader.connect();
-				flashLoader.flash(file);
-
-			} else if (args[0].equals("readmac")) {
-				System.out.println("start FlashLoader...");
-
-				String port = cmd.getOptionValue("port");
-				String server = cmd.getOptionValue("server");
-				String user = cmd.getOptionValue("user");
-				String password = cmd.getOptionValue("passwd");
-				String device = cmd.getOptionValue("device");
-				String id = cmd.getOptionValue("id");
-
-				if (server != null && (user == null && password == null || user == null)) {
-					System.out.println("Username and Password is missing.");
-					BufferedReader in = new BufferedReader(
-							new InputStreamReader(System.in));
-					System.out.print("Username: ");
-					user = in.readLine();
-					System.out.print("Password: ");
-					password = in.readLine();
-					in.close();
+				if (cmd.hasOption("version")) {
+					System.out.println(version);
 				}
-				if (server != null && (password == null)) {
-					System.out.println("Password is missing.");
-					BufferedReader in = new BufferedReader(
-							new InputStreamReader(System.in));
-					System.out.print("Password: ");
-					password = in.readLine();
-					in.close();
-				}
-				FlashLoader flashLoader = new FlashLoader();
-				flashLoader.setPort(port);
-				flashLoader.setServer(server);
-				flashLoader.setUser(user);
-				flashLoader.setPassword(password);
-				flashLoader.setDevice(device);
-				flashLoader.setId(id);
-				flashLoader.connect();
-				flashLoader.readmac();
+				// der FlashLoader
+				if (args[0].equals("flash")) {
+					read_cmd(cmd, flashLoader);
+					String file = cmd.getOptionValue("file");
+					flashLoader.flash(file);
 
-			} else if (args[0].equals("writemac")) {
-				System.out.println("start FlashLoader...");
+				} else if (args[0].equals("readmac")) {
+					read_cmd(cmd, flashLoader);
+					flashLoader.readmac();
 
-				String port = cmd.getOptionValue("port");
-				String server = cmd.getOptionValue("server");
-				String user = cmd.getOptionValue("user");
-				String password = cmd.getOptionValue("passwd");
-				String device = cmd.getOptionValue("device");
-				String id = cmd.getOptionValue("id");
-				String timeout = cmd.getOptionValue("timeout");
+				} else if (args[0].equals("writemac")) {
+				    read_cmd(cmd, flashLoader);
+					MacAddress macAdress = new MacAddress(1024);
+					flashLoader.writemac(macAdress);
 
-				if (server != null && (user == null && password == null || user == null)) {
-					System.out.println("Username and Password is missing.");
-					BufferedReader in = new BufferedReader(
-							new InputStreamReader(System.in));
-					System.out.print("Username: ");
-					user = in.readLine();
-					System.out.print("Password: ");
-					password = in.readLine();
-					in.close();
+				} else if (args[0].equals("reset")) {
+					read_cmd(cmd, flashLoader);
+					flashLoader.reset();
 				}
-				if (server != null && (password == null)) {
-					System.out.println("Password is missing.");
-					BufferedReader in = new BufferedReader(
-							new InputStreamReader(System.in));
-					System.out.print("Password: ");
-					password = in.readLine();
-					in.close();
-				}
-				FlashLoader flashLoader = new FlashLoader();
-				flashLoader.setPort(port);
-				flashLoader.setServer(server);
-				MacAddress macAdresse = new MacAddress(1024);
-				flashLoader.setUser(user);
-				flashLoader.setPassword(password);
-				flashLoader.setDevice(device);
-				flashLoader.setId(id);
-				if(timeout != null){
-					flashLoader.setTimeout(timeout);
-				}
-				flashLoader.connect();
-				flashLoader.writemac(macAdresse);
-
-			} else if (args[0].equals("reset")) {
-				System.out.println("start FlashLoader...");
-
-				String port = cmd.getOptionValue("port");
-				String server = cmd.getOptionValue("server");
-				String user = cmd.getOptionValue("user");
-				String password = cmd.getOptionValue("passwd");
-				String device = cmd.getOptionValue("device");
-				String id = cmd.getOptionValue("id");
-				String timeout = cmd.getOptionValue("timeout");
-
-				if (server != null && (user == null && password == null || user == null)) {
-					System.out.println("Username and Password is missing.");
-					BufferedReader in = new BufferedReader(
-							new InputStreamReader(System.in));
-					System.out.print("Username: ");
-					user = in.readLine();
-					System.out.print("Password: ");
-					password = in.readLine();
-					in.close();
-				}
-				if (server != null && (password == null)) {
-					System.out.println("Password is missing.");
-					BufferedReader in = new BufferedReader(
-							new InputStreamReader(System.in));
-					System.out.print("Password: ");
-					password = in.readLine();
-					in.close();
-				}
-				FlashLoader flashLoader = new FlashLoader();
-				flashLoader.setPort(port);
-				flashLoader.setServer(server);
-				flashLoader.setUser(user);
-				flashLoader.setPassword(password);
-				flashLoader.setDevice(device);
-				flashLoader.setId(id);
-				if(timeout != null){
-					flashLoader.setTimeout(timeout);
-				}
-				flashLoader.connect();
-				flashLoader.reset();
 			}
 		}
+	}
+	
+	public static void read_cmd(CommandLine cmd, FlashLoader flashLoader) throws IOException {
+		String port = cmd.getOptionValue("port");
+		String server = cmd.getOptionValue("server");
+		String user = cmd.getOptionValue("user");
+		String password = cmd.getOptionValue("passwd");
+		String device = cmd.getOptionValue("device");
+		String id = cmd.getOptionValue("id");
+		String timeout = cmd.getOptionValue("timeout");
+
+		if (server != null && (user == null && password == null || user == null)) {
+			System.out.println("Username and Password is missing.");
+			BufferedReader in = new BufferedReader(
+					new InputStreamReader(System.in));
+			System.out.print("Username: ");
+			user = in.readLine();
+			System.out.print("Password: ");
+			password = in.readLine();
+			in.close();
+		}
+		if (server != null && (password == null)) {
+			System.out.println("Password is missing.");
+			BufferedReader in = new BufferedReader(
+					new InputStreamReader(System.in));
+			System.out.print("Password: ");
+			password = in.readLine();
+			in.close();
+		}
+		flashLoader.setPort(port);
+		flashLoader.setServer(server);
+		flashLoader.setUser(user);
+		flashLoader.setPassword(password);
+		flashLoader.setDevice(device);
+		flashLoader.setId(id);
+		if(timeout != null){
+			flashLoader.setTimeout(timeout);
+		}
+		flashLoader.connect();
 	}
 }

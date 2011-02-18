@@ -42,69 +42,77 @@ public class Main {
 		options.addOption("device", true,
 				"type of the device in local case: jennec, telosb oder pacemate");
 		options.addOption("id", true, "ID of the device in remote case");
+		options.addOption("message_type", true, "Type of the Message to be send");
 
 		// for help statement
 		HelpFormatter formatter = new HelpFormatter();
 
 		CommandLineParser parser = new GnuParser();
 		CommandLine cmd = null;
-		try {
-			cmd = parser.parse(options, args);
-		} catch (ParseException e) {
-			System.out.println("One of these options is not registered.");
+		if(args.length == 0){
+			formatter.printHelp("help", options);
 		}
-		if (cmd != null) {
-			// standard-options
-			if (cmd.hasOption("help")) {
-				System.out.println("Example:");
-				System.out
-						.println("Messenger: send -message 0a 3f 41 -server 141.83.1.546 -port 1282");
-				System.out.println("");
-				formatter.printHelp("help", options);
+		else{
+			try {
+				cmd = parser.parse(options, args);
+			} catch (ParseException e) {
+				System.out.println("One of these options is not registered.");
 			}
-			if (cmd.hasOption("version")) {
-				System.out.println(version);
-			}
-
-			// der Messenger
-			if (args[0].equals("send")) {
-				System.out.println("start Messenger...");
-
-				String port = cmd.getOptionValue("port");
-				String server = cmd.getOptionValue("server");
-				String message = cmd.getOptionValue("message");
-				String user = cmd.getOptionValue("user");
-				String password = cmd.getOptionValue("passwd");
-				String device = cmd.getOptionValue("device");
-				String id = cmd.getOptionValue("id");
-
-				if (server != null && (user == null && password == null || user == null)) {
-					System.out.println("Username and Password is missing.");
-					BufferedReader in = new BufferedReader(
-							new InputStreamReader(System.in));
-					System.out.print("Username: ");
-					user = in.readLine();
-					System.out.print("Password: ");
-					password = in.readLine();
-					in.close();
+			if (cmd != null) {
+				// standard-options
+				if (cmd.hasOption("help")) {
+					System.out.println("Example:");
+					System.out
+							.println("Messenger: send -message 0a 3f 41 -server 141.83.1.546 -port 1282");
+					System.out.println("");
+					formatter.printHelp("help", options);
 				}
-				if (server != null && (password == null)) {
-					System.out.println("Password is missing.");
-					BufferedReader in = new BufferedReader(
-							new InputStreamReader(System.in));
-					System.out.print("Password: ");
-					password = in.readLine();
-					in.close();
+				if (cmd.hasOption("version")) {
+					System.out.println(version);
 				}
-				Messenger messenger = new Messenger();
-				messenger.setPort(port);
-				messenger.setServer(server);
-				messenger.setUser(user);
-				messenger.setPassword(password);
-				messenger.setDevice(device);
-				messenger.setId(id);
-				messenger.connect();
-				messenger.send(message);
+
+				// der Messenger
+				if (args[0].equals("send")) {
+					System.out.println("start Messenger...");
+
+					String port = cmd.getOptionValue("port");
+					String server = cmd.getOptionValue("server");
+					String message = cmd.getOptionValue("message");
+					String user = cmd.getOptionValue("user");
+					String password = cmd.getOptionValue("passwd");
+					String device = cmd.getOptionValue("device");
+					String id = cmd.getOptionValue("id");
+					String message_type = cmd.getOptionValue("message_type");
+
+					if (server != null && (user == null && password == null || user == null)) {
+						System.out.println("Username and Password is missing.");
+						BufferedReader in = new BufferedReader(
+								new InputStreamReader(System.in));
+						System.out.print("Username: ");
+						user = in.readLine();
+						System.out.print("Password: ");
+						password = in.readLine();
+						in.close();
+					}
+					if (server != null && (password == null)) {
+						System.out.println("Password is missing.");
+						BufferedReader in = new BufferedReader(
+								new InputStreamReader(System.in));
+						System.out.print("Password: ");
+						password = in.readLine();
+						in.close();
+					}
+					Messenger messenger = new Messenger();
+					messenger.setPort(port);
+					messenger.setServer(server);
+					messenger.setUser(user);
+					messenger.setPassword(password);
+					messenger.setDevice(device);
+					messenger.setId(id);
+					messenger.setMessage_type(message_type);
+					messenger.connect();
+					messenger.send(message);
+				}
 			}
 		}
 	}

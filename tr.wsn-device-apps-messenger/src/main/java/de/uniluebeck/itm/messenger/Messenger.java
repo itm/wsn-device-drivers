@@ -22,6 +22,7 @@ import de.uniluebeck.itm.devicedriver.telosb.TelosbDevice;
 import de.uniluebeck.itm.devicedriver.telosb.TelosbSerialPortConnection;
 import de.uniluebeck.itm.tcp.client.RemoteConnection;
 import de.uniluebeck.itm.tcp.client.RemoteDevice;
+import de.uniluebeck.itm.tr.util.StringUtils;
 
 /**
  * The Class Messenger.
@@ -35,6 +36,7 @@ public class Messenger {
 	private String device_parameter;
 	private DeviceAsync deviceAsync;
 	private String id;
+	private int message_type;
 	private boolean sent = false; // for the test-class
 
 	/**
@@ -101,6 +103,10 @@ public class Messenger {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+	
+	public void setMessage_type(String message_type){
+		this.message_type = Integer.valueOf(message_type);
 	}
 
 	/**
@@ -194,7 +200,7 @@ public class Messenger {
 			}
 		}, PacketType.LOG);
 
-		MessagePacket packet = new MessagePacket(0, message.getBytes());
+		MessagePacket packet = new MessagePacket(message_type, hexStringToByteArray(message));
 		deviceAsync.send(packet, 100000, new AsyncAdapter<Void>() {
 
 			@Override
@@ -216,5 +222,15 @@ public class Messenger {
 				System.exit(0);
 			}
 		});
+	}
+	
+	public static byte[] hexStringToByteArray(String s) {
+	    int len = s.length();
+	    byte[] data = new byte[len / 2];
+	    for (int i = 0; i < len; i += 2) {
+	        data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+	                             + Character.digit(s.charAt(i+1), 16));
+	    }
+	    return data;
 	}
 }
