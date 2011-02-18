@@ -10,7 +10,7 @@ import org.apache.commons.logging.LogFactory;
 
 public class Main {
 
-	private static Log log = LogFactory.getLog(Datalogger.class);
+	private static Log log = LogFactory.getLog(Main.class);
 	private static double version = 0.1;
 
 	/**
