@@ -124,7 +124,6 @@ public class ServerDevice {
 			connection = (Connection) con.newInstance();
 		} catch (final Exception e) {
 			log.error(e.getMessage());
-			e.printStackTrace();
 		}
 		return  connection;
 	}

@@ -183,6 +183,13 @@ public class Server {
 
 			@Override
 			public void connectionLost(final RpcClientChannel clientChannel) {
+				DeviceAsync device = idList.get(clientChannel).getDevice();
+				for(String key : packetListenerList.get(clientChannel).keySet()){
+					device.removeListener(packetListenerList.get(clientChannel).get(key));
+				}
+				for(String key : plainTextListenerList.get(clientChannel).keySet()){
+					device.removeListener(plainTextListenerList.get(clientChannel).get(key));
+				}
 				authList.remove(clientChannel);
 				idList.remove(clientChannel);
 				clientChannel.close();
@@ -290,10 +297,13 @@ public class Server {
 			
 			DeviceAsync device = idList.get(ServerRpcController
 					.getRpcChannel(controller)).getDevice();
+
+			for(String key : packetListenerList.get(ServerRpcController.getRpcChannel(controller)).keySet()){
+				device.removeListener(packetListenerList.get(ServerRpcController.getRpcChannel(controller)).get(key));
+			}
 			
-			
-			if(null != packetListenerList.get(ServerRpcController.getRpcChannel(controller))){
-				//device.removeListener(packetListenerList.get(ServerRpcController.getRpcChannel(controller)));
+			for(String key : plainTextListenerList.get(ServerRpcController.getRpcChannel(controller)).keySet()){
+				device.removeListener(plainTextListenerList.get(ServerRpcController.getRpcChannel(controller)).get(key));
 			}
 			
 			idList.remove(ServerRpcController.getRpcChannel(controller));
@@ -302,6 +312,7 @@ public class Server {
 					.getRpcChannel(controller));
 			plainTextListenerList.remove(ServerRpcController
 					.getRpcChannel(controller));
+			device = null;
 			done.run(EmptyAnswer.newBuilder().build());
 		}
 
