@@ -73,7 +73,7 @@ public class Main {
 				String id = cmd.getOptionValue("id");
 				String microcontroller = cmd.getOptionValue("microcontroller");
 				String sensor = cmd.getOptionValue("sensor");
-				String user = cmd.getOptionValue("user");
+				String user = cmd.getOptionValue("username");
 				String password = cmd.getOptionValue("passwd");
 				String server = cmd.getOptionValue("server");
 				String server_port = cmd.getOptionValue("server_port");
