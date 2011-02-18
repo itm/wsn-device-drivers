@@ -66,7 +66,7 @@ public class JarUtil {
 	 * Extracts the library from the jar in the current working directory.
 	 * 
 	 * @param path The path of the libary.
-	 * @param lib The destination library name.
+	 * @param lib The destinated library name.
 	 * @throws IOException When a file operation during the extraction failed.
 	 */
 	private static final void extractLibrary(final String path, final String lib) throws IOException {
@@ -84,14 +84,14 @@ public class JarUtil {
 	}
 	
 	/**
-	 * Check via CRC32 if a file has changed.
+	 * Check via Adler32 if a given targte file differs from the given source.
 	 * 
-	 * @param file1 The first file.
-	 * @param file2 The second file.
+	 * @param source The source file.
+	 * @param target The target file.
 	 * @return True when the files are not equal, so they changed, else false.
 	 * @throws IOException when something happened current the checksum calculation.
 	 */
-	private static final boolean hasFileChanged(final File file1, final File file2) throws IOException {
-		return Files.getChecksum(file1, new Adler32()) != Files.getChecksum(file2, new Adler32());
+	private static final boolean hasFileChanged(final File source, final File target) throws IOException {
+		return Files.getChecksum(source, new Adler32()) != Files.getChecksum(target, new Adler32());
 	}
 }

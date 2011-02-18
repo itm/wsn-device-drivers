@@ -691,7 +691,7 @@ public class BSLTelosb {
 			log.error("Failed to change baud rate, received NACK.");
 			return false;
 		} else if ((0xFF & reply[0]) == DATA_ACK) {
-			log.info("Changing baudrate to " + newBaudRate + "...");
+			log.debug("Changing baudrate to " + newBaudRate + "...");
 		} else if (reply.length != 1) {
 			log.error("Failed to change baud rate, received unexpected reply of length " + reply.length);
 			return false;
@@ -701,7 +701,7 @@ public class BSLTelosb {
 		try {
 			serialPort.setSerialPortParams(newBaudRate.toInt(), serialPort.getDataBits(), serialPort.getStopBits(),
 					serialPort.getParity());
-			log.info("Changing serial baudrate to " + newBaudRate + "...");
+			log.debug("Changing serial baudrate to " + newBaudRate + "...");
 		} catch (UnsupportedCommOperationException e) {
 			throw new IOException("Error changing baudrate: " + e);
 		}
