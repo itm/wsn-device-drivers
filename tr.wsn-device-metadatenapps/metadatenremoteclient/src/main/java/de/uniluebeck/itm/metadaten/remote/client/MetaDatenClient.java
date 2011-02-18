@@ -11,23 +11,18 @@ import java.util.concurrent.Executors;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
-import org.simpleframework.xml.Serializer;
-import org.simpleframework.xml.load.Persister;
-
 import com.google.protobuf.RpcController;
 import com.google.protobuf.ServiceException;
 import com.googlecode.protobuf.pro.duplex.PeerInfo;
 import com.googlecode.protobuf.pro.duplex.RpcClientChannel;
 import com.googlecode.protobuf.pro.duplex.client.DuplexTcpClientBootstrap;
 import com.googlecode.protobuf.pro.duplex.execute.ThreadPoolCallExecutor;
-
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Identification;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.NODE;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Operations;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Operations.BlockingInterface;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.SearchRequest;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.SearchResponse;
-import de.uniluebeck.itm.metadaten.remote.entity.ConfigData;
 import de.uniluebeck.itm.metadaten.remote.entity.Node;
 import de.uniluebeck.itm.metadaten.remote.metadataclienthelper.NodeHelper;
 
@@ -49,7 +44,6 @@ public class MetaDatenClient implements MetaDataClient {
 	Operations.Interface operationService = null;
 	private String password = "testPassword";
 	private String user = "frager";
-	private ConfigData config = new ConfigData();
 	
 	public MetaDatenClient(final String userName, final String passWord, final String serverIP,
 			final int serverPort) throws Exception {
