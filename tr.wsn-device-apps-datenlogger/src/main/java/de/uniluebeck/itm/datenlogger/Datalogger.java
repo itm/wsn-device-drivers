@@ -361,10 +361,15 @@ public class Datalogger {
 					if (location != null) {
 						try {
 							byte[] bytes = event.getMessage().getContent();
-
-							if (output.equals("1")) {
-								writer.write(StringUtils.toHexString(bytes));
-							} else {
+							if(output != null){							
+								if (output.equals("hex")) {
+									writer.write(StringUtils.toHexString(bytes));
+								} else {
+									writer.write(incoming_data);
+									writer.write("\n");
+								}
+							}
+							else{
 								writer.write(incoming_data);
 								writer.write("\n");
 							}
@@ -374,9 +379,14 @@ public class Datalogger {
 					} else {
 						byte[] bytes = event.getMessage().getContent();
 
-						if (output.equals("1")) {
-							System.out.println(StringUtils.toHexString(bytes));
-						} else {
+						if(output != null){	
+							if (output.equals("1")) {
+								System.out.println(StringUtils.toHexString(bytes));
+							} else {
+								System.out.println(incoming_data);
+							}
+						}
+						else{
 							System.out.println(incoming_data);
 						}
 					}
