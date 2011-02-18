@@ -32,6 +32,7 @@ import model.Setup;
 import model.Timeinfo;
 import model.Trace;
 import viewer.CreateXML;
+import viewer.DatabaseToStore;
 
 import com.google.common.base.Predicate;
 
