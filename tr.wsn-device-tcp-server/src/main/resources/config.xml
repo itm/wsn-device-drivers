@@ -6,4 +6,5 @@
 	<ns0:clientPort>1234</ns0:clientPort>
 	<ns0:username>testUser</ns0:username>
 	<ns0:password>testPassword</ns0:password>
+	<ns0:updateRate>5000</ns0:updateRate>
 </ns0:configData>

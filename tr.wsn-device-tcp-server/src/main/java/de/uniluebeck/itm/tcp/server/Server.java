@@ -104,6 +104,11 @@ public class Server {
 	private static HashMap<RpcClientChannel, HashMap<String, MessagePlainTextListener>> plainTextListenerList = new HashMap<RpcClientChannel, HashMap<String, MessagePlainTextListener>>();
 
 	/**
+	 * contains the objects representing the devices connected to the host.
+	 */
+	private static ServerDevice serverDevices;
+	
+	/**
 	 * IP of the host the server is running on.
 	 */
 	private final String host;
@@ -111,10 +116,6 @@ public class Server {
 	 * the port ther server is listening on.
 	 */
 	private final int port;
-	/**
-	 * contains the objects representing the devices connected to the host.
-	 */
-	private static ServerDevice serverDevices;
 
 	/**
 	 * Constructor.
