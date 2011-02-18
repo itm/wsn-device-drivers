@@ -3,6 +3,7 @@ package de.uniluebeck.itm.devicedriver.util;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.zip.Adler32;
 
 import com.google.common.base.Joiner;
 import com.google.common.io.Files;
@@ -33,7 +34,7 @@ public class JarUtil {
 			extractLibrary(path, lib);
 			System.loadLibrary(libName);
 		} catch (final IOException e) {
-			throw new RuntimeException("Unable to find libary in " + path, e);
+			throw new RuntimeException("Unable to extract libary to: " + path, e);
 		}
 	}
 	
@@ -69,11 +70,28 @@ public class JarUtil {
 	 * @throws IOException When a file operation during the extraction failed.
 	 */
 	private static final void extractLibrary(final String path, final String lib) throws IOException {
-		final URL source = ClassLoader.getSystemResource(path);
+		final URL uri = ClassLoader.getSystemResource(path);
+		final File source = new File(uri.getFile());
 		final File target = new File(lib);
 		if (!target.exists()) {
 			target.createNewFile();
 		}
-		Files.copy(new File(source.getFile()), target);
+
+		// Only copy the source to target when the file has changed.
+		if (hasFileChanged(source, target)) {
+			Files.copy(source, target);
+		}
+	}
+	
+	/**
+	 * Check via CRC32 if a file has changed.
+	 * 
+	 * @param file1 The first file.
+	 * @param file2 The second file.
+	 * @return True when the files are not equal, so they changed, else false.
+	 * @throws IOException when something happened current the checksum calculation.
+	 */
+	private static final boolean hasFileChanged(final File file1, final File file2) throws IOException {
+		return Files.getChecksum(file1, new Adler32()) != Files.getChecksum(file2, new Adler32());
 	}
 }

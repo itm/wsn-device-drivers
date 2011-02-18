@@ -93,7 +93,7 @@ public class ServerDevice {
 			}
 			
 		} catch (final Exception e) {
-			log.error(e.getMessage());
+			log.error(e.getMessage(), e);
 			System.exit(-1);
 		}
 	}
@@ -146,15 +146,17 @@ public class ServerDevice {
 			deviceClass = Class.forName(deviceName);
 			
 			for(Constructor<?> constructor : deviceClass.getConstructors()){
-				for (Class<?> type : constructor.getParameterTypes()){
-					if(type.isInstance(con) && device == null){
+				final Class<?>[] types = constructor.getParameterTypes();
+				if (types.length == 1) {
+					final Class<?> type = types[0];
+					if(type.isInstance(con)){
 						device = (Device<?>) constructor.newInstance(new Object[] {con});
 						break;
 					}
 				}
 			}
 		} catch (final Exception e) {
-			log.error(e.getMessage());
+			log.error("Unable to create device: " + deviceName, e);
 			System.exit(-1);
 		}
 	    
