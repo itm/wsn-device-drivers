@@ -127,9 +127,9 @@ public class FlashLoader {
 	public void connect() {
 		if (server != null) {
 			final RemoteConnection connection = new RemoteConnection();
-
-			connection.connect(id + ":" + user + ":" + password + "@" + server
-					+ ":" + port);
+			final String uri = id + ":" + user + ":" + password + "@" + server + ":" + port;
+			System.out.println("Connecting to: " + uri);
+			connection.connect(uri);
 			System.out.println("Connected");
 
 			deviceAsync = new RemoteDevice(connection);
