@@ -12,6 +12,7 @@ import com.google.protobuf.RpcController;
 
 import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.Connection;
+import de.uniluebeck.itm.devicedriver.Device;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.MessagePacketListener;
@@ -128,8 +129,16 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 
 		try {
 			except = Class.forName(request.getExceptionName());
-			Constructor<?> constructor  = except.getConstructor();
-			exception = (Exception) constructor.newInstance(new Object[] {request.getExceptionMessage()});
+			for(Constructor<?> constructor : except.getConstructors()){
+				final Class<?>[] types = constructor.getParameterTypes();
+				if (types.length == 1) {
+					final Class<?> type = types[0];
+					if(type.isInstance(request.getExceptionMessage())){
+						exception = (Exception) constructor.newInstance(new Object[] {request.getExceptionMessage()});
+						break;
+					}
+				}
+			}
 		} catch (final Exception e) {
 			log.error(e.getMessage(),e);
 			e.printStackTrace();
