@@ -3,6 +3,10 @@ package de.uniluebeck.itm.overlayclient;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import de.uniluebeck.itm.flashloader.FlashLoader;
 import de.uniluebeck.itm.metadaten.remote.client.*;
 import de.uniluebeck.itm.metadaten.remote.entity.*;
 
@@ -11,6 +15,7 @@ import de.uniluebeck.itm.metadaten.remote.entity.*;
  */
 public class OverlayClient {
 	
+	private static Log log = LogFactory.getLog(OverlayClient.class);
 	private String username;
 	private String password;
 	private String server;
@@ -63,7 +68,7 @@ public class OverlayClient {
 		try {
 			results = client.search(queryExample, query);
 		} catch (Exception e) {
-			System.out.println("Error!");
+			log.error("Error while searching the node.");
 		}
 		System.out.println("Results: " + results.size());
 		for (Node node : results) {
@@ -93,7 +98,7 @@ public class OverlayClient {
 		try {
 			results = client.search(queryExample, query);
 		} catch (Exception e) {
-			System.out.println("Error!");
+			log.error("Error while searching the node.");
 		}
 		System.out.println("Results: " + results.size());
 		for (Node node : results) {
@@ -126,7 +131,7 @@ public class OverlayClient {
 		try {
 			results = client.search(queryExample, query);
 		} catch (Exception e) {
-			System.out.println("Error!");
+			log.error("Error while searching the node.");
 		}
 		System.out.println("Results: " + results.size());
 		for (Node node : results) {
