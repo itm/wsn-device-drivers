@@ -25,7 +25,7 @@ public abstract class AbstractOperation<T> implements Runnable {
 	DeviceAsync deviceAsync;
 	ReverseMessage message;
 	
-	public AbstractOperation(RpcController controller, RpcCallback<EmptyAnswer> done, Subject user, ClientID id) {
+	public AbstractOperation(final RpcController controller, final RpcCallback<EmptyAnswer> done, final Subject user, final ClientID id) {
 		this.controller = controller;
 		this.done = done;
 		this.user = user;
@@ -48,7 +48,7 @@ public abstract class AbstractOperation<T> implements Runnable {
 	
 	//public abstract void setOnSuccess(T result);
 	
-	public void setOnSuccess(T result) {
+	public void setOnSuccess(final T result) {
 		message.reverseSuccess(ReverseAnswer.newBuilder().setSuccess(OpKey.newBuilder().setOperationKey(message.getOperationKey())).build());
 	}
 	public void setOnExecute(){
@@ -57,10 +57,10 @@ public abstract class AbstractOperation<T> implements Runnable {
 	public void setOnCancel(){
 		message.reverseChangeEvent("Operation was canceled by the Device",true);
 	}
-	public void setOnFailure(Throwable throwable){
+	public void setOnFailure(final Throwable throwable){
 		message.reverseChangeEvent(throwable.getMessage(),true);
 	}
-	public void setOnProgressChange(float fraction){
+	public void setOnProgressChange(final float fraction){
 		message.reverseChangeEvent(String.valueOf(fraction),false);
 	}
 	
@@ -78,16 +78,16 @@ public abstract class AbstractOperation<T> implements Runnable {
 			}
 
 			@Override
-			public void onFailure(Throwable throwable) {
+			public void onFailure(final Throwable throwable) {
 				setOnFailure(throwable);
 			}
 
 			@Override
-			public void onProgressChange(float fraction) {
+			public void onProgressChange(final float fraction) {
 				setOnProgressChange(fraction);
 			}
 			@Override
-			public void onSuccess(T result) {
+			public void onSuccess(final T result) {
 				setOnSuccess(result);
 			}
 		};

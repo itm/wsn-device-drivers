@@ -17,7 +17,7 @@ public class writeMacOperation extends AbstractOperation<Void> {
 
 	MacData request = null;
 	
-	public writeMacOperation(RpcController controller, RpcCallback<EmptyAnswer> done, Subject user, ClientID id, MacData request) {
+	public writeMacOperation(final RpcController controller, final RpcCallback<EmptyAnswer> done, final Subject user, final ClientID id, final MacData request) {
 		super(controller, done, user, id);
 		this.request =  request;
 		message = new ReverseMessage(request.getOperationKey(),ServerRpcController.getRpcChannel(controller));
@@ -33,7 +33,7 @@ public class writeMacOperation extends AbstractOperation<Void> {
 		}
 		
 		// erzeugen eines OperationHandle zur der Operation
-		OperationHandle <Void> handle = deviceAsync.writeMac(new MacAddress(request.getMACADDRESSList().get(0).toByteArray()), request.getTimeout(), getAsyncAdapter());
+		final OperationHandle <Void> handle = deviceAsync.writeMac(new MacAddress(request.getMACADDRESSList().get(0).toByteArray()), request.getTimeout(), getAsyncAdapter());
 		
 		// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
 		id.setHandleElement(request.getOperationKey(), handle);

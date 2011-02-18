@@ -16,7 +16,7 @@ public class eraseOperation extends AbstractOperation<Void> {
 
 	Timeout request = null;
 	
-	public eraseOperation(RpcController controller, RpcCallback<EmptyAnswer> done, Subject user, ClientID id, Timeout request) {
+	public eraseOperation(final RpcController controller, final RpcCallback<EmptyAnswer> done, final Subject user, final ClientID id, final Timeout request) {
 		super(controller, done, user, id);
 		this.request =  request;
 		message = new ReverseMessage(request.getOperationKey(),ServerRpcController.getRpcChannel(controller));
@@ -32,7 +32,7 @@ public class eraseOperation extends AbstractOperation<Void> {
 		}
 		
 		// erzeugen eines OperationHandle zur der Operation
-		OperationHandle <Void> handle = deviceAsync.eraseFlash(request.getTimeout(), getAsyncAdapter());
+		final OperationHandle <Void> handle = deviceAsync.eraseFlash(request.getTimeout(), getAsyncAdapter());
 		
 		// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
 		id.setHandleElement(request.getOperationKey(), handle);

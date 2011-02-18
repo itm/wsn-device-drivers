@@ -19,16 +19,16 @@ public class readFlashOperation extends AbstractOperation<byte[]> {
 
 	FlashData request = null;
 	
-	public readFlashOperation(RpcController controller, RpcCallback<EmptyAnswer> done, Subject user, ClientID id, FlashData request){
+	public readFlashOperation(final RpcController controller, final RpcCallback<EmptyAnswer> done, final Subject user, final ClientID id, final FlashData request){
 		super(controller,done, user, id);
 		this.request = request;
 		message = new ReverseMessage(request.getOperationKey(),ServerRpcController.getRpcChannel(controller));
 	}
 	
 	@Override
-	public void setOnSuccess(byte[] result) {
+	public void setOnSuccess(final byte[] result) {
 		if(!id.getCalledGet(request.getOperationKey())){
-			ByteData data = ByteData.newBuilder().setOperationKey(request.getOperationKey()).addData(ByteString.copyFrom(result)).build();
+			final ByteData data = ByteData.newBuilder().setOperationKey(request.getOperationKey()).addData(ByteString.copyFrom(result)).build();
 			message.reverseSuccess(ReverseAnswer.newBuilder().setData(data).build());
 		}
 	}
@@ -37,7 +37,7 @@ public class readFlashOperation extends AbstractOperation<byte[]> {
 	protected void operate(){
 
 		// erzeugen eines OperationHandle zur der Operation
-		OperationHandle <byte[]> handle = deviceAsync.readFlash(request.getAddress(), request.getLength(), request.getTimeout(), getAsyncAdapter());
+		final OperationHandle <byte[]> handle = deviceAsync.readFlash(request.getAddress(), request.getLength(), request.getTimeout(), getAsyncAdapter());
 		
 		// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
 		id.setHandleElement(request.getOperationKey(), handle);

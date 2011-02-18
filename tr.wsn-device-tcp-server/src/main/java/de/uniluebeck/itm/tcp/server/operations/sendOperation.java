@@ -17,7 +17,7 @@ public class sendOperation extends AbstractOperation<Void> {
 
 	sendData request = null;
 	
-	public sendOperation(RpcController controller, RpcCallback<EmptyAnswer> done, Subject user, ClientID id, sendData request) {
+	public sendOperation(final RpcController controller, final RpcCallback<EmptyAnswer> done, final Subject user, final ClientID id, final sendData request) {
 		super(controller, done, user, id);
 		this.request =  request;
 		message = new ReverseMessage(request.getOperationKey(),ServerRpcController.getRpcChannel(controller));
@@ -32,10 +32,10 @@ public class sendOperation extends AbstractOperation<Void> {
 			return;
 		}
 		
-		MessagePacket packet = new MessagePacket(request.getType(), request.getDataList().get(0).toByteArray());
+		final MessagePacket packet = new MessagePacket(request.getType(), request.getDataList().get(0).toByteArray());
 		
 		// erzeugen eines OperationHandle zur der Operation
-		OperationHandle <Void> handle = deviceAsync.send(packet, request.getTimeout(), getAsyncAdapter());
+		final OperationHandle <Void> handle = deviceAsync.send(packet, request.getTimeout(), getAsyncAdapter());
 		
 		// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
 		id.setHandleElement(request.getOperationKey(), handle);

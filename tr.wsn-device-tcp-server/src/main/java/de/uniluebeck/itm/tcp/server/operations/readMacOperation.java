@@ -20,16 +20,16 @@ public class readMacOperation extends AbstractOperation<MacAddress> {
 
 	Timeout request = null;
 	
-	public readMacOperation(RpcController controller, RpcCallback<EmptyAnswer> done, Subject user, ClientID id, Timeout request){
+	public readMacOperation(final RpcController controller, final RpcCallback<EmptyAnswer> done, final Subject user, final ClientID id, final Timeout request){
 		super(controller,done, user, id);
 		this.request = request;
 		message = new ReverseMessage(request.getOperationKey(),ServerRpcController.getRpcChannel(controller));
 	}
 	
 	@Override
-	public void setOnSuccess(MacAddress result) {
+	public void setOnSuccess(final MacAddress result) {
 		if(!id.getCalledGet(request.getOperationKey())){
-			MacData mac = MacData.newBuilder().setOperationKey(request.getOperationKey()).addMACADDRESS(ByteString.copyFrom(result.getMacBytes())).build();
+			final MacData mac = MacData.newBuilder().setOperationKey(request.getOperationKey()).addMACADDRESS(ByteString.copyFrom(result.getMacBytes())).build();
 			message.reverseSuccess(ReverseAnswer.newBuilder().setMacAddress(mac).build());
 		}
 	}
@@ -38,7 +38,7 @@ public class readMacOperation extends AbstractOperation<MacAddress> {
 	protected void operate(){
 
 		// erzeugen eines OperationHandle zur der Operation
-		OperationHandle <MacAddress> handle = deviceAsync.readMac(request.getTimeout(), getAsyncAdapter());
+		final OperationHandle <MacAddress> handle = deviceAsync.readMac(request.getTimeout(), getAsyncAdapter());
 		
 		// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
 		id.setHandleElement(request.getOperationKey(), handle);

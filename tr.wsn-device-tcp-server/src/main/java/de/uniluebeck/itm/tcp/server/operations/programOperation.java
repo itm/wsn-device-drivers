@@ -19,7 +19,7 @@ public class programOperation extends AbstractOperation<Void> {
 
 	ProgramPacket request = null;
 	
-	public programOperation(RpcController controller, RpcCallback<EmptyAnswer> done, Subject user, ClientID id, ProgramPacket request) {
+	public programOperation(final RpcController controller, final RpcCallback<EmptyAnswer> done, final Subject user, final ClientID id, final ProgramPacket request) {
 		super(controller, done, user, id);
 		this.request =  request;
 		message = new ReverseMessage(request.getOperationKey(),ServerRpcController.getRpcChannel(controller));
@@ -34,9 +34,9 @@ public class programOperation extends AbstractOperation<Void> {
 			return;
 		}
 
-		byte[] data = request.getBinaryPacketList().get(0).toByteArray();
+		final byte[] data = request.getBinaryPacketList().get(0).toByteArray();
 		
-		Checksum checksum = new CRC32();
+		final Checksum checksum = new CRC32();
 		checksum.update(data,0,data.length);
 		
 		if(request.getCrc() != checksum.getValue()){
@@ -45,7 +45,7 @@ public class programOperation extends AbstractOperation<Void> {
 		}else{
 		
 			// erzeugen eines OperationHandle zur der Operation
-			OperationHandle <Void> handle = deviceAsync.program(data, request.getTimeout(), getAsyncAdapter());
+			final OperationHandle <Void> handle = deviceAsync.program(data, request.getTimeout(), getAsyncAdapter());
 			
 			// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
 			id.setHandleElement(request.getOperationKey(), handle);

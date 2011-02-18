@@ -19,7 +19,7 @@ public class writeFlashOperation extends AbstractOperation<Void> {
 
 	FlashData request = null;
 	
-	public writeFlashOperation(RpcController controller, RpcCallback<EmptyAnswer> done, Subject user, ClientID id, FlashData request) {
+	public writeFlashOperation(final RpcController controller, final RpcCallback<EmptyAnswer> done, final Subject user, final ClientID id, final FlashData request) {
 		super(controller, done, user, id);
 		this.request =  request;
 		message = new ReverseMessage(request.getOperationKey(),ServerRpcController.getRpcChannel(controller));
@@ -34,9 +34,9 @@ public class writeFlashOperation extends AbstractOperation<Void> {
 			return;
 		}
 
-		byte[] data = request.getDataList().get(0).toByteArray();
+		final byte[] data = request.getDataList().get(0).toByteArray();
 		
-		Checksum checksum = new CRC32();
+		final Checksum checksum = new CRC32();
 		checksum.update(data,0,data.length);
 		
 		if(request.getCrc() != checksum.getValue()){
@@ -45,7 +45,7 @@ public class writeFlashOperation extends AbstractOperation<Void> {
 		}else{
 		
 			// erzeugen eines OperationHandle zur der Operation
-			OperationHandle <Void> handle = deviceAsync.writeFlash(request.getAddress(), data, request.getLength(), request.getTimeout(), getAsyncAdapter());
+			final OperationHandle <Void> handle = deviceAsync.writeFlash(request.getAddress(), data, request.getLength(), request.getTimeout(), getAsyncAdapter());
 			
 			// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
 			id.setHandleElement(request.getOperationKey(), handle);
