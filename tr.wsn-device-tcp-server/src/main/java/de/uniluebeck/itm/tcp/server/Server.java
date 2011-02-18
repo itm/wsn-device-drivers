@@ -287,6 +287,15 @@ public class Server {
 		@Override
 		public void shutdown(final RpcController controller, final EmptyAnswer request,
 				final RpcCallback<EmptyAnswer> done) {
+			
+			DeviceAsync device = idList.get(ServerRpcController
+					.getRpcChannel(controller)).getDevice();
+			
+			
+			if(null != packetListenerList.get(ServerRpcController.getRpcChannel(controller))){
+				//device.removeListener(packetListenerList.get(ServerRpcController.getRpcChannel(controller)));
+			}
+			
 			idList.remove(ServerRpcController.getRpcChannel(controller));
 			authList.remove(ServerRpcController.getRpcChannel(controller));
 			packetListenerList.remove(ServerRpcController

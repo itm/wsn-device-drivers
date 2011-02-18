@@ -39,13 +39,35 @@ public class ReverseMessage {
 			}});
 	}
 	
-	public void reverseChangeEvent(final String message, final boolean failed){
+	public void reverseOnCancel(){
 		
 		final RpcController controller = channel.newRpcController();
 		
-		if (failed){
-			controller.setFailed(message);
-		}
+		final OpKey request = OpKey.newBuilder().setOperationKey(OperationKey).build();
+		answer.reverseOnCancel(controller, request, new RpcCallback<EmptyAnswer>(){
+
+			@Override
+			public void run(final EmptyAnswer parameter) {
+			}});
+		
+	}
+	
+	public void reverseOnFailure(String message){
+		
+		final RpcController controller = channel.newRpcController();
+		
+		final clientMessage request = clientMessage.newBuilder().setOperationKey(OperationKey).setQuery(message).build();
+		answer.reverseOnFailure(controller, request, new RpcCallback<EmptyAnswer>(){
+
+			@Override
+			public void run(final EmptyAnswer parameter) {
+			}});
+		
+	}
+	
+	public void reverseChangeEvent(final String message){
+		
+		final RpcController controller = channel.newRpcController();
 		
 		final clientMessage request = clientMessage.newBuilder().setOperationKey(OperationKey).setQuery(message).build();
 		answer.reverseChangeEvent(controller, request, new RpcCallback<EmptyAnswer>(){

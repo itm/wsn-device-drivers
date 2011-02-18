@@ -55,13 +55,13 @@ public abstract class AbstractOperation<T> implements Runnable {
 		message.reverseExecute();
 	}
 	public void setOnCancel(){
-		message.reverseChangeEvent("Operation was canceled by the Device",true);
+		message.reverseOnCancel();
 	}
 	public void setOnFailure(final Throwable throwable){
-		message.reverseChangeEvent(throwable.getMessage(),true);
+		message.reverseOnFailure(throwable.getMessage());
 	}
 	public void setOnProgressChange(final float fraction){
-		message.reverseChangeEvent(String.valueOf(fraction),false);
+		message.reverseChangeEvent(String.valueOf(fraction));
 	}
 	
 	public  AsyncAdapter<T> getAsyncAdapter(){
