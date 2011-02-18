@@ -21,8 +21,8 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService {
 	private static Log log = LogFactory.getLog(MetaDatenService.class);
 	private ClientStub stub = null;
 	private List<IMetaDataCollector> collector = new ArrayList<IMetaDataCollector>();
-	ConfigData config = new ConfigData();
-	File sensors;
+	private ConfigData config = new ConfigData();
+	private File sensors;
 	Timer timer = new Timer();
 	int count = 0;
 
@@ -39,7 +39,7 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService {
 		// timer.schedule ( new Task(), 2000 );
 
 		// nach 1 Sek gehts los und dann alle 5 Sekunden
-		timer.schedule(this, 10000, 5000);
+		timer.schedule(this, 10000, config.getUpdateRate().intValue());
 	}
 
 	@Override

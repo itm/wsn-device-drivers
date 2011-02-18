@@ -15,6 +15,8 @@
 				minOccurs="1"></xsd:element>
 			<xsd:element name="password" type="xsd:string" maxOccurs="1"
 				minOccurs="1"></xsd:element>
+			<xsd:element name="updateRate" type="xsd:integer" maxOccurs="1"
+				minOccurs="1"></xsd:element>	
 		</xsd:sequence>
 	</xsd:complexType>
 	
