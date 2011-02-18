@@ -4,7 +4,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import de.uniluebeck.itm.devicedriver.Device;
-import de.uniluebeck.itm.metadaten.metadatenservice.entity.Node;
+import de.uniluebeck.itm.metadatenservice.config.Node;
 
 public class MetaDatenCollector {
 	public Device device;

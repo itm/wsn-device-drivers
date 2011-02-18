@@ -1,10 +1,7 @@
 package de.uniluebeck.itm.metadatenservice;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -14,10 +11,10 @@ import org.apache.commons.logging.LogFactory;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.load.Persister;
 
-import de.uniluebeck.itm.metadaten.metadatenservice.entity.Capability;
-import de.uniluebeck.itm.metadaten.metadatenservice.entity.ConfigData;
-import de.uniluebeck.itm.metadaten.metadatenservice.entity.Node;
 import de.uniluebeck.itm.metadaten.metadatenservice.metadatacollector.IMetaDataCollector;
+import de.uniluebeck.itm.metadaten.serverclient.metadataclienthelper.ConfigReader;
+import de.uniluebeck.itm.metadatenservice.config.ConfigData;
+import de.uniluebeck.itm.metadatenservice.config.Node;
 
 public class MetaDatenService extends TimerTask implements iMetaDatenService {
 
@@ -31,11 +28,11 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService {
 
 	public MetaDatenService(File configpath, File sensors) throws Exception {
 		this.sensors = sensors;
-		config = loadConfig(configpath);
-		log.info("remove old data of this TCP-Server");
+		config = ConfigReader.readConfigFile(configpath);
+		log.info("remove old data of this TCP-Server" + config.getPassword());
 		stub = new ClientStub(config.getUsername(), config.getPassword(),
-				config.getServerIP(), config.getServerPort(),
-				config.getClientport());
+				config.getServerIP(), config.getServerPort().intValue(),
+				config.getClientPort().intValue());
 		removeData();
 
 		// nach 2 Sek gehts los
@@ -53,7 +50,7 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService {
 		log.info("Refreshrun connected");
 		for (int i = 0; i < collector.size(); i++) {
 			System.out.println("Node with ID: "
-					+ collector.get(i).collect(sensors).getId()
+					+ collector.get(i).collect(sensors).getNodeid()
 					+ "refreshed in directory");
 			refreshNodeSync(collector.get(i).collect(sensors));
 		}
@@ -71,30 +68,31 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService {
 		}
 	}
 
-	/**
-	 * Load of ConfigData needed for communication
-	 * 
-	 * @param fileurl
-	 * @return
-	 */
-	public ConfigData loadConfig(File source) {
-		ConfigData config = new ConfigData();
-		Serializer serializer = new Persister();
-		log.debug("ConfigFile:" + source.getName() + source.toString());
-		try {
-			config = serializer
-					.read(de.uniluebeck.itm.metadaten.metadatenservice.entity.ConfigData.class,
-							source);
-			// serializer.read(ConfigData, source);
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		log.debug("Config:" + config.getPassword() + config.getServerIP()
-				+ config.getUsername() + config.getServerPort()
-				+ config.getClientport());
-		return config;
-	}
+//	/**
+//	 * Load of ConfigData needed for communication
+//	 * 
+//	 * @param fileurl
+//	 * @return
+//	 */
+//	public ConfigData loadConfig(File source) {
+//		ConfigData config = new ConfigData();
+//		Serializer serializer = new Persister();
+//		log.debug("ConfigFile:" + source.getName() + source.toString());
+//		try {
+//			config = serializer
+//					.read(de.uniluebeck.itm.metadaten.metadatenservice.entity.ConfigData.class,
+//							source);
+//			// serializer.read(ConfigData, source);
+//		} catch (Exception e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//		log.debug("Config:" + config.getPassword() + config.getServerIP()
+//				+ config.getUsername() + config.getServerPort()
+//				+ config.getClientport());
+//		return config;
+//	}
+//	
 
 	/**
 	 * Adds an node to the directory - no existing connection needed

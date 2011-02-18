@@ -1,7 +1,9 @@
-<configData>
-   <serverIP>localhost</serverIP>
-   <serverport>8080</serverport>
-   <clientport>1234</clientport>
-   <username>testUser</username>
-   <password>testPassword</password>
-</configData>
+<?xml version="1.0" encoding="UTF-8"?>
+<ns0:configData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ns0="de/uniluebeck/itm/metadatenservice/config" xsi:schemaLocation="de/uniluebeck/itm/metadatenservice/config config.xsd">
+	<ns0:serverIP>localhost</ns0:serverIP>
+	<ns0:serverPort>8080</ns0:serverPort>
+	<ns0:clientPort>1234</ns0:clientPort>
+	<ns0:username>testUser</ns0:username>
+	<ns0:password>testPassword</ns0:password>
+</ns0:configData>

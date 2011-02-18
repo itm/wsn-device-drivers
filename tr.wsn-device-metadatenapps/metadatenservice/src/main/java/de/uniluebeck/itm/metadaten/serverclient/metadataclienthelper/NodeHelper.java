@@ -1,13 +1,13 @@
 package de.uniluebeck.itm.metadaten.serverclient.metadataclienthelper;
 
-
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.NODE;
-import de.uniluebeck.itm.metadaten.metadatenservice.entity.Capability;
-import de.uniluebeck.itm.metadaten.metadatenservice.entity.Node;
+import de.uniluebeck.itm.metadatenservice.config.Capability;
+import de.uniluebeck.itm.metadatenservice.config.Node;
 
 public class NodeHelper {
 
@@ -19,38 +19,36 @@ public class NodeHelper {
 	 */
 	public NODE changetoNODE(Node node) {
 		NODE.Builder nodebuilder = NODE.newBuilder();
-		if (node.getId().isEmpty()) {
-			throw new NullPointerException("KnotenID darf nicht null sein");
+		if (!(node.getNodeid() == null)) {
+			nodebuilder.setKnotenid(node.getNodeid());
 		}
-		if (!node.getId().isEmpty()) {
-			nodebuilder.setKnotenid(node.getId());
-		}
-		if (!node.getIpAddress().isEmpty()) {
+		if (!(node.getIpAddress() == null)) {
 			nodebuilder.setIp(node.getIpAddress());
 		}
-		if (!node.getDescription().isEmpty()) {
+		if (!(node.getDescription() == null)) {
 			nodebuilder.setDescription(node.getDescription());
 		}
 		;
-		if (!node.getMicrocontroller().isEmpty()) {
+		if (!(node.getMicrocontroller() == null)) {
 			nodebuilder.setMicrocontroller(node.getMicrocontroller());
 		}
 		;
-		if (!node.getCapabilityList().isEmpty()) {
-			for (Capability cap : node.getCapabilityList()) {
+		if (!node.getCapability().isEmpty()) {
+			for (Capability cap : node.getCapability()) {
 				Capabilities.Builder capbuilder = Capabilities.newBuilder();
-				capbuilder.setDefaults(cap.getCapDefault());
+				capbuilder.setDefaults(cap.getDefault().intValue());
 				capbuilder.setName(cap.getName());
 				capbuilder.setUnit(cap.getUnit());
 				capbuilder.setDatatype(cap.getDatatype());
-				capbuilder.setParentnodeId(node.getId());
+				capbuilder.setParentnodeId(node.getNodeid());
 				nodebuilder.addCapabilityList(capbuilder.build());
 			}
-		
+
 		}
 
 		return nodebuilder.build();
 	}
+
 
 	/**
 	 * Wandelt NODE-Message zur Uebertragung per RPC in WiseMlNode um
@@ -62,22 +60,20 @@ public class NodeHelper {
 
 		Node nodeout = new Node();
 		List<Capability> capResultList = new ArrayList<Capability>();
-		nodeout.setId(nodein.getKnotenid());
+		nodeout.setNodeid(nodein.getKnotenid());
 		nodeout.setIpAddress(nodein.getIp());
 		nodeout.setMicrocontroller(nodein.getMicrocontroller());
 		nodeout.setDescription(nodein.getDescription());
 		for (int i = 0; i < nodein.getCapabilityListCount(); i++) {
 			Capabilities capItem = nodein.getCapabilityList(i);
 			Capability cap = new Capability();
-			cap.setCapDefault(capItem.getDefaults());
+			cap.setDefault(BigInteger.valueOf(capItem.getDefaults()));
 			cap.setDatatype(capItem.getDatatype());
 			cap.setName(capItem.getName());
 			cap.setUnit(capItem.getUnit());
-			cap.setNode(nodeout);
-			capResultList.add(cap);
+//			cap.setNode(nodeout);
+			nodeout.getCapability().add(cap);
 		}
-		nodeout.setCapabilityList(capResultList);
-
 		return nodeout;
 	}
 

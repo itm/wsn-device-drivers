@@ -22,9 +22,9 @@ import de.uniluebeck.itm.metadaten.files.MetaDataService.Operations;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Operations.BlockingInterface;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.ServerIP;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.VOID;
-import de.uniluebeck.itm.metadaten.metadatenservice.entity.ConfigData;
-import de.uniluebeck.itm.metadaten.metadatenservice.entity.Node;
 import de.uniluebeck.itm.metadaten.serverclient.metadataclienthelper.NodeHelper;
+import de.uniluebeck.itm.metadatenservice.config.ConfigData;
+import de.uniluebeck.itm.metadatenservice.config.Node;
 
 public class ClientStub {
 	// TODO connect gleich im Konstruktor oder soll Verbindung fuer jeden
@@ -43,7 +43,7 @@ public class ClientStub {
 
 	ClientStub(ConfigData config) throws Exception {
 		this(config.getUsername(), config.getPassword(), config.getServerIP(),
-				config.getServerPort(), config.getClientport());
+				config.getServerPort().intValue(), config.getClientPort().intValue());
 	}
 
 	ClientStub(String userName, String passWord, String uri, int port,
@@ -168,7 +168,7 @@ public class ClientStub {
 					@Override
 					public void run(VOID arg0) {
 						if (!controller.failed()) {
-							callback.onSuccess("Knoten " + node.getId()
+							callback.onSuccess("Knoten " + node.getNodeid()
 									+ "erfolgreich dem Verzeichnis hinzugefuegt");
 						} else {
 							callback.onFailure(new Throwable(controller
@@ -232,7 +232,7 @@ public class ClientStub {
 					@Override
 					public void run(VOID arg0) {
 						if (!controller.failed()) {
-							callback.onSuccess("Knoten " + node.getId()
+							callback.onSuccess("Knoten " + node.getNodeid()
 									+ "erfolgreich dem Verzeichnis hinzugefuegt");
 						} else {
 							callback.onFailure(new Throwable(controller

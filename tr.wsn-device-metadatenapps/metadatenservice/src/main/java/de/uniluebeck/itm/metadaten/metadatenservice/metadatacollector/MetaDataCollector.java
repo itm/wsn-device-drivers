@@ -5,7 +5,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import de.uniluebeck.itm.devicedriver.Device;
-import de.uniluebeck.itm.metadaten.metadatenservice.entity.Node;
+import de.uniluebeck.itm.metadatenservice.config.Node;
+
 
 public class MetaDataCollector implements IMetaDataCollector {
 	private Device device = null;
@@ -29,7 +30,7 @@ public class MetaDataCollector implements IMetaDataCollector {
 	@Override
 	public Node collect(File wisemlFile) {
 		Node node = new Node();
-		node.setId(knotenId);
+		node.setNodeid(knotenId);
 		try {
 			InetAddress address = InetAddress.getLocalHost();
 			node.setIpAddress(address.getHostAddress());

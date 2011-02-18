@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="de/uniluebeck/itm/metadatenservice/config" xmlns:tns="de/uniluebeck/itm/metadatenservice/config"
+	elementFormDefault="qualified">
+	<xsd:complexType name="capability">
+		<xsd:sequence>
+			<xsd:element name="name" type="xsd:string" minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="datatype" type="xsd:string" minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="unit" type="xsd:string" minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="default" type="xsd:integer" minOccurs="1" maxOccurs="1"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="node">
+		<xsd:sequence>
+			<xsd:element name="nodeid" type="xsd:string" minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="description" type="xsd:string"
+				minOccurs="0" maxOccurs="1"></xsd:element>
+			<xsd:element name="microcontroller" type="xsd:string"
+				minOccurs="0" maxOccurs="1"></xsd:element>
+			<xsd:element name="ipAddress" type="xsd:string"
+				minOccurs="0" maxOccurs="1"></xsd:element>
+			<xsd:element name="Port" type="xsd:integer" minOccurs="0"
+				maxOccurs="1"></xsd:element>
+			<xsd:element name="capability" type="tns:capability" minOccurs="0" maxOccurs="unbounded"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="nodeList">
+		<xsd:sequence>
+			<xsd:element name="node" type="tns:node" maxOccurs="unbounded"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="nodeList" type="tns:nodeList"></xsd:element>
+</xsd:schema>

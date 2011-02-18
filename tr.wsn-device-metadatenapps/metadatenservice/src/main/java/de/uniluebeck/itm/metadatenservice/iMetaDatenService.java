@@ -1,7 +1,8 @@
 package de.uniluebeck.itm.metadatenservice;
 
-import de.uniluebeck.itm.metadaten.metadatenservice.entity.Node;
+
 import de.uniluebeck.itm.metadaten.metadatenservice.metadatacollector.IMetaDataCollector;
+import de.uniluebeck.itm.metadatenservice.config.Node;
 
 public interface iMetaDatenService {
 	//TODO i gross

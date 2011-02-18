@@ -3,7 +3,8 @@ package de.uniluebeck.itm.metadaten.metadatenservice.metadatacollector;
 
 import java.io.File;
 
-import de.uniluebeck.itm.metadaten.metadatenservice.entity.Node;
+import de.uniluebeck.itm.metadatenservice.config.Node;
+
 
 public interface IMetaDataCollector {
 

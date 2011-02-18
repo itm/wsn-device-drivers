@@ -1,27 +1,27 @@
 package de.uniluebeck.itm.metadaten.metadatenservice.metadatacollector;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
 
-import org.simpleframework.xml.Serializer;
-import org.simpleframework.xml.load.Persister;
+import javax.xml.bind.JAXBException;
 
-import de.uniluebeck.itm.metadaten.metadatenservice.entity.Node;
-import de.uniluebeck.itm.metadaten.metadatenservice.entity.Setup;
+import de.uniluebeck.itm.metadaten.serverclient.metadataclienthelper.ConfigReader;
+import de.uniluebeck.itm.metadatenservice.config.Capability;
+import de.uniluebeck.itm.metadatenservice.config.Node;
+import de.uniluebeck.itm.metadatenservice.config.NodeList;
 
 public class FileCollector {
 
 	public FileCollector() {
 	};
+
 	public static void main(String[] args) throws Exception {
-		
-	 Node node = new Node();
-	 node.setId("Test281220101");
-	 //TODO Classloader
-//	 FileCollector collect = new FileCollector();
-//		node= collect.filecollect(node, "sensors.xml");
-//		System.out.println("Ergbenis"+ node.getDescription());
+
+		// Node node = new Node();
+		// node.setId("Test281220101");
+		// TODO Classloader
+		// FileCollector collect = new FileCollector();
+		// node= collect.filecollect(node, "sensors.xml");
+		// System.out.println("Ergbenis"+ node.getDescription());
 	}
 
 	/**
@@ -32,36 +32,33 @@ public class FileCollector {
 	 * @return node - with supplemented information
 	 */
 	public Node filecollect(Node node, File source) {
-		// TODO Informationen Ueberschreiben? IP zum Beispiel ja eher nicht
-		Serializer serializer = new Persister();
-		Setup setup = new Setup();
+
+		NodeList nodelist = null;
 		try {
-			setup = serializer.read(de.uniluebeck.itm.metadaten.metadatenservice.entity.Setup.class,
-					source);
-			// serializer.read(ConfigData, source);
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			nodelist = ConfigReader.readSensorFile(source);
+		} catch (JAXBException e) {
+			e.printStackTrace();
 		}
-		for (Node result : setup.getNodeList()) {
-			if (result.getId().equals(node.getId())) {
-				if (node.getDescription().equals("")) {
+		for (Node result : nodelist.getNode()) {
+			if (result.getNodeid().equals(node.getNodeid())) {
+				if (node.getDescription() == null) {
 					if (!(result.getDescription() == null)) {
 						node.setDescription(result.getDescription());
 					}
 				}
-				if (node.getPort() == 0) {
-					if (result.getPort() != 0) {
+				if (node.getPort() == null) {
+					if (result.getPort().shortValue() != 0) {
 						node.setPort(result.getPort());
 					}
 				}
-				if (node.getMicrocontroller().equals("")) {
+				if (node.getMicrocontroller() == null) {
 					if (!(result.getMicrocontroller() == null)) {
 						node.setMicrocontroller(result.getMicrocontroller());
 					}
 				}
-
-				node.setCapabilityList(result.getCapabilityList());
+				for (Capability cap : result.getCapability()) {
+					node.getCapability().add(cap);
+				}
 			}
 		}
 		return node;
