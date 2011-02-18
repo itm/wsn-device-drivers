@@ -99,21 +99,29 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 	}
 
 	@Override
+	public void reverseOnCancel(RpcController controller, OpKey request,
+			RpcCallback<EmptyAnswer> done) {
+		
+		getCallback(request.getOperationKey()).onCancel();
+		removeCallback(request.getOperationKey());
+		done.run(EmptyAnswer.newBuilder().build());
+	}
+
+	@Override
+	public void reverseOnFailure(RpcController controller,
+			clientMessage request, RpcCallback<EmptyAnswer> done) {
+		getCallback(request.getOperationKey()).onFailure(
+				new Throwable(controller.errorText()));
+		removeCallback(request.getOperationKey());
+		done.run(EmptyAnswer.newBuilder().build());
+	}
+	
+	@Override
 	public void reverseChangeEvent(RpcController controller,
 			clientMessage request, RpcCallback<EmptyAnswer> done) {
 
-		if (controller.isCanceled()) {
-			if (controller.errorText().contains("cancel")) {
-				getCallback(request.getOperationKey()).onCancel();
-			} else {
-				getCallback(request.getOperationKey()).onFailure(
-						new Throwable(controller.errorText()));
-			}
-			removeCallback(request.getOperationKey());
-		} else {
 			getCallback(request.getOperationKey()).onProgressChange(
 					Float.parseFloat(request.getQuery()));
-		}
 		done.run(EmptyAnswer.newBuilder().build());
 
 	}

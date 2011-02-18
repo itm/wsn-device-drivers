@@ -136,7 +136,7 @@ public final class MessageServiceFiles {
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
       private de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer result;
       
-      // Construct using de.uniluebeck.itm.tcp.files.MessageServiceFiles.EmptyAnswer.newBuilder()
+      // Construct using de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer.newBuilder()
       private Builder() {}
       
       private static Builder create() {
@@ -411,7 +411,7 @@ public final class MessageServiceFiles {
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
       private de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Timeout result;
       
-      // Construct using de.uniluebeck.itm.tcp.files.MessageServiceFiles.Timeout.newBuilder()
+      // Construct using de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Timeout.newBuilder()
       private Builder() {}
       
       private static Builder create() {
@@ -724,7 +724,7 @@ public final class MessageServiceFiles {
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
       private de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey result;
       
-      // Construct using de.uniluebeck.itm.tcp.files.MessageServiceFiles.OpKey.newBuilder()
+      // Construct using de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey.newBuilder()
       private Builder() {}
       
       private static Builder create() {
@@ -1012,7 +1012,7 @@ public final class MessageServiceFiles {
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
       private de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.STRING result;
       
-      // Construct using de.uniluebeck.itm.tcp.files.MessageServiceFiles.STRING.newBuilder()
+      // Construct using de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.STRING.newBuilder()
       private Builder() {}
       
       private static Builder create() {
@@ -1315,7 +1315,7 @@ public final class MessageServiceFiles {
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
       private de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage result;
       
-      // Construct using de.uniluebeck.itm.tcp.files.MessageServiceFiles.clientMessage.newBuilder()
+      // Construct using de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage.newBuilder()
       private Builder() {}
       
       private static Builder create() {
@@ -1646,7 +1646,7 @@ public final class MessageServiceFiles {
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
       private de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ChipData result;
       
-      // Construct using de.uniluebeck.itm.tcp.files.MessageServiceFiles.ChipData.newBuilder()
+      // Construct using de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ChipData.newBuilder()
       private Builder() {}
       
       private static Builder create() {
@@ -1992,7 +1992,7 @@ public final class MessageServiceFiles {
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
       private de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Identification result;
       
-      // Construct using de.uniluebeck.itm.tcp.files.MessageServiceFiles.Identification.newBuilder()
+      // Construct using de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Identification.newBuilder()
       private Builder() {}
       
       private static Builder create() {
@@ -2390,7 +2390,7 @@ public final class MessageServiceFiles {
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
       private de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ProgramPacket result;
       
-      // Construct using de.uniluebeck.itm.tcp.files.MessageServiceFiles.ProgramPacket.newBuilder()
+      // Construct using de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ProgramPacket.newBuilder()
       private Builder() {}
       
       private static Builder create() {
@@ -2819,7 +2819,7 @@ public final class MessageServiceFiles {
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
       private de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.MacData result;
       
-      // Construct using de.uniluebeck.itm.tcp.files.MessageServiceFiles.MacData.newBuilder()
+      // Construct using de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.MacData.newBuilder()
       private Builder() {}
       
       private static Builder create() {
@@ -3270,7 +3270,7 @@ public final class MessageServiceFiles {
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
       private de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FlashData result;
       
-      // Construct using de.uniluebeck.itm.tcp.files.MessageServiceFiles.FlashData.newBuilder()
+      // Construct using de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FlashData.newBuilder()
       private Builder() {}
       
       private static Builder create() {
@@ -3765,7 +3765,7 @@ public final class MessageServiceFiles {
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
       private de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.sendData result;
       
-      // Construct using de.uniluebeck.itm.tcp.files.MessageServiceFiles.sendData.newBuilder()
+      // Construct using de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.sendData.newBuilder()
       private Builder() {}
       
       private static Builder create() {
@@ -4211,7 +4211,7 @@ public final class MessageServiceFiles {
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
       private de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ListenerData result;
       
-      // Construct using de.uniluebeck.itm.tcp.files.MessageServiceFiles.ListenerData.newBuilder()
+      // Construct using de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ListenerData.newBuilder()
       private Builder() {}
       
       private static Builder create() {
@@ -4629,7 +4629,7 @@ public final class MessageServiceFiles {
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
       private de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ByteData result;
       
-      // Construct using de.uniluebeck.itm.tcp.files.MessageServiceFiles.ByteData.newBuilder()
+      // Construct using de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ByteData.newBuilder()
       private Builder() {}
       
       private static Builder create() {
@@ -4995,7 +4995,7 @@ public final class MessageServiceFiles {
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
       private de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.PacketTypeData result;
       
-      // Construct using de.uniluebeck.itm.tcp.files.MessageServiceFiles.PacketTypeData.newBuilder()
+      // Construct using de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.PacketTypeData.newBuilder()
       private Builder() {}
       
       private static Builder create() {
@@ -5388,7 +5388,7 @@ public final class MessageServiceFiles {
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
       private de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.GetHandleAnswers result;
       
-      // Construct using de.uniluebeck.itm.tcp.files.MessageServiceFiles.GetHandleAnswers.newBuilder()
+      // Construct using de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.GetHandleAnswers.newBuilder()
       private Builder() {}
       
       private static Builder create() {
@@ -5895,7 +5895,7 @@ public final class MessageServiceFiles {
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
       private de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ReverseAnswer result;
       
-      // Construct using de.uniluebeck.itm.tcp.files.MessageServiceFiles.ReverseAnswer.newBuilder()
+      // Construct using de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ReverseAnswer.newBuilder()
       private Builder() {}
       
       private static Builder create() {
@@ -7705,6 +7705,16 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ListenerData request,
           com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer> done);
       
+      public abstract void reverseOnFailure(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer> done);
+      
+      public abstract void reverseOnCancel(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer> done);
+      
       public abstract void reverseExecuteEvent(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey request,
@@ -7739,6 +7749,22 @@ public final class MessageServiceFiles {
             de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ListenerData request,
             com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer> done) {
           impl.sendReversePlainTextMessage(controller, request, done);
+        }
+        
+        @Override
+        public  void reverseOnFailure(
+            com.google.protobuf.RpcController controller,
+            de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage request,
+            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer> done) {
+          impl.reverseOnFailure(controller, request, done);
+        }
+        
+        @Override
+        public  void reverseOnCancel(
+            com.google.protobuf.RpcController controller,
+            de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey request,
+            com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer> done) {
+          impl.reverseOnCancel(controller, request, done);
         }
         
         @Override
@@ -7792,10 +7818,14 @@ public final class MessageServiceFiles {
             case 1:
               return impl.sendReversePlainTextMessage(controller, (de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ListenerData)request);
             case 2:
-              return impl.reverseExecuteEvent(controller, (de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey)request);
+              return impl.reverseOnFailure(controller, (de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage)request);
             case 3:
-              return impl.reverseChangeEvent(controller, (de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage)request);
+              return impl.reverseOnCancel(controller, (de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey)request);
             case 4:
+              return impl.reverseExecuteEvent(controller, (de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey)request);
+            case 5:
+              return impl.reverseChangeEvent(controller, (de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage)request);
+            case 6:
               return impl.reverseSuccess(controller, (de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ReverseAnswer)request);
             default:
               throw new java.lang.AssertionError("Can't get here.");
@@ -7816,10 +7846,14 @@ public final class MessageServiceFiles {
             case 1:
               return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ListenerData.getDefaultInstance();
             case 2:
-              return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey.getDefaultInstance();
-            case 3:
               return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage.getDefaultInstance();
+            case 3:
+              return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey.getDefaultInstance();
             case 4:
+              return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey.getDefaultInstance();
+            case 5:
+              return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage.getDefaultInstance();
+            case 6:
               return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ReverseAnswer.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
@@ -7845,6 +7879,10 @@ public final class MessageServiceFiles {
               return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
             case 4:
               return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
+            case 5:
+              return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
+            case 6:
+              return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
           }
@@ -7861,6 +7899,16 @@ public final class MessageServiceFiles {
     public abstract void sendReversePlainTextMessage(
         com.google.protobuf.RpcController controller,
         de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ListenerData request,
+        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer> done);
+    
+    public abstract void reverseOnFailure(
+        com.google.protobuf.RpcController controller,
+        de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage request,
+        com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer> done);
+    
+    public abstract void reverseOnCancel(
+        com.google.protobuf.RpcController controller,
+        de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey request,
         com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer> done);
     
     public abstract void reverseExecuteEvent(
@@ -7911,16 +7959,26 @@ public final class MessageServiceFiles {
               done));
           return;
         case 2:
-          this.reverseExecuteEvent(controller, (de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey)request,
+          this.reverseOnFailure(controller, (de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage)request,
             com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
               done));
           return;
         case 3:
-          this.reverseChangeEvent(controller, (de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage)request,
+          this.reverseOnCancel(controller, (de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey)request,
             com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
               done));
           return;
         case 4:
+          this.reverseExecuteEvent(controller, (de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey)request,
+            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
+              done));
+          return;
+        case 5:
+          this.reverseChangeEvent(controller, (de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage)request,
+            com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
+              done));
+          return;
+        case 6:
           this.reverseSuccess(controller, (de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ReverseAnswer)request,
             com.google.protobuf.RpcUtil.<de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer>specializeCallback(
               done));
@@ -7944,10 +8002,14 @@ public final class MessageServiceFiles {
         case 1:
           return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ListenerData.getDefaultInstance();
         case 2:
-          return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey.getDefaultInstance();
-        case 3:
           return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage.getDefaultInstance();
+        case 3:
+          return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey.getDefaultInstance();
         case 4:
+          return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey.getDefaultInstance();
+        case 5:
+          return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage.getDefaultInstance();
+        case 6:
           return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ReverseAnswer.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
@@ -7972,6 +8034,10 @@ public final class MessageServiceFiles {
         case 3:
           return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
         case 4:
+          return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
+        case 5:
+          return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
+        case 6:
           return de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
@@ -8024,12 +8090,42 @@ public final class MessageServiceFiles {
             de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance()));
       }
       
+      public  void reverseOnFailure(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer> done) {
+        channel.callMethod(
+          getDescriptor().getMethods().get(2),
+          controller,
+          request,
+          de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
+          com.google.protobuf.RpcUtil.generalizeCallback(
+            done,
+            de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer.class,
+            de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance()));
+      }
+      
+      public  void reverseOnCancel(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey request,
+          com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer> done) {
+        channel.callMethod(
+          getDescriptor().getMethods().get(3),
+          controller,
+          request,
+          de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
+          com.google.protobuf.RpcUtil.generalizeCallback(
+            done,
+            de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer.class,
+            de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance()));
+      }
+      
       public  void reverseExecuteEvent(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey request,
           com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer> done) {
         channel.callMethod(
-          getDescriptor().getMethods().get(2),
+          getDescriptor().getMethods().get(4),
           controller,
           request,
           de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
@@ -8044,7 +8140,7 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage request,
           com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer> done) {
         channel.callMethod(
-          getDescriptor().getMethods().get(3),
+          getDescriptor().getMethods().get(5),
           controller,
           request,
           de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
@@ -8059,7 +8155,7 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ReverseAnswer request,
           com.google.protobuf.RpcCallback<de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer> done) {
         channel.callMethod(
-          getDescriptor().getMethods().get(4),
+          getDescriptor().getMethods().get(6),
           controller,
           request,
           de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance(),
@@ -8084,6 +8180,16 @@ public final class MessageServiceFiles {
       public de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer sendReversePlainTextMessage(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ListenerData request)
+          throws com.google.protobuf.ServiceException;
+      
+      public de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer reverseOnFailure(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage request)
+          throws com.google.protobuf.ServiceException;
+      
+      public de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer reverseOnCancel(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey request)
           throws com.google.protobuf.ServiceException;
       
       public de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer reverseExecuteEvent(
@@ -8133,12 +8239,36 @@ public final class MessageServiceFiles {
       }
       
       
+      public de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer reverseOnFailure(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage request)
+          throws com.google.protobuf.ServiceException {
+        return (de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
+          getDescriptor().getMethods().get(2),
+          controller,
+          request,
+          de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
+      }
+      
+      
+      public de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer reverseOnCancel(
+          com.google.protobuf.RpcController controller,
+          de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey request)
+          throws com.google.protobuf.ServiceException {
+        return (de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
+          getDescriptor().getMethods().get(3),
+          controller,
+          request,
+          de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
+      }
+      
+      
       public de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer reverseExecuteEvent(
           com.google.protobuf.RpcController controller,
           de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey request)
           throws com.google.protobuf.ServiceException {
         return (de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
-          getDescriptor().getMethods().get(2),
+          getDescriptor().getMethods().get(4),
           controller,
           request,
           de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
@@ -8150,7 +8280,7 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage request)
           throws com.google.protobuf.ServiceException {
         return (de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
-          getDescriptor().getMethods().get(3),
+          getDescriptor().getMethods().get(5),
           controller,
           request,
           de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
@@ -8162,7 +8292,7 @@ public final class MessageServiceFiles {
           de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ReverseAnswer request)
           throws com.google.protobuf.ServiceException {
         return (de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer) channel.callBlockingMethod(
-          getDescriptor().getMethods().get(4),
+          getDescriptor().getMethods().get(6),
           controller,
           request,
           de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer.getDefaultInstance());
@@ -8463,16 +8593,18 @@ public final class MessageServiceFiles {
       "r\022\017.PacketTypeData\032\014.EmptyAnswer\0223\n\033remo" +
       "veMessagePacketListener\022\006.OpKey\032\014.EmptyA" +
       "nswer\0226\n\036removeMessagePlainTextListener\022" +
-      "\006.OpKey\032\014.EmptyAnswer2\233\002\n\023PacketServiceA" +
+      "\006.OpKey\032\014.EmptyAnswer2\366\002\n\023PacketServiceA" +
       "nswer\0227\n\030sendReversePacketMessage\022\r.List" +
       "enerData\032\014.EmptyAnswer\022:\n\033sendReversePla",
       "inTextMessage\022\r.ListenerData\032\014.EmptyAnsw" +
-      "er\022+\n\023reverseExecuteEvent\022\006.OpKey\032\014.Empt" +
-      "yAnswer\0222\n\022reverseChangeEvent\022\016.clientMe" +
-      "ssage\032\014.EmptyAnswer\022.\n\016reverseSuccess\022\016." +
-      "ReverseAnswer\032\014.EmptyAnswer2\022\n\020RemoteOpe" +
-      "rationsB2\n\033de.uniluebeck.itm.tcp.filesB\023" +
-      "MessageServiceFiles"
+      "er\0220\n\020reverseOnFailure\022\016.clientMessage\032\014" +
+      ".EmptyAnswer\022\'\n\017reverseOnCancel\022\006.OpKey\032" +
+      "\014.EmptyAnswer\022+\n\023reverseExecuteEvent\022\006.O" +
+      "pKey\032\014.EmptyAnswer\0222\n\022reverseChangeEvent" +
+      "\022\016.clientMessage\032\014.EmptyAnswer\022.\n\016revers" +
+      "eSuccess\022\016.ReverseAnswer\032\014.EmptyAnswer2\022" +
+      "\n\020RemoteOperationsB9\n\"de.uniluebeck.itm." +
+      "tcp.server.utilsB\023MessageServiceFiles"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
