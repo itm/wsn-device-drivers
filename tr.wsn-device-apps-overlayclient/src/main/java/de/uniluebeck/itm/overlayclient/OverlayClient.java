@@ -53,8 +53,9 @@ public class OverlayClient {
 		System.out.println("Start Overlaysuche...");
 		if(client_port != null){
 			MetaDatenClient client = new MetaDatenClient(username, password, server, Integer.valueOf(server_port), Integer.valueOf(client_port));
+		}else{
+			MetaDatenClient client = new MetaDatenClient(username, password, server, Integer.valueOf(server_port));
 		}
-		MetaDatenClient client = new MetaDatenClient(username, password, server, Integer.valueOf(server_port));
 		Node queryExample = new Node();
 		queryExample.setId(ID);
 		String query = ""; // not used
@@ -82,8 +83,9 @@ public class OverlayClient {
 	public void searchDeviceWithMicrocontroller(String microcontroller) throws java.lang.Exception {
 		if(client_port != null){
 			MetaDatenClient client = new MetaDatenClient(username, password, server, Integer.valueOf(server_port), Integer.valueOf(client_port));
+		}else{
+			MetaDatenClient client = new MetaDatenClient(username, password, server, Integer.valueOf(server_port));
 		}
-		MetaDatenClient client = new MetaDatenClient(username, password, server, Integer.valueOf(server_port));
 		Node queryExample = new Node();
 		queryExample.setMicrocontroller(microcontroller);
 		String query = ""; // not used
@@ -114,8 +116,9 @@ public class OverlayClient {
 		sensoren.add(capability);
 		if(client_port != null){
 			MetaDatenClient client = new MetaDatenClient(username, password, server, Integer.valueOf(server_port), Integer.valueOf(client_port));
+		}else{
+			MetaDatenClient client = new MetaDatenClient(username, password, server, Integer.valueOf(server_port));
 		}
-		MetaDatenClient client = new MetaDatenClient(username, password, server, Integer.valueOf(server_port));
 		Node queryExample = new Node();
 		queryExample.setCapabilityList(sensoren);
 		String query = ""; // not used
