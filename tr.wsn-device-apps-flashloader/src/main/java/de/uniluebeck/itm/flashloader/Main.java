@@ -86,12 +86,20 @@ public class Main {
 				String device = cmd.getOptionValue("device");
 				String id = cmd.getOptionValue("id");
 
-				if (server != null && (user == null || password == null)) {
+				if (server != null && (user == null && password == null || user == null)) {
 					System.out.println("Username and Password is missing.");
 					BufferedReader in = new BufferedReader(
 							new InputStreamReader(System.in));
 					System.out.print("Username: ");
 					user = in.readLine();
+					System.out.print("Password: ");
+					password = in.readLine();
+					in.close();
+				}
+				if (server != null && (password == null)) {
+					System.out.println("Password is missing.");
+					BufferedReader in = new BufferedReader(
+							new InputStreamReader(System.in));
 					System.out.print("Password: ");
 					password = in.readLine();
 					in.close();
@@ -116,12 +124,20 @@ public class Main {
 				String device = cmd.getOptionValue("device");
 				String id = cmd.getOptionValue("id");
 
-				if (server != null && (user == null || password == null)) {
+				if (server != null && (user == null && password == null || user == null)) {
 					System.out.println("Username and Password is missing.");
 					BufferedReader in = new BufferedReader(
 							new InputStreamReader(System.in));
 					System.out.print("Username: ");
 					user = in.readLine();
+					System.out.print("Password: ");
+					password = in.readLine();
+					in.close();
+				}
+				if (server != null && (password == null)) {
+					System.out.println("Password is missing.");
+					BufferedReader in = new BufferedReader(
+							new InputStreamReader(System.in));
 					System.out.print("Password: ");
 					password = in.readLine();
 					in.close();
@@ -146,12 +162,20 @@ public class Main {
 				String device = cmd.getOptionValue("device");
 				String id = cmd.getOptionValue("id");
 
-				if (server != null && (user == null || password == null)) {
+				if (server != null && (user == null && password == null || user == null)) {
 					System.out.println("Username and Password is missing.");
 					BufferedReader in = new BufferedReader(
 							new InputStreamReader(System.in));
 					System.out.print("Username: ");
 					user = in.readLine();
+					System.out.print("Password: ");
+					password = in.readLine();
+					in.close();
+				}
+				if (server != null && (password == null)) {
+					System.out.println("Password is missing.");
+					BufferedReader in = new BufferedReader(
+							new InputStreamReader(System.in));
 					System.out.print("Password: ");
 					password = in.readLine();
 					in.close();
@@ -177,12 +201,20 @@ public class Main {
 				String device = cmd.getOptionValue("device");
 				String id = cmd.getOptionValue("id");
 
-				if (server != null && (user == null || password == null)) {
+				if (server != null && (user == null && password == null || user == null)) {
 					System.out.println("Username and Password is missing.");
 					BufferedReader in = new BufferedReader(
 							new InputStreamReader(System.in));
 					System.out.print("Username: ");
 					user = in.readLine();
+					System.out.print("Password: ");
+					password = in.readLine();
+					in.close();
+				}
+				if (server != null && (password == null)) {
+					System.out.println("Password is missing.");
+					BufferedReader in = new BufferedReader(
+							new InputStreamReader(System.in));
 					System.out.print("Password: ");
 					password = in.readLine();
 					in.close();
