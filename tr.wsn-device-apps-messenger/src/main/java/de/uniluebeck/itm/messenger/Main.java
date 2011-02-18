@@ -109,7 +109,9 @@ public class Main {
 					messenger.setPassword(password);
 					messenger.setDevice(device);
 					messenger.setId(id);
-					messenger.setMessage_type(message_type);
+					if(message_type != null){
+						messenger.setMessage_type(message_type);
+					}
 					messenger.connect();
 					messenger.send(message);
 				}
