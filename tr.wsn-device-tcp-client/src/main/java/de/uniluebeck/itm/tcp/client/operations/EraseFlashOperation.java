@@ -8,11 +8,27 @@ import de.uniluebeck.itm.tcp.client.files.PacketServiceAnswerImpl;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Timeout;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations.BlockingInterface;
 
-public class eraseFlashOperation extends AbstractOperation<Void> {
+/**
+ * The erase Operation
+ * @author Bjoern Schuett
+ *
+ */
+public class EraseFlashOperation extends AbstractOperation<Void> {
 
+	/**
+	 * the Timeout for this operation
+	 */
 	private long timeout = 0L;	
 	
-	public eraseFlashOperation(final RpcClientChannel channel, final AsyncCallback<Void> callback, final BlockingInterface operationService,
+	/**
+	 * Constructor
+	 * @param channel the RpcClientChannel for a erase Operation
+	 * @param callback the AsyncCallback for a erase Operation
+	 * @param operationService the blocking Interface of Operations for a erase Operation
+	 * @param packetServiceAnswerImpl the PacketServiceAnswerImpl for a erase Operation
+	 * @param timeout the timeout for a erase Operation
+	 */
+	public EraseFlashOperation(final RpcClientChannel channel, final AsyncCallback<Void> callback, final BlockingInterface operationService,
 			final PacketServiceAnswerImpl packetServiceAnswerImpl, final long timeout) {
 		super(channel, packetServiceAnswerImpl, operationService, callback);
 		this.timeout = timeout;

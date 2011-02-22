@@ -22,29 +22,70 @@ import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Identification;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations.BlockingInterface;
 
+/**
+ * establish a TCP-Connection to a device via a TCP-Server
+ * @author Andreas Maier
+ * @author Bjoern Schuett
+ *
+ */
 public class RemoteConnection extends AbstractConnection{
 	
+	/**
+	 * 
+	 */
 	private static final int PORT = 1234;
+	/**
+	 * 
+	 */
 	private static final int CORE_POOL_SIZE = 3;
+	/**
+	 * 
+	 */
 	private static final int MAX_POOL_SIZE = 10;
-	
+	/**
+	 * 
+	 */
 	private static final int CONNECT_TIMEOUT = 10000;
+	/**
+	 * 
+	 */
 	private static final int CONNECT_RESPONSE_TIMEOUT = 10000;
+	/**
+	 * 
+	 */
 	private static final int RECEIVE_BUFFER_SIZE = 1048576;
-
+	
+	/**
+	 * Logger
+	 */
 	private static Logger log = LoggerFactory.getLogger(RemoteConnection.class);
 	
+	/**
+	 * 
+	 */
 	private PeerInfo server = null;
+	/**
+	 * 
+	 */
 	private PeerInfo client = null;
+	/**
+	 * 
+	 */
 	private ThreadPoolCallExecutor executor = null;
+	/**
+	 * 
+	 */
 	private DuplexTcpClientBootstrap bootstrap = null;
+	/**
+	 * 
+	 */
 	private RpcClientChannel channel = null;
+	/**
+	 * 
+	 */
 	private BlockingInterface syncOperationService = null;
 
-	/**
-	 * establishes a connection to the server running on the given host.
-	 * @param uri ConnectionString der Form DeviceID:Username:password@host:port
-	 */
+
 	@Override
 	public void connect(final String uri) {
 		

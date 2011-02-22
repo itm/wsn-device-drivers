@@ -113,8 +113,8 @@ public class MockDeviceExample {
 //		//System.out.println("Connection closed");
 //	}
 	
-	RemoteConnection connection;
-	DeviceAsync deviceAsync;
+	private RemoteConnection connection;
+	private DeviceAsync deviceAsync;
 	
 	public MockDeviceExample() {
 		connection = new RemoteConnection();
@@ -126,7 +126,7 @@ public class MockDeviceExample {
 	public void addListener(){
 		System.out.println("Message packet listener added");
 		deviceAsync.addListener(new MessagePacketListener() {
-			public void onMessagePacketReceived(MessageEvent<MessagePacket> event) {
+			public void onMessagePacketReceived(final MessageEvent<MessagePacket> event) {
 				System.out.println("Message: " + new String(event.getMessage().getContent()));
 			}
 		}, PacketType.LOG);
@@ -136,16 +136,16 @@ public class MockDeviceExample {
 		System.out.println("Reading mac address...");
 		
 		final AsyncCallback<MacAddress> callback = new AsyncAdapter<MacAddress>() {
-			public void onProgressChange(float fraction) {
+			public void onProgressChange(final float fraction) {
 				final int percent = (int) (fraction * 100.0);
 				System.out.println("Reading mac address progress: " + percent + "%");
 			}
 			
-			public void onSuccess(MacAddress result) {
+			public void onSuccess(final MacAddress result) {
 				System.out.println("Mac Address: " + result.toString());
 			}
 			
-			public void onFailure(Throwable throwable) {
+			public void onFailure(final Throwable throwable) {
 				throwable.printStackTrace();
 			}
 		};
@@ -156,18 +156,18 @@ public class MockDeviceExample {
 		deviceAsync.writeMac(new MacAddress(1024), 100000, new AsyncAdapter<Void>() {
 
 			@Override
-			public void onProgressChange(float fraction) {
+			public void onProgressChange(final float fraction) {
 				final int percent = (int) (fraction * 100.0);
 				System.out.println("Writing mac address progress: " + percent + "%");
 			}
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onSuccess(final Void result) {
 				System.out.println("Mac Address written");
 			}
 
 			@Override
-			public void onFailure(Throwable throwable) {
+			public void onFailure(final Throwable throwable) {
 				throwable.printStackTrace();
 			}
 		});
@@ -178,40 +178,40 @@ public class MockDeviceExample {
 		deviceAsync.getChipType(10000, new AsyncAdapter<ChipType>() {
 
 			@Override
-			public void onProgressChange(float fraction) {
+			public void onProgressChange(final float fraction) {
 				final int percent = (int) (fraction * 100.0);
 				System.out.println("Reading chip type progress: " + percent + "%");
 			}
 			
 			@Override
-			public void onSuccess(ChipType result) {
+			public void onSuccess(final ChipType result) {
 				System.out.println("Chip Type: " + result);
 			}
 
 			@Override
-			public void onFailure(Throwable throwable) {
+			public void onFailure(final Throwable throwable) {
 				throwable.printStackTrace();
 			}
 		});
 	}
 	
-	public void exampleSendOperation(String message){
-		MessagePacket packet = new MessagePacket(0, message.getBytes());
+	public void exampleSendOperation(final String message){
+		final MessagePacket packet = new MessagePacket(0, message.getBytes());
 		deviceAsync.send(packet, 100000, new AsyncAdapter<Void>() {
 
 			@Override
-			public void onProgressChange(float fraction) {
+			public void onProgressChange(final float fraction) {
 				final int percent = (int) (fraction * 100.0);
 				System.out.println("Sending the message: " + percent + "%");
 			}
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onSuccess(final Void result) {
 				System.out.println("Message send");
 			}
 
 			@Override
-			public void onFailure(Throwable throwable) {
+			public void onFailure(final Throwable throwable) {
 				throwable.printStackTrace();
 			}
 		});
@@ -221,18 +221,18 @@ public class MockDeviceExample {
 		deviceAsync.reset(10000, new AsyncAdapter<Void>() {
 
 			@Override
-			public void onProgressChange(float fraction) {
+			public void onProgressChange(final float fraction) {
 				final int percent = (int) (fraction * 100.0);
 				System.out.println("Reset Operation: " + percent + "%");
 			}
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onSuccess(final Void result) {
 				System.out.println("Reset Done");
 			}
 
 			@Override
-			public void onFailure(Throwable throwable) {
+			public void onFailure(final Throwable throwable) {
 				throwable.printStackTrace();
 			}
 		});
@@ -242,40 +242,40 @@ public class MockDeviceExample {
 		deviceAsync.eraseFlash(10000, new AsyncAdapter<Void>() {
 
 			@Override
-			public void onProgressChange(float fraction) {
+			public void onProgressChange(final float fraction) {
 				final int percent = (int) (fraction * 100.0);
 				System.out.println("erase Process: " + percent + "%");
 			}
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onSuccess(final Void result) {
 				System.out.println("Flash erased");
 			}
 
 			@Override
-			public void onFailure(Throwable throwable) {
+			public void onFailure(final Throwable throwable) {
 				throwable.printStackTrace();
 			}
 		});
 	}
 	
 	public void exampleProgramOperation(){
-		byte[] data = {0,0,0,0,0,0,1};
+		final byte[] data = {0,0,0,0,0,0,1};
 		deviceAsync.program(data, 100000, new AsyncAdapter<Void>() {
 
 			@Override
-			public void onProgressChange(float fraction) {
+			public void onProgressChange(final float fraction) {
 				final int percent = (int) (fraction * 100.0);
 				System.out.println("program Process: " + percent + "%");
 			}
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onSuccess(final Void result) {
 				System.out.println("Program Done");
 			}
 
 			@Override
-			public void onFailure(Throwable throwable) {
+			public void onFailure(final Throwable throwable) {
 				throwable.printStackTrace();
 			}
 		});
@@ -284,38 +284,38 @@ public class MockDeviceExample {
 	public void exampleFlashOperation(){
 		
 		final AsyncCallback<byte[]> callback = new AsyncAdapter<byte[]>() {
-			public void onProgressChange(float fraction) {
+			public void onProgressChange(final float fraction) {
 				final int percent = (int) (fraction * 100.0);
 				System.out.println("Reading flash progress: " + percent + "%");
 			}
 			
-			public void onSuccess(byte[] result) {
+			public void onSuccess(final byte[] result) {
 				System.out.println("Flash data: " + result.toString());
 			}
 			
-			public void onFailure(Throwable throwable) {
+			public void onFailure(final Throwable throwable) {
 				throwable.printStackTrace();
 			}
 		};
 		
 		deviceAsync.readFlash(0, 10, 10000, callback);
 		
-		byte[] data = {0,0,0,0,1};
+		final byte[] data = {0,0,0,0,1};
 		deviceAsync.writeFlash(0, data, 100, 100000, new AsyncAdapter<Void>() {
 
 			@Override
-			public void onProgressChange(float fraction) {
+			public void onProgressChange(final float fraction) {
 				final int percent = (int) (fraction * 100.0);
 				System.out.println("Writing flash progress: " + percent + "%");
 			}
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onSuccess(final Void result) {
 				System.out.println("Flash written");
 			}
 
 			@Override
-			public void onFailure(Throwable throwable) {
+			public void onFailure(final Throwable throwable) {
 				throwable.printStackTrace();
 			}
 		});
@@ -325,15 +325,15 @@ public class MockDeviceExample {
 	}
 	
 	/**
-	 * @param args
+	 * @param args a
 	 */
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		final MockDeviceExample example = new MockDeviceExample();
 		example.addListener();
-		//example.exampleMacAddressOperations();
+		example.exampleMacAddressOperations();
 		//example.exampleChipTypeOperation();
 		//example.exampleSendOperation("00000000");
-		example.exampleResetOperation();
+		//example.exampleResetOperation();
 		//example.exampleEraseFlashOperation();
 		//example.exampleProgramOperation();
 		//example.exampleFlashOperation();

@@ -10,12 +10,33 @@ import de.uniluebeck.itm.tcp.client.files.PacketServiceAnswerImpl;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.sendData;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations.BlockingInterface;
 
-public class sendOperation extends AbstractOperation<Void> {
+/**
+ * The send Operation
+ * @author Bjoern Schuett
+ *
+ */
+public class SendOperation extends AbstractOperation<Void> {
 
+	/**
+	 * MessagePacket which should be send to the device
+	 */
 	private MessagePacket packet;
+	/**
+	 * the Timeout for this operation
+	 */
 	private long timeout = 0L;	
 	
-	public sendOperation(final RpcClientChannel channel, final AsyncCallback<Void> callback, final BlockingInterface operationService, final PacketServiceAnswerImpl packetServiceAnswerImpl, final MessagePacket packet, final long timeout){
+	/**
+	 * 
+	 * Constructor
+	 * @param channel the RpcClientChannel for a send Operation
+	 * @param callback the AsyncCallback for a send Operation
+	 * @param operationService the blocking Interface of Operations for a send Operation
+	 * @param packetServiceAnswerImpl the PacketServiceAnswerImpl for a send Operation
+	 * @param packet the MessagePacket which should be send to the device
+	 * @param timeout the timeout for a send Operation
+	 */
+	public SendOperation(final RpcClientChannel channel, final AsyncCallback<Void> callback, final BlockingInterface operationService, final PacketServiceAnswerImpl packetServiceAnswerImpl, final MessagePacket packet, final long timeout){
 		super(channel, packetServiceAnswerImpl, operationService, callback);
 		this.packet = packet;
 		this.timeout = timeout;

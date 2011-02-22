@@ -16,16 +16,46 @@ import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.STRING;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations.BlockingInterface;
 
+/**
+ * 
+ * @author Andreas Maier
+ *
+ * @param <T> type for the answer of the OperationHandle for a Operation
+ */
 public abstract class AbstractOperation<T> {
 
+	/**
+	 * RpcClientChannel
+	 */
 	private RpcClientChannel channel = null;
+	/**
+	 * PacketServiceAnswerImpl
+	 */
 	private PacketServiceAnswerImpl packetServiceAnswerImpl = null;
-	//Operations.Interface operationService = null;
+	/**
+	 * BlockingInterface of Operations
+	 */
 	private Operations.BlockingInterface operationService = null;
+	/**
+	 * AsyncCallback
+	 */
 	private AsyncCallback<T> callback = null;
+	/**
+	 * RpcController
+	 */
 	private final RpcController controller;
+	/**
+	 * OperationKey
+	 */
 	private String operationKey;
 	
+	/**
+	 * constructor
+	 * @param channel RpcClientChannel
+	 * @param packetServiceAnswerImpl instance of packetServiceAnswerImpl
+	 * @param operationService instance the BlockingInterface
+	 * @param callback AsyncCallback
+	 */
 	public AbstractOperation(final RpcClientChannel channel,
 			final PacketServiceAnswerImpl packetServiceAnswerImpl,
 			final BlockingInterface operationService, final AsyncCallback<T> callback) {
@@ -36,6 +66,10 @@ public abstract class AbstractOperation<T> {
 		this.controller = channel.newRpcController();
 	}
 	
+	/**
+	 * execute the request to the server
+	 * @throws ServiceException the Exception thrown by RPC-Pro
+	 */
 	public abstract void operate() throws ServiceException;
 	
 	public void setOperationKey(final String operationKey) {
@@ -46,6 +80,10 @@ public abstract class AbstractOperation<T> {
 		return operationKey;
 	}
 	
+	/**
+	 * Method to start the Operation
+	 * @return the OperationHandle
+	 */
 	public OperationHandle<T> execute(){
 		
 		try {
@@ -58,6 +96,10 @@ public abstract class AbstractOperation<T> {
 		}
 	}
 	
+	/**
+	 * Get the OperationHandle for a Operation
+	 * @return a OperationHandle for a Operation
+	 */
 	private OperationHandle<T> getHandle() {
 		return new OperationHandle<T>(){
 
@@ -80,6 +122,9 @@ public abstract class AbstractOperation<T> {
 			}};
 	}
 	
+	/**
+	 * standard Implementation for the cancel-Method of a OperationHandle
+	 */
 	public void getCancel(){
 		final BlockingInterface blockOperationService =  Operations.newBlockingStub(channel);
 		try {
@@ -92,6 +137,10 @@ public abstract class AbstractOperation<T> {
 		packetServiceAnswerImpl.removeCallback(getOperationKey());
 	}
 	
+	/**
+	 * standard implementation for the get-Method of a OperationHandle
+	 * @return the Answer from the Device
+	 */
 	@SuppressWarnings("unchecked")
 	public T getGet(){
 		// erzeugen eines sync RPC-Objekts fuer die Operationen
@@ -121,6 +170,10 @@ public abstract class AbstractOperation<T> {
 		}
 	}
 	
+	/**
+	 * standard implementation for the getState-Method of a OperationHandle
+	 * @return the actual State of the device
+	 */
 	public State getGetState(){
 		// erzeugen eines sync RPC-Objekts fuer die Operationen
 		final BlockingInterface blockOperationService =  Operations.newBlockingStub(channel);

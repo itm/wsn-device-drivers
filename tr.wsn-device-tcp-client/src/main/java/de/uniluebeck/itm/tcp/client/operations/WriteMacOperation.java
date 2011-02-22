@@ -10,7 +10,12 @@ import de.uniluebeck.itm.tcp.client.files.PacketServiceAnswerImpl;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.MacData;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations.BlockingInterface;
 
-public class writeMacOperation extends AbstractOperation<Void>{
+/**
+ * The writeMac Operation
+ * @author Bjoern Schuett
+ *
+ */
+public class WriteMacOperation extends AbstractOperation<Void>{
 	
 	/**
 	 * MAC address to write on node. 
@@ -21,15 +26,22 @@ public class writeMacOperation extends AbstractOperation<Void>{
 	 */
 	private long timeout;
 
-	public writeMacOperation(final RpcClientChannel channel, final PacketServiceAnswerImpl packetServiceAnswerImpl, final BlockingInterface operationService, final AsyncCallback<Void> callback, final MacAddress macAddress, final long timeout) {
+	/**
+	 * Constructor
+	 * @param channel the RpcClientChannel for a erase Operation
+	 * @param callback the AsyncCallback for a erase Operation
+	 * @param operationService the blocking Interface of Operations for a erase Operation
+	 * @param packetServiceAnswerImpl the PacketServiceAnswerImpl for a erase Operation
+	 * @param macAddress the MacAddress which should be written on the device
+	 * @param timeout the timeout for a erase Operation
+	 */
+	public WriteMacOperation(final RpcClientChannel channel, final PacketServiceAnswerImpl packetServiceAnswerImpl, final BlockingInterface operationService, final AsyncCallback<Void> callback, final MacAddress macAddress, final long timeout) {
 		super(channel,packetServiceAnswerImpl, operationService, callback);
 		this.macAddress = macAddress;
 		this.timeout = timeout;
 	}
-
-	/**
-	 * writes the MAC address on the node.
-	 */
+	
+	@Override
 	public void operate() throws ServiceException {
 		
 		final MacData request = MacData.newBuilder().addMACADDRESS(ByteString.copyFrom(macAddress.getMacBytes())).setTimeout(timeout).setOperationKey(this.getController().toString()).build();
@@ -37,16 +49,6 @@ public class writeMacOperation extends AbstractOperation<Void>{
 		setOperationKey(request.getOperationKey());
 		
 		this.getPacketServiceAnswerImpl().addCallback(request.getOperationKey(), this.getCallback());
-		
-//		operationService.writeMac(controller, address, new RpcCallback<EmptyAnswer>() {
-//			
-//			@Override
-//			public void run(EmptyAnswer parameter) {
-//				if(controller.failed()){
-//					callback.onFailure(new Throwable(controller.errorText()));
-//				}
-//			}
-//		});
 		
 		this.getOperationService().writeMac(this.getController(), request);
 	}

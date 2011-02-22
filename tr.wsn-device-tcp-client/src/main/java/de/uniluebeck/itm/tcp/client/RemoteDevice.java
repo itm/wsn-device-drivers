@@ -11,7 +11,6 @@ import com.google.protobuf.RpcCallback;
 import com.google.protobuf.RpcController;
 import com.googlecode.protobuf.pro.duplex.RpcClientChannel;
 import com.googlecode.protobuf.pro.duplex.client.DuplexTcpClientBootstrap;
-import com.googlecode.protobuf.pro.duplex.execute.ThreadPoolCallExecutor;
 
 import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.MacAddress;
@@ -31,15 +30,15 @@ import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.PacketService;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.PacketServiceAnswer;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.PacketTypeData;
-import de.uniluebeck.itm.tcp.client.operations.eraseFlashOperation;
-import de.uniluebeck.itm.tcp.client.operations.getChipTypeOperation;
-import de.uniluebeck.itm.tcp.client.operations.programOperation;
-import de.uniluebeck.itm.tcp.client.operations.readFlashOperation;
-import de.uniluebeck.itm.tcp.client.operations.readMacAddressOperation;
-import de.uniluebeck.itm.tcp.client.operations.resetOperation;
-import de.uniluebeck.itm.tcp.client.operations.sendOperation;
-import de.uniluebeck.itm.tcp.client.operations.writeFlashOperation;
-import de.uniluebeck.itm.tcp.client.operations.writeMacOperation;
+import de.uniluebeck.itm.tcp.client.operations.EraseFlashOperation;
+import de.uniluebeck.itm.tcp.client.operations.GetChipTypeOperation;
+import de.uniluebeck.itm.tcp.client.operations.ProgramOperation;
+import de.uniluebeck.itm.tcp.client.operations.ReadFlashOperation;
+import de.uniluebeck.itm.tcp.client.operations.ReadMacAddressOperation;
+import de.uniluebeck.itm.tcp.client.operations.ResetOperation;
+import de.uniluebeck.itm.tcp.client.operations.SendOperation;
+import de.uniluebeck.itm.tcp.client.operations.WriteFlashOperation;
+import de.uniluebeck.itm.tcp.client.operations.WriteMacOperation;
 
 /**
  * The RemoteDevice represents one device on the server acting as a stub.
@@ -47,22 +46,49 @@ import de.uniluebeck.itm.tcp.client.operations.writeMacOperation;
  */
 public class RemoteDevice implements DeviceAsync{
 
+	/**
+	 * Logger
+	 */
 	private static Logger log = LoggerFactory.getLogger(RemoteDevice.class);
 	
-	private ThreadPoolCallExecutor executor = null;
+//	/**
+//	 * netty ThreadPoolCallExecutor
+//	 */
+//	private ThreadPoolCallExecutor executor = null;
+	/**
+	 * netty DuplexTcpClientBootstrap
+	 */
 	private DuplexTcpClientBootstrap bootstrap = null;
+	/**
+	 * RpcClientChannel
+	 */
 	private RpcClientChannel channel = null;
-	//Operations.Interface operationService = null;
+	/**
+	 * BlockingInterface of Operations
+	 */
 	private Operations.BlockingInterface operationService = null;
+	/**
+	 * non-blocking Interface of PacketService
+	 */
 	private PacketService.Interface packetService = null;
+	/**
+	 * Instance of PacketServiceAnswerImpl
+	 */
 	private PacketServiceAnswerImpl packetServiceAnswerImpl = null;
-	private RemoteConnection connection = null;
+	
+//	/**
+//	 * Instance of a RemoteConnection
+//	 */
+	//private RemoteConnection connection = null;
 
+	/**
+	 * constructor
+	 * @param connection the RemoteConnection which should be used for this device
+	 */
 	public RemoteDevice(final RemoteConnection connection){
-		this.connection = connection;
+		//this.connection = connection;
 		this.channel = connection.getChannel();
 		this.bootstrap = connection.getBootstrap();
-		//operationService = Operations.newStub(channel);
 		operationService = Operations.newBlockingStub(channel);
 		packetService = PacketService.newStub(channel);
 		packetServiceAnswerImpl = new PacketServiceAnswerImpl();
@@ -76,63 +102,63 @@ public class RemoteDevice implements DeviceAsync{
 	public OperationHandle<Void> program(final byte[] bytes,
 			final long timeout, final AsyncCallback<Void> callback) {
 		
-		return new programOperation(channel, callback, operationService, packetServiceAnswerImpl, bytes, timeout).execute();		
+		return new ProgramOperation(channel, callback, operationService, packetServiceAnswerImpl, bytes, timeout).execute();		
 	}
 
 	@Override
 	public OperationHandle<Void> eraseFlash(final long timeout,
 			final AsyncCallback<Void> callback) {
 		
-		return new eraseFlashOperation(channel, callback, operationService, packetServiceAnswerImpl, timeout).execute();
+		return new EraseFlashOperation(channel, callback, operationService, packetServiceAnswerImpl, timeout).execute();
 	}
 
 	@Override
 	public OperationHandle<byte[]> readFlash(final int address, final int length,
 			final long timeout, final AsyncCallback<byte[]> callback) {
 
-		return new readFlashOperation(channel, callback, operationService, packetServiceAnswerImpl, address, length, timeout).execute();
+		return new ReadFlashOperation(channel, callback, operationService, packetServiceAnswerImpl, address, length, timeout).execute();
 	}
 
 	@Override
 	public OperationHandle<MacAddress> readMac(final long timeout,
 			final AsyncCallback<MacAddress> callback) {
 		
-		return new readMacAddressOperation(channel, callback, operationService, packetServiceAnswerImpl,timeout).execute();
+		return new ReadMacAddressOperation(channel, callback, operationService, packetServiceAnswerImpl,timeout).execute();
 	}
 
 	@Override
 	public OperationHandle<Void> reset(final long timeout,
 			final AsyncCallback<Void> callback) {
 
-		return new resetOperation(channel, callback, operationService, packetServiceAnswerImpl, timeout).execute();
+		return new ResetOperation(channel, callback, operationService, packetServiceAnswerImpl, timeout).execute();
 	}
 
 	@Override
 	public OperationHandle<Void> send(final MessagePacket packet, final long timeout,
 			final AsyncCallback<Void> callback) {
 
-		return new sendOperation(channel, callback, operationService, packetServiceAnswerImpl, packet, timeout).execute();
+		return new SendOperation(channel, callback, operationService, packetServiceAnswerImpl, packet, timeout).execute();
 	}
 
 	@Override
 	public OperationHandle<Void> writeFlash(final int address, final byte[] data,
 			final int length, final long timeout, final AsyncCallback<Void> callback) {
 		
-		return new writeFlashOperation(channel, callback, operationService, packetServiceAnswerImpl,address,data,length,timeout).execute();		
+		return new WriteFlashOperation(channel, callback, operationService, packetServiceAnswerImpl,address,data,length,timeout).execute();		
 	}
 
 	@Override
 	public OperationHandle<Void> writeMac(final MacAddress macAddress, final long timeout,
 			final AsyncCallback<Void> callback) {
 
-		return new writeMacOperation(channel, packetServiceAnswerImpl, operationService, callback, macAddress, timeout).execute();
+		return new WriteMacOperation(channel, packetServiceAnswerImpl, operationService, callback, macAddress, timeout).execute();
 	}
 
 	@Override
 	public OperationHandle<ChipType> getChipType(final long timeout,
 			final AsyncCallback<ChipType> callback) {
 		
-		return new getChipTypeOperation(channel, callback, operationService, packetServiceAnswerImpl, timeout).execute();
+		return new GetChipTypeOperation(channel, callback, operationService, packetServiceAnswerImpl, timeout).execute();
 	}
 
 	@Override

@@ -3,17 +3,32 @@ package de.uniluebeck.itm.tcp.client.operations;
 import com.google.protobuf.ServiceException;
 import com.googlecode.protobuf.pro.duplex.RpcClientChannel;
 
-import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.tcp.client.files.PacketServiceAnswerImpl;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Timeout;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations.BlockingInterface;
 
-public class resetOperation extends AbstractOperation<Void> {
+/**
+ * The reset Operation
+ * @author Bjoern Schuett
+ *
+ */
+public class ResetOperation extends AbstractOperation<Void> {
 
+	/**
+	 * the Timeout for this operation
+	 */
 	private long timeout = 0L;	
 	
-	public resetOperation(final RpcClientChannel channel, final AsyncCallback<Void> callback, final BlockingInterface operationService, final PacketServiceAnswerImpl packetServiceAnswerImpl, final long timeout){
+	/**
+	 * Constructor
+	 * @param channel the RpcClientChannel for a reset Operation
+	 * @param callback the AsyncCallback for a reset Operation
+	 * @param operationService the blocking Interface of Operations for a reset Operation
+	 * @param packetServiceAnswerImpl the PacketServiceAnswerImpl for a reset Operation
+	 * @param timeout the timeout for a reset Operation
+	 */
+	public ResetOperation(final RpcClientChannel channel, final AsyncCallback<Void> callback, final BlockingInterface operationService, final PacketServiceAnswerImpl packetServiceAnswerImpl, final long timeout){
 		super(channel, packetServiceAnswerImpl, operationService, callback);
 		this.timeout = timeout;
 	}

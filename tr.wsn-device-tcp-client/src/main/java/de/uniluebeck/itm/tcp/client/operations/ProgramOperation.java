@@ -12,20 +12,41 @@ import de.uniluebeck.itm.tcp.client.files.PacketServiceAnswerImpl;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ProgramPacket;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations.BlockingInterface;
 
-public class programOperation extends AbstractOperation<Void> {
+/**
+ * The program Operation
+ * @author Bjoern Schuett
+ *
+ */
+public class ProgramOperation extends AbstractOperation<Void> {
 	
+	/**
+	 * the bytes from the binaryImage for this program operation
+	 */
 	private byte[] bytes;
+	/**
+	 * the Timeout for this operation
+	 */
 	private long timeout;
 
-	public programOperation(final RpcClientChannel channel, final AsyncCallback<Void> callback, final BlockingInterface operationService, final PacketServiceAnswerImpl packetServiceAnswerImpl, final byte[] bytes, final long timeout) {
+	/**
+	 * Constructor
+	 * @param channel the RpcClientChannel for a program Operation
+	 * @param callback the AsyncCallback for a program Operation
+	 * @param operationService the blocking Interface of Operations for a program Operation
+	 * @param packetServiceAnswerImpl the PacketServiceAnswerImpl for a program Operation
+	 * @param bytes the bytes from the binaryImage for this program operation
+	 * @param timeout the timeout for a program operation
+	 */
+	public ProgramOperation(final RpcClientChannel channel, final AsyncCallback<Void> callback, final BlockingInterface operationService, final PacketServiceAnswerImpl packetServiceAnswerImpl, final byte[] bytes, final long timeout) {
 		super(channel,packetServiceAnswerImpl, operationService, callback);
 		this.bytes = bytes;
 		this.timeout = timeout;
 	}
 
+	@Override
 	public void operate() throws ServiceException {
 		
-		
+		/* create a CRC to check the Integrity */
 		final Checksum checksum = new CRC32();
 		checksum.update(bytes,0,bytes.length);
 		
@@ -34,17 +55,6 @@ public class programOperation extends AbstractOperation<Void> {
 		setOperationKey(packet.getOperationKey());
 
 		this.getPacketServiceAnswerImpl().addCallback(packet.getOperationKey(), this.getCallback());
-		
-		
-		
-//		operationService.program(controller, packet, new RpcCallback<EmptyAnswer>() {
-//			@Override
-//			public void run(EmptyAnswer parameter) {
-//				if(controller.failed()){
-//					callback.onFailure(new Throwable(controller.errorText()));
-//				}
-//			}
-//		});
 		
 		this.getOperationService().program(this.getController(), packet);
 	}

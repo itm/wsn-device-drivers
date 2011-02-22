@@ -12,14 +12,42 @@ import de.uniluebeck.itm.tcp.client.files.PacketServiceAnswerImpl;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.FlashData;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations.BlockingInterface;
 
-public class writeFlashOperation extends AbstractOperation<Void> {
+/**
+ * The writeFlash Operation
+ * @author Bjoern Schuett
+ *
+ */
+public class WriteFlashOperation extends AbstractOperation<Void> {
 
+	/**
+	 * 
+	 */
 	private int address = 0;
+	/**
+	 * 
+	 */
 	private byte[] data = null;
+	/**
+	 * 
+	 */
 	private int length = 0;
+	/**
+	 * the Timeout for this operation
+	 */
 	private long timeout = 0L;
 
-	public writeFlashOperation(final RpcClientChannel channel, final AsyncCallback<Void> callback, final BlockingInterface operationService, final PacketServiceAnswerImpl packetServiceAnswerImpl, final int address, final byte[] data,
+	/**
+	 * Constructor
+	 * @param channel the RpcClientChannel for a erase Operation
+	 * @param callback the AsyncCallback for a erase Operation
+	 * @param operationService the blocking Interface of Operations for a erase Operation
+	 * @param packetServiceAnswerImpl the PacketServiceAnswerImpl for a erase Operation
+	 * @param address 
+	 * @param data 
+	 * @param length 
+	 * @param timeout the timeout for a erase Operation
+	 */
+	public WriteFlashOperation(final RpcClientChannel channel, final AsyncCallback<Void> callback, final BlockingInterface operationService, final PacketServiceAnswerImpl packetServiceAnswerImpl, final int address, final byte[] data,
 			final int length, final long timeout) {
 
 		super(channel,packetServiceAnswerImpl, operationService, callback);
@@ -29,6 +57,7 @@ public class writeFlashOperation extends AbstractOperation<Void> {
 		this.timeout = timeout;
 	}
 
+	@Override
 	public void operate() throws ServiceException {
 		
 		final Checksum checksum = new CRC32();
@@ -39,16 +68,6 @@ public class writeFlashOperation extends AbstractOperation<Void> {
 		setOperationKey(request.getOperationKey());
 		
 		this.getPacketServiceAnswerImpl().addCallback(request.getOperationKey(), this.getCallback());
-		
-//		operationService.writeFlash(controller, flash, new RpcCallback<EmptyAnswer>() {
-//			
-//			@Override
-//			public void run(EmptyAnswer parameter) {
-//				if(controller.failed()){
-//					callback.onFailure(new Throwable(controller.errorText()));
-//				}
-//			}
-//		});
 		
 		this.getOperationService().writeFlash(this.getController(), request);
 	}
