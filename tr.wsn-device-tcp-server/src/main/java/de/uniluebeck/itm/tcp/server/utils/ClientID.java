@@ -35,7 +35,6 @@ public class ClientID {
 		this.device = device;
 	}
 	
-	// Rueckgabe des richtigen OperationHandle
 	/**
 	 * Return a HandleElement for a Key
 	 * @param operationKey the key for the request
@@ -76,14 +75,7 @@ public class ClientID {
 	 * @return the status of getHandle
 	 */
 	public Boolean getCalledGet(final String key) {
-		
-		if(this.getList.isEmpty() ){
-			return false;
-		}else if(this.getList.get(key)){
-			return true;
-		}else {
-			return false;
-		}
+		return !this.getList.isEmpty() && this.getList.get(key);
 	}
 	/**
 	 * set the status of getHandle

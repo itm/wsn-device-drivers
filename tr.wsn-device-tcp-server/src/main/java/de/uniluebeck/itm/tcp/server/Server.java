@@ -39,15 +39,15 @@ import de.uniluebeck.itm.devicedriver.MessagePlainTextListener;
 import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 import de.uniluebeck.itm.devicedriver.event.MessageEvent;
-import de.uniluebeck.itm.tcp.server.operations.eraseOperation;
-import de.uniluebeck.itm.tcp.server.operations.getChipTypeOperation;
-import de.uniluebeck.itm.tcp.server.operations.programOperation;
-import de.uniluebeck.itm.tcp.server.operations.readFlashOperation;
-import de.uniluebeck.itm.tcp.server.operations.readMacOperation;
-import de.uniluebeck.itm.tcp.server.operations.resetOperation;
-import de.uniluebeck.itm.tcp.server.operations.sendOperation;
-import de.uniluebeck.itm.tcp.server.operations.writeFlashOperation;
-import de.uniluebeck.itm.tcp.server.operations.writeMacOperation;
+import de.uniluebeck.itm.tcp.server.operations.EraseOperation;
+import de.uniluebeck.itm.tcp.server.operations.GetChipTypeOperation;
+import de.uniluebeck.itm.tcp.server.operations.ProgramOperation;
+import de.uniluebeck.itm.tcp.server.operations.ReadFlashOperation;
+import de.uniluebeck.itm.tcp.server.operations.ReadMacOperation;
+import de.uniluebeck.itm.tcp.server.operations.ResetOperation;
+import de.uniluebeck.itm.tcp.server.operations.SendOperation;
+import de.uniluebeck.itm.tcp.server.operations.WriteFlashOperation;
+import de.uniluebeck.itm.tcp.server.operations.WriteMacOperation;
 import de.uniluebeck.itm.tcp.server.utils.ClientID;
 import de.uniluebeck.itm.tcp.server.utils.RemoteMessagePacketListener;
 import de.uniluebeck.itm.tcp.server.utils.RemoteMessagePlainTextListener;
@@ -80,19 +80,22 @@ public class Server {
 	 * logger.
 	 */
 	private static Logger log = LoggerFactory.getLogger(Server.class);
-
-	// werden nach 30 min alle eintraege des Cache geloescht?
-	// wie Timeout fuer einen Eintrag neu starten?
+	
+	/**
+	 * default authentication time
+	 */
+	private final static int TIMEOUT = 30;
+	
 	/**
 	 * stores a clientID for every open channel.
 	 */
 	private static TimedCache<RpcClientChannel, ClientID> idList = new TimedCache<RpcClientChannel, ClientID>(
-			30, TimeUnit.MINUTES);
+			TIMEOUT, TimeUnit.MINUTES);
 	/**
 	 * stores a Shiro subject for every open channel.
 	 */
 	private static TimedCache<RpcClientChannel, Subject> authList = new TimedCache<RpcClientChannel, Subject>(
-			30, TimeUnit.MINUTES);
+			TIMEOUT, TimeUnit.MINUTES);
 	// private static HashMap<RpcClientChannel,Subject> authList = new
 	// HashMap<RpcClientChannel,Subject>();
 	// private static HashMap <String,MessagePacketListener> packetListenerList
@@ -100,7 +103,13 @@ public class Server {
 	// private static HashMap <String,MessagePlainTextListener>
 	// plainTextListenerList = new HashMap<String,MessagePlainTextListener>();
 
+	/**
+	 * packetListenerList
+	 */
 	private static HashMap<RpcClientChannel, HashMap<String, MessagePacketListener>> packetListenerList = new HashMap<RpcClientChannel, HashMap<String, MessagePacketListener>>();
+	/**
+	 * plainTextListenerList
+	 */
 	private static HashMap<RpcClientChannel, HashMap<String, MessagePlainTextListener>> plainTextListenerList = new HashMap<RpcClientChannel, HashMap<String, MessagePlainTextListener>>();
 
 	/**
@@ -183,7 +192,7 @@ public class Server {
 
 			@Override
 			public void connectionLost(final RpcClientChannel clientChannel) {
-				DeviceAsync device = idList.get(clientChannel).getDevice();
+				final DeviceAsync device = idList.get(clientChannel).getDevice();
 				for(String key : packetListenerList.get(clientChannel).keySet()){
 					device.removeListener(packetListenerList.get(clientChannel).get(key));
 				}
@@ -228,10 +237,21 @@ public class Server {
 	}
 
 	// eigentliche Operationen, die spaeter verwendet werden sollen
+	/**
+	 * Implements the Operations from the Operations.Interface 
+	 * @author Andreas Maier
+	 */
 	static class OperationsImpl implements Operations.Interface {
 
 		// Methode zum verbinden auf den Server
 		// hier sollte die Authentifikation stattfinden
+
+		/**
+		 * establish a Connection from a client
+		 * @param controller RpcController
+		 * @param request the UserData
+		 * @param done RpcCallback<EmptyAnswer>
+		 */
 		@Override
 		public void connect(final RpcController controller,
 				final Identification request,
@@ -291,6 +311,12 @@ public class Server {
 
 		}
 
+		/**
+		 * close a RPC-Connection safely
+		 * @param controller RpcController
+		 * @param request EmptyAnswer
+		 * @param done RpcCallback<EmptyAnswer>
+		 */
 		@Override
 		public void shutdown(final RpcController controller, final EmptyAnswer request,
 				final RpcCallback<EmptyAnswer> done) {
@@ -328,7 +354,7 @@ public class Server {
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
 
-			new programOperation(controller, done, user, id, request).run();
+			new ProgramOperation(controller, done, user, id, request).run();
 		}
 
 		// reagieren auf ein getState-Aufruf
@@ -398,9 +424,6 @@ public class Server {
 					OperationHandle<?> handle = null;
 
 					try {
-						// TODO wenn der Aufruf zu schnell passiert, bleibt
-						// handle null, deswegen muss man ein wenig warten
-						// Thread.sleep(100);
 
 						handle = id.getHandleElement(request.getOperationKey());
 						final Object a = handle.get();
@@ -457,7 +480,7 @@ public class Server {
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
 
-			new writeMacOperation(controller, done, user, id, request).run();
+			new WriteMacOperation(controller, done, user, id, request).run();
 
 		}
 
@@ -472,7 +495,7 @@ public class Server {
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
 
-			new writeFlashOperation(controller, done, user, id, request).run();
+			new WriteFlashOperation(controller, done, user, id, request).run();
 		}
 
 		@Override
@@ -486,7 +509,7 @@ public class Server {
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
 
-			new eraseOperation(controller, done, user, id, request).run();
+			new EraseOperation(controller, done, user, id, request).run();
 		}
 
 		@Override
@@ -500,7 +523,7 @@ public class Server {
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
 
-			new readFlashOperation(controller, done, user, id, request).run();
+			new ReadFlashOperation(controller, done, user, id, request).run();
 
 		}
 
@@ -515,7 +538,7 @@ public class Server {
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
 
-			new readMacOperation(controller, done, user, id, request).run();
+			new ReadMacOperation(controller, done, user, id, request).run();
 
 		}
 
@@ -530,7 +553,7 @@ public class Server {
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
 
-			new resetOperation(controller, done, user, id, request).run();
+			new ResetOperation(controller, done, user, id, request).run();
 
 		}
 
@@ -545,7 +568,7 @@ public class Server {
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
 
-			new sendOperation(controller, done, user, id, request).run();
+			new SendOperation(controller, done, user, id, request).run();
 
 		}
 
@@ -560,10 +583,15 @@ public class Server {
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
 
-			new getChipTypeOperation(controller, done, user, id, request).run();
+			new GetChipTypeOperation(controller, done, user, id, request).run();
 		}
 	}
 
+	/**
+	 * Implements the Operations from the PacketService.Interface 
+	 * @author Andreas Maier
+	 *
+	 */
 	static class PacketServiceImpl implements PacketService.Interface {
 
 		@Override

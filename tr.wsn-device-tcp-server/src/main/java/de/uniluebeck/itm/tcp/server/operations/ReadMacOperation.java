@@ -16,21 +16,37 @@ import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.MacData;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.ReverseAnswer;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.Timeout;
 
-public class readMacOperation extends AbstractOperation<MacAddress> {
+/**
+ * The readMac Operation
+ * @author Andreas Maier
+ *
+ */
+public class ReadMacOperation extends AbstractOperation<MacAddress> {
 
-	Timeout request = null;
+	/**
+	 * the request of type Timeout
+	 */
+	private Timeout request = null;
 	
-	public readMacOperation(final RpcController controller, final RpcCallback<EmptyAnswer> done, final Subject user, final ClientID id, final Timeout request){
+	/**
+	 * Constructor
+	 * @param controller the RpcController for a readMac Operation
+	 * @param done the RpcCallback<EmptyAnswer> for a readMac Operation
+	 * @param user the Shiro-User-Object a readMac Operation
+	 * @param id the ClientID-Instance for a readMac Operation
+	 * @param request the Timeout request for a readMac Operation
+	 */
+	public ReadMacOperation(final RpcController controller, final RpcCallback<EmptyAnswer> done, final Subject user, final ClientID id, final Timeout request){
 		super(controller,done, user, id);
 		this.request = request;
-		message = new ReverseMessage(request.getOperationKey(),ServerRpcController.getRpcChannel(controller));
+		setMessage(new ReverseMessage(request.getOperationKey(),ServerRpcController.getRpcChannel(controller)));
 	}
 	
 	@Override
 	public void setOnSuccess(final MacAddress result) {
-		if(!id.getCalledGet(request.getOperationKey())){
+		if(!getId().getCalledGet(request.getOperationKey())){
 			final MacData mac = MacData.newBuilder().setOperationKey(request.getOperationKey()).addMACADDRESS(ByteString.copyFrom(result.getMacBytes())).build();
-			message.reverseSuccess(ReverseAnswer.newBuilder().setMacAddress(mac).build());
+			getMessage().reverseSuccess(ReverseAnswer.newBuilder().setMacAddress(mac).build());
 		}
 	}
 	
@@ -38,12 +54,12 @@ public class readMacOperation extends AbstractOperation<MacAddress> {
 	protected void operate(){
 
 		// erzeugen eines OperationHandle zur der Operation
-		final OperationHandle <MacAddress> handle = deviceAsync.readMac(request.getTimeout(), getAsyncAdapter());
+		final OperationHandle <MacAddress> handle = getDeviceAsync().readMac(request.getTimeout(), getAsyncAdapter());
 		
 		// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
-		id.setHandleElement(request.getOperationKey(), handle);
+		getId().setHandleElement(request.getOperationKey(), handle);
 		
-		done.run(EmptyAnswer.newBuilder().build());
+		getDone().run(EmptyAnswer.newBuilder().build());
 	}
 	
 }

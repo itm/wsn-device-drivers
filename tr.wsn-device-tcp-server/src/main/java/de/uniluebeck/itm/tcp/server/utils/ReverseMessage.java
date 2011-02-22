@@ -11,28 +11,53 @@ import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.PacketServiceAnswe
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.ReverseAnswer;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.clientMessage;
 
-
+/**
+ * Send the Answers from the Device to the client
+ * @author Andreas Maier
+ *
+ */
 public class ReverseMessage {
 
+	/**
+	 * RpcClientChannel
+	 */
 	private RpcClientChannel channel = null;
+	/**
+	 * Instance of PacketServiceAnswer
+	 */
 	private final PacketServiceAnswer.Interface answer;
-	private final String OperationKey;
+	/**
+	 * Instance of OperationKey
+	 */
+	private final String operationKey;
 
-	public ReverseMessage(final String OperationKey, final RpcClientChannel channel){
-		this.OperationKey = OperationKey;
+	/**
+	 * Constructor
+	 * @param operationKey the OperationKey for the ReverseMessages
+	 * @param channel the channel for the ReverseMessages
+	 */
+	public ReverseMessage(final String operationKey, final RpcClientChannel channel){
+		this.operationKey = operationKey;
 		this.channel = channel;
 		answer = PacketServiceAnswer.newStub(channel);
 	}
 
+	/**
+	 * 
+	 * @return the OperationKey for the ReverseMessages
+	 */
 	public String getOperationKey() {
-		return OperationKey;
+		return operationKey;
 	}
 	
+	/**
+	 * send an onExecute-Message to the client
+	 */
 	public void reverseExecute(){
 		
 		final RpcController controller = channel.newRpcController();
 		
-		final OpKey request = OpKey.newBuilder().setOperationKey(OperationKey).build();
+		final OpKey request = OpKey.newBuilder().setOperationKey(operationKey).build();
 		answer.reverseExecuteEvent(controller, request, new RpcCallback<EmptyAnswer>(){
 
 			@Override
@@ -40,11 +65,14 @@ public class ReverseMessage {
 			}});
 	}
 	
+	/**
+	 * send an onCancel-Message to the client
+	 */
 	public void reverseOnCancel(){
 		
 		final RpcController controller = channel.newRpcController();
 		
-		final OpKey request = OpKey.newBuilder().setOperationKey(OperationKey).build();
+		final OpKey request = OpKey.newBuilder().setOperationKey(operationKey).build();
 		answer.reverseOnCancel(controller, request, new RpcCallback<EmptyAnswer>(){
 
 			@Override
@@ -53,11 +81,15 @@ public class ReverseMessage {
 		
 	}
 	
+	/**
+	 * send an onFailure-Message to the client
+	 * @param throwable the Exception thrown from the device
+	 */
 	public void reverseOnFailure(final Throwable throwable){
 		
 		final RpcController controller = channel.newRpcController();
 		
-		final FailureException request = FailureException.newBuilder().setOperationKey(OperationKey).setExceptionName(throwable.getClass().getName()).setExceptionMessage(throwable.getMessage()).build();
+		final FailureException request = FailureException.newBuilder().setOperationKey(operationKey).setExceptionName(throwable.getClass().getName()).setExceptionMessage(throwable.getMessage()).build();
 		answer.reverseOnFailure(controller, request, new RpcCallback<EmptyAnswer>(){
 
 			@Override
@@ -66,11 +98,15 @@ public class ReverseMessage {
 		
 	}
 	
+	/**
+	 * send an onProgressChange-Message to the client
+	 * @param message the message from the device
+	 */
 	public void reverseChangeEvent(final String message){
 		
 		final RpcController controller = channel.newRpcController();
 		
-		final clientMessage request = clientMessage.newBuilder().setOperationKey(OperationKey).setQuery(message).build();
+		final clientMessage request = clientMessage.newBuilder().setOperationKey(operationKey).setQuery(message).build();
 		answer.reverseChangeEvent(controller, request, new RpcCallback<EmptyAnswer>(){
 
 			@Override
@@ -79,6 +115,10 @@ public class ReverseMessage {
 		
 	}
 	
+	/**
+	 * send an onSuccess-Message to the client
+	 * @param ans the different types of Success-Messages
+	 */
 	public void reverseSuccess(final ReverseAnswer ans){
 		
 		final RpcController controller = channel.newRpcController();

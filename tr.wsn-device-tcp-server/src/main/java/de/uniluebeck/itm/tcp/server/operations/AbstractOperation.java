@@ -13,29 +13,95 @@ import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.EmptyAnswer;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.OpKey;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.ReverseAnswer;
 
-
+/**
+ * 
+ * @author Andreas Maier
+ *
+ * @param <T> Type of the 
+ */
 public abstract class AbstractOperation<T> implements Runnable {
 	
 	//private static Logger log = LoggerFactory.getLogger(AbstractOperation.class);
 	
-	RpcController controller = null;
-	RpcCallback<EmptyAnswer> done = null;
-	Subject user;
-	ClientID id;
-	DeviceAsync deviceAsync;
-	ReverseMessage message;
+	/**
+	 * RpcController
+	 */
+	private RpcController controller = null;
+	/**
+	 * RpcCallback<EmptyAnswer>
+	 */
+	private RpcCallback<EmptyAnswer> done = null;
+	/**
+	 * Shiro User
+	 */
+	private Subject user;
+	/**
+	 * ClientID Instance
+	 */
+	private ClientID id;
+	/**
+	 * DeviceAsync-Instance
+	 */
+	private DeviceAsync deviceAsync;
+
+	/**
+	 * ReverseMessage-Instance
+	 */
+	private ReverseMessage message;
 	
+	/**
+	 * Constructor 
+	 * @param controller the RpcController for the Operation
+	 * @param done the RpcCallback<EmptyAnswer> for the Operation
+	 * @param user the Shiro-User-Object
+	 * @param id the ClientID-Instance for the Operation
+	 */
 	public AbstractOperation(final RpcController controller, final RpcCallback<EmptyAnswer> done, final Subject user, final ClientID id) {
 		this.controller = controller;
 		this.done = done;
 		this.user = user;
 		this.id = id;
 	}
+	
+	public ReverseMessage getMessage() {
+		return message;
+	}
 
+	public void setMessage(final ReverseMessage message) {
+		this.message = message;
+	}
+	
+	public DeviceAsync getDeviceAsync() {
+		return deviceAsync;
+	}
+	
+	public RpcController getController() {
+		return controller;
+	}
+
+	public RpcCallback<EmptyAnswer> getDone() {
+		return done;
+	}
+
+	public Subject getUser() {
+		return user;
+	}
+
+	public ClientID getId() {
+		return id;
+	}
+
+	/**
+	 * 
+	 */
 	abstract protected void operate();
 	
+	/**
+	 * Method to start the Operation
+	 */
 	@Override
 	public void run(){
+		// Shiro 
 		if(user==null || !user.isAuthenticated()){
 			controller.setFailed("Sie sind nicht authentifiziert!");
 			done.run(null);
@@ -46,24 +112,45 @@ public abstract class AbstractOperation<T> implements Runnable {
 		operate();
 	}
 	
-	//public abstract void setOnSuccess(T result);
-	
+	/**
+	 * set the standard OnSuccess-Method for the AsyncAdapter <br>
+	 * the ReverseAnswer-Parameter is OpKey
+	 * @param result the result from the Device
+	 */
 	public void setOnSuccess(final T result) {
 		message.reverseSuccess(ReverseAnswer.newBuilder().setSuccess(OpKey.newBuilder().setOperationKey(message.getOperationKey())).build());
 	}
+	/**
+	 * set the OnExecute-Method for the AsyncAdapter
+	 */
 	public void setOnExecute(){
 		message.reverseExecute();
 	}
+	/**
+	 * set the OnCancel-Method for the AsyncAdapter
+	 */
 	public void setOnCancel(){
 		message.reverseOnCancel();
 	}
+	/**
+	 * set the OnFailure-Method for the AsyncAdapter
+	 * @param throwable the Exception thrown by the device
+	 */
 	public void setOnFailure(final Throwable throwable){
 		message.reverseOnFailure(throwable);
 	}
+	/**
+	 * set the OnProgressChange-Method for the AsyncAdapter
+	 * @param fraction value from the device
+	 */
 	public void setOnProgressChange(final float fraction){
 		message.reverseChangeEvent(String.valueOf(fraction));
 	}
 	
+	/**
+	 * Create a AsyncAdapter 
+	 * @return the AsyncAdapter for the Operation
+	 */
 	public  AsyncAdapter<T> getAsyncAdapter(){
 		return new AsyncAdapter<T>(){
 			
