@@ -46,6 +46,21 @@ public class ServerDevice {
 	private boolean metaDaten = false;
 	
 	/**
+	 * the Path of the config-file (devices.xml)
+	 */
+	private String devicesPath = "src/main/resources/devices.xml";
+	
+	/**
+	 * the Path of the config-file (config.xml)
+	 */
+	private String configPath = "src/main/resources/config.xml";
+	
+	/**
+	 * the Path of the config-file (sensors.xml)
+	 */
+	private String sensorsPath = "src/main/resources/sensors.xml";
+	
+	/**
 	 * The metaDatenService
 	 */
 	private iMetaDatenService mclient = null;
@@ -58,9 +73,21 @@ public class ServerDevice {
 	
 	/**
 	 * Constructor.
+	 * @param devicesPath the Path of the config-file (devices.xml), "" for standard-Path
+	 * @param configPath the Path of the config-file (config.xml), "" for standard-Path
+	 * @param sensorsPath the Path of the config-file (sensors.xml), "" for standard-Path
 	 * @param meta parameter for activate (true) or deactivate (false, default) the metaDaten-functions
 	 */
-	public ServerDevice(final boolean meta){
+	public ServerDevice(final String devicesPath, final String configPath, final String sensorsPath, final boolean meta){
+		if(!devicesPath.equalsIgnoreCase("")){
+			this.devicesPath = devicesPath;
+		}
+		if(!configPath.equalsIgnoreCase("")){
+			this.configPath = configPath;
+		}
+		if(!sensorsPath.equalsIgnoreCase("")){
+			this.sensorsPath = sensorsPath;
+		}
 		this.metaDaten = meta;
 	}
 	
@@ -72,9 +99,9 @@ public class ServerDevice {
 		
 		try {
 			if(metaDaten){
-				mclient = new MetaDatenService (new File("src/main/resources/config.xml"),new File("src/main/resources/sensors.xml"));
+				mclient = new MetaDatenService (new File(configPath),new File(sensorsPath));
 			}
-			final JaxbDeviceList list = readDevices();
+			final JaxbDeviceList list = readDevices(devicesPath);
 			
 			for(JaxbDevice jaxDevice : list.getJaxbDevice()){
 				final String key = createID(jaxDevice);
@@ -100,12 +127,13 @@ public class ServerDevice {
 	
 	/**
 	 * readouts the devices specified in the devices.xml.
+	 * @param path the Path of the config-file (devices.xml)
 	 * @return a JaxbDeviceList object with a list of devices in it.
 	 * @throws JAXBException Error while try to read the devices.xml
 	 */
-	private JaxbDeviceList readDevices() throws JAXBException{
+	private JaxbDeviceList readDevices(final String path) throws JAXBException{
 		
-		return ConfigReader.readFile();
+		return ConfigReader.readFile(path);
 		
 	}
 	//ConnectionType = de.uniluebeck.itm.devicedriver.mockdevice.MockConnection

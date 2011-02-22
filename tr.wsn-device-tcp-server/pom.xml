@@ -16,9 +16,9 @@
 
 	<dependencies>
 		<dependency>
-				<groupId>org.simpleframework</groupId>
-				<artifactId>simple-xml</artifactId>
-				<version>1.8</version>
+			<groupId>org.simpleframework</groupId>
+			<artifactId>simple-xml</artifactId>
+			<version>1.8</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.protobuf</groupId>
@@ -86,51 +86,32 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.mod4j.org.apache.commons</groupId>
+			<artifactId>cli</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 	</dependencies>
-	
-<!--  
-	<repositories>
-	
-		<repository>
-			<id>google-maven-repository</id>
-			<name>Google Maven Repository</name>
-			<url>http://google-maven-repository.googlecode.com/svn/repository/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>itm-maven-repository-releases</id>
-			<url>http://www.itm.uni-luebeck.de/projects/maven/releases/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>itm-maven-repository-snapshots</id>
-			<url>http://www.itm.uni-luebeck.de/projects/maven/snapshots/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>repository.tu-bs.de</id>
-			<url>http://www.ibr.cs.tu-bs.de/maven/</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<layout>default</layout>
-		</repository> 
-	</repositories>-->
+
+	<!--
+		<repositories> <repository> <id>google-maven-repository</id>
+		<name>Google Maven Repository</name>
+		<url>http://google-maven-repository.googlecode.com/svn/repository/</url>
+		<releases> <enabled>true</enabled> </releases> <snapshots>
+		<enabled>false</enabled> </snapshots> </repository> <repository>
+		<id>itm-maven-repository-releases</id>
+		<url>http://www.itm.uni-luebeck.de/projects/maven/releases/</url>
+		<releases> <enabled>true</enabled> </releases> <snapshots>
+		<enabled>false</enabled> </snapshots> </repository> <repository>
+		<id>itm-maven-repository-snapshots</id>
+		<url>http://www.itm.uni-luebeck.de/projects/maven/snapshots/</url>
+		<releases> <enabled>false</enabled> </releases> <snapshots>
+		<enabled>true</enabled> </snapshots> </repository> <repository>
+		<id>repository.tu-bs.de</id>
+		<url>http://www.ibr.cs.tu-bs.de/maven/</url> <snapshots>
+		<enabled>true</enabled> </snapshots> <layout>default</layout>
+		</repository> </repositories>
+	-->
 
 	<build>
 		<plugins>

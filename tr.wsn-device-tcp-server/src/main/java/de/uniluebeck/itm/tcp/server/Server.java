@@ -135,7 +135,7 @@ public class Server {
 	 *            the port the server is listening on.
 	 */
 	public Server(final String host, final int port) {
-		this(host, port, false);
+		this(host, port, "", "", "",false);
 	}
 
 	/**
@@ -145,13 +145,19 @@ public class Server {
 	 *            IP of the host.
 	 * @param port
 	 *            the port the server is listening on.
+	 * @param devicesPath
+	 *            the path of the config-file (devices.xml)
+	 * @param configPath
+	 *            the path of the config-file (config.xml)
+	 * @param sensorsPath    
+	 *            the path of the config-file (sensors.xml)
 	 * @param metaDaten
 	 *            activate MetaDaten-Collector
 	 */
-	public Server(final String host, final int port, final boolean metaDaten) {
+	public Server(final String host, final int port, final String devicesPath, final String configPath, final String sensorsPath, final boolean metaDaten) {
 		this.host = host;
 		this.port = port;
-		serverDevices = new ServerDevice(metaDaten);
+		serverDevices = new ServerDevice(devicesPath,configPath,sensorsPath,metaDaten);
 	}
 
 	/**
