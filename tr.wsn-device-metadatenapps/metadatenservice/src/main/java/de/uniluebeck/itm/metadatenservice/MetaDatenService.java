@@ -46,15 +46,19 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService {
 	public void run() {
 		log.info("start refreshrun - connect");
 		count = 0;
-		stub.connect(config.getUsername(), config.getPassword());
-		log.info("Refreshrun connected");
-		for (int i = 0; i < collector.size(); i++) {
-			System.out.println("Node with ID: "
-					+ collector.get(i).collect(sensors).getNodeid()
-					+ "refreshed in directory");
-			refreshNodeSync(collector.get(i).collect(sensors));
+		try {
+			stub.connect(config.getUsername(), config.getPassword());
+			log.info("Refreshrun connected");
+			for (int i = 0; i < collector.size(); i++) {
+				System.out.println("Node with ID: "
+						+ collector.get(i).collect(sensors).getNodeid()
+						+ "refreshed in directory");
+				refreshNodeSync(collector.get(i).collect(sensors));
+			}
+			stub.disconnect();
+		} catch (Exception e) {
+			log.error(e.getMessage());
 		}
-		stub.disconnect();
 	}
 
 	public void writeConfig(ConfigData config) {

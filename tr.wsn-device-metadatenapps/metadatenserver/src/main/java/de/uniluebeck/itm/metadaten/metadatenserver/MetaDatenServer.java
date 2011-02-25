@@ -39,6 +39,7 @@ import com.googlecode.protobuf.pro.duplex.server.DuplexTcpServerBootstrap;
 
 import de.uniluebeck.itm.metadaten.entities.ConfigData;
 import de.uniluebeck.itm.metadaten.entities.Node;
+import de.uniluebeck.itm.metadaten.entities.NodeId;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Identification;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.NODE;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Operations;
@@ -49,7 +50,6 @@ import de.uniluebeck.itm.metadaten.files.MetaDataService.VOID;
 import de.uniluebeck.itm.metadaten.server.helper.NodeHelper;
 import de.uniluebeck.itm.persistence.DatabaseToStore;
 import de.uniluebeck.itm.persistence.StoreToDatabase;
-//import de.uniluebeck.itm.tr.util.TimedCache;
 
 public class MetaDatenServer {
 
@@ -99,12 +99,12 @@ public class MetaDatenServer {
 
 			@Override
 			public void connectionLost(RpcClientChannel clientChannel) {
-				System.out.println("connectionLost " + clientChannel);
+				log.info("connectionLost " + clientChannel);
 			}
 
 			@Override
 			public void connectionChanged(RpcClientChannel clientChannel) {
-				System.out.println("connectionChanged " + clientChannel);
+				log.info("connectionChanged " + clientChannel);
 			}
 		};
 		rpcEventNotifier.setEventListener(listener);
@@ -120,7 +120,7 @@ public class MetaDatenServer {
 		bootstrap.bind();
 
 		// ein wenig Kommunikation
-		System.out.println("Serving started: " + bootstrap);
+		log.info("Serving started: " + bootstrap);
 
 		/* Initialiesieren von Shiro */
 		// URI fileuri = null;
@@ -244,7 +244,7 @@ public class MetaDatenServer {
 				done.run(VOID.newBuilder().build());
 			}
 			/* Shiro END */
-			log.info("All things checked");
+			log.info("Authentication successfull");
 		}
 
 		@Override
@@ -260,9 +260,12 @@ public class MetaDatenServer {
 
 				return;
 			}
+			if (request.getKnotenid() == null) {
+				controller.setFailed("Node without Id!");
+				done.run(null);
 
-			// ClientID id =
-			// idList.get(ServerRpcController.getRpcChannel(controller));
+				return;
+			}
 			node = nhelper.changeToNode(request);
 			node.setTimestamp(new Date());
 			StoreToDatabase storeDB = new StoreToDatabase();
@@ -321,6 +324,12 @@ public class MetaDatenServer {
 
 				return;
 			}
+			if (request.getKnotenid() == null) {
+				controller.setFailed("Node without Id!");
+				done.run(null);
+
+				return;
+			}
 			// ClientID id =
 			// idList.get(ServerRpcController.getRpcChannel(controller));
 			node = nhelper.changeToNode(request);
@@ -344,8 +353,6 @@ public class MetaDatenServer {
 			log.info("Searchquery by Client: "
 					+ ServerRpcController.getRpcChannel(controller)
 							.getPeerInfo().getHostName() + " started");
-			log.info("NodeID vom CLient" + request.getQueryMs().getKnotenid()+ "Rest des Requests" +  request.getQueryMs().getMicrocontroller());
-			log.info("true? " + (request.getQueryMs().getMicrocontroller().matches("")));
 			DatabaseToStore getfromDB = new DatabaseToStore();
 			NodeHelper nhelper = new NodeHelper();
 			List<Node> resultlist = new ArrayList<Node>();
@@ -354,10 +361,11 @@ public class MetaDatenServer {
 			if (!(request.getQueryMs() == null)) {
 				Node node = nhelper.changeToNode(request.getQueryMs());
 				 node = nhelper.removeEmptyStrings(node);
-				log.info("Im request querynode if" + node.getId() + node.getIpAddress() + "null?" + node.getMicrocontroller());
-				System.out.println("querynode size" + getfromDB.getNodes(node).size());
+				log.info("search started");
+				log.info("NodeID vom CLient" + node.getId().getId()+ "Rest des Requests" +  node.getMicrocontroller());
+//				log.info("true? " + (node.getMicrocontroller().matches("")));
 				resultlist = getfromDB.getNodes(node);
-				System.err.println("Groesse der Anwtort" +resultlist.size());
+				log.info("search ended and delivered " +resultlist.size() + " results ");
 			}
 			if (!(request.getQueryString() == null)) {
 				// TODO
@@ -400,6 +408,7 @@ public class MetaDatenServer {
 		public void removeallServerNodes(RpcController controller,
 				ServerIP request, RpcCallback<VOID> done) {
 			Node node = new Node();
+			NodeId id = new NodeId();
 			Subject user = authList.get(ServerRpcController
 					.getRpcChannel(controller));
 			if (user == null || !user.isAuthenticated()) {
@@ -408,7 +417,8 @@ public class MetaDatenServer {
 
 				return;
 			}
-			node.setIpAddress(request.getIP());
+			id.setIpAdress(request.getIP());
+			node.setId(id);
 			DatabaseToStore fromDB = new DatabaseToStore();
 			StoreToDatabase storeDB = new StoreToDatabase();
 			List<Node> nodelist = fromDB.getNodes(node);

@@ -62,7 +62,7 @@ public class DatabaseToStore {
 	public List <Node> getNodes(Node nodeexample) {
     	List <Node> resultlist = new ArrayList<Node>();
     	final Session session = getSession();
-    	System.err.println("Vor Criteria Bildung" + nodeexample.getId() + nodeexample.getIpAddress() + "der Rest" + nodeexample.getDescription() + nodeexample.getMicrocontroller());
+//    	System.err.println("Vor Criteria Bildung" + nodeexample.getId() + nodeexample.getIpAddress() + "der Rest" + nodeexample.getDescription() + nodeexample.getMicrocontroller());
         Transaction transaction = session.beginTransaction();
 //        resultlist = session.createQuery("select  from Node parentnode where id="+parentnode.getId()).list();
         Criteria crit = session.createCriteria(Node.class);
@@ -71,13 +71,32 @@ public class DatabaseToStore {
 //        final List <NodeEntity> nodeIds = session.createQuery("from NodeEntity parentnode where id =" + parentnode.getId()).list();
         crit.add(exampleNode);
         resultlist = crit.list();      
-        System.out.println("Example" + resultlist.size());
+        System.out.println("Example" +resultlist.size());
+        if(!(nodeexample.getId().getId() == null)){
+        	List <Node> templist = new ArrayList<Node>();
+        	for(Node node : resultlist){
+        		if(nodeexample.getId().getId().matches(node.getId().getId())){
+        			templist.add(node);
+        		}
+        	}
+        	resultlist.clear();
+        	resultlist.addAll(templist);
+        }
+        if(!(nodeexample.getId().getIpAdress() == null)){
+        	List <Node> templist = new ArrayList<Node>();
+        	for(Node node : resultlist){
+        		if(nodeexample.getId().getIpAdress().matches(node.getId().getIpAdress())){
+        			templist.add(node);
+        		}
+        	}
+        	resultlist.clear();
+        	resultlist.addAll(templist);
+        }
        	if (resultlist.size() > 0){
     		for (Node nod: resultlist){
 //        		nod.setCapabilityList(session.createQuery("from Capability where parentnode_id ="+ nod.getId()).list());
     			nod.getCapabilityList().size();
-        	}
-    		
+        	}  		
     	}
         transaction.commit();
         session.close();
@@ -133,37 +152,37 @@ public class DatabaseToStore {
     }
 
 
-    /**
-     * This function retrieves a NodeCapability from the DataBase and stores it to NodeStore.
-     */
-    public final void getNodeCapability(final int nodeCapId) {
-
-        try {
-            final Session session = getSession();
-            session.beginTransaction();
-            final Query query;
-            query = session.createQuery("select nodecapability.id," + " nodecapability.name, " + " nodecapability.nodeid, " + " nodecapability.value from NodecapabilityEntity nodecapability  where nodecapability.id=" + nodeCapId + " ");
-
-            for (final Iterator it = query.iterate(); it.
-                    hasNext();) {
-                final Object[] row = (Object[]) it.next();
-                System.out.println("ID: " + row[0].toString());
-                System.out.println("Name: " + row[1].toString());
-                System.out.println("NodeId: " + row[2].toString());
-                System.out.println("Value: " + row[3].toString());
-                final NodeCapability mynodeCap;
-                mynodeCap = new NodeCapability();
-                mynodeCap.setID(Integer.parseInt(row[0].toString()));
-                mynodeCap.setName(row[1].toString());
-                mynodeCap.setNodeID(row[2].toString());
-                mynodeCap.setValue(row[3].toString());
-                NodeCapabilityStore.getInstance().add(mynodeCap);
-            }
-
-            session.close();
-        }
-        catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
+//    /**
+//     * This function retrieves a NodeCapability from the DataBase and stores it to NodeStore.
+//     */
+//    public final void getNodeCapability(final int nodeCapId) {
+//
+//        try {
+//            final Session session = getSession();
+//            session.beginTransaction();
+//            final Query query;
+//            query = session.createQuery("select nodecapability.id," + " nodecapability.name, " + " nodecapability.nodeid, " + " nodecapability.value from NodecapabilityEntity nodecapability  where nodecapability.id=" + nodeCapId + " ");
+//
+//            for (final Iterator it = query.iterate(); it.
+//                    hasNext();) {
+//                final Object[] row = (Object[]) it.next();
+//                System.out.println("ID: " + row[0].toString());
+//                System.out.println("Name: " + row[1].toString());
+//                System.out.println("NodeId: " + row[2].toString());
+//                System.out.println("Value: " + row[3].toString());
+//                final NodeCapability mynodeCap;
+//                mynodeCap = new NodeCapability();
+//                mynodeCap.setID(Integer.parseInt(row[0].toString()));
+//                mynodeCap.setName(row[1].toString());
+//                mynodeCap.setNodeID(row[2].toString());
+//                mynodeCap.setValue(row[3].toString());
+//                NodeCapabilityStore.getInstance().add(mynodeCap);
+//            }
+//
+//            session.close();
+//        }
+//        catch (Exception e) {
+//            System.out.println(e.getMessage());
+//        }
+//    }
 }

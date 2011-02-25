@@ -1,5 +1,6 @@
 package de.uniluebeck.itm.metadaten.entities;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -7,13 +8,10 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.Element;
 
 /**
  * A Node Entity is described.
@@ -21,37 +19,24 @@ import org.simpleframework.xml.Element;
 
 @Entity
 @Table(catalog = "metadaten_db", name = "node")
-public class Node implements Key {
+public class Node implements Serializable {
 
-	@Id
-	@Attribute
-	@Column(name = "id", nullable = false, length = 100)
-	private String id;
+	
+	@EmbeddedId
+	NodeId id;
 
-	/**
-	 * Node Defaults Elements.
-	 */
-
-	@Element
 	@Basic
 	@Column(name = "microcontroller", length = 100)
 	private String microcontroller;
 
-	@Element
-	@Basic
-	@Column(name = "ipAdress", length = 100)
-	private String ipAddress;
-
-	@Element
 	@Basic
 	@Column(name = "description", length = 100)
 	private String description;
 
-	@Element
 	@Basic
-	private short port;
+	@Column(name = "port", length = 100)
+	private Short port;
 
-	@Element
 	private Date timestamp;
 
 	/**
@@ -68,34 +53,15 @@ public class Node implements Key {
 		super();
 	}
 
-	/**
-	 * Constructor Method.
-	 * 
-	 * @param microcontoller
-	 * @param ipAddress
-	 * @param softwareRevision
-	 * @param otapVersion
-	 * @param description
-	 * @param capList
-	 */
-	public Node(String identity, String microcontoller, String IpAddress,
-			String description, List capList) {
-		setId(identity);
-		setMicrocontroller(microcontoller);
-		setIpAddress(IpAddress);
 
-		setDescription(description);
-		setCapabilityList(capList);
-	}
-
-	public String getId() {
+	public NodeId getId() {
 		return id;
 	}
-
-	public void setId(final String id) {
+	
+	public void setId(NodeId id) {
 		this.id = id;
 	}
-
+	
 	public String getMicrocontroller() {
 		return microcontroller;
 	}
@@ -104,13 +70,13 @@ public class Node implements Key {
 		this.microcontroller = microcontroller;
 	}
 
-	public void setIpAddress(String ipAddress) {
-		this.ipAddress = ipAddress;
-	}
-
-	public String getIpAddress() {
-		return ipAddress;
-	}
+//	public void setIpAddress(String ipAddress) {
+//		this.ipAddress = ipAddress;
+//	}
+//
+//	public String getIpAddress() {
+//		return ipAddress;
+//	}
 
 	public String getDescription() {
 		return description;
@@ -120,11 +86,11 @@ public class Node implements Key {
 		this.description = description;
 	}
 
-	public void setPort(short port) {
+	public void setPort(Short port) {
 		this.port = port;
 	}
 
-	public short getPort() {
+	public Short getPort() {
 		return this.port;
 	}
 
@@ -146,11 +112,5 @@ public class Node implements Key {
 
 	public void setCapabilityList(List<Capability> capabilityList) {
 		this.capabilityList = capabilityList;
-	}
-
-	@Override
-	public Object getKey() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

@@ -15,34 +15,35 @@ import de.uniluebeck.itm.metadaten.remote.entity.Node;
 public class Testtreiber {
 
 	/**
-	 * @param args
+	 * @param args argumentlist
 	 */
 	public static void main(final String[] args) {
 		// TODO Authentifizierung fuer die Abfrage von Daten?
-		
+		final int serverport = 8080;
+		final int clientport = 1235;
 		MetaDataClient mclient=null;
 		try {
-			mclient = new MetaDatenClient("frager","testPassword","localhost", 8080, 1235);
-		} catch (Exception e1) {
+			mclient = new MetaDatenClient("frager","testPassword","localhost", serverport, clientport);
+		} catch (final Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		System.out.println("Node wird gebaut");
-		Node node = new Node();
-        node.setId("111296050613777");
-		node.setIpAddress("192.168.0.101");
-		node.setMicrocontroller("mic1");
+		final Node node = new Node();
+//        node.setId("111296050613777");
+		node.setIpAddress("192.168.8.115");
+//		node.setMicrocontroller("mic1");
 //		node.setDescription("Solar2000");
-		String queryString = "123";
+		final String queryString = "123";
 		List <Node> nodes = new ArrayList<Node>();
 		try {
 			nodes=mclient.search(node, queryString);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		System.out.println("Folgende Knoten im Verzeichnis, entsprechen Ihrer Suchanfrage:");
+		System.out.println("Folgende Knoten im Verzeichnis, entsprechen Ihrer Suchanfrage:" + nodes.size());
 		for (int i=0 ;i < nodes.size(); i++)
 		{
 			System.out.println("Knoten: " +i+1 +" :"+nodes.get(i).getId());

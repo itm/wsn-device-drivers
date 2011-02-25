@@ -16,26 +16,36 @@ import org.simpleframework.xml.ElementList;
 
 public class Node {
 
-
+	/**
+	 * Id of the node
+	 */
 	@Attribute
 	private String id;
 
 	/**
-	 * Node Defaults Elements.
+	 * the microcontroller build on the sensor node
 	 */
 
 	@Element(required= false)
 	private String microcontroller;
-
+	/**
+	 * Ip-Adress of the Tcp-Server to which the node is connected
+	 */
 	@Element(required= false)
 	private String ipAddress;
-
+	/**
+	 * Testbed to which the sensor node belongs
+	 */
 	@Element(required= false)
 	private String description;
-
+	/**
+	 * port to which the node is connected
+	 */
 	@Element
 	private short port;
-
+	/**
+	 * Timestamp on which the node was last refreshed
+	 */
 	@Element(required= false)
 	private Date timestamp;
 
@@ -55,16 +65,14 @@ public class Node {
 
 	/**
 	 * Constructor Method.
-	 * 
-	 * @param microcontoller
-	 * @param ipAddress
-	 * @param softwareRevision
-	 * @param otapVersion
-	 * @param description
-	 * @param capList
+	 * @param identity id number of the node
+	 * @param microcontoller type of microcontroller of the node
+	 * @param IpAddress determines the ipAddress of the server the node is connected to
+	 * @param description the testbed to which the node belongs
+	 * @param capList List of capabilities the sensor node offers
 	 */
-	public Node(String identity, String microcontoller, String IpAddress,
-			String description, List<Capability> capList) {
+	public Node(final String identity, final String microcontoller, final String IpAddress,
+			final String description, final List<Capability> capList) {
 		setId(identity);
 		setMicrocontroller(microcontoller);
 		setIpAddress(IpAddress);
@@ -72,55 +80,94 @@ public class Node {
 		setDescription(description);
 		setCapabilityList(capList);
 	}
-
+	/**
+	 * id of node
+	 * @return string id of the node
+	 */
 	public String getId() {
 		return id;
 	}
-
+	/**
+	 * Set id of the node
+	 * @param id id of the node
+	 */
 	public void setId(final String id) {
 		this.id = id;
 	}
-
+	/**
+	 * retunr microcontroller of the node
+	 * @return string name of microcontroller
+	 */
 	public String getMicrocontroller() {
 		return microcontroller;
 	}
-
-	public void setMicrocontroller(String microcontroller) {
+	/**
+	 * Set the name of the mic-controller
+	 * @param microcontroller name of the mic-controller
+	 */
+	public void setMicrocontroller(final String microcontroller) {
 		this.microcontroller = microcontroller;
 	}
-
-	public void setIpAddress(String ipAddress) {
+	/**
+	 * Set Ip-Address of the Tcp-server
+	 * @param ipAddress of the Tcp-server
+	 */
+	public void setIpAddress(final String ipAddress) {
 		this.ipAddress = ipAddress;
 	}
-
+	/**
+	 * delivers Ip Adress of the Tcp-server
+	 * @return string IpAddress of the Tcp-server
+	 */
 	public String getIpAddress() {
 		return ipAddress;
 	}
-
+	/**
+	 * delivers name of the testbed
+	 * @return String description
+	 */
 	public String getDescription() {
 		return description;
 	}
-
-	public void setDescription(String description) {
+	/**
+	 * sets the name of the testbed
+	 * @param  description name of testbed
+	 */
+	public void setDescription(final String description) {
 		this.description = description;
 	}
-
-	public void setPort(short port) {
+	/**
+	 * Port of the node
+	 * @param port to which the sensor node is connected
+	 */
+	public void setPort(final short port) {
 		this.port = port;
 	}
-
+	/**
+	 * delivers port of the node
+	 * @return  short port to which the sensor node is connected
+	 */
 	public short getPort() {
 		return this.port;
 	}
-
-	public void setTimestamp(Date timestamp) {
+	/**
+	 * set timestamp
+	 * @param timestamp time of last refresh
+	 */
+	public void setTimestamp(final Date timestamp) {
 		this.timestamp = timestamp;
 	}
-
+	/**
+	 * get the timestamp of last refresh
+	 * @return Date the date
+	 */
 	public Date getTimestamp() {
 		return this.timestamp;
 	}
-
+	/**
+	 * list of capabilites
+	 * @return List<Capability> list of capabilties
+	 */
 	public List<Capability> getCapabilityList() {
 //		return capabilityList;
 		if (null == capabilityList) {
@@ -128,8 +175,11 @@ public class Node {
 	    }
 	    return Collections.unmodifiableList(capabilityList);
 	}
-
-	public void setCapabilityList(List<Capability> capabilityList) {
+	/**
+	 * Cap-List
+	 * @param capabilityList list of the capabilities
+	 */
+	public void setCapabilityList(final List<Capability> capabilityList) {
 		this.capabilityList = capabilityList;
 	}
 

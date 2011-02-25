@@ -54,9 +54,10 @@ public class StoreToDatabase {
 	public boolean nodeinDB(Node node) {
 		boolean inDB = false;
 		DatabaseToStore db = new DatabaseToStore();
-		String dBNode = db.getNode(node).getId();
-		if(!(dBNode == null)){
-			if (dBNode.equals((node.getId()))) {
+		String dBNodeId = db.getNode(node).getId().getId();
+		String dBNodeIP = db.getNode(node).getId().getIpAdress();
+		if(!(dBNodeId == null) && (dBNodeIP == null)){
+			if (dBNodeId.equals((node.getId().getId())) && dBNodeIP.equals((node.getId().getIpAdress()))) {
 				inDB = true;
 			}
 		}

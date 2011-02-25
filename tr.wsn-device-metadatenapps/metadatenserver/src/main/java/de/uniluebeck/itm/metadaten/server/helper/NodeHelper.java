@@ -2,11 +2,11 @@ package de.uniluebeck.itm.metadaten.server.helper;
 
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import de.uniluebeck.itm.metadaten.entities.Capability;
 import de.uniluebeck.itm.metadaten.entities.Node;
+import de.uniluebeck.itm.metadaten.entities.NodeId;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.NODE;
 
@@ -20,14 +20,11 @@ public class NodeHelper {
 	 */
 	public NODE changetoNODE(Node node) {
 		NODE.Builder nodebuilder = NODE.newBuilder();
-		if (!(node.getId().isEmpty())) {
-			nodebuilder.setKnotenid(node.getId());
+		if (!(node.getId().getId().isEmpty())) {
+			nodebuilder.setKnotenid(node.getId().getId());
 		}
-		if (!node.getId().isEmpty()) {
-			nodebuilder.setKnotenid(node.getId());
-		}
-		if (!(node.getIpAddress() == null)) {
-			nodebuilder.setIp(node.getIpAddress());
+		if (!(node.getId().getIpAdress() == null)) {
+			nodebuilder.setIp(node.getId().getIpAdress());
 		}
 		if (!(node.getDescription()==null)) {
 			nodebuilder.setDescription(node.getDescription());
@@ -44,7 +41,7 @@ public class NodeHelper {
 				capbuilder.setName(cap.getName());
 				capbuilder.setUnit(cap.getUnit());
 				capbuilder.setDatatype(cap.getDatatype());
-				capbuilder.setParentnodeId(node.getId());
+				capbuilder.setParentnodeId(node.getId().getId());
 				nodebuilder.addCapabilityList(capbuilder.build());
 			}
 		
@@ -62,10 +59,11 @@ public class NodeHelper {
 	public Node changeToNode(NODE nodein) {
 
 		Node nodeout = new Node();
+		NodeId id = new NodeId();
 		List<Capability> capResultList = new ArrayList<Capability>();
-		nodeout.setId(nodein.getKnotenid());
-		nodeout.setIpAddress(nodein.getIp());
-//		
+		id.setId(nodein.getKnotenid());
+		id.setIpAdress(nodein.getIp());
+		nodeout.setId(id);
 		nodeout.setMicrocontroller(nodein.getMicrocontroller());
 		nodeout.setDescription(nodein.getDescription());
 		for (int i = 0; i < nodein.getCapabilityListCount(); i++) {
@@ -84,26 +82,28 @@ public class NodeHelper {
 	}
 	public Node removeEmptyStrings(Node nodein) {
 		Node nodeout = new Node();
+		NodeId id = new NodeId();
 		List <Capability> resultlist = new ArrayList<Capability>();
-		if (!(nodein.getId().matches(""))){
-			nodeout.setId(nodein.getId());
+		if (!(nodein.getId().getId().matches(""))){
+			id.setId(nodein.getId().getId());
+		}
+		if (!(nodein.getId().getIpAdress().matches(""))){
+			id.setIpAdress(nodein.getId().getIpAdress());
 		}
 		if (!(nodein.getDescription().matches(""))) {
 			nodeout.setDescription(nodein.getDescription());
 		}
-		if ((!(nodein.getIpAddress().matches("")))) {
-			nodeout.setIpAddress(nodein.getIpAddress());
-		}
 		if (!(nodein.getMicrocontroller().matches(""))) {
 			nodeout.setMicrocontroller(nodein.getMicrocontroller());
 		}
-		if ((!(nodein.getPort() == 0))) {
+		if ((!(nodein.getPort() == null))) {
 			nodeout.setPort(nodein.getPort());
 		}
 		for (Capability cap : nodein.getCapabilityList()) {
 			resultlist.add(removeEmptyStrings(cap));
 		}
 		nodeout.setCapabilityList(resultlist);
+		nodeout.setId(id);
 		return nodeout;
 	}
 	/**

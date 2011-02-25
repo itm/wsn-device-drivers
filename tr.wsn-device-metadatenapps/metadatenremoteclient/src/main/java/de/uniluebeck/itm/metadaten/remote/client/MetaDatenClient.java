@@ -32,31 +32,55 @@ import de.uniluebeck.itm.metadaten.remote.metadataclienthelper.NodeHelper;
  * the Metadata-Directory
  */
 public class MetaDatenClient implements MetaDataClient {
-
+	/** Logger**/
 	private static Log log = LogFactory.getLog(MetaDatenClient.class);
-	private static List<Node> nodelist = new ArrayList<Node>();
-
-	PeerInfo server = null;
-	PeerInfo client = null;
-	ThreadPoolCallExecutor executor = null;
-	DuplexTcpClientBootstrap bootstrap = null;
-	RpcClientChannel channel = null;
-	Operations.Interface operationService = null;
-	private String password = "testPassword";
+	/** list of nodes holds the searchresult**/
+	private List<Node> nodelist = new ArrayList<Node>();
+	/** Peerinfo of the server**/
+	private PeerInfo server = null;
+	/** Peerinfo of the client**/
+	private PeerInfo client = null;
+	/**Threadpoolexecutor for communication Requests**/
+	private ThreadPoolCallExecutor executor = null;
+	/** **/
+	private DuplexTcpClientBootstrap bootstrap = null;
+	/** Channel for the communication with the server**/
+	private RpcClientChannel channel = null;
+	/** interface for the operations metadaten.proto**/
+	private Operations.Interface operationService = null;
+	/** user for authentication to the server**/
 	private String user = "frager";
+	/** password for the user**/
+	private String password = "testPassword";
 	
+	/**
+	 * Constructor
+	 * @param userName Name of the user for authentication
+	 * @param passWord password of the user
+	 * @param serverIP IP of the server to which you connect
+	 * @param serverPort port of the server to which you connect
+	 * @throws Exception Exception while establishing the instance
+	 */
 	public MetaDatenClient(final String userName, final String passWord, final String serverIP,
 			final int serverPort) throws Exception {
-
+		final int  port = 1235;
 		// setzen der Server-Infos
 		server = new PeerInfo(serverIP, serverPort);
 		// setzen der Client-Infos fuer Reverse RPC
-		client = new PeerInfo(userName + "client", 1235);
+		client = new PeerInfo(userName + "client", port);
 		user = userName;
 		password = passWord;
 
 	}
-
+	/**
+	 * Constructor
+	 * @param userName Name of the user for authentication
+	 * @param passWord password of the user
+	 * @param serverIP IP of the server to which you connect
+	 * @param serverPort port of the server to which you connect
+	 * @param clientPort clientport which will be used for communication with the server
+	 * @throws Exception Exception while establishing the instance
+	 */
 	public MetaDatenClient(final String userName, final String passWord, final String serverIP,
 			final int serverPort, final int clientPort) throws Exception {
 
@@ -72,15 +96,18 @@ public class MetaDatenClient implements MetaDataClient {
 	/**
 	 * Sets up connection to server
 	 * 
-	 * @param userName
-	 * @param passWord
-	 * @param callback
+	 * @param userName user for authentication
+	 * @param passWord password for the user
 	 */
 	private void connect(final String userName, final String passWord) {
-
+		final int corePoolsize = 3;
+		final int maxPoolsize = 10;
+		final int timeout = 10000;
+		final int responsetimeout = 10000;
+		final int bufferSize = 1048576;
 		// setzen des Thread-Pools
 		System.out.println("Setzen des Threadpools CLient");
-		executor = new ThreadPoolCallExecutor(3, 10);
+		executor = new ThreadPoolCallExecutor(corePoolsize, maxPoolsize);
 		// setzen des bootstraps
 		bootstrap = new DuplexTcpClientBootstrap(client,
 				new NioClientSocketChannelFactory(
@@ -89,9 +116,9 @@ public class MetaDatenClient implements MetaDataClient {
 
 		// setzen der Verbindungs-Optionen, siehe Netty
 		System.out.println("Verbindungsoptionen CLient werden gesetzt");
-		bootstrap.setOption("connectTimeoutMillis", 10000);
-		bootstrap.setOption("connectResponseTimeoutMillis", 10000);
-		bootstrap.setOption("receiveBufferSize", 1048576);
+		bootstrap.setOption("connectTimeoutMillis", timeout);
+		bootstrap.setOption("connectResponseTimeoutMillis", responsetimeout);
+		bootstrap.setOption("receiveBufferSize", bufferSize);
 		bootstrap.setOption("tcpNoDelay", false);
 		// herstellen der Verbindung zum Server
 		try {
@@ -109,7 +136,7 @@ public class MetaDatenClient implements MetaDataClient {
 		operationService = Operations.newStub(channel);
 		log.info("create Identification");
 		// aufbauen eines Identification-Packets
-		Identification id = Identification.newBuilder().setUsername(userName)
+		final Identification id = Identification.newBuilder().setUsername(userName)
 				.setPassword(passWord).build();
 		// erzeugen eines synchronen RPC-Objekts fuer den connect
 		log.info("Connect to server");
@@ -127,6 +154,8 @@ public class MetaDatenClient implements MetaDataClient {
 
 	/**
 	 * Disconnect the Channel to the server
+	 * @param userName username to athenticate to the server
+	 * @param passWord password for the user
 	 */
 	public void disconnect(final String userName, final String passWord) {
 		final RpcController controller = channel.newRpcController();
@@ -134,7 +163,7 @@ public class MetaDatenClient implements MetaDataClient {
 		final BlockingInterface syncOperationService = Operations
 				.newBlockingStub(channel);
 		// // aufbauen eines Identification-Packets
-		Identification id = Identification.newBuilder().setUsername(userName)
+		final Identification id = Identification.newBuilder().setUsername(userName)
 				.setPassword(passWord).build();
 
 		try {
@@ -151,27 +180,33 @@ public class MetaDatenClient implements MetaDataClient {
 		log.info("Disconnect () nach channel.close");
 	}
 
-	
+	/**
+	 * Synchrone Suche
+	 * @param queryexmpl Examplenode for the search in  the MetaDataDictionary
+	 * @param query Querystring for the search
+	 * @throws Exception error while connection to server
+	 * @return List<Node> result of the search
+	 */
 	public List<Node> search(final Node queryexmpl, final String query) throws Exception {
 
 		this.connect(user, password);
 		// erzeugen eines Controllers fuer diese Operation
 		final RpcController controller = channel.newRpcController();
-		NodeHelper nhelper = new NodeHelper();
+		final NodeHelper nhelper = new NodeHelper();
 		// Node fuer die Uebertragung erzeugen
 
 		// Result erzeugen
-		SearchRequest request = SearchRequest.newBuilder()
+		final SearchRequest request = SearchRequest.newBuilder()
 				.setQueryMs(nhelper.changetoNODE(queryexmpl))
 				.setQueryString("123").build();
 		System.out.println("Was geht los sind die null"
 				+ request.getQueryMs().getMicrocontroller());
 		// erzeugen eines synchronen RPC-Objekts fuer die Operationen
-		BlockingInterface blockOperationService = Operations
+		final BlockingInterface blockOperationService = Operations
 				.newBlockingStub(channel);
 		try {
 			// sync RPC-Aufruf
-			SearchResponse resultresp = blockOperationService.search(
+			final SearchResponse resultresp = blockOperationService.search(
 					controller, request);
 			System.out.println("Groesse der Response"
 					+ resultresp.getResponseList().size());
@@ -181,7 +216,7 @@ public class MetaDatenClient implements MetaDataClient {
 			for (int i = 0; i < result.size(); i++) {
 				nodelist.add(nhelper.changeToNode(result.get(i)));
 			}
-		} catch (ServiceException e) {
+		} catch (final ServiceException e) {
 			e.printStackTrace();
 		}
 
@@ -191,25 +226,30 @@ public class MetaDatenClient implements MetaDataClient {
 
 	/**
 	 * Asynchrone Suche
+	 * @param queryexmpl Examplenode for the search in  the MetaDataDictionary
+	 * @param query Querystring for the search
+	 * @param callback for calling back after ending operation
+	 * @throws Exception error while connection to server
+	 * 
 	 */
-	public void searchasync(Node queryexmpl, String query,
+	public void searchasync(final Node queryexmpl, final String query,
 			final AsyncCallback<List<Node>> callback) throws Exception {
 
 		this.connect(user, password);
 		// erzeugen eines Controllers fuer diese Operation
 		final RpcController controller = channel.newRpcController();
-		NodeHelper nhelper = new NodeHelper();
+		final NodeHelper nhelper = new NodeHelper();
 
-		SearchRequest request = SearchRequest.newBuilder()
+		final SearchRequest request = SearchRequest.newBuilder()
 				.setQueryMs(nhelper.changetoNODE(queryexmpl))
 				.setQueryString(query).build();
 
 		// erzeugen eines synchronen RPC-Objekts fuer die Operationen
-		BlockingInterface blockOperationService = Operations
+		final BlockingInterface blockOperationService = Operations
 				.newBlockingStub(channel);
 		try {
 			// synchroner RPC-Aufruf
-			SearchResponse resultresp = blockOperationService.search(
+			final SearchResponse resultresp = blockOperationService.search(
 					controller, request);
 			System.out.println("Groesse der Sresponse"
 					+ resultresp.getResponseList().size());
@@ -220,7 +260,7 @@ public class MetaDatenClient implements MetaDataClient {
 				System.out.println("Knoten hinzufuegen");
 				nodelist.add(nhelper.changeToNode(result.get(i)));
 			}
-		} catch (ServiceException e) {
+		} catch (final ServiceException e) {
 			callback.onFailure(e);
 		}
 

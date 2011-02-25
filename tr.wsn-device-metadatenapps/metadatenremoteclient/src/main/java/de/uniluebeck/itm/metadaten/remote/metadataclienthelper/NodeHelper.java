@@ -18,15 +18,12 @@ public class NodeHelper {
 	/**
 	 * Wandelt WiseMlNode in NODE-Message zur Uebertragung per RPC um
 	 * 
-	 * @param node
-	 * @return NODE
+	 * @param node Node the should be transformed
+	 * @return NODE Node for transport with protocolBuffers
 	 */
 	public NODE changetoNODE(final Node node) {
-		NODE.Builder nodebuilder = NODE.newBuilder();
-		if (!(node.getId().isEmpty())) {
-			nodebuilder.setKnotenid(node.getId());
-		}
-		if (!node.getId().isEmpty()) {
+		final NODE.Builder nodebuilder = NODE.newBuilder();
+		if (!(node.getId()== null)) {
 			nodebuilder.setKnotenid(node.getId());
 		}
 		if (!(node.getIpAddress() == null)) {
@@ -41,8 +38,8 @@ public class NodeHelper {
 		}
 		;
 		if (!node.getCapabilityList().isEmpty()) {
-			for (Capability cap : node.getCapabilityList()) {
-				Capabilities.Builder capbuilder = Capabilities.newBuilder();
+			for (final Capability cap : node.getCapabilityList()) {
+				final Capabilities.Builder capbuilder = Capabilities.newBuilder();
 				capbuilder.setDefaults(cap.getCapDefault());
 				capbuilder.setName(cap.getName());
 				capbuilder.setUnit(cap.getUnit());
@@ -59,20 +56,20 @@ public class NodeHelper {
 	/**
 	 * Transforms NODE-Message for RPC-transmission to Local node
 	 * 
-	 * @param nodein
+	 * @param nodein rpc- Node for transport
 	 * @return Returns a Local node
 	 */
-	public Node changeToNode(NODE nodein) {
+	public Node changeToNode(final NODE nodein) {
 
-		Node nodeout = new Node();
-		List<Capability> capResultList = new ArrayList<Capability>();
+		final Node nodeout = new Node();
+		final List<Capability> capResultList = new ArrayList<Capability>();
 		nodeout.setId(nodein.getKnotenid());
 		nodeout.setIpAddress(nodein.getIp());
 		nodeout.setMicrocontroller(nodein.getMicrocontroller());
 		nodeout.setDescription(nodein.getDescription());
 		for (int i = 0; i < nodein.getCapabilityListCount(); i++) {
-			Capabilities capItem = nodein.getCapabilityList(i);
-			Capability cap = new Capability();
+			final Capabilities capItem = nodein.getCapabilityList(i);
+			final Capability cap = new Capability();
 			cap.setCapDefault(capItem.getDefaults());
 			cap.setDatatype(capItem.getDatatype());
 			cap.setName(capItem.getName());
