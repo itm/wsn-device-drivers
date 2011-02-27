@@ -25,7 +25,8 @@ import de.uniluebeck.itm.tcp.client.RemoteDevice;
 import de.uniluebeck.itm.tr.util.StringUtils;
 
 /**
- * The Class Messenger.
+ * The Class Messenger. 
+ * Sends a given Message to the sensor-device.
  */
 public class Messenger {
 
@@ -111,9 +112,11 @@ public class Messenger {
 
 	/**
 	 * Connect.
+	 * Method to connect to the tcp-server or to a local Sensornode.
 	 */
 	public void connect() {
 		if (server != null) {
+			//Connect to the TCP-Server.
 			final RemoteConnection connection = new RemoteConnection();
 
 			connection.connect(id + ":" + user + ":" + password + "@" + server
@@ -128,6 +131,7 @@ public class Messenger {
 
 			if (device_parameter != null) {
 				if (device_parameter.equals("jennec")) {
+					//Connect to a local jennec device.
 					SerialPortConnection jennic_connection = new iSenseSerialPortConnection();
 					jennic_connection.addListener(new ConnectionListener() {
 						@Override
@@ -142,6 +146,7 @@ public class Messenger {
 					device = new JennicDevice(jennic_connection);
 					jennic_connection.connect(port);
 				} else if (device_parameter.equals("pacemate")) {
+					//Connect to a local pacemate device.
 					SerialPortConnection pacemate_connection = new iSenseSerialPortConnection();
 					pacemate_connection.addListener(new ConnectionListener() {
 						@Override
@@ -156,6 +161,7 @@ public class Messenger {
 					device = new PacemateDevice(pacemate_connection);
 					pacemate_connection.connect(port);
 				} else if (device_parameter.equals("telosb")) {
+					//Connect to a local telosb device.
 					SerialPortConnection telosb_connection = new TelosbSerialPortConnection();
 					telosb_connection.addListener(new ConnectionListener() {
 						@Override
@@ -171,6 +177,7 @@ public class Messenger {
 					telosb_connection.connect(port);
 				}
 			}
+			//there is no device-parameter oder server-parameter, so connect to the mock-device
 			deviceAsync = new QueuedDeviceAsync(queue, device);
 
 			System.out.println("Message packet listener added");
@@ -186,6 +193,7 @@ public class Messenger {
 
 	/**
 	 * Send.
+	 * Sends the message to the device and handles the response.
 	 * 
 	 * @param message
 	 *            the message
@@ -224,6 +232,11 @@ public class Messenger {
 		});
 	}
 	
+	/**
+	 * Converts a hex-String to a byte array to send this as message to the device.
+	 * @param s
+	 * @return data, the byte array
+	 */
 	public static byte[] hexStringToByteArray(String s) {
 	    int len = s.length();
 	    byte[] data = new byte[len / 2];
