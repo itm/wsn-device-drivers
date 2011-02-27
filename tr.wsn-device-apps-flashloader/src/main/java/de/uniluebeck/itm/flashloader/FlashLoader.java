@@ -31,7 +31,8 @@ import de.uniluebeck.itm.tcp.client.RemoteConnection;
 import de.uniluebeck.itm.tcp.client.RemoteDevice;
 
 /**
- * Class FlashLoader.
+ * Class FlashLoader. Functions to flash a device, read/write the Mac-Adress
+ * or reset the device.
  */
 public class FlashLoader {
 
@@ -128,9 +129,11 @@ public class FlashLoader {
 
 	/**
 	 * Connect.
+	 * Method to connect to the tcp-server or to a local Sensornode.
 	 */
 	public void connect() {
 		if (server != null) {
+			//Connect to the TCP-Server.
 			final RemoteConnection connection = new RemoteConnection();
 			final String uri = id + ":" + user + ":" + password + "@" + server + ":" + port;
 			System.out.println("Connecting to: " + uri);
@@ -145,6 +148,7 @@ public class FlashLoader {
 
 			if (device_parameter != null) {
 				if (device_parameter.equals("jennec")) {
+					//Connect to a local jennec device.
 					SerialPortConnection jennic_connection = new iSenseSerialPortConnection();
 					jennic_connection.addListener(new ConnectionListener() {
 						@Override
@@ -159,6 +163,7 @@ public class FlashLoader {
 					device = new JennicDevice(jennic_connection);
 					jennic_connection.connect(port);
 				} else if (device_parameter.equals("pacemate")) {
+					//Connect to a local pacemate device.
 					SerialPortConnection pacemate_connection = new iSenseSerialPortConnection();
 					pacemate_connection.addListener(new ConnectionListener() {
 						@Override
@@ -173,6 +178,7 @@ public class FlashLoader {
 					device = new PacemateDevice(pacemate_connection);
 					pacemate_connection.connect(port);
 				} else if (device_parameter.equals("telosb")) {
+					//Connect to a local telosb device.
 					SerialPortConnection telosb_connection = new TelosbSerialPortConnection();
 					telosb_connection.addListener(new ConnectionListener() {
 						@Override
@@ -188,6 +194,7 @@ public class FlashLoader {
 					telosb_connection.connect(port);
 				}
 			}
+			//there is no device-parameter oder server-parameter, so connect to the mock-device
 			deviceAsync = new QueuedDeviceAsync(queue, device);
 
 			System.out.println("Message packet listener added");
@@ -202,7 +209,8 @@ public class FlashLoader {
 	}
 
 	/**
-	 * Flash.
+	 * Flash the given file on the device
+	 * and handle the response.
 	 * 
 	 * @param file
 	 *            the file
@@ -243,7 +251,7 @@ public class FlashLoader {
 	}
 
 	/**
-	 * Readmac.
+	 * Readmac reads the Mac-Adress of the device.
 	 */
 	public void readmac() {
 		System.out.println("Reading mac address...");
@@ -270,7 +278,7 @@ public class FlashLoader {
 	}
 
 	/**
-	 * Writemac.
+	 * Writemac writes the Mac-Adress of the device.
 	 * 
 	 * @param macAdresse
 	 *            the mac adresse
@@ -302,7 +310,7 @@ public class FlashLoader {
 	}
 
 	/**
-	 * Reset.
+	 * Resets the device.
 	 */
 	public void reset() {
 		System.out.println("Reset");

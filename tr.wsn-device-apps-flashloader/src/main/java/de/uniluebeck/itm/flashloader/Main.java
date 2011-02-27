@@ -79,7 +79,7 @@ public class Main {
 				if (cmd.hasOption("version")) {
 					System.out.println(version);
 				}
-				// der FlashLoader
+				// the flashLoader
 				if (args[0].equals("flash")) {
 					read_cmd(cmd, flashLoader);
 					String file = cmd.getOptionValue("file");
@@ -102,6 +102,13 @@ public class Main {
 		}
 	}
 	
+	/**
+	 * Parses the Parameters from the given CommandLine gives them 
+	 * to the flashloader-object.
+	 * @param cmd
+	 * @param flashLoader
+	 * @throws IOException
+	 */
 	public static void read_cmd(CommandLine cmd, FlashLoader flashLoader) throws IOException {
 		String port = cmd.getOptionValue("port");
 		String server = cmd.getOptionValue("server");
