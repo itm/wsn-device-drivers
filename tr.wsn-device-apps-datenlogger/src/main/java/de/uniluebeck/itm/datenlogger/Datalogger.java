@@ -38,11 +38,7 @@ import de.uniluebeck.itm.tcp.client.RemoteConnection;
 import de.uniluebeck.itm.tcp.client.RemoteDevice;
 
 /**
-<<<<<<< .mine
- * Class Datenlogger. Functions to registrate a datalogger on a sensornode and
-=======
- * Class Datalogger. Functions to registrate a Datalogger on a sensornode and
->>>>>>> .r577
+ * Class Datalogger. Functions to registrate a datalogger on a sensornode and
  * print the messages on the console or in a file.
  */
 public class Datalogger {
