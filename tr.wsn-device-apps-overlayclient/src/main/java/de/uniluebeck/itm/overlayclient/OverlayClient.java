@@ -11,6 +11,7 @@ import de.uniluebeck.itm.metadaten.remote.entity.*;
 
 /**
  * The Class OverlayClient.
+ * Connects to the MetaDataServer and searches for nodes in the network.
  */
 public class OverlayClient {
 	
@@ -54,7 +55,6 @@ public class OverlayClient {
 	 *            the iD
 	 */
 	public void searchDeviceWithId(String ID) throws java.lang.Exception {
-		System.out.println("Start Overlaysuche...");
 		MetaDatenClient client;
 		if(client_port != null){
 			client = new MetaDatenClient(username, password, server, Integer.valueOf(server_port), Integer.valueOf(client_port));
