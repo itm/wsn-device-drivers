@@ -43,7 +43,7 @@ public class Main {
 		options.addOption("passwd", true, "password to connect to the server");
 		options.addOption("device", true,
 				"type of sensornode in local case: jennec, telosb oder pacemate");
-		options.addOption("output", true, "Coding of the output data");
+		options.addOption("output", true, "Coding of the output data as hex");
 		options.addOption("id", true, "ID of the device in remote case");
 
 		// for help statement
@@ -51,10 +51,9 @@ public class Main {
 
 		CommandLineParser parser = new GnuParser();
 		CommandLine cmd = null;
-		if(args.length == 0){
+		if (args.length == 0) {
 			formatter.printHelp("help", options);
-		}
-		else{
+		} else {
 			try {
 				cmd = parser.parse(options, args);
 			} catch (ParseException e) {
@@ -81,7 +80,8 @@ public class Main {
 
 					String port = cmd.getOptionValue("port");
 					String server = cmd.getOptionValue("server");
-					String brackets_filter = cmd.getOptionValue("brackets_filter");
+					String brackets_filter = cmd
+							.getOptionValue("brackets_filter");
 					String regex_filter = cmd.getOptionValue("regex_filter");
 					String location = cmd.getOptionValue("location");
 					String user = cmd.getOptionValue("user");
@@ -90,7 +90,8 @@ public class Main {
 					String output = cmd.getOptionValue("output");
 					String id = cmd.getOptionValue("id");
 
-					if (server != null && (user == null && password == null || user == null)) {
+					if (server != null
+							&& (user == null && password == null || user == null)) {
 						System.out.println("Username and Password is missing.");
 						BufferedReader in = new BufferedReader(
 								new InputStreamReader(System.in));
@@ -121,7 +122,8 @@ public class Main {
 					datenlogger.connect();
 					datenlogger.startlog();
 				}
-				while (true) {
+				while (true) { // Read from terminal to add filters, change the
+								// location or stoplog.
 					try {
 						BufferedReader in = new BufferedReader(
 								new InputStreamReader(System.in));

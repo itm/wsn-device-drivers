@@ -68,11 +68,5 @@ public class DatenloggerTest extends TestCase {
 		logger.add_regex_filter("|c");
 		assertEquals("(a&b)|c", logger.getRegex_filter());
 	}
-	
-	public void testWriteToXmlFile(){
-		Datalogger logger = new Datalogger();
-		logger.writeToXmlFile();
-		//TODO ...
-	}
 }
 

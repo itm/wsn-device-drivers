@@ -5,34 +5,12 @@ import static com.google.common.base.Predicates.or;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Logger;
-
-import model.Capability;
-import model.DisableLink;
-import model.DisableNode;
-import model.EnableLink;
-import model.EnableNode;
-import model.Link;
-import model.LinkDefaults;
-import model.Node;
-import model.NodeDefaults;
-import model.Origin;
-import model.Position;
-import model.Rssi;
-import model.Scenario;
-import model.Setup;
-import model.Timeinfo;
-import model.Trace;
-import viewer.CreateXML;
-import viewer.DatabaseToStore;
 
 import com.google.common.base.Predicate;
 
@@ -60,7 +38,11 @@ import de.uniluebeck.itm.tcp.client.RemoteConnection;
 import de.uniluebeck.itm.tcp.client.RemoteDevice;
 
 /**
+<<<<<<< .mine
+ * Class Datenlogger. Functions to registrate a datalogger on a sensornode and
+=======
  * Class Datalogger. Functions to registrate a Datalogger on a sensornode and
+>>>>>>> .r577
  * print the messages on the console or in a file.
  */
 public class Datalogger {
@@ -196,69 +178,74 @@ public class Datalogger {
 
 	/**
 	 * Parse_klammer_filter.
+	 * Uses a stack to parse the brackets-filter 
+	 * for example: 
+	 * ((Datatype, Begin, Value)&(Datatype, Begin, Value))|(Datatype, Begin, Value)
 	 * 
 	 * @param klammer_filter
 	 *            the klammer_filter
 	 * @return the predicate
 	 */
-	public Predicate<CharSequence> parse_klammer_filter(String klammer_filter) {
-		Stack<Predicate<CharSequence>> ausdruecke = new Stack<Predicate<CharSequence>>();
-		Stack<String> operatoren = new Stack<String>();
-		String ausdruck = "";
-		for (int i = 0; i < klammer_filter.length(); i++) {
-			String character = Character.toString(klammer_filter.charAt(i));
+	public Predicate<CharSequence> parse_brackets_filter(String bracket_filter) {
+		Stack<Predicate<CharSequence>> expressions = new Stack<Predicate<CharSequence>>();
+		Stack<String> operators = new Stack<String>();
+		String expression = "";
+		for (int i = 0; i < bracket_filter.length(); i++) {
+			String character = Character.toString(bracket_filter.charAt(i));
 			if (character.equals("|")) {
-				operatoren.push("or");
+				operators.push("or");
 			} else if (character.equals("&")) {
-				operatoren.push("and");
+				operators.push("and");
 			} else if (character.equals("(")) {
 				// do nothing
 			} else if (character.equals(")")) {
-				if (!ausdruck.equals("")) {
+				if (!expression.equals("")) {
 					Predicate<CharSequence> predicate = new Brackets_Predicate(
-							ausdruck);
-					ausdruecke.push(predicate);
-					ausdruck = "";
+							expression);
+					expressions.push(predicate);
+					expression = "";
 				} else {
-					Predicate<CharSequence> erster_ausdruck = ausdruecke.pop();
-					Predicate<CharSequence> zweiter_ausdruck = ausdruecke.pop();
-					String operator = operatoren.pop();
+					Predicate<CharSequence> first_expression = expressions.pop();
+					Predicate<CharSequence> second_expression = expressions.pop();
+					String operator = operators.pop();
 					if (operator.equals("or")) {
-						Predicate<CharSequence> ergebnis = or(erster_ausdruck,
-								zweiter_ausdruck);
-						ausdruecke.push(ergebnis);
+						Predicate<CharSequence> result = or(first_expression,
+								second_expression);
+						expressions.push(result);
 					} else if (operator.equals("and")) {
-						Predicate<CharSequence> ergebnis = and(erster_ausdruck,
-								zweiter_ausdruck);
-						ausdruecke.push(ergebnis);
+						Predicate<CharSequence> result = and(first_expression,
+								second_expression);
+						expressions.push(result);
 					}
 				}
 			} else {
-				ausdruck = ausdruck + character;
+				expression = expression + character;
 			}
 		}
-		while (operatoren.size() != 0) {
-			Predicate<CharSequence> erster_ausdruck = ausdruecke.pop();
-			Predicate<CharSequence> zweiter_ausdruck = ausdruecke.pop();
-			String operator = operatoren.pop();
+		while (operators.size() != 0) {
+			Predicate<CharSequence> first_expression = expressions.pop();
+			Predicate<CharSequence> second_expression = expressions.pop();
+			String operator = operators.pop();
 			if (operator.equals("or")) {
-				Predicate<CharSequence> ergebnis = or(erster_ausdruck,
-						zweiter_ausdruck);
-				ausdruecke.push(ergebnis);
+				Predicate<CharSequence> result = or(first_expression,
+						second_expression);
+				expressions.push(result);
 			} else if (operator.equals("and")) {
-				Predicate<CharSequence> ergebnis = and(erster_ausdruck,
-						zweiter_ausdruck);
-				ausdruecke.push(ergebnis);
+				Predicate<CharSequence> result = and(first_expression,
+						second_expression);
+				expressions.push(result);
 			}
 		}
-		return ausdruecke.pop();
+		return expressions.pop();
 	}
 
 	/**
 	 * Connect.
+	 * Method to connect to the tcp-server or to a local Sensornode.
 	 */
 	public void connect() {
 		if (server != null) {
+			//Connect to the TCP-Server.
 			final RemoteConnection connection = new RemoteConnection();
 
 			connection.connect(id + ":" + user + ":" + password + "@" + server
@@ -274,6 +261,7 @@ public class Datalogger {
 
 			if (device_parameter != null) {
 				if (device_parameter.equals("jennec")) {
+					//Connect to the local jennec-device.
 					SerialPortConnection jennic_connection = new iSenseSerialPortConnection();
 					jennic_connection.addListener(new ConnectionListener() {
 						@Override
@@ -288,6 +276,7 @@ public class Datalogger {
 					device = new JennicDevice(jennic_connection);
 					jennic_connection.connect(port);
 				} else if (device_parameter.equals("pacemate")) {
+					//Connect to the local pacemate-device.
 					SerialPortConnection pacemate_connection = new iSenseSerialPortConnection();
 					pacemate_connection.addListener(new ConnectionListener() {
 						@Override
@@ -302,6 +291,7 @@ public class Datalogger {
 					device = new PacemateDevice(pacemate_connection);
 					pacemate_connection.connect(port);
 				} else if (device_parameter.equals("telosb")) {
+					//Connect to the local telosb-device
 					SerialPortConnection telosb_connection = new TelosbSerialPortConnection();
 					telosb_connection.addListener(new ConnectionListener() {
 						@Override
@@ -317,6 +307,7 @@ public class Datalogger {
 					telosb_connection.connect(port);
 				}
 			}
+			//there is no device-parameter oder server-parameter, so connect to the mock-device
 			connection.connect("MockPort");
 			System.out.println("Connected");
 
@@ -326,11 +317,13 @@ public class Datalogger {
 
 	/**
 	 * Startlog.
+	 * Registers a message packet listener on the connected device
+	 * and handles the incoming data.
 	 */
 	public void startlog() {
 		started = true;
 
-		if (location != null) {
+		if (location != null) {		//data shall be written in a text-file.
 			try {
 				writer = new FileWriter(location);
 			} catch (IOException e) {
@@ -346,15 +339,14 @@ public class Datalogger {
 				String incoming_data = new String(event.getMessage()
 						.getContent());
 				incoming_data = incoming_data.substring(1);
-				// Filter
+				
+				// Filter-matching
 				boolean matches = false;
-
 				// (Datatype, Begin, Value)-Filter
 				if (brackets_filter != null) {
-					matches = parse_klammer_filter(brackets_filter).apply(
+					matches = parse_brackets_filter(brackets_filter).apply(
 							incoming_data);
 				}
-
 				// Reg-Ex-Filter
 				// "[+-]?[0-9]+"
 				if (regex_filter != null) {
@@ -363,37 +355,27 @@ public class Datalogger {
 					matches = m.matches();
 				}
 
-				if (!matches) {
-					if (location != null) {
+				if (!matches) {		//if the filters not match the incoming data => log it.
+					if (location != null) {		//write to text-file
 						try {
 							byte[] bytes = event.getMessage().getContent();
-							if(output != null){							
-								if (output.equals("hex")) {
-									writer.write(StringUtils.toHexString(bytes));
-								} else {
+
+							if (output.equals("hex")) {	//encoding of the data shall be hex.
+								writer.write(StringUtils.toHexString(bytes));
+							} else {
 									writer.write(incoming_data);
 									writer.write("\n");
-								}
-							}
-							else{
-								writer.write(incoming_data);
-								writer.write("\n");
 							}
 						} catch (IOException e) {
 							log.error("Error while writing the data.");
 						}
-					} else {
+					} else {	//output on terminal
 						byte[] bytes = event.getMessage().getContent();
 
-						if(output != null){	
-							if (output.equals("1")) {
-								System.out.println(StringUtils.toHexString(bytes));
-							} else {
+						if (output.equals("hex")) {	//encoding of the data shall be hex.
+							System.out.println(StringUtils.toHexString(bytes));
+						} else {
 								System.out.println(incoming_data);
-							}
-						}
-						else{
-							System.out.println(incoming_data);
 						}
 					}
 				} else {
@@ -406,6 +388,7 @@ public class Datalogger {
 
 	/**
 	 * Stoplog.
+	 * Remove the registered Listener and close the writer.
 	 */
 	public void stoplog() {
 		deviceAsync.removeListener(listener);
@@ -441,70 +424,5 @@ public class Datalogger {
 		regex_filter = regex_filter + filter;
 		System.out.println("Filter added");
 	}
-
-	/**
-	 * Write to xml file.
-	 */
-	public void writeToXmlFile() {
-		// Read the xml file
-		CreateXML create = new CreateXML();
-
-		List<Node> nodeList = new ArrayList<Node>();
-		List<Link> edgeList = new ArrayList<Link>();
-		List<Capability> capList = new ArrayList<Capability>();
-
-		// --- N1 ---
-		// Add Node Capabilities
-
-		Capability cap1 = new Capability("urn:wisebed:node:capability:temp",
-				"integer", "lux", 2);
-		Capability cap2 = new Capability("urn:wisebed:node:capability:time",
-				"Float", "lux", 0);
-		capList.add(cap1);
-		capList.add(cap2);
-
-		/**
-		 * Create all the required elemets for the setup section of a wiseml
-		 * file.
-		 */
-		Position position = new Position(1.23, 1.56, 1.77);
-		// Data data = new Data("urn:wisebed:node:capability:time");
-
-		Node node1 = new Node("urn:wisebed:node:tud:M4FTR", "gw1",
-				"123.456.79", "ein Knoten", capList);
-		nodeList.add(node1);
-
-		Rssi rssi = new Rssi("decimal", "dBam", "-120");
-
-		Link edge = new Link("urn:wisebed:node:tud:330006",
-				"urn:wisebed:node:tud:330009", "true", "false", rssi, capList);
-		edgeList.add(edge);
-
-		Origin origin = new Origin(position, 5, 0);
-		Timeinfo time = new Timeinfo("9/7/2009", "19/12/2010", "seconds");
-		NodeDefaults ndefault = new NodeDefaults("node", node1);
-		LinkDefaults ldefault = new LinkDefaults("link", edge);
-		Setup setup = new Setup(origin, time, "cubic", "wiseml example",
-				ndefault, ldefault, nodeList, edgeList);
-
-		/**
-		 * Create all the required elemets for the scenario section of a wiseml
-		 * file.
-		 */
-
-		EnableNode enable = new EnableNode("urn:wisebed:node:tud:M4FTR");
-		EnableLink enablel = new EnableLink("urn:wisebed:node:tud:33000",
-				"urn:wisebed:node:tud:330009");
-		DisableNode disable = new DisableNode("urn:wisebed:node:tud:M4FTR");
-		DisableLink disablel = new DisableLink("urn:wisebed:node:tud:33000",
-				"urn:wisebed:node:tud:33000");
-		Scenario scenario = new Scenario("scenario_1", "23/09/09", enable,
-				disable, enablel, disablel, node1);
-		Trace trace = new Trace("Trace_1", "2/5/09", node1, edge);
-
-		/**
-		 * Create the final wiseml file.
-		 */
-		create.writeXML("test.xml", setup, scenario, trace);
-	}
+	
 }
