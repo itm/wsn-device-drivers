@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ns0:configData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ns0="de/uniluebeck/itm/metadaten/server/config" xsi:schemaLocation="de/uniluebeck/itm/metadaten/server/config config.xsd">
+	<!-- IP on which the server listens for requests -->
+   <ns0:serverIP>localhost</ns0:serverIP>
+   <!-- Port on which the server listens for requests -->
+   <ns0:serverPort>8080</ns0:serverPort>
+   <!-- Nodeentries in the repository will be deleted if theri Timestamp is older
+	 than the given overagetime in ms -->
+   <ns0:overagetime>900000</ns0:overagetime>
+   <!-- delay for the starting time in ms of the timer who cleans the repository
+	  from old entries -->
+   <ns0:timerdelay>1000</ns0:timerdelay>
+   <!-- Interval for the timer who cleans the repository from old entries -->
+   <ns0:timerinterval>5000</ns0:timerinterval>
+</ns0:configData>
