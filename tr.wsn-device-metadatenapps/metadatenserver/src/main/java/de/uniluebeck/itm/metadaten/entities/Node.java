@@ -20,7 +20,6 @@ import javax.persistence.Table;
 @Entity
 @Table(catalog = "metadaten_db", name = "node")
 public class Node implements Serializable {
-
 	
 	@EmbeddedId
 	NodeId id;
@@ -34,7 +33,7 @@ public class Node implements Serializable {
 	private String description;
 
 	@Basic
-	@Column(name = "port", length = 100)
+	@Column(name = "port", nullable=true)
 	private Short port;
 
 	private Date timestamp;
@@ -58,7 +57,7 @@ public class Node implements Serializable {
 		return id;
 	}
 	
-	public void setId(NodeId id) {
+	public void setId(final NodeId id) {
 		this.id = id;
 	}
 	
@@ -66,7 +65,7 @@ public class Node implements Serializable {
 		return microcontroller;
 	}
 
-	public void setMicrocontroller(String microcontroller) {
+	public void setMicrocontroller(final String microcontroller) {
 		this.microcontroller = microcontroller;
 	}
 
@@ -82,11 +81,11 @@ public class Node implements Serializable {
 		return description;
 	}
 
-	public void setDescription(String description) {
+	public void setDescription(final String description) {
 		this.description = description;
 	}
 
-	public void setPort(Short port) {
+	public void setPort(final Short port) {
 		this.port = port;
 	}
 
@@ -94,7 +93,7 @@ public class Node implements Serializable {
 		return this.port;
 	}
 
-	public void setTimestamp(Date timestamp) {
+	public void setTimestamp(final Date timestamp) {
 		this.timestamp = timestamp;
 	}
 
@@ -110,7 +109,7 @@ public class Node implements Serializable {
 	    return Collections.unmodifiableList(capabilityList);
 	}
 
-	public void setCapabilityList(List<Capability> capabilityList) {
+	public void setCapabilityList(final List<Capability> capabilityList) {
 		this.capabilityList = capabilityList;
 	}
 }

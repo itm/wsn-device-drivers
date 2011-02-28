@@ -1,5 +1,7 @@
 package de.uniluebeck.itm.metadaten.entities;
 
+import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -7,7 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.simpleframework.xml.Element;
 
 /**
  * This class describes a capability entity, required in wiseml file.
@@ -23,17 +24,21 @@ public class Capability {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
-	@Element
-	private String name = "";
+	@Basic
+	@Column(name = "name", nullable=true, length = 100)
+	private String name;
 
-	@Element
-	private String datatype = "";
+	@Basic
+	@Column(name = "datatype", nullable=true, length = 100)
+	private String datatype;
 
-	@Element
-	private String unit = "";
+	@Basic
+	@Column(name = "unit", nullable=true, length = 100)
+	private String unit;
 
-	@Element
-	private int defaults = 0;
+	@Basic
+	@Column(name="defaults", nullable=true)
+	private Integer defaults;
 
 	/**
 	 * Requires function for deserializing objects.
@@ -50,7 +55,7 @@ public class Capability {
 	 * @param unit
 	 * @param defaults
 	 */
-	public Capability(String name, String dtype, String unit, int defaults) {
+	public Capability(final String name,final  String dtype,final  String unit,final  int defaults) {
 		setName(name);
 		setDatatype(dtype);
 		setUnit(unit);
@@ -71,7 +76,7 @@ public class Capability {
 	 * 
 	 * @param name
 	 */
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -89,7 +94,7 @@ public class Capability {
 	 * 
 	 * @param datatype
 	 */
-	public void setDatatype(String datatype) {
+	public void setDatatype(final String datatype) {
 		this.datatype = datatype;
 	}
 
@@ -105,7 +110,7 @@ public class Capability {
 	 * 
 	 * @param nodeId
 	 */
-	public void setNode(Node node) {
+	public void setNode(final Node node) {
 		this.parentnode = node;
 	}
 
@@ -123,7 +128,7 @@ public class Capability {
 	 * 
 	 * @param unit
 	 */
-	public void setUnit(String unit) {
+	public void setUnit(final String unit) {
 		this.unit = unit;
 	}
 
@@ -132,7 +137,7 @@ public class Capability {
 	 * 
 	 * @return int capabilityDefault.
 	 */
-	public int getCapDefault() {
+	public Integer getCapDefault() {
 		return this.defaults;
 	}
 
@@ -141,7 +146,7 @@ public class Capability {
 	 * 
 	 * @param capDefault
 	 */
-	public void setCapDefault(int capDefault) {
+	public void setCapDefault(final Integer capDefault) {
 		this.defaults = capDefault;
 	}
 

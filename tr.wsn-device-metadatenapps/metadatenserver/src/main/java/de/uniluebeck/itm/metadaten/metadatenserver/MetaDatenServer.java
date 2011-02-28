@@ -1,7 +1,6 @@
 package de.uniluebeck.itm.metadaten.metadatenserver;
 
 import java.io.File;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
+
+import javax.xml.bind.JAXBException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,8 +24,6 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.Factory;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
-import org.simpleframework.xml.Serializer;
-import org.simpleframework.xml.load.Persister;
 
 import com.google.protobuf.RpcCallback;
 import com.google.protobuf.RpcController;
@@ -37,7 +36,6 @@ import com.googlecode.protobuf.pro.duplex.execute.ThreadPoolCallExecutor;
 import com.googlecode.protobuf.pro.duplex.listener.RpcConnectionEventListener;
 import com.googlecode.protobuf.pro.duplex.server.DuplexTcpServerBootstrap;
 
-import de.uniluebeck.itm.metadaten.entities.ConfigData;
 import de.uniluebeck.itm.metadaten.entities.Node;
 import de.uniluebeck.itm.metadaten.entities.NodeId;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Identification;
@@ -47,12 +45,24 @@ import de.uniluebeck.itm.metadaten.files.MetaDataService.SearchRequest;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.SearchResponse;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.ServerIP;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.VOID;
+import de.uniluebeck.itm.metadaten.server.config.ConfigData;
+import de.uniluebeck.itm.metadaten.server.exception.NodeInDBException;
+import de.uniluebeck.itm.metadaten.server.helper.ConfigReader;
 import de.uniluebeck.itm.metadaten.server.helper.NodeHelper;
 import de.uniluebeck.itm.persistence.DatabaseToStore;
 import de.uniluebeck.itm.persistence.StoreToDatabase;
 
+/**
+ * Server Class for the MetaDataRepository
+ * It provides all necessary function to manipulate the Repository
+ * @author babel
+ *
+ */
 public class MetaDatenServer {
 
+	/**
+	 * Logger for the server
+	 */
 	private static Log log = LogFactory.getLog(MetaDatenServer.class);
 	// werden nach 30 min alle eintraege des Cache geloescht?
 	// wie Timeout fuer einen Eintrag neu starten?
@@ -61,49 +71,63 @@ public class MetaDatenServer {
 	// private static TimedCache<RpcClientChannel, Subject> authList = new
 	// TimedCache<RpcClientChannel, Subject>();
 //	private static Map<RpcClientChannel, ClientID> idList = new HashMap<RpcClientChannel, ClientID>();
+	/**
+	 * List with authenticated CLients
+	 */
 	private static Map<RpcClientChannel, Subject> authList = new HashMap<RpcClientChannel, Subject>();
-	public static List<Node> knotenliste = new ArrayList<Node>();
 
-	public static void main(String[] args) throws URISyntaxException {
-		ConfigData config = loadConfig("config.xml");
+	/**
+	 * Main methode for the servers
+	 * @param args 1st argument for the path to the config file
+	 * @throws URISyntaxException
+	 */
+	public static void main(final String[] args) throws URISyntaxException {
+		final String file = (args.length < 1) ? "src/main/resources/config.xml" : args[0];
+		ConfigData config = null;
+		try {
+			config = ConfigReader.readConfigFile(new File(file));
+		} catch (final JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		log.info("Startup Server!");
-		CleanRepository cleaner = new CleanRepository(config.getOveragetime());
-		cleaner.timer.schedule(cleaner, config.getTimerdelay(),
-				config.getTimerinterval());
+		final CleanRepository cleaner = new CleanRepository(config.getOveragetime().intValue());
+		cleaner.timer.schedule(cleaner, config.getTimerdelay().longValue(),
+				config.getTimerinterval().longValue());
 		// setzen der server-Informationen
-		PeerInfo serverInfo = new PeerInfo(config.getServerIP(),
-				config.getPort());
+		final PeerInfo serverInfo = new PeerInfo(config.getServerIP(),
+				config.getServerPort().intValue());
 
 		// setzen des ThreadPools
-		RpcServerCallExecutor executor = new ThreadPoolCallExecutor(10, 10);
+		final RpcServerCallExecutor executor = new ThreadPoolCallExecutor(10, 10);
 
 		// setzen des bootstraps
-		DuplexTcpServerBootstrap bootstrap = new DuplexTcpServerBootstrap(
+		final DuplexTcpServerBootstrap bootstrap = new DuplexTcpServerBootstrap(
 				serverInfo, new NioServerSocketChannelFactory(
 						Executors.newCachedThreadPool(),
 						Executors.newCachedThreadPool()), executor);
 
 		// setzen eines ConnectionLoggers
-		RpcConnectionEventNotifier rpcEventNotifier = new RpcConnectionEventNotifier();
-		RpcConnectionEventListener listener = new RpcConnectionEventListener() {
+		final RpcConnectionEventNotifier rpcEventNotifier = new RpcConnectionEventNotifier();
+		final RpcConnectionEventListener listener = new RpcConnectionEventListener() {
 
 			@Override
-			public void connectionReestablished(RpcClientChannel clientChannel) {
+			public void connectionReestablished(final RpcClientChannel clientChannel) {
 				log.info("connectionReestablished " + clientChannel);
 			}
 
 			@Override
-			public void connectionOpened(RpcClientChannel clientChannel) {
+			public void connectionOpened(final RpcClientChannel clientChannel) {
 				log.info("connectionOpened " + clientChannel);
 			}
 
 			@Override
-			public void connectionLost(RpcClientChannel clientChannel) {
+			public void connectionLost(final RpcClientChannel clientChannel) {
 				log.info("connectionLost " + clientChannel);
 			}
 
 			@Override
-			public void connectionChanged(RpcClientChannel clientChannel) {
+			public void connectionChanged(final RpcClientChannel clientChannel) {
 				log.info("connectionChanged " + clientChannel);
 			}
 		};
@@ -132,44 +156,17 @@ public class MetaDatenServer {
 		// }
 		// File source = new File(fileuri);
 
-		Factory<SecurityManager> factory = new IniSecurityManagerFactory(
+		final Factory<SecurityManager> factory = new IniSecurityManagerFactory(
 				ClassLoader.getSystemResource("shiro.ini").toURI().getPath());
-		SecurityManager securityManager = factory.getInstance();
+		final SecurityManager securityManager = factory.getInstance();
 		SecurityUtils.setSecurityManager(securityManager);
 
 	}
 
 	/**
-	 * Load of ConfigData needed for communication
-	 * 
-	 * @param fileurl
-	 * @return
-	 */
-	public static ConfigData loadConfig(String fileurl) {
-		ConfigData config = new ConfigData();
-		Serializer serializer = new Persister();
-		URI fileuri = null;
-		try {
-			fileuri = ClassLoader.getSystemResource(fileurl).toURI();
-		} catch (URISyntaxException e) {
-			log.error(e.getMessage());
-		}
-		File source = new File(fileuri);
-
-		try {
-			config = serializer.read(ConfigData.class, source);
-			// serializer.read(ConfigData, source);
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		return config;
-	}
-
-	/**
 	 * Class implements the operations used of client and server
 	 * 
-	 * @author tora
+	 * @author babel
 	 * 
 	 */
 	static class OperationsImpl implements Operations.Interface {
@@ -178,33 +175,29 @@ public class MetaDatenServer {
 		// hier sollte die Authentifikation stattfinden
 
 		@Override
-		public void connect(RpcController controller, Identification request,
-				RpcCallback<VOID> done) {
+		public void connect(final RpcController controller,final  Identification request,
+				final RpcCallback<VOID> done) {
 
 			// eine Moeglichkeit den benutzten channel zu identifizieren
-			RpcClientChannel channel = ServerRpcController
+			final RpcClientChannel channel = ServerRpcController
 					.getRpcChannel(controller);
 			// erzeugen einer channel bezogenen User Instanz
 //			ClientID id = new ClientID();
 
 			// Abgleich der Userdaten
-			log.info("Checking password");
+			log.info("Checking authentication");
 			/* Shiro: */
 			Subject currentUser;
-			// System.err.println("AuthList" + authList.get(channel));
 			if (authList.get(channel) == null) {
-				log.info("!!!!!!Nicht in der authListe");
+				log.info("user not in authenticationlist - new authentication process started");
 				currentUser = SecurityUtils.getSubject();
 			} else {
-				log.info("####### in der authListe");
+				log.info("User in authenticationlist - getting user information");
 				currentUser = authList.get(channel);
 			}
-			// System.out.println( authList.get(channel)..toString());
-			// System.err.println("!!!User logged in?"
-			// +currentUser.isAuthenticated());
 			if (!currentUser.isAuthenticated()) {
-				log.info("Saving clientdata");
-				UsernamePasswordToken token = new UsernamePasswordToken(
+				log.info("checking user and password");
+				final UsernamePasswordToken token = new UsernamePasswordToken(
 						request.getUsername(), request.getPassword());
 				token.setRememberMe(true);
 				try {
@@ -217,17 +210,17 @@ public class MetaDatenServer {
 					// ausfuehren des Callback
 					done.run(VOID.newBuilder().build());
 
-				} catch (UnknownAccountException uae) {
+				} catch (final UnknownAccountException uae) {
 					controller.setFailed("There is no user with username of "
 							+ token.getPrincipal());
 					done.run(null);
 					return;
-				} catch (IncorrectCredentialsException ice) {
+				} catch (final IncorrectCredentialsException ice) {
 					controller.setFailed("Password for account "
 							+ token.getPrincipal() + " was incorrect!");
 					done.run(null);
 					return;
-				} catch (LockedAccountException lae) {
+				} catch (final LockedAccountException lae) {
 					controller
 							.setFailed("The account for username "
 									+ token.getPrincipal()
@@ -235,7 +228,7 @@ public class MetaDatenServer {
 									+ "Please contact your administrator to unlock it.");
 					done.run(null);
 					return;
-				} catch (AuthenticationException ae) {
+				} catch (final AuthenticationException ae) {
 					controller.setFailed(ae.getMessage());
 					done.run(null);
 					return;
@@ -248,11 +241,11 @@ public class MetaDatenServer {
 		}
 
 		@Override
-		public void add(RpcController controller, NODE request,
-				RpcCallback<VOID> done) {
-			NodeHelper nhelper = new NodeHelper();
+		public void add(final RpcController controller,final NODE request,
+				final RpcCallback<VOID> done) {
+			final NodeHelper nhelper = new NodeHelper();
 			Node node = new Node();
-			Subject user = authList.get(ServerRpcController
+			final Subject user = authList.get(ServerRpcController
 					.getRpcChannel(controller));
 			if (user == null || !user.isAuthenticated()) {
 				controller.setFailed("Authentification failed!");
@@ -268,11 +261,11 @@ public class MetaDatenServer {
 			}
 			node = nhelper.changeToNode(request);
 			node.setTimestamp(new Date());
-			StoreToDatabase storeDB = new StoreToDatabase();
+			final StoreToDatabase storeDB = new StoreToDatabase();
 			try {
 				storeDB.storeNode(node);
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (final NodeInDBException e) {
+				log.error(e.getStackTrace());
 				controller.setFailed("Error saving Node: " + e.getMessage());
 				done.run(VOID.newBuilder().build());
 			}
@@ -283,11 +276,11 @@ public class MetaDatenServer {
 		}
 
 		@Override
-		public void remove(RpcController controller, NODE request,
-				RpcCallback<VOID> done) {
-			NodeHelper nhelper = new NodeHelper();
+		public void remove(final RpcController controller,final NODE request,
+				final RpcCallback<VOID> done) {
+			final NodeHelper nhelper = new NodeHelper();
 			Node node = new Node();
-			Subject user = authList.get(ServerRpcController
+			final Subject user = authList.get(ServerRpcController
 					.getRpcChannel(controller));
 			if (user == null || !user.isAuthenticated()) {
 				controller.setFailed("You are not authenticated!");
@@ -296,10 +289,10 @@ public class MetaDatenServer {
 				return;
 			}
 			node = nhelper.changeToNode(request);
-			StoreToDatabase storeDB = new StoreToDatabase();
+			final StoreToDatabase storeDB = new StoreToDatabase();
 			try {
 				storeDB.deleteNode(node);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				e.printStackTrace();
 				controller.setFailed("Error deleting Node: " + e.getMessage());
 				done.run(VOID.newBuilder().build());
@@ -312,11 +305,11 @@ public class MetaDatenServer {
 		}
 
 		@Override
-		public void refresh(RpcController controller, NODE request,
-				RpcCallback<VOID> done) {
-			NodeHelper nhelper = new NodeHelper();
+		public void refresh(final RpcController controller,final NODE request,
+				final RpcCallback<VOID> done) {
+			final NodeHelper nhelper = new NodeHelper();
 			Node node = new Node();
-			Subject user = authList.get(ServerRpcController
+			final Subject user = authList.get(ServerRpcController
 					.getRpcChannel(controller));
 			if (user == null || !user.isAuthenticated()) {
 				controller.setFailed("You are not authenticated!");
@@ -334,10 +327,10 @@ public class MetaDatenServer {
 			// idList.get(ServerRpcController.getRpcChannel(controller));
 			node = nhelper.changeToNode(request);
 			node.setTimestamp(new Date());
-			StoreToDatabase storeDB = new StoreToDatabase();
+			final StoreToDatabase storeDB = new StoreToDatabase();
 			try {
 				storeDB.updateNode(node);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				e.printStackTrace();
 				controller.setFailed("Error updating Node: " + e.getMessage());
 				done.run(VOID.newBuilder().build());
@@ -348,15 +341,15 @@ public class MetaDatenServer {
 		}
 
 		@Override
-		public void search(RpcController controller, SearchRequest request,
-				RpcCallback<SearchResponse> done) {
+		public void search(final RpcController controller,final SearchRequest request,
+				final RpcCallback<SearchResponse> done) {
 			log.info("Searchquery by Client: "
 					+ ServerRpcController.getRpcChannel(controller)
 							.getPeerInfo().getHostName() + " started");
-			DatabaseToStore getfromDB = new DatabaseToStore();
-			NodeHelper nhelper = new NodeHelper();
+			final DatabaseToStore getfromDB = new DatabaseToStore();
+			final NodeHelper nhelper = new NodeHelper();
 			List<Node> resultlist = new ArrayList<Node>();
-			SearchResponse.Builder responsebuilder = SearchResponse
+			final SearchResponse.Builder responsebuilder = SearchResponse
 					.newBuilder();
 			if (!(request.getQueryMs() == null)) {
 				Node node = nhelper.changeToNode(request.getQueryMs());
@@ -364,7 +357,7 @@ public class MetaDatenServer {
 				log.info("search started");
 				log.info("NodeID vom CLient" + node.getId().getId()+ "Rest des Requests" +  node.getMicrocontroller());
 //				log.info("true? " + (node.getMicrocontroller().matches("")));
-				resultlist = getfromDB.getNodes(node);
+				resultlist = getfromDB.getNodes(node, false);
 				log.info("search ended and delivered " +resultlist.size() + " results ");
 			}
 			if (!(request.getQueryString() == null)) {
@@ -378,7 +371,7 @@ public class MetaDatenServer {
 			}
 
 			log.info("Finales mopped erstellen");
-			SearchResponse response = responsebuilder.build();
+			final SearchResponse response = responsebuilder.build();
 			log.info("Send searchResponse to client: "
 					+ ServerRpcController.getRpcChannel(controller)
 							.getPeerInfo().getHostName());
@@ -386,13 +379,13 @@ public class MetaDatenServer {
 		}
 
 		@Override
-		public void disconnect(RpcController controller,
-				Identification request, RpcCallback<VOID> done) {
+		public void disconnect(final RpcController controller,
+				final Identification request,final RpcCallback<VOID> done) {
 			log.info("!'!'!'!'!'!'!'!'!'!'!''!''!'!'!'!'!'Disconnect-Methode");
 			// eine Moeglichkeit den benutzten channel zu identifizieren
-			RpcClientChannel channel = ServerRpcController
+			final RpcClientChannel channel = ServerRpcController
 					.getRpcChannel(controller);
-			Subject currentUser = authList.get(ServerRpcController
+			final Subject currentUser = authList.get(ServerRpcController
 					.getRpcChannel(controller));
 			authList.remove(channel);
 //			idList.remove(ServerRpcController.getRpcChannel(controller));
@@ -405,11 +398,13 @@ public class MetaDatenServer {
 		}
 
 		@Override
-		public void removeallServerNodes(RpcController controller,
-				ServerIP request, RpcCallback<VOID> done) {
-			Node node = new Node();
-			NodeId id = new NodeId();
-			Subject user = authList.get(ServerRpcController
+		public void removeallServerNodes(final RpcController controller,
+				final ServerIP request,final RpcCallback<VOID> done) {
+			final Node node = new Node();
+			final NodeId id = new NodeId();
+			final DatabaseToStore fromDB = new DatabaseToStore();
+			final StoreToDatabase storeDB = new StoreToDatabase();
+			final Subject user = authList.get(ServerRpcController
 					.getRpcChannel(controller));
 			if (user == null || !user.isAuthenticated()) {
 				controller.setFailed("You are not authenticated!");
@@ -419,13 +414,11 @@ public class MetaDatenServer {
 			}
 			id.setIpAdress(request.getIP());
 			node.setId(id);
-			DatabaseToStore fromDB = new DatabaseToStore();
-			StoreToDatabase storeDB = new StoreToDatabase();
-			List<Node> nodelist = fromDB.getNodes(node);
+			final List<Node> nodelist = fromDB.getNodes(node, true);
 			for (Node nodeex : nodelist) {
 				try {
 					storeDB.deleteNode(nodeex);
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					e.printStackTrace();
 					controller.setFailed("Error deleting Node: "
 							+ e.getMessage());

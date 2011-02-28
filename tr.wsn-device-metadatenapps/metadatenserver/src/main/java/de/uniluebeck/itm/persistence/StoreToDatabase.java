@@ -1,11 +1,12 @@
 package de.uniluebeck.itm.persistence;
 
-import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -14,24 +15,30 @@ import org.hibernate.cfg.AnnotationConfiguration;
 
 import de.uniluebeck.itm.metadaten.entities.Capability;
 import de.uniluebeck.itm.metadaten.entities.Node;
+import de.uniluebeck.itm.metadaten.metadatenserver.MetaDatenServer;
+import de.uniluebeck.itm.metadaten.server.exception.NodeInDBException;
 
 /**
  * This is a class that retrieves information from the "Store" Hashmap and
  * stores it to the database.
+ * @author babel
  */
 public class StoreToDatabase {
-	static File datafile = new File(
-			"C:\\uni hl\\workspace\\fallstudie2010\\sources\\tr.wsn-device-metadatenapps\\metadatenserver\\hibernate.cfg.xml");
-
-	 private static final SessionFactory ourSessionFactory;
-	    private static final URL url = ClassLoader.getSystemResource("hibernate.cfg.xml");
+	/**
+	 * Logger for saving operations
+	 */
+	private static Log log = LogFactory.getLog(StoreToDatabase.class);
+	/** */
+	private static final SessionFactory ourSessionFactory;
+	/**Url to Hibernate Config*/    
+	private static final URL url = ClassLoader.getSystemResource("hibernate.cfg.xml");
 
 	    static {
 	        try {
 	            ourSessionFactory = new AnnotationConfiguration().configure(url).
 	                    buildSessionFactory();
 	        }
-	        catch (Exception ex) {
+	        catch (final Exception ex) {
 	            throw new ExceptionInInitializerError(ex);
 	        }
 	    }
@@ -39,7 +46,7 @@ public class StoreToDatabase {
 	 * This functions creates a Hibernate Session.
 	 * 
 	 * @return ourSessionFactory.openSession()
-	 * @throws HibernateException
+	 * @throws HibernateException - Exception with Hibernate
 	 */
 	public static Session getSession() throws HibernateException {
 		return ourSessionFactory.openSession();
@@ -49,74 +56,74 @@ public class StoreToDatabase {
 	 * Ueberprueft ob ein Knoten bereits in der Datenbank gespeichert ist
 	 * 
 	 * @param parentnode
-	 * @return
+	 * @return boolean true if node already in DB
 	 */
-	public boolean nodeinDB(Node node) {
+	public boolean nodeinDB(final Node node) {
 		boolean inDB = false;
-		DatabaseToStore db = new DatabaseToStore();
-		String dBNodeId = db.getNode(node).getId().getId();
-		String dBNodeIP = db.getNode(node).getId().getIpAdress();
-		if(!(dBNodeId == null) && (dBNodeIP == null)){
-			if (dBNodeId.equals((node.getId().getId())) && dBNodeIP.equals((node.getId().getIpAdress()))) {
+		final DatabaseToStore db = new DatabaseToStore();
+		try{
+			if(db.getNode(node).getId( ).equals(node.getId())){
 				inDB = true;
 			}
+		}catch(final NullPointerException e){
+			System.err.println("Nullpointer in NodeinDB");
 		}
 		return inDB;
 	}
 
 	/**
-	 * This function stores o parentnode Entity to the database.
+	 * This function stores a node Entity to the database.
 	 * 
-	 * @param parentnode
-	 * @throws Exception
+	 * @param Node node that should be written to the database
+	 * @throws Exception - if node is already in DB
 	 */
-	public final void storeNode(final Node node) throws Exception {
+	public final void storeNode(final Node node) throws NodeInDBException {
 		// TODO tokenizer wieder nutzen falls wir WiseML die keys generieren
 		// lassen
 		if (!nodeinDB(node)) {
 			final Session session = getSession();
 			final Transaction transaction = session.beginTransaction();
-			System.out.println("StoretoDataBase.storeNode: Saving Node");
+			log.info("StoretoDataBase.storeNode: Saving Node");
 			session.save(node);
+			log.info("StoretoDataBase.storeNode: Saved Node");
 			transaction.commit();
-			System.out.println("StoretoDataBase.storeNode: Saved Node");
 			session.close();
 		} else {
 			//TODO wenn bereits in DB, KNoten updaten oder Anfrage ignorieren?
-			System.out.println("Node already in DB, data will be updated");
+			log.info("Node with id "+node.getId().toString() + " already in DB, data will be updated");
 			updateNode(node);
-			throw new Exception(
-					"Knoten bereits in DB vorhanden. Duplicate Entry for this Node. Please use Refresh.");
+			throw new NodeInDBException(
+					"Node with id "+node.getId().toString() + " already in DB, data will be updated. Duplicate Entry for this Node. Please use Refresh.");
 		}
 	}
 
 	/**
-	 * This function updates the current entry of a node.
+	 * This function updates a node Entity to the database.
 	 * 
-	 * @param parentnode
-	 * @throws Exception
+	 * @param Node node that should be updatetes in database
+	 * @throws NodeInDBException - if node is already in DB
 	 */
 	public final void updateNode(final Node node) {
-		// TODO tokenizer wieder nutzen falls wir WiseML die keys generieren
-		// lassen
-		if ((nodeinDB(node))){
-			System.out.println("!!! im refreshif, updaten des Knoten");
+		if (nodeinDB(node)){
+			log.info("Update Node with ID" + node.getId().toString());
 			deleteCapability(node);
 			final Session session = getSession();
 			final Transaction transaction = session.beginTransaction();
 			// for (Capability cap : node.getCapabilityList()) {
 			// System.out.println("CAPPPPPPP HINZU!!!");
 			// // session.update("capability", cap);
-			// session.delete("capability", cap);
+//			 session.delete("capability", cap);
 			// }
+//			for (Capability cap : node.getCapabilityList()){
+//				session.update(cap);
+//			}
 			session.update(node);
 			transaction.commit();
 			session.close();
 		}else {
 			try {
-				System.out.println("!!! in der refreshElse, zufuegen des Knotens");
 				storeNode(node);
-			} catch (Exception e) {
+			} catch (final NodeInDBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -126,16 +133,16 @@ public class StoreToDatabase {
 
 	/**
 	 * Deletes theCapabilities of the given Node
+	 * @param node - Node which capabilities should be removed
 	 */
-	public void deleteCapability(Node node) {
-		DatabaseToStore fromDB = new DatabaseToStore();
-		Node capnode = fromDB.getNode(node);
+	public void deleteCapability(final Node node) {
+		final DatabaseToStore fromDB = new DatabaseToStore();
+		final Node capnode = fromDB.getNode(node);
 		System.out.println("SIZE: " + capnode.getCapabilityList().size());
 		final Session session = getSession();
 		final Transaction transaction = session.beginTransaction();
+		log.info("Deleting Capabilities of node " + node.getId().toString());
 		for (Capability cap : capnode.getCapabilityList()) {
-			System.out.println("CAPPPPPPP Deleted!!!");
-			// session.update("capability", cap);
 			session.delete("capability", cap);
 		}
 		transaction.commit();
@@ -145,9 +152,9 @@ public class StoreToDatabase {
 	/**
 	 * Deletes the given Node and it's capabilities
 	 * 
-	 * @param node
+	 * @param node that should be deleted from repository
 	 */
-	public void deleteNode(Node node) {
+	public void deleteNode(final Node node) {
 //		deleteCapability(node);
 		final Session session = getSession();
 		final Transaction transaction = session.beginTransaction();
@@ -161,8 +168,8 @@ public class StoreToDatabase {
 	 * 
 	 * @param timestamp - maximum age of a node
 	 */
-	public void deleteoldNodes(Date timestamp) {
-		DatabaseToStore fromDB = new DatabaseToStore();
+	public void deleteoldNodes(final Date timestamp) {
+		final DatabaseToStore fromDB = new DatabaseToStore();
 		List<Node> deletelist = new ArrayList<Node>();
 		deletelist = fromDB.getoldNodes(timestamp);
 		for (Node nod : deletelist) {

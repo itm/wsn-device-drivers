@@ -18,23 +18,23 @@ public class CleanRepository extends TimerTask {
 	int overageperiod;
 	public CleanRepository(){
 	};
-	public CleanRepository(int overagetime){
+	public CleanRepository(final int overagetime){
 		this.overageperiod=overagetime;
 	};
 
 	@Override
 	public void run() {
-		Node node = new Node();
-		StoreToDatabase storeDB = new StoreToDatabase();
-		DatabaseToStore fromDB = new DatabaseToStore();
-        Date actDate = new Date();
-        Date olddate = new Date();
+		final Node node = new Node();
+		final StoreToDatabase storeDB = new StoreToDatabase();
+		final DatabaseToStore fromDB = new DatabaseToStore();
+		final Date actDate = new Date();
+		final Date olddate = new Date();
         olddate.setTime(olddate.getTime()-overageperiod);
         node.setTimestamp(actDate);
         log.info("Deleting old nodes");
         try {
         	storeDB.deleteoldNodes(olddate);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}

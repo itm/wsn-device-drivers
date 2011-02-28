@@ -10,16 +10,21 @@ import de.uniluebeck.itm.metadaten.entities.NodeId;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.NODE;
 
+/**
+ * This class is used for transformation of transportobjects to their local objects and return
+ * @author babel
+ *
+ */
 public class NodeHelper {
 
 	/**
 	 * Wandelt WiseMlNode in NODE-Message zur Uebertragung per RPC um
 	 * 
-	 * @param node
-	 * @return NODE
+	 * @param node - local node object
+	 * @return NODE - Node object for transport
 	 */
-	public NODE changetoNODE(Node node) {
-		NODE.Builder nodebuilder = NODE.newBuilder();
+	public NODE changetoNODE(final Node node) {
+		final NODE.Builder nodebuilder = NODE.newBuilder();
 		if (!(node.getId().getId().isEmpty())) {
 			nodebuilder.setKnotenid(node.getId().getId());
 		}
@@ -36,7 +41,7 @@ public class NodeHelper {
 		;
 		if (!node.getCapabilityList().isEmpty()) {
 			for (Capability cap : node.getCapabilityList()) {
-				Capabilities.Builder capbuilder = Capabilities.newBuilder();
+				final Capabilities.Builder capbuilder = Capabilities.newBuilder();
 				capbuilder.setDefaults(cap.getCapDefault());
 				capbuilder.setName(cap.getName());
 				capbuilder.setUnit(cap.getUnit());
@@ -51,24 +56,24 @@ public class NodeHelper {
 	}
 
 	/**
-	 * Transforms NODE-Message for RPC to WiseMlNode
+	 * Transforms NODE-Message for RPC to Local Node
 	 * 
-	 * @param nodein
-	 * @return
+	 * @param nodein - node used for transport
+	 * @return Node - local node representative
 	 */
-	public Node changeToNode(NODE nodein) {
+	public Node changeToNode(final NODE nodein) {
 
-		Node nodeout = new Node();
-		NodeId id = new NodeId();
-		List<Capability> capResultList = new ArrayList<Capability>();
+		final Node nodeout = new Node();
+		final NodeId id = new NodeId();
+		final List<Capability> capResultList = new ArrayList<Capability>();
 		id.setId(nodein.getKnotenid());
 		id.setIpAdress(nodein.getIp());
 		nodeout.setId(id);
 		nodeout.setMicrocontroller(nodein.getMicrocontroller());
 		nodeout.setDescription(nodein.getDescription());
 		for (int i = 0; i < nodein.getCapabilityListCount(); i++) {
-			Capabilities capItem = nodein.getCapabilityList(i);
-			Capability cap = new Capability();
+			final Capabilities capItem = nodein.getCapabilityList(i);
+			final Capability cap = new Capability();
 			cap.setCapDefault(capItem.getDefaults());
 			cap.setDatatype(capItem.getDatatype());
 			cap.setName(capItem.getName());
@@ -80,10 +85,15 @@ public class NodeHelper {
 
 		return nodeout;
 	}
-	public Node removeEmptyStrings(Node nodein) {
-		Node nodeout = new Node();
-		NodeId id = new NodeId();
-		List <Capability> resultlist = new ArrayList<Capability>();
+	/**
+	 * Removes empty strings and replaces them by null
+	 * @param nodein - local node object
+	 * @return Node - emptystring replaced by null
+	 */
+	public Node removeEmptyStrings(final Node nodein) {
+		final Node nodeout = new Node();
+		final NodeId id = new NodeId();
+		final List <Capability> resultlist = new ArrayList<Capability>();
 		if (!(nodein.getId().getId().matches(""))){
 			id.setId(nodein.getId().getId());
 		}
@@ -96,7 +106,7 @@ public class NodeHelper {
 		if (!(nodein.getMicrocontroller().matches(""))) {
 			nodeout.setMicrocontroller(nodein.getMicrocontroller());
 		}
-		if ((!(nodein.getPort() == null))) {
+		if (!(nodein.getPort() == null)) {
 			nodeout.setPort(nodein.getPort());
 		}
 		for (Capability cap : nodein.getCapabilityList()) {
@@ -108,11 +118,11 @@ public class NodeHelper {
 	}
 	/**
 	 * Removes empty strings from the given Capability
-	 * @param cap
-	 * @return
+	 * @param cap - local capability
+	 * @return Capability - freed from empty strings
 	 */
-	private Capability removeEmptyStrings (Capability cap){
-		Capability capout = new Capability();
+	private Capability removeEmptyStrings (final Capability cap){
+		final Capability capout = new Capability();
 		if (!(cap.getDatatype().matches(""))) {
 			capout.setDatatype(cap.getDatatype());
 		}
