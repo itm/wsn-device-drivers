@@ -237,7 +237,7 @@ public class Datalogger {
 
 	/**
 	 * Connect.
-	 * Method to connect to the tcp-server or to a local Sensornode.
+	 * Method to connect to the tcp-server or to a local sensornode.
 	 */
 	public void connect() {
 		if (server != null) {
@@ -250,10 +250,13 @@ public class Datalogger {
 
 			deviceAsync = new RemoteDevice(connection);
 		} else {
-
+			//if there is no device-parameter or server-parameter, 
+			//so connect to the mock-device
 			final OperationQueue queue = new PausableExecutorOperationQueue();
 			final MockConnection connection = new MockConnection();
 			Device device = new MockDevice(connection);
+			connection.connect("MockPort");
+			System.out.println("Connected");
 
 			if (device_parameter != null) {
 				if (device_parameter.equals("jennec")) {
@@ -303,10 +306,6 @@ public class Datalogger {
 					telosb_connection.connect(port);
 				}
 			}
-			//there is no device-parameter oder server-parameter, so connect to the mock-device
-			connection.connect("MockPort");
-			System.out.println("Connected");
-
 			deviceAsync = new QueuedDeviceAsync(queue, device);
 		}
 	}
@@ -368,11 +367,16 @@ public class Datalogger {
 					} else {	//output on terminal
 						byte[] bytes = event.getMessage().getContent();
 
-						if (output.equals("hex")) {	//encoding of the data shall be hex.
-							System.out.println(StringUtils.toHexString(bytes));
-						} else {
-								System.out.println(incoming_data);
+						if(output != null){
+							if (output.equals("hex")) {	//encoding of the data shall be hex.
+								System.out.println(StringUtils.toHexString(bytes));
+							} else {
+									System.out.println(incoming_data);
+							}
+						}else {
+							System.out.println(incoming_data);
 						}
+						
 					}
 				} else {
 					System.out.println("Data was filtered.");

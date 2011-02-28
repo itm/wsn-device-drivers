@@ -51,6 +51,7 @@ public class Main {
 				"type of device in local case: jennec, telosb oder pacemate");
 		options.addOption("id", true, "ID of the device in remote case");
 		options.addOption("timeout", true, "Timeout while flashing the device");
+		options.addOption("mac_adress", true, "The mac-address, that should be written on the device.");
 		
 		// for help statement
 		HelpFormatter formatter = new HelpFormatter();
@@ -91,7 +92,8 @@ public class Main {
 
 				} else if (args[0].equals("writemac")) {
 				    read_cmd(cmd, flashLoader);
-					MacAddress macAdress = new MacAddress(1024);
+				    String mac_address = cmd.getOptionValue("mac_adress");
+					MacAddress macAdress = new MacAddress(mac_address.getBytes());
 					flashLoader.writemac(macAdress);
 
 				} else if (args[0].equals("reset")) {

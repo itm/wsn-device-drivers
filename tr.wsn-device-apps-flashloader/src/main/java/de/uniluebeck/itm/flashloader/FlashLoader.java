@@ -3,6 +3,9 @@ package de.uniluebeck.itm.flashloader;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.google.common.io.Files;
 
 import de.uniluebeck.itm.devicedriver.ConnectionEvent;
@@ -36,6 +39,7 @@ import de.uniluebeck.itm.tcp.client.RemoteDevice;
  */
 public class FlashLoader {
 
+	private static Log log = LogFactory.getLog(FlashLoader.class);
 	private String port;
 	private String server;
 	private String user;
@@ -44,6 +48,7 @@ public class FlashLoader {
 	private DeviceAsync deviceAsync;
 	private String id;
 	private int timeout = 300000;
+	private int flash_process = 0;
 
 	private boolean flashed = false; // for the test-class
 	private String current_mac_adress; // for the test-class
@@ -129,7 +134,7 @@ public class FlashLoader {
 
 	/**
 	 * Connect.
-	 * Method to connect to the tcp-server or to a local Sensornode.
+	 * Method to connect to the tcp-server or to a local sensornode.
 	 */
 	public void connect() {
 		if (server != null) {
@@ -142,9 +147,13 @@ public class FlashLoader {
 
 			deviceAsync = new RemoteDevice(connection);
 		} else {
+			//if there is no device-parameter oder server-parameter, 
+			//so connect to the mock-device
 			final OperationQueue queue = new PausableExecutorOperationQueue();
 			final MockConnection connection = new MockConnection();
 			Device device = new MockDevice(connection);
+			connection.connect("MockPort");
+			System.out.println("Connected");
 
 			if (device_parameter != null) {
 				if (device_parameter.equals("jennec")) {
@@ -196,15 +205,6 @@ public class FlashLoader {
 			}
 			//there is no device-parameter oder server-parameter, so connect to the mock-device
 			deviceAsync = new QueuedDeviceAsync(queue, device);
-
-			System.out.println("Message packet listener added");
-			deviceAsync.addListener(new MessagePacketListener() {
-				public void onMessagePacketReceived(
-						MessageEvent<MessagePacket> event) {
-					System.out.println("Message: "
-							+ new String(event.getMessage().getContent()));
-				}
-			}, PacketType.LOG);
 		}
 	}
 
@@ -216,12 +216,17 @@ public class FlashLoader {
 	 *            the file
 	 */
 	public void flash(String file) {
-		System.out.println("Program the Device");
 		byte[] image = null;
-		try {
-			image = Files.toByteArray(new File(file));
-		} catch (IOException e) {
-			e.printStackTrace();
+		if(device_parameter != null || server != null){
+			try {
+				image = Files.toByteArray(new File(file));
+			} catch (IOException e) {
+				log.error("Error while reading file.");
+				System.exit(1);
+			}
+		}
+		else{
+			image = "Mock Device".getBytes();
 		}
 		deviceAsync.program(image, timeout, new AsyncAdapter<Void>() {
 			@Override
@@ -232,7 +237,10 @@ public class FlashLoader {
 			@Override
 			public void onProgressChange(float fraction) {
 				final int percent = (int) (fraction * 100.0);
-				System.out.println("Programming the Device: " + percent + "%");
+				if(percent > flash_process){
+					System.out.println("Programming the Device: " + percent + "%");
+					flash_process = percent;
+				}
 			}
 
 			@Override
@@ -244,10 +252,11 @@ public class FlashLoader {
 
 			@Override
 			public void onFailure(Throwable throwable) {
-				throwable.printStackTrace();
-				System.exit(0);
+				log.error("Error while flashing the device.");
+				System.exit(1);
 			}
 		});
+		System.out.println("Flashing process was added to the queue.");
 	}
 
 	/**
@@ -270,8 +279,8 @@ public class FlashLoader {
 			}
 
 			public void onFailure(Throwable throwable) {
-				throwable.printStackTrace();
-				System.exit(0);
+				log.error("Error while reading the mac address.");
+				System.exit(1);
 			}
 		};
 		deviceAsync.readMac(10000, callback);
@@ -280,12 +289,12 @@ public class FlashLoader {
 	/**
 	 * Writemac writes the Mac-Adress of the device.
 	 * 
-	 * @param macAdresse
-	 *            the mac adresse
+	 * @param macAddress
+	 *            the mac address
 	 */
-	public void writemac(MacAddress macAdresse) {
+	public void writemac(MacAddress macAddress) {
 		System.out.println("Setting Mac Address");
-		deviceAsync.writeMac(new MacAddress(1024), timeout,
+		deviceAsync.writeMac(macAddress, timeout,
 				new AsyncAdapter<Void>() {
 
 					@Override
@@ -303,8 +312,8 @@ public class FlashLoader {
 
 					@Override
 					public void onFailure(Throwable throwable) {
-						throwable.printStackTrace();
-						System.exit(0);
+						log.error("Error while writing the mac address.");
+						System.exit(1);
 					}
 				});
 	}
@@ -331,8 +340,8 @@ public class FlashLoader {
 
 			@Override
 			public void onFailure(Throwable throwable) {
-				throwable.printStackTrace();
-				System.exit(0);
+				log.error("Error while reseting the device.");
+				System.exit(1);
 			}
 		});
 	}

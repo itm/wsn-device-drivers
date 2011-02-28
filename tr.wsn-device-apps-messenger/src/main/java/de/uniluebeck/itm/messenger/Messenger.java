@@ -1,5 +1,8 @@
 package de.uniluebeck.itm.messenger;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import de.uniluebeck.itm.devicedriver.ConnectionEvent;
 import de.uniluebeck.itm.devicedriver.ConnectionListener;
 import de.uniluebeck.itm.devicedriver.Device;
@@ -22,7 +25,6 @@ import de.uniluebeck.itm.devicedriver.telosb.TelosbDevice;
 import de.uniluebeck.itm.devicedriver.telosb.TelosbSerialPortConnection;
 import de.uniluebeck.itm.tcp.client.RemoteConnection;
 import de.uniluebeck.itm.tcp.client.RemoteDevice;
-import de.uniluebeck.itm.tr.util.StringUtils;
 
 /**
  * The Class Messenger. 
@@ -30,6 +32,7 @@ import de.uniluebeck.itm.tr.util.StringUtils;
  */
 public class Messenger {
 
+	private static Log log = LogFactory.getLog(Messenger.class);
 	private String port;
 	private String server;
 	private String user;
@@ -125,9 +128,13 @@ public class Messenger {
 
 			deviceAsync = new RemoteDevice(connection);
 		} else {
+			//if there is no device-parameter oder server-parameter, 
+			//so connect to the mock-device
 			final OperationQueue queue = new PausableExecutorOperationQueue();
 			final MockConnection connection = new MockConnection();
 			Device device = new MockDevice(connection);
+			connection.connect("MockPort");
+			System.out.println("Connected");
 
 			if (device_parameter != null) {
 				if (device_parameter.equals("jennec")) {
@@ -177,17 +184,7 @@ public class Messenger {
 					telosb_connection.connect(port);
 				}
 			}
-			//there is no device-parameter oder server-parameter, so connect to the mock-device
 			deviceAsync = new QueuedDeviceAsync(queue, device);
-
-			System.out.println("Message packet listener added");
-			deviceAsync.addListener(new MessagePacketListener() {
-				public void onMessagePacketReceived(
-						MessageEvent<MessagePacket> event) {
-					System.out.println("Message: "
-							+ new String(event.getMessage().getContent()));
-				}
-			}, PacketType.LOG);
 		}
 	}
 
@@ -226,8 +223,8 @@ public class Messenger {
 
 			@Override
 			public void onFailure(Throwable throwable) {
-				throwable.printStackTrace();
-				System.exit(0);
+				log.error("Error while sending the message.");
+				System.exit(1);
 			}
 		});
 	}
