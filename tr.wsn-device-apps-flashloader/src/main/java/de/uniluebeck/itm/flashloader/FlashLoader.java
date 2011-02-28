@@ -247,7 +247,6 @@ public class FlashLoader {
 			public void onSuccess(Void result) {
 				System.out.println("The Device has been flashed.");
 				flashed = true; // for tests
-				System.exit(0);
 			}
 
 			@Override
@@ -275,7 +274,6 @@ public class FlashLoader {
 			public void onSuccess(MacAddress result) {
 				System.out.println("Mac Address: " + result.toString());
 				current_mac_adress = result.toString();
-				System.exit(0);
 			}
 
 			public void onFailure(Throwable throwable) {
@@ -307,7 +305,6 @@ public class FlashLoader {
 					@Override
 					public void onSuccess(Void result) {
 						System.out.println("Mac Address written");
-						System.exit(0);
 					}
 
 					@Override
@@ -335,7 +332,6 @@ public class FlashLoader {
 			public void onSuccess(Void result) {
 				System.out.println("Device has been reseted");
 				resetet = true; //for tests
-				System.exit(0);
 			}
 
 			@Override

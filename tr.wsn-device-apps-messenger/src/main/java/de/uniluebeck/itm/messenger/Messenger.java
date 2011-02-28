@@ -196,15 +196,6 @@ public class Messenger {
 	 *            the message
 	 */
 	public void send(String message) {
-		System.out.println("Message packet listener added");
-		deviceAsync.addListener(new MessagePacketListener() {
-			public void onMessagePacketReceived(
-					MessageEvent<MessagePacket> event) {
-				System.out.println("Message: "
-						+ new String(event.getMessage().getContent()));
-			}
-		}, PacketType.LOG);
-
 		MessagePacket packet = new MessagePacket(message_type, hexStringToByteArray(message));
 		deviceAsync.send(packet, 100000, new AsyncAdapter<Void>() {
 
@@ -218,7 +209,6 @@ public class Messenger {
 			public void onSuccess(Void result) {
 				System.out.println("Message sent");
 				sent = true; // for tests
-				System.exit(0);
 			}
 
 			@Override

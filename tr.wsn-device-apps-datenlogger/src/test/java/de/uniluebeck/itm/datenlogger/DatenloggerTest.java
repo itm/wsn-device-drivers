@@ -45,6 +45,7 @@ public class DatenloggerTest extends TestCase {
 		logger.connect();
 		logger.startlog();
 		assertEquals(true, logger.isStarted());
+		logger.stoplog();
 	}
 	
 	public void testStoplog(){
