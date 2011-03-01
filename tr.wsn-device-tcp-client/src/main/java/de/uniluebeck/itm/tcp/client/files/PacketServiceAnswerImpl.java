@@ -164,8 +164,10 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 	public void reverseExecuteEvent(final RpcController controller, final OpKey request,
 			final RpcCallback<EmptyAnswer> done) {
 
-		getCallback(request.getOperationKey()).onExecute();
-		done.run(EmptyAnswer.newBuilder().build());
+		if(null != getCallback(request.getOperationKey())){ // Wenn eine onSuccess-Nachricht vor onExecute eintrifft, wird onExecute ignoriert
+			getCallback(request.getOperationKey()).onExecute();
+			done.run(EmptyAnswer.newBuilder().build());
+		}
 	}
 
 	/**
@@ -175,9 +177,11 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 	public void reverseOnCancel(final RpcController controller, final OpKey request,
 			final RpcCallback<EmptyAnswer> done) {
 		
-		getCallback(request.getOperationKey()).onCancel();
-		removeCallback(request.getOperationKey());
-		done.run(EmptyAnswer.newBuilder().build());
+		if(null != getCallback(request.getOperationKey())){ // Wenn eine onSuccess-Nachricht vor onCancel eintrifft, wird onCancel ignoriert
+			getCallback(request.getOperationKey()).onCancel();
+			removeCallback(request.getOperationKey());
+			done.run(EmptyAnswer.newBuilder().build());
+		}
 	}
 	
 	/**
@@ -207,10 +211,11 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 			e.printStackTrace();
 		}
 		
-		getCallback(request.getOperationKey()).onFailure(exception);
-		
-		removeCallback(request.getOperationKey());
-		done.run(EmptyAnswer.newBuilder().build());
+		if(null != request.getOperationKey()){ // Wenn eine onSuccess-Nachricht vor onFailure eintrifft, wird onFailure ignoriert
+			getCallback(request.getOperationKey()).onFailure(exception);
+			removeCallback(request.getOperationKey());
+			done.run(EmptyAnswer.newBuilder().build());
+		}
 	}
 	
 	/**
