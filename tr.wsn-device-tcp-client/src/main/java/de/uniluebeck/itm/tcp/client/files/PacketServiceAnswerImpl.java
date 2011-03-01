@@ -35,7 +35,7 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 	/**
 	 * the logger.
 	 */
-	private static Logger log = LoggerFactory.getLogger(PacketServiceAnswerImpl.class);
+	private final static Logger log = LoggerFactory.getLogger(PacketServiceAnswerImpl.class);
 	
 	/**
 	 * packetListenerList
