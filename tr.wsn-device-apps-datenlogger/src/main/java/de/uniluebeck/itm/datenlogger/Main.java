@@ -109,6 +109,9 @@ public class Main {
 						password = in.readLine();
 						in.close();
 					}
+					final PausableWriter writer = new StringConsoleWriter();
+					
+					datenlogger.setWriter(writer);
 					datenlogger.setUser(user);
 					datenlogger.setPassword(password);
 					datenlogger.setPort(port);
@@ -121,36 +124,32 @@ public class Main {
 					datenlogger.setId(id);
 					datenlogger.connect();
 					datenlogger.startlog();
-				}
-				while (true) { // Read from terminal to add filters, change the
-								// location or stoplog.
-					try {
-						BufferedReader in = new BufferedReader(
-								new InputStreamReader(System.in));
-						String input = in.readLine();
-						if (input.startsWith("-brackets_filter")) {
-							String delims = " ";
-							String[] tokens = input.split(delims);
-							datenlogger.add_klammer_filter(tokens[1]);
-						} else if (input.startsWith("-regex_filter")) {
-							String delims = " ";
-							String[] tokens = input.split(delims);
-							datenlogger.add_regex_filter(tokens[1]);
-						} else if (input.equals("stoplog")) {
-							datenlogger.stoplog();
-							System.exit(0);
-						} else if (input.startsWith("-location")) {
-							String delims = " ";
-							String[] tokens = input.split(delims);
-							datenlogger.setLocation(tokens[1]);
-						} else if (input.startsWith("e")) {
-							datenlogger.stoplog();
-							System.exit(0);
+					
+					while(true) {
+						final char input = (char)System.in.read();
+						writer.pause();
+						if (input == 10) {
+							break;
 						}
-					} catch (Exception ex) {
-						log.error("Error while reading from terminal.");
 					}
-				}
+					String input = new BufferedReader(new InputStreamReader(System.in)).readLine();
+					if (input.startsWith("-brackets_filter")) {
+						String delims = " ";
+						String[] tokens = input.split(delims);
+						datenlogger.add_klammer_filter(tokens[1]);
+					} else if (input.startsWith("-regex_filter")) {
+						String delims = " ";
+						String[] tokens = input.split(delims);
+						datenlogger.add_regex_filter(tokens[1]);
+					} else if (input.equals("stoplog")) {
+						datenlogger.stoplog();
+						System.exit(0);
+					} else if (input.startsWith("-location")) {
+						String delims = " ";
+						String[] tokens = input.split(delims);
+						datenlogger.setLocation(tokens[1]);
+					}
+				}		
 			}
 		}
 	}

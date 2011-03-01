@@ -3,18 +3,13 @@ package de.uniluebeck.itm.datenlogger;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.or;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Stack;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.google.common.base.Predicate;
-
-import de.uniluebeck.itm.tr.util.*;
 
 import de.uniluebeck.itm.devicedriver.ConnectionEvent;
 import de.uniluebeck.itm.devicedriver.ConnectionListener;
@@ -55,9 +50,13 @@ public class Datalogger {
 	private String device_parameter;
 	private DeviceAsync deviceAsync;
 	private MessagePacketListener listener;
-	private FileWriter writer;
 	private String output;
 	private String id;
+	private PausableWriter writer;
+
+	public void setWriter(PausableWriter writer) {
+		this.writer = writer;
+	}
 
 	/**
 	 * Instantiates a new datalogger.
@@ -116,7 +115,7 @@ public class Datalogger {
 		return listener;
 	}
 
-	public FileWriter getWriter() {
+	public PausableWriter getWriter() {
 		return writer;
 	}
 
@@ -173,10 +172,9 @@ public class Datalogger {
 	}
 
 	/**
-	 * Parse_klammer_filter.
-	 * Uses a stack to parse the brackets-filter 
-	 * for example: 
-	 * ((Datatype, Begin, Value)&(Datatype, Begin, Value))|(Datatype, Begin, Value)
+	 * Parse_klammer_filter. Uses a stack to parse the brackets-filter for
+	 * example: ((Datatype, Begin, Value)&(Datatype, Begin, Value))|(Datatype,
+	 * Begin, Value)
 	 * 
 	 * @param klammer_filter
 	 *            the klammer_filter
@@ -201,8 +199,10 @@ public class Datalogger {
 					expressions.push(predicate);
 					expression = "";
 				} else {
-					Predicate<CharSequence> first_expression = expressions.pop();
-					Predicate<CharSequence> second_expression = expressions.pop();
+					Predicate<CharSequence> first_expression = expressions
+							.pop();
+					Predicate<CharSequence> second_expression = expressions
+							.pop();
 					String operator = operators.pop();
 					if (operator.equals("or")) {
 						Predicate<CharSequence> result = or(first_expression,
@@ -236,12 +236,11 @@ public class Datalogger {
 	}
 
 	/**
-	 * Connect.
-	 * Method to connect to the tcp-server or to a local sensornode.
+	 * Connect. Method to connect to the tcp-server or to a local sensornode.
 	 */
 	public void connect() {
 		if (server != null) {
-			//Connect to the TCP-Server.
+			// Connect to the TCP-Server.
 			final RemoteConnection connection = new RemoteConnection();
 
 			connection.connect(id + ":" + user + ":" + password + "@" + server
@@ -250,17 +249,17 @@ public class Datalogger {
 
 			deviceAsync = new RemoteDevice(connection);
 		} else {
-			//if there is no device-parameter or server-parameter, 
-			//so connect to the mock-device
+			// if there is no device-parameter or server-parameter,
+			// so connect to the mock-device
 			final OperationQueue queue = new PausableExecutorOperationQueue();
 			final MockConnection connection = new MockConnection();
-			Device device = new MockDevice(connection);
+			Device<?> device = new MockDevice(connection);
 			connection.connect("MockPort");
 			System.out.println("Connected");
 
 			if (device_parameter != null) {
 				if (device_parameter.equals("jennec")) {
-					//Connect to the local jennec-device.
+					// Connect to the local jennec-device.
 					SerialPortConnection jennic_connection = new iSenseSerialPortConnection();
 					jennic_connection.addListener(new ConnectionListener() {
 						@Override
@@ -275,7 +274,7 @@ public class Datalogger {
 					device = new JennicDevice(jennic_connection);
 					jennic_connection.connect(port);
 				} else if (device_parameter.equals("pacemate")) {
-					//Connect to the local pacemate-device.
+					// Connect to the local pacemate-device.
 					SerialPortConnection pacemate_connection = new iSenseSerialPortConnection();
 					pacemate_connection.addListener(new ConnectionListener() {
 						@Override
@@ -290,7 +289,7 @@ public class Datalogger {
 					device = new PacemateDevice(pacemate_connection);
 					pacemate_connection.connect(port);
 				} else if (device_parameter.equals("telosb")) {
-					//Connect to the local telosb-device
+					// Connect to the local telosb-device
 					SerialPortConnection telosb_connection = new TelosbSerialPortConnection();
 					telosb_connection.addListener(new ConnectionListener() {
 						@Override
@@ -311,84 +310,25 @@ public class Datalogger {
 	}
 
 	/**
-	 * Startlog.
-	 * Registers a message packet listener on the connected device
-	 * and handles the incoming data.
+	 * Startlog. Registers a message packet listener on the connected device and
+	 * handles the incoming data.
 	 */
 	public void startlog() {
 		started = true;
-
-		if (location != null) {		//data shall be written in a text-file.
-			try {
-				writer = new FileWriter(location);
-			} catch (IOException e) {
-				log.error("Error while creating the writer.");
-			}
-		}
 
 		System.out.println("Message packet listener added");
 		listener = new MessagePacketListener() {
 			@Override
 			public void onMessagePacketReceived(
 					de.uniluebeck.itm.devicedriver.event.MessageEvent<MessagePacket> event) {
-				String incoming_data = new String(event.getMessage()
-						.getContent());
-				incoming_data = incoming_data.substring(1);
-				
-				// Filter-matching
-				boolean matches = false;
-				// (Datatype, Begin, Value)-Filter
-				if (brackets_filter != null) {
-					matches = parse_brackets_filter(brackets_filter).apply(
-							incoming_data);
-				}
-				// Reg-Ex-Filter
-				// "[+-]?[0-9]+"
-				if (regex_filter != null) {
-					Pattern p = Pattern.compile(regex_filter);
-					Matcher m = p.matcher(incoming_data);
-					matches = m.matches();
-				}
-
-				if (!matches) {		//if the filters not match the incoming data => log it.
-					if (location != null) {		//write to text-file
-						try {
-							byte[] bytes = event.getMessage().getContent();
-
-							if (output.equals("hex")) {	//encoding of the data shall be hex.
-								writer.write(StringUtils.toHexString(bytes));
-							} else {
-									writer.write(incoming_data);
-									writer.write("\n");
-							}
-						} catch (IOException e) {
-							log.error("Error while writing the data.");
-						}
-					} else {	//output on terminal
-						byte[] bytes = event.getMessage().getContent();
-
-						if(output != null){
-							if (output.equals("hex")) {	//encoding of the data shall be hex.
-								System.out.println(StringUtils.toHexString(bytes));
-							} else {
-									System.out.println(incoming_data);
-							}
-						}else {
-							System.out.println(incoming_data);
-						}
-						
-					}
-				} else {
-					System.out.println("Data was filtered.");
-				}
+				writer.write(event.getMessage().getContent());
 			}
 		};
 		deviceAsync.addListener(listener, PacketType.LOG);
 	}
 
 	/**
-	 * Stoplog.
-	 * Remove the registered Listener and close the writer.
+	 * Stoplog. Remove the registered Listener and close the writer.
 	 */
 	public void stoplog() {
 		deviceAsync.removeListener(listener);
@@ -424,5 +364,5 @@ public class Datalogger {
 		regex_filter = regex_filter + filter;
 		System.out.println("Filter added");
 	}
-	
+
 }
