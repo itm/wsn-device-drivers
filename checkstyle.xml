@@ -65,7 +65,9 @@
         <module name="ParameterAssignment"/>
         <module name="DefaultComesLast"/>
         <module name="UnnecessaryParentheses"/>
-        <module name="JavadocMethod"/>
+        <module name="JavadocMethod">
+        	<property name="allowMissingPropertyJavadoc" value="true"/>
+        </module>
         <module name="JavadocType">
         	<property name="authorFormat" value="\S"/>
         </module>
