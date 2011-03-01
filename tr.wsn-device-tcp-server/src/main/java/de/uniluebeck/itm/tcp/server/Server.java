@@ -312,6 +312,8 @@ public class Server {
 					done.run(null);
 					return;
 				}
+			}else {
+				done.run(EmptyAnswer.newBuilder().build());
 			}
 			/* Shiro END */
 
