@@ -219,7 +219,12 @@ public class FlashLoader {
 		byte[] image = null;
 		if(device_parameter != null || server != null){
 			try {
-				image = Files.toByteArray(new File(file));
+				if(file != null){
+					image = Files.toByteArray(new File(file));
+				}
+				else{
+					image = "Mock Device".getBytes();
+				}
 			} catch (IOException e) {
 				log.error("Error while reading file.");
 				System.exit(1);
