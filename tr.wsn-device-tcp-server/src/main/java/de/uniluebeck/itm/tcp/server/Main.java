@@ -38,10 +38,14 @@ public class Main {
 	 */
 	private static String sensorsPath = "";
 	/**
+	 * 
+	 */
+	private static boolean metaDaten = false;
+	/**
 	 * version number of the startScript
 	 */
 	private static final double VERSION = 0.1;
-
+	
 	/**
 	 * The main method.
 	 * 
@@ -67,7 +71,7 @@ public class Main {
 		options.addOption("d", true, "path to the devices.xml file");
 		options.addOption("c", true, "path to the config.xml file");
 		options.addOption("s", true, "path to the sensors.xml file");
-		options.addOption("m", true, "path to the sensors.xml file");
+		options.addOption("m", true, "if set the Metadatenservice will be enabled");
 
 		// for help statement
 		final HelpFormatter formatter = new HelpFormatter();
@@ -75,7 +79,11 @@ public class Main {
 		final CommandLineParser parser = new GnuParser();
 		CommandLine cmd = null;
 		if (args.length == 0) {
-			formatter.printHelp("help", options);
+			
+			final Server server = new Server(defaultHost, DEFAULTPORT, devicesPath,
+					configPath, sensorsPath, false);
+			server.start();
+			System.out.println("No Parameters found, the Server will start with default-config.");
 		} else {
 			try {
 				cmd = parser.parse(options, args);
@@ -122,7 +130,9 @@ public class Main {
 				if(cmd.hasOption("s")){
 					sensorsPath = cmd.getOptionValue("s");
 				}
-				final boolean metaDaten = cmd.hasOption("m");
+				if(cmd.hasOption("m") && cmd.getOptionValue("m").equalsIgnoreCase("1") ){
+					metaDaten = true;
+				}
 
 				final Server server = new Server(defaultHost, port, devicesPath,
 						configPath, sensorsPath, metaDaten);

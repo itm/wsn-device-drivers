@@ -61,11 +61,6 @@ public class ServerDevice {
 	private String sensorsPath = "src/main/resources/sensors.xml";
 	
 	/**
-	 * The metaDatenService
-	 */
-	private iMetaDatenService mclient = null;
-	
-	/**
 	 * Constructor.
 	 */
 	public ServerDevice(){
@@ -98,9 +93,6 @@ public class ServerDevice {
 	public void createServerDevices() {
 		
 		try {
-			if(metaDaten){
-				mclient = new MetaDatenService (new File(configPath),new File(sensorsPath));
-			}
 			final JaxbDeviceList list = readDevices(devicesPath);
 			
 			for(JaxbDevice jaxDevice : list.getJaxbDevice()){
@@ -109,8 +101,8 @@ public class ServerDevice {
 				final Device<?> device = createDevice(jaxDevice.getDeviceType(), con);
 				
 				if(metaDaten){
-					final IMetaDataCollector mcollector = new MetaDataCollector (device, key);
-					mclient.addMetaDataCollector(mcollector);
+					final MetadatenThread metadatenService = new MetadatenThread(new MetaDatenService (new File(configPath),new File(sensorsPath)), device, key);
+					metadatenService.start();
 				}
 				
 				con.connect(jaxDevice.getPort());
@@ -225,5 +217,78 @@ public class ServerDevice {
 	 */
 	public Map<String, DeviceAsync> getDeviceList() {
 		return deviceList;
+	}
+}
+
+/**
+ * Thread for connecting to the MetadataService
+ * @author Andreas Maier
+ * @author Bjoern Schuett
+ *
+ */
+class MetadatenThread extends Thread {
+	
+	/**
+	 * the logger.
+	 */
+	private static Logger log = LoggerFactory.getLogger(MetadatenThread.class);
+	
+	/**
+	 * time to wait between the connections attemps
+	 */
+	private final static int WAITTIME = 100;//600000;
+	
+	/**
+	 * 
+	 */
+	private boolean running = true;
+	
+	/**
+	 * The metaDatenService
+	 */
+	private iMetaDatenService mclient = null;
+	
+	/**
+	 * The device for the MetadataCollector
+	 */
+	private final Device<?> device;
+	
+	/**
+	 * The device's ID
+	 */
+	private String id = "";
+	
+	/**
+	 * Constructor .
+	 * @param mclient The MetaDatenService
+	 * @param device The device for the MetadataCollector
+	 * @param id The device's ID
+	 */
+	MetadatenThread(final iMetaDatenService mclient, final Device<?> device, final String id){
+		this.mclient = mclient;
+		this.device = device;
+		this.id = id;
+	}
+
+	public boolean isRunning() {
+		return running;
+	}
+	
+	@Override
+	public void run(){
+		while(running){
+			try{
+				final IMetaDataCollector mcollector = new MetaDataCollector (device, id);
+				mclient.addMetaDataCollector(mcollector);
+				running = false;
+			}catch(final Exception ex){
+				log.error("No Metadatenservice were found, the Server will try to connect in 10 Minutes again",ex);
+				try {
+					this.wait(WAITTIME);
+				} catch (final InterruptedException e) {
+					log.error("",e);
+				}
+			}
+		}
 	}
 }
