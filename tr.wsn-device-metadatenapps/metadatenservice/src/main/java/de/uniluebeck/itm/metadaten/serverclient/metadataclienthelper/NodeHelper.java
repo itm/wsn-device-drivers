@@ -30,6 +30,7 @@ public class NodeHelper {
 		}
 		;
 		if (!(node.getMicrocontroller() == null)) {
+			System.err.println("Mic" + node.getMicrocontroller());
 			nodebuilder.setMicrocontroller(node.getMicrocontroller());
 		}
 		;

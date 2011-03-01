@@ -39,6 +39,7 @@ message NODE {
 	optional string description = 3;
 	optional string ip = 4;
 	repeated Capabilities capabilityList = 5;
+	optional int16 port = 6;
 }
 
 service Operations {
