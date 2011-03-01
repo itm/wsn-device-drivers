@@ -242,10 +242,7 @@ public class FlashLoader {
 			@Override
 			public void onProgressChange(float fraction) {
 				final int percent = (int) (fraction * 100.0);
-				if(percent > flash_process){
-					System.out.println("Programming the Device: " + percent + "%");
-					flash_process = percent;
-				}
+				System.out.println("Programming the Device: " + percent + "%");
 			}
 
 			@Override
@@ -315,6 +312,7 @@ public class FlashLoader {
 					@Override
 					public void onFailure(Throwable throwable) {
 						log.error("Error while writing the mac address.");
+						throwable.printStackTrace();
 						System.exit(1);
 					}
 				});
@@ -341,9 +339,11 @@ public class FlashLoader {
 
 			@Override
 			public void onFailure(Throwable throwable) {
-				log.error("Error while reseting the device.");
+				System.out.println("Error while reseting the device");
+				throwable.printStackTrace();
 				System.exit(1);
 			}
 		});
 	}
+	
 }
