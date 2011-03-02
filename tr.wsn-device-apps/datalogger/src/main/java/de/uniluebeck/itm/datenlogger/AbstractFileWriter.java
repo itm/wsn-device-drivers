@@ -53,8 +53,18 @@ public abstract class AbstractFileWriter implements PausableWriter{
 	}
 
 	@Override
+	public String getRegexFilter() {
+		return this.regexFilter;
+	}
+	
+	@Override
 	public void setRegexFilter(String regexFilter) {
 		this.regexFilter = regexFilter;
+	}
+	
+	@Override
+	public String getBracketFilter() {
+		return this.bracketFilter;
 	}
 	
 	@Override

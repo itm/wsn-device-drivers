@@ -20,4 +20,8 @@ public interface PausableWriter extends Closeable{
 	void addBracketFilter(String bracketFilter);
 	
 	void addRegexFilter(String regexFilter);
+
+	String getRegexFilter();
+
+	String getBracketFilter();
 }

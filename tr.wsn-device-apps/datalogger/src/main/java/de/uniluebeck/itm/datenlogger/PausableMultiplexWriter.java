@@ -59,4 +59,14 @@ public class PausableMultiplexWriter implements PausableWriter {
 	@Override
 	public void addRegexFilter(String regexFilter) {
 	}
+
+	@Override
+	public String getBracketFilter() {
+		return null;
+	}
+
+	@Override
+	public String getRegexFilter() {
+		return null;
+	}
 }

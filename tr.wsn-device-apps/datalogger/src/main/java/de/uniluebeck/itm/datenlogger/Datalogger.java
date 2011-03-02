@@ -66,6 +66,14 @@ public class Datalogger {
 	public Datalogger(){
 		
 	}
+	
+	public PausableWriter getWriter() {
+		return writer;
+	}
+
+	public void setWriter(PausableWriter writer) {
+		this.writer = writer;
+	}
 
 	/**
 	 * Connect. Method to connect to the tcp-server or to a local sensornode.
