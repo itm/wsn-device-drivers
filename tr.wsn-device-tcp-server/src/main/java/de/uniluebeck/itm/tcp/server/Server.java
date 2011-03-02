@@ -161,6 +161,29 @@ public class Server {
 	}
 
 	/**
+	 * Close a RpcClientChannel and remove all references to it
+	 * @param clientChannel the RpcClientChannel for which the connection should be closed
+	 */
+	public static void closeConnection(final RpcClientChannel clientChannel){
+		final DeviceAsync device = idList.get(clientChannel).getDevice();
+		if(!packetListenerList.isEmpty() && !packetListenerList.get(clientChannel).isEmpty()){
+			for(String key : packetListenerList.get(clientChannel).keySet()){
+				device.removeListener(packetListenerList.get(clientChannel).get(key));
+			}
+			packetListenerList.remove(clientChannel);
+		}
+		if(!plainTextListenerList.isEmpty() && !plainTextListenerList.get(clientChannel).isEmpty()){
+			for(String key : plainTextListenerList.get(clientChannel).keySet()){
+				device.removeListener(plainTextListenerList.get(clientChannel).get(key));
+			}
+			plainTextListenerList.remove(clientChannel);
+		}
+		authList.remove(clientChannel);
+		idList.remove(clientChannel);
+		clientChannel.close();
+	}
+	
+	/**
 	 * starts the whole Server.
 	 */
 	public void start() {
@@ -198,18 +221,24 @@ public class Server {
 
 			@Override
 			public void connectionLost(final RpcClientChannel clientChannel) {
-				final DeviceAsync device = idList.get(clientChannel).getDevice();
-				for(String key : packetListenerList.get(clientChannel).keySet()){
-					device.removeListener(packetListenerList.get(clientChannel).get(key));
-				}
-				for(String key : plainTextListenerList.get(clientChannel).keySet()){
-					device.removeListener(plainTextListenerList.get(clientChannel).get(key));
-				}
-				authList.remove(clientChannel);
-				idList.remove(clientChannel);
-				clientChannel.close();
-				packetListenerList.remove(clientChannel);
-				plainTextListenerList.remove(clientChannel);
+//				final DeviceAsync device = idList.get(clientChannel).getDevice();
+//				if(!packetListenerList.isEmpty() && !packetListenerList.get(clientChannel).isEmpty()){
+//					for(String key : packetListenerList.get(clientChannel).keySet()){
+//						device.removeListener(packetListenerList.get(clientChannel).get(key));
+//					}
+//					packetListenerList.remove(clientChannel);
+//				}
+//				if(!plainTextListenerList.isEmpty() && !plainTextListenerList.get(clientChannel).isEmpty()){
+//					for(String key : plainTextListenerList.get(clientChannel).keySet()){
+//						device.removeListener(plainTextListenerList.get(clientChannel).get(key));
+//					}
+//					plainTextListenerList.remove(clientChannel);
+//				}
+//				authList.remove(clientChannel);
+//				idList.remove(clientChannel);
+//				clientChannel.close();
+				
+				closeConnection(clientChannel);
 				log.info("connectionLost " + clientChannel);
 			}
 
@@ -313,6 +342,8 @@ public class Server {
 					return;
 				}
 			}else {
+				idList.put(channel, id);
+				authList.put(channel, currentUser);
 				done.run(EmptyAnswer.newBuilder().build());
 			}
 			/* Shiro END */
@@ -329,24 +360,26 @@ public class Server {
 		public void shutdown(final RpcController controller, final EmptyAnswer request,
 				final RpcCallback<EmptyAnswer> done) {
 			
-			DeviceAsync device = idList.get(ServerRpcController
-					.getRpcChannel(controller)).getDevice();
-
-			for(String key : packetListenerList.get(ServerRpcController.getRpcChannel(controller)).keySet()){
-				device.removeListener(packetListenerList.get(ServerRpcController.getRpcChannel(controller)).get(key));
-			}
+//			DeviceAsync device = idList.get(ServerRpcController
+//					.getRpcChannel(controller)).getDevice();
+//
+//			for(String key : packetListenerList.get(ServerRpcController.getRpcChannel(controller)).keySet()){
+//				device.removeListener(packetListenerList.get(ServerRpcController.getRpcChannel(controller)).get(key));
+//			}
+//			
+//			for(String key : plainTextListenerList.get(ServerRpcController.getRpcChannel(controller)).keySet()){
+//				device.removeListener(plainTextListenerList.get(ServerRpcController.getRpcChannel(controller)).get(key));
+//			}
+//			
+//			idList.remove(ServerRpcController.getRpcChannel(controller));
+//			authList.remove(ServerRpcController.getRpcChannel(controller));
+//			packetListenerList.remove(ServerRpcController
+//					.getRpcChannel(controller));
+//			plainTextListenerList.remove(ServerRpcController
+//					.getRpcChannel(controller));
+//			device = null;
 			
-			for(String key : plainTextListenerList.get(ServerRpcController.getRpcChannel(controller)).keySet()){
-				device.removeListener(plainTextListenerList.get(ServerRpcController.getRpcChannel(controller)).get(key));
-			}
-			
-			idList.remove(ServerRpcController.getRpcChannel(controller));
-			authList.remove(ServerRpcController.getRpcChannel(controller));
-			packetListenerList.remove(ServerRpcController
-					.getRpcChannel(controller));
-			plainTextListenerList.remove(ServerRpcController
-					.getRpcChannel(controller));
-			device = null;
+			closeConnection(ServerRpcController.getRpcChannel(controller));
 			done.run(EmptyAnswer.newBuilder().build());
 		}
 
