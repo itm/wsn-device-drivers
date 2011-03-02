@@ -106,65 +106,67 @@ public class Main {
 						System.out.print("Password: ");
 						password = in.readLine();
 					}
-					//Init Writer
+					// Init Writer
 					PausableWriter writer;
-					if(location != null){
-						if(output != null && output.equals("hex")){
+					if (location != null) {
+						if (output != null && output.equals("hex")) {
 							writer = new HexFileWriter();
 							writer.setLocation(location);
-						}else if(output != null && output.equals("byte")){
+						} else if (output != null && output.equals("byte")) {
 							writer = new ByteFileWriter();
 							writer.setLocation(location);
-						}
-						else{
+						} else {
 							writer = new StringFileWriter();
 							writer.setLocation(location);
 						}
-					}else{
-						if(output != null && output.equals("hex")){
+					} else {
+						if (output != null && output.equals("hex")) {
 							writer = new HexConsoleWriter();
-						}
-						else{
+						} else {
 							writer = new StringConsoleWriter();
 						}
 					}
-					if(regex_filter != null){
+					if (regex_filter != null) {
 						writer.setRegexFilter(regex_filter);
 					}
-					if(brackets_filter != null){
+					if (brackets_filter != null) {
 						writer.setBracketFilter(brackets_filter);
 					}
-					
-					Datalogger datenlogger = new Datalogger(writer, user, password, port, server, device, id);
+
+					Datalogger datenlogger = new Datalogger(writer, user,
+							password, port, server, device, id);
 					datenlogger.connect();
 					datenlogger.startlog();
-					
-					while(true) {
-						final char input = (char)System.in.read();
-						writer.pause();
-						if (input == 10) {
-							break;
+
+					while (true) {
+						while (true) {
+							final char input = (char) System.in.read();
+							writer.pause();
+							if (input == 10) {
+								break;
+							}
 						}
+						String input = new BufferedReader(
+								new InputStreamReader(System.in)).readLine();
+						if (input.startsWith("-brackets_filter")) {
+							String delims = " ";
+							String[] tokens = input.split(delims);
+							writer.addBracketFilter(tokens[1]);
+						} else if (input.startsWith("-regex_filter")) {
+							String delims = " ";
+							String[] tokens = input.split(delims);
+							writer.addRegexFilter(tokens[1]);
+						} else if (input.equals("stoplog")) {
+							datenlogger.stoplog();
+							System.exit(0);
+						} else if (input.startsWith("-location")) {
+							String delims = " ";
+							String[] tokens = input.split(delims);
+							writer.setLocation(tokens[1]);
+						}
+						writer.resume();
 					}
-					String input = new BufferedReader(new InputStreamReader(System.in)).readLine();
-					if (input.startsWith("-brackets_filter")) {
-						String delims = " ";
-						String[] tokens = input.split(delims);
-						writer.addBracketFilter(tokens[1]);
-					} else if (input.startsWith("-regex_filter")) {
-						String delims = " ";
-						String[] tokens = input.split(delims);
-						writer.addRegexFilter(tokens[1]);
-					} else if (input.equals("stoplog")) {
-						datenlogger.stoplog();
-						System.exit(0);
-					} else if (input.startsWith("-location")) {
-						String delims = " ";
-						String[] tokens = input.split(delims);
-						writer.setLocation(tokens[1]);
-					}
-					writer.resume();
-				}		
+				}
 			}
 		}
 	}
