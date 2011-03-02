@@ -21,8 +21,10 @@ public abstract class AbstractConsoleWriter implements PausableWriter{
 		final String output = convert(content);
 		Pattern pattern = Pattern.compile(regexFilter);
 		if (!isPaused && pattern.matcher(output).matches()) {
-			if(bracketFilter != null && parse_brackets_filter(bracketFilter).apply(output)){
-				System.out.println(output);
+			if(bracketFilter != null){
+				if(parse_brackets_filter(bracketFilter).apply(output)){
+					System.out.println(output);
+				}
 			}else{
 				System.out.println(output);
 			}
