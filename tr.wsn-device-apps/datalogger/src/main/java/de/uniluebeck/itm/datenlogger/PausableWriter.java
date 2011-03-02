@@ -1,7 +1,6 @@
 package de.uniluebeck.itm.datenlogger;
 
 import java.io.Closeable;
-import java.util.regex.Pattern;
 
 
 public interface PausableWriter extends Closeable{

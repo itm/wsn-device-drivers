@@ -5,6 +5,7 @@ import static com.google.common.base.Predicates.or;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Stack;
 import java.util.regex.Pattern;
 
@@ -14,7 +15,7 @@ public abstract class AbstractFileWriter implements PausableWriter{
 
 	private boolean isPaused = false;
 	
-	private FileWriter writer;
+	private Writer writer;
 	private String regexFilter = ".*";
 	private String bracketFilter;
 	
