@@ -1,6 +1,6 @@
 package de.uniluebeck.itm.datenlogger;
 
-public class StringFileWriter extends AbstractFileWriterImpl{
+public class StringFileWriter extends AbstractFileWriter{
 	
 	@Override
 	public String convert(byte[] content) {

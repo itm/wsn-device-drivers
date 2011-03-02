@@ -3,6 +3,7 @@ package de.uniluebeck.itm.datenlogger;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.regex.Pattern;
 
 import org.apache.commons.cli.*;
 import org.apache.commons.logging.Log;
@@ -60,8 +61,6 @@ public class Main {
 				System.out.println("One of the parameters is not registered.");
 			}
 			if (cmd != null) {
-				Datalogger datenlogger = new Datalogger();
-
 				// standard-options
 				if (cmd.hasOption("help")) {
 					System.out.println("Example:");
@@ -109,19 +108,36 @@ public class Main {
 						password = in.readLine();
 						in.close();
 					}
-					final PausableWriter writer = new StringConsoleWriter();
+					//Init Writer
+					PausableWriter writer;
+					if(location != null){
+						if(output != null && output.equals("hex")){
+							writer = new HexFileWriter();
+							writer.setLocation(location);
+						}else if(output != null && output.equals("byte")){
+							writer = new ByteFileWriter();
+							writer.setLocation(location);
+						}
+						else{
+							writer = new StringFileWriter();
+							writer.setLocation(location);
+						}
+					}else{
+						if(output != null && output.equals("hex")){
+							writer = new HexConsoleWriter();
+						}
+						else{
+							writer = new StringConsoleWriter();
+						}
+					}
+					if(regex_filter != null){
+						writer.setRegexFilter(regex_filter);
+					}
+					if(brackets_filter != null){
+						writer.setBracketFilter(brackets_filter);
+					}
 					
-					datenlogger.setWriter(writer);
-					datenlogger.setUser(user);
-					datenlogger.setPassword(password);
-					datenlogger.setPort(port);
-					datenlogger.setServer(server);
-					datenlogger.setKlammer_filter(brackets_filter);
-					datenlogger.setRegex_filter(regex_filter);
-					datenlogger.setLocation(location);
-					datenlogger.setDevice(device);
-					datenlogger.setOutput(output);
-					datenlogger.setId(id);
+					Datalogger datenlogger = new Datalogger(writer, user, password, port, server, device, id);
 					datenlogger.connect();
 					datenlogger.startlog();
 					
@@ -136,19 +152,22 @@ public class Main {
 					if (input.startsWith("-brackets_filter")) {
 						String delims = " ";
 						String[] tokens = input.split(delims);
-						datenlogger.add_klammer_filter(tokens[1]);
+						writer.addBracketFilter(tokens[1]);
 					} else if (input.startsWith("-regex_filter")) {
 						String delims = " ";
 						String[] tokens = input.split(delims);
-						datenlogger.add_regex_filter(tokens[1]);
+						writer.addRegexFilter(tokens[1]);
 					} else if (input.equals("stoplog")) {
 						datenlogger.stoplog();
 						System.exit(0);
 					} else if (input.startsWith("-location")) {
 						String delims = " ";
 						String[] tokens = input.split(delims);
-						datenlogger.setLocation(tokens[1]);
-					}
+						writer.setLocation(tokens[1]);
+					}else if (input.equals("e")) {
+						datenlogger.stoplog();
+						System.exit(0);
+					} 
 				}		
 			}
 		}

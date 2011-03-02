@@ -41,198 +41,30 @@ public class Datalogger {
 	private static Log log = LogFactory.getLog(Datalogger.class);
 	private String port;
 	private String server;
-	private String brackets_filter;
-	private String regex_filter;
-	private String location;
 	private String user;
 	private String password;
 	private boolean started = false;
 	private String device_parameter;
 	private DeviceAsync deviceAsync;
 	private MessagePacketListener listener;
-	private String output;
 	private String id;
 	private PausableWriter writer;
-
-	public void setWriter(PausableWriter writer) {
-		this.writer = writer;
-	}
 
 	/**
 	 * Instantiates a new datalogger.
 	 */
-	public Datalogger() {
-	}
-
-	/**
-	 * Getter/Setters
-	 */
-	public String getPort() {
-		return port;
-	}
-
-	public boolean isStarted() {
-		return started;
-	}
-
-	public void setStarted(boolean started) {
-		this.started = started;
-	}
-
-	public String getServer() {
-		return server;
-	}
-
-	public String getKlammer_filter() {
-		return brackets_filter;
-	}
-
-	public String getRegex_filter() {
-		return regex_filter;
-	}
-
-	public String getLocation() {
-		return location;
-	}
-
-	public String getUser() {
-		return user;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public String getDevice_parameter() {
-		return device_parameter;
-	}
-
-	public DeviceAsync getDeviceAsync() {
-		return deviceAsync;
-	}
-
-	public MessagePacketListener getListener() {
-		return listener;
-	}
-
-	public PausableWriter getWriter() {
-		return writer;
-	}
-
-	public String getOutput() {
-		return output;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setDevice(String device) {
-		this.device_parameter = device;
-	}
-
-	public void setUser(String user) {
+	public Datalogger(PausableWriter writer, String user, String password, String port, String server, String device, String id) {
+		this.writer = writer;
 		this.user = user;
-	}
-
-	public void setPassword(String password) {
 		this.password = password;
-	}
-
-	public void setPort(String port) {
 		this.port = port;
-	}
-
-	public void setServer(String server) {
 		this.server = server;
-	}
-
-	public void setStartet(boolean started) {
-		this.started = started;
-	}
-
-	public void setKlammer_filter(String klammer_filter) {
-		this.brackets_filter = klammer_filter;
-	}
-
-	public void setRegex_filter(String regex_filter) {
-		this.regex_filter = regex_filter;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
-	}
-
-	public void setOutput(String output) {
-		this.output = output;
-	}
-
-	public void setId(String id) {
+		this.device_parameter = device;
 		this.id = id;
 	}
-
-	/**
-	 * Parse_klammer_filter. Uses a stack to parse the brackets-filter for
-	 * example: ((Datatype, Begin, Value)&(Datatype, Begin, Value))|(Datatype,
-	 * Begin, Value)
-	 * 
-	 * @param klammer_filter
-	 *            the klammer_filter
-	 * @return the predicate
-	 */
-	public Predicate<CharSequence> parse_brackets_filter(String bracket_filter) {
-		Stack<Predicate<CharSequence>> expressions = new Stack<Predicate<CharSequence>>();
-		Stack<String> operators = new Stack<String>();
-		String expression = "";
-		for (int i = 0; i < bracket_filter.length(); i++) {
-			String character = Character.toString(bracket_filter.charAt(i));
-			if (character.equals("|")) {
-				operators.push("or");
-			} else if (character.equals("&")) {
-				operators.push("and");
-			} else if (character.equals("(")) {
-				// do nothing
-			} else if (character.equals(")")) {
-				if (!expression.equals("")) {
-					Predicate<CharSequence> predicate = new Brackets_Predicate(
-							expression);
-					expressions.push(predicate);
-					expression = "";
-				} else {
-					Predicate<CharSequence> first_expression = expressions
-							.pop();
-					Predicate<CharSequence> second_expression = expressions
-							.pop();
-					String operator = operators.pop();
-					if (operator.equals("or")) {
-						Predicate<CharSequence> result = or(first_expression,
-								second_expression);
-						expressions.push(result);
-					} else if (operator.equals("and")) {
-						Predicate<CharSequence> result = and(first_expression,
-								second_expression);
-						expressions.push(result);
-					}
-				}
-			} else {
-				expression = expression + character;
-			}
-		}
-		while (operators.size() != 0) {
-			Predicate<CharSequence> first_expression = expressions.pop();
-			Predicate<CharSequence> second_expression = expressions.pop();
-			String operator = operators.pop();
-			if (operator.equals("or")) {
-				Predicate<CharSequence> result = or(first_expression,
-						second_expression);
-				expressions.push(result);
-			} else if (operator.equals("and")) {
-				Predicate<CharSequence> result = and(first_expression,
-						second_expression);
-				expressions.push(result);
-			}
-		}
-		return expressions.pop();
+	
+	public Datalogger(){
+		
 	}
 
 	/**
@@ -332,37 +164,12 @@ public class Datalogger {
 	 */
 	public void stoplog() {
 		deviceAsync.removeListener(listener);
-		if (location != null) {
-			try {
-				writer.close();
-			} catch (IOException e) {
-				log.error("Error while closing the writer.");
-			}
+		try {
+			writer.close();
+		} catch (IOException e) {
+			log.error("Error while closing the writer.");
 		}
 		started = false;
 		System.out.println("\nEnd of Logging.");
 	}
-
-	/**
-	 * Add_klammer_filter.
-	 * 
-	 * @param filter
-	 *            the filter
-	 */
-	public void add_klammer_filter(String filter) {
-		brackets_filter = brackets_filter + filter;
-		System.out.println("Filter added");
-	}
-
-	/**
-	 * Add_regex_filter.
-	 * 
-	 * @param filter
-	 *            the filter
-	 */
-	public void add_regex_filter(String filter) {
-		regex_filter = regex_filter + filter;
-		System.out.println("Filter added");
-	}
-
 }
