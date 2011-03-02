@@ -98,7 +98,6 @@ public class Main {
 						user = in.readLine();
 						System.out.print("Password: ");
 						password = in.readLine();
-						in.close();
 					}
 					if (server != null && (password == null)) {
 						System.out.println("Password is missing.");
@@ -106,7 +105,6 @@ public class Main {
 								new InputStreamReader(System.in));
 						System.out.print("Password: ");
 						password = in.readLine();
-						in.close();
 					}
 					//Init Writer
 					PausableWriter writer;
@@ -164,10 +162,8 @@ public class Main {
 						String delims = " ";
 						String[] tokens = input.split(delims);
 						writer.setLocation(tokens[1]);
-					}else if (input.equals("e")) {
-						datenlogger.stoplog();
-						System.exit(0);
-					} 
+					}
+					writer.resume();
 				}		
 			}
 		}
