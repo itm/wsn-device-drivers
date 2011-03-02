@@ -21,9 +21,10 @@ public class ConfigReader {
 	 * @param path the Path of the config-file (devices.xml)
 	 * @return a List with the Elements from the devices.xml
 	 * @throws JAXBException Error while reading and converting the devices.sml
+	 * @throws NullPointerException the path of the devices.xml was not found
 	 */
 	@SuppressWarnings("unchecked")
-	public static JaxbDeviceList readFile(final String path) throws JAXBException {
+	public static JaxbDeviceList readFile(final String path) throws JAXBException, NullPointerException{
 		
 		final JAXBContext context = JAXBContext.newInstance(ObjectFactory.class);
         final Unmarshaller um = context.createUnmarshaller();

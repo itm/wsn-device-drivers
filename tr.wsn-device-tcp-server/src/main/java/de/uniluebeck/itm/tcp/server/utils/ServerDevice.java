@@ -3,7 +3,9 @@ package de.uniluebeck.itm.tcp.server.utils;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBException;
@@ -58,7 +60,7 @@ public class ServerDevice {
 	/**
 	 * the Path of the config-file (sensors.xml)
 	 */
-	private String sensorsPath = "src/main/resources/sensors.xml";
+	private String sensorsPath = "src/main/resources/sensors.xml";	
 	
 	/**
 	 * Constructor.
@@ -92,6 +94,8 @@ public class ServerDevice {
 	 */
 	public void createServerDevices() {
 		
+		final List<IMetaDataCollector> collectorList = new ArrayList<IMetaDataCollector>();
+		
 		try {
 			final JaxbDeviceList list = readDevices(devicesPath);
 			
@@ -101,8 +105,7 @@ public class ServerDevice {
 				final Device<?> device = createDevice(jaxDevice.getDeviceType(), con);
 				
 				if(metaDaten){
-					final MetadatenThread metadatenService = new MetadatenThread(new MetaDatenService (new File(configPath),new File(sensorsPath)), device, key);
-					metadatenService.start();
+					collectorList.add(new MetaDataCollector (device, key));
 				}
 				
 				con.connect(jaxDevice.getPort());
@@ -111,10 +114,22 @@ public class ServerDevice {
 				
 			}
 			
-		} catch (final Exception e) {
+		} catch (final JAXBException e) {
 			log.error(e.getMessage(), e);
 			System.exit(-1);
+		} catch (final NullPointerException ex){
+			log.error(ex.getMessage(),ex);
 		}
+		
+		if(metaDaten){
+			try{
+				new MetadatenThread(new File(configPath), new File(sensorsPath), collectorList).start();
+			}catch(final NullPointerException es){
+				log.info("a config-file was not found, the Server will start without MetaDataService ");
+				log.error(es.getMessage(),es);
+			}
+		}
+		
 	}
 	
 	/**
@@ -122,8 +137,9 @@ public class ServerDevice {
 	 * @param path the Path of the config-file (devices.xml)
 	 * @return a JaxbDeviceList object with a list of devices in it.
 	 * @throws JAXBException Error while try to read the devices.xml
+	 * @throws NullPointerException the Path of the devices.xml was not found
 	 */
-	private JaxbDeviceList readDevices(final String path) throws JAXBException{
+	private JaxbDeviceList readDevices(final String path) throws JAXBException, NullPointerException{
 		
 		return ConfigReader.readFile(path);
 		
@@ -236,7 +252,7 @@ class MetadatenThread extends Thread {
 	/**
 	 * time to wait between the connections attemps
 	 */
-	private final static int WAITTIME = 100;//600000;
+	private final static int WAITTIME = 600000;
 	
 	/**
 	 * 
@@ -249,25 +265,29 @@ class MetadatenThread extends Thread {
 	private iMetaDatenService mclient = null;
 	
 	/**
-	 * The device for the MetadataCollector
+	 * the Path of the config-file (config.xml)
 	 */
-	private final Device<?> device;
+	private File configPath = null;
 	
 	/**
-	 * The device's ID
+	 * the Path of the config-file (sensors.xml)
 	 */
-	private String id = "";
+	private File sensorsPath = null;
+	/**
+	 * a List with the MetaDataCollectors for every existing Device
+	 */
+	private List<IMetaDataCollector> collectorList = null;
 	
 	/**
 	 * Constructor .
-	 * @param mclient The MetaDatenService
-	 * @param device The device for the MetadataCollector
-	 * @param id The device's ID
+	 * @param configPath the Path of config.xml
+	 * @param sensorsPath the Path of sensors.xml
+	 * @param collectorList a List with the MetaDataCollectors for every existing Device
 	 */
-	MetadatenThread(final iMetaDatenService mclient, final Device<?> device, final String id){
-		this.mclient = mclient;
-		this.device = device;
-		this.id = id;
+	MetadatenThread(final File configPath, final File sensorsPath, final List<IMetaDataCollector> collectorList){
+		this.configPath = configPath;
+		this.sensorsPath = sensorsPath;
+		this.collectorList = collectorList;
 	}
 
 	public boolean isRunning() {
@@ -277,14 +297,18 @@ class MetadatenThread extends Thread {
 	@Override
 	public void run(){
 		while(running){
+			
 			try{
-				final IMetaDataCollector mcollector = new MetaDataCollector (device, id);
-				mclient.addMetaDataCollector(mcollector);
+				mclient = new MetaDatenService (configPath,sensorsPath);
+				for(IMetaDataCollector mcollector : collectorList){
+					mclient.addMetaDataCollector(mcollector);
+				}
 				running = false;
 			}catch(final Exception ex){
+				log.info("No Metadatenservice were found, the Server will try to connect in 10 Minutes again");
 				log.error("No Metadatenservice were found, the Server will try to connect in 10 Minutes again",ex);
 				try {
-					this.wait(WAITTIME);
+					Thread.sleep(WAITTIME);
 				} catch (final InterruptedException e) {
 					log.error("",e);
 				}

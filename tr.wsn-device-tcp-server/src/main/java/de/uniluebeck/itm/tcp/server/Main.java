@@ -18,9 +18,9 @@ import org.apache.commons.cli.ParseException;
 public class Main {
 
 	/**
-	 * defaultPort is 8080
+	 * defaultPort is 8181
 	 */
-	private static final int DEFAULTPORT = 8080;
+	private static final int DEFAULTPORT = 8181;
 	/**
 	 * defaultHost is localhost
 	 */
