@@ -44,13 +44,10 @@ public class Main {
 		options.addOption("server_port", true, "Port of the server");
 		options.addOption("client_port", true, "Port of the client");
 
-		// for help statement
-		HelpFormatter formatter = new HelpFormatter();
-
 		CommandLineParser parser = new GnuParser();
 		CommandLine cmd = null;
 		if(args.length == 0){
-			formatter.printHelp("help", options);
+			printHelp(options);
 		}
 		else{
 			try {
@@ -61,10 +58,7 @@ public class Main {
 			if (cmd != null) {
 				// standard-options
 				if (cmd.hasOption("help")) {
-					System.out.println("Example:");
-					System.out.println("Meta-Data Service: metadata -id 123");
-					System.out.println("");
-					formatter.printHelp("help", options);
+					printHelp(options);
 				}
 				if (cmd.hasOption("version")) {
 					System.out.println(version);
@@ -115,5 +109,15 @@ public class Main {
 				}
 			}
 		}
+	}
+	
+	public static void printHelp(Options options){
+		System.out.println("Example:");
+		System.out.println("Meta-Data Service: metadata -id 123 -server localhost -server_port 8181");
+		System.out.println("");
+
+		// for help statement
+		HelpFormatter formatter = new HelpFormatter();
+		formatter.printHelp("help", options);
 	}
 }
