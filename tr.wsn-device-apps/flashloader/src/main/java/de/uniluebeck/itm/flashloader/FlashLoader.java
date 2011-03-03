@@ -187,6 +187,12 @@ public class FlashLoader {
 		System.out.println("Reading mac address...");
 
 		final AsyncCallback<MacAddress> callback = new AsyncAdapter<MacAddress>() {
+			
+			@Override
+			public void onExecute() {
+				System.out.println("Read mac address is starting now...");
+			}
+			
 			public void onProgressChange(float fraction) {
 				final int percent = (int) (fraction * 100.0);
 				System.out.println("Reading mac address progress: " + percent
@@ -204,6 +210,7 @@ public class FlashLoader {
 			}
 		};
 		deviceAsync.readMac(10000, callback);
+		System.out.println("Reading process was added to the queue.");
 	}
 
 	/**
@@ -217,25 +224,31 @@ public class FlashLoader {
 		deviceAsync.writeMac(macAddress, timeout,
 				new AsyncAdapter<Void>() {
 
-					@Override
-					public void onProgressChange(float fraction) {
-						final int percent = (int) (fraction * 100.0);
-						System.out.println("Writing mac address progress: "
-								+ percent + "%");
-					}
+			@Override
+			public void onExecute() {
+				System.out.println("Write mac address is starting now...");
+			}
+			
+			@Override
+			public void onProgressChange(float fraction) {
+				final int percent = (int) (fraction * 100.0);
+				System.out.println("Writing mac address progress: "
+						+ percent + "%");
+			}
 
-					@Override
-					public void onSuccess(Void result) {
-						System.out.println("Mac Address written");
-					}
+			@Override
+			public void onSuccess(Void result) {
+				System.out.println("Mac Address written");
+			}
 
-					@Override
-					public void onFailure(Throwable throwable) {
-						log.error("Error while writing the mac address.");
-						throwable.printStackTrace();
-						System.exit(1);
-					}
-				});
+			@Override
+			public void onFailure(Throwable throwable) {
+				log.error("Error while writing the mac address.");
+				throwable.printStackTrace();
+				System.exit(1);
+			}
+		});
+		System.out.println("Writing process was added to the queue.");
 	}
 
 	/**
@@ -245,6 +258,11 @@ public class FlashLoader {
 		System.out.println("Reset");
 		deviceAsync.reset(timeout, new AsyncAdapter<Void>() {
 
+			@Override
+			public void onExecute() {
+				System.out.println("Reset is starting now...");
+			}
+			
 			@Override
 			public void onProgressChange(float fraction) {
 				final int percent = (int) (fraction * 100.0);
@@ -264,6 +282,7 @@ public class FlashLoader {
 				System.exit(1);
 			}
 		});
+		System.out.println("Reset process was added to the queue.");
 	}
 	
 }
