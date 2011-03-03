@@ -24,14 +24,14 @@ public class Main {
 	 */
 	public static void main(String[] args) throws IOException {
 		// create Options object
-		Option help_option = new Option("help", "print this message");
-		Option version_option = new Option("version",
+		Option helpOption = new Option("help", "print this message");
+		Option versionOption = new Option("version",
 				"print the version information");
 
 		Options options = new Options();
 
-		options.addOption(help_option);
-		options.addOption(version_option);
+		options.addOption(helpOption);
+		options.addOption(versionOption);
 
 		// add options for Messenger
 		options.addOption("port", true, "port");
@@ -42,7 +42,7 @@ public class Main {
 		options.addOption("device", true,
 				"type of the device in local case: jennec, telosb or pacemate");
 		options.addOption("id", true, "ID of the device in remote case");
-		options.addOption("message_type", true, "Type of the Message to be send");
+		options.addOption("messageType", true, "Type of the Message to be send");
 
 		CommandLineParser parser = new GnuParser();
 		CommandLine cmd = null;
@@ -75,10 +75,10 @@ public class Main {
 					String password = cmd.getOptionValue("passwd");
 					String device = cmd.getOptionValue("device");
 					String id = cmd.getOptionValue("id");
-					String message_type = cmd.getOptionValue("message_type");
+					String messageType = cmd.getOptionValue("messageType");
 					
-					if(message_type == null){
-						System.out.println("Please enter a message_type!");
+					if(messageType == null){
+						System.out.println("Please enter a messageType!");
 						System.exit(1);
 					}
 					if(device == null && server == null){
@@ -112,7 +112,7 @@ public class Main {
 						password = in.readLine();
 						in.close();
 					}
-					Messenger messenger = new Messenger(port, server, user, password, device, id, Integer.valueOf(message_type));
+					Messenger messenger = new Messenger(port, server, user, password, device, id, Integer.valueOf(messageType));
 					messenger.connect();
 					messenger.send(message);
 				}

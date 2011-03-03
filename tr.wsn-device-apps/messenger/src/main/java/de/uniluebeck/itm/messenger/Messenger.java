@@ -29,28 +29,27 @@ import de.uniluebeck.itm.tcp.client.RemoteDevice;
  */
 public class Messenger {
 
-	private static Log log = LogFactory.getLog(Messenger.class);
 	private String port;
 	private String server;
 	private String user;
 	private String password;
-	private String device_parameter;
+	private String deviceParameter;
 	private DeviceAsync deviceAsync;
 	private String id;
-	private byte message_type;
+	private byte messageType;
 	private boolean sent = false; // for the test-class
 
 	/**
 	 * Instantiates a new messenger.
 	 */
-	public Messenger(String port, String server, String user, String password, String device, String id, int message_type) {
+	public Messenger(String port, String server, String user, String password, String device, String id, int messageType) {
 		this.port = port;
 		this.server = server;
 		this.user = user;
 		this.password = password;
-		this.device_parameter = device;
+		this.deviceParameter = device;
 		this.id = id;
-		this.message_type = (byte)message_type;
+		this.messageType = (byte)messageType;
 	}
 	
 	/**
@@ -67,13 +66,13 @@ public class Messenger {
 
 			deviceAsync = new RemoteDevice(connection);
 		} else {
-			if (device_parameter != null) {
+			if (deviceParameter != null) {
 				final OperationQueue queue = new PausableExecutorOperationQueue();
 				Device<?> device = null;
-				if (device_parameter.equals("jennec")) {
+				if (deviceParameter.equals("jennec")) {
 					// Connect to the local jennec-device.
-					SerialPortConnection jennic_connection = new iSenseSerialPortConnection();
-					jennic_connection.addListener(new ConnectionListener() {
+					SerialPortConnection jennicConnection = new iSenseSerialPortConnection();
+					jennicConnection.addListener(new ConnectionListener() {
 						@Override
 						public void onConnectionChange(ConnectionEvent event) {
 							if (event.isConnected()) {
@@ -83,12 +82,12 @@ public class Messenger {
 							}
 						}
 					});
-					device = new JennicDevice(jennic_connection);
-					jennic_connection.connect(port);
-				} else if (device_parameter.equals("pacemate")) {
+					device = new JennicDevice(jennicConnection);
+					jennicConnection.connect(port);
+				} else if (deviceParameter.equals("pacemate")) {
 					// Connect to the local pacemate-device.
-					SerialPortConnection pacemate_connection = new iSenseSerialPortConnection();
-					pacemate_connection.addListener(new ConnectionListener() {
+					SerialPortConnection pacemateConnection = new iSenseSerialPortConnection();
+					pacemateConnection.addListener(new ConnectionListener() {
 						@Override
 						public void onConnectionChange(ConnectionEvent event) {
 							if (event.isConnected()) {
@@ -98,12 +97,12 @@ public class Messenger {
 							}
 						}
 					});
-					device = new PacemateDevice(pacemate_connection);
-					pacemate_connection.connect(port);
-				} else if (device_parameter.equals("telosb")) {
+					device = new PacemateDevice(pacemateConnection);
+					pacemateConnection.connect(port);
+				} else if (deviceParameter.equals("telosb")) {
 					// Connect to the local telosb-device
-					SerialPortConnection telosb_connection = new TelosbSerialPortConnection();
-					telosb_connection.addListener(new ConnectionListener() {
+					SerialPortConnection telosbConnection = new TelosbSerialPortConnection();
+					telosbConnection.addListener(new ConnectionListener() {
 						@Override
 						public void onConnectionChange(ConnectionEvent event) {
 							if (event.isConnected()) {
@@ -113,9 +112,9 @@ public class Messenger {
 							}
 						}
 					});
-					device = new TelosbDevice(telosb_connection);
-					telosb_connection.connect(port);
-				}else if(device_parameter.equals("mock")){
+					device = new TelosbDevice(telosbConnection);
+					telosbConnection.connect(port);
+				}else if(deviceParameter.equals("mock")){
 					final MockConnection connection = new MockConnection();
 					device = new MockDevice(connection);
 					connection.connect("MockPort");
@@ -134,7 +133,7 @@ public class Messenger {
 	 *            the message
 	 */
 	public void send(String message) {
-		MessagePacket packet = new MessagePacket(message_type, hexStringToByteArray(message));
+		MessagePacket packet = new MessagePacket(messageType, hexStringToByteArray(message));
 		deviceAsync.send(packet, 100000, new AsyncAdapter<Void>() {
 
 			@Override
@@ -156,7 +155,7 @@ public class Messenger {
 
 			@Override
 			public void onFailure(Throwable throwable) {
-				log.error("Error while sending the message.");
+				System.out.println("Error while sending the message.");
 				System.exit(1);
 			}
 		});
