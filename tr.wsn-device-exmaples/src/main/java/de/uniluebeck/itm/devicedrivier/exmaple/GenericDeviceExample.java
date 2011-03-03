@@ -263,7 +263,7 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 	
 	@Override
 	public void onMessagePacketReceived(MessageEvent<MessagePacket> event) {
-		System.out.println(new String(event.getMessage().getContent()));
+		System.out.println(new String(event.getMessage().getContent()).substring(1));
 	}
 	
 	@Override
