@@ -50,11 +50,7 @@ public class RemoteDevice implements DeviceAsync{
 	 * Logger
 	 */
 	private static Logger log = LoggerFactory.getLogger(RemoteDevice.class);
-	
-//	/**
-//	 * netty ThreadPoolCallExecutor
-//	 */
-//	private ThreadPoolCallExecutor executor = null;
+
 	/**
 	 * netty DuplexTcpClientBootstrap
 	 */
@@ -75,18 +71,12 @@ public class RemoteDevice implements DeviceAsync{
 	 * Instance of PacketServiceAnswerImpl
 	 */
 	private PacketServiceAnswerImpl packetServiceAnswerImpl = null;
-	
-//	/**
-//	 * Instance of a RemoteConnection
-//	 */
-	//private RemoteConnection connection = null;
 
 	/**
 	 * constructor
 	 * @param connection the RemoteConnection which should be used for this device
 	 */
 	public RemoteDevice(final RemoteConnection connection){
-		//this.connection = connection;
 		this.channel = connection.getChannel();
 		this.bootstrap = connection.getBootstrap();
 		operationService = Operations.newBlockingStub(channel);
@@ -181,7 +171,6 @@ public class RemoteDevice implements DeviceAsync{
 					@Override
 					public void onMessagePacketReceived(final MessageEvent<MessagePacket> event) {
 						listener.onMessagePacketReceived(event);
-						//log.info("Message: " + new String(event.getMessage().getContent()));
 					}
 				});
 			}});
@@ -207,7 +196,6 @@ public class RemoteDevice implements DeviceAsync{
 					@Override
 					public void onMessagePacketReceived(final MessageEvent<MessagePacket> event) {
 						listener.onMessagePacketReceived(event);
-						//log.info("Message: " + new String(event.getMessage().getContent()));
 					}
 				});
 			}});

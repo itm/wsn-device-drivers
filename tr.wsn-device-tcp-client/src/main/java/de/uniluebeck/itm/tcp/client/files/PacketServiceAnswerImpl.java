@@ -195,7 +195,9 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 		Class<?> except;
 
 		try {
+			/* erstellen der richtigen Exception mittels Exceptions */
 			except = Class.forName(request.getExceptionName());
+			/* finden des richtigen Konstruktors */
 			for(final Constructor<?> constructor : except.getConstructors()){
 				final Class<?>[] types = constructor.getParameterTypes();
 				if (types.length == 1) {
@@ -208,7 +210,6 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 			}
 		} catch (final Exception e) {
 			log.error(e.getMessage(),e);
-			e.printStackTrace();
 		}
 		
 		if(null != request.getOperationKey()){ // Wenn eine onSuccess-Nachricht vor onFailure eintrifft, wird onFailure ignoriert

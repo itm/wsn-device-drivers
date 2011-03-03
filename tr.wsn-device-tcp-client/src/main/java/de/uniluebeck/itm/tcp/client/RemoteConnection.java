@@ -32,7 +32,7 @@ public class RemoteConnection extends AbstractConnection{
 	/**
 	 * 
 	 */
-	private static final int PORT = 1234;
+	private static final int PORT = 8765;
 	/**
 	 * 
 	 */
@@ -97,9 +97,9 @@ public class RemoteConnection extends AbstractConnection{
 		}
 		
 		server = new PeerInfo(url.getHost(),url.getPort());
-		final String deviceID = url.getUserInfo().split(":")[0];
-		final String username = url.getUserInfo().split(":")[1];
-		final String password = url.getUserInfo().split(":")[2];
+		final String deviceID = uri.split("/")[1];
+		final String username = url.getUserInfo().split(":")[0];
+		final String password = url.getUserInfo().split(":")[1];
 
 		client = new PeerInfo(username+"client",RemoteConnection.PORT);
 		
@@ -128,12 +128,12 @@ public class RemoteConnection extends AbstractConnection{
 				channel = bootstrap.peerWith(server);
 				peered = true;
 			} catch (final IOException e) {
-				if(e.getMessage().contains("ALREADY_CONNECTED")){
-					log.info(e.getMessage());
+				if(e.getMessage().contains("ALREADY_CONNECTED")){ // Wenn der lokale ClientPort besetzt ist, wird der naechste versucht
+					//log.info(e.getMessage());
 					client = new PeerInfo(username+"client",client.getPort()+1);
 					bootstrap.setClientInfo(client);
 				}
-				else{
+				else{ // Es gab eine andere Exception
 					peered = true;
 					log.debug(e.getMessage());
 				}
@@ -147,8 +147,8 @@ public class RemoteConnection extends AbstractConnection{
 		
 		// aufbauen eines Identification-Packets
 		final Identification id = Identification.newBuilder().setDeviceID(deviceID).setUsername(username).setPassword(password).build();
-		//durchfuehren eines RPC-calls (das connect sollte vlt blockierend sein)
 		try {
+			/* blockierender connect-Aufruf */
 			syncOperationService.connect(controller, id);
 		} catch (final ServiceException e) {
 			log.debug(e.getMessage());
