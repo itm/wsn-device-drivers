@@ -52,7 +52,7 @@ public class Main {
 				"type of device in local case: jennec, telosb oder pacemate");
 		options.addOption("id", true, "ID of the device in remote case");
 		options.addOption("timeout", true, "optional timeout while flashing the device");
-		options.addOption("mac_adress", true, "the mac-address, that should be written on the device.");
+		options.addOption("mac_address", true, "the mac-address, that should be written on the device.");
 
 		CommandLineParser parser = new GnuParser();
 		CommandLine cmd = null;
@@ -90,7 +90,7 @@ public class Main {
 
 				} else if (args[0].equals("writemac")) {
 					FlashLoader flashLoader = read_cmd(cmd);
-				    String mac_address = cmd.getOptionValue("mac_adress");
+				    String mac_address = cmd.getOptionValue("mac_address");
 				    if(mac_address == null){
 						System.out.println("Please enter mac_address!");
 						System.exit(1);
@@ -159,7 +159,7 @@ public class Main {
 	}
 	
 	/**
-	 * Converts a hex-String to a byte array to send this as message to the device.
+	 * Converts a hex-String to a byte array
 	 * @param s
 	 * @return data, the byte array
 	 */
