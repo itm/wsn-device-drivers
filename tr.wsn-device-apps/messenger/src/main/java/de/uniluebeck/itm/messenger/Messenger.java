@@ -7,14 +7,11 @@ import de.uniluebeck.itm.devicedriver.ConnectionEvent;
 import de.uniluebeck.itm.devicedriver.ConnectionListener;
 import de.uniluebeck.itm.devicedriver.Device;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
-import de.uniluebeck.itm.devicedriver.MessagePacketListener;
-import de.uniluebeck.itm.devicedriver.PacketType;
 import de.uniluebeck.itm.devicedriver.async.AsyncAdapter;
 import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.OperationQueue;
 import de.uniluebeck.itm.devicedriver.async.QueuedDeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.thread.PausableExecutorOperationQueue;
-import de.uniluebeck.itm.devicedriver.event.MessageEvent;
 import de.uniluebeck.itm.devicedriver.generic.iSenseSerialPortConnection;
 import de.uniluebeck.itm.devicedriver.jennic.JennicDevice;
 import de.uniluebeck.itm.devicedriver.mockdevice.MockConnection;
@@ -53,9 +50,7 @@ public class Messenger {
 		this.password = password;
 		this.device_parameter = device;
 		this.id = id;
-		if(message_type != null){
-			this.message_type = Integer.valueOf(message_type);
-		}
+		this.message_type = Integer.valueOf(message_type);
 	}
 	
 	/**
@@ -120,6 +115,11 @@ public class Messenger {
 					});
 					device = new TelosbDevice(telosb_connection);
 					telosb_connection.connect(port);
+				}else if(device_parameter.equals("mock")){
+					final MockConnection connection = new MockConnection();
+					device = new MockDevice(connection);
+					connection.connect("MockPort");
+					System.out.println("Connected");
 				}
 				deviceAsync = new QueuedDeviceAsync(queue, device);
 			}
