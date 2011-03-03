@@ -138,6 +138,11 @@ public class Messenger {
 		deviceAsync.send(packet, 100000, new AsyncAdapter<Void>() {
 
 			@Override
+			public void onExecute() {
+				System.out.println("Sending is starting now...");
+			}
+			
+			@Override
 			public void onProgressChange(float fraction) {
 				final int percent = (int) (fraction * 100.0);
 				System.out.println("Sending the message: " + percent + "%");
@@ -155,6 +160,7 @@ public class Messenger {
 				System.exit(1);
 			}
 		});
+		System.out.println("Sending process was added to the queue.");
 	}
 	
 	/**
