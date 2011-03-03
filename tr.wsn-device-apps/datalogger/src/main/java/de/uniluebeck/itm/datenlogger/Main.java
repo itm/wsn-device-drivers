@@ -68,7 +68,7 @@ public class Main {
 				if (cmd.hasOption("help")) {
 					System.out.println("Example:");
 					System.out
-							.println("Datalogger: startlog -filter 0a, 0b, 54 -location filename.txt -server 141.83.1.546 -port 1282");
+							.println("Datalogger: startlog -filter (104,23,4) -location filename.txt -server localhost -id 1 -port 8181");
 					System.out.println("");
 					formatter.printHelp("help", options);
 				}
