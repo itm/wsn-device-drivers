@@ -1,28 +1,43 @@
 package de.uniluebeck.itm.devicedriver.mockdevice;
 
-import de.uniluebeck.itm.devicedriver.Monitor;
-import de.uniluebeck.itm.devicedriver.operation.AbstractSendOperation;
+import de.uniluebeck.itm.devicedriver.MessagePacket;
+import de.uniluebeck.itm.devicedriver.operation.SendOperation;
 
-public class MockSendOperation extends AbstractSendOperation {
 
-	private static final int STEPS = 10;
+/**
+ * Sending a <code>MessagePacket</code> to the device.
+ * 
+ * @author Malte Legenhausen
+ */
+public class MockSendOperation extends AbstractMockOperation<Void> implements SendOperation {
 	
-	private static final int SLEEP = 50;
+	/**
+	 * The <code>MessagePacket</code> that has to be send.
+	 */
+	private MessagePacket messagePacket;
 	
+	/**
+	 * The <code>MockConnection</code> which is used for sending the message.
+	 */
 	private final MockConnection connection;
 	
+	/**
+	 * Constructor.
+	 * 
+	 * @param connection The <code>MockConnection</code> which is used for sending the message.
+	 */
 	public MockSendOperation(final MockConnection connection) {
 		this.connection = connection;
 	}
+
+	@Override
+	public void setMessagePacket(final MessagePacket messagePacket) {
+		this.messagePacket = messagePacket;
+	}
 	
 	@Override
-	public Void execute(final Monitor monitor) throws Exception {
-		for (int i = 0; i < STEPS; ++i) {
-			Thread.sleep(SLEEP);
-			final float progress = 0.1f * i;
-			monitor.onProgressChange(progress);
-		}
-		connection.sendMessage(new String(getMessagePacket().getContent()));
+	public Void returnResult() {
+		connection.sendMessage(new String(messagePacket.getContent()));
 		return null;
 	}
 }

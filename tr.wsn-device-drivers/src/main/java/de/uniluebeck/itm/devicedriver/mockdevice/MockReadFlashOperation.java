@@ -1,30 +1,49 @@
 package de.uniluebeck.itm.devicedriver.mockdevice;
 
-import de.uniluebeck.itm.devicedriver.Monitor;
-import de.uniluebeck.itm.devicedriver.operation.AbstractReadFlashOperation;
+import de.uniluebeck.itm.devicedriver.operation.ReadFlashOperation;
 
-public class MockReadFlashOperation extends AbstractReadFlashOperation {
 
-	private static final int STEPS = 10;
+/**
+ * Mock operation for reading data from the imulated flash rom in the configuration.
+ * 
+ * @author Malte Legenhausen
+ */
+public class MockReadFlashOperation extends AbstractMockOperation<byte[]> implements ReadFlashOperation {
 	
-	private static final int SLEEP = 100;
+	/**
+	 * The start address of the read operation.
+	 */
+	private int address;
 	
+	/**
+	 * The length of the data that has to be read.
+	 */
+	private int length;
+	
+	/**
+	 * The <code>MockConfiguration</code> of the <code>MockDevice</code>.
+	 */
 	private final MockConfiguration configuration;
 	
+	/**
+	 * Constructor.
+	 * 
+	 * @param configuration The <code>MockConfiguration</code> of the <code>MockDevice</code>.
+	 */
 	public MockReadFlashOperation(final MockConfiguration configuration) {
 		this.configuration = configuration;
 	}
-	
+
 	@Override
-	public byte[] execute(final Monitor monitor) throws Exception {
-		for(int i = 1; i <= STEPS && !isCanceled(); ++i) {
-			Thread.sleep(SLEEP);
-			final float progress = 0.1f * i;
-			monitor.onProgressChange(progress);
-		}
-		final byte[] result = new byte[getLength()];
-		System.arraycopy(configuration.getFlashRom(), getAddress(), result, 0, getLength());
+	public byte[] returnResult() {
+		final byte[] result = new byte[length];
+		System.arraycopy(configuration.getFlashRom(), address, result, 0, length);
 		return result;
 	}
-
+	
+	@Override
+	public void setAddress(final int address, final int length) {
+		this.address = address;
+		this.length = length;
+	}
 }

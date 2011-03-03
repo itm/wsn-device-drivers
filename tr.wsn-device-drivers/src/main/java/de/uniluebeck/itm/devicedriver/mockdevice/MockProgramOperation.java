@@ -1,29 +1,43 @@
 package de.uniluebeck.itm.devicedriver.mockdevice;
 
-import de.uniluebeck.itm.devicedriver.Monitor;
-import de.uniluebeck.itm.devicedriver.operation.AbstractProgramOperation;
+import de.uniluebeck.itm.devicedriver.operation.ProgramOperation;
 
-public class MockProgramOperation extends AbstractProgramOperation {
 
-	private static final int STEPS = 10;
+/**
+ * The operation for programming the <code>MockDevice</code>.
+ * 
+ * @author Malte Legenhausen
+ */
+public class MockProgramOperation extends AbstractMockOperation<Void> implements ProgramOperation {
 	
-	private static final int SLEEP = 500;
+	/**
+	 * The binarry image that has to be written to the device.
+	 */
+	private byte[] binaryImage;
 	
+	/**
+	 * The configuration that will store the binary image.
+	 */
 	private MockConfiguration configuration;
 	
-	public MockProgramOperation(final MockConfiguration flashRom) {
-		this.configuration = flashRom;
+	/**
+	 * Constructor.
+	 * 
+	 * @param configuration The configuration of the <code>MockDevice</code>.
+	 */
+	public MockProgramOperation(final MockConfiguration configuration) {
+		this.configuration = configuration;
 	}
 	
 	@Override
-	public Void execute(final Monitor monitor) throws Exception {
-		for(int i = 1; i <= STEPS && !isCanceled(); ++i) {
-			Thread.sleep(SLEEP);
-			final float progress = 0.1f * i;
-			monitor.onProgressChange(progress);
-		}
-		System.arraycopy(getBinaryImage(), 0, configuration.getFlashRom(), 0, getBinaryImage().length);
+	public Void returnResult() {
+		System.arraycopy(binaryImage, 0, configuration.getFlashRom(), 0, binaryImage.length);
 		return null;
+	}
+
+	@Override
+	public void setBinaryImage(final byte[] data) {
+		this.binaryImage = data;
 	}
 
 }

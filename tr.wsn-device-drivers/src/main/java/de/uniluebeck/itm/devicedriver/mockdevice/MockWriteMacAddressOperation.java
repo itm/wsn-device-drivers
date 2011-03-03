@@ -3,36 +3,51 @@ package de.uniluebeck.itm.devicedriver.mockdevice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.devicedriver.Monitor;
-import de.uniluebeck.itm.devicedriver.operation.AbstractWriteMacAddressOperation;
+import de.uniluebeck.itm.devicedriver.MacAddress;
+import de.uniluebeck.itm.devicedriver.operation.WriteMacAddressOperation;
 
-public class MockWriteMacAddressOperation extends AbstractWriteMacAddressOperation {
 
-	private static final int STEPS = 10;
-	
-	private static final int SLEEP = 100;
+/**
+ * Mock operation for writing a <code>MacAddress</code> in the given <code>MockConfiguration</code>.
+ * 
+ * @author Malte Legenhausen
+ */
+public class MockWriteMacAddressOperation extends AbstractMockOperation<Void> implements WriteMacAddressOperation {
 	
 	/**
 	 * Logger for this class.
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(MockWriteMacAddressOperation.class);
 	
+	/**
+	 * The <code>MockConfiguration</code> to which the <code>MacAddress</code> has to be assigned.
+	 */
 	private final MockConfiguration configuration;
 	
+	/**
+	 * The <code>MacAddress</code> that has to be written to the configuration.
+	 */
+	private MacAddress macAddress;
+	
+	/**
+	 * Constructor.
+	 * 
+	 * @param configuration The configuration of the <code>MockDevice</code>.
+	 */
 	public MockWriteMacAddressOperation(final MockConfiguration configuration) {
 		this.configuration = configuration;
 	}
 	
 	@Override
-	public Void execute(final Monitor monitor) throws Exception {
-		for(int i = 1; i <= STEPS && !isCanceled(); ++i) {
-			Thread.sleep(SLEEP);
-			final float progress = 0.1f * i;
-			monitor.onProgressChange(progress);
-		}
-		LOG.debug("Writing mac address: " + getMacAddress());
-		configuration.setMacAddress(getMacAddress());
+	protected Void returnResult() {
+		LOG.debug("Writing mac address: " + macAddress);
+		configuration.setMacAddress(macAddress);
 		return null;
+	}
+
+	@Override
+	public void setMacAddress(final MacAddress macAddress) {
+		this.macAddress = macAddress;
 	}
 
 }

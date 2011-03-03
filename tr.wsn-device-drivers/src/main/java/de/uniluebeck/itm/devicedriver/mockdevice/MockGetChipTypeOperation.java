@@ -1,30 +1,32 @@
 package de.uniluebeck.itm.devicedriver.mockdevice;
 
 import de.uniluebeck.itm.devicedriver.ChipType;
-import de.uniluebeck.itm.devicedriver.Monitor;
-import de.uniluebeck.itm.devicedriver.operation.AbstractOperation;
 import de.uniluebeck.itm.devicedriver.operation.GetChipTypeOperation;
 
-public class MockGetChipTypeOperation extends AbstractOperation<ChipType> implements GetChipTypeOperation {
 
-	private static final int STEPS = 10;
+/**
+ * Returns the <code>ChipType</code> setted in the given <code>MockConfiguration</code>.
+ * 
+ * @author Malte Legenhausen
+ */
+public class MockGetChipTypeOperation extends AbstractMockOperation<ChipType> implements GetChipTypeOperation {
 	
-	private static final int SLEEP = 100;
-	
+	/**
+	 * The <code>MockConfiguration</code> from which the <code>ChipType</code> has to be received.
+	 */
 	private final MockConfiguration configuration;
 	
-	public MockGetChipTypeOperation(final MockConfiguration chipType) {
-		this.configuration = chipType;
-	}
-	
-	@Override
-	public ChipType execute(final Monitor monitor) throws Exception {
-		for(int i = 1; i <= STEPS && !isCanceled(); ++i) {
-			Thread.sleep(SLEEP);
-			final float progress = 0.1f * i;
-			monitor.onProgressChange(progress);
-		}
-		return configuration.getChipType();
+	/**
+	 * Constructor.
+	 * 
+	 * @param configuration The <code>MockConfiguration</code> from which the <code>ChipType</code> has to be gotten.
+	 */
+	public MockGetChipTypeOperation(final MockConfiguration configuration) {
+		this.configuration = configuration;
 	}
 
+	@Override
+	public ChipType returnResult() {
+		return configuration.getChipType();
+	}
 }
