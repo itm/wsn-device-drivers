@@ -47,7 +47,7 @@ public class Main {
 		options.addOption("passwd", true, "password to connect to the server");
 		options.addOption("device", true,
 				"type of sensornode in local case: jennec, telosb oder pacemate");
-		options.addOption("output", true, "Coding of the output data as hex");
+		options.addOption("output", true, "Coding alternative of the output data hex or byte");
 		options.addOption("id", true, "ID of the device in remote case");
 
 		CommandLineParser parser = new GnuParser();
