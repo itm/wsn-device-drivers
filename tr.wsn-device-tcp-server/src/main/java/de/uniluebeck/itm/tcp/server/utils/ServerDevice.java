@@ -26,6 +26,8 @@ import de.uniluebeck.itm.metadaten.metadatenservice.metadatacollector.MetaDataCo
 import de.uniluebeck.itm.tcp.jaxdevices.JaxbDevice;
 import de.uniluebeck.itm.tcp.jaxdevices.JaxbDeviceList;
 import de.uniluebeck.itm.tcp.jaxdevices.ObjectFactory;
+import de.uniluebeck.itm.tcp.server.exceptions.DuplacateIdException;
+import de.uniluebeck.itm.tcp.server.exceptions.EmptyIdException;
 
 /**
  * Create Devices and adds metaDatenCollectors to them
@@ -114,11 +116,9 @@ public class ServerDevice {
 				deviceList.put(key, deviceAsync);
 			}
 			
-		} catch (final JAXBException e) {
+		} catch (final Exception e) {
 			log.error(e.getMessage(), e);
 			System.exit(-1);
-		} catch (final NullPointerException ex){
-			log.error(ex.getMessage(),ex);
 		}
 		
 		if(metaDaten){
@@ -220,22 +220,21 @@ public class ServerDevice {
 	 * creates a distinct id for the devices.
 	 * @param jaxDevice the Device for which the Id should be created
 	 * @return the Id for a Device
+	 * @throws EmptyIdException if thrown when the id-tag in the devices.xml is empty
+	 * @throws DuplacateIdException thrown when the id's in the devices.xml are not unique
 	 */
-	private String createID(final JaxbDevice jaxDevice){
+	private String createID(final JaxbDevice jaxDevice) throws DuplacateIdException, EmptyIdException{
 		
-		/* Wenn der ID-Tag in der devices.xml gesetz ist, wird er bevorzugt */
-		if(jaxDevice.getDeviceId() != null){
-			return jaxDevice.getDeviceId();
+		/* Bei doppelten Id's wird eine DuplacateIdException geworfen */
+		if(!jaxDevice.getDeviceId().equalsIgnoreCase("")){
+			if(deviceList.containsKey(jaxDevice.getDeviceId())){
+				throw new DuplacateIdException(jaxDevice.getDeviceId());
+			}else{
+				return jaxDevice.getDeviceId();
+			}
+		}else{
+			throw new EmptyIdException();
 		}
-		
-		/* Sonst wird eine Zufallszahl als ID erzeugts */
-		int rand;
-		final int number = 1000;
-		do{
-			rand = (int) (Math.random()*number)%number;
-		}while(deviceList.containsKey(String.valueOf(rand)));
-		
-		return String.valueOf(rand);
 	}
 	/**
 	 * get the List with the Devices
