@@ -70,31 +70,24 @@ public class FlashLoader {
 	}
 
 	/**
-	 * Connect.
-	 * Method to connect to the tcp-server or to a local sensornode.
+	 * Connect. Method to connect to the tcp-server or to a local sensornode.
 	 */
 	public void connect() {
 		if (server != null) {
-			//Connect to the TCP-Server.
-			final RemoteConnection connection = new RemoteConnection();
-			final String uri = id + ":" + user + ":" + password + "@" + server + ":" + port;
-			System.out.println("Connecting to: " + uri);
-			connection.connect(uri);
+			// Connect to the TCP-Server.
+			RemoteConnection connection = new RemoteConnection();
+
+			connection.connect(user + ":" + password + "@" + server
+					+ ":" + port + "/" + id);
 			System.out.println("Connected");
 
 			deviceAsync = new RemoteDevice(connection);
 		} else {
-			//if there is no device-parameter oder server-parameter, 
-			//so connect to the mock-device
-			final OperationQueue queue = new PausableExecutorOperationQueue();
-			final MockConnection connection = new MockConnection();
-			Device device = new MockDevice(connection);
-			connection.connect("MockPort");
-			System.out.println("Connected");
-
 			if (device_parameter != null) {
+				final OperationQueue queue = new PausableExecutorOperationQueue();
+				Device<?> device = null;
 				if (device_parameter.equals("jennec")) {
-					//Connect to a local jennec device.
+					// Connect to the local jennec-device.
 					SerialPortConnection jennic_connection = new iSenseSerialPortConnection();
 					jennic_connection.addListener(new ConnectionListener() {
 						@Override
@@ -109,7 +102,7 @@ public class FlashLoader {
 					device = new JennicDevice(jennic_connection);
 					jennic_connection.connect(port);
 				} else if (device_parameter.equals("pacemate")) {
-					//Connect to a local pacemate device.
+					// Connect to the local pacemate-device.
 					SerialPortConnection pacemate_connection = new iSenseSerialPortConnection();
 					pacemate_connection.addListener(new ConnectionListener() {
 						@Override
@@ -124,7 +117,7 @@ public class FlashLoader {
 					device = new PacemateDevice(pacemate_connection);
 					pacemate_connection.connect(port);
 				} else if (device_parameter.equals("telosb")) {
-					//Connect to a local telosb device.
+					// Connect to the local telosb-device
 					SerialPortConnection telosb_connection = new TelosbSerialPortConnection();
 					telosb_connection.addListener(new ConnectionListener() {
 						@Override
@@ -139,9 +132,8 @@ public class FlashLoader {
 					device = new TelosbDevice(telosb_connection);
 					telosb_connection.connect(port);
 				}
+				deviceAsync = new QueuedDeviceAsync(queue, device);
 			}
-			//there is no device-parameter oder server-parameter, so connect to the mock-device
-			deviceAsync = new QueuedDeviceAsync(queue, device);
 		}
 	}
 

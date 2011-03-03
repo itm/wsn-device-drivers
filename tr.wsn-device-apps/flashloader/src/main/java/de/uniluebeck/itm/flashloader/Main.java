@@ -52,14 +52,11 @@ public class Main {
 		options.addOption("id", true, "ID of the device in remote case");
 		options.addOption("timeout", true, "Timeout while flashing the device");
 		options.addOption("mac_adress", true, "The mac-address, that should be written on the device.");
-		
-		// for help statement
-		HelpFormatter formatter = new HelpFormatter();
 
 		CommandLineParser parser = new GnuParser();
 		CommandLine cmd = null;
 		if(args.length == 0){
-			formatter.printHelp("help", options);
+			printHelp(options);
 		}
 		else{
 			try {
@@ -70,11 +67,7 @@ public class Main {
 			if (cmd != null) {
 				// standard-options
 				if (cmd.hasOption("help")) {
-					System.out.println("Example:");
-					System.out
-							.println("Flashloader: flash -port x -file programm.bin");
-					System.out.println("");
-					formatter.printHelp("help", options);
+					printHelp(options);
 				}
 				if (cmd.hasOption("version")) {
 					System.out.println(version);
@@ -155,5 +148,23 @@ public class Main {
 	                             + Character.digit(s.charAt(i+1), 16));
 	    }
 	    return data;
+	}
+	
+	public static void printHelp(Options options){
+		System.out.println("Example:");
+		System.out
+				.println("Flash: Remote-Example: flash -port 8181 -server localhost -id 1 -file jennec.bin");
+		System.out
+		.println("Flash: Local-Example: flash -port 8181 -file jennec.bin -device jennec");
+		System.out
+		.println("Write Mac: Local-Example: writemac -port 8181 -device jennec -mac_adress 080020aefd7e");
+		System.out
+		.println("Read Mac: Local-Example: readmac -port 8181 -device jennec");
+		System.out
+		.println("Reset: Local-Example: reset -port 8181 -device jennec");
+		System.out.println("");
+		// for help statement
+		HelpFormatter formatter = new HelpFormatter();
+		formatter.printHelp("help", options);
 	}
 }
