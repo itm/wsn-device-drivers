@@ -173,11 +173,17 @@ public class FlashLoader {
 			public void onSuccess(Void result) {
 				System.out.println("The Device has been flashed.");
 				flashed = true; // for tests
+				if(connection != null){
+					connection.shutdown(false);
+				}
 			}
 
 			@Override
 			public void onFailure(Throwable throwable) {
 				System.out.println("Error while flashing the device.");
+				if(connection != null){
+					connection.shutdown(false);
+				}
 				System.exit(1);
 			}
 		});
@@ -206,10 +212,16 @@ public class FlashLoader {
 			public void onSuccess(MacAddress result) {
 				System.out.println("Mac Address: " + result.toString());
 				currentMacAdress = result.toString();
+				if(connection != null){
+					connection.shutdown(false);
+				}
 			}
 
 			public void onFailure(Throwable throwable) {
 				System.out.println("Error while reading the mac address.");
+				if(connection != null){
+					connection.shutdown(false);
+				}
 				System.exit(1);
 			}
 		};
@@ -243,12 +255,18 @@ public class FlashLoader {
 			@Override
 			public void onSuccess(Void result) {
 				System.out.println("Mac Address written");
+				if(connection != null){
+					connection.shutdown(false);
+				}
 			}
 
 			@Override
 			public void onFailure(Throwable throwable) {
 				System.out.println("Error while writing the mac address.");
 				throwable.printStackTrace();
+				if(connection != null){
+					connection.shutdown(false);
+				}
 				System.exit(1);
 			}
 		});
@@ -277,12 +295,18 @@ public class FlashLoader {
 			public void onSuccess(Void result) {
 				System.out.println("Device has been reseted");
 				resetet = true; //for tests
+				if(connection != null){
+					connection.shutdown(false);
+				}
 			}
 
 			@Override
 			public void onFailure(Throwable throwable) {
 				System.out.println("Error while reseting the device");
 				throwable.printStackTrace();
+				if(connection != null){
+					connection.shutdown(false);
+				}
 				System.exit(1);
 			}
 		});

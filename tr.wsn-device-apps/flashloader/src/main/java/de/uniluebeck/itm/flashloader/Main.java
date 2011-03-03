@@ -77,44 +77,37 @@ public class Main {
 				// the flashLoader
 				FlashLoader flashLoader = readCmd(cmd);
 				flashLoader.connect();
-				try{
-					if (args[0].equals("flash")) {
-						
-						String file = cmd.getOptionValue("file");
-						File f = new File(file);
-						if(!f.exists()){
-							System.out.println("File don´t exists!");
-							System.exit(1);
-						}
-						flashLoader.flash(file);
-
-					} else if (args[0].equals("readmac")) {
-						flashLoader.readmac();
-
-					} else if (args[0].equals("writemac")) {
-					    String macAddress = cmd.getOptionValue("macAddress");
-					    if(macAddress == null){
-							System.out.println("Please enter macAddress!");
-							System.exit(1);
-						}
-					    int length = macAddress.length();
-					    if(length != 16){
-					    	for(int i = length; i < 16; i++){
-					    		macAddress = macAddress + "0";
-					    		length++;
-					    	}
-					    }
-						MacAddress macAdress = new MacAddress(hexStringToByteArray(macAddress));
-						flashLoader.writemac(macAdress);
-
-					} else if (args[0].equals("reset")) {
-						flashLoader.reset();
+				if (args[0].equals("flash")) {
+					
+					String file = cmd.getOptionValue("file");
+					File f = new File(file);
+					if(!f.exists()){
+						System.out.println("File don´t exists!");
+						System.exit(1);
 					}
-				}finally{
-					RemoteConnection connection = flashLoader.getConnection();
-					if(connection != null){
-						connection.shutdown(false);
+					flashLoader.flash(file);
+
+				} else if (args[0].equals("readmac")) {
+					flashLoader.readmac();
+
+				} else if (args[0].equals("writemac")) {
+				    String macAddress = cmd.getOptionValue("macAddress");
+				    if(macAddress == null){
+						System.out.println("Please enter macAddress!");
+						System.exit(1);
 					}
+				    int length = macAddress.length();
+				    if(length != 16){
+				    	for(int i = length; i < 16; i++){
+				    		macAddress = macAddress + "0";
+				    		length++;
+				    	}
+				    }
+					MacAddress macAdress = new MacAddress(hexStringToByteArray(macAddress));
+					flashLoader.writemac(macAdress);
+
+				} else if (args[0].equals("reset")) {
+					flashLoader.reset();
 				}
 			}
 		}
