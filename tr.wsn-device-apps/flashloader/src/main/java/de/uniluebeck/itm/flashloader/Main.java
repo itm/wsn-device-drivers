@@ -95,6 +95,13 @@ public class Main {
 						System.out.println("Please enter macAddress!");
 						System.exit(1);
 					}
+				    int length = macAddress.length();
+				    if(length != 16){
+				    	for(int i = length; i < 16; i++){
+				    		macAddress = macAddress + "0";
+				    		length++;
+				    	}
+				    }
 					MacAddress macAdress = new MacAddress(hexStringToByteArray(macAddress));
 					flashLoader.writemac(macAdress);
 
