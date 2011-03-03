@@ -68,7 +68,6 @@ public class Main {
 				System.out.println("One of these options is not registered.");
 			}
 			if (cmd != null) {
-				FlashLoader flashLoader = new FlashLoader();
 				// standard-options
 				if (cmd.hasOption("help")) {
 					System.out.println("Example:");
@@ -82,22 +81,22 @@ public class Main {
 				}
 				// the flashLoader
 				if (args[0].equals("flash")) {
-					read_cmd(cmd, flashLoader);
+					FlashLoader flashLoader = read_cmd(cmd);
 					String file = cmd.getOptionValue("file");
 					flashLoader.flash(file);
 
 				} else if (args[0].equals("readmac")) {
-					read_cmd(cmd, flashLoader);
+					FlashLoader flashLoader = read_cmd(cmd);
 					flashLoader.readmac();
 
 				} else if (args[0].equals("writemac")) {
-				    read_cmd(cmd, flashLoader);
+					FlashLoader flashLoader = read_cmd(cmd);
 				    String mac_address = cmd.getOptionValue("mac_adress");
 					MacAddress macAdress = new MacAddress(hexStringToByteArray(mac_address));
 					flashLoader.writemac(macAdress);
 
 				} else if (args[0].equals("reset")) {
-					read_cmd(cmd, flashLoader);
+					FlashLoader flashLoader = read_cmd(cmd);
 					flashLoader.reset();
 				}
 			}
@@ -111,7 +110,7 @@ public class Main {
 	 * @param flashLoader
 	 * @throws IOException
 	 */
-	public static void read_cmd(CommandLine cmd, FlashLoader flashLoader) throws IOException {
+	public static FlashLoader read_cmd(CommandLine cmd) throws IOException {
 		String port = cmd.getOptionValue("port");
 		String server = cmd.getOptionValue("server");
 		String user = cmd.getOptionValue("user");
@@ -138,16 +137,9 @@ public class Main {
 			password = in.readLine();
 			in.close();
 		}
-		flashLoader.setPort(port);
-		flashLoader.setServer(server);
-		flashLoader.setUser(user);
-		flashLoader.setPassword(password);
-		flashLoader.setDevice(device);
-		flashLoader.setId(id);
-		if(timeout != null){
-			flashLoader.setTimeout(timeout);
-		}
+		FlashLoader flashLoader = new FlashLoader(port, server, user, password, device, id, timeout);
 		flashLoader.connect();
+		return flashLoader;
 	}
 	
 	/**

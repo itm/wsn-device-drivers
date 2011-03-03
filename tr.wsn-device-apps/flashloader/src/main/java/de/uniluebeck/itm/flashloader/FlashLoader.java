@@ -57,79 +57,16 @@ public class FlashLoader {
 	/**
 	 * Instantiates a new flash loader.
 	 */
-	public FlashLoader() {
-
-	}
-
-	/**
-	 * Getter/Setter
-	 */
-	public String getPort() {
-		return port;
-	}
-
-	public String getServer() {
-		return server;
-	}
-
-	public String getUser() {
-		return user;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public String getDevice_parameter() {
-		return device_parameter;
-	}
-
-	public DeviceAsync getDeviceAsync() {
-		return deviceAsync;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public boolean isFlashed() {
-		return flashed;
-	}
-
-	public String getCurrent_mac_adress() {
-		return current_mac_adress;
-	}
-
-	public boolean isResetet() {
-		return resetet;
-	}
-	
-	public void setDevice(String device) {
-		this.device_parameter = device;
-	}
-	
-	public void setUser(String user) {
-		this.user = user;
-	}
-	
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public void setPort(String port) {
+	public FlashLoader(String port, String server, String user, String password, String device_parameter, String id, String timeout) {
 		this.port = port;
-	}
-
-	public void setServer(String server) {
 		this.server = server;
-	}
-
-	public void setId(String id) {
+		this.user = user;
+		this.password = password;
+		this.device_parameter = device_parameter;
 		this.id = id;
-	}
-	
-	public void setTimeout(String timeout){
-		this.timeout = Integer.valueOf(timeout);
+		if(timeout != null){
+			this.timeout = Integer.parseInt(timeout);
+		}
 	}
 
 	/**
