@@ -35,30 +35,29 @@ import de.uniluebeck.itm.tcp.client.RemoteDevice;
  */
 public class FlashLoader {
 
-	private static Log log = LogFactory.getLog(FlashLoader.class);
 	private String port;
 	private String server;
 	private String user;
 	private String password;
-	private String device_parameter;
+	private String deviceParameter;
 	private DeviceAsync deviceAsync;
 	private String id;
 	private int timeout = 300000;
-	private int flash_process = 0;
+	private int flashProcess = 0;
 
 	private boolean flashed = false; // for the test-class
-	private String current_mac_adress; // for the test-class
+	private String currentMacAdress; // for the test-class
 	private boolean resetet = false; // for the test-class
 
 	/**
 	 * Instantiates a new flash loader.
 	 */
-	public FlashLoader(String port, String server, String user, String password, String device_parameter, String id, String timeout) {
+	public FlashLoader(String port, String server, String user, String password, String deviceParameter, String id, String timeout) {
 		this.port = port;
 		this.server = server;
 		this.user = user;
 		this.password = password;
-		this.device_parameter = device_parameter;
+		this.deviceParameter = deviceParameter;
 		this.id = id;
 		if(timeout != null){
 			this.timeout = Integer.parseInt(timeout);
@@ -79,13 +78,13 @@ public class FlashLoader {
 
 			deviceAsync = new RemoteDevice(connection);
 		} else {
-			if (device_parameter != null) {
+			if (deviceParameter != null) {
 				final OperationQueue queue = new PausableExecutorOperationQueue();
 				Device<?> device = null;
-				if (device_parameter.equals("jennec")) {
+				if (deviceParameter.equals("jennec")) {
 					// Connect to the local jennec-device.
-					SerialPortConnection jennic_connection = new iSenseSerialPortConnection();
-					jennic_connection.addListener(new ConnectionListener() {
+					SerialPortConnection jennicConnection = new iSenseSerialPortConnection();
+					jennicConnection.addListener(new ConnectionListener() {
 						@Override
 						public void onConnectionChange(ConnectionEvent event) {
 							if (event.isConnected()) {
@@ -95,12 +94,12 @@ public class FlashLoader {
 							}
 						}
 					});
-					device = new JennicDevice(jennic_connection);
-					jennic_connection.connect(port);
-				} else if (device_parameter.equals("pacemate")) {
+					device = new JennicDevice(jennicConnection);
+					jennicConnection.connect(port);
+				} else if (deviceParameter.equals("pacemate")) {
 					// Connect to the local pacemate-device.
-					SerialPortConnection pacemate_connection = new iSenseSerialPortConnection();
-					pacemate_connection.addListener(new ConnectionListener() {
+					SerialPortConnection pacemateConnection = new iSenseSerialPortConnection();
+					pacemateConnection.addListener(new ConnectionListener() {
 						@Override
 						public void onConnectionChange(ConnectionEvent event) {
 							if (event.isConnected()) {
@@ -110,12 +109,12 @@ public class FlashLoader {
 							}
 						}
 					});
-					device = new PacemateDevice(pacemate_connection);
-					pacemate_connection.connect(port);
-				} else if (device_parameter.equals("telosb")) {
+					device = new PacemateDevice(pacemateConnection);
+					pacemateConnection.connect(port);
+				} else if (deviceParameter.equals("telosb")) {
 					// Connect to the local telosb-device
-					SerialPortConnection telosb_connection = new TelosbSerialPortConnection();
-					telosb_connection.addListener(new ConnectionListener() {
+					SerialPortConnection telosbConnection = new TelosbSerialPortConnection();
+					telosbConnection.addListener(new ConnectionListener() {
 						@Override
 						public void onConnectionChange(ConnectionEvent event) {
 							if (event.isConnected()) {
@@ -125,9 +124,9 @@ public class FlashLoader {
 							}
 						}
 					});
-					device = new TelosbDevice(telosb_connection);
-					telosb_connection.connect(port);
-				}else if(device_parameter.equals("mock")){
+					device = new TelosbDevice(telosbConnection);
+					telosbConnection.connect(port);
+				}else if(deviceParameter.equals("mock")){
 					final MockConnection connection = new MockConnection();
 					device = new MockDevice(connection);
 					connection.connect("MockPort");
@@ -150,7 +149,7 @@ public class FlashLoader {
 		try {
 			image = Files.toByteArray(new File(file));
 		} catch (IOException e) {
-			log.error("Error while reading file.");
+			System.out.println("Error while reading file.");
 			System.exit(1);
 		}
 		deviceAsync.program(image, timeout, new AsyncAdapter<Void>() {
@@ -173,7 +172,7 @@ public class FlashLoader {
 
 			@Override
 			public void onFailure(Throwable throwable) {
-				log.error("Error while flashing the device.");
+				System.out.println("Error while flashing the device.");
 				System.exit(1);
 			}
 		});
@@ -201,11 +200,11 @@ public class FlashLoader {
 
 			public void onSuccess(MacAddress result) {
 				System.out.println("Mac Address: " + result.toString());
-				current_mac_adress = result.toString();
+				currentMacAdress = result.toString();
 			}
 
 			public void onFailure(Throwable throwable) {
-				log.error("Error while reading the mac address.");
+				System.out.println("Error while reading the mac address.");
 				System.exit(1);
 			}
 		};
@@ -243,7 +242,7 @@ public class FlashLoader {
 
 			@Override
 			public void onFailure(Throwable throwable) {
-				log.error("Error while writing the mac address.");
+				System.out.println("Error while writing the mac address.");
 				throwable.printStackTrace();
 				System.exit(1);
 			}

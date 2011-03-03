@@ -33,14 +33,14 @@ public class Main {
 	 */
 	public static void main(String[] args) throws IOException {
 		// create Options object
-		Option help_option = new Option("help", "print this message");
-		Option version_option = new Option("version",
+		Option helpOption = new Option("help", "print this message");
+		Option versionOption = new Option("version",
 				"print the version information");
 
 		Options options = new Options();
 
-		options.addOption(help_option);
-		options.addOption(version_option);
+		options.addOption(helpOption);
+		options.addOption(versionOption);
 
 		// add options for FlashLoader
 		options.addOption("port", true, "port");
@@ -52,7 +52,7 @@ public class Main {
 				"type of device in local case: jennec, telosb oder pacemate");
 		options.addOption("id", true, "ID of the device in remote case");
 		options.addOption("timeout", true, "optional timeout while flashing the device");
-		options.addOption("mac_address", true, "the mac-address, that should be written on the device.");
+		options.addOption("macAddress", true, "the mac-address, that should be written on the device.");
 
 		CommandLineParser parser = new GnuParser();
 		CommandLine cmd = null;
@@ -75,7 +75,7 @@ public class Main {
 				}
 				// the flashLoader
 				if (args[0].equals("flash")) {
-					FlashLoader flashLoader = read_cmd(cmd);
+					FlashLoader flashLoader = readCmd(cmd);
 					String file = cmd.getOptionValue("file");
 					File f = new File(file);
 					if(!f.exists()){
@@ -85,21 +85,21 @@ public class Main {
 					flashLoader.flash(file);
 
 				} else if (args[0].equals("readmac")) {
-					FlashLoader flashLoader = read_cmd(cmd);
+					FlashLoader flashLoader = readCmd(cmd);
 					flashLoader.readmac();
 
 				} else if (args[0].equals("writemac")) {
-					FlashLoader flashLoader = read_cmd(cmd);
-				    String mac_address = cmd.getOptionValue("mac_address");
-				    if(mac_address == null){
-						System.out.println("Please enter mac_address!");
+					FlashLoader flashLoader = readCmd(cmd);
+				    String macAddress = cmd.getOptionValue("macAddress");
+				    if(macAddress == null){
+						System.out.println("Please enter macAddress!");
 						System.exit(1);
 					}
-					MacAddress macAdress = new MacAddress(hexStringToByteArray(mac_address));
+					MacAddress macAdress = new MacAddress(hexStringToByteArray(macAddress));
 					flashLoader.writemac(macAdress);
 
 				} else if (args[0].equals("reset")) {
-					FlashLoader flashLoader = read_cmd(cmd);
+					FlashLoader flashLoader = readCmd(cmd);
 					flashLoader.reset();
 				}
 			}
@@ -113,7 +113,7 @@ public class Main {
 	 * @param flashLoader
 	 * @throws IOException
 	 */
-	public static FlashLoader read_cmd(CommandLine cmd) throws IOException {
+	public static FlashLoader readCmd(CommandLine cmd) throws IOException {
 		String port = cmd.getOptionValue("port");
 		String server = cmd.getOptionValue("server");
 		String user = cmd.getOptionValue("user");
