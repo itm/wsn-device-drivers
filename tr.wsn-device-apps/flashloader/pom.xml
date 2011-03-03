@@ -19,4 +19,18 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+  
+    <dependencies>
+  	  	<dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.googlecode.protobuf.pro</groupId>
+			<artifactId>protobuf-rpc-pro-duplex</artifactId>
+			<version>1.1.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/protobuf-rpc-pro-duplex-1.1.0.jar</systemPath>
+		</dependency>
+  </dependencies>
 </project>
