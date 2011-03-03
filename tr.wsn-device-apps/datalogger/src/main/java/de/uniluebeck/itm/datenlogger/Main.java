@@ -12,8 +12,17 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+/**
+ * Datalogger Main Program
+ * 
+ * @author Fabian Kausche
+ * 
+ */
 public class Main {
 
+	/**
+	 * version
+	 */
 	private static double version = 1.0;
 
 	/**
@@ -24,29 +33,30 @@ public class Main {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public static void main(String[] args) throws IOException {
+	public static void main(final String[] args) throws IOException {
 		// create Options object
-		Option help_option = new Option("help", "print this message");
-		Option version_option = new Option("version",
+		Option helpOption = new Option("help", "print this message");
+		Option versionOption = new Option("version",
 				"print the version information");
 
 		Options options = new Options();
 
-		options.addOption(help_option);
-		options.addOption(version_option);
+		options.addOption(helpOption);
+		options.addOption(versionOption);
 
 		// add options for Datenlogger
 		options.addOption("port", true, "port");
 		options.addOption("server", true, "server");
 		options.addOption("location", true, "path to the output file");
-		options.addOption("brackets_filter", true,
+		options.addOption("bracketsFilter", true,
 				"(datatype,begin,value)-filter");
-		options.addOption("regex_filter", true, "regular expression-filter");
+		options.addOption("regexFilter", true, "regular expression-filter");
 		options.addOption("user", true, "username to connect to the server");
 		options.addOption("passwd", true, "password to connect to the server");
 		options.addOption("device", true,
 				"type of sensornode in local case: jennec, telosb oder pacemate");
-		options.addOption("output", true, "Coding alternative of the output data hex or byte");
+		options.addOption("output", true,
+				"Coding alternative of the output data hex or byte");
 		options.addOption("id", true, "ID of the device in remote case");
 
 		CommandLineParser parser = new GnuParser();
@@ -74,25 +84,25 @@ public class Main {
 
 					String port = cmd.getOptionValue("port");
 					String server = cmd.getOptionValue("server");
-					String brackets_filter = cmd
-							.getOptionValue("brackets_filter");
-					String regex_filter = cmd.getOptionValue("regex_filter");
+					String bracketsFilter = cmd
+							.getOptionValue("bracketsFilter");
+					String regexFilter = cmd.getOptionValue("regexFilter");
 					String location = cmd.getOptionValue("location");
 					String user = cmd.getOptionValue("user");
 					String password = cmd.getOptionValue("passwd");
 					String device = cmd.getOptionValue("device");
 					String output = cmd.getOptionValue("output");
 					String id = cmd.getOptionValue("id");
-					
-					if(device == null && server == null){
+
+					if (device == null && server == null) {
 						System.out.println("Please enter device or server!");
 						System.exit(1);
 					}
-					if(port == null){
+					if (port == null) {
 						System.out.println("Please enter port!");
 						System.exit(1);
 					}
-					if(server != null && id == null){
+					if (server != null && id == null) {
 						System.out.println("Please enter id of the node!");
 						System.exit(1);
 					}
@@ -114,9 +124,10 @@ public class Main {
 						System.out.print("Password: ");
 						password = in.readLine();
 					}
-					// Init Writer			
-					PausableWriter writer = initWriter(brackets_filter, regex_filter, location, output);
-					
+					// Init Writer
+					PausableWriter writer = initWriter(bracketsFilter,
+							regexFilter, location, output);
+
 					Datalogger datenlogger = new Datalogger(writer, user,
 							password, port, server, device, id);
 					datenlogger.connect();
@@ -127,14 +138,16 @@ public class Main {
 							final char in = (char) System.in.read();
 							if (in == 10) {
 								writer.pause();
-								System.out.print("Write-mode entered, please enter your command: ");
+								System.out
+										.print("Write-mode entered, please enter your command: ");
 								String input = new BufferedReader(
-										new InputStreamReader(System.in)).readLine();
-								if (input.startsWith("-brackets_filter")) {
+										new InputStreamReader(System.in))
+										.readLine();
+								if (input.startsWith("-bracketsFilter")) {
 									String delims = " ";
 									String[] tokens = input.split(delims);
 									writer.addBracketFilter(tokens[1]);
-								} else if (input.startsWith("-regex_filter")) {
+								} else if (input.startsWith("-regexFilter")) {
 									String delims = " ";
 									String[] tokens = input.split(delims);
 									writer.addRegexFilter(tokens[1]);
@@ -144,11 +157,17 @@ public class Main {
 								} else if (input.startsWith("-location")) {
 									String delims = " ";
 									String[] tokens = input.split(delims);
-									if(tokens.length < 2){
-										writer = initWriter(writer.getBracketFilter(), writer.getRegexFilter(), null, output);
+									if (tokens.length < 2) {
+										writer = initWriter(
+												writer.getBracketFilter(),
+												writer.getRegexFilter(), null,
+												output);
 										datenlogger.setWriter(writer);
-									}else {
-										writer = initWriter(writer.getBracketFilter(), writer.getRegexFilter(), tokens[1], output);
+									} else {
+										writer = initWriter(
+												writer.getBracketFilter(),
+												writer.getRegexFilter(),
+												tokens[1], output);
 										datenlogger.setWriter(writer);
 									}
 								}
@@ -161,11 +180,12 @@ public class Main {
 			}
 		}
 	}
-	
-	public static PausableWriter initWriter(String brackets_filter, String regex_filter, String location, String output){
-		
+
+	public static PausableWriter initWriter(String bracketsFilter,
+			String regexFilter, String location, String output) {
+
 		PausableWriter writer = null;
-		
+
 		if (location != null) {
 			if (output != null && output.equals("hex")) {
 				writer = new HexFileWriter();
@@ -184,23 +204,22 @@ public class Main {
 				writer = new StringConsoleWriter();
 			}
 		}
-		if (regex_filter != null) {
-			writer.setRegexFilter(regex_filter);
+		if (regexFilter != null) {
+			writer.setRegexFilter(regexFilter);
 		}
-		if (brackets_filter != null) {
-			writer.setBracketFilter(brackets_filter);
+		if (bracketsFilter != null) {
+			writer.setBracketFilter(bracketsFilter);
 		}
-		
+
 		return writer;
 	}
-	
-	
-	public static void printHelp(Options options){
+
+	public static void printHelp(Options options) {
 		System.out.println("Example:");
 		System.out
 				.println("Datalogger: Remote example: startlog -filter (104,23,4)&(104,24,5) -location filename.txt -server localhost -id 1 -port 8181");
 		System.out
-		.println("Datalogger: Local example: startlog -filter .*(4|3)*. -device telosb -port 1464");
+				.println("Datalogger: Local example: startlog -filter .*(4|3)*. -device telosb -port 1464");
 		System.out.println("");
 
 		// for help statement

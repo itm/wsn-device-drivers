@@ -22,7 +22,7 @@ public abstract class AbstractConsoleWriter implements PausableWriter{
 		Pattern pattern = Pattern.compile(regexFilter);
 		if (!isPaused && pattern.matcher(output).matches()) {
 			if(bracketFilter != null){
-				if(parse_brackets_filter(bracketFilter, messageType).apply(output)){
+				if(parseBracketsFilter(bracketFilter, messageType).apply(output)){
 					System.out.println(output);
 				}
 			}else{
@@ -92,12 +92,12 @@ public abstract class AbstractConsoleWriter implements PausableWriter{
 	 *            the klammer_filter
 	 * @return the predicate
 	 */
-	public Predicate<CharSequence> parse_brackets_filter(String bracket_filter, int messageType) {
+	public Predicate<CharSequence> parseBracketsFilter(String bracketFilter, int messageType) {
 		Stack<Predicate<CharSequence>> expressions = new Stack<Predicate<CharSequence>>();
 		Stack<String> operators = new Stack<String>();
 		String expression = "";
-		for (int i = 0; i < bracket_filter.length(); i++) {
-			String character = Character.toString(bracket_filter.charAt(i));
+		for (int i = 0; i < bracketFilter.length(); i++) {
+			String character = Character.toString(bracketFilter.charAt(i));
 			if (character.equals("|")) {
 				operators.push("or");
 			} else if (character.equals("&")) {
@@ -106,23 +106,23 @@ public abstract class AbstractConsoleWriter implements PausableWriter{
 				// do nothing
 			} else if (character.equals(")")) {
 				if (!expression.equals("")) {
-					Predicate<CharSequence> predicate = new Brackets_Predicate(
+					Predicate<CharSequence> predicate = new BracketsPredicate(
 							expression, messageType);
 					expressions.push(predicate);
 					expression = "";
 				} else {
-					Predicate<CharSequence> first_expression = expressions
+					Predicate<CharSequence> firstExpression = expressions
 							.pop();
-					Predicate<CharSequence> second_expression = expressions
+					Predicate<CharSequence> secondExpression = expressions
 							.pop();
 					String operator = operators.pop();
 					if (operator.equals("or")) {
-						Predicate<CharSequence> result = or(first_expression,
-								second_expression);
+						Predicate<CharSequence> result = or(firstExpression,
+								secondExpression);
 						expressions.push(result);
 					} else if (operator.equals("and")) {
-						Predicate<CharSequence> result = and(first_expression,
-								second_expression);
+						Predicate<CharSequence> result = and(firstExpression,
+								secondExpression);
 						expressions.push(result);
 					}
 				}
@@ -131,16 +131,16 @@ public abstract class AbstractConsoleWriter implements PausableWriter{
 			}
 		}
 		while (operators.size() != 0) {
-			Predicate<CharSequence> first_expression = expressions.pop();
-			Predicate<CharSequence> second_expression = expressions.pop();
+			Predicate<CharSequence> firstExpression = expressions.pop();
+			Predicate<CharSequence> secondExpression = expressions.pop();
 			String operator = operators.pop();
 			if (operator.equals("or")) {
-				Predicate<CharSequence> result = or(first_expression,
-						second_expression);
+				Predicate<CharSequence> result = or(firstExpression,
+						secondExpression);
 				expressions.push(result);
 			} else if (operator.equals("and")) {
-				Predicate<CharSequence> result = and(first_expression,
-						second_expression);
+				Predicate<CharSequence> result = and(firstExpression,
+						secondExpression);
 				expressions.push(result);
 			}
 		}
