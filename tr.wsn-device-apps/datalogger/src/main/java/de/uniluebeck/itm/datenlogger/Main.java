@@ -12,6 +12,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import de.uniluebeck.itm.tcp.client.RemoteConnection;
+
 /**
  * Datalogger Main Program
  * 
@@ -128,52 +130,59 @@ public class Main {
 					PausableWriter writer = initWriter(bracketsFilter,
 							regexFilter, location, output);
 
-					Datalogger datenlogger = new Datalogger(writer, user,
+					Datalogger datalogger = new Datalogger(writer, user,
 							password, port, server, device, id);
-					datenlogger.connect();
-					datenlogger.startlog();
+					datalogger.connect();
+					try{
+						datalogger.startlog();
 
-					while (true) {
 						while (true) {
-							final char in = (char) System.in.read();
-							if (in == 10) {
-								writer.pause();
-								System.out
-										.print("Write-mode entered, please enter your command: ");
-								String input = new BufferedReader(
-										new InputStreamReader(System.in))
-										.readLine();
-								if (input.startsWith("-bracketsFilter")) {
-									String delims = " ";
-									String[] tokens = input.split(delims);
-									writer.addBracketFilter(tokens[1]);
-								} else if (input.startsWith("-regexFilter")) {
-									String delims = " ";
-									String[] tokens = input.split(delims);
-									writer.addRegexFilter(tokens[1]);
-								} else if (input.equals("stoplog")) {
-									datenlogger.stoplog();
-									System.exit(0);
-								} else if (input.startsWith("-location")) {
-									String delims = " ";
-									String[] tokens = input.split(delims);
-									if (tokens.length < 2) {
-										writer = initWriter(
-												writer.getBracketFilter(),
-												writer.getRegexFilter(), null,
-												output);
-										datenlogger.setWriter(writer);
-									} else {
-										writer = initWriter(
-												writer.getBracketFilter(),
-												writer.getRegexFilter(),
-												tokens[1], output);
-										datenlogger.setWriter(writer);
+							while (true) {
+								final char in = (char) System.in.read();
+								if (in == 10) {
+									writer.pause();
+									System.out
+											.print("Write-mode entered, please enter your command: ");
+									String input = new BufferedReader(
+											new InputStreamReader(System.in))
+											.readLine();
+									if (input.startsWith("-bracketsFilter")) {
+										String delims = " ";
+										String[] tokens = input.split(delims);
+										writer.addBracketFilter(tokens[1]);
+									} else if (input.startsWith("-regexFilter")) {
+										String delims = " ";
+										String[] tokens = input.split(delims);
+										writer.addRegexFilter(tokens[1]);
+									} else if (input.equals("stoplog")) {
+										datalogger.stoplog();
+										System.exit(0);
+									} else if (input.startsWith("-location")) {
+										String delims = " ";
+										String[] tokens = input.split(delims);
+										if (tokens.length < 2) {
+											writer = initWriter(
+													writer.getBracketFilter(),
+													writer.getRegexFilter(), null,
+													output);
+											datalogger.setWriter(writer);
+										} else {
+											writer = initWriter(
+													writer.getBracketFilter(),
+													writer.getRegexFilter(),
+													tokens[1], output);
+											datalogger.setWriter(writer);
+										}
 									}
+									System.out.println("Write-mode leaved!");
+									writer.resume();
 								}
-								System.out.println("Write-mode leaved!");
-								writer.resume();
 							}
+						}
+					}finally{
+						RemoteConnection connection = datalogger.getConnection();
+						if(connection != null){
+							connection.shutdown(false);
 						}
 					}
 				}
