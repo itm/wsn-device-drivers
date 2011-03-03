@@ -1,8 +1,5 @@
 package de.uniluebeck.itm.messenger;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import de.uniluebeck.itm.devicedriver.ConnectionEvent;
 import de.uniluebeck.itm.devicedriver.ConnectionListener;
 import de.uniluebeck.itm.devicedriver.Device;
@@ -156,11 +153,17 @@ public class Messenger {
 			public void onSuccess(Void result) {
 				System.out.println("Message sent");
 				sent = true; // for tests
+				if(connection != null){
+					connection.shutdown(false);
+				}
 			}
 
 			@Override
 			public void onFailure(Throwable throwable) {
 				System.out.println("Error while sending the message.");
+				if(connection != null){
+					connection.shutdown(false);
+				}
 				System.exit(1);
 			}
 		});

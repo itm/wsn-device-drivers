@@ -116,14 +116,7 @@ public class Main {
 					}
 					Messenger messenger = new Messenger(port, server, user, password, device, id, Integer.valueOf(messageType));
 					messenger.connect();
-					try{
-						messenger.send(message);
-					}finally{
-						RemoteConnection connection = messenger.getConnection();
-						if(connection != null){
-							connection.shutdown(false);
-						}
-					}
+					messenger.send(message);
 				}
 			}
 		}	
