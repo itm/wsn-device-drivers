@@ -24,14 +24,14 @@ public class Main {
 	 */
 	public static void main(String[] args) throws IOException, java.lang.Exception {
 		// create Options object
-		Option help_option = new Option("help", "print this message");
-		Option version_option = new Option("version",
+		Option helpOption = new Option("help", "print this message");
+		Option versionOption = new Option("version",
 				"print the version information");
 
 		Options options = new Options();
 
-		options.addOption(help_option);
-		options.addOption(version_option);
+		options.addOption(helpOption);
+		options.addOption(versionOption);
 
 		// add options for Meta-Service
 		options.addOption("id", true, "id to search for");
@@ -41,8 +41,8 @@ public class Main {
 		options.addOption("username", true, "username to connect to the sever");
 		options.addOption("passwd", true, "password to connect to the server");
 		options.addOption("server", true, "IP-Adress of the server");
-		options.addOption("server_port", true, "Port of the server");
-		options.addOption("client_port", true, "Port of the client");
+		options.addOption("serverPort", true, "Port of the server");
+		options.addOption("clientPort", true, "Port of the client");
 
 		CommandLineParser parser = new GnuParser();
 		CommandLine cmd = null;
@@ -74,15 +74,15 @@ public class Main {
 					String user = cmd.getOptionValue("username");
 					String password = cmd.getOptionValue("passwd");
 					String server = cmd.getOptionValue("server");
-					String server_port = cmd.getOptionValue("server_port");
-					String client_port = cmd.getOptionValue("client_port");
+					String serverPort = cmd.getOptionValue("serverPort");
+					String clientPort = cmd.getOptionValue("clientPort");
 					
 					if(server == null){
 						System.out.println("Please enter server!");
 						System.exit(1);
 					}
-					if(server_port == null){
-						System.out.println("Please enter server_port!");
+					if(serverPort == null){
+						System.out.println("Please enter serverPort!");
 						System.exit(1);
 					}
 					if(id == null && microcontroller == null && sensor == null){
@@ -109,7 +109,7 @@ public class Main {
 						in.close();
 					}
 					
-					OverlayClient metaService = new OverlayClient(user, password, server, server_port, client_port);
+					OverlayClient metaService = new OverlayClient(user, password, server, serverPort, clientPort);
 
 					if (id != null) {
 						metaService.searchDeviceWithId(id);
