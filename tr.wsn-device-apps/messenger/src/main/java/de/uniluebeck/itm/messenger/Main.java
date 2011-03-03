@@ -76,6 +76,23 @@ public class Main {
 					String device = cmd.getOptionValue("device");
 					String id = cmd.getOptionValue("id");
 					String message_type = cmd.getOptionValue("message_type");
+					
+					if(message_type == null){
+						System.out.println("Please enter a message_type!");
+						System.exit(1);
+					}
+					if(device == null && server == null){
+						System.out.println("Please enter device or server!");
+						System.exit(1);
+					}
+					if(port == null){
+						System.out.println("Please enter port!");
+						System.exit(1);
+					}
+					if(server != null && id == null){
+						System.out.println("Please enter id of the node!");
+						System.exit(1);
+					}
 
 					if (server != null && (user == null && password == null || user == null)) {
 						System.out.println("Username and Password is missing.");
@@ -106,9 +123,9 @@ public class Main {
 	public static void printHelp(Options options){
 		System.out.println("Example:");
 		System.out
-				.println("Messenger: Remote example: send -message 68616c6c6f -port 8181 -server localhost -id 1 -message_type");
+				.println("Messenger: Remote example: send -message 68616c6c6f -port 8181 -server localhost -id 1 -message_type 1");
 		System.out
-		.println("Messenger: Local example: send -message 68616c6c6f -port 1282 -device jennec -message_type");
+		.println("Messenger: Local example: send -message 68616c6c6f -port 1282 -device jennec -message_type 1");
 		System.out.println("");
 		// for help statement
 		HelpFormatter formatter = new HelpFormatter();
