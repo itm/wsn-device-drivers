@@ -4,17 +4,7 @@ import junit.framework.TestCase;
 
 public class MessengerTest extends TestCase {
 
-	public void testSetPort(){
-		Messenger messenger = new Messenger();
-	    messenger.setPort("123");
-	    assertEquals("123", messenger.getPort());
-	}
-	
-	public void testSetServer(){
-		Messenger messenger = new Messenger();
-	    messenger.setServer("123");
-	    assertEquals("123", messenger.getServer());
-	}
+	/**
 	
 	public void testSend(){
 		Messenger messenger = new Messenger();
@@ -27,4 +17,6 @@ public class MessengerTest extends TestCase {
 	    }
 	    assertEquals(true, messenger.isSent());
 	}
+	
+	*/
 }

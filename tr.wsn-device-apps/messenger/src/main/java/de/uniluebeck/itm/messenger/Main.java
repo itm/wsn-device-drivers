@@ -102,16 +102,7 @@ public class Main {
 						password = in.readLine();
 						in.close();
 					}
-					Messenger messenger = new Messenger();
-					messenger.setPort(port);
-					messenger.setServer(server);
-					messenger.setUser(user);
-					messenger.setPassword(password);
-					messenger.setDevice(device);
-					messenger.setId(id);
-					if(message_type != null){
-						messenger.setMessage_type(message_type);
-					}
+					Messenger messenger = new Messenger(port, server, user, password, device, id, message_type);
 					messenger.connect();
 					messenger.send(message);
 				}

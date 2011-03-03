@@ -46,71 +46,16 @@ public class Messenger {
 	/**
 	 * Instantiates a new messenger.
 	 */
-	public Messenger() {
-
-	}
-
-	/**
-	 * Getter/Setter
-	 */
-	public String getPort() {
-		return port;
-	}
-
-	public String getServer() {
-		return server;
-	}
-
-	public String getUser() {
-		return user;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public String getDevice_parameter() {
-		return device_parameter;
-	}
-
-	public DeviceAsync getDeviceAsync() {
-		return deviceAsync;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public boolean isSent() {
-		return sent;
-	}
-
-	public void setDevice(String device) {
-		this.device_parameter = device;
-	}
-
-	public void setUser(String user) {
-		this.user = user;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public void setPort(String port) {
+	public Messenger(String port, String server, String user, String password, String device, String id, String message_type) {
 		this.port = port;
-	}
-
-	public void setServer(String server) {
 		this.server = server;
-	}
-
-	public void setId(String id) {
+		this.user = user;
+		this.password = password;
+		this.device_parameter = device;
 		this.id = id;
-	}
-	
-	public void setMessage_type(String message_type){
-		this.message_type = Integer.valueOf(message_type);
+		if(message_type != null){
+			this.message_type = Integer.valueOf(message_type);
+		}
 	}
 	
 	/**
