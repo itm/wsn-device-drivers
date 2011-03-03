@@ -336,7 +336,7 @@ public class Server {
 					return;
 				}
 			} else { // Wenn ein Benutzer bereits authentifiziert war, wird er
-						// hier erneut eingetragen
+				// hier erneut eingetragen
 				idList.put(channel, id);
 				authList.put(channel, currentUser);
 				done.run(EmptyAnswer.newBuilder().build());
@@ -432,31 +432,21 @@ public class Server {
 				if (a == null) { // Antwort auf Void als Datentyp
 					response = GetHandleAnswers.newBuilder().setEmptyAnswer(
 							EmptyAnswer.newBuilder().build()).build();
-				} else if (a.getClass().getName().contains("ChipType")) { // Antwort
-																			// auf
-																			// ChipType
-																			// als
-																			// Datentyp
-
+				} else if (a.getClass().getName().contains("ChipType")) {
+					/* Antwort auf ChipType als Datentyp */
 					response = GetHandleAnswers.newBuilder().setChipData(
 							STRING.newBuilder().setQuery(((ChipType) a).name())
 									.build()).build();
-				} else if (a.getClass().getName().contains("MacAddress")) { // Antwort
-																			// auf
-																			// MacAddress
-																			// als
-																			// Datentyp
+				} else if (a.getClass().getName().contains("MacAddress")) {
+					/* Antwort auf MacAddress als Datentyp */
 					final MacData mac = MacData.newBuilder()
 							.addMACADDRESS(
 									ByteString.copyFrom(((MacAddress) a)
 											.getMacBytes())).build();
 					response = GetHandleAnswers.newBuilder().setMacAddress(mac)
 							.build();
-				} else if (a.getClass().getName().contains("[B")) { // Antwort
-																	// auf
-																	// Byte[]
-																	// als
-																	// Datentyp
+				} else if (a.getClass().getName().contains("[B")) {
+					/* Antwort auf byte[] als Datentyp */
 					final ByteData bytes = ByteData.newBuilder().addData(
 							ByteString.copyFrom(((byte[]) a).clone())).build();
 					response = GetHandleAnswers.newBuilder().setData(bytes)
@@ -723,8 +713,9 @@ public class Server {
 				types[i] = request.getType(i);
 			}
 
-			//TODO vlt MessagePacketListener und MessagePlainTextListener durch eine Methode verarbeitens
-			
+			// TODO vlt MessagePacketListener und MessagePlainTextListener durch
+			// eine Methode verarbeitens
+
 			/* wiederherstellen eines listener-Objekt */
 			final MessagePacketListener listener = new MessagePacketListener() {
 
@@ -732,8 +723,8 @@ public class Server {
 				public void onMessagePacketReceived(
 						final MessageEvent<MessagePacket> event) {
 					/*
-					 * uebergeben eines RemoteMessageListener, der die
-					 * Antworten des Devices an den Client weiterreichen wird
+					 * uebergeben eines RemoteMessageListener, der die Antworten
+					 * des Devices an den Client weiterreichen wird
 					 */
 					final RemoteMessageListener remoteListener = new RemoteMessageListener(
 							request.getOperationKey(), ServerRpcController
