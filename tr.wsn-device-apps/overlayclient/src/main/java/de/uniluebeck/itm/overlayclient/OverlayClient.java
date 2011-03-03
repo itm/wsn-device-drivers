@@ -22,32 +22,17 @@ public class OverlayClient {
 	private String server_port;
 	private String client_port;
 	
-	public void setUsername(String username){
-		this.username = username;
-	}
-	
-	public void setPassword(String password){
-		this.password = password;
-	}
-	
-	public void setServer(String server){
-		this.server = server;
-	}
-	
-	public void setServer_port(String server_port){
-		this.server_port = server_port;
-	}
-	
-	public void setClient_port(String client_port){
-		this.client_port = client_port;
-	}
 	/**
 	 * Instantiates a new overlay client.
 	 */
-	public OverlayClient() {
-
+	public OverlayClient(String username, String password, String server, String server_port, String client_port) {
+		this.username = username;
+		this.password = password;
+		this.server = server;
+		this.server_port = server_port;
+		this.client_port = client_port;
 	}
-
+	
 	/**
 	 * Search device with id.
 	 * 

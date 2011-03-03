@@ -102,13 +102,7 @@ public class Main {
 						in.close();
 					}
 					
-					OverlayClient metaService = new OverlayClient();
-					
-					metaService.setUsername(user);
-					metaService.setPassword(password);
-					metaService.setServer(server);
-					metaService.setServer_port(server_port);
-					metaService.setClient_port(client_port);
+					OverlayClient metaService = new OverlayClient(user, password, server, server_port, client_port);
 
 					if (id != null) {
 						metaService.searchDeviceWithId(id);
