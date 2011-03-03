@@ -164,7 +164,8 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 			
 			@Override
 			public void onProgressChange(float fraction) {
-				System.out.println("Reading flash progress: " + fraction * 100 + "%");
+				final int percent = (int) (fraction * 100.0);
+				System.out.println("Reading flash progress: " + percent + "%");
 			}
 			
 			@Override
