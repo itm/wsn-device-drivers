@@ -44,6 +44,7 @@ public class FlashLoader {
 	private String id;
 	private int timeout = 300000;
 	private int flashProcess = 0;
+	private RemoteConnection connection;
 
 	private boolean flashed = false; // for the test-class
 	private String currentMacAdress; // for the test-class
@@ -63,6 +64,10 @@ public class FlashLoader {
 			this.timeout = Integer.parseInt(timeout);
 		}
 	}
+	
+	public RemoteConnection getConnection(){
+		return connection;
+	}
 
 	/**
 	 * Connect. Method to connect to the tcp-server or to a local sensornode.
@@ -70,7 +75,7 @@ public class FlashLoader {
 	public void connect() {
 		if (server != null) {
 			// Connect to the TCP-Server.
-			RemoteConnection connection = new RemoteConnection();
+			connection = new RemoteConnection();
 
 			connection.connect(user + ":" + password + "@" + server
 					+ ":" + port + "/" + id);
