@@ -12,16 +12,12 @@ import de.uniluebeck.itm.devicedriver.ConnectionEvent;
 import de.uniluebeck.itm.devicedriver.ConnectionListener;
 import de.uniluebeck.itm.devicedriver.Device;
 import de.uniluebeck.itm.devicedriver.MacAddress;
-import de.uniluebeck.itm.devicedriver.MessagePacket;
-import de.uniluebeck.itm.devicedriver.MessagePacketListener;
-import de.uniluebeck.itm.devicedriver.PacketType;
 import de.uniluebeck.itm.devicedriver.async.AsyncAdapter;
 import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
 import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.OperationQueue;
 import de.uniluebeck.itm.devicedriver.async.QueuedDeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.thread.PausableExecutorOperationQueue;
-import de.uniluebeck.itm.devicedriver.event.MessageEvent;
 import de.uniluebeck.itm.devicedriver.generic.iSenseSerialPortConnection;
 import de.uniluebeck.itm.devicedriver.jennic.JennicDevice;
 import de.uniluebeck.itm.devicedriver.mockdevice.MockConnection;
@@ -131,6 +127,11 @@ public class FlashLoader {
 					});
 					device = new TelosbDevice(telosb_connection);
 					telosb_connection.connect(port);
+				}else if(device_parameter.equals("mock")){
+					final MockConnection connection = new MockConnection();
+					device = new MockDevice(connection);
+					connection.connect("MockPort");
+					System.out.println("Connected");
 				}
 				deviceAsync = new QueuedDeviceAsync(queue, device);
 			}
@@ -146,21 +147,11 @@ public class FlashLoader {
 	 */
 	public void flash(String file) {
 		byte[] image = null;
-		if(device_parameter != null || server != null){
-			try {
-				if(file != null){
-					image = Files.toByteArray(new File(file));
-				}
-				else{
-					image = "Mock Device".getBytes();
-				}
-			} catch (IOException e) {
-				log.error("Error while reading file.");
-				System.exit(1);
-			}
-		}
-		else{
-			image = "Mock Device".getBytes();
+		try {
+			image = Files.toByteArray(new File(file));
+		} catch (IOException e) {
+			log.error("Error while reading file.");
+			System.exit(1);
 		}
 		deviceAsync.program(image, timeout, new AsyncAdapter<Void>() {
 			@Override
