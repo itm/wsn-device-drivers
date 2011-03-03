@@ -2,9 +2,6 @@ package de.uniluebeck.itm.datenlogger;
 
 import java.io.IOException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import de.uniluebeck.itm.devicedriver.ConnectionEvent;
 import de.uniluebeck.itm.devicedriver.ConnectionListener;
 import de.uniluebeck.itm.devicedriver.Device;
@@ -32,7 +29,6 @@ import de.uniluebeck.itm.tcp.client.RemoteDevice;
  */
 public class Datalogger {
 
-	private static Log log = LogFactory.getLog(Datalogger.class);
 	private String port;
 	private String server;
 	private String user;
@@ -136,6 +132,11 @@ public class Datalogger {
 					});
 					device = new TelosbDevice(telosb_connection);
 					telosb_connection.connect(port);
+				}else if(device_parameter.equals("mock")){
+					final MockConnection connection = new MockConnection();
+					device = new MockDevice(connection);
+					connection.connect("MockPort");
+					System.out.println("Connected");
 				}
 				deviceAsync = new QueuedDeviceAsync(queue, device);
 			}
@@ -168,7 +169,7 @@ public class Datalogger {
 		try {
 			writer.close();
 		} catch (IOException e) {
-			log.error("Error while closing the writer.");
+			System.out.println("Error while closing the writer.");
 		}
 		started = false;
 		if(connection != null){
