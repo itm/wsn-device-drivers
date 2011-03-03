@@ -42,6 +42,7 @@ public class ReadFlashOperation extends AbstractOperation<byte[]> {
 	}
 	
 	@Override
+	/* ueberschreiben der standard OnSuccess-Methode, da hier ein byte[] als Antwort benoetigt wird */
 	public void setOnSuccess(final byte[] result) {
 		if(!getId().getCalledGet(request.getOperationKey())){
 			final ByteData data = ByteData.newBuilder().setOperationKey(request.getOperationKey()).addData(ByteString.copyFrom(result)).build();

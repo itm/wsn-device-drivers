@@ -50,6 +50,7 @@ public class WriteFlashOperation extends AbstractOperation<Void> {
 			return;
 		}
 
+		/* ueberpruefen der Chucksum, um eine korrekte Uebertragung der Daten sicherzustellen */
 		final byte[] data = request.getDataList().get(0).toByteArray();
 		
 		final Checksum checksum = new CRC32();

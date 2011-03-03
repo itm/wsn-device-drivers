@@ -9,7 +9,7 @@ import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.FailureException;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.OpKey;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.PacketServiceAnswer;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.ReverseAnswer;
-import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.clientMessage;
+import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.changeMessage;
 
 /**
  * Send the Answers from the Device to the client
@@ -106,7 +106,7 @@ public class ReverseMessage {
 		
 		final RpcController controller = channel.newRpcController();
 		
-		final clientMessage request = clientMessage.newBuilder().setOperationKey(operationKey).setQuery(message).build();
+		final changeMessage request = changeMessage.newBuilder().setOperationKey(operationKey).setQuery(message).build();
 		answer.reverseChangeEvent(controller, request, new RpcCallback<EmptyAnswer>(){
 
 			@Override

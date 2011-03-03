@@ -8,7 +8,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,10 +25,12 @@ import de.uniluebeck.itm.metadaten.metadatenservice.metadatacollector.IMetaDataC
 import de.uniluebeck.itm.metadaten.metadatenservice.metadatacollector.MetaDataCollector;
 import de.uniluebeck.itm.tcp.jaxdevices.JaxbDevice;
 import de.uniluebeck.itm.tcp.jaxdevices.JaxbDeviceList;
+import de.uniluebeck.itm.tcp.jaxdevices.ObjectFactory;
 
 /**
  * Create Devices and adds metaDatenCollectors to them
  * @author Andreas Maier
+ * @author Bjoern Schuett
  *
  */
 public class ServerDevice {
@@ -48,17 +53,17 @@ public class ServerDevice {
 	/**
 	 * the Path of the config-file (devices.xml)
 	 */
-	private String devicesPath = "src/main/resources/devices.xml";
+	private String devicesPath = "";
 	
 	/**
 	 * the Path of the config-file (config.xml)
 	 */
-	private String configPath = "src/main/resources/config.xml";
+	private String configPath = "";
 	
 	/**
 	 * the Path of the config-file (sensors.xml)
 	 */
-	private String sensorsPath = "src/main/resources/sensors.xml";	
+	private String sensorsPath = "";	
 	
 	/**
 	 * Constructor.
@@ -74,15 +79,9 @@ public class ServerDevice {
 	 * @param meta parameter for activate (true) or deactivate (false, default) the metaDaten-functions
 	 */
 	public ServerDevice(final String devicesPath, final String configPath, final String sensorsPath, final boolean meta){
-		if(!devicesPath.equalsIgnoreCase("")){
-			this.devicesPath = devicesPath;
-		}
-		if(!configPath.equalsIgnoreCase("")){
-			this.configPath = configPath;
-		}
-		if(!sensorsPath.equalsIgnoreCase("")){
-			this.sensorsPath = sensorsPath;
-		}
+		this.devicesPath = devicesPath;
+		this.configPath = configPath;
+		this.sensorsPath = sensorsPath;
 		this.metaDaten = meta;
 	}
 	
@@ -95,21 +94,24 @@ public class ServerDevice {
 		final List<IMetaDataCollector> collectorList = new ArrayList<IMetaDataCollector>();
 		
 		try {
+			/* erzeugen der JAXB-Device-Objekte zu den Eintraegen in der devices.xml */
 			final JaxbDeviceList list = readDevices(devicesPath);
 			
 			for(JaxbDevice jaxDevice : list.getJaxbDevice()){
+				/* erstellen oder auslesen der einzigartigen DeviceID */
 				final String key = createID(jaxDevice);
+				/* erstellen einer Device-spezifischen Connection */
 				final Connection con = createConnection(jaxDevice.getConnectionType());
+				/* erstellen einer repraesentation eines physikalischen Devices */
 				final Device<?> device = createDevice(jaxDevice.getDeviceType(), con);
-				
+				/* erstellen eines MetaDataCollector fuer das Device, wenn MetaDataService aktiviert ist */
 				if(metaDaten){
 					collectorList.add(new MetaDataCollector (device, key));
 				}
-				
+				/* herstellen einer physikalischen Verbindung zum Device */
 				con.connect(jaxDevice.getPort());
 				final DeviceAsync deviceAsync = createDeviceAsync(device);
 				deviceList.put(key, deviceAsync);
-				
 			}
 			
 		} catch (final JAXBException e) {
@@ -121,6 +123,7 @@ public class ServerDevice {
 		
 		if(metaDaten){
 			try{
+				/* starten des MetaDataService in einem eigenen Thread */
 				new MetaDataThread(new File(configPath), new File(sensorsPath), collectorList).start();
 			}catch(final NullPointerException es){
 				log.info("a config-file was not found, the Server will start without MetaDataService ");
@@ -131,29 +134,34 @@ public class ServerDevice {
 	}
 	
 	/**
-	 * readouts the devices specified in the devices.xml.
+	 * Read the device.xml and convert the Elements into JAXB-Objects
 	 * @param path the Path of the config-file (devices.xml)
-	 * @return a JaxbDeviceList object with a list of devices in it.
-	 * @throws JAXBException Error while try to read the devices.xml
-	 * @throws NullPointerException the Path of the devices.xml was not found
+	 * @return a List with the Elements from the devices.xml
+	 * @throws JAXBException Error while reading and converting the devices.xml
 	 */
-	private JaxbDeviceList readDevices(final String path) throws JAXBException, NullPointerException{
+	@SuppressWarnings("unchecked")
+	private JaxbDeviceList readDevices(final String path) throws JAXBException {
 		
-		return ConfigReader.readFile(path);
+		final JAXBContext context = JAXBContext.newInstance(ObjectFactory.class);
+        final Unmarshaller um = context.createUnmarshaller();
+        final JAXBElement<JaxbDeviceList> tmp = (JAXBElement<JaxbDeviceList>) um.unmarshal(new File(path));
 		
+		return tmp.getValue();
 	}
-	//ConnectionType = de.uniluebeck.itm.devicedriver.mockdevice.MockConnection
+	
 	/**
 	 * creates a connection instance of the type specified in the devices.xml .
 	 * @param connectionType the Type of the Connection
 	 * @return Connection for the Device
 	 */
+	/* Example: ConnectionType = de.uniluebeck.itm.devicedriver.mockdevice.MockConnection */
 	private Connection createConnection(final String connectionType) {
 		
 		Connection connection = null;
 		Class<?> con;
 		
 		try {
+			/* erstellen der richtigen Connection mittels Reflection */
 			con = Class.forName(connectionType);
 			connection = (Connection) con.newInstance();
 		} catch (final Exception e) {
@@ -162,22 +170,24 @@ public class ServerDevice {
 		return  connection;
 	}
 	
-	//DeviceName = de.uniluebeck.itm.devicedriver.mockdevice.MockDevice
-	//DeviceName = de.uniluebeck.itm.devicedriver.jennic.JennicDevice
 	/**
 	 * creates a device instance of the type specified in the devices.xml .
 	 * @param deviceName the Name of the DeviceType
 	 * @param con the connection for this Device
 	 * @return Device-Instance
 	 */
+	/* Example: DeviceName = de.uniluebeck.itm.devicedriver.mockdevice.MockDevice */
+	/* Example: DeviceName = de.uniluebeck.itm.devicedriver.jennic.JennicDevice */
 	private Device<?> createDevice(final String deviceName, final Connection con) {
 
 		Device<?> device = null;
 		Class<?> deviceClass;
 		
 		try {
+			/* erstellen des richtigen Devices mittels Reflection */
 			deviceClass = Class.forName(deviceName);
 			
+			/* finden des richtigen Konstruktors */
 			for(Constructor<?> constructor : deviceClass.getConstructors()){
 				final Class<?>[] types = constructor.getParameterTypes();
 				if (types.length == 1) {
@@ -213,10 +223,12 @@ public class ServerDevice {
 	 */
 	private String createID(final JaxbDevice jaxDevice){
 		
+		/* Wenn der ID-Tag in der devices.xml gesetz ist, wird er bevorzugt */
 		if(jaxDevice.getDeviceId() != null){
 			return jaxDevice.getDeviceId();
 		}
 		
+		/* Sonst wird eine Zufallszahl als ID erzeugts */
 		int rand;
 		final int number = 1000;
 		do{

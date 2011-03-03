@@ -17,7 +17,7 @@ import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.Timeout;
  * @author Andreas Maier
  *
  */
-public class EraseOperation extends AbstractOperation<Void> {
+public class EraseFlashOperation extends AbstractOperation<Void> {
 
 	/**
 	 * the request of type Timeout
@@ -32,7 +32,7 @@ public class EraseOperation extends AbstractOperation<Void> {
 	 * @param id the ClientID-Instance for a erase Operation
 	 * @param request the Timeout request for a erase Operation
 	 */
-	public EraseOperation(final RpcController controller, final RpcCallback<EmptyAnswer> done, final Subject user, final ClientID id, final Timeout request) {
+	public EraseFlashOperation(final RpcController controller, final RpcCallback<EmptyAnswer> done, final Subject user, final ClientID id, final Timeout request) {
 		super(controller, done, user, id);
 		this.request =  request;
 		setMessage(new ReverseMessage(request.getOperationKey(),ServerRpcController.getRpcChannel(controller)));

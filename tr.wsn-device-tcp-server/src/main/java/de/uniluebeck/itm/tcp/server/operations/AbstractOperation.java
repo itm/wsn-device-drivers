@@ -17,7 +17,7 @@ import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.ReverseAnswer;
  * 
  * @author Andreas Maier
  *
- * @param <T> Type of the 
+ * @param <T> Type of the Answer from the Device
  */
 public abstract class AbstractOperation<T> {
 	
@@ -92,8 +92,13 @@ public abstract class AbstractOperation<T> {
 	}
 
 	/**
-	 * 
+	 * Execute the different specific Operation-Functions on a physical-Device</br>
+	 * Example:</br><PRE>
+	 * 	final OperationHandle <Void> handle = getDeviceAsync().'OPERATIONNAME'('...',getAsyncAdapter());
+	 * 	getId().setHandleElement(request.getOperationKey(), handle);
+	 * 	getDone().run('...'); </PRE>
 	 */
+	/*  */
 	abstract protected void operate();
 	
 	/**
@@ -112,8 +117,7 @@ public abstract class AbstractOperation<T> {
 	}
 	
 	/**
-	 * set the standard OnSuccess-Method for the AsyncAdapter <br>
-	 * the ReverseAnswer-Parameter is OpKey
+	 * set the OnSuccess-Method for the AsyncAdapter <br>
 	 * @param result the result from the Device
 	 */
 	public void setOnSuccess(final T result) {

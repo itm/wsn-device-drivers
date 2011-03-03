@@ -11,7 +11,8 @@ import de.uniluebeck.itm.metadatenservice.MetaDatenService;
 import de.uniluebeck.itm.metadatenservice.iMetaDatenService;
 
 /**
- * Thread for connecting to the MetadataService
+ * Thread for connecting to the MetadataService.</br>
+ * The Thread try a connect every 10 min, if the MetaDataServer is not reachable.
  * @author Andreas Maier
  * @author Bjoern Schuett
  *

@@ -1,9 +1,11 @@
 package de.uniluebeck.itm.tcp.Server;
 
-import de.uniluebeck.itm.tcp.server.Server;
+import java.io.IOException;
+
+import de.uniluebeck.itm.tcp.server.Main;
 
 /**
- * Class to start manually the Server
+ * Class to test the Server
  * @author Andreas Maier
  *
  */
@@ -14,9 +16,13 @@ public class ServerTest {
 	 * @param args null
 	 */
 	public static void main(final String[] args) {
-		
-		final Server server = new Server("localhost",8080);
-		server.start();
+
+		try {
+			// test the Server with default-configs
+			Main.main(new String[]{});
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 	}
 

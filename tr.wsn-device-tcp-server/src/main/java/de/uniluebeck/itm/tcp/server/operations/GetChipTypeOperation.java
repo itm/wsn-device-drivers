@@ -42,6 +42,7 @@ public class GetChipTypeOperation extends AbstractOperation<ChipType> {
 	}
 
 	@Override
+	/* ueberschreiben der standard OnSuccess-Methode, da hier ein ChipType als Antwort benoetigt wird */
 	public void setOnSuccess(final ChipType result){
 		// ausfuehren des Callbacks
 		if(!getId().getCalledGet(request.getOperationKey())){

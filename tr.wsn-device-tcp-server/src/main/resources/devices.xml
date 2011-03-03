@@ -5,21 +5,18 @@
  
  	<ns0:jaxbDevice>
  		<ns0:DeviceId>1</ns0:DeviceId>
-        <ns0:DeviceName>mokDevice</ns0:DeviceName>
         <ns0:DeviceType>de.uniluebeck.itm.devicedriver.mockdevice.MockDevice</ns0:DeviceType>
         <ns0:ConnectionType>de.uniluebeck.itm.devicedriver.mockdevice.MockConnection</ns0:ConnectionType>
         <ns0:Port>1111</ns0:Port>
     </ns0:jaxbDevice>
     <ns0:jaxbDevice>
  		<ns0:DeviceId>2</ns0:DeviceId>
-        <ns0:DeviceName>mokDevice</ns0:DeviceName>
         <ns0:DeviceType>de.uniluebeck.itm.devicedriver.mockdevice.MockDevice</ns0:DeviceType>
         <ns0:ConnectionType>de.uniluebeck.itm.devicedriver.mockdevice.MockConnection</ns0:ConnectionType>
         <ns0:Port>1112</ns0:Port>
     </ns0:jaxbDevice> <!-- 
     <ns0:jaxbDevice>
  		<ns0:DeviceId>3</ns0:DeviceId>
-        <ns0:DeviceName>pacemateDevice</ns0:DeviceName>
         <ns0:DeviceType>de.uniluebeck.itm.devicedriver.pacemate.PacemateDevice</ns0:DeviceType>
         <ns0:ConnectionType>de.uniluebeck.itm.devicedriver.generic.iSenseSerialPortConnection</ns0:ConnectionType>
         <ns0:Port>COM21</ns0:Port>
@@ -27,28 +24,10 @@
      
      
      <ns0:jaxbDevice>
-        <ns0:DeviceName>JenicDevice</ns0:DeviceName>
+     	<ns0:DeviceId>4</ns0:DeviceId>
         <ns0:DeviceType>de.uniluebeck.itm.devicedriver.jennic.JennicDevice</ns0:DeviceType>
         <ns0:ConnectionType>de.uniluebeck.itm.devicedriver.generic.iSenseSerialPortConnection</ns0:ConnectionType>
         <ns0:Port>COM19</ns0:Port>
-    </ns0:jaxbDevice>
-   
-    <ns0:jaxbDevice>
-        <ns0:DeviceName>jennic</ns0:DeviceName>
-        <ns0:DeviceType>de.uniluebeck.itm.devicedriver.jennic.JennicDevice</ns0:DeviceType>
-        <ns0:ConnectionType>de.uniluebeck.itm.devicedriver.generic.iSenseSerialPortConnection</ns0:ConnectionType>
-        <ns0:Port>2222</ns0:Port>
-        <ns0:TestBed>ITM</ns0:TestBed>
-        <ns0:Sensors>
-            <ns0:Sensor>temp</ns0:Sensor>
-        </ns0:Sensors>
-    </ns0:jaxbDevice>
-    <ns0:jaxbDevice>
-        <ns0:DeviceName>pacemate</ns0:DeviceName>
-        <ns0:DeviceType>de.uniluebeck.itm.devicedriver.pacemate.PacemateDevice</ns0:DeviceType>
-        <ns0:ConnectionType>de.uniluebeck.itm.devicedriver.generic.iSenseSerialPortConnection</ns0:ConnectionType>
-        <ns0:Port>3333</ns0:Port>
-        <ns0:TestBed>ITM</ns0:TestBed>
     </ns0:jaxbDevice>
     -->
 </ns0:jaxbDeviceList>

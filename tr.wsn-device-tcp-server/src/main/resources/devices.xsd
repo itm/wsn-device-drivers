@@ -6,12 +6,26 @@
     elementFormDefault="qualified">
     <xsd:complexType name="jaxbDevice">
         <xsd:sequence>
-        	<xsd:element name="DeviceId" type="xsd:string" minOccurs="0"></xsd:element>
-            <xsd:element name="DeviceName" type="xsd:string" minOccurs="0"></xsd:element>
-            <xsd:element name="DeviceType" type="xsd:string" minOccurs="1" maxOccurs="1"></xsd:element>
-            <xsd:element name="ConnectionType" type="xsd:string" minOccurs="1" maxOccurs="1"></xsd:element>
-            <xsd:element name="Port" type="xsd:string" minOccurs="1" maxOccurs="1"></xsd:element>
-            <xsd:element name="TestBed" type="xsd:string" minOccurs="0"></xsd:element>
+        	<xsd:element name="DeviceId" type="xsd:string" minOccurs="1" maxOccurs="1">
+        	       	<xsd:annotation>
+						<xsd:documentation> The unique Id of Device</xsd:documentation>
+					</xsd:annotation>
+        	</xsd:element>
+            <xsd:element name="DeviceType" type="xsd:string" minOccurs="1" maxOccurs="1">
+        	       	<xsd:annotation>
+						<xsd:documentation> The full-path Classname of the Device. Example: de.uniluebeck.itm.devicedriver.mockdevice.MockDevice</xsd:documentation>
+					</xsd:annotation>
+            </xsd:element>
+            <xsd:element name="ConnectionType" type="xsd:string" minOccurs="1" maxOccurs="1">
+            		<xsd:annotation>
+						<xsd:documentation> The full-path Classname of the Connection for the Device. Example: de.uniluebeck.itm.devicedriver.mockdevice.MockConnection</xsd:documentation>
+					</xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Port" type="xsd:string" minOccurs="1" maxOccurs="1">
+            		<xsd:annotation>
+						<xsd:documentation> The physical OS-port of the Device.</xsd:documentation>
+					</xsd:annotation>
+            </xsd:element>
         </xsd:sequence>
     </xsd:complexType>
     <xsd:complexType name="jaxbDeviceList">
@@ -19,5 +33,9 @@
             <xsd:element name="jaxbDevice" type="tns:jaxbDevice" maxOccurs="unbounded"></xsd:element>
         </xsd:sequence>
     </xsd:complexType>
-    <xsd:element name="jaxbDeviceList" type="tns:jaxbDeviceList"></xsd:element>
+    <xsd:element name="jaxbDeviceList" type="tns:jaxbDeviceList">
+    	<xsd:annotation>
+			<xsd:documentation> A list with all devices</xsd:documentation>
+		</xsd:annotation>
+    </xsd:element>
 </xsd:schema>

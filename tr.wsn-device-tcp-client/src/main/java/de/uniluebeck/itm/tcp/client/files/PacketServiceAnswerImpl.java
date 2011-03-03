@@ -23,7 +23,7 @@ import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ListenerData;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.PacketServiceAnswer;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.ReverseAnswer;
-import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.clientMessage;
+import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.changeMessage;
 
 /**
  * Implements the methods for the ReverseRPC
@@ -223,7 +223,7 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 	 */
 	@Override
 	public void reverseChangeEvent(final RpcController controller,
-			final clientMessage request, final RpcCallback<EmptyAnswer> done) {
+			final changeMessage request, final RpcCallback<EmptyAnswer> done) {
 			
 		if (null != request.getOperationKey()) { // Wenn eine onSuccess-Nachricht vor ChangeEvent eintrifft, wird ChangeEvent ignoriert
 			getCallback(request.getOperationKey()).onProgressChange(

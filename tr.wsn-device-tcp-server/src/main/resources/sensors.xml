@@ -3,7 +3,7 @@
 	xmlns:ns0="de/uniluebeck/itm/metadatenservice/config"
 	xsi:schemaLocation="de/uniluebeck/itm/metadatenservice/config sensors.xsd ">
 	<ns0:node>
-		<ns0:nodeid>1</ns0:nodeid>
+		<ns0:nodeid>3</ns0:nodeid>
 		<ns0:description>wisebed</ns0:description>
 		<ns0:microcontroller>TI MSP430</ns0:microcontroller>
 		<ns0:ipAddress></ns0:ipAddress>
@@ -22,7 +22,7 @@
 		</ns0:capability>
 	</ns0:node>
 	<ns0:node>
-		<ns0:nodeid>2</ns0:nodeid>
+		<ns0:nodeid>4</ns0:nodeid>
 		<ns0:description>wisebed</ns0:description>
 		<ns0:microcontroller>TI MSP430</ns0:microcontroller>
 		<ns0:ipAddress></ns0:ipAddress>

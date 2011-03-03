@@ -26,26 +26,34 @@ public class Main {
 	 */
 	private static String defaultHost = "localhost";
 	/**
-	 * 
+	 * Path of the devices-config File</br>
+	 * default path is src/main/resources/devices.xml
 	 */
-	private static String devicesPath = "";
+	private static String devicesPath = "src/main/resources/devices.xml";
 	/**
-	 * 
+	 * Path of the shiro-config File</br>
+	 * default path is src/main/resources/shiro.ini
 	 */
-	private static String configPath = "";
+	private static String shiroConfigPath = "src/main/resources/shiro.ini";
 	/**
-	 * 
+	 * Path of the MetaDataServer-config File</br>
+	 * default path is src/main/resources/config.xml
 	 */
-	private static String sensorsPath = "";
+	private static String configPath = "src/main/resources/config.xml";
 	/**
-	 * 
+	 * Path of the Sensors-config File</br>
+	 * default path is src/main/resources/sensors.xml
+	 */
+	private static String sensorsPath = "src/main/resources/sensors.xml";
+	/**
+	 * Switch to enable or disable the MetaData-Functions
 	 */
 	private static boolean metaDaten = false;
 	/**
 	 * version number of the startScript
 	 */
-	private static final double VERSION = 0.1;
-	
+	private static final double VERSION = 0.2;
+
 	/**
 	 * The main method.
 	 * 
@@ -69,9 +77,14 @@ public class Main {
 		options.addOption("p", true, "port of the Server");
 		options.addOption("h", true, "host of the Server");
 		options.addOption("d", true, "path to the devices.xml file");
+		options.addOption("sh", true, "path to the shiro.ini file");
 		options.addOption("c", true, "path to the config.xml file");
 		options.addOption("s", true, "path to the sensors.xml file");
-		options.addOption("m", true, "if set the Metadatenservice will be enabled");
+		options
+				.addOption(
+						"m",
+						true,
+						"if 1 the MetaDataService will be enabled, else the Server will start without MetaDataService");
 
 		// for help statement
 		final HelpFormatter formatter = new HelpFormatter();
@@ -79,11 +92,14 @@ public class Main {
 		final CommandLineParser parser = new GnuParser();
 		CommandLine cmd = null;
 		if (args.length == 0) {
-			
-			final Server server = new Server(defaultHost, DEFAULTPORT, devicesPath,
-					configPath, sensorsPath, false);
+
+			/* starten mit default configs */
+			final Server server = new Server(defaultHost, DEFAULTPORT,
+					devicesPath, shiroConfigPath, configPath, sensorsPath,
+					false);
 			server.start();
-			System.out.println("No Parameters found, the Server will start with default-config.");
+			System.out
+					.println("No Parameters found, the Server will start with default-config.");
 		} else {
 			try {
 				cmd = parser.parse(options, args);
@@ -96,7 +112,7 @@ public class Main {
 				if (cmd.hasOption("help")) {
 					System.out.println("Example:");
 					System.out
-							.println("Server: -p 8080 -h localhost -d devices.xml -c config.xml -s sensors.xml");
+							.println("Server: -p 8080 -h localhost -d devices.xml -sh shiro.ini -c config.xml -s sensors.xml");
 					System.out.println("");
 					formatter.printHelp("help", options);
 					System.exit(-1);
@@ -114,28 +130,35 @@ public class Main {
 							.println("No parameter for Port was inserted. The standard-Port "
 									+ DEFAULTPORT + " will be used!");
 				}
-				if(cmd.hasOption("h")){
+				if (cmd.hasOption("h")) {
 					defaultHost = cmd.getOptionValue("h");
-				} else{
+				} else {
 					System.out
-					.println("No parameter for Host was inserted. The standard-Host "
-							+ defaultHost + " will be used!");
+							.println("No parameter for Host was inserted. The standard-Host "
+									+ defaultHost + " will be used!");
 				}
-				if(cmd.hasOption("d")){
+				if (cmd.hasOption("d")) {
 					devicesPath = cmd.getOptionValue("d");
 				}
-				if(cmd.hasOption("c")){
+				if (cmd.hasOption("sh")) {
+					shiroConfigPath = cmd.getOptionValue("sh");
+				}
+				if (cmd.hasOption("c")) {
 					configPath = cmd.getOptionValue("c");
 				}
-				if(cmd.hasOption("s")){
+				if (cmd.hasOption("s")) {
 					sensorsPath = cmd.getOptionValue("s");
 				}
-				if(cmd.hasOption("m") && cmd.getOptionValue("m").equalsIgnoreCase("1") ){
+				if (cmd.hasOption("m")
+						&& cmd.getOptionValue("m").equalsIgnoreCase("1")) {
 					metaDaten = true;
 				}
 
-				final Server server = new Server(defaultHost, port, devicesPath,
-						configPath, sensorsPath, metaDaten);
+				/* erzeugen des Servers mit user configs */
+				final Server server = new Server(defaultHost, port,
+						devicesPath, shiroConfigPath, configPath, sensorsPath,
+						metaDaten);
+				/* starten des Servers */
 				server.start();
 
 			}

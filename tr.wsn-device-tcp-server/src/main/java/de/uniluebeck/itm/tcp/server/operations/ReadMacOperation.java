@@ -43,6 +43,7 @@ public class ReadMacOperation extends AbstractOperation<MacAddress> {
 	}
 	
 	@Override
+	/* ueberschreiben der standard OnSuccess-Methode, da hier eine MacAdress als Antwort benoetigt wird */
 	public void setOnSuccess(final MacAddress result) {
 		if(!getId().getCalledGet(request.getOperationKey())){
 			final MacData mac = MacData.newBuilder().setOperationKey(request.getOperationKey()).addMACADDRESS(ByteString.copyFrom(result.getMacBytes())).build();

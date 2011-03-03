@@ -8,6 +8,8 @@ import com.googlecode.protobuf.pro.duplex.RpcClientChannel;
 
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.MessagePacketListener;
+import de.uniluebeck.itm.devicedriver.MessagePlainText;
+import de.uniluebeck.itm.devicedriver.MessagePlainTextListener;
 import de.uniluebeck.itm.devicedriver.event.MessageEvent;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.EmptyAnswer;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.ListenerData;
@@ -18,8 +20,8 @@ import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.PacketServiceAnswe
  * @author Andreas Maier
  *
  */
-public class RemoteMessagePacketListener implements MessagePacketListener {
-
+public class RemoteMessageListener implements MessagePacketListener, MessagePlainTextListener{
+	
 	/**
 	 * client Channel
 	 */
@@ -40,7 +42,7 @@ public class RemoteMessagePacketListener implements MessagePacketListener {
 	 * @param operationKey key for the Listener 
 	 * @param channel channel for the client
 	 */
-	public RemoteMessagePacketListener(final String operationKey, final RpcClientChannel channel){
+	public RemoteMessageListener(final String operationKey, final RpcClientChannel channel){
 		this.operationKey = operationKey;
 		this.channel = channel;
 		answer = PacketServiceAnswer.newStub(channel);
@@ -59,4 +61,20 @@ public class RemoteMessagePacketListener implements MessagePacketListener {
 			}});
 		
 	}
+	
+	@Override
+	public void onMessagePlainTextReceived(
+			final MessageEvent<MessagePlainText> message) {
+		
+		final RpcController controller = channel.newRpcController();
+		final ListenerData request = ListenerData.newBuilder().setOperationKey(operationKey).setSource(message.getSource().toString()).addData(ByteString.copyFrom(message.getMessage().getContent())).build();
+
+		answer.sendReversePlainTextMessage(controller, request, new RpcCallback<EmptyAnswer>(){
+
+			@Override
+			public void run(final EmptyAnswer parameter) {	
+			}});
+		
+	}
+
 }
