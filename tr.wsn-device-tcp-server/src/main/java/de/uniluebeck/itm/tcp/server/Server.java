@@ -184,6 +184,10 @@ public class Server {
 			@Override
 			public void connectionReestablished(
 					final RpcClientChannel clientChannel) {
+				/*
+				 * TODO es waehre machbar eine verlorene oder beendete
+				 * Verbindung mit all ihren Abhaengigkeiten wieder herzustellen
+				 */
 				log.info("connectionReestablished " + clientChannel);
 			}
 
@@ -218,12 +222,15 @@ public class Server {
 						}
 						plainTextListenerList.remove(clientChannel);
 					}
+					// logout des Clients
+					authList.get(clientChannel).logout();
 					// entfernen des Clients aus der authentifiziert-Liste
 					authList.remove(clientChannel);
 					// entfernen des ClientID-Objektes
 					idList.remove(clientChannel);
 				}
 				clientChannel.close();
+				
 				log.info("connectionLost " + clientChannel);
 			}
 
@@ -337,9 +344,10 @@ public class Server {
 				}
 			} else { // Wenn ein Benutzer bereits authentifiziert war, wird er
 				// hier erneut eingetragen
-				idList.put(channel, id);
-				authList.put(channel, currentUser);
-				done.run(EmptyAnswer.newBuilder().build());
+//				idList.put(channel, id);
+//				authList.put(channel, currentUser);
+//				done.run(EmptyAnswer.newBuilder().build());
+				log.info("User was authentificated");
 			}
 			/* Shiro END */
 
@@ -348,9 +356,13 @@ public class Server {
 		// reagieren auf ein getState-Aufruf
 		/**
 		 * react to a GetState-Call from the Client
-		 * @param controller the RpcController for this operation
-		 * @param request the OpKey-request from the Client
-		 * @param done RpcCallback
+		 * 
+		 * @param controller
+		 *            the RpcController for this operation
+		 * @param request
+		 *            the OpKey-request from the Client
+		 * @param done
+		 *            RpcCallback
 		 */
 		@Override
 		public void getState(final RpcController controller,
@@ -378,9 +390,13 @@ public class Server {
 		// reagieren auf ein cancel-Aufruf
 		/**
 		 * react to a Cancel-Call from the Client
-		 * @param controller the RpcController for this operation
-		 * @param request the OpKey-request from the Client
-		 * @param done RpcCallback
+		 * 
+		 * @param controller
+		 *            the RpcController for this operation
+		 * @param request
+		 *            the OpKey-request from the Client
+		 * @param done
+		 *            RpcCallback
 		 */
 		@Override
 		public void cancelHandle(final RpcController controller,
@@ -408,9 +424,13 @@ public class Server {
 		// reagieren auf ein get-Aufruf
 		/**
 		 * react to a Get-Call from the Client
-		 * @param controller the RpcController for this operation
-		 * @param request the OpKey-request from the Client
-		 * @param done RpcCallback
+		 * 
+		 * @param controller
+		 *            the RpcController for this operation
+		 * @param request
+		 *            the OpKey-request from the Client
+		 * @param done
+		 *            RpcCallback
 		 */
 		@Override
 		public void getHandle(final RpcController controller,
@@ -480,9 +500,13 @@ public class Server {
 		// Methode um Device zu Programmieren
 		/**
 		 * program a Device
-		 * @param controller the RpcController for this operation
-		 * @param request the ProgramPacket-request from the Client
-		 * @param done RpcCallback
+		 * 
+		 * @param controller
+		 *            the RpcController for this operation
+		 * @param request
+		 *            the ProgramPacket-request from the Client
+		 * @param done
+		 *            RpcCallback
 		 */
 		@Override
 		public void program(final RpcController controller,
@@ -504,9 +528,13 @@ public class Server {
 
 		/**
 		 * write the MacAddress on a Device
-		 * @param controller the RpcController for this operation
-		 * @param request the MacData-request from the Client
-		 * @param done RpcCallback
+		 * 
+		 * @param controller
+		 *            the RpcController for this operation
+		 * @param request
+		 *            the MacData-request from the Client
+		 * @param done
+		 *            RpcCallback
 		 */
 		@Override
 		public void writeMac(final RpcController controller,
@@ -530,9 +558,13 @@ public class Server {
 
 		/**
 		 * write the Flash on a Device
-		 * @param controller the RpcController for this operation
-		 * @param request the FlashData-request from the Client
-		 * @param done RpcCallback
+		 * 
+		 * @param controller
+		 *            the RpcController for this operation
+		 * @param request
+		 *            the FlashData-request from the Client
+		 * @param done
+		 *            RpcCallback
 		 */
 		@Override
 		public void writeFlash(final RpcController controller,
@@ -555,9 +587,13 @@ public class Server {
 
 		/**
 		 * erase the Flash on a Device
-		 * @param controller the RpcController for this operation
-		 * @param request the Timeout-request from the Client
-		 * @param done RpcCallback
+		 * 
+		 * @param controller
+		 *            the RpcController for this operation
+		 * @param request
+		 *            the Timeout-request from the Client
+		 * @param done
+		 *            RpcCallback
 		 */
 		@Override
 		public void eraseFlash(final RpcController controller,
@@ -580,9 +616,13 @@ public class Server {
 
 		/**
 		 * read the Flash on a Device
-		 * @param controller the RpcController for this operation
-		 * @param request the FlashData-request from the Client
-		 * @param done RpcCallback
+		 * 
+		 * @param controller
+		 *            the RpcController for this operation
+		 * @param request
+		 *            the FlashData-request from the Client
+		 * @param done
+		 *            RpcCallback
 		 */
 		@Override
 		public void readFlash(final RpcController controller,
@@ -606,9 +646,13 @@ public class Server {
 
 		/**
 		 * read the MacAddress on a Device
-		 * @param controller the RpcController for this operation
-		 * @param request the Timeout-request from the Client
-		 * @param done RpcCallback
+		 * 
+		 * @param controller
+		 *            the RpcController for this operation
+		 * @param request
+		 *            the Timeout-request from the Client
+		 * @param done
+		 *            RpcCallback
 		 */
 		@Override
 		public void readMac(final RpcController controller,
@@ -631,9 +675,13 @@ public class Server {
 
 		/**
 		 * reset a Device
-		 * @param controller the RpcController for this operation
-		 * @param request the Timeout-request from the Client
-		 * @param done RpcCallback
+		 * 
+		 * @param controller
+		 *            the RpcController for this operation
+		 * @param request
+		 *            the Timeout-request from the Client
+		 * @param done
+		 *            RpcCallback
 		 */
 		@Override
 		public void reset(final RpcController controller,
@@ -656,9 +704,13 @@ public class Server {
 
 		/**
 		 * send a Message to a Device
-		 * @param controller the RpcController for this operation
-		 * @param request the sendData-request from the Client
-		 * @param done RpcCallback
+		 * 
+		 * @param controller
+		 *            the RpcController for this operation
+		 * @param request
+		 *            the sendData-request from the Client
+		 * @param done
+		 *            RpcCallback
 		 */
 		@Override
 		public void send(final RpcController controller,
@@ -681,9 +733,13 @@ public class Server {
 
 		/**
 		 * get the Chiptype from a Device
-		 * @param controller the RpcController for this operation
-		 * @param request the Timeout-request from the Client
-		 * @param done RpcCallback
+		 * 
+		 * @param controller
+		 *            the RpcController for this operation
+		 * @param request
+		 *            the Timeout-request from the Client
+		 * @param done
+		 *            RpcCallback
 		 */
 		@Override
 		public void getChipType(final RpcController controller,
@@ -715,9 +771,13 @@ public class Server {
 
 		/**
 		 * add a MessagePacketListener to a Device
-		 * @param controller the RpcController for this operation
-		 * @param request the PacketTypeData-request from the Client
-		 * @param done RpcCallback
+		 * 
+		 * @param controller
+		 *            the RpcController for this operation
+		 * @param request
+		 *            the PacketTypeData-request from the Client
+		 * @param done
+		 *            RpcCallback
 		 */
 		@Override
 		public void addMessagePacketListener(final RpcController controller,
@@ -795,9 +855,13 @@ public class Server {
 
 		/**
 		 * add a MessagePlainTextListener to a Device
-		 * @param controller the RpcController for this operation
-		 * @param request the PacketTypeData-request from the Client
-		 * @param done RpcCallback
+		 * 
+		 * @param controller
+		 *            the RpcController for this operation
+		 * @param request
+		 *            the PacketTypeData-request from the Client
+		 * @param done
+		 *            RpcCallback
 		 */
 		@Override
 		public void addMessagePlainTextListener(final RpcController controller,
@@ -849,9 +913,13 @@ public class Server {
 
 		/**
 		 * remove a MessagePacketListener from a Device
-		 * @param controller the RpcController for this operation
-		 * @param request the OpKey-request from the Client
-		 * @param done RpcCallback
+		 * 
+		 * @param controller
+		 *            the RpcController for this operation
+		 * @param request
+		 *            the OpKey-request from the Client
+		 * @param done
+		 *            RpcCallback
 		 */
 		@Override
 		public void removeMessagePacketListener(final RpcController controller,
@@ -896,9 +964,13 @@ public class Server {
 
 		/**
 		 * remove a MessagePlainTextListener from a Device
-		 * @param controller the RpcController for this operation
-		 * @param request the OpKey-request from the Client
-		 * @param done RpcCallback
+		 * 
+		 * @param controller
+		 *            the RpcController for this operation
+		 * @param request
+		 *            the OpKey-request from the Client
+		 * @param done
+		 *            RpcCallback
 		 */
 		@Override
 		public void removeMessagePlainTextListener(

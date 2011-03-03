@@ -80,10 +80,7 @@ public class Main {
 		options.addOption("sh", true, "path to the shiro.ini file");
 		options.addOption("c", true, "path to the config.xml file");
 		options.addOption("s", true, "path to the sensors.xml file");
-		options
-				.addOption(
-						"m",
-						true,
+		options.addOption("m",true,
 						"if 1 the MetaDataService will be enabled, else the Server will start without MetaDataService");
 
 		// for help statement
@@ -112,7 +109,7 @@ public class Main {
 				if (cmd.hasOption("help")) {
 					System.out.println("Example:");
 					System.out
-							.println("Server: -p 8080 -h localhost -d devices.xml -sh shiro.ini -c config.xml -s sensors.xml");
+							.println("Server: -p 8181 -h localhost -d devices.xml -sh shiro.ini -c config.xml -s sensors.xml");
 					System.out.println("");
 					formatter.printHelp("help", options);
 					System.exit(-1);
