@@ -20,7 +20,7 @@ public class ServerTest {
 		try {
 			// test the Server with default-configs
 			Main.main(new String[]{});
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 

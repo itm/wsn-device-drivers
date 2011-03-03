@@ -149,12 +149,12 @@ public class ServerDevice {
 		return tmp.getValue();
 	}
 	
+	/* Example: ConnectionType = de.uniluebeck.itm.devicedriver.mockdevice.MockConnection */
 	/**
 	 * creates a connection instance of the type specified in the devices.xml .
 	 * @param connectionType the Type of the Connection
 	 * @return Connection for the Device
 	 */
-	/* Example: ConnectionType = de.uniluebeck.itm.devicedriver.mockdevice.MockConnection */
 	private Connection createConnection(final String connectionType) {
 		
 		Connection connection = null;
@@ -170,14 +170,14 @@ public class ServerDevice {
 		return  connection;
 	}
 	
+	/* Example: DeviceName = de.uniluebeck.itm.devicedriver.mockdevice.MockDevice */
+	/* Example: DeviceName = de.uniluebeck.itm.devicedriver.jennic.JennicDevice */
 	/**
 	 * creates a device instance of the type specified in the devices.xml .
 	 * @param deviceName the Name of the DeviceType
 	 * @param con the connection for this Device
 	 * @return Device-Instance
 	 */
-	/* Example: DeviceName = de.uniluebeck.itm.devicedriver.mockdevice.MockDevice */
-	/* Example: DeviceName = de.uniluebeck.itm.devicedriver.jennic.JennicDevice */
 	private Device<?> createDevice(final String deviceName, final Connection con) {
 
 		Device<?> device = null;

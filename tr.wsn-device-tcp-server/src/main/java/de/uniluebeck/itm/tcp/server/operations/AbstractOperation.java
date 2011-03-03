@@ -98,7 +98,6 @@ public abstract class AbstractOperation<T> {
 	 * 	getId().setHandleElement(request.getOperationKey(), handle);
 	 * 	getDone().run('...'); </PRE>
 	 */
-	/*  */
 	abstract protected void operate();
 	
 	/**
