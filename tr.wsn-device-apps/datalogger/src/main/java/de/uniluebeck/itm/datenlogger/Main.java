@@ -50,13 +50,10 @@ public class Main {
 		options.addOption("output", true, "Coding of the output data as hex");
 		options.addOption("id", true, "ID of the device in remote case");
 
-		// for help statement
-		HelpFormatter formatter = new HelpFormatter();
-
 		CommandLineParser parser = new GnuParser();
 		CommandLine cmd = null;
 		if (args.length == 0) {
-			formatter.printHelp("help", options);
+			printHelp(options);
 		} else {
 			try {
 				cmd = parser.parse(options, args);
@@ -66,11 +63,7 @@ public class Main {
 			if (cmd != null) {
 				// standard-options
 				if (cmd.hasOption("help")) {
-					System.out.println("Example:");
-					System.out
-							.println("Datalogger: startlog -filter (104,23,4) -location filename.txt -server localhost -id 1 -port 8181");
-					System.out.println("");
-					formatter.printHelp("help", options);
+					printHelp(options);
 				}
 				if (cmd.hasOption("version")) {
 					System.out.println(version);
@@ -189,4 +182,17 @@ public class Main {
 		return writer;
 	}
 	
+	
+	public static void printHelp(Options options){
+		System.out.println("Example:");
+		System.out
+				.println("Datalogger: Remote example: startlog -filter (104,23,4)&(104,24,5) -location filename.txt -server localhost -id 1 -port 8181");
+		System.out
+		.println("Datalogger: Local example: startlog -filter .*(4|3)*. -device telosb -port 1464");
+		System.out.println("");
+
+		// for help statement
+		HelpFormatter formatter = new HelpFormatter();
+		formatter.printHelp("help", options);
+	}
 }

@@ -82,21 +82,15 @@ public class Datalogger {
 			// Connect to the TCP-Server.
 			connection = new RemoteConnection();
 
-			connection.connect(id + ":" + user + ":" + password + "@" + server
-					+ ":" + port);
+			connection.connect(user + ":" + password + "@" + server
+					+ ":" + port + "/" + id);
 			System.out.println("Connected");
 
 			deviceAsync = new RemoteDevice(connection);
 		} else {
-			// if there is no device-parameter or server-parameter,
-			// so connect to the mock-device
-			final OperationQueue queue = new PausableExecutorOperationQueue();
-			final MockConnection connection = new MockConnection();
-			Device<?> device = new MockDevice(connection);
-			connection.connect("MockPort");
-			System.out.println("Connected");
-
 			if (device_parameter != null) {
+				final OperationQueue queue = new PausableExecutorOperationQueue();
+				Device<?> device = null;
 				if (device_parameter.equals("jennec")) {
 					// Connect to the local jennec-device.
 					SerialPortConnection jennic_connection = new iSenseSerialPortConnection();
@@ -143,8 +137,8 @@ public class Datalogger {
 					device = new TelosbDevice(telosb_connection);
 					telosb_connection.connect(port);
 				}
+				deviceAsync = new QueuedDeviceAsync(queue, device);
 			}
-			deviceAsync = new QueuedDeviceAsync(queue, device);
 		}
 	}
 	
