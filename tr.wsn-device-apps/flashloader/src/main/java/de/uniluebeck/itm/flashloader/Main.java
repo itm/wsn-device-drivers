@@ -45,14 +45,14 @@ public class Main {
 		// add options for FlashLoader
 		options.addOption("port", true, "port");
 		options.addOption("server", true, "server");
-		options.addOption("file", true, "File to flash the device.");
+		options.addOption("file", true, "file to flash the device.");
 		options.addOption("user", true, "username to connect to the server");
 		options.addOption("passwd", true, "password to connect to the server");
 		options.addOption("device", true,
 				"type of device in local case: jennec, telosb oder pacemate");
 		options.addOption("id", true, "ID of the device in remote case");
-		options.addOption("timeout", true, "Timeout while flashing the device");
-		options.addOption("mac_adress", true, "The mac-address, that should be written on the device.");
+		options.addOption("timeout", true, "optional timeout while flashing the device");
+		options.addOption("mac_adress", true, "the mac-address, that should be written on the device.");
 
 		CommandLineParser parser = new GnuParser();
 		CommandLine cmd = null;
