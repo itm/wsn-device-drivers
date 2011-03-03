@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 
 import org.apache.commons.cli.*;
 
+import de.uniluebeck.itm.tcp.client.RemoteConnection;
+
 /**
  * The Class Main.
  */
@@ -114,7 +116,14 @@ public class Main {
 					}
 					Messenger messenger = new Messenger(port, server, user, password, device, id, Integer.valueOf(messageType));
 					messenger.connect();
-					messenger.send(message);
+					try{
+						messenger.send(message);
+					}finally{
+						RemoteConnection connection = messenger.getConnection();
+						if(connection != null){
+							connection.shutdown(false);
+						}
+					}
 				}
 			}
 		}	

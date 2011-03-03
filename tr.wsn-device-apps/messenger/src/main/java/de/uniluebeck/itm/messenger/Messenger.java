@@ -37,6 +37,7 @@ public class Messenger {
 	private DeviceAsync deviceAsync;
 	private String id;
 	private byte messageType;
+	private RemoteConnection connection;
 	private boolean sent = false; // for the test-class
 
 	/**
@@ -52,13 +53,17 @@ public class Messenger {
 		this.messageType = (byte)messageType;
 	}
 	
+	public RemoteConnection getConnection(){
+		return connection;
+	}
+	
 	/**
 	 * Connect. Method to connect to the tcp-server or to a local sensornode.
 	 */
 	public void connect() {
 		if (server != null) {
 			// Connect to the TCP-Server.
-			RemoteConnection connection = new RemoteConnection();
+			connection = new RemoteConnection();
 
 			connection.connect(user + ":" + password + "@" + server
 					+ ":" + port + "/" + id);
