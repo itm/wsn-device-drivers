@@ -1,6 +1,7 @@
 package de.uniluebeck.itm.metadatenservice;
 
 import java.io.File;
+import java.rmi.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -17,7 +18,7 @@ import de.uniluebeck.itm.metadatenservice.config.ConfigData;
 import de.uniluebeck.itm.metadatenservice.config.Node;
 
 public class MetaDatenService extends TimerTask implements iMetaDatenService {
-
+	/**Logger*/
 	private static Log log = LogFactory.getLog(MetaDatenService.class);
 	private ClientStub stub = null;
 	private List<IMetaDataCollector> collector = new ArrayList<IMetaDataCollector>();
@@ -31,9 +32,13 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService {
 		config = ConfigReader.readConfigFile(configpath);
 		log.info("remove old data of this TCP-Server" + config.getPassword());
 		stub = new ClientStub(config.getUsername(), config.getPassword(),
-				config.getServerIP(), config.getServerPort().intValue(),
-				config.getClientPort().intValue());
-		removeData();
+				config.getServerIP(), config.getServerPort().intValue(), config
+						.getClientPort().intValue());
+		try {
+			removeData();
+		} catch (final NullPointerException npe) {
+			log.error(npe.getStackTrace());
+		}
 
 		// nach 2 Sek gehts los
 		// timer.schedule ( new Task(), 2000 );
@@ -50,15 +55,21 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService {
 			stub.connect(config.getUsername(), config.getPassword());
 			log.info("Refreshrun connected");
 			for (int i = 0; i < collector.size(); i++) {
-				System.out.println("Node with ID: "
+				refreshNodeSync(collector.get(i).collect(sensors));
+				log.info("Node with ID: "
 						+ collector.get(i).collect(sensors).getNodeid()
 						+ "refreshed in directory");
-				refreshNodeSync(collector.get(i).collect(sensors));
 			}
-			stub.disconnect();
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error("xxx" + e.getMessage());
 		}
+		log.info("refreshrun disconnect:");
+		try {
+			stub.disconnect();
+		} catch (final NullPointerException npe) {
+			log.error(npe.getStackTrace());
+		}
+		log.info("refreshrun disconnected:");
 	}
 
 	public void writeConfig(ConfigData config) {
@@ -72,31 +83,31 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService {
 		}
 	}
 
-//	/**
-//	 * Load of ConfigData needed for communication
-//	 * 
-//	 * @param fileurl
-//	 * @return
-//	 */
-//	public ConfigData loadConfig(File source) {
-//		ConfigData config = new ConfigData();
-//		Serializer serializer = new Persister();
-//		log.debug("ConfigFile:" + source.getName() + source.toString());
-//		try {
-//			config = serializer
-//					.read(de.uniluebeck.itm.metadaten.metadatenservice.entity.ConfigData.class,
-//							source);
-//			// serializer.read(ConfigData, source);
-//		} catch (Exception e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
-//		log.debug("Config:" + config.getPassword() + config.getServerIP()
-//				+ config.getUsername() + config.getServerPort()
-//				+ config.getClientport());
-//		return config;
-//	}
-//	
+	// /**
+	// * Load of ConfigData needed for communication
+	// *
+	// * @param fileurl
+	// * @return
+	// */
+	// public ConfigData loadConfig(File source) {
+	// ConfigData config = new ConfigData();
+	// Serializer serializer = new Persister();
+	// log.debug("ConfigFile:" + source.getName() + source.toString());
+	// try {
+	// config = serializer
+	// .read(de.uniluebeck.itm.metadaten.metadatenservice.entity.ConfigData.class,
+	// source);
+	// // serializer.read(ConfigData, source);
+	// } catch (Exception e1) {
+	// // TODO Auto-generated catch block
+	// e1.printStackTrace();
+	// }
+	// log.debug("Config:" + config.getPassword() + config.getServerIP()
+	// + config.getUsername() + config.getServerPort()
+	// + config.getClientport());
+	// return config;
+	// }
+	//
 
 	/**
 	 * Adds an node to the directory - no existing connection needed
@@ -148,7 +159,7 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService {
 
 			@Override
 			public void onFailure(Throwable throwable) {
-				System.err.println(throwable.getMessage());
+				log.error(throwable.getMessage());
 				callback.onFailure(throwable);
 
 			}
@@ -215,7 +226,7 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService {
 		// public void onProgressChange(float fraction) {
 		//
 		// }});
-//		log.info("und wieder neu connecten");
+		// log.info("und wieder neu connecten");
 	}
 
 	@Override

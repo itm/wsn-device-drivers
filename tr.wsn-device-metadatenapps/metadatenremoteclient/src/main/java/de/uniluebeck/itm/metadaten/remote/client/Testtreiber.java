@@ -1,5 +1,6 @@
 package de.uniluebeck.itm.metadaten.remote.client;
 
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +9,7 @@ import de.uniluebeck.itm.metadaten.remote.entity.Node;
 
 /**
  * 
- * @author tora
+ * @author Toralf Babel
  * just a test implementation
  *
  */
@@ -38,7 +39,11 @@ public class Testtreiber {
 		List <Node> nodes = new ArrayList<Node>();
 		try {
 			nodes=mclient.search(node, queryString);
-		} catch (final Exception e) {
+		} catch (final NullPointerException e) {
+			e.printStackTrace();
+		}catch(final ConnectException con){
+			
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

@@ -60,7 +60,7 @@ public class ClientStub {
 	public void connect(String userName, String passWord) {
 		// setzen des Thread-Pools
 		channel = null;
-		System.out.println("Setzen des Threadpools CLient");
+		log.info("setting Threadpools CLient");
 		executor = new ThreadPoolCallExecutor(3, 10);
 		// setzen des bootstraps
 		bootstrap = new DuplexTcpClientBootstrap(client,
@@ -73,7 +73,7 @@ public class ClientStub {
 		// PacketServiceImpl()));
 
 		// setzen der Verbindungs-Optionen, siehe Netty
-		System.out.println("Verbindungsoptionen CLient werden gesetzt");
+		log.info("Verbindungsoptionen CLient werden gesetzt");
 		bootstrap.setOption("connectTimeoutMillis", 10000);
 		bootstrap.setOption("connectResponseTimeoutMillis", 10000);
 		bootstrap.setOption("receiveBufferSize", 1048576);
@@ -83,14 +83,14 @@ public class ClientStub {
 			// herstellen der Verbindung zum Server
 			channel = bootstrap.peerWith(server);
 		} catch (IOException e) {
+			log.error("Fehler beim bootstrap" + e.getMessage());
 			log.error(e.getCause());
-			System.err.println("Fehler beim bootstrap" + e.getMessage());
 			// channel = bootstrap.peerWith(server);
 			// --- callback.onFailure(e);
 		}
 		// erzeugen eines Controlles fuer diese Operation
 		final RpcController controller = channel.newRpcController();
-		System.out.println("RPC-Controller erzeugt");
+		log.info("RPC-Controller erzeugt");
 		BlockingInterface syncOperationService = Operations
 				.newBlockingStub(channel);
 		// // aufbauen eines Identification-Packets
@@ -237,7 +237,7 @@ public class ClientStub {
 						} else {
 							callback.onFailure(new Throwable(controller
 									.errorText()));
-							System.out.println("Fehler beim Refresh");
+							log.info("Error refreshing node");
 						}
 					}
 				});

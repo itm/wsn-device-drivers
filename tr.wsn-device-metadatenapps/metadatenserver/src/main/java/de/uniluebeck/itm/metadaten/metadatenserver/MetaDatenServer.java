@@ -4,10 +4,9 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.bind.JAXBException;
 
@@ -51,12 +50,14 @@ import de.uniluebeck.itm.metadaten.server.helper.ConfigReader;
 import de.uniluebeck.itm.metadaten.server.helper.NodeHelper;
 import de.uniluebeck.itm.persistence.DatabaseToStore;
 import de.uniluebeck.itm.persistence.StoreToDatabase;
+import de.uniluebeck.itm.tr.util.TimedCache;
 
 /**
- * Server Class for the MetaDataRepository
- * It provides all necessary function to manipulate the Repository
+ * Server Class for the MetaDataRepository It provides all necessary function to
+ * manipulate the Repository
+ * 
  * @author babel
- *
+ * 
  */
 public class MetaDatenServer {
 
@@ -68,21 +69,27 @@ public class MetaDatenServer {
 	// wie Timeout fuer einen Eintrag neu starten?
 	// private static TimedCache<RpcClientChannel, ClientID> idList = new
 	// TimedCache<RpcClientChannel, ClientID>();
-	// private static TimedCache<RpcClientChannel, Subject> authList = new
-	// TimedCache<RpcClientChannel, Subject>();
-//	private static Map<RpcClientChannel, ClientID> idList = new HashMap<RpcClientChannel, ClientID>();
+	private static TimedCache<RpcClientChannel, Subject> authList = new TimedCache<RpcClientChannel, Subject>(
+			30, TimeUnit.SECONDS);
+
+	// private static Map<RpcClientChannel, ClientID> idList = new
+	// HashMap<RpcClientChannel, ClientID>();
 	/**
 	 * List with authenticated CLients
 	 */
-	private static Map<RpcClientChannel, Subject> authList = new HashMap<RpcClientChannel, Subject>();
+	// private static Map<RpcClientChannel, Subject> authList = new
+	// HashMap<RpcClientChannel, Subject>();
 
 	/**
-	 * Main methode for the servers
-	 * @param args 1st argument for the path to the config file
+	 * Main method for the servers
+	 * 
+	 * @param args
+	 *            1st argument for the path to the config file
 	 * @throws URISyntaxException
 	 */
 	public static void main(final String[] args) throws URISyntaxException {
-		final String file = (args.length < 1) ? "src/main/resources/config.xml" : args[0];
+		final String file = (args.length < 1) ? "src/main/resources/config.xml"
+				: args[0];
 		ConfigData config = null;
 		try {
 			config = ConfigReader.readConfigFile(new File(file));
@@ -91,15 +98,17 @@ public class MetaDatenServer {
 			e.printStackTrace();
 		}
 		log.info("Startup Server!");
-		final CleanRepository cleaner = new CleanRepository(config.getOveragetime().intValue());
+		final CleanRepository cleaner = new CleanRepository(config
+				.getOveragetime().intValue());
 		cleaner.timer.schedule(cleaner, config.getTimerdelay().longValue(),
 				config.getTimerinterval().longValue());
 		// setzen der server-Informationen
-		final PeerInfo serverInfo = new PeerInfo(config.getServerIP(),
-				config.getServerPort().intValue());
+		final PeerInfo serverInfo = new PeerInfo(config.getServerIP(), config
+				.getServerPort().intValue());
 
 		// setzen des ThreadPools
-		final RpcServerCallExecutor executor = new ThreadPoolCallExecutor(10, 10);
+		final RpcServerCallExecutor executor = new ThreadPoolCallExecutor(10,
+				10);
 
 		// setzen des bootstraps
 		final DuplexTcpServerBootstrap bootstrap = new DuplexTcpServerBootstrap(
@@ -112,7 +121,8 @@ public class MetaDatenServer {
 		final RpcConnectionEventListener listener = new RpcConnectionEventListener() {
 
 			@Override
-			public void connectionReestablished(final RpcClientChannel clientChannel) {
+			public void connectionReestablished(
+					final RpcClientChannel clientChannel) {
 				log.info("connectionReestablished " + clientChannel);
 			}
 
@@ -175,14 +185,14 @@ public class MetaDatenServer {
 		// hier sollte die Authentifikation stattfinden
 
 		@Override
-		public void connect(final RpcController controller,final  Identification request,
-				final RpcCallback<VOID> done) {
+		public void connect(final RpcController controller,
+				final Identification request, final RpcCallback<VOID> done) {
 
 			// eine Moeglichkeit den benutzten channel zu identifizieren
 			final RpcClientChannel channel = ServerRpcController
 					.getRpcChannel(controller);
 			// erzeugen einer channel bezogenen User Instanz
-//			ClientID id = new ClientID();
+			// ClientID id = new ClientID();
 
 			// Abgleich der Userdaten
 			log.info("Checking authentication");
@@ -205,7 +215,7 @@ public class MetaDatenServer {
 					currentUser.login(token);
 					// eintragen der ClientID-Instanz zusammen mit den benutzten
 					// Channel in eine Liste
-//					idList.put(channel, id);
+					// idList.put(channel, id);
 					authList.put(channel, currentUser);
 					// ausfuehren des Callback
 					done.run(VOID.newBuilder().build());
@@ -237,11 +247,18 @@ public class MetaDatenServer {
 				done.run(VOID.newBuilder().build());
 			}
 			/* Shiro END */
-			log.info("Authentication successfull");
+			if ((currentUser.isAuthenticated())
+					&& (!(authList.get(channel) == null))) {
+				log.info("Authentication successfull");
+			} else {
+				log.error(("Authentication not successful "
+						+ currentUser.isAuthenticated() + "User in authlist" + authList
+						.containsKey(channel)));
+			}
 		}
 
 		@Override
-		public void add(final RpcController controller,final NODE request,
+		public void add(final RpcController controller, final NODE request,
 				final RpcCallback<VOID> done) {
 			final NodeHelper nhelper = new NodeHelper();
 			Node node = new Node();
@@ -276,7 +293,7 @@ public class MetaDatenServer {
 		}
 
 		@Override
-		public void remove(final RpcController controller,final NODE request,
+		public void remove(final RpcController controller, final NODE request,
 				final RpcCallback<VOID> done) {
 			final NodeHelper nhelper = new NodeHelper();
 			Node node = new Node();
@@ -305,12 +322,14 @@ public class MetaDatenServer {
 		}
 
 		@Override
-		public void refresh(final RpcController controller,final NODE request,
+		public void refresh(final RpcController controller, final NODE request,
 				final RpcCallback<VOID> done) {
 			final NodeHelper nhelper = new NodeHelper();
 			Node node = new Node();
 			final Subject user = authList.get(ServerRpcController
 					.getRpcChannel(controller));
+			log.debug("Method: refresh: User: " + user == null
+					+ "user authenticated? " + user.isAuthenticated());
 			if (user == null || !user.isAuthenticated()) {
 				controller.setFailed("You are not authenticated!");
 				done.run(null);
@@ -318,7 +337,7 @@ public class MetaDatenServer {
 				return;
 			}
 			if (request.getKnotenid() == null) {
-				controller.setFailed("Node without Id!");
+				controller.setFailed("Node without Id cannot be updated!");
 				done.run(null);
 
 				return;
@@ -341,7 +360,8 @@ public class MetaDatenServer {
 		}
 
 		@Override
-		public void search(final RpcController controller,final SearchRequest request,
+		public void search(final RpcController controller,
+				final SearchRequest request,
 				final RpcCallback<SearchResponse> done) {
 			log.info("Searchquery by Client: "
 					+ ServerRpcController.getRpcChannel(controller)
@@ -353,12 +373,14 @@ public class MetaDatenServer {
 					.newBuilder();
 			if (!(request.getQueryMs() == null)) {
 				Node node = nhelper.changeToNode(request.getQueryMs());
-				 node = nhelper.removeEmptyStrings(node);
+				node = nhelper.removeEmptyStrings(node);
 				log.info("search started");
-				log.info("NodeID vom CLient" + node.getId().getId()+ "Rest des Requests" +  node.getMicrocontroller());
-//				log.info("true? " + (node.getMicrocontroller().matches("")));
+				log.info("NodeID vom CLient" + node.getId().getId()
+						+ "Rest des Requests" + node.getMicrocontroller());
+				// log.info("true? " + (node.getMicrocontroller().matches("")));
 				resultlist = getfromDB.getNodes(node, false);
-				log.info("search ended and delivered " +resultlist.size() + " results ");
+				log.info("search ended and delivered " + resultlist.size()
+						+ " results ");
 			}
 			if (!(request.getQueryString() == null)) {
 				// TODO
@@ -380,17 +402,26 @@ public class MetaDatenServer {
 
 		@Override
 		public void disconnect(final RpcController controller,
-				final Identification request,final RpcCallback<VOID> done) {
-			log.info("!'!'!'!'!'!'!'!'!'!'!''!''!'!'!'!'!'Disconnect-Methode");
+				final Identification request, final RpcCallback<VOID> done) {
 			// eine Moeglichkeit den benutzten channel zu identifizieren
 			final RpcClientChannel channel = ServerRpcController
 					.getRpcChannel(controller);
 			final Subject currentUser = authList.get(ServerRpcController
 					.getRpcChannel(controller));
+			log.info("Disconnect Client" + channel + "User" + currentUser);
+			log.debug("Size of authList before removal of channel in dsiconnect()"
+					+ authList.size());
 			authList.remove(channel);
-//			idList.remove(ServerRpcController.getRpcChannel(controller));
+			log.debug("Size of authList after removal of channel in dsiconnect()"
+					+ authList.size());
+			// idList.remove(ServerRpcController.getRpcChannel(controller));
 			// authList.remove(ServerRpcController.getRpcChannel(controller));
-			currentUser.logout();
+			try{
+				currentUser.logout();
+			}catch(final NullPointerException e){
+				log.error("Error while logging out user." );
+				log.error(e.getStackTrace());
+			}
 			log.info("Und user noch in der Liste"
 					+ authList.get(ServerRpcController
 							.getRpcChannel(controller)));
@@ -399,7 +430,7 @@ public class MetaDatenServer {
 
 		@Override
 		public void removeallServerNodes(final RpcController controller,
-				final ServerIP request,final RpcCallback<VOID> done) {
+				final ServerIP request, final RpcCallback<VOID> done) {
 			final Node node = new Node();
 			final NodeId id = new NodeId();
 			final DatabaseToStore fromDB = new DatabaseToStore();

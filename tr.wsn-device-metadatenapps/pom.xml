@@ -39,16 +39,6 @@
 				<artifactId>metadatenserver</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>-->
-			<dependency>
-				<groupId>org.rxtx</groupId>
-				<artifactId>rxtx</artifactId>
-				<version>2.1.7</version>
-			</dependency>
-			<dependency>
-				<groupId>com.google.inject</groupId>
-				<artifactId>guice</artifactId>
-				<version>2.0</version>
-			</dependency>
 			<!-- Kommunikation-->
 				<dependency>
 				<groupId>org.jboss.netty</groupId>
@@ -68,11 +58,6 @@
 				<version>0.0.1-SNAPSHOT</version>
 				<scope>compile</scope>
 			</dependency>
-			<dependency>
-				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>tr.util</artifactId>
-				<version>0.5.3</version>
-			</dependency>
 			<!--Logging-->
 			<dependency>
 				<groupId>log4j</groupId>
@@ -83,23 +68,6 @@
 				<groupId>commons-logging</groupId>
 				<artifactId>commons-logging</artifactId>
 				<version>1.1.1</version>
-			</dependency>
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-log4j12</artifactId>
-				<version>1.5.8</version>
-			</dependency>
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-api</artifactId>
-				<version>1.5.8</version>
-			</dependency>
-			<!--Testing-->
-			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>4.8.2</version>
-				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>cglib</groupId>

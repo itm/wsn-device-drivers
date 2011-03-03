@@ -18,6 +18,9 @@ public class Testtreiber {
 		System.out.println("Init des MetaDatenService");
 		try {
 			mclient = new MetaDatenService (new File("src/main/resources/config.xml"), new File("src/main/resources/sensors.xml"));
+		} catch (NullPointerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -27,7 +30,11 @@ public class Testtreiber {
 //		IMetaDataCollector mcollector = new MetaDataCollector (device, "11"+String.valueOf(new Date().getTime()));
 		IMetaDataCollector mcollector = new MetaDataCollector (device, "280120101");
 		System.out.println("Collector hinzufügen");
-		mclient.addMetaDataCollector(mcollector);
+		try{
+			mclient.addMetaDataCollector(mcollector);
+		}catch(Exception e){
+			System.err.println(e.getMessage());
+		}
 	}
 
 }

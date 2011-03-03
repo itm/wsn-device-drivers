@@ -5,7 +5,8 @@ import java.util.List;
 import de.uniluebeck.itm.metadaten.remote.entity.Node;
 
 /**
- * @author babel The MetaDataClient can be used for searching for nodes in the
+ * @author Toralf Babel 
+ * The MetaDataClient can be used for searching for nodes in the
  *         MetaDataDirectory
  */
 public interface MetaDataClient {

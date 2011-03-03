@@ -4,34 +4,38 @@ import java.io.File;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import de.uniluebeck.itm.metadaten.serverclient.metadataclienthelper.ConfigReader;
 import de.uniluebeck.itm.metadatenservice.config.Capability;
 import de.uniluebeck.itm.metadatenservice.config.Node;
 import de.uniluebeck.itm.metadatenservice.config.NodeList;
 
+/**
+ * Reads all possible MetaData for a sensornode from the given sensor.xml - File
+ * 
+ * @author Toralf Babel
+ * 
+ */
 public class FileCollector {
-
+	/**
+	 * Logger for FileCollector
+	 */
+	private static Log log = LogFactory.getLog(FileCollector.class);
+	/** Constructor */
 	public FileCollector() {
 	};
 
-	public static void main(String[] args) throws Exception {
-
-		// Node node = new Node();
-		// node.setId("Test281220101");
-		// TODO Classloader
-		// FileCollector collect = new FileCollector();
-		// node= collect.filecollect(node, "sensors.xml");
-		// System.out.println("Ergbenis"+ node.getDescription());
-	}
-
 	/**
-	 * Collects the information given by the wiseml-configfile
+	 * Collects the information given by the sensor.xml - file
 	 * 
 	 * @param node
-	 * @param wisemlurl
+	 *            node with current collected information -> at least the id to
+	 *            search for in the config - file
+	 * @param source - the file with the information for the sensor node
 	 * @return node - with supplemented information
 	 */
-	public Node filecollect(Node node, File source) {
+	public Node filecollect(final Node node, final File source) {
 
 		NodeList nodelist = null;
 		try {
@@ -39,27 +43,32 @@ public class FileCollector {
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
-		for (Node result : nodelist.getNode()) {
-			if (result.getNodeid().equals(node.getNodeid())) {
-				if (node.getDescription() == null) {
-					if (!(result.getDescription() == null)) {
-						node.setDescription(result.getDescription());
+		try {
+			for (Node result : nodelist.getNode()) {
+				if (result.getNodeid().equals(node.getNodeid())) {
+					if (node.getDescription() == null) {
+						if (!(result.getDescription() == null)) {
+							node.setDescription(result.getDescription());
+						}
 					}
-				}
-				if (node.getPort() == null) {
-					if (result.getPort().shortValue() != 0) {
-						node.setPort(result.getPort());
+					if (node.getPort() == null) {
+						if (result.getPort().shortValue() != 0) {
+							node.setPort(result.getPort());
+						}
 					}
-				}
-				if (node.getMicrocontroller() == null) {
-					if (!(result.getMicrocontroller() == null)) {
-						node.setMicrocontroller(result.getMicrocontroller());
+					if (node.getMicrocontroller() == null) {
+						if (!(result.getMicrocontroller() == null)) {
+							node.setMicrocontroller(result.getMicrocontroller());
+						}
 					}
-				}
-				for (Capability cap : result.getCapability()) {
-					node.getCapability().add(cap);
+					for (Capability cap : result.getCapability()) {
+						node.getCapability().add(cap);
+					}
 				}
 			}
+		}
+		catch(final NullPointerException e){
+			log.error(e.getCause());
 		}
 		return node;
 	}

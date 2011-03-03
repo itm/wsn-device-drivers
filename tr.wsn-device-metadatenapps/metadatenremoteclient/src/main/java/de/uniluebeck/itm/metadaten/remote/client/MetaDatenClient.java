@@ -1,9 +1,6 @@
 package de.uniluebeck.itm.metadaten.remote.client;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -11,12 +8,14 @@ import java.util.concurrent.Executors;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
+
 import com.google.protobuf.RpcController;
 import com.google.protobuf.ServiceException;
 import com.googlecode.protobuf.pro.duplex.PeerInfo;
 import com.googlecode.protobuf.pro.duplex.RpcClientChannel;
 import com.googlecode.protobuf.pro.duplex.client.DuplexTcpClientBootstrap;
 import com.googlecode.protobuf.pro.duplex.execute.ThreadPoolCallExecutor;
+
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Identification;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.NODE;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Operations;
@@ -125,12 +124,12 @@ public class MetaDatenClient implements MetaDataClient {
 			channel = bootstrap.peerWith(server);
 		} catch (final IOException e1) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			log.error(e1.getStackTrace());
 		}
 
 		// erzeugen eines Controlles fuer diese Operation
 		final RpcController controller = channel.newRpcController();
-		System.out.println("RPC-Controller erzeugt");
+		log.info("RPC-Controller erzeugt");
 
 		// erzeugen eines async RPC-Objekts fuer die Operationen
 		operationService = Operations.newStub(channel);
@@ -187,20 +186,19 @@ public class MetaDatenClient implements MetaDataClient {
 	 * @throws Exception error while connection to server
 	 * @return List<Node> result of the search
 	 */
-	public List<Node> search(final Node queryexmpl, final String query) throws Exception {
+	public List<Node> search(final Node queryexmpl, String query) throws NullPointerException {
 
 		this.connect(user, password);
 		// erzeugen eines Controllers fuer diese Operation
 		final RpcController controller = channel.newRpcController();
 		final NodeHelper nhelper = new NodeHelper();
-		// Node fuer die Uebertragung erzeugen
-
+		if(query==null){
+			query="";
+		}
 		// Result erzeugen
 		final SearchRequest request = SearchRequest.newBuilder()
 				.setQueryMs(nhelper.changetoNODE(queryexmpl))
-				.setQueryString("123").build();
-		System.out.println("Was geht los sind die null"
-				+ request.getQueryMs().getMicrocontroller());
+				.setQueryString(query).build();
 		// erzeugen eines synchronen RPC-Objekts fuer die Operationen
 		final BlockingInterface blockOperationService = Operations
 				.newBlockingStub(channel);
@@ -208,11 +206,8 @@ public class MetaDatenClient implements MetaDataClient {
 			// sync RPC-Aufruf
 			final SearchResponse resultresp = blockOperationService.search(
 					controller, request);
-			System.out.println("Groesse der Response"
-					+ resultresp.getResponseList().size());
 			List<NODE> result = new ArrayList<NODE>();
 			result = resultresp.getResponseList();
-			System.out.println("Groesse des Results: " + result.size());
 			for (int i = 0; i < result.size(); i++) {
 				nodelist.add(nhelper.changeToNode(result.get(i)));
 			}
@@ -220,7 +215,7 @@ public class MetaDatenClient implements MetaDataClient {
 			e.printStackTrace();
 		}
 
-		this.disconnect("frager", "testPassword");
+		this.disconnect(user, password);
 		return nodelist;
 	}
 

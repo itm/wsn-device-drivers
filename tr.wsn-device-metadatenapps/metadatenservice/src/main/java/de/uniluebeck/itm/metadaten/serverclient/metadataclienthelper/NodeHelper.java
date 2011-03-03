@@ -28,12 +28,9 @@ public class NodeHelper {
 		if (!(node.getDescription() == null)) {
 			nodebuilder.setDescription(node.getDescription());
 		}
-		;
 		if (!(node.getMicrocontroller() == null)) {
-			System.err.println("Mic" + node.getMicrocontroller());
 			nodebuilder.setMicrocontroller(node.getMicrocontroller());
 		}
-		;
 		if (!node.getCapability().isEmpty()) {
 			for (Capability cap : node.getCapability()) {
 				Capabilities.Builder capbuilder = Capabilities.newBuilder();
@@ -44,12 +41,10 @@ public class NodeHelper {
 				capbuilder.setParentnodeId(node.getNodeid());
 				nodebuilder.addCapabilityList(capbuilder.build());
 			}
-
 		}
 
 		return nodebuilder.build();
 	}
-
 
 	/**
 	 * Wandelt NODE-Message zur Uebertragung per RPC in WiseMlNode um
@@ -72,7 +67,7 @@ public class NodeHelper {
 			cap.setDatatype(capItem.getDatatype());
 			cap.setName(capItem.getName());
 			cap.setUnit(capItem.getUnit());
-//			cap.setNode(nodeout);
+			// cap.setNode(nodeout);
 			nodeout.getCapability().add(cap);
 		}
 		return nodeout;
