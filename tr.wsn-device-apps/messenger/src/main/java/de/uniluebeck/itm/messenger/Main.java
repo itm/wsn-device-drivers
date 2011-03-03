@@ -40,17 +40,14 @@ public class Main {
 		options.addOption("user", true, "username to connect to the server");
 		options.addOption("passwd", true, "password to connect to the server");
 		options.addOption("device", true,
-				"type of the device in local case: jennec, telosb oder pacemate");
+				"type of the device in local case: jennec, telosb or pacemate");
 		options.addOption("id", true, "ID of the device in remote case");
 		options.addOption("message_type", true, "Type of the Message to be send");
-
-		// for help statement
-		HelpFormatter formatter = new HelpFormatter();
 
 		CommandLineParser parser = new GnuParser();
 		CommandLine cmd = null;
 		if(args.length == 0){
-			formatter.printHelp("help", options);
+			printHelp(options);
 		}
 		else{
 			try {
@@ -61,11 +58,7 @@ public class Main {
 			if (cmd != null) {
 				// standard-options
 				if (cmd.hasOption("help")) {
-					System.out.println("Example:");
-					System.out
-							.println("Messenger: send -message 0a 3f 41 -server 141.83.1.546 -port 1282");
-					System.out.println("");
-					formatter.printHelp("help", options);
+					printHelp(options);
 				}
 				if (cmd.hasOption("version")) {
 					System.out.println(version);
@@ -107,6 +100,18 @@ public class Main {
 					messenger.send(message);
 				}
 			}
-		}
+		}	
+	}
+	
+	public static void printHelp(Options options){
+		System.out.println("Example:");
+		System.out
+				.println("Messenger: Remote example: send -message 68616c6c6f -port 8181 -server localhost -id 1");
+		System.out
+		.println("Messenger: Local example: send -message 68616c6c6f -port 1282 -device jennec");
+		System.out.println("");
+		// for help statement
+		HelpFormatter formatter = new HelpFormatter();
+		formatter.printHelp("help", options);
 	}
 }
