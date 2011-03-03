@@ -14,8 +14,7 @@ import org.apache.commons.cli.ParseException;
 
 public class Main {
 
-	//private static Log log = LogFactory.getLog(Main.class);
-	private static double version = 0.1;
+	private static double version = 1.0;
 
 	/**
 	 * The main method.
