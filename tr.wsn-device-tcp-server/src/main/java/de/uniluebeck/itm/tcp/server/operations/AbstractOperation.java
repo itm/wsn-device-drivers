@@ -19,7 +19,7 @@ import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.ReverseAnswer;
  *
  * @param <T> Type of the 
  */
-public abstract class AbstractOperation<T> implements Runnable {
+public abstract class AbstractOperation<T> {
 	
 	//private static Logger log = LoggerFactory.getLogger(AbstractOperation.class);
 	
@@ -99,8 +99,7 @@ public abstract class AbstractOperation<T> implements Runnable {
 	/**
 	 * Method to start the Operation
 	 */
-	@Override
-	public void run(){
+	public void execute(){
 		// Shiro 
 		if(user==null || !user.isAuthenticated()){
 			controller.setFailed("Sie sind nicht authentifiziert!");

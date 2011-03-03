@@ -70,9 +70,10 @@ import de.uniluebeck.itm.tr.util.TimedCache;
 
 /**
  * TCP-Server
+ * 
  * @author Andreas Maier
  * @author Bjoern Schuett
- *
+ * 
  */
 public class Server {
 
@@ -80,12 +81,12 @@ public class Server {
 	 * logger.
 	 */
 	private static Logger log = LoggerFactory.getLogger(Server.class);
-	
+
 	/**
 	 * default authentication time
 	 */
 	private final static int TIMEOUT = 30;
-	
+
 	/**
 	 * stores a clientID for every open channel.
 	 */
@@ -116,7 +117,7 @@ public class Server {
 	 * contains the objects representing the devices connected to the host.
 	 */
 	private static ServerDevice serverDevices;
-	
+
 	/**
 	 * IP of the host the server is running on.
 	 */
@@ -135,7 +136,7 @@ public class Server {
 	 *            the port the server is listening on.
 	 */
 	public Server(final String host, final int port) {
-		this(host, port, "", "", "",false);
+		this(host, port, "", "", "", false);
 	}
 
 	/**
@@ -149,40 +150,20 @@ public class Server {
 	 *            the path of the config-file (devices.xml)
 	 * @param configPath
 	 *            the path of the config-file (config.xml)
-	 * @param sensorsPath    
+	 * @param sensorsPath
 	 *            the path of the config-file (sensors.xml)
 	 * @param metaDaten
 	 *            activate MetaDaten-Collector
 	 */
-	public Server(final String host, final int port, final String devicesPath, final String configPath, final String sensorsPath, final boolean metaDaten) {
+	public Server(final String host, final int port, final String devicesPath,
+			final String configPath, final String sensorsPath,
+			final boolean metaDaten) {
 		this.host = host;
 		this.port = port;
-		serverDevices = new ServerDevice(devicesPath,configPath,sensorsPath,metaDaten);
+		serverDevices = new ServerDevice(devicesPath, configPath, sensorsPath,
+				metaDaten);
 	}
 
-	/**
-	 * Close a RpcClientChannel and remove all references to it
-	 * @param clientChannel the RpcClientChannel for which the connection should be closed
-	 */
-	public static void closeConnection(final RpcClientChannel clientChannel){
-		final DeviceAsync device = idList.get(clientChannel).getDevice();
-		if(!packetListenerList.isEmpty() && !packetListenerList.get(clientChannel).isEmpty()){
-			for(String key : packetListenerList.get(clientChannel).keySet()){
-				device.removeListener(packetListenerList.get(clientChannel).get(key));
-			}
-			packetListenerList.remove(clientChannel);
-		}
-		if(!plainTextListenerList.isEmpty() && !plainTextListenerList.get(clientChannel).isEmpty()){
-			for(String key : plainTextListenerList.get(clientChannel).keySet()){
-				device.removeListener(plainTextListenerList.get(clientChannel).get(key));
-			}
-			plainTextListenerList.remove(clientChannel);
-		}
-		authList.remove(clientChannel);
-		idList.remove(clientChannel);
-		clientChannel.close();
-	}
-	
 	/**
 	 * starts the whole Server.
 	 */
@@ -221,24 +202,32 @@ public class Server {
 
 			@Override
 			public void connectionLost(final RpcClientChannel clientChannel) {
-//				final DeviceAsync device = idList.get(clientChannel).getDevice();
-//				if(!packetListenerList.isEmpty() && !packetListenerList.get(clientChannel).isEmpty()){
-//					for(String key : packetListenerList.get(clientChannel).keySet()){
-//						device.removeListener(packetListenerList.get(clientChannel).get(key));
-//					}
-//					packetListenerList.remove(clientChannel);
-//				}
-//				if(!plainTextListenerList.isEmpty() && !plainTextListenerList.get(clientChannel).isEmpty()){
-//					for(String key : plainTextListenerList.get(clientChannel).keySet()){
-//						device.removeListener(plainTextListenerList.get(clientChannel).get(key));
-//					}
-//					plainTextListenerList.remove(clientChannel);
-//				}
-//				authList.remove(clientChannel);
-//				idList.remove(clientChannel);
-//				clientChannel.close();
-				
-				closeConnection(clientChannel);
+				if (!idList.isEmpty() && null != idList.get(clientChannel)) {
+					final DeviceAsync device = idList.get(clientChannel)
+							.getDevice();
+					if (!packetListenerList.isEmpty()
+							&& !packetListenerList.get(clientChannel).isEmpty()) {
+						for (String key : packetListenerList.get(clientChannel)
+								.keySet()) {
+							device.removeListener(packetListenerList.get(
+									clientChannel).get(key));
+						}
+						packetListenerList.remove(clientChannel);
+					}
+					if (!plainTextListenerList.isEmpty()
+							&& !plainTextListenerList.get(clientChannel)
+									.isEmpty()) {
+						for (String key : plainTextListenerList.get(
+								clientChannel).keySet()) {
+							device.removeListener(plainTextListenerList.get(
+									clientChannel).get(key));
+						}
+						plainTextListenerList.remove(clientChannel);
+					}
+					authList.remove(clientChannel);
+					idList.remove(clientChannel);
+				}
+				clientChannel.close();
 				log.info("connectionLost " + clientChannel);
 			}
 
@@ -273,7 +262,8 @@ public class Server {
 
 	// eigentliche Operationen, die spaeter verwendet werden sollen
 	/**
-	 * Implements the Operations from the Operations.Interface 
+	 * Implements the Operations from the Operations.Interface
+	 * 
 	 * @author Andreas Maier
 	 */
 	static class OperationsImpl implements Operations.Interface {
@@ -283,9 +273,13 @@ public class Server {
 
 		/**
 		 * establish a Connection from a client
-		 * @param controller RpcController
-		 * @param request the UserData
-		 * @param done RpcCallback<EmptyAnswer>
+		 * 
+		 * @param controller
+		 *            RpcController
+		 * @param request
+		 *            the UserData
+		 * @param done
+		 *            RpcCallback<EmptyAnswer>
 		 */
 		@Override
 		public void connect(final RpcController controller,
@@ -306,8 +300,8 @@ public class Server {
 			final Subject currentUser = SecurityUtils.getSubject();
 
 			if (!currentUser.isAuthenticated()) {
-				final UsernamePasswordToken token = new UsernamePasswordToken(request
-						.getUsername(), request.getPassword());
+				final UsernamePasswordToken token = new UsernamePasswordToken(
+						request.getUsername(), request.getPassword());
 				token.setRememberMe(true);
 				try {
 					currentUser.login(token);
@@ -341,7 +335,7 @@ public class Server {
 					done.run(null);
 					return;
 				}
-			}else {
+			} else {
 				idList.put(channel, id);
 				authList.put(channel, currentUser);
 				done.run(EmptyAnswer.newBuilder().build());
@@ -350,43 +344,10 @@ public class Server {
 
 		}
 
-		/**
-		 * close a RPC-Connection safely
-		 * @param controller RpcController
-		 * @param request EmptyAnswer
-		 * @param done RpcCallback<EmptyAnswer>
-		 */
-		@Override
-		public void shutdown(final RpcController controller, final EmptyAnswer request,
-				final RpcCallback<EmptyAnswer> done) {
-			
-//			DeviceAsync device = idList.get(ServerRpcController
-//					.getRpcChannel(controller)).getDevice();
-//
-//			for(String key : packetListenerList.get(ServerRpcController.getRpcChannel(controller)).keySet()){
-//				device.removeListener(packetListenerList.get(ServerRpcController.getRpcChannel(controller)).get(key));
-//			}
-//			
-//			for(String key : plainTextListenerList.get(ServerRpcController.getRpcChannel(controller)).keySet()){
-//				device.removeListener(plainTextListenerList.get(ServerRpcController.getRpcChannel(controller)).get(key));
-//			}
-//			
-//			idList.remove(ServerRpcController.getRpcChannel(controller));
-//			authList.remove(ServerRpcController.getRpcChannel(controller));
-//			packetListenerList.remove(ServerRpcController
-//					.getRpcChannel(controller));
-//			plainTextListenerList.remove(ServerRpcController
-//					.getRpcChannel(controller));
-//			device = null;
-			
-			closeConnection(ServerRpcController.getRpcChannel(controller));
-			done.run(EmptyAnswer.newBuilder().build());
-		}
-
 		// Methode um Device zu Programmieren
 		@Override
-		public void program(final RpcController controller, final ProgramPacket request,
-				final RpcCallback<EmptyAnswer> done) {
+		public void program(final RpcController controller,
+				final ProgramPacket request, final RpcCallback<EmptyAnswer> done) {
 
 			final Subject user = authList.get(ServerRpcController
 					.getRpcChannel(controller));
@@ -395,7 +356,7 @@ public class Server {
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
 
-			new ProgramOperation(controller, done, user, id, request).run();
+			new ProgramOperation(controller, done, user, id, request).execute();
 		}
 
 		// reagieren auf ein getState-Aufruf
@@ -403,23 +364,18 @@ public class Server {
 		public void getState(final RpcController controller,
 				final OpKey request, final RpcCallback<STRING> done) {
 
-			new Runnable() {
-				@Override
-				public void run() {
-					final ClientID id = idList.get(ServerRpcController
-							.getRpcChannel(controller));
-					if (id != null) {
-						final OperationHandle<?> handle = id.getHandleElement(request
-								.getOperationKey());
-						done.run(STRING.newBuilder().setQuery(
-								handle.getState().getName()).build());
-					} else {
-						controller
-								.setFailed("Internal Error, please reconnect and try it again! ");
-						done.run(null);
-					}
-				}
-			}.run();
+			final ClientID id = idList.get(ServerRpcController
+					.getRpcChannel(controller));
+			if (id != null) {
+				final OperationHandle<?> handle = id.getHandleElement(request
+						.getOperationKey());
+				done.run(STRING.newBuilder().setQuery(
+						handle.getState().getName()).build());
+			} else {
+				controller
+						.setFailed("Internal Error, please reconnect and try it again! ");
+				done.run(null);
+			}
 		}
 
 		// reagieren auf ein cancel-Aufruf
@@ -427,26 +383,19 @@ public class Server {
 		public void cancelHandle(final RpcController controller,
 				final OpKey request, final RpcCallback<EmptyAnswer> done) {
 
-			new Runnable() {
-
-				@Override
-				public void run() {
-					final ClientID id = idList.get(ServerRpcController
-							.getRpcChannel(controller));
-					if (id != null) {
-						final OperationHandle<?> handle = id.getHandleElement(request
-								.getOperationKey());
-						handle.cancel();
-						id.deleteHandleElement(handle);
-						done.run(EmptyAnswer.newBuilder().build());
-					} else {
-						controller
-								.setFailed("Internal Error, please reconnect and try it again! ");
-						done.run(null);
-					}
-
-				}
-			}.run();
+			final ClientID id = idList.get(ServerRpcController
+					.getRpcChannel(controller));
+			if (id != null) {
+				final OperationHandle<?> handle = id.getHandleElement(request
+						.getOperationKey());
+				handle.cancel();
+				id.deleteHandleElement(handle);
+				done.run(EmptyAnswer.newBuilder().build());
+			} else {
+				controller
+						.setFailed("Internal Error, please reconnect and try it again! ");
+				done.run(null);
+			}
 		}
 
 		// reagieren auf ein get-Aufruf
@@ -454,60 +403,46 @@ public class Server {
 		public void getHandle(final RpcController controller,
 				final OpKey request, final RpcCallback<GetHandleAnswers> done) {
 
-			new Runnable() {
+			final ClientID id = idList.get(ServerRpcController
+					.getRpcChannel(controller));
+			id.setCalledGet(request.getOperationKey());
+			OperationHandle<?> handle = null;
 
-				@Override
-				public void run() {
+			try {
 
-					final ClientID id = idList.get(ServerRpcController
-							.getRpcChannel(controller));
-					id.setCalledGet(request.getOperationKey());
-					OperationHandle<?> handle = null;
+				handle = id.getHandleElement(request.getOperationKey());
+				final Object a = handle.get();
 
-					try {
+				GetHandleAnswers response = null;
 
-						handle = id.getHandleElement(request.getOperationKey());
-						final Object a = handle.get();
+				if (a == null) {
+					response = GetHandleAnswers.newBuilder().setEmptyAnswer(
+							EmptyAnswer.newBuilder().build()).build();
+				} else if (a.getClass().getName().contains("ChipType")) {
 
-						GetHandleAnswers response = null;
-
-						if (a == null) {
-							response = GetHandleAnswers.newBuilder()
-									.setEmptyAnswer(
-											EmptyAnswer.newBuilder().build())
-									.build();
-						} else if (a.getClass().getName().contains("ChipType")) {
-
-							response = GetHandleAnswers.newBuilder()
-									.setChipData(
-											STRING.newBuilder().setQuery(
-													((ChipType) a).name())
-													.build()).build();
-						} else if (a.getClass().getName()
-								.contains("MacAddress")) {
-							final MacData mac = MacData.newBuilder().addMACADDRESS(
+					response = GetHandleAnswers.newBuilder().setChipData(
+							STRING.newBuilder().setQuery(((ChipType) a).name())
+									.build()).build();
+				} else if (a.getClass().getName().contains("MacAddress")) {
+					final MacData mac = MacData.newBuilder()
+							.addMACADDRESS(
 									ByteString.copyFrom(((MacAddress) a)
 											.getMacBytes())).build();
-							response = GetHandleAnswers.newBuilder()
-									.setMacAddress(mac).build();
-						} else if (a.getClass().getName().contains("[B")) {
-							final ByteData bytes = ByteData.newBuilder().addData(
-									ByteString.copyFrom(((byte[]) a).clone()))
-									.build();
-							response = GetHandleAnswers.newBuilder().setData(
-									bytes).build();
-						}
-						done.run(response);
-					} catch (final Exception e) {
-						controller.setFailed("Error in get()-Operation");
-						done.run(null);
-					}
-					id.deleteHandleElement(handle);
-					id.removeCalledGet(request.getOperationKey());
-
+					response = GetHandleAnswers.newBuilder().setMacAddress(mac)
+							.build();
+				} else if (a.getClass().getName().contains("[B")) {
+					final ByteData bytes = ByteData.newBuilder().addData(
+							ByteString.copyFrom(((byte[]) a).clone())).build();
+					response = GetHandleAnswers.newBuilder().setData(bytes)
+							.build();
 				}
-			}.run();
-
+				done.run(response);
+			} catch (final Exception e) {
+				controller.setFailed("Error in get()-Operation");
+				done.run(null);
+			}
+			id.deleteHandleElement(handle);
+			id.removeCalledGet(request.getOperationKey());
 		}
 
 		@Override
@@ -521,13 +456,14 @@ public class Server {
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
 
-			new WriteMacOperation(controller, done, user, id, request).run();
+			new WriteMacOperation(controller, done, user, id, request)
+					.execute();
 
 		}
 
 		@Override
-		public void writeFlash(final RpcController controller, final FlashData request,
-				final RpcCallback<EmptyAnswer> done) {
+		public void writeFlash(final RpcController controller,
+				final FlashData request, final RpcCallback<EmptyAnswer> done) {
 
 			final Subject user = authList.get(ServerRpcController
 					.getRpcChannel(controller));
@@ -536,12 +472,13 @@ public class Server {
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
 
-			new WriteFlashOperation(controller, done, user, id, request).run();
+			new WriteFlashOperation(controller, done, user, id, request)
+					.execute();
 		}
 
 		@Override
-		public void eraseFlash(final RpcController controller, final Timeout request,
-				final RpcCallback<EmptyAnswer> done) {
+		public void eraseFlash(final RpcController controller,
+				final Timeout request, final RpcCallback<EmptyAnswer> done) {
 
 			final Subject user = authList.get(ServerRpcController
 					.getRpcChannel(controller));
@@ -550,12 +487,12 @@ public class Server {
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
 
-			new EraseOperation(controller, done, user, id, request).run();
+			new EraseOperation(controller, done, user, id, request).execute();
 		}
 
 		@Override
-		public void readFlash(final RpcController controller, final FlashData request,
-				final RpcCallback<EmptyAnswer> done) {
+		public void readFlash(final RpcController controller,
+				final FlashData request, final RpcCallback<EmptyAnswer> done) {
 
 			final Subject user = authList.get(ServerRpcController
 					.getRpcChannel(controller));
@@ -564,7 +501,8 @@ public class Server {
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
 
-			new ReadFlashOperation(controller, done, user, id, request).run();
+			new ReadFlashOperation(controller, done, user, id, request)
+					.execute();
 
 		}
 
@@ -579,13 +517,13 @@ public class Server {
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
 
-			new ReadMacOperation(controller, done, user, id, request).run();
+			new ReadMacOperation(controller, done, user, id, request).execute();
 
 		}
 
 		@Override
-		public void reset(final RpcController controller, final Timeout request,
-				final RpcCallback<EmptyAnswer> done) {
+		public void reset(final RpcController controller,
+				final Timeout request, final RpcCallback<EmptyAnswer> done) {
 
 			final Subject user = authList.get(ServerRpcController
 					.getRpcChannel(controller));
@@ -594,13 +532,13 @@ public class Server {
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
 
-			new ResetOperation(controller, done, user, id, request).run();
+			new ResetOperation(controller, done, user, id, request).execute();
 
 		}
 
 		@Override
-		public void send(final RpcController controller, final sendData request,
-				final RpcCallback<EmptyAnswer> done) {
+		public void send(final RpcController controller,
+				final sendData request, final RpcCallback<EmptyAnswer> done) {
 
 			final Subject user = authList.get(ServerRpcController
 					.getRpcChannel(controller));
@@ -609,7 +547,7 @@ public class Server {
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
 
-			new SendOperation(controller, done, user, id, request).run();
+			new SendOperation(controller, done, user, id, request).execute();
 
 		}
 
@@ -624,14 +562,16 @@ public class Server {
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
 
-			new GetChipTypeOperation(controller, done, user, id, request).run();
+			new GetChipTypeOperation(controller, done, user, id, request)
+					.execute();
 		}
 	}
 
 	/**
-	 * Implements the Operations from the PacketService.Interface 
+	 * Implements the Operations from the PacketService.Interface
+	 * 
 	 * @author Andreas Maier
-	 *
+	 * 
 	 */
 	static class PacketServiceImpl implements PacketService.Interface {
 
@@ -648,55 +588,44 @@ public class Server {
 				return;
 			}
 
-			new Runnable() {
+			final DeviceAsync deviceAsync = idList.get(
+					ServerRpcController.getRpcChannel(controller)).getDevice();
+
+			if (deviceAsync == null) {
+				controller.setFailed("Error while adding a Packet-Listener");
+				done.run(null);
+				return;
+			}
+
+			final int[] types = new int[request.getTypeCount()];
+			for (int i = 0; i < request.getTypeCount(); i++) {
+				types[i] = request.getType(i);
+			}
+
+			final MessagePacketListener listener = new MessagePacketListener() {
 
 				@Override
-				public void run() {
-
-					final DeviceAsync deviceAsync = idList.get(
-							ServerRpcController.getRpcChannel(controller))
-							.getDevice();
-
-					if (deviceAsync == null) {
-						controller
-								.setFailed("Error while adding a Packet-Listener");
-						done.run(null);
-						return;
-					}
-
-					final int[] types = new int[request.getTypeCount()];
-					for (int i = 0; i < request.getTypeCount(); i++) {
-						types[i] = request.getType(i);
-					}
-
-					final MessagePacketListener listener = new MessagePacketListener() {
-
-						@Override
-						public void onMessagePacketReceived(
-								final MessageEvent<MessagePacket> event) {
-							final RemoteMessagePacketListener remoteListener = new RemoteMessagePacketListener(
-									request.getOperationKey(),
-									ServerRpcController
-											.getRpcChannel(controller));
-							remoteListener.onMessagePacketReceived(event);
-						}
-					};
-
-					deviceAsync.addListener(listener, types);
-
-					// packetListenerList.put(request.getOperationKey(),
-					// listener);
-
-					final HashMap<String, MessagePacketListener> a = new HashMap<String, MessagePacketListener>();
-					a.put(request.getOperationKey(), listener);
-
-					packetListenerList.put(ServerRpcController
-							.getRpcChannel(controller), a);
-
-					done.run(EmptyAnswer.newBuilder().build());
-
+				public void onMessagePacketReceived(
+						final MessageEvent<MessagePacket> event) {
+					final RemoteMessagePacketListener remoteListener = new RemoteMessagePacketListener(
+							request.getOperationKey(), ServerRpcController
+									.getRpcChannel(controller));
+					remoteListener.onMessagePacketReceived(event);
 				}
-			}.run();
+			};
+
+			deviceAsync.addListener(listener, types);
+
+			// packetListenerList.put(request.getOperationKey(),
+			// listener);
+
+			final HashMap<String, MessagePacketListener> a = new HashMap<String, MessagePacketListener>();
+			a.put(request.getOperationKey(), listener);
+
+			packetListenerList.put(ServerRpcController
+					.getRpcChannel(controller), a);
+
+			done.run(EmptyAnswer.newBuilder().build());
 		}
 
 		@Override
@@ -712,51 +641,38 @@ public class Server {
 				return;
 			}
 
-			new Runnable() {
+			final DeviceAsync deviceAsync = idList.get(
+					ServerRpcController.getRpcChannel(controller)).getDevice();
+
+			if (deviceAsync == null) {
+				controller.setFailed("Error while adding a Plaintext-Listener");
+				done.run(null);
+				return;
+			}
+
+			final MessagePlainTextListener listener = new MessagePlainTextListener() {
 
 				@Override
-				public void run() {
+				public void onMessagePlainTextReceived(
+						final MessageEvent<MessagePlainText> message) {
 
-					final DeviceAsync deviceAsync = idList.get(
-							ServerRpcController.getRpcChannel(controller))
-							.getDevice();
-
-					if (deviceAsync == null) {
-						controller
-								.setFailed("Error while adding a Plaintext-Listener");
-						done.run(null);
-						return;
-					}
-
-					final MessagePlainTextListener listener = new MessagePlainTextListener() {
-
-						@Override
-						public void onMessagePlainTextReceived(
-								final MessageEvent<MessagePlainText> message) {
-
-							final RemoteMessagePlainTextListener remoteListener = new RemoteMessagePlainTextListener(
-									request.getOperationKey(),
-									ServerRpcController
-											.getRpcChannel(controller));
-							remoteListener.onMessagePlainTextReceived(message);
-						}
-					};
-
-					deviceAsync.addListener(listener);
-
-					// plainTextListenerList.put(request.getOperationKey(),
-					// listener);
-
-					final HashMap<String, MessagePlainTextListener> a = new HashMap<String, MessagePlainTextListener>();
-					a.put(request.getOperationKey(), listener);
-
-					plainTextListenerList.put(ServerRpcController
-							.getRpcChannel(controller), a);
-
-					done.run(EmptyAnswer.newBuilder().build());
-
+					final RemoteMessagePlainTextListener remoteListener = new RemoteMessagePlainTextListener(
+							request.getOperationKey(), ServerRpcController
+									.getRpcChannel(controller));
+					remoteListener.onMessagePlainTextReceived(message);
 				}
-			}.run();
+			};
+
+			deviceAsync.addListener(listener);
+
+			final HashMap<String, MessagePlainTextListener> a = new HashMap<String, MessagePlainTextListener>();
+			a.put(request.getOperationKey(), listener);
+
+			plainTextListenerList.put(ServerRpcController
+					.getRpcChannel(controller), a);
+
+			done.run(EmptyAnswer.newBuilder().build());
+
 		}
 
 		@Override
@@ -771,39 +687,26 @@ public class Server {
 				return;
 			}
 
-			new Runnable() {
+			final DeviceAsync deviceAsync = idList.get(
+					ServerRpcController.getRpcChannel(controller)).getDevice();
+			final HashMap<String, MessagePacketListener> a = packetListenerList
+					.get(ServerRpcController.getRpcChannel(controller));
 
-				@Override
-				public void run() {
+			if (deviceAsync == null
+					|| (!packetListenerList.containsKey(ServerRpcController
+							.getRpcChannel(controller)) && a
+							.containsKey(request.getOperationKey()))) {
+				controller.setFailed("Error while removing a Packet-Listener");
+				done.run(null);
+				return;
+			}
 
-					final DeviceAsync deviceAsync = idList.get(
-							ServerRpcController.getRpcChannel(controller))
-							.getDevice();
-					final HashMap<String, MessagePacketListener> a = packetListenerList
-							.get(ServerRpcController.getRpcChannel(controller));
+			deviceAsync.removeListener(a.get(request.getOperationKey()));
+			a.remove(request.getOperationKey());
+			packetListenerList.put(ServerRpcController
+					.getRpcChannel(controller), a);
 
-					if (deviceAsync == null
-							|| (!packetListenerList
-									.containsKey(ServerRpcController
-											.getRpcChannel(controller)) && a
-									.containsKey(request.getOperationKey()))) {
-						controller
-								.setFailed("Error while removing a Packet-Listener");
-						done.run(null);
-						return;
-					}
-
-					deviceAsync
-							.removeListener(a.get(request.getOperationKey()));
-					// packetListenerList.remove(request.getOperationKey());
-					a.remove(ServerRpcController.getRpcChannel(controller));
-					packetListenerList.put(ServerRpcController
-							.getRpcChannel(controller), a);
-
-					done.run(EmptyAnswer.newBuilder().build());
-
-				}
-			}.run();
+			done.run(EmptyAnswer.newBuilder().build());
 		}
 
 		@Override
@@ -819,35 +722,26 @@ public class Server {
 				return;
 			}
 
-			new Runnable() {
+			final DeviceAsync deviceAsync = idList.get(
+					ServerRpcController.getRpcChannel(controller)).getDevice();
+			final HashMap<String, MessagePlainTextListener> a = plainTextListenerList
+					.get(ServerRpcController.getRpcChannel(controller));
 
-				@Override
-				public void run() {
-					final DeviceAsync deviceAsync = idList.get(
-							ServerRpcController.getRpcChannel(controller))
-							.getDevice();
-					final HashMap<String, MessagePlainTextListener> a = plainTextListenerList
-							.get(ServerRpcController.getRpcChannel(controller));
+			if (deviceAsync == null
+					|| (!plainTextListenerList.containsKey(ServerRpcController
+							.getRpcChannel(controller)) && a
+							.containsKey(request.getOperationKey()))) {
+				controller
+						.setFailed("Error while removing a Plaintext-Listener");
+				done.run(null);
+				return;
+			}
 
-					if (deviceAsync == null
-							|| (!plainTextListenerList
-									.containsKey(ServerRpcController
-											.getRpcChannel(controller)) && a
-									.containsKey(request.getOperationKey()))) {
-						controller
-								.setFailed("Error while removing a Plaintext-Listener");
-						done.run(null);
-						return;
-					}
-
-					deviceAsync
-							.removeListener(a.get(request.getOperationKey()));
-					a.remove(request.getOperationKey());
-					plainTextListenerList.put(ServerRpcController
-							.getRpcChannel(controller), a);
-					done.run(EmptyAnswer.newBuilder().build());
-				}
-			}.run();
+			deviceAsync.removeListener(a.get(request.getOperationKey()));
+			a.remove(request.getOperationKey());
+			plainTextListenerList.put(ServerRpcController
+					.getRpcChannel(controller), a);
+			done.run(EmptyAnswer.newBuilder().build());
 		}
 	}
 
