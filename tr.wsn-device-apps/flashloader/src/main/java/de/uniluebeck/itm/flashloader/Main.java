@@ -1,6 +1,7 @@
 package de.uniluebeck.itm.flashloader;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -76,6 +77,11 @@ public class Main {
 				if (args[0].equals("flash")) {
 					FlashLoader flashLoader = read_cmd(cmd);
 					String file = cmd.getOptionValue("file");
+					File f = new File(file);
+					if(!f.exists()){
+						System.out.println("File don´t exists!");
+						System.exit(1);
+					}
 					flashLoader.flash(file);
 
 				} else if (args[0].equals("readmac")) {
@@ -85,6 +91,10 @@ public class Main {
 				} else if (args[0].equals("writemac")) {
 					FlashLoader flashLoader = read_cmd(cmd);
 				    String mac_address = cmd.getOptionValue("mac_adress");
+				    if(mac_address == null){
+						System.out.println("Please enter mac_address!");
+						System.exit(1);
+					}
 					MacAddress macAdress = new MacAddress(hexStringToByteArray(mac_address));
 					flashLoader.writemac(macAdress);
 
@@ -111,6 +121,19 @@ public class Main {
 		String device = cmd.getOptionValue("device");
 		String id = cmd.getOptionValue("id");
 		String timeout = cmd.getOptionValue("timeout");
+		
+		if(device == null && server == null){
+			System.out.println("Please enter device or server!");
+			System.exit(1);
+		}
+		if(port == null){
+			System.out.println("Please enter port!");
+			System.exit(1);
+		}
+		if(server != null && id == null){
+			System.out.println("Please enter id of the node!");
+			System.exit(1);
+		}
 
 		if (server != null && (user == null && password == null || user == null)) {
 			System.out.println("Username and Password is missing.");
