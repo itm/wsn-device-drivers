@@ -37,20 +37,20 @@ public class Messenger {
 	private String device_parameter;
 	private DeviceAsync deviceAsync;
 	private String id;
-	private int message_type;
+	private byte message_type;
 	private boolean sent = false; // for the test-class
 
 	/**
 	 * Instantiates a new messenger.
 	 */
-	public Messenger(String port, String server, String user, String password, String device, String id, String message_type) {
+	public Messenger(String port, String server, String user, String password, String device, String id, int message_type) {
 		this.port = port;
 		this.server = server;
 		this.user = user;
 		this.password = password;
 		this.device_parameter = device;
 		this.id = id;
-		this.message_type = Integer.valueOf(message_type);
+		this.message_type = (byte)message_type;
 	}
 	
 	/**
