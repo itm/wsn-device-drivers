@@ -84,6 +84,19 @@ public class Main {
 					String device = cmd.getOptionValue("device");
 					String output = cmd.getOptionValue("output");
 					String id = cmd.getOptionValue("id");
+					
+					if(device == null && server == null){
+						System.out.println("Please enter device or server!");
+						System.exit(1);
+					}
+					if(port == null){
+						System.out.println("Please enter port!");
+						System.exit(1);
+					}
+					if(server != null && id == null){
+						System.out.println("Please enter id of the node!");
+						System.exit(1);
+					}
 
 					if (server != null
 							&& (user == null && password == null || user == null)) {
