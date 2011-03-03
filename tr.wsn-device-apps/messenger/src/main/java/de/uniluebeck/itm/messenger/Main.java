@@ -36,7 +36,7 @@ public class Main {
 		// add options for Messenger
 		options.addOption("port", true, "port");
 		options.addOption("server", true, "server");
-		options.addOption("message", true, "message to send");
+		options.addOption("message", true, "message to send as hex-code");
 		options.addOption("user", true, "username to connect to the server");
 		options.addOption("passwd", true, "password to connect to the server");
 		options.addOption("device", true,
