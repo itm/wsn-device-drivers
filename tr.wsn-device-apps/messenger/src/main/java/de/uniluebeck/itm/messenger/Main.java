@@ -12,7 +12,7 @@ import org.apache.commons.cli.*;
 public class Main {
 
 	/** The version. */
-	private static double version = 0.1;
+	private static double version = 1.0;
 
 	/**
 	 * The main method.
