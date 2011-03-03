@@ -77,6 +77,19 @@ public class Main {
 					String server_port = cmd.getOptionValue("server_port");
 					String client_port = cmd.getOptionValue("client_port");
 					
+					if(server == null){
+						System.out.println("Please enter server!");
+						System.exit(1);
+					}
+					if(server_port == null){
+						System.out.println("Please enter server_port!");
+						System.exit(1);
+					}
+					if(id == null && microcontroller == null && sensor == null){
+						System.out.println("Please enter id, microcontroller or sensor!");
+						System.exit(1);
+					}
+					
 					if (server != null && (user == null && password == null || user == null)) {
 						System.out.println("Username and Password is missing.");
 						BufferedReader in = new BufferedReader(
