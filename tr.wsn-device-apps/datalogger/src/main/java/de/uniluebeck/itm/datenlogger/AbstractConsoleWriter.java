@@ -17,12 +17,14 @@ public abstract class AbstractConsoleWriter implements PausableWriter{
 	private String bracketFilter;
 	
 	@Override
-	public void write(byte[] content) {
+	public void write(byte[] content, int messageType) {
 		final String output = convert(content);
 		Pattern pattern = Pattern.compile(regexFilter);
 		if (!isPaused && pattern.matcher(output).matches()) {
 			if(bracketFilter != null){
-				if(parse_brackets_filter(bracketFilter).apply(output)){
+				Brackets_Predicate predicate = (Brackets_Predicate)parse_brackets_filter(bracketFilter);
+				predicate.setMessageType(messageType);
+				if(predicate.apply(output)){
 					System.out.println(output);
 				}
 			}else{

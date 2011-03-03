@@ -5,7 +5,7 @@ import java.io.Closeable;
 
 public interface PausableWriter extends Closeable{
 	
-	public void write(byte[] content);
+	public void write(byte[] content, int messageType);
 	
 	void pause();
 	

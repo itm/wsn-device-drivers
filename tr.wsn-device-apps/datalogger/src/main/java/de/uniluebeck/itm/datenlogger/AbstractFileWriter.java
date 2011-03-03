@@ -20,17 +20,21 @@ public abstract class AbstractFileWriter implements PausableWriter{
 	private String bracketFilter;
 	
 	@Override
-	public void write(byte[] content) {
+	public void write(byte[] content, int messageType) {
 		final String output = convert(content);
 		Pattern pattern = Pattern.compile(regexFilter);
 		if (!isPaused && pattern.matcher(output).matches()) {
-			if(bracketFilter != null && parse_brackets_filter(bracketFilter).apply(output)){
-				try {
-					writer.write(output);
-					writer.write("\n");
-				} catch (IOException e) {
-					System.out.println("Cannot write to file.");
-				}
+			if(bracketFilter != null){
+				Brackets_Predicate predicate = (Brackets_Predicate)parse_brackets_filter(bracketFilter);
+				predicate.setMessageType(messageType);
+				if(predicate.apply(output)){
+					try {
+						writer.write(output);
+						writer.write("\n");
+					} catch (IOException e) {
+						System.out.println("Cannot write to file.");
+					}
+				}	
 			}else{
 				try {
 					writer.write(output);

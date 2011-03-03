@@ -160,7 +160,7 @@ public class Datalogger {
 			@Override
 			public void onMessagePacketReceived(
 					de.uniluebeck.itm.devicedriver.event.MessageEvent<MessagePacket> event) {
-				writer.write(event.getMessage().getContent());
+				writer.write(event.getMessage().getContent(), event.getMessage().getType());
 			}
 		};
 		deviceAsync.addListener(listener, PacketType.LOG);
@@ -177,7 +177,9 @@ public class Datalogger {
 			log.error("Error while closing the writer.");
 		}
 		started = false;
-		connection.shutdown(false);
+		if(connection != null){
+			connection.shutdown(false);
+		}
 		System.out.println("\nEnd of Logging.");
 	}
 }

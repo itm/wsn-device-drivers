@@ -15,6 +15,8 @@ public class Brackets_Predicate implements Predicate<CharSequence>, Serializable
 	
 	/** The filter given by the user. */
 	private String filter;
+	
+	private int messageType;
 
 	/**
 	 * Instantiates a new brackets_ predicate.
@@ -24,6 +26,10 @@ public class Brackets_Predicate implements Predicate<CharSequence>, Serializable
 	public Brackets_Predicate(String filter) {
 		this.filter = filter;
 		filter = filter.substring(1, filter.length() - 1);	//Deletes the brackets
+	}
+	
+	public void setMessageType(int messageType){
+		this.messageType = messageType;
 	}
 
 	/*
@@ -35,12 +41,12 @@ public class Brackets_Predicate implements Predicate<CharSequence>, Serializable
 		boolean result = true;
 		String[] single_filter = filter.split(",");
 		// match Datatype
-		if (!single_filter[0].equals(incoming_data.subSequence(0, 6))) {
+		if (!single_filter[0].equals(String.valueOf(messageType))) {
 			result = false;
 		}
 		// match Value
 		int begin = Integer.parseInt(single_filter[1]);
-		if (single_filter[2].charAt(0) != incoming_data.charAt(begin + 6)) {
+		if (single_filter[2].charAt(0) != incoming_data.charAt(begin)) {
 			result = false;
 		}
 		return result;

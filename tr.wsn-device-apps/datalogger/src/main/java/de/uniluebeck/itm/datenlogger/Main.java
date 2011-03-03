@@ -109,36 +109,9 @@ public class Main {
 						System.out.print("Password: ");
 						password = in.readLine();
 					}
-					// Init Writer
-					
+					// Init Writer			
 					PausableWriter writer = initWriter(brackets_filter, regex_filter, location, output);
 					
-//					PausableWriter writer;
-//					if (location != null) {
-//						if (output != null && output.equals("hex")) {
-//							writer = new HexFileWriter();
-//							writer.setLocation(location);
-//						} else if (output != null && output.equals("byte")) {
-//							writer = new ByteFileWriter();
-//							writer.setLocation(location);
-//						} else {
-//							writer = new StringFileWriter();
-//							writer.setLocation(location);
-//						}
-//					} else {
-//						if (output != null && output.equals("hex")) {
-//							writer = new HexConsoleWriter();
-//						} else {
-//							writer = new StringConsoleWriter();
-//						}
-//					}
-//					if (regex_filter != null) {
-//						writer.setRegexFilter(regex_filter);
-//					}
-//					if (brackets_filter != null) {
-//						writer.setBracketFilter(brackets_filter);
-//					}
-
 					Datalogger datenlogger = new Datalogger(writer, user,
 							password, port, server, device, id);
 					datenlogger.connect();

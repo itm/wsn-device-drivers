@@ -13,9 +13,9 @@ public class PausableMultiplexWriter implements PausableWriter {
 	}
 	
 	@Override
-	public void write(byte[] content) {
+	public void write(byte[] content, int messageType) {
 		for (PausableWriter writer : writers) {
-			writer.write(content);
+			writer.write(content, messageType);
 		}
 	}
 	

@@ -8,7 +8,7 @@ public class ByteFileWriter extends AbstractFileWriter {
 	FileOutputStream writer;
 
 	@Override
-	public void write(byte[] content) {
+	public void write(byte[] content, int messageType) {
 		try {
 			String temp = "";
 			for (byte a : content) {
