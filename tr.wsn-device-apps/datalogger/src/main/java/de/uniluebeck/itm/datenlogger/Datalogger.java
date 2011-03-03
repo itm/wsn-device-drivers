@@ -1,15 +1,9 @@
 package de.uniluebeck.itm.datenlogger;
 
-import static com.google.common.base.Predicates.and;
-import static com.google.common.base.Predicates.or;
-
 import java.io.IOException;
-import java.util.Stack;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import com.google.common.base.Predicate;
 
 import de.uniluebeck.itm.devicedriver.ConnectionEvent;
 import de.uniluebeck.itm.devicedriver.ConnectionListener;
@@ -49,6 +43,7 @@ public class Datalogger {
 	private MessagePacketListener listener;
 	private String id;
 	private PausableWriter writer;
+	private RemoteConnection connection = null;
 
 	/**
 	 * Instantiates a new datalogger.
@@ -66,7 +61,11 @@ public class Datalogger {
 	public Datalogger(){
 		
 	}
-	
+
+	public boolean isStarted() {
+		return started;
+	}
+
 	public PausableWriter getWriter() {
 		return writer;
 	}
@@ -81,7 +80,7 @@ public class Datalogger {
 	public void connect() {
 		if (server != null) {
 			// Connect to the TCP-Server.
-			final RemoteConnection connection = new RemoteConnection();
+			connection = new RemoteConnection();
 
 			connection.connect(id + ":" + user + ":" + password + "@" + server
 					+ ":" + port);
@@ -148,7 +147,7 @@ public class Datalogger {
 			deviceAsync = new QueuedDeviceAsync(queue, device);
 		}
 	}
-
+	
 	/**
 	 * Startlog. Registers a message packet listener on the connected device and
 	 * handles the incoming data.
@@ -178,6 +177,7 @@ public class Datalogger {
 			log.error("Error while closing the writer.");
 		}
 		started = false;
+		connection.shutdown(false);
 		System.out.println("\nEnd of Logging.");
 	}
 }

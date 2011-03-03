@@ -3,15 +3,18 @@ package de.uniluebeck.itm.datenlogger;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.regex.Pattern;
 
-import org.apache.commons.cli.*;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 public class Main {
 
-	private static Log log = LogFactory.getLog(Main.class);
+	//private static Log log = LogFactory.getLog(Main.class);
 	private static double version = 0.1;
 
 	/**
