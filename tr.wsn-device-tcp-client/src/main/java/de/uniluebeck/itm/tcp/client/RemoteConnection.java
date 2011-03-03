@@ -17,7 +17,6 @@ import com.googlecode.protobuf.pro.duplex.client.DuplexTcpClientBootstrap;
 import com.googlecode.protobuf.pro.duplex.execute.ThreadPoolCallExecutor;
 
 import de.uniluebeck.itm.devicedriver.AbstractConnection;
-import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.EmptyAnswer;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Identification;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations.BlockingInterface;
@@ -159,30 +158,12 @@ public class RemoteConnection extends AbstractConnection{
 
 	@Override
 	public void shutdown(final boolean force) {
-		
-		if(force){
-			channel.close();
-			server = null;
-			client = null;
-			executor.shutdown();
-			bootstrap.releaseExternalResources();
-		}
-		else {
-			// erzeugen eines Controlles fuer diese Operation
-			final RpcController controller = channel.newRpcController();
-			
-			try {
-				this.syncOperationService.shutdown(controller, EmptyAnswer.newBuilder().build());
-				controller.startCancel();
-				channel.close();
-				server = null;
-				client = null;
-				executor.shutdown();
-				bootstrap.releaseExternalResources();
-			} catch (final ServiceException e) {
-				log.debug(e.getMessage());
-			}
-		}
+
+		channel.close();
+		server = null;
+		client = null;
+		executor.shutdown();
+		bootstrap.releaseExternalResources();
 	}
 	
 	public DuplexTcpClientBootstrap getBootstrap() {
