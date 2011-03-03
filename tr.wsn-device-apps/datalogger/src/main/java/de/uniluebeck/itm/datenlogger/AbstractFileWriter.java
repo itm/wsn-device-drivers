@@ -25,9 +25,7 @@ public abstract class AbstractFileWriter implements PausableWriter{
 		Pattern pattern = Pattern.compile(regexFilter);
 		if (!isPaused && pattern.matcher(output).matches()) {
 			if(bracketFilter != null){
-				Brackets_Predicate predicate = (Brackets_Predicate)parse_brackets_filter(bracketFilter);
-				predicate.setMessageType(messageType);
-				if(predicate.apply(output)){
+				if(parse_brackets_filter(bracketFilter, messageType).apply(output)){
 					try {
 						writer.write(output);
 						writer.write("\n");
@@ -111,7 +109,7 @@ public abstract class AbstractFileWriter implements PausableWriter{
 	 *            the klammer_filter
 	 * @return the predicate
 	 */
-	public Predicate<CharSequence> parse_brackets_filter(String bracket_filter) {
+	public Predicate<CharSequence> parse_brackets_filter(String bracket_filter, int messageType) {
 		Stack<Predicate<CharSequence>> expressions = new Stack<Predicate<CharSequence>>();
 		Stack<String> operators = new Stack<String>();
 		String expression = "";
@@ -126,7 +124,7 @@ public abstract class AbstractFileWriter implements PausableWriter{
 			} else if (character.equals(")")) {
 				if (!expression.equals("")) {
 					Predicate<CharSequence> predicate = new Brackets_Predicate(
-							expression);
+							expression, messageType);
 					expressions.push(predicate);
 					expression = "";
 				} else {

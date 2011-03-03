@@ -23,13 +23,10 @@ public class Brackets_Predicate implements Predicate<CharSequence>, Serializable
 	 *
 	 * @param filter, given by the user.
 	 */
-	public Brackets_Predicate(String filter) {
+	public Brackets_Predicate(String filter, int messageType) {
 		this.filter = filter;
-		filter = filter.substring(1, filter.length() - 1);	//Deletes the brackets
-	}
-	
-	public void setMessageType(int messageType){
 		this.messageType = messageType;
+		filter = filter.substring(1, filter.length() - 1);	//Deletes the brackets
 	}
 
 	/*
