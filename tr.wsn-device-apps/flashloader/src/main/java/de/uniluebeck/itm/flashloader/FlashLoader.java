@@ -213,7 +213,7 @@ public class FlashLoader {
 				System.exit(1);
 			}
 		};
-		deviceAsync.readMac(10000, callback);
+		deviceAsync.readMac(timeout, callback);
 		System.out.println("Reading process was added to the queue.");
 	}
 
