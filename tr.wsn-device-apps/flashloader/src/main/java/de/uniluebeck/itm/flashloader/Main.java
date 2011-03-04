@@ -14,7 +14,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import de.uniluebeck.itm.devicedriver.MacAddress;
-import de.uniluebeck.itm.tcp.client.RemoteConnection;
 
 /**
  * The Class Main.
@@ -80,9 +79,12 @@ public class Main {
 				if (args[0].equals("flash")) {
 					
 					String file = cmd.getOptionValue("file");
+					if(file == null){
+						System.out.println("Please enter file!");
+					}
 					File f = new File(file);
 					if(!f.exists()){
-						System.out.println("File don´t exists!");
+						System.out.println("File do not exists!");
 						System.exit(1);
 					}
 					flashLoader.flash(file);

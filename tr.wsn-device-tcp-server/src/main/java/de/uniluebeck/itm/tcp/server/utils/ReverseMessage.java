@@ -89,7 +89,12 @@ public class ReverseMessage {
 		
 		final RpcController controller = channel.newRpcController();
 		
-		final FailureException request = FailureException.newBuilder().setOperationKey(operationKey).setExceptionName(throwable.getClass().getName()).setExceptionMessage(throwable.getMessage()).build();
+		String exceptionMessage = "";
+		if(null != throwable.getMessage()){
+			exceptionMessage = throwable.getMessage();
+		}
+		
+		final FailureException request = FailureException.newBuilder().setOperationKey(operationKey).setExceptionName(throwable.getClass().getName()).setExceptionMessage(exceptionMessage).build();
 		answer.reverseOnFailure(controller, request, new RpcCallback<EmptyAnswer>(){
 
 			@Override
