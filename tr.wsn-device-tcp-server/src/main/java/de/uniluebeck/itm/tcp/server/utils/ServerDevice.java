@@ -106,13 +106,13 @@ public class ServerDevice {
 				final Connection con = createConnection(jaxDevice.getConnectionType());
 				/* erstellen einer repraesentation eines physikalischen Devices */
 				final Device<?> device = createDevice(jaxDevice.getDeviceType(), con);
-				/* erstellen eines MetaDataCollector fuer das Device, wenn MetaDataService aktiviert ist */
-				if(metaDaten){
-					collectorList.add(new MetaDataCollector (device, key));
-				}
 				/* herstellen einer physikalischen Verbindung zum Device */
 				con.connect(jaxDevice.getPort());
 				final DeviceAsync deviceAsync = createDeviceAsync(device);
+				/* erstellen eines MetaDataCollector fuer das Device, wenn MetaDataService aktiviert ist */
+				if(metaDaten){
+					collectorList.add(new MetaDataCollector (deviceAsync, key));
+				}
 				deviceList.put(key, deviceAsync);
 			}
 			
