@@ -109,7 +109,7 @@ public class Main {
 				if (cmd.hasOption("help")) {
 					System.out.println("Example:");
 					System.out
-							.println("Server: -p 8181 -h localhost -d devices.xml -sh shiro.ini -c config.xml -s sensors.xml");
+							.println("Server: -p 8181 -h localhost -d devices.xml -sh shiro.ini -c config.xml -s sensors.xml -m 1");
 					System.out.println("");
 					formatter.printHelp("help", options);
 					System.exit(-1);
