@@ -65,12 +65,15 @@ public class MetaDatenServer {
 	 * Logger for the server
 	 */
 	private static Log log = LogFactory.getLog(MetaDatenServer.class);
+	/**The time period that the authorized client channel is hold in the authorization map*/
+	private final static int TIMEOUT = 30; 
 	// werden nach 30 min alle eintraege des Cache geloescht?
 	// wie Timeout fuer einen Eintrag neu starten?
 	// private static TimedCache<RpcClientChannel, ClientID> idList = new
 	// TimedCache<RpcClientChannel, ClientID>();
+	/**Holds the authorized client channel for the given timeperiod in the authorization map*/
 	private static TimedCache<RpcClientChannel, Subject> authList = new TimedCache<RpcClientChannel, Subject>(
-			30, TimeUnit.SECONDS);
+			TIMEOUT, TimeUnit.SECONDS);
 
 	// private static Map<RpcClientChannel, ClientID> idList = new
 	// HashMap<RpcClientChannel, ClientID>();

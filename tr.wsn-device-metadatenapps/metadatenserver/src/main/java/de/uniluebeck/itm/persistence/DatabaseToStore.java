@@ -34,13 +34,13 @@ public class DatabaseToStore {
 	private static Log log = LogFactory.getLog(StoreToDatabase.class);
 	// static File datafile = new
 	// File("C:\\uni hl\\workspace\\fallstudie2010\\sources\\tr.wsn-device-metadatenapps\\metadatenserver\\hibernate.cfg.xml");
-	private static final SessionFactory ourSessionFactory;
-	private static final URL url = ClassLoader
+	private static final SessionFactory OUR_SESSION_FACTORY;
+	private static final URL URL = ClassLoader
 			.getSystemResource("hibernate.cfg.xml");
 
 	static {
 		try {
-			ourSessionFactory = new AnnotationConfiguration().configure(url)
+			OUR_SESSION_FACTORY = new AnnotationConfiguration().configure(URL)
 					.buildSessionFactory();
 		} catch (final Exception ex) {
 			throw new ExceptionInInitializerError(ex);
@@ -55,7 +55,7 @@ public class DatabaseToStore {
 	 * 
 	 */
 	public static Session getSession() throws HibernateException {
-		return ourSessionFactory.openSession();
+		return OUR_SESSION_FACTORY.openSession();
 	}
 
 	/**
@@ -64,10 +64,11 @@ public class DatabaseToStore {
 	 * method regards only the first Capability of the nodeexample. If there is
 	 * no capability only the properties of the node are considered
 	 * 
-	 * @param nodeexample Examplenode, which properties are considered for search 
-	 * @param ignoreCapability If is set, the Capabilities are ignored
-	 *        for searching, only nodeproperties are considered for loading
-	 *        nodes
+	 * @param nodeexample
+	 *            Examplenode, which properties are considered for search
+	 * @param ignoreCapability
+	 *            If is set, the Capabilities are ignored for searching, only
+	 *            nodeproperties are considered for loading nodes
 	 * @return List <Node> list of nodes that capabilities match to the given
 	 *         capability
 	 */
@@ -140,6 +141,7 @@ public class DatabaseToStore {
 	 * @param nodeexamples
 	 *            List of Nodes to which the capabilities found by the example -
 	 *            capability will be matched
+	 * @param cap Capability as example to filter the delivered list of nodes
 	 * @return List <Node> list of nodes that capabilities match to the given
 	 *         capability
 	 */
@@ -173,23 +175,27 @@ public class DatabaseToStore {
 	 * 
 	 * @param node
 	 *            The nodeexample that the node searched should fit to
+	 * 
+	 * @return Node retunrs Node found in the database
 	 */
 
 	public Node getNode(final Node node) {
-		 final Session session = getSession();
-		 	final List <Node> resultlist = new ArrayList<Node>();
-		 	Node returnnode = new Node();
-	        Transaction transaction = session.beginTransaction();
-	        Criteria crit = session.createCriteria(Node.class);
-	        Example exampleNode = Example.create(node);
-//	        resultlist = session.createQuery("select  from Node parentnode where id="+parentnode.getId()).list();
-//	        final List <NodeEntity> nodeIds = session.createQuery("from NodeEntity parentnode where id =" + parentnode.getId()).list();
-//	        final List <Node> tresultlist = session.createQuery("from Node snode where id = "+ node.getId()).list();
-	        returnnode = (Node) session.get(Node.class, node.getId());
-	        returnnode.getCapabilityList().size();
-	        transaction.commit();
-	        session.close();
-	        return returnnode;
+		final Session session = getSession();
+		Node returnnode = new Node();
+		final Transaction transaction = session.beginTransaction();
+		// resultlist =
+		// session.createQuery("select  from Node parentnode where id="+parentnode.getId()).list();
+		// final List <NodeEntity> nodeIds =
+		// session.createQuery("from NodeEntity parentnode where id =" +
+		// parentnode.getId()).list();
+		// final List <Node> tresultlist =
+		// session.createQuery("from Node snode where id = "+
+		// node.getId()).list();
+		returnnode = (Node) session.get(Node.class, node.getId());
+		returnnode.getCapabilityList().size();
+		transaction.commit();
+		session.close();
+		return returnnode;
 	}
 
 	/**

@@ -3,15 +3,15 @@ package de.uniluebeck.itm.metadaten.metadatenservice.metadatacollector;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import de.uniluebeck.itm.devicedriver.Device;
+import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.metadatenservice.config.Node;
 
 public class MetaDatenCollector {
-	public Device device;
+	public DeviceAsync device;
 	public Node node = new Node();
 	
 	public MetaDatenCollector () {};
-	public MetaDatenCollector (Device device)
+	public MetaDatenCollector (DeviceAsync device)
 	{
 		this.device=device;
 	}
@@ -26,7 +26,7 @@ public class MetaDatenCollector {
 			System.err.println("Ip-Adresse des TCP-Servers konnte nicht ermittelt werden");
 			e.printStackTrace();
 		}
-		node = new DeviceCollector ().devicecollect(device, node);
+		node = new DeviceCollector ().deviceCollect(device, node);
 //		node = new FileCollector().filecollect(node);
 		return node;
 	}

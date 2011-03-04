@@ -30,7 +30,7 @@ public class NodeId implements Serializable{
 	}
 	
 	public String toString (){
-		return (this.id +"|" +this.ipAdress);
+		return this.id +"|" +this.ipAdress;
 	}
 
 }

@@ -24,15 +24,15 @@ public class Testtreiber {
 		final int clientport = 1235;
 		MetaDataClient mclient=null;
 		try {
-			mclient = new MetaDatenClient("frager","testPassword","localhost", serverport, clientport);
+			mclient = new MetaDatenClient("frager","testPassword","localhost", serverport);
 		} catch (final Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		System.out.println("Node wird gebaut");
 		final Node node = new Node();
-//        node.setId("111296050613777");
-		node.setIpAddress("192.168.8.115");
+        node.setId("280120101");
+//		node.setIpAddress("192.168.8.115");
 //		node.setMicrocontroller("mic1");
 //		node.setDescription("Solar2000");
 		final String queryString = "123";

@@ -4,38 +4,47 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import de.uniluebeck.itm.devicedriver.ChipType;
-import de.uniluebeck.itm.devicedriver.Device;
-import de.uniluebeck.itm.metadatenservice.MetaDatenService;
+import de.uniluebeck.itm.devicedriver.async.AsyncAdapter;
+import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.metadatenservice.config.Node;
+
 /**
  * Collects all Data that is delvired by the devices themself
+ * 
  * @author Toralf Babel
- *
+ * 
  */
 public class DeviceCollector {
-	/**Logger*/
+	/** Logger */
 	private static Log log = LogFactory.getLog(DeviceCollector.class);
-	/** Constructor*/
+
+	/** Constructor */
 	public DeviceCollector() {
 	};
+
 	/**
-	 * Delivers a node. At the moment only the Chiptype can be resolved by the Devicecollector
-	 * @param device - Device from which we need the MetaData
-	 * @param node node whith the current known information
+	 * Delivers a node. At the moment only the Chiptype can be resolved by the
+	 * Devicecollector
+	 * 
+	 * @param device
+	 *            - Device from which we need the MetaData
+	 * @param node
+	 *            node whith the current known information
 	 * @return node with the chiptype as delivered by the device
 	 */
-	public Node devicecollect(Device device, Node node) {
+	public Node deviceCollect(DeviceAsync device, Node node) {
 		ChipType chip = null;
 		try {
-			chip = device.createGetChipTypeOperation().call();
+			chip = device.getChipType(10000, new AsyncAdapter<ChipType>())
+					.get();
 		} catch (final Exception e) {
-			log.error(e.getStackTrace());
+			log.error(e.getCause().toString());
 		}
-		try{
-			if(!(chip.getName() == null)){
-				node.setMicrocontroller(chip.getName());	
+		try {
+			if (!(chip.getName() == null)) {
+				node.setMicrocontroller(chip.getName());
 			}
-		}catch (final NullPointerException e) {
+		} catch (final NullPointerException e) {
 			// TODO Auto-generated catch block
 			log.error(e.getStackTrace());
 		}

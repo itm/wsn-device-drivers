@@ -11,23 +11,23 @@ import de.uniluebeck.itm.metadaten.server.exception.NodeInDBException;
 import de.uniluebeck.itm.persistence.DatabaseToStore;
 import de.uniluebeck.itm.persistence.StoreToDatabase;
 
-public class dbtest {
+public class Dbtest {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 //		// TODO Auto-generated method stub
-		Node node = new Node();
-		NodeId idchen = new NodeId();
+		final Node node = new Node();
+		final NodeId idchen = new NodeId();
 		idchen.setId("280120101");
 		idchen.setIpAdress("192.168.0.101");
 		node.setId(idchen);
 //		node.setMicrocontroller("TelosB");
 //		node.setDescription("Solar2002");
 		node.setTimestamp(new Date());
-		Capability cap = new Capability ();
-		Capability cap2 = new Capability ();
+		final Capability cap = new Capability ();
+		final Capability cap2 = new Capability ();
 		cap.setDatatype("int");
 		cap.setName("Temperatur");
 		cap.setNode(node);

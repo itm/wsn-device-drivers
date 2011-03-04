@@ -62,7 +62,7 @@ public class MetaDatenClient implements MetaDataClient {
 	 */
 	public MetaDatenClient(final String userName, final String passWord, final String serverIP,
 			final int serverPort) throws Exception {
-		final int  port = 1235;
+		final int  port = 1589;
 		// setzen der Server-Infos
 		server = new PeerInfo(serverIP, serverPort);
 		// setzen der Client-Infos fuer Reverse RPC

@@ -2,7 +2,7 @@ package de.uniluebeck.itm.metadatenservice;
 
 import java.io.File;
 
-import de.uniluebeck.itm.devicedriver.Device;
+import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.metadaten.metadatenservice.metadatacollector.IMetaDataCollector;
 import de.uniluebeck.itm.metadaten.metadatenservice.metadatacollector.MetaDataCollector;
 
@@ -25,7 +25,7 @@ public class Testtreiber {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Device device= null;
+		DeviceAsync device= null;
 		System.out.println("Collector initialisieren");
 //		IMetaDataCollector mcollector = new MetaDataCollector (device, "11"+String.valueOf(new Date().getTime()));
 		IMetaDataCollector mcollector = new MetaDataCollector (device, "280120101");
