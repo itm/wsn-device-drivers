@@ -10,6 +10,7 @@ import com.googlecode.protobuf.pro.duplex.execute.ServerRpcController;
 import de.uniluebeck.itm.devicedriver.MacAddress;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 import de.uniluebeck.itm.tcp.server.utils.ClientID;
+import de.uniluebeck.itm.tcp.server.utils.OperationType;
 import de.uniluebeck.itm.tcp.server.utils.ReverseMessage;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.EmptyAnswer;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.MacData;
@@ -37,9 +38,10 @@ public class ReadMacOperation extends AbstractOperation<MacAddress> {
 	 * @param request the Timeout request for a readMac Operation
 	 */
 	public ReadMacOperation(final RpcController controller, final RpcCallback<EmptyAnswer> done, final Subject user, final ClientID id, final Timeout request){
-		super(controller,done, user, id);
+		super(controller,done, user, id, request.getOperationKey());
 		this.request = request;
 		setMessage(new ReverseMessage(request.getOperationKey(),ServerRpcController.getRpcChannel(controller)));
+		setOperationType(OperationType.READOPERATION);
 	}
 	
 	@Override
@@ -48,6 +50,9 @@ public class ReadMacOperation extends AbstractOperation<MacAddress> {
 		if(!getId().getCalledGet(request.getOperationKey())){
 			final MacData mac = MacData.newBuilder().setOperationKey(request.getOperationKey()).addMACADDRESS(ByteString.copyFrom(result.getMacBytes())).build();
 			getMessage().reverseSuccess(ReverseAnswer.newBuilder().setMacAddress(mac).build());
+		}
+		if(!getId().getHandleList().isEmpty() && null != getId().getHandleElement(request.getOperationKey())){
+			getId().getHandleList().remove(request.getOperationKey());
 		}
 	}
 	
@@ -59,6 +64,9 @@ public class ReadMacOperation extends AbstractOperation<MacAddress> {
 		
 		// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
 		getId().setHandleElement(request.getOperationKey(), handle);
+		
+		// hinzufuegen des OperationType dieser operation zur OperationTypeList
+		getId().addOperationType(request.getOperationKey(), getOperationType());
 		
 		getDone().run(EmptyAnswer.newBuilder().build());
 	}

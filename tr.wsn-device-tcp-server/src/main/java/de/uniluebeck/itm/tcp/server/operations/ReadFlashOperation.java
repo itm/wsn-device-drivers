@@ -9,6 +9,7 @@ import com.googlecode.protobuf.pro.duplex.execute.ServerRpcController;
 
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 import de.uniluebeck.itm.tcp.server.utils.ClientID;
+import de.uniluebeck.itm.tcp.server.utils.OperationType;
 import de.uniluebeck.itm.tcp.server.utils.ReverseMessage;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.ByteData;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.EmptyAnswer;
@@ -36,9 +37,10 @@ public class ReadFlashOperation extends AbstractOperation<byte[]> {
 	 * @param request the FlashData request for a readFlash Operation
 	 */
 	public ReadFlashOperation(final RpcController controller, final RpcCallback<EmptyAnswer> done, final Subject user, final ClientID id, final FlashData request){
-		super(controller,done, user, id);
+		super(controller,done, user, id, request.getOperationKey());
 		this.request = request;
 		setMessage(new ReverseMessage(request.getOperationKey(),ServerRpcController.getRpcChannel(controller)));
+		setOperationType(OperationType.READOPERATION);
 	}
 	
 	@Override
@@ -47,6 +49,9 @@ public class ReadFlashOperation extends AbstractOperation<byte[]> {
 		if(!getId().getCalledGet(request.getOperationKey())){
 			final ByteData data = ByteData.newBuilder().setOperationKey(request.getOperationKey()).addData(ByteString.copyFrom(result)).build();
 			getMessage().reverseSuccess(ReverseAnswer.newBuilder().setData(data).build());
+		}
+		if(!getId().getHandleList().isEmpty() && null != getId().getHandleElement(request.getOperationKey())){
+			getId().getHandleList().remove(request.getOperationKey());
 		}
 	}
 	
@@ -58,6 +63,9 @@ public class ReadFlashOperation extends AbstractOperation<byte[]> {
 		
 		// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
 		getId().setHandleElement(request.getOperationKey(), handle);
+		
+		// hinzufuegen des OperationType dieser operation zur OperationTypeList
+		getId().addOperationType(request.getOperationKey(), getOperationType());
 		
 		getDone().run(EmptyAnswer.newBuilder().build());
 	}

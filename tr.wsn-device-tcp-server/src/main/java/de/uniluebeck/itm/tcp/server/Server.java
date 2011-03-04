@@ -222,6 +222,15 @@ public class Server {
 						}
 						plainTextListenerList.remove(clientChannel);
 					}
+					final ClientID id = idList.get(clientChannel);
+					/* abbrechen und loeschen aller read-Operationen */
+					for(final String key : id.getHandleList().keySet()){
+						if(id.getOperationType(key).getName().equalsIgnoreCase("read")){
+							id.getHandleElement(key).cancel();
+							id.getHandleList().remove(key);
+						}
+					}
+					
 					// logout des Clients
 					authList.get(clientChannel).logout();
 					// entfernen des Clients aus der authentifiziert-Liste
@@ -483,16 +492,16 @@ public class Server {
 				}
 				/* absenden der eigentlichen Antwort */
 				done.run(response);
+				/*
+				 * entfernen des OperationHandle aus dem ClientID-Object, da
+				 * Operation fertig ist
+				 */
+				id.deleteHandleElement(handle);
 			} catch (final Exception e) {
 				log.error("", e);
 				controller.setFailed(e.getMessage());
 				done.run(null);
 			}
-			/*
-			 * entfernen des OperationHandle aus dem ClientID-Object, da
-			 * Operation fertig ist
-			 */
-			id.deleteHandleElement(handle);
 			/* reset des CalledGet-Flag, um normalen Betrieb wieder herzustellen */
 			id.removeCalledGet(request.getOperationKey());
 		}

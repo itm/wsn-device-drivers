@@ -9,6 +9,7 @@ import com.googlecode.protobuf.pro.duplex.execute.ServerRpcController;
 import de.uniluebeck.itm.devicedriver.MessagePacket;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 import de.uniluebeck.itm.tcp.server.utils.ClientID;
+import de.uniluebeck.itm.tcp.server.utils.OperationType;
 import de.uniluebeck.itm.tcp.server.utils.ReverseMessage;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.EmptyAnswer;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.sendData;
@@ -34,9 +35,10 @@ public class SendOperation extends AbstractOperation<Void> {
 	 * @param request the sendData request for a send Operation
 	 */
 	public SendOperation(final RpcController controller, final RpcCallback<EmptyAnswer> done, final Subject user, final ClientID id, final sendData request) {
-		super(controller, done, user, id);
+		super(controller, done, user, id, request.getOperationKey());
 		this.request =  request;
 		setMessage(new ReverseMessage(request.getOperationKey(),ServerRpcController.getRpcChannel(controller)));
+		setOperationType(OperationType.WRITEOPERATION);
 	}
 
 	@Override
@@ -55,6 +57,9 @@ public class SendOperation extends AbstractOperation<Void> {
 		
 		// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
 		getId().setHandleElement(request.getOperationKey(), handle);
+		
+		// hinzufuegen des OperationType dieser operation zur OperationTypeList
+		getId().addOperationType(request.getOperationKey(), getOperationType());
 		
 		// ausfuehren des Callbacks
 		getDone().run(EmptyAnswer.newBuilder().build());

@@ -9,6 +9,7 @@ import com.googlecode.protobuf.pro.duplex.execute.ServerRpcController;
 import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 import de.uniluebeck.itm.tcp.server.utils.ClientID;
+import de.uniluebeck.itm.tcp.server.utils.OperationType;
 import de.uniluebeck.itm.tcp.server.utils.ReverseMessage;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.ChipData;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.EmptyAnswer;
@@ -36,9 +37,10 @@ public class GetChipTypeOperation extends AbstractOperation<ChipType> {
 	 * @param request the Timeout request for a getChipType Operation
 	 */
 	public GetChipTypeOperation(final RpcController controller, final RpcCallback<EmptyAnswer> done, final Subject user, final ClientID id, final Timeout request) {
-		super(controller, done, user, id);
+		super(controller, done, user, id, request.getOperationKey());
 		this.request =  request;
 		setMessage(new ReverseMessage(request.getOperationKey(),ServerRpcController.getRpcChannel(controller)));
+		setOperationType(OperationType.READOPERATION);
 	}
 
 	@Override
@@ -48,6 +50,9 @@ public class GetChipTypeOperation extends AbstractOperation<ChipType> {
 		if(!getId().getCalledGet(request.getOperationKey())){
 			final ChipData chipData = ChipData.newBuilder().setOperationKey(request.getOperationKey()).setType(result.name()).build();
 			getMessage().reverseSuccess(ReverseAnswer.newBuilder().setChipData(chipData).build());
+		}
+		if(!getId().getHandleList().isEmpty() && null != getId().getHandleElement(request.getOperationKey())){
+			getId().getHandleList().remove(request.getOperationKey());
 		}
 	}
 	
@@ -59,6 +64,9 @@ public class GetChipTypeOperation extends AbstractOperation<ChipType> {
 		
 		// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
 		getId().setHandleElement(request.getOperationKey(), handle);
+		
+		// hinzufuegen des OperationType dieser operation zur OperationTypeList
+		getId().addOperationType(request.getOperationKey(), getOperationType());
 		
 		getDone().run(EmptyAnswer.newBuilder().build());
 		

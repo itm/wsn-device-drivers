@@ -16,11 +16,16 @@ public class ClientID {
 	 * List with Handles for every Operation that a User has started
 	 */
 	private final HashMap<String,OperationHandle<?>> handleList = new HashMap<String,OperationHandle<?>>();
-	
+
 	/**
 	 * List with entry's for every Operation where getHandle was called 
 	 */
 	private final HashMap<String,Boolean> getList = new HashMap<String,Boolean>();
+	
+	/**
+	 * List for the OperationType for every Handle
+	 */
+	private final HashMap<String,OperationType> operationTypeList = new HashMap<String,OperationType>();
 	
 	/**
 	 * The Device the User called
@@ -62,6 +67,14 @@ public class ClientID {
 	}
 	
 	/**
+	 * Return all HandleElements
+	 * @return all HandleElements
+	 */
+	public HashMap<String, OperationHandle<?>> getHandleList() {
+		return handleList;
+	}
+	
+	/**
 	 * returns a reference to the device
 	 * @return the device
 	 */
@@ -90,5 +103,23 @@ public class ClientID {
 	 */
 	public void removeCalledGet(final String key) {
 		this.getList.remove(key);
+	}
+
+	/**
+	 * Add a OperationType to the operationTypeList
+	 * @param key the OperationHandle key
+	 * @param type the operationType
+	 */
+	public void addOperationType(final String key, final OperationType type) {
+		this.operationTypeList.put(key, type);
+	}
+	
+	/**
+	 * Remove a OperationType from the operationTypeList
+	 * @param key the key which should be removed
+	 * @return the operationType
+	 */
+	public OperationType getOperationType(final String key) {
+		return operationTypeList.get(key);
 	}
 }
