@@ -26,7 +26,10 @@ public class Main {
 	 * version
 	 */
 	private static double version = 1.0;
-
+	
+	private static String bracketsRegex = "([\\([0-9]+,[0-9]+,[0-9]+\\)][&|\\([0-9]+,[0-9]+,[0-9]+\\)]*)";
+	private static String ipRegex = "(((\\d{1,3}.){3})(\\d{1,3}))";
+	
 	/**
 	 * The main method.
 	 * 
@@ -81,53 +84,59 @@ public class Main {
 					System.out.println(version);
 				}
 
-				// der Datenlogger
-				if (args[0].equals("startlog")) {
-					System.out.println("start Datalogger...");
+				String port = cmd.getOptionValue("port");
+				String server = cmd.getOptionValue("server");
+				String bracketsFilter = cmd
+						.getOptionValue("bracketsFilter");
+				String regexFilter = cmd.getOptionValue("regexFilter");
+				String location = cmd.getOptionValue("location");
+				String user = cmd.getOptionValue("username");
+				String password = cmd.getOptionValue("password");
+				String device = cmd.getOptionValue("device");
+				String output = cmd.getOptionValue("output");
+				String id = cmd.getOptionValue("id");
 
-					String port = cmd.getOptionValue("port");
-					String server = cmd.getOptionValue("server");
-					String bracketsFilter = cmd
-							.getOptionValue("bracketsFilter");
-					String regexFilter = cmd.getOptionValue("regexFilter");
-					String location = cmd.getOptionValue("location");
-					String user = cmd.getOptionValue("username");
-					String password = cmd.getOptionValue("password");
-					String device = cmd.getOptionValue("device");
-					String output = cmd.getOptionValue("output");
-					String id = cmd.getOptionValue("id");
-
-					if (device == null && server == null) {
-						System.out.println("Please enter device or server!");
-						System.exit(1);
-					}				
-				    String ipRegex = "(((\\d{1,3}.){3})(\\d{1,3}))";
+				//Begin: validate input-data
+				boolean valideInput = true;
+				if (device == null && server == null) {
+					System.out.println("Wrong input: Please enter device or server!");
+					valideInput = false;
+				}
+				if(server != null){
 				    if(!server.matches(ipRegex) && !server.equals("localhost")){
-				    	System.out.println("This is no validate server address.");
-						System.exit(1);
+				    	System.out.println("Wrong input: This is no valide server address.");
+				    	valideInput = false;
 				    }
-					if (port == null) {
-						System.out.println("Please enter port!");
-						System.exit(1);
+				}
+				if (port == null) {
+					System.out.println("Wrong input: Please enter port!");
+					valideInput = false;
+				}
+				if (server != null && id == null) {
+					System.out.println("Wrong input: Please enter id of the device!");
+					valideInput = false;
+				}
+				if(bracketsFilter != null){
+					if(!bracketsFilter.matches(bracketsRegex)){
+					   	System.out.println("Wrong input: This is no valide bracket filter.");
+					   	valideInput = false;
 					}
-					if (server != null && id == null) {
-						System.out.println("Please enter id of the node!");
-						System.exit(1);
-					}
-					if(bracketsFilter != null){
-						String bracketsRegex = "([\\([0-9]+,[0-9]+,[0-9]+\\)][&|\\([0-9]+,[0-9]+,[0-9]+\\)]*)";
-						   if(!bracketsFilter.matches(bracketsRegex)){
-						   	System.out.println("This is no validate bracket filter.");
-							System.exit(1);
-						}
-					}
-				    if(output != null){
-				    	if(!output.equals("hex") && !output.equals("byte")){
-				    		System.out.println("The output parameter can only be 'hex' or 'byte'.");
-				    		System.exit(1);
-				    	}
-				    }
-
+				}
+			    if(output != null){
+			    	if(!output.equals("hex") && !output.equals("byte")){
+			    		System.out.println("Wrong input: The output parameter can only be 'hex' or 'byte'.");
+			    		valideInput = false;
+			    	}
+			    }
+			    if(device != null){
+			    	if(!device.equals("mock") && !device.equals("jennec") && !device.equals("pacemate") && !device.equals("telosb")){
+			    		System.out.println("Wrong input: The device parameter can only be 'jennec', 'pacemate', 'telosb' or 'mock'.");
+			    		valideInput = false;
+			    	}
+			    }
+			    //End: validate input-data
+			    
+			    if(valideInput){
 					if (server != null
 							&& (user == null && password == null || user == null)) {
 						System.out.println("Username and Password is missing.");
@@ -149,27 +158,42 @@ public class Main {
 					// Init Writer
 					PausableWriter writer = initWriter(bracketsFilter,
 							regexFilter, location, output);
-
+	
 					Datalogger datalogger = new Datalogger(writer, user,
 							password, port, server, device, id);
 					datalogger.connect();
 					try{
 						datalogger.startlog();
-
+	
 						while (true) {
 							while (true) {
 								final char in = (char) System.in.read();
 								if (in == 10) {
 									writer.pause();
+									System.out.println("Write-mode entered");
 									System.out
-											.print("Write-mode entered, please enter your command: ");
+									.println("Options:");
+									System.out
+										.println("Enter '-bracketsFilter filter' to add 'filter' to the current brackets-filter.");
+									System.out
+										.println("Enter '-regexFilter filter' to add 'filter' to the current regex-filter.");
+									System.out
+										.println("Enter '-location location' to change the current location. '-location' will set the location to terminal.");
+									System.out
+									.println("Enter '-stoplog' to exit the program.\n");
+									System.out
+											.print("Please enter your command: ");
 									String input = new BufferedReader(
 											new InputStreamReader(System.in))
 											.readLine();
 									if (input.startsWith("-bracketsFilter")) {
 										String delims = " ";
 										String[] tokens = input.split(delims);
-										writer.addBracketFilter(tokens[1]);
+										if(tokens[1].matches(bracketsRegex)){
+											writer.addBracketFilter(tokens[1]);
+										}else{
+										   	System.out.println("This is no valide bracket filter.");
+										}
 									} else if (input.startsWith("-regexFilter")) {
 										String delims = " ";
 										String[] tokens = input.split(delims);
@@ -205,7 +229,7 @@ public class Main {
 							connection.shutdown(false);
 						}
 					}
-				}
+			    }
 			}
 		}
 	}
@@ -244,11 +268,11 @@ public class Main {
 	}
 
 	public static void printHelp(Options options) {
-		System.out.println("Example:");
+		System.out.println("Examples:");
 		System.out
-				.println("Datalogger: Remote example: startlog -bracketsFilter (104,23,4)&(104,24,5) -location filename.txt -server localhost -id 1 -port 8181 -username name -password password");
+				.println("Remote example: -bracketsFilter ((104,23,4)&(104,24,5))|(104,65,4) -location filename.txt -server localhost -id 1 -port 8181 -username name -password password");
 		System.out
-				.println("Datalogger: Local example: startlog -regexFilter .*(4|3)*. -device telosb -port COM1");
+				.println("Local example: -regexFilter .*(4|3)*. -device telosb -port COM1");
 		System.out.println("");
 
 		// for help statement
