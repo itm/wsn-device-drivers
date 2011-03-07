@@ -102,6 +102,12 @@ public class Main {
 					System.out.println("Wrong input: Please enter device or server!");
 					valideInput = false;
 				}
+				if(device != null){
+			    	if(!device.equals("mock") && !device.equals("jennec") && !device.equals("pacemate") && !device.equals("telosb")){
+			    		System.out.println("Wrong input: The device parameter can only be 'jennec', 'pacemate', 'telosb' or 'mock'.");
+			    		valideInput = false;
+			    	}
+			    }
 				if(server != null){
 				    if(!server.matches(ipRegex) && !server.equals("localhost")){
 				    	System.out.println("Wrong input: This is no valide server address.");
@@ -125,12 +131,6 @@ public class Main {
 			    if(output != null){
 			    	if(!output.equals("hex") && !output.equals("byte")){
 			    		System.out.println("Wrong input: The output parameter can only be 'hex' or 'byte'.");
-			    		valideInput = false;
-			    	}
-			    }
-			    if(device != null){
-			    	if(!device.equals("mock") && !device.equals("jennec") && !device.equals("pacemate") && !device.equals("telosb")){
-			    		System.out.println("Wrong input: The device parameter can only be 'jennec', 'pacemate', 'telosb' or 'mock'.");
 			    		valideInput = false;
 			    	}
 			    }
