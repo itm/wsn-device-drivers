@@ -23,6 +23,9 @@ public class Main {
 	/** The version. */
 	private static double version = 1.0;
 
+	private static String ipRegex = "(((\\d{1,3}.){3})(\\d{1,3}))";
+	private static boolean valideInput = true;
+
 	/**
 	 * The main method.
 	 * 
@@ -51,15 +54,16 @@ public class Main {
 		options.addOption("device", true,
 				"type of device in local case: jennec, telosb oder pacemate");
 		options.addOption("id", true, "ID of the device in remote case");
-		options.addOption("timeout", true, "optional timeout while flashing the device");
-		options.addOption("macAddress", true, "the mac-address, that should be written on the device.");
+		options.addOption("timeout", true,
+				"optional timeout while flashing the device");
+		options.addOption("macAddress", true,
+				"the mac-address, that should be written on the device.");
 
 		CommandLineParser parser = new GnuParser();
 		CommandLine cmd = null;
-		if(args.length == 0){
+		if (args.length == 0) {
 			printHelp(options);
-		}
-		else{
+		} else {
 			try {
 				cmd = parser.parse(options, args);
 			} catch (ParseException e) {
@@ -73,51 +77,71 @@ public class Main {
 				if (cmd.hasOption("version")) {
 					System.out.println(version);
 				}
-				// the flashLoader
+
 				FlashLoader flashLoader = readCmd(cmd);
 				flashLoader.connect();
 				if (args[0].equals("flash")) {
-					
+
 					String file = cmd.getOptionValue("file");
-					if(file == null){
-						System.out.println("Please enter file!");
+					if (file == null) {
+						System.out
+								.println("Wrong input: Please enter file to flash the device!");
+						valideInput = false;
+					} else {
+						File f = new File(file);
+						if (!f.exists()) {
+							System.out
+									.println("Wrong input: File does not exists!");
+							valideInput = false;
+						}
 					}
-					File f = new File(file);
-					if(!f.exists()){
-						System.out.println("File do not exists!");
-						System.exit(1);
+					if (valideInput) {
+						flashLoader.flash(file);
 					}
-					flashLoader.flash(file);
 
 				} else if (args[0].equals("readmac")) {
-					flashLoader.readmac();
+					if (valideInput) {
+						flashLoader.readmac();
+					}
 
 				} else if (args[0].equals("writemac")) {
-				    String macAddress = cmd.getOptionValue("macAddress");
-				    if(macAddress == null){
-						System.out.println("Please enter macAddress!");
-						System.exit(1);
+					String macAddress = cmd.getOptionValue("macAddress");
+					if (macAddress == null) {
+						System.out
+								.println("Wrong input: Please enter macAddress!");
+						valideInput = false;
 					}
-				    int length = macAddress.length();
-				    if(length != 16){
-				    	for(int i = length; i < 16; i++){
-				    		macAddress = macAddress + "0";
-				    		length++;
-				    	}
-				    }
-					MacAddress macAdress = new MacAddress(hexStringToByteArray(macAddress));
-					flashLoader.writemac(macAdress);
+					if (!macAddress.matches("\\A\\b[0-9a-fA-F]+\\b\\Z")) {
+						System.out
+								.println("Wrong input: Please enter macAddress as hex!");
+						valideInput = false;
+					}
+					if (valideInput) {
+						int length = macAddress.length();
+						if (length != 16) {
+							for (int i = length; i < 16; i++) {
+								macAddress = macAddress + "0";
+								length++;
+							}
+						}
+						MacAddress macAdress = new MacAddress(
+								hexStringToByteArray(macAddress));
+						flashLoader.writemac(macAdress);
+					}
 
 				} else if (args[0].equals("reset")) {
-					flashLoader.reset();
+					if (valideInput) {
+						flashLoader.reset();
+					}
 				}
 			}
 		}
 	}
-	
+
 	/**
-	 * Parses the Parameters from the given CommandLine gives them 
-	 * to the flashloader-object.
+	 * Parses the Parameters from the given CommandLine gives them to the
+	 * flashloader-object.
+	 * 
 	 * @param cmd
 	 * @param flashLoader
 	 * @throws IOException
@@ -130,24 +154,41 @@ public class Main {
 		String device = cmd.getOptionValue("device");
 		String id = cmd.getOptionValue("id");
 		String timeout = cmd.getOptionValue("timeout");
-		
-		if(device == null && server == null){
-			System.out.println("Please enter device or server!");
-			System.exit(1);
+
+		// Begin: validate input-data
+		if (device == null && server == null) {
+			System.out.println("Wrong input: Please enter device or server!");
+			valideInput = false;
 		}
-		if(port == null){
-			System.out.println("Please enter port!");
-			System.exit(1);
+		if (device != null) {
+			if (!device.equals("mock") && !device.equals("jennec")
+					&& !device.equals("pacemate") && !device.equals("telosb")) {
+				System.out
+						.println("Wrong input: The device parameter can only be 'jennec', 'pacemate', 'telosb' or 'mock'.");
+				valideInput = false;
+			}
 		}
-		if(server != null && id == null){
-			System.out.println("Please enter id of the node!");
-			System.exit(1);
+		if (server != null) {
+			if (!server.matches(ipRegex) && !server.equals("localhost")) {
+				System.out
+						.println("Wrong input: This is no valide server address.");
+				valideInput = false;
+			}
+		}
+		if (port == null) {
+			System.out.println("Wrong input: Please enter port!");
+			valideInput = false;
+		}
+		if (server != null && id == null) {
+			System.out.println("Wrong input: Please enter id of the device!");
+			valideInput = false;
 		}
 
-		if (server != null && (user == null && password == null || user == null)) {
+		if (server != null
+				&& (user == null && password == null || user == null)) {
 			System.out.println("Username and Password is missing.");
-			BufferedReader in = new BufferedReader(
-					new InputStreamReader(System.in));
+			BufferedReader in = new BufferedReader(new InputStreamReader(
+					System.in));
 			System.out.print("Username: ");
 			user = in.readLine();
 			System.out.print("Password: ");
@@ -156,43 +197,45 @@ public class Main {
 		}
 		if (server != null && (password == null)) {
 			System.out.println("Password is missing.");
-			BufferedReader in = new BufferedReader(
-					new InputStreamReader(System.in));
+			BufferedReader in = new BufferedReader(new InputStreamReader(
+					System.in));
 			System.out.print("Password: ");
 			password = in.readLine();
 			in.close();
 		}
-		FlashLoader flashLoader = new FlashLoader(port, server, user, password, device, id, timeout);
+		FlashLoader flashLoader = new FlashLoader(port, server, user, password,
+				device, id, timeout);
 		return flashLoader;
 	}
-	
+
 	/**
 	 * Converts a hex-String to a byte array
+	 * 
 	 * @param s
 	 * @return data, the byte array
 	 */
 	public static byte[] hexStringToByteArray(String s) {
-	    int len = s.length();
-	    byte[] data = new byte[len / 2];
-	    for (int i = 0; i < len; i += 2) {
-	        data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
-	                             + Character.digit(s.charAt(i+1), 16));
-	    }
-	    return data;
+		int len = s.length();
+		byte[] data = new byte[len / 2];
+		for (int i = 0; i < len; i += 2) {
+			data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4) + Character
+					.digit(s.charAt(i + 1), 16));
+		}
+		return data;
 	}
-	
-	public static void printHelp(Options options){
+
+	public static void printHelp(Options options) {
 		System.out.println("Example:");
 		System.out
 				.println("Flash: Remote-Example: flash -port 8181 -server localhost -id 1 -file jennec.bin");
 		System.out
-		.println("Flash: Local-Example: flash -port 8181 -file jennec.bin -device jennec");
+				.println("Flash: Local-Example: flash -port COM1 -file jennec.bin -device jennec");
 		System.out
-		.println("Write Mac: Local-Example: writemac -port 8181 -device jennec -mac_adress 080020aefd7e");
+				.println("Write Mac: Local-Example: writemac -port COM1 -device jennec -mac_adress 080020aefd7e");
 		System.out
-		.println("Read Mac: Local-Example: readmac -port 8181 -device jennec");
+				.println("Read Mac: Local-Example: readmac -port COM1 -device jennec");
 		System.out
-		.println("Reset: Local-Example: reset -port 8181 -device jennec");
+				.println("Reset: Local-Example: reset -port COM1 -device telosb");
 		System.out.println("");
 		// for help statement
 		HelpFormatter formatter = new HelpFormatter();
