@@ -1,7 +1,8 @@
 package de.uniluebeck.itm.tcp.server.utils;
 
 import java.util.HashMap;
-
+import de.uniluebeck.itm.devicedriver.MessagePacketListener;
+import de.uniluebeck.itm.devicedriver.MessagePlainTextListener;
 import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 
@@ -18,6 +19,12 @@ public class ClientID {
 	private final HashMap<String,OperationHandle<?>> handleList = new HashMap<String,OperationHandle<?>>();
 
 	/**
+	 * List with ReverseMessages for every Operation that a User has started
+	 */
+	private final HashMap<String,ReverseMessage> reverseMessageList = new HashMap<String,ReverseMessage>();
+
+	
+	/**
 	 * List with entry's for every Operation where getHandle was called 
 	 */
 	private final HashMap<String,Boolean> getList = new HashMap<String,Boolean>();
@@ -26,6 +33,16 @@ public class ClientID {
 	 * List for the OperationType for every Handle
 	 */
 	private final HashMap<String,OperationType> operationTypeList = new HashMap<String,OperationType>();
+	
+	/**
+	 * packetListenerList
+	 */
+	private HashMap<String, MessagePacketListener> packetListenerList = new HashMap<String, MessagePacketListener>();
+	/**
+	 * plainTextListenerList
+	 */
+	private HashMap<String, MessagePlainTextListener> plainTextListenerList = new HashMap<String, MessagePlainTextListener>();
+
 	
 	/**
 	 * The Device the User called
@@ -50,11 +67,11 @@ public class ClientID {
 	}
 	
 	/**
-	 * set a HandleElement for a key
+	 * add a HandleElement for a key to the HandleList
 	 * @param operationKey the key where the HandleElement should be set
 	 * @param handle the HandleElement should be set
 	 */
-	public void setHandleElement(final String operationKey, final OperationHandle<?> handle) {
+	public void addHandleElement(final String operationKey, final OperationHandle<?> handle) {
 		handleList.put(operationKey, handle);
 	}
 	
@@ -73,7 +90,15 @@ public class ClientID {
 	public HashMap<String, OperationHandle<?>> getHandleList() {
 		return handleList;
 	}
-	
+
+	/**
+	 * Return all ReverMessageElements
+	 * @return all ReverMessageElements
+	 */
+	public HashMap<String,ReverseMessage> getReverseMessageList() {
+		return reverseMessageList;
+	}
+
 	/**
 	 * returns a reference to the device
 	 * @return the device
@@ -115,11 +140,79 @@ public class ClientID {
 	}
 	
 	/**
-	 * Remove a OperationType from the operationTypeList
-	 * @param key the key which should be removed
+	 * return a OperationType from the operationTypeList
+	 * @param key the key of the Operation for which the Type should be find
 	 * @return the operationType
 	 */
 	public OperationType getOperationType(final String key) {
 		return operationTypeList.get(key);
+	}
+
+	/**
+	 * return a PacketListener from the PacketListenerList
+	 * @param key the key of the Listener which should be find
+	 * @return the Listener
+	 */
+	public MessagePacketListener getPacketListener(final String key) {
+		return this.packetListenerList.get(key);
+	}
+	
+	/**
+	 * return a the PacketListenerList
+	 * @return the PacketListenerList
+	 */
+	public HashMap<String, MessagePacketListener> getPacketListenerList() {
+		return this.packetListenerList;
+	}
+
+	/**
+	 * add a PacketListener to the PacketListenerList
+	 * @param key the key of the Listener which should be add
+	 * @param packetListener the Listener which should be add
+	 */
+	public void addPacketListener(final String key, final MessagePacketListener packetListener) {
+		this.packetListenerList.put(key, packetListener);
+	}
+	
+	/**
+	 * remove a PacketListener from the PacketListenerList
+	 * @param key the key of the Listener which should be removed
+	 */
+	public void removePacketListener(final String key) {
+		this.packetListenerList.remove(key);
+	}
+
+	/**
+	 * return a PlainTextListener from the PlainTextListenerList
+	 * @param key the key of the Listener which should be find
+	 * @return the Listener
+	 */
+	public MessagePlainTextListener getPlainTextListener(final String key) {
+		return this.plainTextListenerList.get(key);
+	}
+	
+	/**
+	 * return the PlainTextListenerList
+	 * @return the PlainTextListenerList
+	 */
+	public HashMap<String, MessagePlainTextListener> getPlainTextListenerList() {
+		return this.plainTextListenerList;
+	}
+
+	/**
+	 * add a PlainTextListener to the PlainTextListenerList
+	 * @param key the key of the Listener which should be add
+	 * @param plainTextListener the Listener which should be add
+	 */
+	public void addPlainTextListener(final String key, final MessagePlainTextListener plainTextListener) {
+		this.plainTextListenerList.put(key, plainTextListener);
+	}
+	
+	/**
+	 * remove a PlainTextListener from the PlainTextListenerList
+	 * @param key the key of the Listener which should be removed
+	 */
+	public void removePlainTextListener(final String key) {
+		this.plainTextListenerList.remove(key);
 	}
 }

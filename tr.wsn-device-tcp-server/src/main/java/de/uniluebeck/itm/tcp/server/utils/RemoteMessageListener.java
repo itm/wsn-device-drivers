@@ -55,11 +55,9 @@ public class RemoteMessageListener implements MessagePacketListener, MessagePlai
 		final ListenerData request = ListenerData.newBuilder().setOperationKey(operationKey).setSource(event.getSource().toString()).setType(event.getMessage().getType()).addData(ByteString.copyFrom(event.getMessage().getContent())).build();
 
 		answer.sendReversePacketMessage(controller, request, new RpcCallback<EmptyAnswer>(){
-
 			@Override
 			public void run(final EmptyAnswer parameter) {	
 			}});
-		
 	}
 	
 	@Override
@@ -74,7 +72,6 @@ public class RemoteMessageListener implements MessagePacketListener, MessagePlai
 			@Override
 			public void run(final EmptyAnswer parameter) {	
 			}});
-		
 	}
 
 }

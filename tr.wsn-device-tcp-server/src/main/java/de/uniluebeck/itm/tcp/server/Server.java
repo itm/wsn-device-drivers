@@ -1,6 +1,5 @@
 package de.uniluebeck.itm.tcp.server;
 
-import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -99,15 +98,6 @@ public class Server {
 			TIMEOUT, TimeUnit.MINUTES);
 
 	/**
-	 * packetListenerList
-	 */
-	private static HashMap<RpcClientChannel, HashMap<String, MessagePacketListener>> packetListenerList = new HashMap<RpcClientChannel, HashMap<String, MessagePacketListener>>();
-	/**
-	 * plainTextListenerList
-	 */
-	private static HashMap<RpcClientChannel, HashMap<String, MessagePlainTextListener>> plainTextListenerList = new HashMap<RpcClientChannel, HashMap<String, MessagePlainTextListener>>();
-
-	/**
 	 * contains the objects representing the devices connected to the host.
 	 */
 	private static ServerDevice serverDevices;
@@ -200,37 +190,38 @@ public class Server {
 			public void connectionLost(final RpcClientChannel clientChannel) {
 				// suaberes beenden der Verbindung und entfernen aller
 				// Ressourcen
+
 				if (!idList.isEmpty() && null != idList.get(clientChannel)) {
-					final DeviceAsync device = idList.get(clientChannel)
-							.getDevice();
-					if (!packetListenerList.isEmpty()
-							&& !packetListenerList.get(clientChannel).isEmpty()) {
-						for (String key : packetListenerList.get(clientChannel)
-								.keySet()) {
-							device.removeListener(packetListenerList.get(
-									clientChannel).get(key));
-						}
-						packetListenerList.remove(clientChannel);
-					}
-					if (!plainTextListenerList.isEmpty()
-							&& !plainTextListenerList.get(clientChannel)
-									.isEmpty()) {
-						for (String key : plainTextListenerList.get(
-								clientChannel).keySet()) {
-							device.removeListener(plainTextListenerList.get(
-									clientChannel).get(key));
-						}
-						plainTextListenerList.remove(clientChannel);
-					}
 					final ClientID id = idList.get(clientChannel);
-					/* abbrechen und loeschen aller read-Operationen */
-					for(final String key : id.getHandleList().keySet()){
-						if(id.getOperationType(key).getName().equalsIgnoreCase("read")){
+					final DeviceAsync device = id.getDevice();
+
+					if (!id.getPacketListenerList().isEmpty()) {
+						for (String key : id.getPacketListenerList().keySet()) {
+							device.removeListener(id.getPacketListener(key));
+							id.removePacketListener(key);
+						}
+					}
+					if (!id.getPlainTextListenerList().isEmpty()) {
+						for (String key : id.getPlainTextListenerList()
+								.keySet()) {
+							device.removeListener(id.getPlainTextListener(key));
+							id.removePlainTextListener(key);
+						}
+					}
+
+					
+					for (final String key : id.getHandleList().keySet()) {
+						/* verhindern einer Nachricht an den Client  */
+						id.getReverseMessageList().get(key).setClosed(true);
+						id.getReverseMessageList().remove(key);
+						/* abbrechen und loeschen aller read-Operationen*/
+						if (id.getOperationType(key).getName()
+								.equalsIgnoreCase("read")) {
 							id.getHandleElement(key).cancel();
 							id.getHandleList().remove(key);
 						}
 					}
-					
+
 					// logout des Clients
 					authList.get(clientChannel).logout();
 					// entfernen des Clients aus der authentifiziert-Liste
@@ -239,7 +230,7 @@ public class Server {
 					idList.remove(clientChannel);
 				}
 				clientChannel.close();
-				
+
 				log.info("connectionLost " + clientChannel);
 			}
 
@@ -353,9 +344,9 @@ public class Server {
 				}
 			} else { // Wenn ein Benutzer bereits authentifiziert war, wird er
 				// hier erneut eingetragen
-//				idList.put(channel, id);
-//				authList.put(channel, currentUser);
-//				done.run(EmptyAnswer.newBuilder().build());
+				// idList.put(channel, id);
+				// authList.put(channel, currentUser);
+				// done.run(EmptyAnswer.newBuilder().build());
 				log.info("User was authentificated");
 			}
 			/* Shiro END */
@@ -802,9 +793,12 @@ public class Server {
 				return;
 			}
 
+			/* finden des richtigen Objektes */
+			final ClientID id = idList.get(ServerRpcController
+					.getRpcChannel(controller));
+
 			/* finden des richtigen Device */
-			final DeviceAsync deviceAsync = idList.get(
-					ServerRpcController.getRpcChannel(controller)).getDevice();
+			final DeviceAsync deviceAsync = id.getDevice();
 
 			/*
 			 * wenn richtiges Device nicht gefunden wurde, sollte im normalen
@@ -843,23 +837,29 @@ public class Server {
 
 			deviceAsync.addListener(listener, types);
 
-			/*
-			 * erzeugen einer temporaeren HashMap, um die Beziehung zwischen
-			 * OpKey und Listener-Objekt zu erhalten
-			 */
-			final HashMap<String, MessagePacketListener> temp = new HashMap<String, MessagePacketListener>();
-			temp.put(request.getOperationKey(), listener);
+			// /*
+			// * erzeugen einer temporaeren HashMap, um die Beziehung zwischen
+			// * OpKey und Listener-Objekt zu erhalten
+			// */
+			// final HashMap<String, MessagePacketListener> temp = new
+			// HashMap<String, MessagePacketListener>();
+			// temp.put(request.getOperationKey(), listener);
+			//
+			// /*
+			// * hinzufuegen der temporaeren HashMap zur packetListenerList.
+			// Dies
+			// * ist notwendig, da ein Client den gleichen Channel benutzt aber
+			// * mehrere Operationen starten kann. Diese Beziehung muss zur
+			// * Verwaltung der Listener erhalten bleiben.
+			// */
+			// packetListenerList.put(ServerRpcController
+			// .getRpcChannel(controller), temp);
+			//
 
-			/*
-			 * hinzufuegen der temporaeren HashMap zur packetListenerList. Dies
-			 * ist notwendig, da ein Client den gleichen Channel benutzt aber
-			 * mehrere Operationen starten kann. Diese Beziehung muss zur
-			 * Verwaltung der Listener erhalten bleiben.
-			 */
-			packetListenerList.put(ServerRpcController
-					.getRpcChannel(controller), temp);
+			id.addPacketListener(request.getOperationKey(), listener);
 
 			done.run(EmptyAnswer.newBuilder().build());
+
 		}
 
 		/**
@@ -886,8 +886,10 @@ public class Server {
 				return;
 			}
 
-			final DeviceAsync deviceAsync = idList.get(
-					ServerRpcController.getRpcChannel(controller)).getDevice();
+			final ClientID id = idList.get(ServerRpcController
+					.getRpcChannel(controller));
+
+			final DeviceAsync deviceAsync = id.getDevice();
 
 			if (deviceAsync == null) {
 				controller.setFailed("Error while adding a Plaintext-Listener");
@@ -910,11 +912,14 @@ public class Server {
 
 			deviceAsync.addListener(listener);
 
-			final HashMap<String, MessagePlainTextListener> temp = new HashMap<String, MessagePlainTextListener>();
-			temp.put(request.getOperationKey(), listener);
+			// final HashMap<String, MessagePlainTextListener> temp = new
+			// HashMap<String, MessagePlainTextListener>();
+			// temp.put(request.getOperationKey(), listener);
+			//
+			// plainTextListenerList.put(ServerRpcController
+			// .getRpcChannel(controller), temp);
 
-			plainTextListenerList.put(ServerRpcController
-					.getRpcChannel(controller), temp);
+			id.addPlainTextListener(request.getOperationKey(), listener);
 
 			done.run(EmptyAnswer.newBuilder().build());
 
@@ -943,30 +948,36 @@ public class Server {
 				return;
 			}
 
+			final ClientID id = idList.get(ServerRpcController
+					.getRpcChannel(controller));
+
 			/* finden des richtigen Device */
-			final DeviceAsync deviceAsync = idList.get(
-					ServerRpcController.getRpcChannel(controller)).getDevice();
-			/* finden der richtigen ListenerList fuer den aktuellen Client */
-			final HashMap<String, MessagePacketListener> temp = packetListenerList
-					.get(ServerRpcController.getRpcChannel(controller));
+			final DeviceAsync deviceAsync = id.getDevice();
+			// /* finden der richtigen ListenerList fuer den aktuellen Client */
+			// final HashMap<String, MessagePacketListener> temp =
+			// packetListenerList
+			// .get(ServerRpcController.getRpcChannel(controller));
 
 			/* Fehlerfall, sollte im normalen Betrieb nicht vorkommen */
 			if (deviceAsync == null
-					|| (!packetListenerList.containsKey(ServerRpcController
-							.getRpcChannel(controller)) && temp
-							.containsKey(request.getOperationKey()))) {
+					|| !id.getPacketListenerList().containsKey(
+							request.getOperationKey())) {
 				controller.setFailed("Error while removing a Packet-Listener");
 				done.run(null);
 				return;
 			}
 
-			/* entfernen des Listener vom physikalischen Device */
-			deviceAsync.removeListener(temp.get(request.getOperationKey()));
-			/* entfernen des Listener aus der ListenerList des Clients */
-			temp.remove(request.getOperationKey());
-			/* ueberschreiben der alten ListenerList */
-			packetListenerList.put(ServerRpcController
-					.getRpcChannel(controller), temp);
+			// /* entfernen des Listener vom physikalischen Device */
+			// deviceAsync.removeListener(temp.get(request.getOperationKey()));
+			// /* entfernen des Listener aus der ListenerList des Clients */
+			// temp.remove(request.getOperationKey());
+			// /* ueberschreiben der alten ListenerList */
+			// packetListenerList.put(ServerRpcController
+			// .getRpcChannel(controller), temp);
+
+			deviceAsync.removeListener(id.getPacketListener(request
+					.getOperationKey()));
+			id.removePacketListener(request.getOperationKey());
 
 			done.run(EmptyAnswer.newBuilder().build());
 		}
@@ -995,25 +1006,32 @@ public class Server {
 				return;
 			}
 
-			final DeviceAsync deviceAsync = idList.get(
-					ServerRpcController.getRpcChannel(controller)).getDevice();
-			final HashMap<String, MessagePlainTextListener> a = plainTextListenerList
-					.get(ServerRpcController.getRpcChannel(controller));
+			final ClientID id = idList.get(ServerRpcController
+					.getRpcChannel(controller));
+
+			final DeviceAsync deviceAsync = id.getDevice();
+			// final HashMap<String, MessagePlainTextListener> a =
+			// plainTextListenerList
+			// .get(ServerRpcController.getRpcChannel(controller));
 
 			if (deviceAsync == null
-					|| (!plainTextListenerList.containsKey(ServerRpcController
-							.getRpcChannel(controller)) && a
-							.containsKey(request.getOperationKey()))) {
+					|| id.getPlainTextListenerList().containsKey(
+							request.getOperationKey())) {
 				controller
 						.setFailed("Error while removing a Plaintext-Listener");
 				done.run(null);
 				return;
 			}
 
-			deviceAsync.removeListener(a.get(request.getOperationKey()));
-			a.remove(request.getOperationKey());
-			plainTextListenerList.put(ServerRpcController
-					.getRpcChannel(controller), a);
+			// deviceAsync.removeListener(a.get(request.getOperationKey()));
+			// a.remove(request.getOperationKey());
+			// plainTextListenerList.put(ServerRpcController
+			// .getRpcChannel(controller), a);
+
+			deviceAsync.removeListener(id.getPlainTextListener(request
+					.getOperationKey()));
+			id.removePlainTextListener(request.getOperationKey());
+
 			done.run(EmptyAnswer.newBuilder().build());
 		}
 	}

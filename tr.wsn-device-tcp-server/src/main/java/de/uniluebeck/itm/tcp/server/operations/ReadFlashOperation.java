@@ -37,7 +37,7 @@ public class ReadFlashOperation extends AbstractOperation<byte[]> {
 	 * @param request the FlashData request for a readFlash Operation
 	 */
 	public ReadFlashOperation(final RpcController controller, final RpcCallback<EmptyAnswer> done, final Subject user, final ClientID id, final FlashData request){
-		super(controller,done, user, id, request.getOperationKey());
+		super(controller,done, user, id);
 		this.request = request;
 		setMessage(new ReverseMessage(request.getOperationKey(),ServerRpcController.getRpcChannel(controller)));
 		setOperationType(OperationType.READOPERATION);
@@ -50,9 +50,6 @@ public class ReadFlashOperation extends AbstractOperation<byte[]> {
 			final ByteData data = ByteData.newBuilder().setOperationKey(request.getOperationKey()).addData(ByteString.copyFrom(result)).build();
 			getMessage().reverseSuccess(ReverseAnswer.newBuilder().setData(data).build());
 		}
-		if(!getId().getHandleList().isEmpty() && null != getId().getHandleElement(request.getOperationKey())){
-			getId().getHandleList().remove(request.getOperationKey());
-		}
 	}
 	
 	@Override
@@ -62,7 +59,7 @@ public class ReadFlashOperation extends AbstractOperation<byte[]> {
 		final OperationHandle <byte[]> handle = getDeviceAsync().readFlash(request.getAddress(), request.getLength(), request.getTimeout(), getAsyncAdapter());
 		
 		// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
-		getId().setHandleElement(request.getOperationKey(), handle);
+		getId().addHandleElement(request.getOperationKey(), handle);
 		
 		// hinzufuegen des OperationType dieser operation zur OperationTypeList
 		getId().addOperationType(request.getOperationKey(), getOperationType());

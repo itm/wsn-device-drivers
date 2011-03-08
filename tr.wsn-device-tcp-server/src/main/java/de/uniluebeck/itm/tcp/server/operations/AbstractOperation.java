@@ -58,11 +58,6 @@ public abstract class AbstractOperation<T> {
 	private OperationType operationType;
 
 	/**
-	 * the operationKey for the Operation
-	 */
-	private String operationKey;
-
-	/**
 	 * Constructor
 	 * 
 	 * @param controller
@@ -73,25 +68,27 @@ public abstract class AbstractOperation<T> {
 	 *            the Shiro-User-Object
 	 * @param id
 	 *            the ClientID-Instance for the Operation
-	 * @param operationKey
-	 *            the operationKey for the Operation
 	 */
 	public AbstractOperation(final RpcController controller,
 			final RpcCallback<EmptyAnswer> done, final Subject user,
-			final ClientID id, final String operationKey) {
+			final ClientID id) {
 		this.controller = controller;
 		this.done = done;
 		this.user = user;
 		this.id = id;
-		this.operationKey = operationKey;
 	}
 
 	public ReverseMessage getMessage() {
 		return message;
 	}
 
+	/**
+	 * set the ReverseMessage and add it to the ReverseMessageList in the clientID-Object
+	 * @param message the ReverseMessage for this operation
+	 */
 	public void setMessage(final ReverseMessage message) {
 		this.message = message;
+		id.getReverseMessageList().put(message.getOperationKey(), message);
 	}
 
 	public DeviceAsync getDeviceAsync() {
@@ -159,11 +156,6 @@ public abstract class AbstractOperation<T> {
 		message.reverseSuccess(ReverseAnswer.newBuilder().setSuccess(
 				OpKey.newBuilder().setOperationKey(message.getOperationKey()))
 				.build());
-		/* remove a Operationhandle from the List */
-		if (!id.getHandleList().isEmpty()
-				&& null != id.getHandleList().remove(operationKey)) {
-			id.getHandleList().remove(operationKey);
-		}
 	}
 
 	/**
@@ -178,11 +170,6 @@ public abstract class AbstractOperation<T> {
 	 */
 	public void setOnCancel() {
 		message.reverseOnCancel();
-		/* remove a Operationhandle from the List */
-		if (!id.getHandleList().isEmpty()
-				&& null != id.getHandleList().remove(operationKey)) {
-			id.getHandleList().remove(operationKey);
-		}
 	}
 
 	/**
@@ -193,11 +180,6 @@ public abstract class AbstractOperation<T> {
 	 */
 	public void setOnFailure(final Throwable throwable) {
 		message.reverseOnFailure(throwable);
-		/* remove a Operationhandle from the List */
-		if (!id.getHandleList().isEmpty()
-				&& null != id.getHandleList().remove(operationKey)) {
-			id.getHandleList().remove(operationKey);
-		}
 	}
 
 	/**
