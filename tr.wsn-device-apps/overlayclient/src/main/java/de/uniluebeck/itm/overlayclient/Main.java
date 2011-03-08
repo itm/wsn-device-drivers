@@ -13,6 +13,9 @@ public class Main {
 
 	/** The version. */
 	private static double version = 1.0;
+	
+	private static String ipRegex = "(((\\d{1,3}.){3})(\\d{1,3}))";
+	private static boolean validInput = true;
 
 	/**
 	 * The main method.
@@ -37,7 +40,7 @@ public class Main {
 		options.addOption("id", true, "id to search for");
 		options.addOption("microcontroller", true,
 				"microcontroller to search for");
-		options.addOption("sensor", true, "sensor to search for");
+		options.addOption("capability", true, "capability to search for");
 		options.addOption("username", true, "username to connect to the sever");
 		options.addOption("passwd", true, "password to connect to the server");
 		options.addOption("server", true, "IP-Adress of the server");
@@ -54,6 +57,7 @@ public class Main {
 				cmd = parser.parse(options, args);
 			} catch (ParseException e) {
 				System.out.println("One of these options is not registered.");
+				printHelp(options);
 			}
 			if (cmd != null) {
 				// standard-options
@@ -64,32 +68,38 @@ public class Main {
 					System.out.println(version);
 				}
 
-				// der Meta-Daten Service
-				if (args[0].equals("metadata")) {
-					System.out.println("start Meta-Data Service...");
-
-					String id = cmd.getOptionValue("id");
-					String microcontroller = cmd.getOptionValue("microcontroller");
-					String sensor = cmd.getOptionValue("sensor");
-					String user = cmd.getOptionValue("username");
-					String password = cmd.getOptionValue("passwd");
-					String server = cmd.getOptionValue("server");
-					String serverPort = cmd.getOptionValue("serverPort");
-					String clientPort = cmd.getOptionValue("clientPort");
-					
-					if(server == null){
-						System.out.println("Please enter server!");
-						System.exit(1);
+				String id = cmd.getOptionValue("id");
+				String microcontroller = cmd.getOptionValue("microcontroller");
+				String capability = cmd.getOptionValue("capability");
+				String user = cmd.getOptionValue("username");
+				String password = cmd.getOptionValue("passwd");
+				String server = cmd.getOptionValue("server");
+				String serverPort = cmd.getOptionValue("serverPort");
+				String clientPort = cmd.getOptionValue("clientPort");
+				
+				//Begin: validate input-data
+				if (server == null) {
+					System.out.println("Wrong input: Please enter server!");
+					validInput = false;
+				}
+				if (server != null) {
+					if (!server.matches(ipRegex) && !server.equals("localhost")) {
+						System.out
+								.println("Wrong input: This is no valide server address.");
+						validInput = false;
 					}
-					if(serverPort == null){
-						System.out.println("Please enter serverPort!");
-						System.exit(1);
-					}
-					if(id == null && microcontroller == null && sensor == null){
-						System.out.println("Please enter id, microcontroller or sensor!");
-						System.exit(1);
-					}
-					
+				}
+				if (serverPort == null) {
+					System.out.println("Wrong input: Please enter port of the server!");
+					validInput = false;
+				}
+				if (id == null && microcontroller == null && capability == null) {
+					System.out.println("Wrong input: Please enter id, microcontroller or capability to search for.!");
+					validInput = false;
+				}
+			    //End: validate input-data
+				
+				if(validInput){
 					if (server != null && (user == null && password == null || user == null)) {
 						System.out.println("Username and Password is missing.");
 						BufferedReader in = new BufferedReader(
@@ -110,14 +120,14 @@ public class Main {
 					}
 					
 					OverlayClient metaService = new OverlayClient(user, password, server, serverPort, clientPort);
-
+	
 					if (id != null) {
 						metaService.searchDeviceWithId(id);
 					} else if (microcontroller != null) {
 						metaService
 								.searchDeviceWithMicrocontroller(microcontroller);
-					} else if (sensor != null) {
-						metaService.searchDeviceWithCapability(sensor);
+					} else if (capability != null) {
+						metaService.searchDeviceWithCapability(capability);
 					}
 				}
 			}
@@ -126,7 +136,9 @@ public class Main {
 	
 	public static void printHelp(Options options){
 		System.out.println("Example:");
-		System.out.println("Meta-Data Service: metadata -id 123 -server localhost -server_port 8181");
+		System.out.println("Search by id of the node: -id 123 -server localhost -server_port 8181");
+		//TODO Example for microcontroller
+		//TODO Example for capabilities
 		System.out.println("");
 
 		// for help statement
