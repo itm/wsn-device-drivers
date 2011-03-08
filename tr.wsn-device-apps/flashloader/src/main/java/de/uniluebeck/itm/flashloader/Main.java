@@ -24,7 +24,7 @@ public class Main {
 	private static double version = 1.0;
 
 	private static String ipRegex = "(((\\d{1,3}.){3})(\\d{1,3}))";
-	private static boolean valideInput = true;
+	private static boolean validInput = true;
 
 	/**
 	 * The main method.
@@ -86,21 +86,21 @@ public class Main {
 					if (file == null) {
 						System.out
 								.println("Wrong input: Please enter file to flash the device!");
-						valideInput = false;
+						validInput = false;
 					} else {
 						File f = new File(file);
 						if (!f.exists()) {
 							System.out
 									.println("Wrong input: File does not exists!");
-							valideInput = false;
+							validInput = false;
 						}
 					}
-					if (valideInput) {
+					if (validInput) {
 						flashLoader.flash(file);
 					}
 
 				} else if (args[0].equals("readmac")) {
-					if (valideInput) {
+					if (validInput) {
 						flashLoader.readmac();
 					}
 
@@ -109,14 +109,15 @@ public class Main {
 					if (macAddress == null) {
 						System.out
 								.println("Wrong input: Please enter macAddress!");
-						valideInput = false;
+						validInput = false;
+					}else{
+						if (!macAddress.matches("\\A\\b[0-9a-fA-F]+\\b\\Z")) {
+							System.out
+									.println("Wrong input: Please enter macAddress as hex!");
+							validInput = false;
+						}
 					}
-					if (!macAddress.matches("\\A\\b[0-9a-fA-F]+\\b\\Z")) {
-						System.out
-								.println("Wrong input: Please enter macAddress as hex!");
-						valideInput = false;
-					}
-					if (valideInput) {
+					if (validInput) {
 						int length = macAddress.length();
 						if (length != 16) {
 							for (int i = length; i < 16; i++) {
@@ -130,7 +131,7 @@ public class Main {
 					}
 
 				} else if (args[0].equals("reset")) {
-					if (valideInput) {
+					if (validInput) {
 						flashLoader.reset();
 					}
 				}
@@ -158,30 +159,30 @@ public class Main {
 		// Begin: validate input-data
 		if (device == null && server == null) {
 			System.out.println("Wrong input: Please enter device or server!");
-			valideInput = false;
+			validInput = false;
 		}
 		if (device != null) {
 			if (!device.equals("mock") && !device.equals("jennec")
 					&& !device.equals("pacemate") && !device.equals("telosb")) {
 				System.out
 						.println("Wrong input: The device parameter can only be 'jennec', 'pacemate', 'telosb' or 'mock'.");
-				valideInput = false;
+				validInput = false;
 			}
 		}
 		if (server != null) {
 			if (!server.matches(ipRegex) && !server.equals("localhost")) {
 				System.out
 						.println("Wrong input: This is no valide server address.");
-				valideInput = false;
+				validInput = false;
 			}
 		}
 		if (port == null) {
 			System.out.println("Wrong input: Please enter port!");
-			valideInput = false;
+			validInput = false;
 		}
 		if (server != null && id == null) {
 			System.out.println("Wrong input: Please enter id of the device!");
-			valideInput = false;
+			validInput = false;
 		}
 
 		if (server != null
