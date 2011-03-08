@@ -77,8 +77,13 @@ public class FlashLoader {
 			// Connect to the TCP-Server.
 			connection = new RemoteConnection();
 
-			connection.connect(user + ":" + password + "@" + server
-					+ ":" + port + "/" + id);
+			try{
+				connection.connect(user + ":" + password + "@" + server
+						+ ":" + port + "/" + id);
+			}catch(Exception e){
+				System.out.println("Cannot connect to server!");
+				System.exit(1);
+			}
 			System.out.println("Connected");
 
 			deviceAsync = new RemoteDevice(connection);
@@ -176,6 +181,7 @@ public class FlashLoader {
 				if(connection != null){
 					connection.shutdown(false);
 				}
+				System.exit(1);
 			}
 
 			@Override
@@ -215,6 +221,7 @@ public class FlashLoader {
 				if(connection != null){
 					connection.shutdown(false);
 				}
+				System.exit(1);
 			}
 
 			public void onFailure(Throwable throwable) {
@@ -258,6 +265,7 @@ public class FlashLoader {
 				if(connection != null){
 					connection.shutdown(false);
 				}
+				System.exit(1);
 			}
 
 			@Override

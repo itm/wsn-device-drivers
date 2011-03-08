@@ -184,6 +184,7 @@ public class Main {
 			System.out.println("Wrong input: Please enter id of the device!");
 			validInput = false;
 		}
+	    //End: validate input-data
 
 		if (server != null
 				&& (user == null && password == null || user == null)) {
