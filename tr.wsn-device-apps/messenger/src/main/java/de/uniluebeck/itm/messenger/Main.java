@@ -6,8 +6,6 @@ import java.io.InputStreamReader;
 
 import org.apache.commons.cli.*;
 
-import de.uniluebeck.itm.tcp.client.RemoteConnection;
-
 /**
  * The Class Main.
  */
@@ -15,6 +13,10 @@ public class Main {
 
 	/** The version. */
 	private static double version = 1.0;
+
+	private static String ipRegex = "(((\\d{1,3}.){3})(\\d{1,3}))";
+	private static String hexRegex = "\\A\\b[0-9a-fA-F]+\\b\\Z";
+	private static boolean validInput = true;
 
 	/**
 	 * The main method.
@@ -66,36 +68,60 @@ public class Main {
 					System.out.println(version);
 				}
 
-				// der Messenger
-				if (args[0].equals("send")) {
-					System.out.println("start Messenger...");
-
-					String port = cmd.getOptionValue("port");
-					String server = cmd.getOptionValue("server");
-					String message = cmd.getOptionValue("message");
-					String user = cmd.getOptionValue("user");
-					String password = cmd.getOptionValue("passwd");
-					String device = cmd.getOptionValue("device");
-					String id = cmd.getOptionValue("id");
-					String messageType = cmd.getOptionValue("messageType");
-					
-					if(messageType == null){
-						System.out.println("Please enter a messageType!");
-						System.exit(1);
+				String port = cmd.getOptionValue("port");
+				String server = cmd.getOptionValue("server");
+				String message = cmd.getOptionValue("message");
+				String user = cmd.getOptionValue("user");
+				String password = cmd.getOptionValue("passwd");
+				String device = cmd.getOptionValue("device");
+				String id = cmd.getOptionValue("id");
+				String messageType = cmd.getOptionValue("messageType");
+				
+				//Begin: validate input-data
+				if (device == null && server == null) {
+					System.out.println("Wrong input: Please enter device or server!");
+					validInput = false;
+				}
+				if (device != null) {
+					if (!device.equals("mock") && !device.equals("jennec")
+							&& !device.equals("pacemate") && !device.equals("telosb")) {
+						System.out
+								.println("Wrong input: The device parameter can only be 'jennec', 'pacemate', 'telosb' or 'mock'.");
+						validInput = false;
 					}
-					if(device == null && server == null){
-						System.out.println("Please enter device or server!");
-						System.exit(1);
+				}
+				if (server != null) {
+					if (!server.matches(ipRegex) && !server.equals("localhost")) {
+						System.out
+								.println("Wrong input: This is no valide server address.");
+						validInput = false;
 					}
-					if(port == null){
-						System.out.println("Please enter port!");
-						System.exit(1);
+				}
+				if (port == null) {
+					System.out.println("Wrong input: Please enter port!");
+					validInput = false;
+				}
+				if (server != null && id == null) {
+					System.out.println("Wrong input: Please enter id of the device!");
+					validInput = false;
+				}
+				if(messageType == null){
+					System.out.println("Wrong input: Please enter a messageType!");
+					validInput = false;
+				}
+				if (message == null) {
+					System.out
+							.println("Wrong input: Please enter message!");
+					validInput = false;
+				}else{
+					if (!message.matches(hexRegex)) {
+						System.out
+								.println("Wrong input: Please enter message as hex!");
+						validInput = false;
 					}
-					if(server != null && id == null){
-						System.out.println("Please enter id of the node!");
-						System.exit(1);
-					}
-
+				}
+			    //End: validate input-data
+				if(validInput){
 					if (server != null && (user == null && password == null || user == null)) {
 						System.out.println("Username and Password is missing.");
 						BufferedReader in = new BufferedReader(
@@ -125,9 +151,9 @@ public class Main {
 	public static void printHelp(Options options){
 		System.out.println("Example:");
 		System.out
-				.println("Messenger: Remote example: send -message 68616c6c6f -port 8181 -server localhost -id 1 -message_type 1");
+				.println("Messenger: Remote example: -message 68616c6c6f -port 8181 -server localhost -id 1 -message_type 1");
 		System.out
-		.println("Messenger: Local example: send -message 68616c6c6f -port 1282 -device jennec -message_type 1");
+		.println("Messenger: Local example: -message 68616c6c6f -port COM1 -device jennec -message_type 1");
 		System.out.println("");
 		// for help statement
 		HelpFormatter formatter = new HelpFormatter();
