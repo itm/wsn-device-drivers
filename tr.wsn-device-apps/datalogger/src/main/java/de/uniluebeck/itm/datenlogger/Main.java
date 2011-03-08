@@ -29,6 +29,7 @@ public class Main {
 	
 	private static String bracketsRegex = "([\\([0-9]+,[0-9]+,[0-9]+\\)][&|\\([0-9]+,[0-9]+,[0-9]+\\)]*)";
 	private static String ipRegex = "(((\\d{1,3}.){3})(\\d{1,3}))";
+	private static boolean validInput = true;
 	
 	/**
 	 * The main method.
@@ -97,46 +98,45 @@ public class Main {
 				String id = cmd.getOptionValue("id");
 
 				//Begin: validate input-data
-				boolean valideInput = true;
 				if (device == null && server == null) {
 					System.out.println("Wrong input: Please enter device or server!");
-					valideInput = false;
+					validInput = false;
 				}
 				if(device != null){
 			    	if(!device.equals("mock") && !device.equals("jennec") && !device.equals("pacemate") && !device.equals("telosb")){
 			    		System.out.println("Wrong input: The device parameter can only be 'jennec', 'pacemate', 'telosb' or 'mock'.");
-			    		valideInput = false;
+			    		validInput = false;
 			    	}
 			    }
 				if(server != null){
 				    if(!server.matches(ipRegex) && !server.equals("localhost")){
 				    	System.out.println("Wrong input: This is no valide server address.");
-				    	valideInput = false;
+				    	validInput = false;
 				    }
 				}
 				if (port == null) {
 					System.out.println("Wrong input: Please enter port!");
-					valideInput = false;
+					validInput = false;
 				}
 				if (server != null && id == null) {
 					System.out.println("Wrong input: Please enter id of the device!");
-					valideInput = false;
+					validInput = false;
 				}
 				if(bracketsFilter != null){
 					if(!bracketsFilter.matches(bracketsRegex)){
 					   	System.out.println("Wrong input: This is no valide bracket filter.");
-					   	valideInput = false;
+					   	validInput = false;
 					}
 				}
 			    if(output != null){
 			    	if(!output.equals("hex") && !output.equals("byte")){
 			    		System.out.println("Wrong input: The output parameter can only be 'hex' or 'byte'.");
-			    		valideInput = false;
+			    		validInput = false;
 			    	}
 			    }
 			    //End: validate input-data
 			    
-			    if(valideInput){
+			    if(validInput){
 					if (server != null
 							&& (user == null && password == null || user == null)) {
 						System.out.println("Username and Password is missing.");
