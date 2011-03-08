@@ -231,7 +231,7 @@ public class Main {
 		System.out
 				.println("Flash: Local-Example: flash -port COM1 -file jennec.bin -device jennec");
 		System.out
-				.println("Write Mac: Local-Example: writemac -port COM1 -device jennec -mac_adress 080020aefd7e");
+				.println("Write Mac: Local-Example: writemac -port COM1 -device jennec -macAddress 080020aefd7e");
 		System.out
 				.println("Read Mac: Local-Example: readmac -port COM1 -device jennec");
 		System.out
