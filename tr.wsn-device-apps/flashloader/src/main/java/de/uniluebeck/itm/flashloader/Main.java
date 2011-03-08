@@ -186,24 +186,26 @@ public class Main {
 		}
 	    //End: validate input-data
 
-		if (server != null
-				&& (user == null && password == null || user == null)) {
-			System.out.println("Username and Password is missing.");
-			BufferedReader in = new BufferedReader(new InputStreamReader(
-					System.in));
-			System.out.print("Username: ");
-			user = in.readLine();
-			System.out.print("Password: ");
-			password = in.readLine();
-			in.close();
-		}
-		if (server != null && (password == null)) {
-			System.out.println("Password is missing.");
-			BufferedReader in = new BufferedReader(new InputStreamReader(
-					System.in));
-			System.out.print("Password: ");
-			password = in.readLine();
-			in.close();
+		if(validInput){
+			if (server != null
+					&& (user == null && password == null || user == null)) {
+				System.out.println("Username and Password is missing.");
+				BufferedReader in = new BufferedReader(new InputStreamReader(
+						System.in));
+				System.out.print("Username: ");
+				user = in.readLine();
+				System.out.print("Password: ");
+				password = in.readLine();
+				in.close();
+			}
+			if (server != null && (password == null)) {
+				System.out.println("Password is missing.");
+				BufferedReader in = new BufferedReader(new InputStreamReader(
+						System.in));
+				System.out.print("Password: ");
+				password = in.readLine();
+				in.close();
+			}
 		}
 		FlashLoader flashLoader = new FlashLoader(port, server, user, password,
 				device, id, timeout);
