@@ -209,11 +209,13 @@ public class Main {
 			System.out.println("Wrong input: Please enter id of the device!");
 			validInput = false;
 		}
-		try{
-			Integer.parseInt(timeout);
-		}catch(NumberFormatException e){
-			System.out.println("Wrong input: Please enter timeout as integer!");
-			validInput = false;
+		if(timeout != null){
+			try{
+				Integer.parseInt(timeout);
+			}catch(NumberFormatException e){
+				System.out.println("Wrong input: Please enter timeout as integer!");
+				validInput = false;
+			}
 		}
 	    //End: validate input-data
 
