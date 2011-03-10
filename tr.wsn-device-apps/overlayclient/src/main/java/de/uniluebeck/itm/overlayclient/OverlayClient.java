@@ -3,10 +3,6 @@ package de.uniluebeck.itm.overlayclient;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities;
 import de.uniluebeck.itm.metadaten.remote.client.*;
 import de.uniluebeck.itm.metadaten.remote.entity.*;
 
@@ -24,6 +20,12 @@ public class OverlayClient {
 	
 	/**
 	 * Instantiates a new overlay client.
+	 *
+	 * @param username the username
+	 * @param password the password
+	 * @param server the server
+	 * @param serverPort the server port
+	 * @param clientPort the client port
 	 */
 	public OverlayClient(String username, String password, String server, String serverPort, String clientPort) {
 		this.username = username;
@@ -34,92 +36,66 @@ public class OverlayClient {
 	}
 	
 	/**
-	 * Search device with id.
-	 * 
-	 * @param ID
-	 *            the iD
-	 */
-	public void searchDeviceWithId(String ID) throws java.lang.Exception {
-		MetaDatenClient client;
-		if(clientPort != null){
-			client = new MetaDatenClient(username, password, server, Integer.valueOf(serverPort), Integer.valueOf(clientPort));
-		}else{
-			client = new MetaDatenClient(username, password, server, Integer.valueOf(serverPort));
-		}
-		Node queryExample = new Node();
-		queryExample.setId(ID);
-		String query = ""; // not used
-		List<Node> results = new ArrayList<Node>();
-		try {
-			results = client.search(queryExample, query);
-		} catch (Exception e) {
-			System.out.println("Error while searching the node.");
-		}
-		System.out.println("Results: " + results.size());
-		for (Node node : results) {
-			printNode(node);
-		}
-	}
-
-	/**
-	 * Search device with microcontroller.
-	 * 
+	 * Search device with the given id, microcontroller and/or capabilities.
+	 *
+	 * @param ID 
 	 * @param microcontroller
-	 *            the microcontroller
+	 * @param capabilities
+	 * @throws Exception the exception
 	 */
-	public void searchDeviceWithMicrocontroller(String microcontroller) throws java.lang.Exception {
-		MetaDatenClient client;
+	public void searchDevice(String ID, String microcontroller, List<Capability> capabilities){
+		//connecting to the server
+		MetaDatenClient client = null;
 		if(clientPort != null){
-			client = new MetaDatenClient(username, password, server, Integer.valueOf(serverPort), Integer.valueOf(clientPort));
+			try {
+				client = new MetaDatenClient(username, password, server, Integer.valueOf(serverPort), Integer.valueOf(clientPort));
+			}catch (Exception e) {
+				System.out.println("Cannot connect to server!");
+				System.exit(1);
+			}
 		}else{
-			client = new MetaDatenClient(username, password, server, Integer.valueOf(serverPort));
+			try {
+				client = new MetaDatenClient(username, password, server, Integer.valueOf(serverPort));
+			} catch (Exception e) {
+				System.out.println("Cannot connect to server!");
+				System.exit(1);
+			}
 		}
+		
+		//searching by example
 		Node queryExample = new Node();
-		queryExample.setMicrocontroller(microcontroller);
-		String query = ""; // not used
+		if(ID != null){
+			//searching device with given id
+			queryExample.setId(ID);		
+		}
+		if(microcontroller != null){
+			//searching device with given microcontroller
+			queryExample.setMicrocontroller(microcontroller);	
+		}	
+		if(capabilities != null){
+			//searching device with given capabilites
+			queryExample.setCapabilityList(capabilities);
+		}
+		String query = ""; // String for searching by query. This is not used here.
 		List<Node> results = new ArrayList<Node>();
 		try {
-			results = client.search(queryExample, query);
+			results = client.search(queryExample, query);  	//
 		} catch (Exception e) {
 			System.out.println("Error while searching the node.");
 		}
-		System.out.println("Results: " + results.size());
-		for (Node node : results) {
-			printNode(node);
-		}
-	}
-
-	/**
-	 * Search device with the capability
-	 * 
-	 * @param sensor
-	 *            the sensor
-	 */
-	public void searchDeviceWithCapability(String sensor) throws java.lang.Exception {
-		List<Capability> sensoren = new ArrayList<Capability>();
-		Capability capability = new Capability(sensor, null, null, 0);
-		sensoren.add(capability);
-		MetaDatenClient client;
-		if(clientPort != null){
-			client = new MetaDatenClient(username, password, server, Integer.valueOf(serverPort), Integer.valueOf(clientPort));
-		}else{
-			client = new MetaDatenClient(username, password, server, Integer.valueOf(serverPort));
-		}
-		Node queryExample = new Node();
-		queryExample.setCapabilityList(sensoren);
-		String query = ""; // not used
-		List<Node> results = new ArrayList<Node>();
-		try {
-			results = client.search(queryExample, query);
-		} catch (Exception e) {
-			System.out.println("Error while searching the node.");
-		}
+		
+		//printing the results
 		System.out.println("Results: " + results.size());
 		for (Node node : results) {
 			printNode(node);
 		}
 	}
 	
+	/**
+	 * Prints the node.
+	 *
+	 * @param node the node
+	 */
 	public void printNode(Node node){
 		System.out.println("ID: "+node.getId());
 		System.out.println("Description: "+node.getDescription());
