@@ -3,9 +3,6 @@ package de.uniluebeck.itm.flashloader;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import com.google.common.io.Files;
 
 import de.uniluebeck.itm.devicedriver.ConnectionEvent;
@@ -30,57 +27,66 @@ import de.uniluebeck.itm.tcp.client.RemoteConnection;
 import de.uniluebeck.itm.tcp.client.RemoteDevice;
 
 /**
- * Class FlashLoader. Functions to flash a device, read/write the Mac-Adress
- * or reset the device.
+ * Class FlashLoader. Functions to flash a device, read/write the Mac-Adress or
+ * reset the device.
  */
 public class FlashLoader {
 
 	private String port;
 	private String server;
-	private String user;
+	private String username;
 	private String password;
 	private String deviceParameter;
 	private DeviceAsync deviceAsync;
 	private String id;
 	private int timeout = 300000;
-	private int flashProcess = 0;
 	private RemoteConnection connection;
-
-	private boolean flashed = false; // for the test-class
-	private String currentMacAdress; // for the test-class
-	private boolean resetet = false; // for the test-class
 
 	/**
 	 * Instantiates a new flash loader.
+	 * 
+	 * @param port
+	 * @param server
+	 * @param username
+	 * @param password
+	 * @param deviceParameter
+	 * @param id
+	 * @param timeout
 	 */
-	public FlashLoader(String port, String server, String user, String password, String deviceParameter, String id, String timeout) {
+	public FlashLoader(String port, String server, String username,
+			String password, String deviceParameter, String id, String timeout) {
 		this.port = port;
 		this.server = server;
-		this.user = user;
+		this.username = username;
 		this.password = password;
 		this.deviceParameter = deviceParameter;
 		this.id = id;
-		if(timeout != null){
+		if (timeout != null) {
 			this.timeout = Integer.parseInt(timeout);
 		}
 	}
-	
-	public RemoteConnection getConnection(){
+
+	/**
+	 * Gets the RemoteConnection, when the client is connected to the server
+	 * 
+	 * @return the connection
+	 */
+	public RemoteConnection getConnection() {
 		return connection;
 	}
 
 	/**
-	 * Connect. Method to connect to the tcp-server or to a local sensornode.
+	 * Method to connect to the tcp-server or to a local sensornode.
 	 */
 	public void connect() {
 		if (server != null) {
 			// Connect to the TCP-Server.
 			connection = new RemoteConnection();
 
-			try{
-				connection.connect(user + ":" + password + "@" + server
-						+ ":" + port + "/" + id);
-			}catch(Exception e){
+			try {
+				connection.connect(username + ":" + password + "@" + server + ":"
+						+ port + "/" + id);
+			} catch (Exception e) {
 				System.out.println("Cannot connect to server!");
 				System.exit(1);
 			}
@@ -136,7 +142,8 @@ public class FlashLoader {
 					});
 					device = new TelosbDevice(telosbConnection);
 					telosbConnection.connect(port);
-				}else if(deviceParameter.equals("mock")){
+				} else if (deviceParameter.equals("mock")) {
+					// Connect to the mock-device for tests
 					final MockConnection connection = new MockConnection();
 					device = new MockDevice(connection);
 					connection.connect("MockPort");
@@ -148,11 +155,9 @@ public class FlashLoader {
 	}
 
 	/**
-	 * Flash the given file on the device
-	 * and handle the response.
+	 * Flash the given file on the device and handle the response.
 	 * 
 	 * @param file
-	 *            the file
 	 */
 	public void flash(String file) {
 		byte[] image = null;
@@ -162,6 +167,9 @@ public class FlashLoader {
 			System.out.println("Error while reading file.");
 			System.exit(1);
 		}
+
+		// Adds a flash-process to the waiting-queue and defines a callback to
+		// react to incoming status-messages
 		deviceAsync.program(image, timeout, new AsyncAdapter<Void>() {
 			@Override
 			public void onExecute() {
@@ -177,8 +185,7 @@ public class FlashLoader {
 			@Override
 			public void onSuccess(Void result) {
 				System.out.println("The Device has been flashed.");
-				flashed = true; // for tests
-				if(connection != null){
+				if (connection != null) {
 					connection.shutdown(false);
 				}
 				System.exit(1);
@@ -187,7 +194,7 @@ public class FlashLoader {
 			@Override
 			public void onFailure(Throwable throwable) {
 				System.out.println("Error while flashing the device.");
-				if(connection != null){
+				if (connection != null) {
 					connection.shutdown(false);
 				}
 				System.exit(1);
@@ -202,13 +209,14 @@ public class FlashLoader {
 	public void readmac() {
 		System.out.println("Reading mac address...");
 
+		// defines a callback to react to incoming status-messages
 		final AsyncCallback<MacAddress> callback = new AsyncAdapter<MacAddress>() {
-			
+
 			@Override
 			public void onExecute() {
 				System.out.println("Read mac address is starting now...");
 			}
-			
+
 			public void onProgressChange(float fraction) {
 				final int percent = (int) (fraction * 100.0);
 				System.out.println("Reading mac address progress: " + percent
@@ -217,8 +225,7 @@ public class FlashLoader {
 
 			public void onSuccess(MacAddress result) {
 				System.out.println("Mac Address: " + result.toString());
-				currentMacAdress = result.toString();
-				if(connection != null){
+				if (connection != null) {
 					connection.shutdown(false);
 				}
 				System.exit(1);
@@ -226,12 +233,13 @@ public class FlashLoader {
 
 			public void onFailure(Throwable throwable) {
 				System.out.println("Error while reading the mac address.");
-				if(connection != null){
+				if (connection != null) {
 					connection.shutdown(false);
 				}
 				System.exit(1);
 			}
 		};
+		// adds the readMac-process to the queue
 		deviceAsync.readMac(timeout, callback);
 		System.out.println("Reading process was added to the queue.");
 	}
@@ -240,29 +248,29 @@ public class FlashLoader {
 	 * Writemac writes the Mac-Adress of the device.
 	 * 
 	 * @param macAddress
-	 *            the mac address
 	 */
 	public void writemac(MacAddress macAddress) {
 		System.out.println("Setting Mac Address");
-		deviceAsync.writeMac(macAddress, timeout,
-				new AsyncAdapter<Void>() {
+		// adds the writeMac-process to the queue and defines a callback to
+		// react to incoming status-messages
+		deviceAsync.writeMac(macAddress, timeout, new AsyncAdapter<Void>() {
 
 			@Override
 			public void onExecute() {
 				System.out.println("Write mac address is starting now...");
 			}
-			
+
 			@Override
 			public void onProgressChange(float fraction) {
 				final int percent = (int) (fraction * 100.0);
-				System.out.println("Writing mac address progress: "
-						+ percent + "%");
+				System.out.println("Writing mac address progress: " + percent
+						+ "%");
 			}
 
 			@Override
 			public void onSuccess(Void result) {
 				System.out.println("Mac Address written");
-				if(connection != null){
+				if (connection != null) {
 					connection.shutdown(false);
 				}
 				System.exit(1);
@@ -272,7 +280,7 @@ public class FlashLoader {
 			public void onFailure(Throwable throwable) {
 				System.out.println("Error while writing the mac address.");
 				throwable.printStackTrace();
-				if(connection != null){
+				if (connection != null) {
 					connection.shutdown(false);
 				}
 				System.exit(1);
@@ -286,13 +294,15 @@ public class FlashLoader {
 	 */
 	public void reset() {
 		System.out.println("Reset");
+		// adds the reset-process to the queue and defines a callback to react
+		// to incoming status-messages
 		deviceAsync.reset(timeout, new AsyncAdapter<Void>() {
 
 			@Override
 			public void onExecute() {
 				System.out.println("Reset is starting now...");
 			}
-			
+
 			@Override
 			public void onProgressChange(float fraction) {
 				final int percent = (int) (fraction * 100.0);
@@ -302,8 +312,7 @@ public class FlashLoader {
 			@Override
 			public void onSuccess(Void result) {
 				System.out.println("Device has been reseted");
-				resetet = true; //for tests
-				if(connection != null){
+				if (connection != null) {
 					connection.shutdown(false);
 				}
 			}
@@ -312,7 +321,7 @@ public class FlashLoader {
 			public void onFailure(Throwable throwable) {
 				System.out.println("Error while reseting the device");
 				throwable.printStackTrace();
-				if(connection != null){
+				if (connection != null) {
 					connection.shutdown(false);
 				}
 				System.exit(1);
@@ -320,5 +329,5 @@ public class FlashLoader {
 		});
 		System.out.println("Reset process was added to the queue.");
 	}
-	
+
 }

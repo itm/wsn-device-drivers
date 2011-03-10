@@ -23,7 +23,13 @@ public class Main {
 	/** The version. */
 	private static double version = 1.0;
 
+	/** The ip regex, to validate the server-address */
 	private static String ipRegex = "(((\\d{1,3}.){3})(\\d{1,3}))";
+
+	/** The hex regex, to validate the mac-address */
+	private static String hexRegex = "\\A\\b[0-9a-fA-F]+\\b\\Z";
+
+	/** The valid input gets false, when one of the input-parameters is wrong. */
 	private static boolean validInput = true;
 
 	/**
@@ -62,12 +68,14 @@ public class Main {
 		CommandLineParser parser = new GnuParser();
 		CommandLine cmd = null;
 		if (args.length == 0) {
+			// if there is no input, print help message
 			printHelp(options);
 		} else {
 			try {
 				cmd = parser.parse(options, args);
 			} catch (ParseException e) {
 				System.out.println("One of these options is not registered.");
+				printHelp(options);
 			}
 			if (cmd != null) {
 				// standard-options
@@ -78,10 +86,14 @@ public class Main {
 					System.out.println(version);
 				}
 
+				// read and validate the standard options
 				FlashLoader flashLoader = readCmd(cmd);
-				flashLoader.connect();
-				if (args[0].equals("flash")) {
+				if(flashLoader != null){
+					flashLoader.connect();
+				}
 
+				// flash the device with a given file
+				if (args[0].equals("flash")) {
 					String file = cmd.getOptionValue("file");
 					if (file == null) {
 						System.out
@@ -99,19 +111,23 @@ public class Main {
 						flashLoader.flash(file);
 					}
 
-				} else if (args[0].equals("readmac")) {
+				}
+				// read the mac-address of the device
+				else if (args[0].equals("readmac")) {
 					if (validInput) {
 						flashLoader.readmac();
 					}
 
-				} else if (args[0].equals("writemac")) {
+				}
+				// write the mac-address of the device with the given address
+				else if (args[0].equals("writemac")) {
 					String macAddress = cmd.getOptionValue("macAddress");
 					if (macAddress == null) {
 						System.out
 								.println("Wrong input: Please enter macAddress!");
 						validInput = false;
-					}else{
-						if (!macAddress.matches("\\A\\b[0-9a-fA-F]+\\b\\Z")) {
+					} else {
+						if (!macAddress.matches(hexRegex)) {
 							System.out
 									.println("Wrong input: Please enter macAddress as hex!");
 							validInput = false;
@@ -119,7 +135,8 @@ public class Main {
 					}
 					if (validInput) {
 						int length = macAddress.length();
-						if (length != 16) {
+						if (length != 16) { // if the length is not 16, fill it
+											// with zeros
 							for (int i = length; i < 16; i++) {
 								macAddress = macAddress + "0";
 								length++;
@@ -130,7 +147,9 @@ public class Main {
 						flashLoader.writemac(macAdress);
 					}
 
-				} else if (args[0].equals("reset")) {
+				}
+				// reset the device
+				else if (args[0].equals("reset")) {
 					if (validInput) {
 						flashLoader.reset();
 					}
@@ -140,25 +159,31 @@ public class Main {
 	}
 
 	/**
-	 * Parses the Parameters from the given CommandLine gives them to the
-	 * flashloader-object.
+	 * Parses the Parameters from the given CommandLine, validates them and
+	 * gives them to the flashloader-object.
 	 * 
 	 * @param cmd
-	 * @param flashLoader
+	 *            the cmd
+	 * @return the flash loader
 	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static FlashLoader readCmd(CommandLine cmd) throws IOException {
-		String port = cmd.getOptionValue("port");
+		FlashLoader flashLoader = null;
+		
+		//parameters for connection
 		String server = cmd.getOptionValue("server");
+		String port = cmd.getOptionValue("port");
+		String id = cmd.getOptionValue("id");
 		String user = cmd.getOptionValue("user");
 		String password = cmd.getOptionValue("passwd");
 		String device = cmd.getOptionValue("device");
-		String id = cmd.getOptionValue("id");
+		//parameter to set the timeout of the operation
 		String timeout = cmd.getOptionValue("timeout");
 
 		// Begin: validate input-data
 		if (device == null && server == null) {
-			System.out.println("Wrong input: Please enter device or server!");
+			System.out.println("Wrong input: Please enter device(local) or server(remote)!");
 			validInput = false;
 		}
 		if (device != null) {
@@ -184,9 +209,16 @@ public class Main {
 			System.out.println("Wrong input: Please enter id of the device!");
 			validInput = false;
 		}
+		try{
+			Integer.parseInt(timeout);
+		}catch(NumberFormatException e){
+			System.out.println("Wrong input: Please enter timeout as integer!");
+			validInput = false;
+		}
 	    //End: validate input-data
 
 		if(validInput){
+			//username and password is required to connect to the server
 			if (server != null
 					&& (user == null && password == null || user == null)) {
 				System.out.println("Username and Password is missing.");
@@ -206,16 +238,18 @@ public class Main {
 				password = in.readLine();
 				in.close();
 			}
+			
+			flashLoader = new FlashLoader(port, server, user, password,
+					device, id, timeout);
 		}
-		FlashLoader flashLoader = new FlashLoader(port, server, user, password,
-				device, id, timeout);
 		return flashLoader;
 	}
 
 	/**
-	 * Converts a hex-String to a byte array
+	 * Converts a hex-String to a byte array to send the mac-address
 	 * 
-	 * @param s
+	 * @param s, hex-String 
+	 *           
 	 * @return data, the byte array
 	 */
 	public static byte[] hexStringToByteArray(String s) {
@@ -228,8 +262,14 @@ public class Main {
 		return data;
 	}
 
+	/**
+	 * Prints the help.
+	 * 
+	 * @param options
+	 *            the options
+	 */
 	public static void printHelp(Options options) {
-		System.out.println("Example:");
+		System.out.println("Examples:");
 		System.out
 				.println("Flash: Remote-Example: flash -port 8181 -server localhost -id 1 -file jennec.bin");
 		System.out
@@ -241,6 +281,7 @@ public class Main {
 		System.out
 				.println("Reset: Local-Example: reset -port COM1 -device telosb");
 		System.out.println("");
+		
 		// for help statement
 		HelpFormatter formatter = new HelpFormatter();
 		formatter.printHelp("help", options);
