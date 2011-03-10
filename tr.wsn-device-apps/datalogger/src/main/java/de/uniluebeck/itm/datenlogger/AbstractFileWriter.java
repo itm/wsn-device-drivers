@@ -19,7 +19,7 @@ public abstract class AbstractFileWriter implements PausableWriter{
 	private boolean isPaused = false;
 	private Writer writer;
 	private String regexFilter = ".*";
-	private String bracketFilter;
+	private String bracketFilter = "";
 	
 	/* 
 	 * @see de.uniluebeck.itm.datenlogger.PausableWriter#write(byte[], int)
@@ -29,7 +29,7 @@ public abstract class AbstractFileWriter implements PausableWriter{
 		final String output = convert(content);
 		Pattern pattern = Pattern.compile(regexFilter);
 		if (!isPaused && pattern.matcher(output).matches()) {
-			if(bracketFilter != null){
+			if(!bracketFilter.equals("")){
 				if(parseBracketsFilter(bracketFilter, messageType).apply(output)){
 					try {
 						writer.write(output);
@@ -111,6 +111,9 @@ public abstract class AbstractFileWriter implements PausableWriter{
 	 */
 	@Override
 	public void addRegexFilter(String filter) {
+		if(regexFilter.equals(".*")){
+			regexFilter = "";
+		}
 		regexFilter = regexFilter + filter;
 		System.out.println("Filter added");
 	}

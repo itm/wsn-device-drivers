@@ -196,7 +196,7 @@ public class Main {
 										//add brackets-filter
 										String delims = " ";
 										String[] tokens = input.split(delims);
-										if(tokens[1].matches(bracketsRegex)){
+										if(tokens[1].matches("[|&]?"+bracketsRegex)){
 											writer.addBracketFilter(tokens[1]);
 										}else{
 										   	System.out.println("This is no valide bracket filter.");
@@ -227,6 +227,8 @@ public class Main {
 													tokens[1], output);
 											datalogger.setWriter(writer);
 										}
+									} else {
+										System.out.println("Wrong command!");
 									}
 									System.out.println("Write-mode leaved!");
 									writer.resume();
