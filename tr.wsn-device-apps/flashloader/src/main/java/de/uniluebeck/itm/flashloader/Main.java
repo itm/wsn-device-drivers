@@ -210,9 +210,7 @@ public class Main {
 			validInput = false;
 		}
 		if(timeout != null){
-			try{
-				Integer.parseInt(timeout);
-			}catch(NumberFormatException e){
+			if(!timeout.matches("\\d*")){
 				System.out.println("Wrong input: Please enter timeout as integer!");
 				validInput = false;
 			}
