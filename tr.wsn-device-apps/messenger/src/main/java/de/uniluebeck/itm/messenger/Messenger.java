@@ -35,7 +35,6 @@ public class Messenger {
 	private String id;
 	private byte messageType;
 	private RemoteConnection connection;
-	private boolean sent = false; // for the test-class
 
 	/**
 	 * Instantiates a new messenger.
@@ -158,7 +157,6 @@ public class Messenger {
 			@Override
 			public void onSuccess(Void result) {
 				System.out.println("Message sent");
-				sent = true; // for tests
 				if(connection != null){
 					connection.shutdown(false);
 				}

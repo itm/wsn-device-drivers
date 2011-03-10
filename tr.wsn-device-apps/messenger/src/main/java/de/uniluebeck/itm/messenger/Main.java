@@ -14,8 +14,13 @@ public class Main {
 	/** The version. */
 	private static double version = 1.0;
 
+	/** The ip regex, to validate the server-address */
 	private static String ipRegex = "(((\\d{1,3}.){3})(\\d{1,3}))";
+	
+	/** The hex regex., to validate the message as hex */
 	private static String hexRegex = "\\A\\b[0-9a-fA-F]+\\b\\Z";
+	
+	/** The valid input gets false, when one of the input-parameters is wrong. */
 	private static boolean validInput = true;
 
 	/**
@@ -51,6 +56,7 @@ public class Main {
 		CommandLineParser parser = new GnuParser();
 		CommandLine cmd = null;
 		if(args.length == 0){
+			//if there is no input, print help message
 			printHelp(options);
 		}
 		else{
@@ -58,6 +64,7 @@ public class Main {
 				cmd = parser.parse(options, args);
 			} catch (ParseException e) {
 				System.out.println("One of these options is not registered.");
+				printHelp(options);
 			}
 			if (cmd != null) {
 				// standard-options
@@ -68,18 +75,21 @@ public class Main {
 					System.out.println(version);
 				}
 
-				String port = cmd.getOptionValue("port");
+				//parameters for connection
 				String server = cmd.getOptionValue("server");
-				String message = cmd.getOptionValue("message");
+				String port = cmd.getOptionValue("port");
+				String id = cmd.getOptionValue("id");
 				String user = cmd.getOptionValue("user");
 				String password = cmd.getOptionValue("passwd");
 				String device = cmd.getOptionValue("device");
-				String id = cmd.getOptionValue("id");
+				
+				//parameters for the message
+				String message = cmd.getOptionValue("message");
 				String messageType = cmd.getOptionValue("messageType");
 				
 				//Begin: validate input-data
 				if (device == null && server == null) {
-					System.out.println("Wrong input: Please enter device or server!");
+					System.out.println("Wrong input: Please enter device(local) or server(remote)!");
 					validInput = false;
 				}
 				if (device != null) {
@@ -121,7 +131,9 @@ public class Main {
 					}
 				}
 			    //End: validate input-data
+				
 				if(validInput){
+					//username and password is required to connect to the server
 					if (server != null && (user == null && password == null || user == null)) {
 						System.out.println("Username and Password is missing.");
 						BufferedReader in = new BufferedReader(
@@ -140,6 +152,7 @@ public class Main {
 						password = in.readLine();
 						in.close();
 					}
+					
 					Messenger messenger = new Messenger(port, server, user, password, device, id, Integer.valueOf(messageType));
 					messenger.connect();
 					messenger.send(message);
@@ -148,8 +161,13 @@ public class Main {
 		}	
 	}
 	
+	/**
+	 * Prints the help.
+	 *
+	 * @param options the options
+	 */
 	public static void printHelp(Options options){
-		System.out.println("Example:");
+		System.out.println("Examples:");
 		System.out
 				.println("Messenger: Remote example: -message 68616c6c6f -port 8181 -server localhost -id 1 -message_type 1");
 		System.out
