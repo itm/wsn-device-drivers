@@ -1,6 +1,5 @@
 package de.uniluebeck.itm.flashloader;
 
-import de.uniluebeck.itm.devicedriver.MacAddress;
 import junit.framework.TestCase;
 
 public class FlashLoaderTest extends TestCase {
