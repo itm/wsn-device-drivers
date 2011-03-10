@@ -4,13 +4,14 @@
 	<groupId>de.uni-luebeck.itm</groupId>
 	<artifactId>tr.wsn-device</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<name>Remote Sensor Control</name>
 	<packaging>pom</packaging>
 
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>de.uni-luebeck.itm</groupId>
-				<artifactId>tr.wsn-device-drivers</artifactId>
+				<artifactId>tr.wsn-device-drivers-core</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
@@ -188,10 +189,6 @@
 
 	<modules>
 		<module>tr.wsn-device-drivers</module>
-		<module>tr.wsn-device-drivers-isense</module>
-		<module>tr.wsn-device-drivers-jennec</module>
-		<module>tr.wsn-device-drivers-pacemate</module>
-		<module>tr.wsn-device-drivers-telosb</module>
 		<module>tr.wsn-device-tcp-server</module>
 		<module>tr.wsn-device-tcp-client</module>
 		<module>tr.wsn-device-metadatenapps</module>

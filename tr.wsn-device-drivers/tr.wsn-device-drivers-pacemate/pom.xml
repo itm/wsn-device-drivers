@@ -3,19 +3,19 @@
 	
 	<parent>
 		<groupId>de.uni-luebeck.itm</groupId>
-		<artifactId>tr.wsn-device</artifactId>
+		<artifactId>tr.wsn-device-drivers</artifactId>
 		<relativePath>../</relativePath>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	
-	<groupId>de.uni-luebeck.itm</groupId>
 	<artifactId>tr.wsn-device-drivers-pacemate</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<name>Remote Sensor Control Drivers Pacemate</name>
 	
 	<dependencies>
   		<dependency>
   			<groupId>de.uni-luebeck.itm</groupId>
-			<artifactId>tr.wsn-device-drivers</artifactId>
+			<artifactId>tr.wsn-device-drivers-core</artifactId>
   		</dependency>
   		<dependency>
   			<groupId>de.uni-luebeck.itm</groupId>

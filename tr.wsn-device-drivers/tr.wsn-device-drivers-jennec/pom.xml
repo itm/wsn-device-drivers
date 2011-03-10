@@ -3,19 +3,19 @@
 	
 	<parent>
 		<groupId>de.uni-luebeck.itm</groupId>
-		<artifactId>tr.wsn-device</artifactId>
+		<artifactId>tr.wsn-device-drivers</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 	
-	<groupId>de.uni-luebeck.itm</groupId>
 	<artifactId>tr.wsn-device-drivers-jennec</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<name>Remote Sensor Control Drivers Jennic</name>
 	
 	<dependencies>
   		<dependency>
   			<groupId>de.uni-luebeck.itm</groupId>
-			<artifactId>tr.wsn-device-drivers</artifactId>
+			<artifactId>tr.wsn-device-drivers-core</artifactId>
   		</dependency>
   		<dependency>
   			<groupId>de.uni-luebeck.itm</groupId>

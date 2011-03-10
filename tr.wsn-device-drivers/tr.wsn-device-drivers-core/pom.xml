@@ -4,15 +4,14 @@
 	
 	<parent>
 		<groupId>de.uni-luebeck.itm</groupId>
-		<artifactId>tr.wsn-device</artifactId>
+		<artifactId>tr.wsn-device-drivers</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 	
-	<groupId>de.uni-luebeck.itm</groupId>
-	<artifactId>tr.wsn-device-drivers</artifactId>
+	<artifactId>tr.wsn-device-drivers-core</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>TR :: WSN Device Drivers</name>
+	<name>Remote Sensor Control Drivers Core</name>
 
 	<dependencies>
 		<dependency>

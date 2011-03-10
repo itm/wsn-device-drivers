@@ -8,7 +8,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>de.uni-luebeck.itm</groupId>
-			<artifactId>tr.wsn-device-drivers</artifactId>
+			<artifactId>tr.wsn-device-drivers-core</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
