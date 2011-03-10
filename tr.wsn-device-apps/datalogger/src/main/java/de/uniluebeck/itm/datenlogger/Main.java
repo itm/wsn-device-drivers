@@ -15,29 +15,29 @@ import org.apache.commons.cli.ParseException;
 import de.uniluebeck.itm.tcp.client.RemoteConnection;
 
 /**
- * Datalogger Main Program
- * 
- * @author Fabian Kausche
- * 
+ * The Class Main.
+ * Console program for the datalogger.
+ *
  */
 public class Main {
 
-	/**
-	 * version
-	 */
+	/** version. */
 	private static double version = 1.0;
 	
+	/** The brackets regex, to validate the brackets-filter */
 	private static String bracketsRegex = "([\\([0-9]+,[0-9]+,[0-9]+\\)][&|\\([0-9]+,[0-9]+,[0-9]+\\)]*)";
+	
+	/** The ip regex, to validate the server-address */
 	private static String ipRegex = "(((\\d{1,3}.){3})(\\d{1,3}))";
+	
+	/** The valid input gets false, when one of the input-parameters is wrong. */
 	private static boolean validInput = true;
 	
 	/**
 	 * The main method.
 	 * 
-	 * @param args
-	 *            the arguments
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
+	 * @param args the arguments
+	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public static void main(final String[] args) throws IOException {
 		// create Options object
@@ -50,7 +50,7 @@ public class Main {
 		options.addOption(helpOption);
 		options.addOption(versionOption);
 
-		// add options for Datenlogger
+		// add options for Datalogger
 		options.addOption("port", true, "port");
 		options.addOption("server", true, "server");
 		options.addOption("location", true, "path to the output file");
@@ -68,7 +68,8 @@ public class Main {
 		CommandLineParser parser = new GnuParser();
 		CommandLine cmd = null;
 		if (args.length == 0) {
-			printHelp(options);
+			//if there is no input, print help message
+			printHelp(options);		
 		} else {
 			try {
 				cmd = parser.parse(options, args);
@@ -85,17 +86,20 @@ public class Main {
 					System.out.println(version);
 				}
 
-				String port = cmd.getOptionValue("port");
+				//parameters for connection
 				String server = cmd.getOptionValue("server");
-				String bracketsFilter = cmd
-						.getOptionValue("bracketsFilter");
-				String regexFilter = cmd.getOptionValue("regexFilter");
-				String location = cmd.getOptionValue("location");
+				String port = cmd.getOptionValue("port");
+				String id = cmd.getOptionValue("id");
 				String user = cmd.getOptionValue("username");
 				String password = cmd.getOptionValue("password");
 				String device = cmd.getOptionValue("device");
+				//parameters for filtering
+				String bracketsFilter = cmd
+						.getOptionValue("bracketsFilter");
+				String regexFilter = cmd.getOptionValue("regexFilter");
+				//parameters for the output of the logging
+				String location = cmd.getOptionValue("location");
 				String output = cmd.getOptionValue("output");
-				String id = cmd.getOptionValue("id");
 
 				//Begin: validate input-data
 				if (device == null && server == null) {
@@ -137,6 +141,7 @@ public class Main {
 			    //End: validate input-data
 			    
 			    if(validInput){
+					//username and password is required to connect to the server
 					if (server != null
 							&& (user == null && password == null || user == null)) {
 						System.out.println("Username and Password is missing.");
@@ -165,6 +170,7 @@ public class Main {
 					try{
 						datalogger.startlog();
 	
+						//write-mote, to change parameters while logging.
 						while (true) {
 							while (true) {
 								final char in = (char) System.in.read();
@@ -187,6 +193,7 @@ public class Main {
 											new InputStreamReader(System.in))
 											.readLine();
 									if (input.startsWith("-bracketsFilter")) {
+										//add brackets-filter
 										String delims = " ";
 										String[] tokens = input.split(delims);
 										if(tokens[1].matches(bracketsRegex)){
@@ -195,13 +202,16 @@ public class Main {
 										   	System.out.println("This is no valide bracket filter.");
 										}
 									} else if (input.startsWith("-regexFilter")) {
+										//add regex-filter
 										String delims = " ";
 										String[] tokens = input.split(delims);
 										writer.addRegexFilter(tokens[1]);
 									} else if (input.equals("stoplog")) {
+										//stop logging
 										datalogger.stoplog();
-										System.exit(0);
+										System.exit(1);
 									} else if (input.startsWith("-location")) {
+										//change the output location
 										String delims = " ";
 										String[] tokens = input.split(delims);
 										if (tokens.length < 2) {
@@ -224,6 +234,7 @@ public class Main {
 							}
 						}
 					}finally{
+						//close remote connection
 						RemoteConnection connection = datalogger.getConnection();
 						if(connection != null){
 							connection.shutdown(false);
@@ -234,6 +245,15 @@ public class Main {
 		}
 	}
 
+	/**
+	 * Inits the writer.
+	 *
+	 * @param bracketsFilter 
+	 * @param regexFilter
+	 * @param location 
+	 * @param output 
+	 * @return the pausable writer
+	 */
 	public static PausableWriter initWriter(String bracketsFilter,
 			String regexFilter, String location, String output) {
 
@@ -267,6 +287,11 @@ public class Main {
 		return writer;
 	}
 
+	/**
+	 * Prints the help.
+	 *
+	 * @param options the options
+	 */
 	public static void printHelp(Options options) {
 		System.out.println("Examples:");
 		System.out

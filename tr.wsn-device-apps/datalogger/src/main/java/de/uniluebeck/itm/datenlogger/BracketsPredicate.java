@@ -29,7 +29,7 @@ public class BracketsPredicate implements Predicate<CharSequence>, Serializable 
 		filter = filter.substring(1, filter.length() - 1);	//Deletes the brackets
 	}
 
-	/*
+	/**
 	 * Method to match the incomming data with the given filter
 	 * @return true, if the filter machtes, else false
 	 * @see com.google.common.base.Predicate#apply(java.lang.Object)

@@ -3,10 +3,16 @@ package de.uniluebeck.itm.datenlogger;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+/**
+ * The Class ByteFileWriter.
+ */
 public class ByteFileWriter extends AbstractFileWriter {
 
 	FileOutputStream writer;
 
+	/* 
+	 * @see de.uniluebeck.itm.datenlogger.AbstractFileWriter#write(byte[], int)
+	 */
 	@Override
 	public void write(byte[] content, int messageType) {
 		try {
@@ -21,6 +27,9 @@ public class ByteFileWriter extends AbstractFileWriter {
 		}
 	}
 
+	/* 
+	 * @see de.uniluebeck.itm.datenlogger.AbstractFileWriter#setLocation(java.lang.String)
+	 */
 	@Override
 	public void setLocation(String location) {
 		try {
@@ -30,11 +39,17 @@ public class ByteFileWriter extends AbstractFileWriter {
 		}
 	}
 
+	/* 
+	 * @see de.uniluebeck.itm.datenlogger.AbstractFileWriter#convert(byte[])
+	 */
 	@Override
 	public String convert(byte[] content) {
 		return "";
 	}
 
+	/* 
+	 * @see de.uniluebeck.itm.datenlogger.AbstractFileWriter#close()
+	 */
 	@Override
 	public void close() throws IOException {
 		writer.close();

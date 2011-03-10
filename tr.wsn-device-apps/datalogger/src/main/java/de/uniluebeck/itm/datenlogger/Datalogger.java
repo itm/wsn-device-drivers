@@ -43,6 +43,14 @@ public class Datalogger {
 
 	/**
 	 * Instantiates a new datalogger.
+	 *
+	 * @param writer the writer
+	 * @param user the user
+	 * @param password the password
+	 * @param port the port
+	 * @param server the server
+	 * @param device the device
+	 * @param id the id
 	 */
 	public Datalogger(PausableWriter writer, String user, String password, String port, String server, String device, String id) {
 		this.writer = writer;
@@ -54,33 +62,44 @@ public class Datalogger {
 		this.id = id;
 	}
 
-	/*
-	 * isStarted
+	/**
+	 * Checks if is started.
+	 *
+	 * @return true, if is started
 	 */
 	public boolean isStarted() {
 		return started;
 	}
 
-	/*
-	 * getWriter
+	/**
+	 * Gets the writer.
+	 *
+	 * @return the writer
 	 */
 	public PausableWriter getWriter() {
 		return writer;
 	}
 
-	/*
-	 * setWriter
+	/**
+	 * Sets the writer.
+	 *
+	 * @param writer the new writer
 	 */
 	public void setWriter(PausableWriter writer) {
 		this.writer = writer;
 	}
 	
+	/**
+	 * Gets the RemoteConnection, when the client is connected to the server
+	 * 
+	 * @return the connection
+	 */
 	public RemoteConnection getConnection(){
 		return connection;
 	}
 
 	/**
-	 * Connect. Method to connect to the tcp-server or to a local sensornode.
+	 * Method to connect to the tcp-server or to a local sensornode.
 	 */
 	public void connect() {
 		if (server != null) {
@@ -147,6 +166,7 @@ public class Datalogger {
 					device = new TelosbDevice(telosbConnection);
 					telosbConnection.connect(port);
 				}else if(deviceParameter.equals("mock")){
+					// Connect to the mock-device for tests
 					final MockConnection connection = new MockConnection();
 					device = new MockDevice(connection);
 					connection.connect("MockPort");
@@ -158,7 +178,7 @@ public class Datalogger {
 	}
 	
 	/**
-	 * Startlog. Registers a message packet listener on the connected device and
+	 * Registers a message packet listener on the connected device and
 	 * handles the incoming data.
 	 */
 	public void startlog() {
@@ -176,7 +196,7 @@ public class Datalogger {
 	}
 
 	/**
-	 * Stoplog. Remove the registered Listener and close the writer.
+	 * Remove the registered Listener and close the writer.
 	 */
 	public void stoplog() {
 		deviceAsync.removeListener(listener);

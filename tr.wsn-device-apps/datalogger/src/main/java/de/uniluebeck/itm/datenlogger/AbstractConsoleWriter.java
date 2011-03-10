@@ -9,13 +9,20 @@ import java.util.regex.Pattern;
 
 import com.google.common.base.Predicate;
 
+/**
+ * The Class AbstractConsoleWriter.
+ */
 public abstract class AbstractConsoleWriter implements PausableWriter{
 
 	private boolean isPaused = false;
 	
 	private String regexFilter = ".*";
+
 	private String bracketFilter;
 	
+	/* 
+	 * @see de.uniluebeck.itm.datenlogger.PausableWriter#write(byte[], int)
+	 */
 	@Override
 	public void write(byte[] content, int messageType) {
 		final String output = convert(content);
@@ -31,53 +38,83 @@ public abstract class AbstractConsoleWriter implements PausableWriter{
 		}
 	}
 
+	/* 
+	 * @see de.uniluebeck.itm.datenlogger.PausableWriter#pause()
+	 */
 	@Override
 	public void pause() {
 		isPaused = true;
 	}
 
+	/* 
+	 * @see de.uniluebeck.itm.datenlogger.PausableWriter#resume()
+	 */
 	@Override
 	public void resume() {
 		isPaused = false;
 	}
 
+	/* 
+	 * @see de.uniluebeck.itm.datenlogger.PausableWriter#getRegexFilter()
+	 */
 	@Override
 	public String getRegexFilter() {
 		return this.regexFilter;
 	}
 	
+	/* 
+	 * @see de.uniluebeck.itm.datenlogger.PausableWriter#setRegexFilter(java.lang.String)
+	 */
 	@Override
 	public void setRegexFilter(String regexFilter) {
 		this.regexFilter = regexFilter;
 	}
 	
+	/* 
+	 * @see de.uniluebeck.itm.datenlogger.PausableWriter#getBracketFilter()
+	 */
 	@Override
 	public String getBracketFilter() {
 		return this.bracketFilter;
 	}
 	
+	/* 
+	 * @see de.uniluebeck.itm.datenlogger.PausableWriter#setBracketFilter(java.lang.String)
+	 */
 	@Override
 	public void setBracketFilter(String bracketFilter) {
 		this.bracketFilter = bracketFilter;
 	}
 	
+	/* 
+	 * @see de.uniluebeck.itm.datenlogger.PausableWriter#addBracketFilter(java.lang.String)
+	 */
 	@Override
 	public void addBracketFilter(String filter) {
 		bracketFilter = bracketFilter + filter;
 		System.out.println("Filter added");
 	}
 
+	/* 
+	 * @see de.uniluebeck.itm.datenlogger.PausableWriter#addRegexFilter(java.lang.String)
+	 */
 	@Override
 	public void addRegexFilter(String filter) {
 		regexFilter = regexFilter + filter;
 		System.out.println("Filter added");
 	}
 
+	/* 
+	 * @see java.io.Closeable#close()
+	 */
 	@Override
 	public void close() throws IOException {
 		
 	}
 	
+	/* 
+	 * @see de.uniluebeck.itm.datenlogger.PausableWriter#setLocation(java.lang.String)
+	 */
 	@Override
 	public void setLocation(String location){
 		
@@ -87,9 +124,9 @@ public abstract class AbstractConsoleWriter implements PausableWriter{
 	 * Parse_klammer_filter. Uses a stack to parse the brackets-filter for
 	 * example: ((Datatype, Begin, Value)&(Datatype, Begin, Value))|(Datatype,
 	 * Begin, Value)
-	 * 
-	 * @param klammer_filter
-	 *            the klammer_filter
+	 *
+	 * @param bracketFilter the bracket filter
+	 * @param messageType the message type
 	 * @return the predicate
 	 */
 	public Predicate<CharSequence> parseBracketsFilter(String bracketFilter, int messageType) {
@@ -147,5 +184,11 @@ public abstract class AbstractConsoleWriter implements PausableWriter{
 		return expressions.pop();
 	}
 	
+	/**
+	 * Converts the content to a string
+	 *
+	 * @param content the content
+	 * @return the string
+	 */
 	public abstract String convert(byte[] content);
 }
