@@ -156,7 +156,7 @@ public class MetaDatenClient implements MetaDataClient {
 	 * @param userName username to athenticate to the server
 	 * @param passWord password for the user
 	 */
-	public void disconnect(final String userName, final String passWord) {
+	private void disconnect(final String userName, final String passWord) {
 		final RpcController controller = channel.newRpcController();
 
 		final BlockingInterface syncOperationService = Operations
@@ -188,7 +188,11 @@ public class MetaDatenClient implements MetaDataClient {
 	 */
 	public List<Node> search(final Node queryexmpl, String query) throws NullPointerException {
 
-		this.connect(user, password);
+		try{
+			this.connect(user, password);
+		}catch(final NullPointerException npe){
+			
+		}
 		// erzeugen eines Controllers fuer diese Operation
 		final RpcController controller = channel.newRpcController();
 		final NodeHelper nhelper = new NodeHelper();

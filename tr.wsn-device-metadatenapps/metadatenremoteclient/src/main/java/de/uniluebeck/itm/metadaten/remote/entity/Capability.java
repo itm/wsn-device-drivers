@@ -28,22 +28,22 @@ public class Capability {
 	 * name of the capability
 	 */
 	@Element
-	private String name = "";
+	private String name;
 	/**
 	 * datatype of the unit of measure
 	 */
 	@Element
-	private String datatype = "";
+	private String datatype;
 	/**
 	 * unit of measure e.g. celsius
 	 */
 	@Element
-	private String unit = "";
+	private String unit;
 	/**
 	 * default value for the unit of measure
 	 */
 	@Element
-	private int defaults = 0;
+	private int defaults;
 
 	/**
 	 * Requires function for deserializing objects.

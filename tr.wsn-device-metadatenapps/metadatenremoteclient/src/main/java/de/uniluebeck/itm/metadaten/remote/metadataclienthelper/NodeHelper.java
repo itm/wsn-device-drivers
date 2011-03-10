@@ -36,15 +36,26 @@ public class NodeHelper {
 		if (!(node.getMicrocontroller() == null)) {
 			nodebuilder.setMicrocontroller(node.getMicrocontroller());
 		}
-		;
+		
 		if (!node.getCapabilityList().isEmpty()) {
 			for (final Capability cap : node.getCapabilityList()) {
 				final Capabilities.Builder capbuilder = Capabilities.newBuilder();
-				capbuilder.setDefaults(cap.getCapDefault());
-				capbuilder.setName(cap.getName());
-				capbuilder.setUnit(cap.getUnit());
-				capbuilder.setDatatype(cap.getDatatype());
-				capbuilder.setParentnodeId(node.getId());
+				try{
+					capbuilder.setDefaults(cap.getCapDefault());
+				}catch(NullPointerException npe){}
+				if(!(cap.getName() == null)){
+					capbuilder.setName(cap.getName());
+				}
+				if (!(cap.getDatatype() == null)){
+					capbuilder.setDatatype(cap.getDatatype());
+					
+				}
+				if(!(cap.getUnit() == null)){
+					capbuilder.setUnit(cap.getUnit());					
+				}
+				if (!(node.getId() == null)){
+					capbuilder.setParentnodeId(node.getId());					
+				}
 				nodebuilder.addCapabilityList(capbuilder.build());
 			}
 

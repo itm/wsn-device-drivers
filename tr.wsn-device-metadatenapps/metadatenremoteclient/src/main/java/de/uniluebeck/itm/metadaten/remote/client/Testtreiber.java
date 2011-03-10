@@ -4,6 +4,7 @@ import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniluebeck.itm.metadaten.remote.entity.Capability;
 import de.uniluebeck.itm.metadaten.remote.entity.Node;
 
 
@@ -31,7 +32,12 @@ public class Testtreiber {
 		}
 		System.out.println("Node wird gebaut");
 		final Node node = new Node();
-        node.setId("280120101");
+        node.setId("3");
+        Capability cap = new Capability();
+        cap.setName("urn:wisebed:node:capability:light");
+        List <Capability> caplist = new ArrayList<Capability>();
+        caplist.add(cap);
+        node.setCapabilityList(caplist);
 //		node.setIpAddress("192.168.8.115");
 //		node.setMicrocontroller("mic1");
 //		node.setDescription("Solar2000");
