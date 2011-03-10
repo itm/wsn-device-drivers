@@ -11,7 +11,7 @@ import de.uniluebeck.itm.metadaten.server.exception.NodeInDBException;
 import de.uniluebeck.itm.persistence.DatabaseToStore;
 import de.uniluebeck.itm.persistence.StoreToDatabase;
 
-public class Dbtest {
+public class dbtest {
 
 	/**
 	 * @param args
