@@ -48,7 +48,7 @@ public class Main {
 				"microcontroller to search for");
 		options.addOption("capabilities", true, "number of capabilities you want to search for");
 		options.addOption("username", true, "username to connect to the server");
-		options.addOption("passwd", true, "password to connect to the server");
+		options.addOption("password", true, "password to connect to the server");
 		options.addOption("server", true, "IP-Adress of the server");
 		options.addOption("serverPort", true, "Port of the server");
 		options.addOption("clientPort", true, "Port of the client");
@@ -80,7 +80,7 @@ public class Main {
 				String serverPort = cmd.getOptionValue("serverPort");
 				String clientPort = cmd.getOptionValue("clientPort");
 				String username = cmd.getOptionValue("username");
-				String password = cmd.getOptionValue("passwd");
+				String password = cmd.getOptionValue("password");
 				
 				//parameters for searching
 				String id = cmd.getOptionValue("id");
@@ -140,6 +140,7 @@ public class Main {
 							String capabilityName = new BufferedReader(
 									new InputStreamReader(System.in))
 									.readLine();
+							capabilityName = "urn:wisebed:node:capability:"+capabilityName;
 							Capability capability = new Capability(capabilityName, null, null, 0);
 							capabilityList.add(capability);
 						}

@@ -1,5 +1,6 @@
 package de.uniluebeck.itm.overlayclient;
 
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,19 +48,10 @@ public class OverlayClient {
 		//connecting to the server
 		MetaDatenClient client = null;
 		if(clientPort != null){
-			try {
-				client = new MetaDatenClient(username, password, server, Integer.valueOf(serverPort), Integer.valueOf(clientPort));
-			}catch (Exception e) {
-				System.out.println("Cannot connect to server!");
-				System.exit(1);
-			}
+			client = new MetaDatenClient(username, password, server, Integer.valueOf(serverPort), Integer.valueOf(clientPort));
+
 		}else{
-			try {
-				client = new MetaDatenClient(username, password, server, Integer.valueOf(serverPort));
-			} catch (Exception e) {
-				System.out.println("Cannot connect to server!");
-				System.exit(1);
-			}
+			client = new MetaDatenClient(username, password, server, Integer.valueOf(serverPort));
 		}
 		
 		//searching by example
