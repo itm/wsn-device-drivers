@@ -39,12 +39,12 @@ public class OverlayClient {
 	/**
 	 * Search device with the given id, microcontroller and/or capabilities.
 	 *
-	 * @param ID 
+	 * @param id 
 	 * @param microcontroller
 	 * @param capabilities
 	 * @throws Exception the exception
 	 */
-	public void searchDevice(String ID, String microcontroller, List<Capability> capabilities){
+	public void searchDevice(String id, String microcontroller, List<Capability> capabilities, String description, String searchIP){
 		//connecting to the server
 		MetaDatenClient client = null;
 		if(clientPort != null){
@@ -56,9 +56,9 @@ public class OverlayClient {
 		
 		//searching by example
 		Node queryExample = new Node();
-		if(ID != null){
+		if(id != null){
 			//searching device with given id
-			queryExample.setId(ID);		
+			queryExample.setId(id);		
 		}
 		if(microcontroller != null){
 			//searching device with given microcontroller
@@ -67,6 +67,14 @@ public class OverlayClient {
 		if(capabilities != null){
 			//searching device with given capabilites
 			queryExample.setCapabilityList(capabilities);
+		}
+		if(description != null){
+			//searching device with given description
+			queryExample.setDescription(description);
+		}
+		if(searchIP != null){
+			//searching device with given IP-Address
+			queryExample.setIpAddress(searchIP);
 		}
 		String query = ""; // String for searching by query. This is not used here.
 		List<Node> results = new ArrayList<Node>();
@@ -95,11 +103,14 @@ public class OverlayClient {
 		List<Capability> capabilities = node.getCapabilityList();
 		System.out.println("Capabilites:");
 		for(int i = 0; i < capabilities.size(); i++){
+			System.out.println(capabilities.get(i).getId());
 			System.out.println(capabilities.get(i).getName());
+			System.out.println(capabilities.get(i).getUnit());
+			System.out.println(capabilities.get(i).getDatatype());
+			System.out.println(capabilities.get(i).getCapDefault());
 		}
 		System.out.println("Timestamp: "+node.getTimestamp());
 		System.out.println("IP-Address: "+node.getIpAddress());
-		System.out.println("Port: "+node.getPort());
 		System.out.println();
 	}
 }

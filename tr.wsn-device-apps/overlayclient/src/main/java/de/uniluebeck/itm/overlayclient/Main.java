@@ -22,6 +22,9 @@ public class Main {
 	/** The ip regex, to validate the server-address */
 	private static String ipRegex = "(((\\d{1,3}.){3})(\\d{1,3}))";
 	
+	/** The capabilityList regex, to validate the List of capabilities */
+	private static String capListRegex = "[A-Za-z:]+(?:,[A-Za-z:]+)*";
+	
 	/** The valid input gets false, when one of the input-parameters is wrong. */
 	private static boolean validInput = true;
 
@@ -46,12 +49,14 @@ public class Main {
 		options.addOption("id", true, "id to search for");
 		options.addOption("microcontroller", true,
 				"microcontroller to search for");
-		options.addOption("capabilities", true, "number of capabilities you want to search for");
+		options.addOption("capabilities", true, "capabilities you want to search for devided by comma");
 		options.addOption("username", true, "username to connect to the server");
 		options.addOption("password", true, "password to connect to the server");
 		options.addOption("server", true, "IP-Adress of the server");
 		options.addOption("serverPort", true, "Port of the server");
 		options.addOption("clientPort", true, "Port of the client");
+		options.addOption("searchIP", true, "search for a device with the given IP-Address");
+		options.addOption("description", true, "search for a device with the given description");
 
 		CommandLineParser parser = new GnuParser();
 		CommandLine cmd = null;
@@ -86,6 +91,8 @@ public class Main {
 				String id = cmd.getOptionValue("id");
 				String microcontroller = cmd.getOptionValue("microcontroller");
 				String capabilities = cmd.getOptionValue("capabilities");
+				String searchIP = cmd.getOptionValue("searchIP");
+				String description = cmd.getOptionValue("description");
 				
 				//Begin: validate input-data
 				if (server == null) {
@@ -103,9 +110,22 @@ public class Main {
 					System.out.println("Wrong input: Please enter port of the server!");
 					validInput = false;
 				}
-				if (id == null && microcontroller == null && capabilities == null) {
-					System.out.println("Wrong input: Please enter id, microcontroller or capabilities to search for at least one of these parameters!");
+				if (id == null && microcontroller == null && capabilities == null && searchIP == null && description == null) {
+					System.out.println("Wrong input: Please enter id, microcontroller, capabilities, searchIP or description to search for at least one of these parameters!");
 					validInput = false;
+				}
+				if(searchIP != null){
+					if (!searchIP.matches(ipRegex) && !searchIP.equals("localhost")) {
+						System.out
+								.println("Wrong input: Please enter searchIP as IP-Address.");
+						validInput = false;
+					}
+				}
+				if (capabilities != null){
+					if(!capabilities.matches(capListRegex)){
+						System.out.println("Wrong input: Please enter capability-names as list devided by comma!");
+						validInput = false;
+					}
 				}
 			    //End: validate input-data
 				
@@ -129,26 +149,23 @@ public class Main {
 					}
 					
 					//in case of searching for capabilites,
-					//the paramteter 'capabilites' holds the number of capabilites,
-					//which names have to be entered now:
+					//the paramteter 'capabilites' holds the capabilites devided by comma
 					List<Capability> capabilityList = null;
 					if(capabilities != null){
-						int numberOfCapabilities = Integer.parseInt(capabilities);
 						capabilityList = new ArrayList<Capability>();
-						for(int i = 1; i <= numberOfCapabilities; i++){
-							System.out.println("Please enter the name of the "+i+". capability:");
-							String capabilityName = new BufferedReader(
-									new InputStreamReader(System.in))
-									.readLine();
+						String[] singleCapabilities = capabilities.split(",");
+						for(int i = 0; i < singleCapabilities.length; i++){
+							String capabilityName = singleCapabilities[i];
 							capabilityName = "urn:wisebed:node:capability:"+capabilityName;
-							Capability capability = new Capability(capabilityName, null, null, 0);
+							Capability capability = new Capability();
+							capability.setName(capabilityName);
 							capabilityList.add(capability);
 						}
 					}
 					
 					OverlayClient metaService = new OverlayClient(username, password, server, serverPort, clientPort);
 
-					metaService.searchDevice(id, microcontroller, capabilityList);
+					metaService.searchDevice(id, microcontroller, capabilityList, description, searchIP);
 				}
 			}
 		}
@@ -161,9 +178,13 @@ public class Main {
 	 */
 	public static void printHelp(Options options){
 		System.out.println("Examples:");
-		System.out.println("Search by id of the node: -id 123 -server localhost -serverPort 8181");
+		System.out.println("Search by id of the node: -id 123 -server 141.48.65.111 -serverPort 8080");
 		//TODO Example for microcontroller
-		System.out.println("Search by three capabilites of the node: -capabilites 3 -server localhost -serverPort 8181");
+		System.out.println("Search by one capability of the node: -capabilities light -server 141.48.65.111 -serverPort 8080");
+		System.out.println("Search by three capabilities of the node: -capabilities light,temperature,gas -server 141.48.65.111 -serverPort 8080");
+		System.out.println("Search by description of the node: -description wisebed -server 141.48.65.111 -serverPort 8080");
+		System.out.println("Search by IP-Address of the node: -searchIP 141.49.65.111 -server 141.48.65.111 -serverPort 8080");
+		System.out.println("Search by IP-Address and description of the node: -searchIP 141.49.65.111 -description wisebed -server 141.48.65.111 -serverPort 8080");
 		System.out.println("");
 
 		// for help statement
