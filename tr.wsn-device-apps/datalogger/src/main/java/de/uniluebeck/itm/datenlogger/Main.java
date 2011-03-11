@@ -25,7 +25,7 @@ public class Main {
 	private static double version = 1.0;
 	
 	/** The brackets regex, to validate the brackets-filter */
-	private static String bracketsRegex = "([\\([0-9]+,[0-9]+,[0-9]+\\)][&|\\([0-9]+,[0-9]+,[0-9]+\\)]*)";
+	private static String bracketsRegex = "([\\([0-9]+,[0-9]+,[0-9]+\\)]+(?:[\\|\\&][\\([0-9]+,[0-9]+,[0-9]+\\)]+)*)";
 	
 	/** The ip regex, to validate the server-address */
 	private static String ipRegex = "(((\\d{1,3}.){3})(\\d{1,3}))";
@@ -114,7 +114,7 @@ public class Main {
 			    }
 				if(server != null){
 				    if(!server.matches(ipRegex) && !server.equals("localhost")){
-				    	System.out.println("Wrong input: This is no valide server address.");
+				    	System.out.println("Wrong input: This is no valid server address.");
 				    	validInput = false;
 				    }
 				}
@@ -128,7 +128,7 @@ public class Main {
 				}
 				if(bracketsFilter != null){
 					if(!bracketsFilter.matches(bracketsRegex)){
-					   	System.out.println("Wrong input: This is no valide bracket filter.");
+					   	System.out.println("Wrong input: This is no valid bracket filter.");
 					   	validInput = false;
 					}
 				}
@@ -199,7 +199,7 @@ public class Main {
 										if(tokens[1].matches("[|&]?"+bracketsRegex)){
 											writer.addBracketFilter(tokens[1]);
 										}else{
-										   	System.out.println("This is no valide bracket filter.");
+										   	System.out.println("This is no valid bracket filter.");
 										}
 									} else if (input.startsWith("-regexFilter")) {
 										//add regex-filter
