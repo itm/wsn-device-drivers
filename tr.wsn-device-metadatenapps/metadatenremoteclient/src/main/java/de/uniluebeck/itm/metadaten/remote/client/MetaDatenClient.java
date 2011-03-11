@@ -61,7 +61,7 @@ public class MetaDatenClient implements MetaDataClient {
 	 * @throws Exception Exception while establishing the instance
 	 */
 	public MetaDatenClient(final String userName, final String passWord, final String serverIP,
-			final int serverPort) throws Exception {
+			final int serverPort) {
 		final int  port = 1589;
 		// setzen der Server-Infos
 		server = new PeerInfo(serverIP, serverPort);
@@ -81,7 +81,7 @@ public class MetaDatenClient implements MetaDataClient {
 	 * @throws Exception Exception while establishing the instance
 	 */
 	public MetaDatenClient(final String userName, final String passWord, final String serverIP,
-			final int serverPort, final int clientPort) throws Exception {
+			final int serverPort, final int clientPort) {
 
 		// setzen der Server-Infos
 		server = new PeerInfo(serverIP, serverPort);
