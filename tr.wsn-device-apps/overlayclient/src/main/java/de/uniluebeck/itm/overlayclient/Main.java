@@ -102,7 +102,7 @@ public class Main {
 				if (server != null) {
 					if (!server.matches(ipRegex) && !server.equals("localhost")) {
 						System.out
-								.println("Wrong input: This is no valide server address.");
+								.println("Wrong input: This is no valid server address.");
 						validInput = false;
 					}
 				}
