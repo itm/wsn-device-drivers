@@ -2,6 +2,8 @@ package de.uniluebeck.itm.tcp.Server;
 
 import java.io.IOException;
 
+import org.junit.Test;
+
 import de.uniluebeck.itm.tcp.server.Main;
 
 /**
@@ -10,20 +12,18 @@ import de.uniluebeck.itm.tcp.server.Main;
  *
  */
 public class ServerTest {
-
+	
 	/**
-	 * starts the Server
-	 * @param args null
+	 * 
 	 */
-	public static void main(final String[] args) {
-
+	@Test
+	public void testServer() {
 		try {
 			// test the Server with default-configs
 			Main.main(new String[]{});
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 }
