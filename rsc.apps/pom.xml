@@ -14,10 +14,10 @@
 	<version>0.0.1-SNAPSHOT</version>
 
 	<modules>
-		<module>datalogger</module>
-		<module>flashloader</module>
-		<module>messenger</module>
-		<module>overlayclient</module>
+		<module>rsc.apps.datalogger</module>
+		<module>rsc.apps.flashloader</module>
+		<module>rsc.apps.messenger</module>
+		<module>rsc.apps.overlayclient</module>
 	</modules>
 
 	<properties>
