@@ -188,5 +188,6 @@
 		<module>tr.wsn-device-tcp-client</module>
 		<module>tr.wsn-device-metadatenapps</module>
 		<module>tr.wsn-device-apps</module>
+		<module>tr.wsn-device-examples</module>
 	</modules>
 </project>
