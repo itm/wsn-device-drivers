@@ -23,7 +23,8 @@ public class Main {
 	private static String ipRegex = "(((\\d{1,3}.){3})(\\d{1,3}))";
 	
 	/** The capabilityList regex, to validate the List of capabilities */
-	private static String capListRegex = "[A-Za-z:]+(?:,[A-Za-z:]+)*";
+	//private static String capListRegex = "[A-Za-z:]+(?:,[A-Za-z:]+)*";
+	private static String capListRegex = "[[A-Za-z:]+,[0-9]*,[A-Za-z:]*]+(?:;[[A-Za-z:]+,[0-9]*,[A-Za-z:]*]+)*";
 	
 	/** The valid input gets false, when one of the input-parameters is wrong. */
 	private static boolean validInput = true;
@@ -49,7 +50,7 @@ public class Main {
 		options.addOption("id", true, "id to search for");
 		options.addOption("microcontroller", true,
 				"microcontroller to search for");
-		options.addOption("capabilities", true, "capabilities you want to search for devided by comma");
+		options.addOption("capabilities", true, "capabilities you want to search for in this format: name,default,datatype;name,default,datatype");
 		options.addOption("username", true, "username to connect to the server");
 		options.addOption("password", true, "password to connect to the server");
 		options.addOption("server", true, "IP-Adress of the server");
@@ -123,7 +124,7 @@ public class Main {
 				}
 				if (capabilities != null){
 					if(!capabilities.matches(capListRegex)){
-						System.out.println("Wrong input: Please enter capability-names as list devided by comma!");
+						System.out.println("Wrong input: Please enter capability-names like name,default,datatype;name,default,datatype or name,default,datatype;name!");
 						validInput = false;
 					}
 				}
@@ -153,13 +154,25 @@ public class Main {
 					List<Capability> capabilityList = null;
 					if(capabilities != null){
 						capabilityList = new ArrayList<Capability>();
-						String[] singleCapabilities = capabilities.split(",");
+						String[] singleCapabilities = capabilities.split(";");
 						for(int i = 0; i < singleCapabilities.length; i++){
-							String capabilityName = singleCapabilities[i];
-							capabilityName = "urn:wisebed:node:capability:"+capabilityName;
-							Capability capability = new Capability();
-							capability.setName(capabilityName);
-							capabilityList.add(capability);
+							String capability = singleCapabilities[i];
+							String[] capabilityAttr = capability.split(",");
+							Capability capabilityObject = new Capability();
+							for(int j = 0; j < capabilityAttr.length; j++){
+								if(j == 0){
+									String capabilityName = "urn:wisebed:node:capability:"+capabilityAttr[0];
+									capabilityObject.setName(capabilityName);
+								}else if(j == 1){
+									int capabilityDefault = Integer.parseInt(capabilityAttr[1]);
+									capabilityObject.setCapDefault(capabilityDefault);
+								}
+								else if(j == 2){
+									String capabilityDatatype = capabilityAttr[2];
+									capabilityObject.setDatatype(capabilityDatatype);
+								}
+							}
+							capabilityList.add(capabilityObject);
 						}
 					}
 					
@@ -181,7 +194,8 @@ public class Main {
 		System.out.println("Search by id of the node: -id 123 -server 141.48.65.111 -serverPort 8080");
 		//TODO Example for microcontroller
 		System.out.println("Search by one capability of the node: -capabilities light -server 141.48.65.111 -serverPort 8080");
-		System.out.println("Search by three capabilities of the node: -capabilities light,temperature,gas -server 141.48.65.111 -serverPort 8080");
+		System.out.println("Search by three capabilities of the node: -capabilities light;temperature;gas -server 141.48.65.111 -serverPort 8080");
+		System.out.println("Search by three capabilities of the node: -capabilities light,6,int;temperature,7,int;gas,3,int -server 141.48.65.111 -serverPort 8080");
 		System.out.println("Search by description of the node: -description wisebed -server 141.48.65.111 -serverPort 8080");
 		System.out.println("Search by IP-Address of the node: -searchIP 141.49.65.111 -server 141.48.65.111 -serverPort 8080");
 		System.out.println("Search by IP-Address and description of the node: -searchIP 141.49.65.111 -description wisebed -server 141.48.65.111 -serverPort 8080");
