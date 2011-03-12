@@ -3,23 +3,23 @@
 	
 	<parent>
 		<groupId>de.uniluebeck.itm</groupId>
-		<artifactId>tr.wsn-device-drivers</artifactId>
+		<artifactId>rsc.drivers</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 	
-	<artifactId>tr.wsn-device-drivers-jennec</artifactId>
+	<artifactId>rsc.drivers.jennic</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Remote Sensor Control Drivers Jennic</name>
 	
 	<dependencies>
   		<dependency>
   			<groupId>de.uniluebeck.itm</groupId>
-			<artifactId>tr.wsn-device-drivers-core</artifactId>
+			<artifactId>rsc.drivers.core</artifactId>
   		</dependency>
   		<dependency>
   			<groupId>de.uniluebeck.itm</groupId>
-			<artifactId>tr.wsn-device-drivers-isense</artifactId>
+			<artifactId>rsc.drivers.isense</artifactId>
   		</dependency>
 	</dependencies>
 	

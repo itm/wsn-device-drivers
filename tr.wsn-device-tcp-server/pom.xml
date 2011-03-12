@@ -4,12 +4,12 @@
 
 	<parent>
 		<groupId>de.uniluebeck.itm</groupId>
-		<artifactId>tr.wsn-device</artifactId>
+		<artifactId>rsc</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 
-	<artifactId>tr.wsn-device-tcp-server</artifactId>
+	<artifactId>rsc.remote.server</artifactId>
 	<name>Remote Sensor Control TCP Server</name>
 	<version>0.0.1-SNAPSHOT</version>
 
@@ -55,23 +55,23 @@
 		</dependency>
 		<dependency>
 			<groupId>de.uniluebeck.itm</groupId>
-			<artifactId>tr.wsn-device-drivers-core</artifactId>
+			<artifactId>rsc.drivers.core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>de.uniluebeck.itm</groupId>
-			<artifactId>tr.wsn-device-drivers-isense</artifactId>
+			<artifactId>rsc.drivers.isense</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>de.uniluebeck.itm</groupId>
-			<artifactId>tr.wsn-device-drivers-jennec</artifactId>
+			<artifactId>rsc.drivers.jennic</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>de.uniluebeck.itm</groupId>
-			<artifactId>tr.wsn-device-drivers-pacemate</artifactId>
+			<artifactId>rsc.drivers.pacemate</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>de.uniluebeck.itm</groupId>
-			<artifactId>tr.wsn-device-drivers-telosb</artifactId>
+			<artifactId>rsc.drivers.telosb</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>de.uniluebeck.itm</groupId>
@@ -80,7 +80,7 @@
 		</dependency>
 		<dependency>
 			<groupId>de.uniluebeck.itm</groupId>
-			<artifactId>metadatenservice</artifactId>
+			<artifactId>rsc.metadata.shared</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>compile</scope>

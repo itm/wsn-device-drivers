@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.uniluebeck.itm</groupId>
-	<artifactId>tr.wsn-device</artifactId>
+	<artifactId>rsc</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Remote Sensor Control</name>
 	<packaging>pom</packaging>
@@ -11,27 +11,27 @@
 		<dependencies>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>tr.wsn-device-drivers-core</artifactId>
+				<artifactId>rsc.drivers.core</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>tr.wsn-device-drivers-isense</artifactId>
+				<artifactId>rsc.drivers.isense</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>tr.wsn-device-drivers-jennec</artifactId>
+				<artifactId>rsc.drivers.jennic</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>tr.wsn-device-drivers-pacemate</artifactId>
+				<artifactId>rsc.drivers.pacemate</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>tr.wsn-device-drivers-telosb</artifactId>
+				<artifactId>rsc.drivers.telosb</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 
@@ -88,22 +88,17 @@
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>tr.wsn-device-tcp-client</artifactId>
+				<artifactId>rsc.remote.client</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>tr.wsn-device-tcp-server</artifactId>
+				<artifactId>rsc.remote.server</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>tr.wsn-device-metadatenapp</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>tr.wsn-device-apps</artifactId>
+				<artifactId>rsc.apps.metadata</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 		</dependencies>

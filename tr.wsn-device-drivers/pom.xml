@@ -4,12 +4,12 @@
 	
 	<parent>
 		<groupId>de.uniluebeck.itm</groupId>
-		<artifactId>tr.wsn-device</artifactId>
+		<artifactId>rsc</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 	
-	<artifactId>tr.wsn-device-drivers</artifactId>
+	<artifactId>rsc.drivers</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Remote Sensor Control Drivers</name>
 	<packaging>pom</packaging>

@@ -4,12 +4,12 @@
 
 	<parent>
 		<groupId>de.uniluebeck.itm</groupId>
-		<artifactId>tr.wsn-device</artifactId>
+		<artifactId>rsc</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 
-	<artifactId>tr.wsn-device-metadatenapp</artifactId>
+	<artifactId>rsc.metadata</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Remote Sensor Control MetaData</name>
@@ -50,13 +50,6 @@
 				<groupId>org.apache.shiro</groupId>
 				<artifactId>shiro-core</artifactId>
 				<version>1.0.0-incubating</version>
-			</dependency>
-			<!-- Sensortreiber -->
-			<dependency>
-				<groupId>de.uni-luebeck.itm</groupId>
-				<artifactId>tr.wsn-device-drivers-core</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
-				<scope>compile</scope>
 			</dependency>
 			<!--Logging-->
 			<dependency>

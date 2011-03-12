@@ -3,12 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<artifactId>tr.wsn-device-apps</artifactId>
 		<groupId>de.uniluebeck.itm</groupId>
+		<artifactId>rsc.apps</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>tr.wsn-device-apps-messenger</artifactId>
+	<artifactId>rsc.apps.messenger</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
 	<name>Remote Sensor Control Messenger</name>

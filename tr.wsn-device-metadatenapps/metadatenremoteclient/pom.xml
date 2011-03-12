@@ -3,12 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<artifactId>tr.wsn-device-metadatenapp</artifactId>
 		<groupId>de.uniluebeck.itm</groupId>
+		<artifactId>rsc.metadata</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>metadatenremoteclient</artifactId>
+	<artifactId>rsc.metadata.client</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Remote Sensor Control Metadata Client</name>
 	<packaging>jar</packaging>
@@ -60,9 +60,8 @@
 		</dependency>
 		<!-- Sensortreiber -->
 		<dependency>
-			<groupId>de.uni-luebeck.itm</groupId>
-			<artifactId>tr.wsn-device-drivers-core</artifactId>
-			<scope>compile</scope>
+			<groupId>de.uniluebeck.itm</groupId>
+			<artifactId>rsc.drivers.core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>de.uniluebeck.itm</groupId>
