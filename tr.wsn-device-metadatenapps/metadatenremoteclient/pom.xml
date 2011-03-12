@@ -4,14 +4,13 @@
 
 	<parent>
 		<artifactId>tr.wsn-device-metadatenapp</artifactId>
-		<groupId>de.uniluebeck.itm.metadaten</groupId>
+		<groupId>de.uniluebeck.itm</groupId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<groupId>de.uniluebeck.itm.metadaten</groupId>
 	<artifactId>metadatenremoteclient</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Metadaten RemoteClient Component</name>
+	<name>Remote Sensor Control Metadata Client</name>
 	<packaging>jar</packaging>
 
 	<dependencies>

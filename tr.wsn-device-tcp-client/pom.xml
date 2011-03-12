@@ -3,16 +3,15 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>de.uni-luebeck.itm</groupId>
+		<groupId>de.uniluebeck.itm</groupId>
 		<artifactId>tr.wsn-device</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 
-	<groupId>de.uni-luebeck.itm</groupId>
 	<artifactId>tr.wsn-device-tcp-client</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>TR :: WSN TCP Client</name>
+	<name>Remote Sensor Control TCP Client</name>
 
 	<dependencies>
 
@@ -41,7 +40,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>de.uni-luebeck.itm</groupId>
+			<groupId>de.uniluebeck.itm</groupId>
 			<artifactId>tr.wsn-device-drivers-core</artifactId>
 		</dependency>
 

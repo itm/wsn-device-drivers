@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<parent>
-		<groupId>de.uni-luebeck.itm</groupId>
+		<groupId>de.uniluebeck.itm</groupId>
 		<artifactId>tr.wsn-device-drivers</artifactId>
 		<relativePath>../</relativePath>
 		<version>0.0.1-SNAPSHOT</version>
@@ -14,11 +14,11 @@
 	
 	<dependencies>
   		<dependency>
-  			<groupId>de.uni-luebeck.itm</groupId>
+  			<groupId>de.uniluebeck.itm</groupId>
 			<artifactId>tr.wsn-device-drivers-core</artifactId>
   		</dependency>
   		<dependency>
-  			<groupId>de.uni-luebeck.itm</groupId>
+  			<groupId>de.uniluebeck.itm</groupId>
 			<artifactId>tr.wsn-device-drivers-isense</artifactId>
   		</dependency>
 	</dependencies>

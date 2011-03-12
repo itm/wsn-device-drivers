@@ -4,7 +4,7 @@
 
 	<parent>
 		<artifactId>tr.wsn-device-apps</artifactId>
-		<groupId>de.uniluebeck.itm.apps</groupId>
+		<groupId>de.uniluebeck.itm</groupId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
@@ -13,7 +13,7 @@
   <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>FlashLoader</name>
+  <name>Remote Sensor Control FlashLoader</name>
   <url>http://maven.apache.org</url>
 
   <properties>

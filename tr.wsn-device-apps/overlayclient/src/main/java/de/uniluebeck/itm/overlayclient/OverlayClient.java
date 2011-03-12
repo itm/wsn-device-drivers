@@ -1,11 +1,11 @@
 package de.uniluebeck.itm.overlayclient;
 
-import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniluebeck.itm.metadaten.remote.client.*;
-import de.uniluebeck.itm.metadaten.remote.entity.*;
+import de.uniluebeck.itm.metadaten.remote.client.MetaDatenClient;
+import de.uniluebeck.itm.metadaten.remote.entity.Capability;
+import de.uniluebeck.itm.metadaten.remote.entity.Node;
 
 /**
  * The Class OverlayClient.
@@ -47,11 +47,15 @@ public class OverlayClient {
 	public void searchDevice(String id, String microcontroller, List<Capability> capabilities, String description, String searchIP){
 		//connecting to the server
 		MetaDatenClient client = null;
-		if(clientPort != null){
-			client = new MetaDatenClient(username, password, server, Integer.valueOf(serverPort), Integer.valueOf(clientPort));
-
-		}else{
-			client = new MetaDatenClient(username, password, server, Integer.valueOf(serverPort));
+		try {
+			if(clientPort != null){
+				client = new MetaDatenClient(username, password, server, Integer.valueOf(serverPort), Integer.valueOf(clientPort));
+	
+			}else{
+				client = new MetaDatenClient(username, password, server, Integer.valueOf(serverPort));
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
 		}
 		
 		//searching by example

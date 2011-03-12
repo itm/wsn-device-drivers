@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>de.uni-luebeck.itm</groupId>
+	<groupId>de.uniluebeck.itm</groupId>
 	<artifactId>tr.wsn-device</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Remote Sensor Control</name>
@@ -10,27 +10,27 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>de.uni-luebeck.itm</groupId>
+				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>tr.wsn-device-drivers-core</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
-				<groupId>de.uni-luebeck.itm</groupId>
+				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>tr.wsn-device-drivers-isense</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
-				<groupId>de.uni-luebeck.itm</groupId>
+				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>tr.wsn-device-drivers-jennec</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
-				<groupId>de.uni-luebeck.itm</groupId>
+				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>tr.wsn-device-drivers-pacemate</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
-				<groupId>de.uni-luebeck.itm</groupId>
+				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>tr.wsn-device-drivers-telosb</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
@@ -87,22 +87,22 @@
 				<version>r08</version>
 			</dependency>
 			<dependency>
-				<groupId>de.uni-luebeck.itm</groupId>
+				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>tr.wsn-device-tcp-client</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
-				<groupId>de.uni-luebeck.itm</groupId>
+				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>tr.wsn-device-tcp-server</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
-				<groupId>de.uniluebeck.itm.metadaten</groupId>
+				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>tr.wsn-device-metadatenapp</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
-				<groupId>de.uniluebeck.itm.apps</groupId>
+				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>tr.wsn-device-apps</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>

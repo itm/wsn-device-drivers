@@ -3,16 +3,16 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>de.uni-luebeck.itm</groupId>
+		<groupId>de.uniluebeck.itm</groupId>
 		<artifactId>tr.wsn-device</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
-	<groupId>de.uniluebeck.itm.metadaten</groupId>
+
 	<artifactId>tr.wsn-device-metadatenapp</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>MetaDaten Application</name>
+	<name>Remote Sensor Control MetaData</name>
 
 	<modules>
 		<module>metadatenserver</module>

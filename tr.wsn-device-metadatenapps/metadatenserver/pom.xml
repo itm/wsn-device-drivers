@@ -4,14 +4,13 @@
 
 	<parent>
 		<artifactId>tr.wsn-device-metadatenapp</artifactId>
-		<groupId>de.uniluebeck.itm.metadaten</groupId>
+		<groupId>de.uniluebeck.itm</groupId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<groupId>de.uniluebeck.itm.metadaten</groupId>
 	<artifactId>metadatenserver</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Metadaten Server Component</name>
+	<name>Remote Sensor Control Metadata Server</name>
 	<packaging>jar</packaging>
 
 	<dependencies>
@@ -57,7 +56,7 @@
 		</dependency>
 		<!-- Sensortreiber -->
 		<dependency>
-			<groupId>de.uni-luebeck.itm</groupId>
+			<groupId>de.uniluebeck.itm</groupId>
 			<artifactId>tr.wsn-device-drivers-core</artifactId>
 			<scope>compile</scope>
 		</dependency>

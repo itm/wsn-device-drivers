@@ -3,15 +3,14 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>de.uni-luebeck.itm</groupId>
+		<groupId>de.uniluebeck.itm</groupId>
 		<artifactId>tr.wsn-device</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 
-	<groupId>de.uni-luebeck.itm</groupId>
 	<artifactId>tr.wsn-device-tcp-server</artifactId>
-	<name>TR :: WSN TCP Server</name>
+	<name>Remote Sensor Control TCP Server</name>
 	<version>0.0.1-SNAPSHOT</version>
 
 	<dependencies>
@@ -55,23 +54,23 @@
 			<version>2.2.1</version>
 		</dependency>
 		<dependency>
-			<groupId>de.uni-luebeck.itm</groupId>
+			<groupId>de.uniluebeck.itm</groupId>
 			<artifactId>tr.wsn-device-drivers-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>de.uni-luebeck.itm</groupId>
+			<groupId>de.uniluebeck.itm</groupId>
 			<artifactId>tr.wsn-device-drivers-isense</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>de.uni-luebeck.itm</groupId>
+			<groupId>de.uniluebeck.itm</groupId>
 			<artifactId>tr.wsn-device-drivers-jennec</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>de.uni-luebeck.itm</groupId>
+			<groupId>de.uniluebeck.itm</groupId>
 			<artifactId>tr.wsn-device-drivers-pacemate</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>de.uni-luebeck.itm</groupId>
+			<groupId>de.uniluebeck.itm</groupId>
 			<artifactId>tr.wsn-device-drivers-telosb</artifactId>
 		</dependency>
 		<dependency>
@@ -80,7 +79,7 @@
 			<version>0.5.5</version>
 		</dependency>
 		<dependency>
-			<groupId>de.uniluebeck.itm.metadaten</groupId>
+			<groupId>de.uniluebeck.itm</groupId>
 			<artifactId>metadatenservice</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<type>jar</type>
