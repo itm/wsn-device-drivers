@@ -187,7 +187,7 @@
 		<module>tr.wsn-device-tcp-server</module>
 		<module>tr.wsn-device-tcp-client</module>
 		<module>tr.wsn-device-metadatenapps</module>
-		<module>tr.wsn-device-apps</module>
+		<module>rsc.apps</module>
 		<module>rsc.examples</module>
 	</modules>
 </project>
