@@ -15,11 +15,11 @@
 	<packaging>pom</packaging>
 	
 	<modules>
-		<module>tr.wsn-device-drivers-core</module>
-		<module>tr.wsn-device-drivers-isense</module>
-		<module>tr.wsn-device-drivers-jennec</module>
-		<module>tr.wsn-device-drivers-pacemate</module>
-		<module>tr.wsn-device-drivers-telosb</module>
+		<module>rsc.drivers.core</module>
+		<module>rsc.drivers.isense</module>
+		<module>rsc.drivers.jennic</module>
+		<module>rsc.drivers.pacemate</module>
+		<module>rsc.drivers.telosb</module>
 	</modules>
 	
 </project>

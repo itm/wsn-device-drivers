@@ -183,7 +183,7 @@
 
 
 	<modules>
-		<module>tr.wsn-device-drivers</module>
+		<module>rsc.drivers</module>
 		<module>tr.wsn-device-tcp-server</module>
 		<module>tr.wsn-device-tcp-client</module>
 		<module>tr.wsn-device-metadatenapps</module>
