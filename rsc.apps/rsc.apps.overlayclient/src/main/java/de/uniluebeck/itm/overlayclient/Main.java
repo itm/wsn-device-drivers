@@ -23,7 +23,6 @@ public class Main {
 	private static String ipRegex = "(((\\d{1,3}.){3})(\\d{1,3}))";
 	
 	/** The capabilityList regex, to validate the List of capabilities */
-	//private static String capListRegex = "[A-Za-z:]+(?:,[A-Za-z:]+)*";
 	private static String capListRegex = "[[A-Za-z:]+,[0-9]*,[A-Za-z:]*]+(?:;[[A-Za-z:]+,[0-9]*,[A-Za-z:]*]+)*";
 	
 	/** The valid input gets false, when one of the input-parameters is wrong. */
