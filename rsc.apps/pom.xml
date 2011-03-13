@@ -13,59 +13,14 @@
 	<packaging>pom</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 
-	<modules>
-		<module>rsc.apps.datalogger</module>
-		<module>rsc.apps.flashloader</module>
-		<module>rsc.apps.messenger</module>
-		<module>rsc.apps.overlayclient</module>
-	</modules>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<org.springframework.version>3.0.5.RELEASE</org.springframework.version>
-		<org.hibernate.version>3.6.0.Final</org.hibernate.version>
-		<org.slf4j.version>1.5.10</org.slf4j.version>
-	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>de.uniluebeck.itm</groupId>
 			<artifactId>tr.util</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.rxtx</groupId>
-			<artifactId>rxtx</artifactId>
-			<version>2.1.7</version>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.mod4j.org.apache.commons</groupId>
 			<artifactId>cli</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.simpleframework</groupId>
-			<artifactId>simple-xml</artifactId>
-			<version>1.8</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.persistence</groupId>
-			<artifactId>persistence-api</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate</artifactId>
-			<version>3.2.7.ga</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-annotations</artifactId>
-			<version>3.4.0.GA</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -77,13 +32,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>
-			<artifactId>guava-base</artifactId>
-			<version>r03</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava-collections</artifactId>
-			<version>r03</version>
+			<artifactId>guava</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>de.uniluebeck.itm</groupId>
@@ -109,10 +58,16 @@
 			<groupId>de.uniluebeck.itm</groupId>
 			<artifactId>rsc.drivers.telosb</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.jboss.netty</groupId>
 			<artifactId>netty</artifactId>
 		</dependency>
 	</dependencies>
+	
+	<modules>
+		<module>rsc.apps.datalogger</module>
+		<module>rsc.apps.flashloader</module>
+		<module>rsc.apps.messenger</module>
+		<module>rsc.apps.overlayclient</module>
+	</modules>
 </project>

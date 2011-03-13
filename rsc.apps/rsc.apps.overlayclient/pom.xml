@@ -20,22 +20,8 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mod4j.org.apache.commons</groupId>
-			<artifactId>cli</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-		<dependency>
 			<groupId>de.uniluebeck.itm</groupId>
 			<artifactId>rsc.metadata.client</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<type>jar</type>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.google.protobuf</groupId>
