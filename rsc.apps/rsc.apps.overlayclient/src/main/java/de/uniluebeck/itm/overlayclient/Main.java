@@ -149,7 +149,8 @@ public class Main {
 					}
 					
 					//in case of searching for capabilites,
-					//the paramteter 'capabilites' holds the capabilites devided by comma
+					//the paramteter 'capabilites' holds the capabilites in the format: name,default,datatype;name,default,datatype
+					//default and datatype are optional
 					List<Capability> capabilityList = null;
 					if(capabilities != null){
 						capabilityList = new ArrayList<Capability>();
@@ -163,8 +164,14 @@ public class Main {
 									String capabilityName = "urn:wisebed:node:capability:"+capabilityAttr[0];
 									capabilityObject.setName(capabilityName);
 								}else if(j == 1){
-									int capabilityDefault = Integer.parseInt(capabilityAttr[1]);
-									capabilityObject.setCapDefault(capabilityDefault);
+									if(capabilityAttr[1].matches("\\d*")){
+										int capabilityDefault = Integer.parseInt(capabilityAttr[1]);
+										capabilityObject.setCapDefault(capabilityDefault);
+									}
+									else{
+										String capabilityDatatype = capabilityAttr[1];
+										capabilityObject.setDatatype(capabilityDatatype);
+									}
 								}
 								else if(j == 2){
 									String capabilityDatatype = capabilityAttr[2];
