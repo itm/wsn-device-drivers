@@ -88,9 +88,6 @@ public class Main {
 
 				// read and validate the standard options
 				FlashLoader flashLoader = readCmd(cmd);
-				if(flashLoader != null){
-					flashLoader.connect();
-				}
 
 				// flash the device with a given file
 				if (args[0].equals("flash")) {
@@ -108,6 +105,7 @@ public class Main {
 						}
 					}
 					if (validInput) {
+						flashLoader.connect();
 						flashLoader.flash(file);
 					}
 
@@ -115,6 +113,7 @@ public class Main {
 				// read the mac-address of the device
 				else if (args[0].equals("readmac")) {
 					if (validInput) {
+						flashLoader.connect();
 						flashLoader.readmac();
 					}
 
@@ -144,6 +143,7 @@ public class Main {
 						}
 						MacAddress macAdress = new MacAddress(
 								hexStringToByteArray(macAddress));
+						flashLoader.connect();
 						flashLoader.writemac(macAdress);
 					}
 
@@ -151,8 +151,13 @@ public class Main {
 				// reset the device
 				else if (args[0].equals("reset")) {
 					if (validInput) {
+						flashLoader.connect();
 						flashLoader.reset();
 					}
+				}
+				else{
+					System.out.println("Please enter program-mode flash, readmac, writemac or reset.");
+					printHelp(options);
 				}
 			}
 		}
