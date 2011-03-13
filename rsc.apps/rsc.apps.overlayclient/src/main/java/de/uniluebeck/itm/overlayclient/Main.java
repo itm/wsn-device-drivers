@@ -193,8 +193,8 @@ public class Main {
 		System.out.println("Search by id of the node: -id 123 -server 141.48.65.111 -serverPort 8080");
 		//TODO Example for microcontroller
 		System.out.println("Search by one capability of the node: -capabilities light -server 141.48.65.111 -serverPort 8080");
-		System.out.println("Search by three capabilities of the node: -capabilities light;temperature;gas -server 141.48.65.111 -serverPort 8080");
-		System.out.println("Search by three capabilities of the node: -capabilities light,6,int;temperature,7,int;gas,3,int -server 141.48.65.111 -serverPort 8080");
+		System.out.println("Search by three capabilities names: -capabilities light;temperature;gas -server 141.48.65.111 -serverPort 8080");
+		System.out.println("Search by three capabilities with name,default,datatype: -capabilities light,6,int;temperature,7,int;gas,3,int -server 141.48.65.111 -serverPort 8080");
 		System.out.println("Search by description of the node: -description wisebed -server 141.48.65.111 -serverPort 8080");
 		System.out.println("Search by IP-Address of the node: -searchIP 141.49.65.111 -server 141.48.65.111 -serverPort 8080");
 		System.out.println("Search by IP-Address and description of the node: -searchIP 141.49.65.111 -description wisebed -server 141.48.65.111 -serverPort 8080");
