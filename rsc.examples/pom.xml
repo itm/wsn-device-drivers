@@ -12,6 +12,7 @@
 	<groupId>de.uni-luebeck.itm</groupId>
 	<artifactId>rsc.examples</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<name>Remote Sensor Control Examples</name>
 
 	<dependencies>
 		<dependency>

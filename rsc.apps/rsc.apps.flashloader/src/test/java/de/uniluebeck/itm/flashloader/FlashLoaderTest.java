@@ -1,8 +1,13 @@
 package de.uniluebeck.itm.flashloader;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class FlashLoaderTest extends TestCase {
+public class FlashLoaderTest {
+	
+	@Test
+	public void emptyTest() {
+		
+	}
 	
 	/**
 	

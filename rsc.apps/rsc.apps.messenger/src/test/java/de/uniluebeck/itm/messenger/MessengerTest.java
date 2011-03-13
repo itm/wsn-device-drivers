@@ -1,11 +1,15 @@
 package de.uniluebeck.itm.messenger;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class MessengerTest extends TestCase {
+public class MessengerTest {
 
-	/**
+	@Test
+	public void emptyTest() {
+		
+	}
 	
+	/**
 	public void testSend(){
 		Messenger messenger = new Messenger();
 		messenger.connect();

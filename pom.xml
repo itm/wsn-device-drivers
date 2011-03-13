@@ -98,6 +98,21 @@
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
+				<artifactId>rsc.metadata.client</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>de.uniluebeck.itm</groupId>
+				<artifactId>rsc.metadata.server</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>de.uniluebeck.itm</groupId>
+				<artifactId>rsc.metadata.shared</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>rsc.apps.metadata</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
@@ -184,8 +199,7 @@
 
 	<modules>
 		<module>rsc.drivers</module>
-		<module>tr.wsn-device-tcp-server</module>
-		<module>tr.wsn-device-tcp-client</module>
+		<module>rsc.remote</module>
 		<module>tr.wsn-device-metadatenapps</module>
 		<module>rsc.apps</module>
 		<module>rsc.examples</module>
