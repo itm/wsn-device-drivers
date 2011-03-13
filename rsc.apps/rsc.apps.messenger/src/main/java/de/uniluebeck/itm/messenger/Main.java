@@ -169,9 +169,9 @@ public class Main {
 	public static void printHelp(Options options){
 		System.out.println("Examples:");
 		System.out
-				.println("Messenger: Remote example: -message 68616c6c6f -port 8181 -server localhost -id 1 -message_type 1");
+				.println("Messenger: Remote example: -message 68616c6c6f -port 8181 -server localhost -id 1 -messageType 1");
 		System.out
-		.println("Messenger: Local example: -message 68616c6c6f -port COM1 -device jennec -message_type 1");
+		.println("Messenger: Local example: -message 68616c6c6f -port COM1 -device jennec -messageType 1");
 		System.out.println("");
 		// for help statement
 		HelpFormatter formatter = new HelpFormatter();
