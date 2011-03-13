@@ -180,19 +180,19 @@ public class Main {
 									System.out
 									.println("Options:");
 									System.out
-										.println("Enter '-bracketsFilter filter' to add 'filter' to the current brackets-filter.");
+										.println("Enter 'bracketsFilter filter' to add 'filter' to the current brackets-filter.");
 									System.out
-										.println("Enter '-regexFilter filter' to add 'filter' to the current regex-filter.");
+										.println("Enter 'regexFilter filter' to add 'filter' to the current regex-filter.");
 									System.out
-										.println("Enter '-location location' to change the current location. '-location' will set the location to terminal.");
+										.println("Enter 'location location' to change the current location. 'location' will set the location to terminal.");
 									System.out
-									.println("Enter '-stoplog' to exit the program.\n");
+									.println("Enter 'stoplog' to exit the program.\n");
 									System.out
 											.print("Please enter your command: ");
 									String input = new BufferedReader(
 											new InputStreamReader(System.in))
 											.readLine();
-									if (input.startsWith("-bracketsFilter")) {
+									if (input.startsWith("bracketsFilter")) {
 										//add brackets-filter
 										String delims = " ";
 										String[] tokens = input.split(delims);
@@ -201,7 +201,7 @@ public class Main {
 										}else{
 										   	System.out.println("This is no valid bracket filter.");
 										}
-									} else if (input.startsWith("-regexFilter")) {
+									} else if (input.startsWith("regexFilter")) {
 										//add regex-filter
 										String delims = " ";
 										String[] tokens = input.split(delims);
@@ -210,7 +210,7 @@ public class Main {
 										//stop logging
 										datalogger.stoplog();
 										System.exit(1);
-									} else if (input.startsWith("-location")) {
+									} else if (input.startsWith("location")) {
 										//change the output location
 										String delims = " ";
 										String[] tokens = input.split(delims);
