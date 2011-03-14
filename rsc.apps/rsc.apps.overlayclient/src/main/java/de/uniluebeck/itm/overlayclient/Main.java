@@ -110,6 +110,16 @@ public class Main {
 					System.out.println("Wrong input: Please enter port of the server!");
 					validInput = false;
 				}
+				else{
+					if(!serverPort.matches("\\d*")){
+						System.out.println("Wrong input: This is no valid server-port number.");
+				    	validInput = false;
+					}
+				}
+				if(clientPort != null && !clientPort.matches("\\d*")){
+					System.out.println("Wrong input: This is no valid client-port number.");
+			    	validInput = false;
+				}
 				if (id == null && microcontroller == null && capabilities == null && searchIP == null && description == null) {
 					System.out.println("Wrong input: Please enter id, microcontroller, capabilities, searchIP or description to search for at least one of these parameters!");
 					validInput = false;
@@ -120,6 +130,10 @@ public class Main {
 								.println("Wrong input: Please enter searchIP as IP-Address.");
 						validInput = false;
 					}
+				}
+				if(id != null && !id.matches("\\d*")){
+					System.out.println("Wrong input: Please enter id as integer!");
+					validInput = false;
 				}
 				if (capabilities != null){
 					if(!capabilities.matches(capListRegex)){
