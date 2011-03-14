@@ -156,7 +156,7 @@ public class Main {
 					}
 				}
 				else{
-					System.out.println("Please enter program-mode flash, readmac, writemac or reset.");
+					System.out.println("Wrong input: Please enter program-mode flash, readmac, writemac or reset.\n");
 					printHelp(options);
 				}
 			}
@@ -209,9 +209,18 @@ public class Main {
 		if (port == null) {
 			System.out.println("Wrong input: Please enter port!");
 			validInput = false;
+		}else{
+			if(!port.matches("\\d*") && !port.matches("COM\\d+")){
+				System.out.println("Wrong input: This is no valid port number.");
+		    	validInput = false;
+			}
 		}
 		if (server != null && id == null) {
 			System.out.println("Wrong input: Please enter id of the device!");
+			validInput = false;
+		}
+		if(id != null && !id.matches("\\d*")){
+			System.out.println("Wrong input: Please enter id as integer!");
 			validInput = false;
 		}
 		if(timeout != null){
