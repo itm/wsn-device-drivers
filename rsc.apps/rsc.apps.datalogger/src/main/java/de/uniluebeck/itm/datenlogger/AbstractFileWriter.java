@@ -26,13 +26,13 @@ public abstract class AbstractFileWriter implements PausableWriter{
 	 */
 	@Override
 	public void write(byte[] content, int messageType) {
-		final String output = convert(content);
+		final String output = convert(content);		//Convert the received bytes into a String
 		Pattern pattern = Pattern.compile(regexFilter);
-		if (!isPaused && pattern.matcher(output).matches()) {
+		if (!isPaused && pattern.matcher(output).matches()) {	//Matching regex-filter
 			if(!bracketFilter.equals("")){
-				if(parseBracketsFilter(bracketFilter, messageType).apply(output)){
+				if(parseBracketsFilter(bracketFilter, messageType).apply(output)){ 	//Matching brackets-filter
 					try {
-						writer.write(output);
+						writer.write(output);		//output in file
 						writer.write("\n");
 					} catch (IOException e) {
 						System.out.println("Cannot write to file.");
@@ -112,7 +112,7 @@ public abstract class AbstractFileWriter implements PausableWriter{
 	@Override
 	public void addRegexFilter(String filter) {
 		if(regexFilter.equals(".*")){
-			regexFilter = "";
+			regexFilter = "";		//to add the filter, the regexFilter must be empty
 		}
 		regexFilter = regexFilter + filter;
 		System.out.println("Filter added");
@@ -148,6 +148,7 @@ public abstract class AbstractFileWriter implements PausableWriter{
 	 * @return the predicate
 	 */
 	public Predicate<CharSequence> parseBracketsFilter(String bracketFilter, int messageType) {
+		//first step parsing the filter and push the elements on the stack:
 		Stack<Predicate<CharSequence>> expressions = new Stack<Predicate<CharSequence>>();
 		Stack<String> operators = new Stack<String>();
 		String expression = "";
@@ -166,11 +167,13 @@ public abstract class AbstractFileWriter implements PausableWriter{
 					expressions.push(predicate);
 					expression = "";
 				} else {
+					//second step, if an element for example (104,23,4)&(104,24,5)is found,
 					Predicate<CharSequence> firstExpression = expressions
 							.pop();
 					Predicate<CharSequence> secondExpression = expressions
 							.pop();
 					String operator = operators.pop();
+					//evaluate these two last expression and push the result on the stack
 					if (operator.equals("or")) {
 						Predicate<CharSequence> result = or(firstExpression,
 								secondExpression);
@@ -185,6 +188,7 @@ public abstract class AbstractFileWriter implements PausableWriter{
 				expression = expression + character;
 			}
 		}
+		//last step, evaluate the rest of elements on the stack
 		while (operators.size() != 0) {
 			Predicate<CharSequence> firstExpression = expressions.pop();
 			Predicate<CharSequence> secondExpression = expressions.pop();
@@ -199,6 +203,7 @@ public abstract class AbstractFileWriter implements PausableWriter{
 				expressions.push(result);
 			}
 		}
+		//result is one predicate, that represents the whole filter
 		return expressions.pop();
 	}
 	

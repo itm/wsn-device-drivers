@@ -4,6 +4,7 @@ import de.uniluebeck.itm.tr.util.StringUtils;
 
 /**
  * The Class HexFileWriter.
+ * Overrides the convert-method, to write the content as hex to a file.
  */
 public class HexFileWriter extends AbstractFileWriter{
 

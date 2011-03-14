@@ -40,11 +40,12 @@ public class Main {
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public static void main(final String[] args) throws IOException {
-		// create Options object
+		//create standard-options, with the command and the description
 		Option helpOption = new Option("help", "print this message");
 		Option versionOption = new Option("version",
 				"print the version information");
 
+		// create Options object, which holds the available parameters
 		Options options = new Options();
 
 		options.addOption(helpOption);
@@ -183,8 +184,8 @@ public class Main {
 						while (true) {
 							while (true) {
 								final char in = (char) System.in.read();
-								if (in == 10) {
-									writer.pause();
+								if (in == 10) {		//press 'enter' to enter write-mode
+									writer.pause();	//writer get paused, to read the command from the console
 									System.out.println("Write-mode entered");
 									System.out
 									.println("Options:");

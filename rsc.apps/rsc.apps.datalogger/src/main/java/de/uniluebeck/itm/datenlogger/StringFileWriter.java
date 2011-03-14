@@ -2,6 +2,7 @@ package de.uniluebeck.itm.datenlogger;
 
 /**
  * The Class StringFileWriter.
+ * Overrides the convert-method, to write the content as String to a file.
  */
 public class StringFileWriter extends AbstractFileWriter{
 	

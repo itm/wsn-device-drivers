@@ -5,6 +5,7 @@ import java.io.IOException;
 
 /**
  * The Class ByteFileWriter.
+ * Overrides the write-method of the FileWriter to write the content in bytes.
  */
 public class ByteFileWriter extends AbstractFileWriter {
 
