@@ -58,7 +58,7 @@ public class Main {
 		options.addOption("user", true, "username to connect to the server");
 		options.addOption("passwd", true, "password to connect to the server");
 		options.addOption("device", true,
-				"type of device in local case: jennec, telosb oder pacemate");
+				"type of device in local case: jennic, telosb oder pacemate");
 		options.addOption("id", true, "ID of the device in remote case");
 		options.addOption("timeout", true,
 				"optional timeout while flashing the device");
@@ -192,10 +192,10 @@ public class Main {
 			validInput = false;
 		}
 		if (device != null) {
-			if (!device.equals("mock") && !device.equals("jennec")
+			if (!device.equals("mock") && !device.equals("jennic")
 					&& !device.equals("pacemate") && !device.equals("telosb")) {
 				System.out
-						.println("Wrong input: The device parameter can only be 'jennec', 'pacemate', 'telosb' or 'mock'.");
+						.println("Wrong input: The device parameter can only be 'jennic', 'pacemate', 'telosb' or 'mock'.");
 				validInput = false;
 			}
 		}
@@ -285,13 +285,13 @@ public class Main {
 	public static void printHelp(Options options) {
 		System.out.println("Examples:");
 		System.out
-				.println("Flash: Remote-Example: flash -port 8181 -server localhost -id 1 -file jennec.bin");
+				.println("Flash: Remote-Example: flash -port 8181 -server localhost -id 1 -file jennic.bin");
 		System.out
-				.println("Flash: Local-Example: flash -port COM1 -file jennec.bin -device jennec");
+				.println("Flash: Local-Example: flash -port COM1 -file jennec.bin -device jennic");
 		System.out
-				.println("Write Mac: Local-Example: writemac -port COM1 -device jennec -macAddress 080020aefd7e");
+				.println("Write Mac: Local-Example: writemac -port COM1 -device jennic -macAddress 080020aefd7e");
 		System.out
-				.println("Read Mac: Local-Example: readmac -port COM1 -device jennec");
+				.println("Read Mac: Local-Example: readmac -port COM1 -device jennic");
 		System.out
 				.println("Reset: Local-Example: reset -port COM1 -device telosb");
 		System.out.println("");
