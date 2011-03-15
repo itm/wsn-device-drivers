@@ -83,10 +83,10 @@ public class FlashLoader {
 			// Connect to the TCP-Server.
 			connection = new RemoteConnection();
 
-			try {
-				connection.connect(username + ":" + password + "@" + server + ":"
-						+ port + "/" + id);
-			} catch (Exception e) {
+			try{
+				connection.connect(username + ":" + password + "@" + server
+						+ ":" + port + "/" + id);
+			}catch(Exception e){
 				System.out.println("Cannot connect to server!");
 				System.exit(1);
 			}
@@ -99,7 +99,13 @@ public class FlashLoader {
 				Device<?> device = null;
 				if (deviceParameter.equals("jennic")) {
 					// Connect to the local jennic-device.
-					SerialPortConnection jennicConnection = new iSenseSerialPortConnection();
+					SerialPortConnection jennicConnection = null;
+					try{
+						jennicConnection = new iSenseSerialPortConnection();
+					}catch(java.lang.ExceptionInInitializerError e){
+						System.out.println("Could not connect to device!");
+						System.exit(1);
+					}
 					jennicConnection.addListener(new ConnectionListener() {
 						@Override
 						public void onConnectionChange(ConnectionEvent event) {
@@ -114,7 +120,13 @@ public class FlashLoader {
 					jennicConnection.connect(port);
 				} else if (deviceParameter.equals("pacemate")) {
 					// Connect to the local pacemate-device.
-					SerialPortConnection pacemateConnection = new iSenseSerialPortConnection();
+					SerialPortConnection pacemateConnection = null;
+					try{
+						pacemateConnection = new iSenseSerialPortConnection();
+					}catch(java.lang.ExceptionInInitializerError e){
+						System.out.println("Could not connect to device!");
+						System.exit(1);
+					}
 					pacemateConnection.addListener(new ConnectionListener() {
 						@Override
 						public void onConnectionChange(ConnectionEvent event) {
@@ -129,7 +141,13 @@ public class FlashLoader {
 					pacemateConnection.connect(port);
 				} else if (deviceParameter.equals("telosb")) {
 					// Connect to the local telosb-device
-					SerialPortConnection telosbConnection = new TelosbSerialPortConnection();
+					SerialPortConnection telosbConnection = null;
+					try{
+						telosbConnection = new TelosbSerialPortConnection();
+					}catch(java.lang.ExceptionInInitializerError e){
+						System.out.println("Could not connect to device!");
+						System.exit(1);
+					}
 					telosbConnection.addListener(new ConnectionListener() {
 						@Override
 						public void onConnectionChange(ConnectionEvent event) {
@@ -142,7 +160,7 @@ public class FlashLoader {
 					});
 					device = new TelosbDevice(telosbConnection);
 					telosbConnection.connect(port);
-				} else if (deviceParameter.equals("mock")) {
+				}else if(deviceParameter.equals("mock")){
 					// Connect to the mock-device for tests
 					final MockConnection connection = new MockConnection();
 					device = new MockDevice(connection);
