@@ -14,15 +14,6 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Remote Sensor Control Remote Client</name>
 
-	<dependencies>
-
-
-
-
-
-
-	</dependencies>
-
 	<build>
 		<plugins>
 			<plugin>
