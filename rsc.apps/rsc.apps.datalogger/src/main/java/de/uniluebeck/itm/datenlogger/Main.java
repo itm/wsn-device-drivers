@@ -61,7 +61,7 @@ public class Main {
 		options.addOption("username", true, "username to connect to the server");
 		options.addOption("password", true, "password to connect to the server");
 		options.addOption("device", true,
-				"type of sensornode in local case: jennec, telosb oder pacemate");
+				"type of sensornode in local case: jennic, telosb oder pacemate");
 		options.addOption("output", true,
 				"Coding alternative of the output data hex or byte");
 		options.addOption("id", true, "ID of the device in remote case");
@@ -108,8 +108,8 @@ public class Main {
 					validInput = false;
 				}
 				if(device != null){
-			    	if(!device.equals("mock") && !device.equals("jennec") && !device.equals("pacemate") && !device.equals("telosb")){
-			    		System.out.println("Wrong input: The device parameter can only be 'jennec', 'pacemate', 'telosb' or 'mock'.");
+			    	if(!device.equals("mock") && !device.equals("jennic") && !device.equals("pacemate") && !device.equals("telosb")){
+			    		System.out.println("Wrong input: The device parameter can only be 'jennic', 'pacemate', 'telosb' or 'mock'.");
 			    		validInput = false;
 			    	}
 			    }
@@ -309,7 +309,7 @@ public class Main {
 		System.out
 				.println("Remote example: -bracketsFilter ((104,23,4)&(104,24,5))|(104,65,4) -location filename.txt -server localhost -id 1 -port 8181 -username name -password password");
 		System.out
-				.println("Local example: -regexFilter .*(4|3)*. -device telosb -port COM1");
+				.println("Local example: -regexFilter .*(4|3).* -device telosb -port COM1");
 		System.out.println("");
 
 		// for help statement

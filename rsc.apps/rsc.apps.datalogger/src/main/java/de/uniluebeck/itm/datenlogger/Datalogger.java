@@ -120,8 +120,8 @@ public class Datalogger {
 			if (deviceParameter != null) {
 				final OperationQueue queue = new PausableExecutorOperationQueue();
 				Device<?> device = null;
-				if (deviceParameter.equals("jennec")) {
-					// Connect to the local jennec-device.
+				if (deviceParameter.equals("jennic")) {
+					// Connect to the local jennic-device.
 					SerialPortConnection jennicConnection = new iSenseSerialPortConnection();
 					jennicConnection.addListener(new ConnectionListener() {
 						@Override
