@@ -49,7 +49,7 @@ public class Main {
 		options.addOption("user", true, "username to connect to the server");
 		options.addOption("passwd", true, "password to connect to the server");
 		options.addOption("device", true,
-				"type of the device in local case: jennec, telosb or pacemate");
+				"type of the device in local case: jennic, telosb or pacemate");
 		options.addOption("id", true, "ID of the device in remote case");
 		options.addOption("messageType", true, "Type of the Message to be send");
 
@@ -93,10 +93,10 @@ public class Main {
 					validInput = false;
 				}
 				if (device != null) {
-					if (!device.equals("mock") && !device.equals("jennec")
+					if (!device.equals("mock") && !device.equals("jennic")
 							&& !device.equals("pacemate") && !device.equals("telosb")) {
 						System.out
-								.println("Wrong input: The device parameter can only be 'jennec', 'pacemate', 'telosb' or 'mock'.");
+								.println("Wrong input: The device parameter can only be 'jennic', 'pacemate', 'telosb' or 'mock'.");
 						validInput = false;
 					}
 				}
@@ -183,7 +183,7 @@ public class Main {
 		System.out
 				.println("Messenger: Remote example: -message 68616c6c6f -port 8181 -server localhost -id 1 -messageType 1");
 		System.out
-		.println("Messenger: Local example: -message 68616c6c6f -port COM1 -device jennec -messageType 1");
+		.println("Messenger: Local example: -message 68616c6c6f -port COM1 -device jennic -messageType 1");
 		System.out.println("");
 		// for help statement
 		HelpFormatter formatter = new HelpFormatter();
