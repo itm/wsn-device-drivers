@@ -20,6 +20,7 @@ import de.uniluebeck.itm.devicedriver.telosb.TelosbSerialPortConnection;
 import de.uniluebeck.itm.tcp.client.RemoteConnection;
 import de.uniluebeck.itm.tcp.client.RemoteDevice;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class Messenger. 
  * Sends a given Message to the sensor-device.
@@ -38,21 +39,35 @@ public class Messenger {
 
 	/**
 	 * Instantiates a new messenger.
+	 *
+	 * @param port the port
+	 * @param server the server
+	 * @param user the user
+	 * @param password the password
+	 * @param device the device
+	 * @param id the id
+	 * @param messageType the message type
 	 */
-	public Messenger(String port, String server, String user, String password, String device, String id, int messageType) {
+	public Messenger(final String port, final String server, final String user, final String password,
+			final String device, final String id, final int messageType) {
 		this.port = port;
 		this.server = server;
 		this.user = user;
 		this.password = password;
 		this.deviceParameter = device;
 		this.id = id;
-		this.messageType = (byte)messageType;
+		this.messageType = (byte) messageType;
 	}
-	
-	public RemoteConnection getConnection(){
+
+	/**
+	 * Gets the connection.
+	 *
+	 * @return the connection
+	 */
+	public RemoteConnection getConnection() {
 		return connection;
 	}
-	
+
 	/**
 	 * Method to connect to the tcp-server or to a local sensornode.
 	 */
@@ -61,10 +76,10 @@ public class Messenger {
 			// Connect to the TCP-Server.
 			connection = new RemoteConnection();
 
-			try{
-				connection.connect(user + ":" + password + "@" + server
-						+ ":" + port + "/" + id);
-			}catch(Exception e){
+			try {
+				connection.connect(user + ":" + password + "@" + server + ":"
+						+ port + "/" + id);
+			} catch (Exception e) {
 				System.out.println("Cannot connect to server!");
 				System.exit(1);
 			}
@@ -78,9 +93,9 @@ public class Messenger {
 				if (deviceParameter.equals("jennic")) {
 					// Connect to the local jennic-device.
 					SerialPortConnection jennicConnection = null;
-					try{
+					try {
 						jennicConnection = new iSenseSerialPortConnection();
-					}catch(java.lang.ExceptionInInitializerError e){
+					} catch (java.lang.ExceptionInInitializerError e) {
 						System.out.println("Could not connect to device!");
 						System.exit(1);
 					}
@@ -99,9 +114,9 @@ public class Messenger {
 				} else if (deviceParameter.equals("pacemate")) {
 					// Connect to the local pacemate-device.
 					SerialPortConnection pacemateConnection = null;
-					try{
+					try {
 						pacemateConnection = new iSenseSerialPortConnection();
-					}catch(java.lang.ExceptionInInitializerError e){
+					} catch (java.lang.ExceptionInInitializerError e) {
 						System.out.println("Could not connect to device!");
 						System.exit(1);
 					}
@@ -120,9 +135,9 @@ public class Messenger {
 				} else if (deviceParameter.equals("telosb")) {
 					// Connect to the local telosb-device
 					SerialPortConnection telosbConnection = null;
-					try{
+					try {
 						telosbConnection = new TelosbSerialPortConnection();
-					}catch(java.lang.ExceptionInInitializerError e){
+					} catch (java.lang.ExceptionInInitializerError e) {
 						System.out.println("Could not connect to device!");
 						System.exit(1);
 					}
@@ -138,7 +153,7 @@ public class Messenger {
 					});
 					device = new TelosbDevice(telosbConnection);
 					telosbConnection.connect(port);
-				}else if(deviceParameter.equals("mock")){
+				} else if (deviceParameter.equals("mock")) {
 					// Connect to the mock-device for tests
 					final MockConnection connection = new MockConnection();
 					device = new MockDevice(connection);
@@ -151,40 +166,39 @@ public class Messenger {
 	}
 
 	/**
-	 * Send.
-	 * Sends the message to the device and handles the response.
-	 * 
+	 * Send. Sends the message to the device and handles the response.
 	 * @param message
 	 *            the message
 	 */
-	public void send(String message) {
-		MessagePacket packet = new MessagePacket(messageType, hexStringToByteArray(message));
+	public void send(final String message) {
+		MessagePacket packet = new MessagePacket(messageType,
+				hexStringToByteArray(message));
 		deviceAsync.send(packet, 100000, new AsyncAdapter<Void>() {
 
 			@Override
 			public void onExecute() {
 				System.out.println("Sending is starting now...");
 			}
-			
+
 			@Override
-			public void onProgressChange(float fraction) {
+			public void onProgressChange(final float fraction) {
 				final int percent = (int) (fraction * 100.0);
 				System.out.println("Sending the message: " + percent + "%");
 			}
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onSuccess(final Void result) {
 				System.out.println("Message sent");
-				if(connection != null){
+				if (connection != null) {
 					connection.shutdown(false);
 				}
 				System.exit(1);
 			}
 
 			@Override
-			public void onFailure(Throwable throwable) {
+			public void onFailure(final Throwable throwable) {
 				System.out.println("Error while sending the message.");
-				if(connection != null){
+				if (connection != null) {
 					connection.shutdown(false);
 				}
 				System.exit(1);
@@ -192,19 +206,21 @@ public class Messenger {
 		});
 		System.out.println("Sending process was added to the queue.");
 	}
-	
+
 	/**
-	 * Converts a hex-String to a byte array to send this as message to the device.
-	 * @param s
+	 * Converts a hex-String to a byte array to send this as message to the
+	 * device.
+	 *
+	 * @param s the s
 	 * @return data, the byte array
 	 */
-	public static byte[] hexStringToByteArray(String s) {
-	    int len = s.length();
-	    byte[] data = new byte[len / 2];
-	    for (int i = 0; i < len; i += 2) {
-	        data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
-	                             + Character.digit(s.charAt(i+1), 16));
-	    }
-	    return data;
+	public static byte[] hexStringToByteArray(final String s) {
+		int len = s.length();
+		byte[] data = new byte[len / 2];
+		for (int i = 0; i < len; i += 2) {
+			data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4) + Character
+					.digit(s.charAt(i + 1), 16));
+		}
+		return data;
 	}
 }
