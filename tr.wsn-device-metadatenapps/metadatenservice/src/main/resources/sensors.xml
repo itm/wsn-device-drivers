@@ -7,7 +7,6 @@
 		<ns0:description>wisebed</ns0:description>
 		<ns0:microcontroller>TI MSP430</ns0:microcontroller>
 		<ns0:ipAddress></ns0:ipAddress>
-		<ns0:Port>1237</ns0:Port>
 		<ns0:capability>
 			<ns0:name>urn:wisebed:node:capability:temp</ns0:name>
 			<ns0:datatype>integer</ns0:datatype>

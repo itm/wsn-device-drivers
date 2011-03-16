@@ -8,7 +8,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>rsc.metadata.client</artifactId>
+	<artifactId>rsc.metadata.searchclient</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Remote Sensor Control Metadata Client</name>
 	<packaging>jar</packaging>
@@ -22,10 +22,6 @@
 		<dependency>
 			<groupId>cglib</groupId>
 			<artifactId>cglib</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.simpleframework</groupId>
-			<artifactId>simple-xml</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.rxtx</groupId>

@@ -9,9 +9,6 @@ import java.util.TimerTask;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.simpleframework.xml.Serializer;
-import org.simpleframework.xml.load.Persister;
-
 import de.uniluebeck.itm.metadaten.metadatenservice.metadatacollector.IMetaDataCollector;
 import de.uniluebeck.itm.metadaten.serverclient.metadataclienthelper.ConfigReader;
 import de.uniluebeck.itm.metadatenservice.config.ConfigData;
@@ -72,16 +69,6 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService {
 		log.info("refreshrun disconnected:");
 	}
 
-	public void writeConfig(ConfigData config) {
-		File result = new File("configschreiben.xml");
-		Serializer serial = new Persister();
-		try {
-			serial.write(config, result);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 
 	// /**
 	// * Load of ConfigData needed for communication

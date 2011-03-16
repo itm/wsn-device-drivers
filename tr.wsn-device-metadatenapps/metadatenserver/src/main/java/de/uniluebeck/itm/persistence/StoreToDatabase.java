@@ -57,7 +57,7 @@ public class StoreToDatabase {
 	/**
 	 * Ueberprueft ob ein Knoten bereits in der Datenbank gespeichert ist
 	 * 
-	 * @param parentnode
+	 * @param node node to search for in database
 	 * @return boolean true if node already in DB
 	 */
 	public boolean nodeinDB(final Node node) {

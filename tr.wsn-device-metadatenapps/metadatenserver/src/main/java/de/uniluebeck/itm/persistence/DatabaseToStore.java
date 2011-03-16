@@ -25,6 +25,7 @@ import de.uniluebeck.itm.metadaten.entities.Node;
 /**
  * In this class, information is extracted from the Database and Stored to
  * proper Hashmaps.
+ * @author Toralf Babel
  */
 
 public class DatabaseToStore {
@@ -32,9 +33,9 @@ public class DatabaseToStore {
 	 * Logger for loading operations
 	 */
 	private static Log log = LogFactory.getLog(StoreToDatabase.class);
-	// static File datafile = new
-	// File("C:\\uni hl\\workspace\\fallstudie2010\\sources\\tr.wsn-device-metadatenapps\\metadatenserver\\hibernate.cfg.xml");
+	/**SessionFactory delivers sessions for DB-actions*/
 	private static final SessionFactory OUR_SESSION_FACTORY;
+	/***/
 	private static final URL URL = ClassLoader
 			.getSystemResource("hibernate.cfg.xml");
 
@@ -51,7 +52,7 @@ public class DatabaseToStore {
 	 * This functions creates a Hibernate Session.
 	 * 
 	 * @return ourSessionFactory.openSession()
-	 * @throws org.hibernate.HibernateException
+	 * @throws HibernateException thrown from Hibernate
 	 * 
 	 */
 	public static Session getSession() throws HibernateException {
@@ -123,12 +124,12 @@ public class DatabaseToStore {
 		transaction.commit();
 		session.close();
 
-		log.info("Found before Capability-Zeuch" + resultlist.size() + " nodes");
+		log.info("Found (before using Capability-Properties)" + resultlist.size() + " nodes");
 		if ((nodeexample.getCapabilityList().size() > 0)
 				&& (ignoreCapability == false)) {
 			List<Node> templist = new ArrayList<Node>();
 			templist = searchforcapabilities(resultlist, nodeexample
-					.getCapabilityList().get(0));
+					.getCapabilityList());
 			resultlist.clear();
 			resultlist.addAll(templist);
 		}
@@ -145,28 +146,33 @@ public class DatabaseToStore {
 	 * @return List <Node> list of nodes that capabilities match to the given
 	 *         capability
 	 */
-	private List<Node> searchforcapabilities(List<Node> nodeexamples,
-			Capability cap) {
-		List<Node> resultlist = new ArrayList<Node>();
+	private List<Node> searchforcapabilities(final List<Node> nodeexamples,
+			final List <Capability> capList) {
+		final List<Node> resultList = new ArrayList<Node>();
 		final Session session = getSession();
-		final Transaction transaction = session.beginTransaction();
-		final Criteria crit = session.createCriteria(Capability.class);
-		final Example exampleCap = Example.create(cap);
-		List<Capability> capresult = new ArrayList<Capability>();
-		crit.add(exampleCap);
-		capresult = crit.list();
-		for (Node node : nodeexamples) {
-			for (Capability captemp : capresult) {
-				if (captemp.getNode().getId().equals(node.getId())) {
-					if (!(resultlist.contains(node))) {
-						resultlist.add(node);
+		for(Capability cap : capList){
+			
+			final Transaction transaction = session.beginTransaction();
+			final Criteria crit = session.createCriteria(Capability.class);
+			final Example exampleCap = Example.create(cap);
+			List<Capability> capresult = new ArrayList<Capability>();
+			crit.add(exampleCap);
+			capresult = crit.list();
+			for (Node node : nodeexamples) {
+				for (Capability captemp : capresult) {
+					if (captemp.getNode().getId().equals(node.getId())) {
+						if (!(resultList.contains(node))) {
+							resultList.add(node);
+						}
+					}else{
+						nodeexamples.remove(node);
 					}
 				}
 			}
+			transaction.commit();
 		}
-		transaction.commit();
 		session.close();
-		return resultlist;
+		return resultList;
 	}
 
 	/**

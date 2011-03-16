@@ -19,14 +19,17 @@ import de.uniluebeck.itm.persistence.StoreToDatabase;
 public class CleanRepository extends TimerTask {
 	/**Logger*/
 	private static Log log = LogFactory.getLog(CleanRepository.class);
-	/**Timer for regularly cleaning the repository*/
-	public final Timer timer = new Timer();
 	/**timeperiod that the nodes timestamp does have until it will be removed from repository*/
 	private int overageperiod;
+	/**Timer for regularly cleaning the repository*/
+	private final Timer timer = new Timer();
 	/**Constructor*/
 	public CleanRepository(){
 	};
-	/**Constructor*/
+	/**Constructor
+	 * @param overagetime time limit -> nodes with older timestamp will be deleted
+	 * 
+	 */
 	public CleanRepository(final int overagetime){
 		this.overageperiod=overagetime;
 	};
@@ -46,6 +49,15 @@ public class CleanRepository extends TimerTask {
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
+	}
+	public int getOverageperiod() {
+		return overageperiod;
+	}
+	public void setOverageperiod(final int overageperiod) {
+		this.overageperiod = overageperiod;
+	}
+	public Timer getTimer() {
+		return timer;
 	}
 
 }

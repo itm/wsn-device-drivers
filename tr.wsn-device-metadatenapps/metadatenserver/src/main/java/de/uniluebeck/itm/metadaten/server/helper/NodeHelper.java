@@ -106,9 +106,6 @@ public class NodeHelper {
 		if (!(nodein.getMicrocontroller().matches(""))) {
 			nodeout.setMicrocontroller(nodein.getMicrocontroller());
 		}
-		if (!(nodein.getPort() == null)) {
-			nodeout.setPort(nodein.getPort());
-		}
 		for (Capability cap : nodein.getCapabilityList()) {
 			resultlist.add(removeEmptyStrings(cap));
 		}

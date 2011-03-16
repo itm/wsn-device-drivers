@@ -28,7 +28,7 @@ public class ConfigReader {
 	 * Delivers the configData read from the configFile
 	 * @param path - File that consists of the config
 	 * @return ConfigData the read configData read from the given ConfigFile
-	 * @throws JaxbException if sth goes wrong with reading the config
+	 * @throws JAXBException if sth goes wrong with reading the config
 	 */
 	@SuppressWarnings("unchecked")
 	public static ConfigData readConfigFile(final File path) throws JAXBException {

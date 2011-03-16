@@ -33,21 +33,23 @@ public class DeviceCollector {
 	 * @return node with the chiptype as delivered by the device
 	 */
 	public Node deviceCollect(DeviceAsync device, Node node) {
-		ChipType chip = null;
-		try {
-			chip = device.getChipType(10000, new AsyncAdapter<ChipType>())
-					.get();
-		} catch (final Exception e) {
-			log.error(e.getCause().toString());
-		}
-		try {
-			if (!(chip.getName() == null)) {
-				node.setMicrocontroller(chip.getName());
-			}
-		} catch (final NullPointerException e) {
-			// TODO Auto-generated catch block
-			log.error(e.getStackTrace());
-		}
+		//Turned off because this operation kicks other running ops
+		//TODO device Listenes who informs Metadatacollector if anything changed
+//		ChipType chip = null;
+//		try {
+//			chip = device.getChipType(10000, new AsyncAdapter<ChipType>())
+//					.get();
+//		} catch (final Exception e) {
+//			log.error(e.getCause().toString());
+//		}
+//		try {
+//			if (!(chip.getName() == null)) {
+//				node.setMicrocontroller(chip.getName());
+//			}
+//		} catch (final NullPointerException e) {
+//			// TODO Auto-generated catch block
+//			log.error(e.getStackTrace());
+//		}
 		return node;
 
 	}

@@ -51,11 +51,6 @@ public class FileCollector {
 							node.setDescription(result.getDescription());
 						}
 					}
-					if (node.getPort() == null) {
-						if (result.getPort().shortValue() != 0) {
-							node.setPort(result.getPort());
-						}
-					}
 					if (node.getMicrocontroller() == null) {
 						if (!(result.getMicrocontroller() == null)) {
 							node.setMicrocontroller(result.getMicrocontroller());

@@ -33,9 +33,7 @@ public class Node implements Serializable {
 	private String description;
 
 	@Basic
-	@Column(name = "port", nullable=true)
-	private Short port;
-
+	@Column(name = "stamp")
 	private Date timestamp;
 
 	/**
@@ -83,14 +81,6 @@ public class Node implements Serializable {
 
 	public void setDescription(final String description) {
 		this.description = description;
-	}
-
-	public void setPort(final Short port) {
-		this.port = port;
-	}
-
-	public Short getPort() {
-		return this.port;
 	}
 
 	public void setTimestamp(final Date timestamp) {

@@ -8,16 +8,12 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>rsc.metadata.shared</artifactId>
+	<artifactId>rsc.metadata.service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Remote Sensor Control Metadata Shared</name>
+	<name>Remote Sensor Control Metadata Service</name>
 	<packaging>jar</packaging>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.simpleframework</groupId>
-			<artifactId>simple-xml</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

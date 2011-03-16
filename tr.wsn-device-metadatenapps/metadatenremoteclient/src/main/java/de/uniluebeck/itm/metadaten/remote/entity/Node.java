@@ -5,9 +5,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.ElementList;
 
 /**
  * @author babel
@@ -19,41 +16,29 @@ public class Node {
 	/**
 	 * Id of the node
 	 */
-	@Attribute
 	private String id;
 
 	/**
 	 * the microcontroller build on the sensor node
 	 */
-
-	@Element(required= false)
 	private String microcontroller;
 	/**
 	 * Ip-Adress of the Tcp-Server to which the node is connected
 	 */
-	@Element(required= false)
 	private String ipAddress;
 	/**
 	 * Testbed to which the sensor node belongs
 	 */
-	@Element(required= false)
 	private String description;
-	/**
-	 * port to which the node is connected
-	 */
-	@Element
-	private short port;
+
 	/**
 	 * Timestamp on which the node was last refreshed
 	 */
-	@Element(required= false)
 	private Date timestamp;
 
 	/**
 	 * List with the capability elements of the entity.
 	 */
-	// @OneToMany(mappedBy = "nodeId")
-	@ElementList(inline = true)
 	private List<Capability> capabilityList;
 
 	/**
@@ -135,20 +120,6 @@ public class Node {
 	 */
 	public void setDescription(final String description) {
 		this.description = description;
-	}
-	/**
-	 * Port of the node
-	 * @param port to which the sensor node is connected
-	 */
-	public void setPort(final short port) {
-		this.port = port;
-	}
-	/**
-	 * delivers port of the node
-	 * @return  short port to which the sensor node is connected
-	 */
-	public short getPort() {
-		return this.port;
 	}
 	/**
 	 * set timestamp

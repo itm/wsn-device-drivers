@@ -56,7 +56,7 @@ import de.uniluebeck.itm.tr.util.TimedCache;
  * Server Class for the MetaDataRepository It provides all necessary function to
  * manipulate the Repository
  * 
- * @author babel
+ * @author Toralf Babel
  * 
  */
 public class MetaDatenServer {
@@ -66,22 +66,12 @@ public class MetaDatenServer {
 	 */
 	private static Log log = LogFactory.getLog(MetaDatenServer.class);
 	/**The time period that the authorized client channel is hold in the authorization map*/
-	private final static int TIMEOUT = 30; 
-	// werden nach 30 min alle eintraege des Cache geloescht?
-	// wie Timeout fuer einen Eintrag neu starten?
-	// private static TimedCache<RpcClientChannel, ClientID> idList = new
-	// TimedCache<RpcClientChannel, ClientID>();
+	private final static int TIMEOUT = 300; 
+	
 	/**Holds the authorized client channel for the given timeperiod in the authorization map*/
 	private static TimedCache<RpcClientChannel, Subject> authList = new TimedCache<RpcClientChannel, Subject>(
 			TIMEOUT, TimeUnit.SECONDS);
 
-	// private static Map<RpcClientChannel, ClientID> idList = new
-	// HashMap<RpcClientChannel, ClientID>();
-	/**
-	 * List with authenticated CLients
-	 */
-	// private static Map<RpcClientChannel, Subject> authList = new
-	// HashMap<RpcClientChannel, Subject>();
 
 	/**
 	 * Main method for the servers
@@ -90,7 +80,7 @@ public class MetaDatenServer {
 	 *            1st argument for the path to the config file
 	 * @throws URISyntaxException
 	 */
-	public static void main(final String[] args) throws URISyntaxException {
+	public static void main(final String[] args)  {
 		final String file = (args.length < 1) ? "src/main/resources/config.xml"
 				: args[0];
 		ConfigData config = null;
@@ -103,7 +93,7 @@ public class MetaDatenServer {
 		log.info("Startup Server!");
 		final CleanRepository cleaner = new CleanRepository(config
 				.getOveragetime().intValue());
-		cleaner.timer.schedule(cleaner, config.getTimerdelay().longValue(),
+		cleaner.getTimer().schedule(cleaner, config.getTimerdelay().longValue(),
 				config.getTimerinterval().longValue());
 		// setzen der server-Informationen
 		final PeerInfo serverInfo = new PeerInfo(config.getServerIP(), config
@@ -160,19 +150,19 @@ public class MetaDatenServer {
 		log.info("Serving started: " + bootstrap);
 
 		/* Initialiesieren von Shiro */
-		// URI fileuri = null;
-		// try {
-		// fileuri =
-		// ClassLoader.getSystemResource("shiro.ini").getPath().toURI();
-		// } catch (URISyntaxException e) {
-		// log.error(e.getMessage());
-		// }
-		// File source = new File(fileuri);
-
-		final Factory<SecurityManager> factory = new IniSecurityManagerFactory(
-				ClassLoader.getSystemResource("shiro.ini").toURI().getPath());
+		Factory<SecurityManager> factory = null;
+		try {
+			factory = new IniSecurityManagerFactory(
+					ClassLoader.getSystemResource("shiro.ini").toURI().getPath());
+		} catch (final URISyntaxException e) {
+			log.error(e.getStackTrace().toString());
+		}
+		try{
 		final SecurityManager securityManager = factory.getInstance();
 		SecurityUtils.setSecurityManager(securityManager);
+		}catch(final NullPointerException npe){
+			log.error(npe.getStackTrace().toString());
+		}
 
 	}
 
@@ -254,9 +244,9 @@ public class MetaDatenServer {
 					&& (!(authList.get(channel) == null))) {
 				log.info("Authentication successfull");
 			} else {
-				log.error(("Authentication not successful "
+				log.error("Authentication not successful "
 						+ currentUser.isAuthenticated() + "User in authlist" + authList
-						.containsKey(channel)));
+						.containsKey(channel));
 			}
 		}
 

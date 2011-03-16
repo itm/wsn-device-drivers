@@ -17,7 +17,7 @@
 	<modules>
 		<module>metadatenserver</module>
 		<module>metadatenservice</module>
-		<module>metadatenremoteclient</module>
+		<module>metadatensearchclient</module>
 	</modules>
 
 	<properties>
@@ -29,11 +29,6 @@
 
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
-				<groupId>org.simpleframework</groupId>
-				<artifactId>simple-xml</artifactId>
-				<version>1.8</version>
-			</dependency>
 				<!--<dependency>
 				<groupId>de.uniluebeck.itm.metadaten</groupId>
 				<artifactId>metadatenserver</artifactId>
