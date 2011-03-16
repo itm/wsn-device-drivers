@@ -51,6 +51,8 @@ public class Main {
 				"type of the device in local case: jennic, telosb or pacemate");
 		options.addOption("id", true, "ID of the device in remote case");
 		options.addOption("messageType", true, "Type of the Message to be send");
+		options.addOption("timeout", true,
+				"optional timeout for the operation");
 
 		CommandLineParser parser = new GnuParser();
 		CommandLine cmd = null;
@@ -84,6 +86,9 @@ public class Main {
 				// parameters for the message
 				String message = cmd.getOptionValue("message");
 				String messageType = cmd.getOptionValue("messageType");
+				
+				// parameter to set the timeout of the operation
+				String timeout = cmd.getOptionValue("timeout");
 
 				// Begin: validate input-data
 				if (device == null && server == null) {
@@ -146,6 +151,13 @@ public class Main {
 						validInput = false;
 					}
 				}
+				if (timeout != null) {
+					if (!timeout.matches("\\d*")) {
+						System.out
+								.println("Wrong input: Please enter timeout as integer!");
+						validInput = false;
+					}
+				}
 				// End: validate input-data
 
 				if (validInput) {
@@ -172,7 +184,7 @@ public class Main {
 					}
 
 					Messenger messenger = new Messenger(port, server, user,
-							password, device, id, Integer.valueOf(messageType));
+							password, device, id, Integer.valueOf(messageType), timeout);
 					messenger.connect();
 					messenger.send(message);
 				}

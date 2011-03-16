@@ -35,6 +35,7 @@ public class Messenger {
 	private DeviceAsync deviceAsync;
 	private String id;
 	private byte messageType;
+	private int timeout = 300000;
 	private RemoteConnection connection;
 
 	/**
@@ -49,7 +50,7 @@ public class Messenger {
 	 * @param messageType the message type
 	 */
 	public Messenger(final String port, final String server, final String user, final String password,
-			final String device, final String id, final int messageType) {
+			final String device, final String id, final int messageType, final String timeout) {
 		this.port = port;
 		this.server = server;
 		this.user = user;
@@ -57,6 +58,9 @@ public class Messenger {
 		this.deviceParameter = device;
 		this.id = id;
 		this.messageType = (byte) messageType;
+		if (timeout != null) {
+			this.timeout = Integer.parseInt(timeout);
+		}
 	}
 
 	/**
@@ -173,7 +177,7 @@ public class Messenger {
 	public void send(final String message) {
 		MessagePacket packet = new MessagePacket(messageType,
 				hexStringToByteArray(message));
-		deviceAsync.send(packet, 100000, new AsyncAdapter<Void>() {
+		deviceAsync.send(packet, timeout, new AsyncAdapter<Void>() {
 
 			@Override
 			public void onExecute() {
