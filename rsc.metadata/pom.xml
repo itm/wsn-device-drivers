@@ -15,9 +15,9 @@
 	<name>Remote Sensor Control MetaData</name>
 
 	<modules>
-		<module>metadatenserver</module>
-		<module>metadatenservice</module>
-		<module>metadatensearchclient</module>
+		<module>rsc.metadata.server</module>
+		<module>rsc.metadata.service</module>
+		<module>rsc.metadata.searchclient</module>
 	</modules>
 
 	<properties>

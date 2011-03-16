@@ -10,7 +10,7 @@
 
 	<artifactId>rsc.metadata.searchclient</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Remote Sensor Control Metadata Client</name>
+	<name>Remote Sensor Control Metadata Search Client</name>
 	<packaging>jar</packaging>
 
 	<dependencies>
