@@ -287,7 +287,7 @@ public class Main {
 		System.out
 				.println("Flash: Remote-Example: flash -port 8181 -server localhost -id 1 -file jennic.bin");
 		System.out
-				.println("Flash: Local-Example: flash -port COM1 -file jennec.bin -device jennic");
+				.println("Flash: Local-Example: flash -port COM1 -file jennic.bin -device jennic");
 		System.out
 				.println("Write Mac: Local-Example: writemac -port COM1 -device jennic -macAddress 080020aefd7e");
 		System.out
