@@ -215,7 +215,7 @@
 	<modules>
 		<module>rsc.drivers</module>
 		<module>rsc.remote</module>
-		<module>tr.wsn-device-metadatenapps</module>
+		<module>rsc.metadata</module>
 		<module>rsc.apps</module>
 		<module>rsc.examples</module>
 	</modules>
