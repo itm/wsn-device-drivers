@@ -37,9 +37,9 @@ public class Testtreiber {
         cap.setName("urn:wisebed:node:capability:light");
         List <Capability> caplist = new ArrayList<Capability>();
         caplist.add(cap);
-        node.setCapabilityList(caplist);
+//        node.setCapabilityList(caplist);
 //		node.setIpAddress("192.168.8.115");
-//		node.setMicrocontroller("mic1");
+		node.setMicrocontroller("TI MSP430");
 //		node.setDescription("Solar2000");
 		final String queryString = "123";
 		List <Node> nodes = new ArrayList<Node>();

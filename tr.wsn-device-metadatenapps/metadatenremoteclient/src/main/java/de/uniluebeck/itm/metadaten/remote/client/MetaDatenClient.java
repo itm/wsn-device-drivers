@@ -124,7 +124,7 @@ public class MetaDatenClient implements MetaDataClient {
 			channel = bootstrap.peerWith(server);
 		} catch (final IOException e1) {
 			// TODO Auto-generated catch block
-			log.error(e1.getStackTrace());
+			log.error("Fehler beim connecten zum Server" + e1.getStackTrace());
 		}
 
 		// erzeugen eines Controlles fuer diese Operation
