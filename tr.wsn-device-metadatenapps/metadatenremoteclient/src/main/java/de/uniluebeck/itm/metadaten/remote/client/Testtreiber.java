@@ -32,7 +32,7 @@ public class Testtreiber {
 		}
 		System.out.println("Node wird gebaut");
 		final Node node = new Node();
-        node.setId("3");
+//        node.setId("280120101");
         Capability cap = new Capability();
         cap.setName("urn:wisebed:node:capability:light");
         List <Capability> caplist = new ArrayList<Capability>();

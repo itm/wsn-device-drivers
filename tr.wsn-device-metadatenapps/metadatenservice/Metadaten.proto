@@ -19,7 +19,7 @@ message SearchResponse {
 	repeated NODE response = 1;
 }
 message Capabilities {
-	required string parentnode_id = 1;
+	optional string parentnode_id = 1;
 	optional int32 id = 2;
 	optional string name = 3;
 	optional string unit = 4;

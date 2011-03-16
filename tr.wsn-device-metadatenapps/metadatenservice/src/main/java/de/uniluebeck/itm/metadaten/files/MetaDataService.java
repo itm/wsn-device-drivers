@@ -671,9 +671,6 @@ public final class MetaDataService {
       queryMs_ = de.uniluebeck.itm.metadaten.files.MetaDataService.NODE.getDefaultInstance();
     }
     public final boolean isInitialized() {
-      if (hasQueryMs()) {
-        if (!getQueryMs().isInitialized()) return false;
-      }
       return true;
     }
     
@@ -1022,9 +1019,6 @@ public final class MetaDataService {
     private void initFields() {
     }
     public final boolean isInitialized() {
-      for (de.uniluebeck.itm.metadaten.files.MetaDataService.NODE element : getResponseList()) {
-        if (!element.isInitialized()) return false;
-      }
       return true;
     }
     
@@ -1341,7 +1335,7 @@ public final class MetaDataService {
       return de.uniluebeck.itm.metadaten.files.MetaDataService.internal_static_Capabilities_fieldAccessorTable;
     }
     
-    // required string parentnode_id = 1;
+    // optional string parentnode_id = 1;
     public static final int PARENTNODE_ID_FIELD_NUMBER = 1;
     private boolean hasParentnodeId;
     private java.lang.String parentnodeId_ = "";
@@ -1386,7 +1380,6 @@ public final class MetaDataService {
     private void initFields() {
     }
     public final boolean isInitialized() {
-      if (!hasParentnodeId) return false;
       return true;
     }
     
@@ -1674,7 +1667,7 @@ public final class MetaDataService {
       }
       
       
-      // required string parentnode_id = 1;
+      // optional string parentnode_id = 1;
       public boolean hasParentnodeId() {
         return result.hasParentnodeId();
       }
@@ -2164,9 +2157,6 @@ public final class MetaDataService {
     private void initFields() {
     }
     public final boolean isInitialized() {
-      for (de.uniluebeck.itm.metadaten.files.MetaDataService.Capabilities element : getCapabilityListList()) {
-        if (!element.isInitialized()) return false;
-      }
       return true;
     }
     
@@ -3257,7 +3247,7 @@ public final class MetaDataService {
       "\n\010query_ms\030\001 \001(\0132\005.NODE\022\024\n\014query_string\030" +
       "\002 \001(\t\")\n\016SearchResponse\022\027\n\010response\030\001 \003(" +
       "\0132\005.NODE\"q\n\014Capabilities\022\025\n\rparentnode_i" +
-      "d\030\001 \002(\t\022\n\n\002id\030\002 \001(\005\022\014\n\004name\030\003 \001(\t\022\014\n\004uni" +
+      "d\030\001 \001(\t\022\n\n\002id\030\002 \001(\005\022\014\n\004name\030\003 \001(\t\022\014\n\004uni" +
       "t\030\004 \001(\t\022\020\n\010defaults\030\005 \001(\005\022\020\n\010datatype\030\006 " +
       "\001(\t\"\026\n\010ServerIP\022\n\n\002iP\030\001 \002(\t\"y\n\004NODE\022\020\n\010k" +
       "notenid\030\001 \001(\t\022\027\n\017microcontroller\030\002 \001(\t\022\023",
