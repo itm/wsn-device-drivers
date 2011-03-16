@@ -4,18 +4,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
- * The Class ByteFileWriter.
- * Overrides the write-method of the FileWriter to write the content in bytes.
+ * The Class ByteFileWriter. Overrides the write-method of the FileWriter to
+ * write the content in bytes.
  */
 public class ByteFileWriter extends AbstractFileWriter {
 
 	FileOutputStream writer;
 
-	/* 
+	/*
 	 * @see de.uniluebeck.itm.datenlogger.AbstractFileWriter#write(byte[], int)
 	 */
 	@Override
-	public void write(byte[] content, int messageType) {
+	public void write(final byte[] content, final int messageType) {
 		try {
 			String temp = "";
 			for (byte a : content) {
@@ -28,11 +28,13 @@ public class ByteFileWriter extends AbstractFileWriter {
 		}
 	}
 
-	/* 
-	 * @see de.uniluebeck.itm.datenlogger.AbstractFileWriter#setLocation(java.lang.String)
+	/*
+	 * @see
+	 * de.uniluebeck.itm.datenlogger.AbstractFileWriter#setLocation(java.lang
+	 * .String)
 	 */
 	@Override
-	public void setLocation(String location) {
+	public void setLocation(final String location) {
 		try {
 			this.writer = new FileOutputStream(location);
 		} catch (IOException e) {
@@ -40,15 +42,15 @@ public class ByteFileWriter extends AbstractFileWriter {
 		}
 	}
 
-	/* 
+	/*
 	 * @see de.uniluebeck.itm.datenlogger.AbstractFileWriter#convert(byte[])
 	 */
 	@Override
-	public String convert(byte[] content) {
+	public String convert(final byte[] content) {
 		return "";
 	}
 
-	/* 
+	/*
 	 * @see de.uniluebeck.itm.datenlogger.AbstractFileWriter#close()
 	 */
 	@Override

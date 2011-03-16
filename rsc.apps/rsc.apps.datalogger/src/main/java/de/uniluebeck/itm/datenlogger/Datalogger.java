@@ -43,16 +43,23 @@ public class Datalogger {
 
 	/**
 	 * Instantiates a new datalogger.
-	 *
-	 * @param writer the writer
-	 * @param user the user
-	 * @param password the password
-	 * @param port the port
-	 * @param server the server
-	 * @param device the device
-	 * @param id the id
+	 * @param writer
+	 *            the writer
+	 * @param user
+	 *            the user
+	 * @param password
+	 *            the password
+	 * @param port
+	 *            the port
+	 * @param server
+	 *            the server
+	 * @param device
+	 *            the device
+	 * @param id
+	 *            the id
 	 */
-	public Datalogger(PausableWriter writer, String user, String password, String port, String server, String device, String id) {
+	public Datalogger(final PausableWriter writer, final String user, final String password,
+			final String port, final String server, final String device, final String id) {
 		this.writer = writer;
 		this.user = user;
 		this.password = password;
@@ -64,7 +71,6 @@ public class Datalogger {
 
 	/**
 	 * Checks if is started.
-	 *
 	 * @return true, if is started
 	 */
 	public boolean isStarted() {
@@ -73,7 +79,6 @@ public class Datalogger {
 
 	/**
 	 * Gets the writer.
-	 *
 	 * @return the writer
 	 */
 	public PausableWriter getWriter() {
@@ -82,19 +87,18 @@ public class Datalogger {
 
 	/**
 	 * Sets the writer.
-	 *
-	 * @param writer the new writer
+	 * @param writer
+	 *            the new writer
 	 */
-	public void setWriter(PausableWriter writer) {
+	public void setWriter(final PausableWriter writer) {
 		this.writer = writer;
 	}
-	
+
 	/**
 	 * Gets the RemoteConnection, when the client is connected to the server
-	 * 
 	 * @return the connection
 	 */
-	public RemoteConnection getConnection(){
+	public RemoteConnection getConnection() {
 		return connection;
 	}
 
@@ -106,10 +110,10 @@ public class Datalogger {
 			// Connect to the TCP-Server.
 			connection = new RemoteConnection();
 
-			try{
-				connection.connect(user + ":" + password + "@" + server
-						+ ":" + port + "/" + id);
-			}catch(Exception e){
+			try {
+				connection.connect(user + ":" + password + "@" + server + ":"
+						+ port + "/" + id);
+			} catch (Exception e) {
 				System.out.println("Cannot connect to server!");
 				System.exit(1);
 			}
@@ -123,9 +127,9 @@ public class Datalogger {
 				if (deviceParameter.equals("jennic")) {
 					// Connect to the local jennic-device.
 					SerialPortConnection jennicConnection = null;
-					try{
+					try {
 						jennicConnection = new iSenseSerialPortConnection();
-					}catch(java.lang.ExceptionInInitializerError e){
+					} catch (java.lang.ExceptionInInitializerError e) {
 						System.out.println("Could not connect to device!");
 						System.exit(1);
 					}
@@ -144,9 +148,9 @@ public class Datalogger {
 				} else if (deviceParameter.equals("pacemate")) {
 					// Connect to the local pacemate-device.
 					SerialPortConnection pacemateConnection = null;
-					try{
+					try {
 						pacemateConnection = new iSenseSerialPortConnection();
-					}catch(java.lang.ExceptionInInitializerError e){
+					} catch (java.lang.ExceptionInInitializerError e) {
 						System.out.println("Could not connect to device!");
 						System.exit(1);
 					}
@@ -165,9 +169,9 @@ public class Datalogger {
 				} else if (deviceParameter.equals("telosb")) {
 					// Connect to the local telosb-device
 					SerialPortConnection telosbConnection = null;
-					try{
+					try {
 						telosbConnection = new TelosbSerialPortConnection();
-					}catch(java.lang.ExceptionInInitializerError e){
+					} catch (java.lang.ExceptionInInitializerError e) {
 						System.out.println("Could not connect to device!");
 						System.exit(1);
 					}
@@ -183,7 +187,7 @@ public class Datalogger {
 					});
 					device = new TelosbDevice(telosbConnection);
 					telosbConnection.connect(port);
-				}else if(deviceParameter.equals("mock")){
+				} else if (deviceParameter.equals("mock")) {
 					// Connect to the mock-device for tests
 					final MockConnection connection = new MockConnection();
 					device = new MockDevice(connection);
@@ -194,10 +198,10 @@ public class Datalogger {
 			}
 		}
 	}
-	
+
 	/**
-	 * Registers a message packet listener on the connected device and
-	 * handles the incoming data.
+	 * Registers a message packet listener on the connected device and handles
+	 * the incoming data.
 	 */
 	public void startlog() {
 		started = true;
@@ -206,8 +210,9 @@ public class Datalogger {
 		listener = new MessagePacketListener() {
 			@Override
 			public void onMessagePacketReceived(
-					de.uniluebeck.itm.devicedriver.event.MessageEvent<MessagePacket> event) {
-				writer.write(event.getMessage().getContent(), event.getMessage().getType());
+					final de.uniluebeck.itm.devicedriver.event.MessageEvent<MessagePacket> event) {
+				writer.write(event.getMessage().getContent(), event
+						.getMessage().getType());
 			}
 		};
 		deviceAsync.addListener(listener, PacketType.LOG);

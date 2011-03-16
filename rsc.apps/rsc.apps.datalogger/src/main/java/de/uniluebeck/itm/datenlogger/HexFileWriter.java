@@ -3,16 +3,16 @@ package de.uniluebeck.itm.datenlogger;
 import de.uniluebeck.itm.tr.util.StringUtils;
 
 /**
- * The Class HexFileWriter.
- * Overrides the convert-method, to write the content as hex to a file.
+ * The Class HexFileWriter. Overrides the convert-method, to write the content
+ * as hex to a file.
  */
-public class HexFileWriter extends AbstractFileWriter{
+public class HexFileWriter extends AbstractFileWriter {
 
-	/* 
+	/*
 	 * @see de.uniluebeck.itm.datenlogger.AbstractFileWriter#convert(byte[])
 	 */
 	@Override
-	public String convert(byte[] content) {
+	public String convert(final byte[] content) {
 		return StringUtils.toHexString(content);
 	}
 

@@ -5,14 +5,14 @@ import java.io.Serializable;
 import com.google.common.base.Predicate;
 
 /**
- * The Class Brackets_Predicate.
- * Represents an object for the (Datatype, Begin, Value)-Filter
+ * The Class Brackets_Predicate. Represents an object for the (Datatype, Begin,
+ * Value)-Filter
  */
 public class BracketsPredicate implements Predicate<CharSequence>, Serializable {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 775543062421891927L;
-	
+
 	/** The filter given by the user. */
 	private String filter;
 	
@@ -21,20 +21,24 @@ public class BracketsPredicate implements Predicate<CharSequence>, Serializable 
 	/**
 	 * Instantiates a new brackets_ predicate.
 	 *
-	 * @param filter, given by the user.
+	 * @param filter , given by the user.
+	 * @param messageType the message type
 	 */
-	public BracketsPredicate(String filter, int messageType) {
+	public BracketsPredicate(final String filter, final int messageType) {
 		this.filter = filter;
 		this.messageType = messageType;
-		filter = filter.substring(1, filter.length() - 1);	//Deletes the brackets
+		this.filter = this.filter.substring(1, this.filter.length() - 1); // Deletes the
+															// brackets
 	}
 
 	/**
-	 * Method to match the incomming data with the given filter
+	 * Method to match the incomming data with the given filter.
+	 *
+	 * @param incomingData the incoming data
 	 * @return true, if the filter machtes, else false
 	 * @see com.google.common.base.Predicate#apply(java.lang.Object)
 	 */
-	public boolean apply(CharSequence incomingData) {
+	public boolean apply(final CharSequence incomingData) {
 		boolean result = true;
 		String[] singleFilter = filter.split(",");
 		// match Datatype

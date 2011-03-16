@@ -5,71 +5,70 @@ import java.io.Closeable;
 /**
  * The Interface PausableWriter.
  */
-public interface PausableWriter extends Closeable{
-	
+public interface PausableWriter extends Closeable {
+
 	/**
-	 * Writes the content to the current output location
-	 *
-	 * @param content the content
-	 * @param messageType the message type
+	 * Writes the content to the current output location.
+	 * @param content
+	 *            the content
+	 * @param messageType
+	 *            the message type
 	 */
-	public void write(byte[] content, int messageType);
-	
+	void write(final byte[] content, final int messageType);
+
 	/**
-	 * Writer gets paused
+	 * Writer gets paused.
 	 */
 	void pause();
-	
+
 	/**
-	 * Writer gets resumed
+	 * Writer gets resumed.
 	 */
 	void resume();
-	
+
 	/**
 	 * Sets the location.
 	 *
-	 * @param location
+	 * @param location the new location
 	 */
-	void setLocation(String location);
-	
+	void setLocation(final String location);
+
 	/**
 	 * Sets the bracket filter.
 	 *
-	 * @param bracketFilter 
+	 * @param bracketFilter the new bracket filter
 	 */
-	void setBracketFilter(String bracketFilter);
-	
+	void setBracketFilter(final String bracketFilter);
+
 	/**
 	 * Sets the regex filter.
 	 *
-	 * @param regexFilter 
+	 * @param regexFilter the new regex filter
 	 */
-	void setRegexFilter(String regexFilter);
-	
+	void setRegexFilter(final String regexFilter);
+
 	/**
 	 * Adds the bracket filter.
 	 *
-	 * @param bracketFilter 
+	 * @param bracketFilter the bracket filter
 	 */
-	void addBracketFilter(String bracketFilter);
-	
+	void addBracketFilter(final String bracketFilter);
+
 	/**
 	 * Adds the regex filter.
 	 *
-	 * @param regexFilter 
+	 * @param regexFilter the regex filter
 	 */
-	void addRegexFilter(String regexFilter);
+	void addRegexFilter(final String regexFilter);
 
 	/**
 	 * Gets the regex filter.
-	 *
 	 * @return the regex filter
 	 */
 	String getRegexFilter();
 
 	/**
 	 * Gets the bracket filter.
-	 *
 	 * @return the bracket filter
 	 */
 	String getBracketFilter();

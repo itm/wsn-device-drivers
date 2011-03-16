@@ -15,32 +15,31 @@ import org.apache.commons.cli.ParseException;
 import de.uniluebeck.itm.tcp.client.RemoteConnection;
 
 /**
- * The Class Main.
- * Console program for the datalogger.
- *
+ * The Class Main. Console program for the datalogger.
  */
 public class Main {
 
 	/** version. */
 	private static double version = 1.0;
-	
-	/** The brackets regex, to validate the brackets-filter */
+
+	/** The brackets regex, to validate the brackets-filter. */
 	private static String bracketsRegex = "([\\([0-9]+,[0-9]+,[0-9]+\\)]+(?:[\\|\\&][\\([0-9]+,[0-9]+,[0-9]+\\)]+)*)";
-	
-	/** The ip regex, to validate the server-address */
+
+	/** The ip regex, to validate the server-address. */
 	private static String ipRegex = "(((\\d{1,3}.){3})(\\d{1,3}))";
-	
+
 	/** The valid input gets false, when one of the input-parameters is wrong. */
 	private static boolean validInput = true;
-	
+
 	/**
 	 * The main method.
-	 * 
-	 * @param args the arguments
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @param args
+	 *            the arguments
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static void main(final String[] args) throws IOException {
-		//create standard-options, with the command and the description
+		// create standard-options, with the command and the description
 		Option helpOption = new Option("help", "print this message");
 		Option versionOption = new Option("version",
 				"print the version information");
@@ -69,8 +68,8 @@ public class Main {
 		CommandLineParser parser = new GnuParser();
 		CommandLine cmd = null;
 		if (args.length == 0) {
-			//if there is no input, print help message
-			printHelp(options);		
+			// if there is no input, print help message
+			printHelp(options);
 		} else {
 			try {
 				cmd = parser.parse(options, args);
@@ -87,71 +86,81 @@ public class Main {
 					System.out.println(version);
 				}
 
-				//parameters for connection
+				// parameters for connection
 				String server = cmd.getOptionValue("server");
 				String port = cmd.getOptionValue("port");
 				String id = cmd.getOptionValue("id");
 				String user = cmd.getOptionValue("username");
 				String password = cmd.getOptionValue("password");
 				String device = cmd.getOptionValue("device");
-				//parameters for filtering
-				String bracketsFilter = cmd
-						.getOptionValue("bracketsFilter");
+				// parameters for filtering
+				String bracketsFilter = cmd.getOptionValue("bracketsFilter");
 				String regexFilter = cmd.getOptionValue("regexFilter");
-				//parameters for the output of the logging
+				// parameters for the output of the logging
 				String location = cmd.getOptionValue("location");
 				String output = cmd.getOptionValue("output");
 
-				//Begin: validate input-data
+				// Begin: validate input-data
 				if (device == null && server == null) {
-					System.out.println("Wrong input: Please enter device or server!");
+					System.out
+							.println("Wrong input: Please enter device or server!");
 					validInput = false;
 				}
-				if(device != null){
-			    	if(!device.equals("mock") && !device.equals("jennic") && !device.equals("pacemate") && !device.equals("telosb")){
-			    		System.out.println("Wrong input: The device parameter can only be 'jennic', 'pacemate', 'telosb' or 'mock'.");
-			    		validInput = false;
-			    	}
-			    }
-				if(server != null){
-				    if(!server.matches(ipRegex) && !server.equals("localhost")){
-				    	System.out.println("Wrong input: This is no valid server address.");
-				    	validInput = false;
-				    }
+				if (device != null) {
+					if (!device.equals("mock") && !device.equals("jennic")
+							&& !device.equals("pacemate")
+							&& !device.equals("telosb")) {
+						System.out
+								.println("Wrong input: The device parameter can only be 'jennic', 'pacemate', 'telosb' or 'mock'.");
+						validInput = false;
+					}
+				}
+				if (server != null) {
+					if (!server.matches(ipRegex) && !server.equals("localhost")) {
+						System.out
+								.println("Wrong input: This is no valid server address.");
+						validInput = false;
+					}
 				}
 				if (port == null) {
 					System.out.println("Wrong input: Please enter port!");
 					validInput = false;
-				}else{
-					if(!port.matches("\\d*") && !port.matches("COM\\d+")){
-						System.out.println("Wrong input: This is no valid port number.");
-				    	validInput = false;
+				} else {
+					if (!port.matches("\\d*") && !port.matches("COM\\d+")) {
+						System.out
+								.println("Wrong input: This is no valid port number.");
+						validInput = false;
 					}
 				}
 				if (server != null && id == null) {
-					System.out.println("Wrong input: Please enter id of the device!");
+					System.out
+							.println("Wrong input: Please enter id of the device!");
 					validInput = false;
 				}
-				if(id != null && !id.matches("\\d*")){
-					System.out.println("Wrong input: Please enter id as integer!");
+				if (id != null && !id.matches("\\d*")) {
+					System.out
+							.println("Wrong input: Please enter id as integer!");
 					validInput = false;
 				}
-				if(bracketsFilter != null){
-					if(!bracketsFilter.matches(bracketsRegex)){
-					   	System.out.println("Wrong input: This is no valid bracket filter.");
-					   	validInput = false;
+				if (bracketsFilter != null) {
+					if (!bracketsFilter.matches(bracketsRegex)) {
+						System.out
+								.println("Wrong input: This is no valid bracket filter.");
+						validInput = false;
 					}
 				}
-			    if(output != null){
-			    	if(!output.equals("hex") && !output.equals("byte")){
-			    		System.out.println("Wrong input: The output parameter can only be 'hex' or 'byte'.");
-			    		validInput = false;
-			    	}
-			    }
-			    //End: validate input-data
-			    
-			    if(validInput){
-					//username and password is required to connect to the server
+				if (output != null) {
+					if (!output.equals("hex") && !output.equals("byte")) {
+						System.out
+								.println("Wrong input: The output parameter can only be 'hex' or 'byte'.");
+						validInput = false;
+					}
+				}
+				// End: validate input-data
+
+				if (validInput) {
+					// username and password is required to connect to the
+					// server
 					if (server != null
 							&& (user == null && password == null || user == null)) {
 						System.out.println("Username and Password is missing.");
@@ -169,66 +178,70 @@ public class Main {
 						System.out.print("Password: ");
 						password = in.readLine();
 					}
-					
+
 					// Init Writer
 					PausableWriter writer = initWriter(bracketsFilter,
 							regexFilter, location, output);
-	
+
 					Datalogger datalogger = new Datalogger(writer, user,
 							password, port, server, device, id);
 					datalogger.connect();
-					try{
+					try {
 						datalogger.startlog();
-	
-						//write-mote, to change parameters while logging.
+
+						// write-mote, to change parameters while logging.
 						while (true) {
 							while (true) {
 								final char in = (char) System.in.read();
-								if (in == 10) {		//press 'enter' to enter write-mode
-									writer.pause();	//writer get paused, to read the command from the console
+								if (in == 10) { // press 'enter' to enter
+												// write-mode
+									writer.pause(); // writer get paused, to
+													// read the command from the
+													// console
 									System.out.println("Write-mode entered");
+									System.out.println("Options:");
 									System.out
-									.println("Options:");
+											.println("Enter 'bracketsFilter filter' to add 'filter' to the current brackets-filter.");
 									System.out
-										.println("Enter 'bracketsFilter filter' to add 'filter' to the current brackets-filter.");
+											.println("Enter 'regexFilter filter' to add 'filter' to the current regex-filter.");
 									System.out
-										.println("Enter 'regexFilter filter' to add 'filter' to the current regex-filter.");
+											.println("Enter 'location location' to change the current location. 'location' will set the location to terminal.");
 									System.out
-										.println("Enter 'location location' to change the current location. 'location' will set the location to terminal.");
-									System.out
-									.println("Enter 'stoplog' to exit the program.\n");
+											.println("Enter 'stoplog' to exit the program.\n");
 									System.out
 											.print("Please enter your command: ");
 									String input = new BufferedReader(
 											new InputStreamReader(System.in))
 											.readLine();
 									if (input.startsWith("bracketsFilter")) {
-										//add brackets-filter
+										// add brackets-filter
 										String delims = " ";
 										String[] tokens = input.split(delims);
-										if(tokens[1].matches("[|&]?"+bracketsRegex)){
+										if (tokens[1].matches("[|&]?"
+												+ bracketsRegex)) {
 											writer.addBracketFilter(tokens[1]);
-										}else{
-										   	System.out.println("This is no valid bracket filter.");
+										} else {
+											System.out
+													.println("This is no valid bracket filter.");
 										}
 									} else if (input.startsWith("regexFilter")) {
-										//add regex-filter
+										// add regex-filter
 										String delims = " ";
 										String[] tokens = input.split(delims);
 										writer.addRegexFilter(tokens[1]);
 									} else if (input.equals("stoplog")) {
-										//stop logging
+										// stop logging
 										datalogger.stoplog();
 										System.exit(1);
 									} else if (input.startsWith("location")) {
-										//change the output location
+										// change the output location
 										String delims = " ";
 										String[] tokens = input.split(delims);
 										if (tokens.length < 2) {
 											writer = initWriter(
 													writer.getBracketFilter(),
-													writer.getRegexFilter(), null,
-													output);
+													writer.getRegexFilter(),
+													null, output);
 											datalogger.setWriter(writer);
 										} else {
 											writer = initWriter(
@@ -245,29 +258,29 @@ public class Main {
 								}
 							}
 						}
-					}finally{
-						//close remote connection
-						RemoteConnection connection = datalogger.getConnection();
-						if(connection != null){
+					} finally {
+						// close remote connection
+						RemoteConnection connection = datalogger
+								.getConnection();
+						if (connection != null) {
 							connection.shutdown(false);
 						}
 					}
-			    }
+				}
 			}
 		}
 	}
 
 	/**
 	 * Inits the writer.
-	 *
-	 * @param bracketsFilter 
+	 * @param bracketsFilter
 	 * @param regexFilter
-	 * @param location 
-	 * @param output 
+	 * @param location
+	 * @param output
 	 * @return the pausable writer
 	 */
-	public static PausableWriter initWriter(String bracketsFilter,
-			String regexFilter, String location, String output) {
+	public static PausableWriter initWriter(final String bracketsFilter,
+			final String regexFilter, final String location, final String output) {
 
 		PausableWriter writer = null;
 
@@ -301,10 +314,10 @@ public class Main {
 
 	/**
 	 * Prints the help.
-	 *
-	 * @param options the options
+	 * @param options
+	 *            the options
 	 */
-	public static void printHelp(Options options) {
+	public static void printHelp(final Options options) {
 		System.out.println("Examples:");
 		System.out
 				.println("Remote example: -bracketsFilter ((104,23,4)&(104,24,5))|(104,65,4) -location filename.txt -server localhost -id 1 -port 8181 -username name -password password");
