@@ -61,7 +61,7 @@ public class Main {
 				"type of device in local case: jennic, telosb oder pacemate");
 		options.addOption("id", true, "ID of the device in remote case");
 		options.addOption("timeout", true,
-				"optional timeout while flashing the device");
+				"optional timeout for the operation");
 		options.addOption("macAddress", true,
 				"the mac-address, that should be written on the device.");
 
