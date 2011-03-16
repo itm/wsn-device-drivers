@@ -93,7 +93,7 @@ public class OverlayClient {
 							// here.
 		List<Node> results = new ArrayList<Node>();
 		try {
-			results = client.search(queryExample, query); //
+			results = client.search(queryExample, query); 
 		} catch (Exception e) {
 			System.out.println("Error while searching the node.");
 		}
