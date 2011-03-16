@@ -21,6 +21,7 @@ public class OverlayClient {
 
 	/**
 	 * Instantiates a new overlay client.
+	 * 
 	 * @param username
 	 *            the username
 	 * @param password
@@ -32,8 +33,9 @@ public class OverlayClient {
 	 * @param clientPort
 	 *            the client port
 	 */
-	public OverlayClient(final String username, final String password, final String server,
-			final String serverPort, final String clientPort) {
+	public OverlayClient(final String username, final String password,
+			final String server, final String serverPort,
+			final String clientPort) {
 		this.username = username;
 		this.password = password;
 		this.server = server;
@@ -43,6 +45,7 @@ public class OverlayClient {
 
 	/**
 	 * Search device with the given id, microcontroller and/or capabilities.
+	 * 
 	 * @param id
 	 * @param microcontroller
 	 * @param capabilities
@@ -50,7 +53,8 @@ public class OverlayClient {
 	 *             the exception
 	 */
 	public void searchDevice(final String id, final String microcontroller,
-			final List<Capability> capabilities, final String description, final String searchIP) {
+			final List<Capability> capabilities, final String description,
+			final String searchIP) {
 		// connecting to the server
 		MetaDatenClient client = null;
 		try {
@@ -93,40 +97,48 @@ public class OverlayClient {
 							// here.
 		List<Node> results = new ArrayList<Node>();
 		try {
-			results = client.search(queryExample, query); 
+			results = client.search(queryExample, query);
 		} catch (Exception e) {
-			e.printStackTrace();
-			//System.out.println("Error while searching the node.");
+			System.out.println("Error while searching the node.");
 		}
 
 		// printing the results
 		System.out.println("Results: " + results.size());
-		for (int i=0; i<results.size(); i++) {
+		for (int i = 0; i < results.size(); i++) {
 			System.out.println();
-			System.out.println("Result " + (i+1) + ":");
+			System.out.println("Result " + (i + 1) + ":");
 			printNode(results.get(i));
 		}
 	}
 
 	/**
 	 * Prints the node.
+	 * 
 	 * @param node
 	 *            the node
 	 */
 	public void printNode(final Node node) {
-		System.out.println("_______________________________________________________________");
-		System.out.println("ID: " + node.getId() + "			Microcontroller: " + node.getMicrocontroller());
-		System.out.println("Description: " + node.getDescription() + "		Timestamp: " + node.getTimestamp());
+		System.out
+				.println("_______________________________________________________________");
+		System.out.println("ID: " + node.getId() + "			Microcontroller: "
+				+ node.getMicrocontroller());
+		System.out.println("Description: " + node.getDescription()
+				+ "		Timestamp: " + node.getTimestamp());
 		System.out.println("IP-Address: " + node.getIpAddress());
 		List<Capability> capabilities = node.getCapabilityList();
 		System.out.println("Capabilites:");
-		System.out.println("---------------------------------------------------------------");
+		System.out
+				.println("---------------------------------------------------------------");
 		for (int i = 0; i < capabilities.size(); i++) {
-			System.out.println("ID: " + capabilities.get(i).getId() + "		Name: " + capabilities.get(i).getName());
-			System.out.println("Unit: " + capabilities.get(i).getUnit() + "		Datatype: " + capabilities.get(i).getDatatype());
-			System.out.println("Default: " + capabilities.get(i).getCapDefault());
+			System.out.println("ID: " + capabilities.get(i).getId()
+					+ "		Name: " + capabilities.get(i).getName());
+			System.out.println("Unit: " + capabilities.get(i).getUnit()
+					+ "		Datatype: " + capabilities.get(i).getDatatype());
+			System.out.println("Default: "
+					+ capabilities.get(i).getCapDefault());
 		}
-		System.out.println("_______________________________________________________________");
+		System.out
+				.println("_______________________________________________________________");
 		System.out.println();
 	}
 }

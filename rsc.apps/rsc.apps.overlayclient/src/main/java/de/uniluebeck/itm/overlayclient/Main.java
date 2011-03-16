@@ -235,7 +235,8 @@ public class Main {
 		System.out.println("Examples:");
 		System.out
 				.println("Search by id of the node: -id 123 -server 141.48.65.111 -serverPort 8080");
-		// TODO Example for microcontroller
+		System.out
+				.println("Search by the microcontroller of the node: -microcontroller \"TI MSP430\" -server 141.48.65.111 -serverPort 8080");
 		System.out
 				.println("Search by one capability of the node: -capabilities light -server 141.48.65.111 -serverPort 8080");
 		System.out
