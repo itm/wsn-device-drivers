@@ -95,13 +95,16 @@ public class OverlayClient {
 		try {
 			results = client.search(queryExample, query); 
 		} catch (Exception e) {
-			System.out.println("Error while searching the node.");
+			e.printStackTrace();
+			//System.out.println("Error while searching the node.");
 		}
 
 		// printing the results
 		System.out.println("Results: " + results.size());
-		for (Node node : results) {
-			printNode(node);
+		for (int i=0; i<results.size(); i++) {
+			System.out.println();
+			System.out.println("Result " + (i+1) + ":");
+			printNode(results.get(i));
 		}
 	}
 
@@ -111,20 +114,19 @@ public class OverlayClient {
 	 *            the node
 	 */
 	public void printNode(final Node node) {
-		System.out.println("ID: " + node.getId());
-		System.out.println("Description: " + node.getDescription());
-		System.out.println("Microcontroller: " + node.getMicrocontroller());
+		System.out.println("_______________________________________________________________");
+		System.out.println("ID: " + node.getId() + "			Microcontroller: " + node.getMicrocontroller());
+		System.out.println("Description: " + node.getDescription() + "		Timestamp: " + node.getTimestamp());
+		System.out.println("IP-Address: " + node.getIpAddress());
 		List<Capability> capabilities = node.getCapabilityList();
 		System.out.println("Capabilites:");
+		System.out.println("---------------------------------------------------------------");
 		for (int i = 0; i < capabilities.size(); i++) {
-			System.out.println(capabilities.get(i).getId());
-			System.out.println(capabilities.get(i).getName());
-			System.out.println(capabilities.get(i).getUnit());
-			System.out.println(capabilities.get(i).getDatatype());
-			System.out.println(capabilities.get(i).getCapDefault());
+			System.out.println("ID: " + capabilities.get(i).getId() + "		Name: " + capabilities.get(i).getName());
+			System.out.println("Unit: " + capabilities.get(i).getUnit() + "		Datatype: " + capabilities.get(i).getDatatype());
+			System.out.println("Default: " + capabilities.get(i).getCapDefault());
 		}
-		System.out.println("Timestamp: " + node.getTimestamp());
-		System.out.println("IP-Address: " + node.getIpAddress());
+		System.out.println("_______________________________________________________________");
 		System.out.println();
 	}
 }
