@@ -53,8 +53,9 @@ public class FlashLoader {
 	 * @param id
 	 * @param timeout
 	 */
-	public FlashLoader(String port, String server, String username,
-			String password, String deviceParameter, String id, String timeout) {
+	public FlashLoader(final String port, final String server,
+			final String username, final String password,
+			final String deviceParameter, final String id, final String timeout) {
 		this.port = port;
 		this.server = server;
 		this.username = username;
@@ -67,7 +68,7 @@ public class FlashLoader {
 	}
 
 	/**
-	 * Gets the RemoteConnection, when the client is connected to the server
+	 * Gets the RemoteConnection, when the client is connected to the server.
 	 * 
 	 * @return the connection
 	 */
@@ -83,10 +84,10 @@ public class FlashLoader {
 			// Connect to the TCP-Server.
 			connection = new RemoteConnection();
 
-			try{
+			try {
 				connection.connect(username + ":" + password + "@" + server
 						+ ":" + port + "/" + id);
-			}catch(Exception e){
+			} catch (Exception e) {
 				System.out.println("Cannot connect to server!");
 				System.exit(1);
 			}
@@ -100,9 +101,9 @@ public class FlashLoader {
 				if (deviceParameter.equals("jennic")) {
 					// Connect to the local jennic-device.
 					SerialPortConnection jennicConnection = null;
-					try{
+					try {
 						jennicConnection = new iSenseSerialPortConnection();
-					}catch(java.lang.ExceptionInInitializerError e){
+					} catch (java.lang.ExceptionInInitializerError e) {
 						System.out.println("Could not connect to device!");
 						System.exit(1);
 					}
@@ -121,9 +122,9 @@ public class FlashLoader {
 				} else if (deviceParameter.equals("pacemate")) {
 					// Connect to the local pacemate-device.
 					SerialPortConnection pacemateConnection = null;
-					try{
+					try {
 						pacemateConnection = new iSenseSerialPortConnection();
-					}catch(java.lang.ExceptionInInitializerError e){
+					} catch (java.lang.ExceptionInInitializerError e) {
 						System.out.println("Could not connect to device!");
 						System.exit(1);
 					}
@@ -142,9 +143,9 @@ public class FlashLoader {
 				} else if (deviceParameter.equals("telosb")) {
 					// Connect to the local telosb-device
 					SerialPortConnection telosbConnection = null;
-					try{
+					try {
 						telosbConnection = new TelosbSerialPortConnection();
-					}catch(java.lang.ExceptionInInitializerError e){
+					} catch (java.lang.ExceptionInInitializerError e) {
 						System.out.println("Could not connect to device!");
 						System.exit(1);
 					}
@@ -160,7 +161,7 @@ public class FlashLoader {
 					});
 					device = new TelosbDevice(telosbConnection);
 					telosbConnection.connect(port);
-				}else if(deviceParameter.equals("mock")){
+				} else if (deviceParameter.equals("mock")) {
 					// Connect to the mock-device for tests
 					final MockConnection connection = new MockConnection();
 					device = new MockDevice(connection);
@@ -177,7 +178,7 @@ public class FlashLoader {
 	 * 
 	 * @param file
 	 */
-	public void flash(String file) {
+	public void flash(final String file) {
 		byte[] image = null;
 		try {
 			image = Files.toByteArray(new File(file));
@@ -195,13 +196,13 @@ public class FlashLoader {
 			}
 
 			@Override
-			public void onProgressChange(float fraction) {
+			public void onProgressChange(final float fraction) {
 				final int percent = (int) (fraction * 100.0);
 				System.out.println("Programming the Device: " + percent + "%");
 			}
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onSuccess(final Void result) {
 				System.out.println("The Device has been flashed.");
 				if (connection != null) {
 					connection.shutdown(false);
@@ -210,7 +211,7 @@ public class FlashLoader {
 			}
 
 			@Override
-			public void onFailure(Throwable throwable) {
+			public void onFailure(final Throwable throwable) {
 				System.out.println("Error while flashing the device.");
 				if (connection != null) {
 					connection.shutdown(false);
@@ -235,13 +236,13 @@ public class FlashLoader {
 				System.out.println("Read mac address is starting now...");
 			}
 
-			public void onProgressChange(float fraction) {
+			public void onProgressChange(final float fraction) {
 				final int percent = (int) (fraction * 100.0);
 				System.out.println("Reading mac address progress: " + percent
 						+ "%");
 			}
 
-			public void onSuccess(MacAddress result) {
+			public void onSuccess(final MacAddress result) {
 				System.out.println("Mac Address: " + result.toString());
 				if (connection != null) {
 					connection.shutdown(false);
@@ -249,7 +250,7 @@ public class FlashLoader {
 				System.exit(1);
 			}
 
-			public void onFailure(Throwable throwable) {
+			public void onFailure(final Throwable throwable) {
 				System.out.println("Error while reading the mac address.");
 				if (connection != null) {
 					connection.shutdown(false);
@@ -267,7 +268,7 @@ public class FlashLoader {
 	 * 
 	 * @param macAddress
 	 */
-	public void writemac(MacAddress macAddress) {
+	public void writemac(final MacAddress macAddress) {
 		System.out.println("Setting Mac Address");
 		// adds the writeMac-process to the queue and defines a callback to
 		// react to incoming status-messages
@@ -279,14 +280,14 @@ public class FlashLoader {
 			}
 
 			@Override
-			public void onProgressChange(float fraction) {
+			public void onProgressChange(final float fraction) {
 				final int percent = (int) (fraction * 100.0);
 				System.out.println("Writing mac address progress: " + percent
 						+ "%");
 			}
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onSuccess(final Void result) {
 				System.out.println("Mac Address written");
 				if (connection != null) {
 					connection.shutdown(false);
@@ -295,7 +296,7 @@ public class FlashLoader {
 			}
 
 			@Override
-			public void onFailure(Throwable throwable) {
+			public void onFailure(final Throwable throwable) {
 				System.out.println("Error while writing the mac address.");
 				throwable.printStackTrace();
 				if (connection != null) {
@@ -322,13 +323,13 @@ public class FlashLoader {
 			}
 
 			@Override
-			public void onProgressChange(float fraction) {
+			public void onProgressChange(final float fraction) {
 				final int percent = (int) (fraction * 100.0);
 				System.out.println("Reset the Device: " + percent + "%");
 			}
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onSuccess(final Void result) {
 				System.out.println("Device has been reseted");
 				if (connection != null) {
 					connection.shutdown(false);
@@ -336,7 +337,7 @@ public class FlashLoader {
 			}
 
 			@Override
-			public void onFailure(Throwable throwable) {
+			public void onFailure(final Throwable throwable) {
 				System.out.println("Error while reseting the device");
 				throwable.printStackTrace();
 				if (connection != null) {

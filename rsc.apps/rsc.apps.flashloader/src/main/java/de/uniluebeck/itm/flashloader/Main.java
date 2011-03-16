@@ -23,10 +23,10 @@ public class Main {
 	/** The version. */
 	private static double version = 1.0;
 
-	/** The ip regex, to validate the server-address */
+	/** The ip regex, to validate the server-address. */
 	private static String ipRegex = "(((\\d{1,3}.){3})(\\d{1,3}))";
 
-	/** The hex regex, to validate the mac-address */
+	/** The hex regex, to validate the mac-address. */
 	private static String hexRegex = "\\A\\b[0-9a-fA-F]+\\b\\Z";
 
 	/** The valid input gets false, when one of the input-parameters is wrong. */
@@ -40,7 +40,7 @@ public class Main {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public static void main(String[] args) throws IOException {
+	public static void main(final String[] args) throws IOException {
 		// create Options object
 		Option helpOption = new Option("help", "print this message");
 		Option versionOption = new Option("version",
@@ -154,9 +154,9 @@ public class Main {
 						flashLoader.connect();
 						flashLoader.reset();
 					}
-				}
-				else{
-					System.out.println("Wrong input: Please enter program-mode flash, readmac, writemac or reset.\n");
+				} else {
+					System.out
+							.println("Wrong input: Please enter program-mode flash, readmac, writemac or reset.\n");
 					printHelp(options);
 				}
 			}
@@ -173,22 +173,22 @@ public class Main {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public static FlashLoader readCmd(CommandLine cmd) throws IOException {
+	public static FlashLoader readCmd(final CommandLine cmd) throws IOException {
 		FlashLoader flashLoader = null;
-		
-		//parameters for connection
+		// parameters for connection
 		String server = cmd.getOptionValue("server");
 		String port = cmd.getOptionValue("port");
 		String id = cmd.getOptionValue("id");
 		String user = cmd.getOptionValue("user");
 		String password = cmd.getOptionValue("passwd");
 		String device = cmd.getOptionValue("device");
-		//parameter to set the timeout of the operation
+		// parameter to set the timeout of the operation
 		String timeout = cmd.getOptionValue("timeout");
 
 		// Begin: validate input-data
 		if (device == null && server == null) {
-			System.out.println("Wrong input: Please enter device(local) or server(remote)!");
+			System.out
+					.println("Wrong input: Please enter device(local) or server(remote)!");
 			validInput = false;
 		}
 		if (device != null) {
@@ -209,30 +209,32 @@ public class Main {
 		if (port == null) {
 			System.out.println("Wrong input: Please enter port!");
 			validInput = false;
-		}else{
-			if(!port.matches("\\d*") && !port.matches("COM\\d+")){
-				System.out.println("Wrong input: This is no valid port number.");
-		    	validInput = false;
+		} else {
+			if (!port.matches("\\d*") && !port.matches("COM\\d+")) {
+				System.out
+						.println("Wrong input: This is no valid port number.");
+				validInput = false;
 			}
 		}
 		if (server != null && id == null) {
 			System.out.println("Wrong input: Please enter id of the device!");
 			validInput = false;
 		}
-		if(id != null && !id.matches("\\d*")){
+		if (id != null && !id.matches("\\d*")) {
 			System.out.println("Wrong input: Please enter id as integer!");
 			validInput = false;
 		}
-		if(timeout != null){
-			if(!timeout.matches("\\d*")){
-				System.out.println("Wrong input: Please enter timeout as integer!");
+		if (timeout != null) {
+			if (!timeout.matches("\\d*")) {
+				System.out
+						.println("Wrong input: Please enter timeout as integer!");
 				validInput = false;
 			}
 		}
-	    //End: validate input-data
+		// End: validate input-data
 
-		if(validInput){
-			//username and password is required to connect to the server
+		if (validInput) {
+			// username and password is required to connect to the server
 			if (server != null
 					&& (user == null && password == null || user == null)) {
 				System.out.println("Username and Password is missing.");
@@ -252,21 +254,20 @@ public class Main {
 				password = in.readLine();
 				in.close();
 			}
-			
-			flashLoader = new FlashLoader(port, server, user, password,
-					device, id, timeout);
+
+			flashLoader = new FlashLoader(port, server, user, password, device,
+					id, timeout);
 		}
 		return flashLoader;
 	}
 
 	/**
 	 * Converts a hex-String to a byte array to send the mac-address
-	 * 
-	 * @param s, hex-String 
-	 *           
+	 * @param s
+	 *            , hex-String
 	 * @return data, the byte array
 	 */
-	public static byte[] hexStringToByteArray(String s) {
+	public static byte[] hexStringToByteArray(final String s) {
 		int len = s.length();
 		byte[] data = new byte[len / 2];
 		for (int i = 0; i < len; i += 2) {
@@ -278,11 +279,10 @@ public class Main {
 
 	/**
 	 * Prints the help.
-	 * 
 	 * @param options
 	 *            the options
 	 */
-	public static void printHelp(Options options) {
+	public static void printHelp(final Options options) {
 		System.out.println("Examples:");
 		System.out
 				.println("Flash: Remote-Example: flash -port 8181 -server localhost -id 1 -file jennic.bin");
@@ -295,7 +295,7 @@ public class Main {
 		System.out
 				.println("Reset: Local-Example: reset -port COM1 -device telosb");
 		System.out.println("");
-		
+
 		// for help statement
 		HelpFormatter formatter = new HelpFormatter();
 		formatter.printHelp("help", options);
