@@ -23,7 +23,8 @@ public class Main {
 	private static double version = 1.0;
 
 	/** The brackets regex, to validate the brackets-filter. */
-	private static String bracketsRegex = "([\\([0-9]+,[0-9]+,[0-9]+\\)]+(?:[\\|\\&][\\([0-9]+,[0-9]+,[0-9]+\\)]+)*)";
+	private static String bracketsRegex = "([\\([0-9]+,[0-9]+,[0-9]+\\)]+(?:" +
+			"[\\|\\&][\\([0-9]+,[0-9]+,[0-9]+\\)]+)*)";
 
 	/** The ip regex, to validate the server-address. */
 	private static String ipRegex = "(((\\d{1,3}.){3})(\\d{1,3}))";
@@ -111,7 +112,8 @@ public class Main {
 							&& !device.equals("pacemate")
 							&& !device.equals("telosb")) {
 						System.out
-								.println("Wrong input: The device parameter can only be 'jennic', 'pacemate', 'telosb' or 'mock'.");
+								.println("Wrong input: The device parameter can only " +
+										"be 'jennic', 'pacemate', 'telosb' or 'mock'.");
 						validInput = false;
 					}
 				}
@@ -152,7 +154,8 @@ public class Main {
 				if (output != null) {
 					if (!output.equals("hex") && !output.equals("byte")) {
 						System.out
-								.println("Wrong input: The output parameter can only be 'hex' or 'byte'.");
+								.println("Wrong input: The output parameter can only " +
+										"be 'hex' or 'byte'.");
 						validInput = false;
 					}
 				}
@@ -201,11 +204,18 @@ public class Main {
 									System.out.println("Write-mode entered");
 									System.out.println("Options:");
 									System.out
-											.println("Enter 'bracketsFilter filter' to add 'filter' to the current brackets-filter.");
+											.println("Enter 'bracketsFilter filter' " +
+													"to add 'filter' to the current " +
+													"brackets-filter.");
 									System.out
-											.println("Enter 'regexFilter filter' to add 'filter' to the current regex-filter.");
+											.println("Enter 'regexFilter filter' " +
+													"to add 'filter' to the current " +
+													"regex-filter.");
 									System.out
-											.println("Enter 'location location' to change the current location. 'location' will set the location to terminal.");
+											.println("Enter 'location location' to " +
+													"change the current location. " +
+													"'location' will set the location " +
+													"to terminal.");
 									System.out
 											.println("Enter 'stoplog' to exit the program.\n");
 									System.out
@@ -222,7 +232,8 @@ public class Main {
 											writer.addBracketFilter(tokens[1]);
 										} else {
 											System.out
-													.println("This is no valid bracket filter.");
+													.println("This is no valid bracket " +
+															"filter.");
 										}
 									} else if (input.startsWith("regexFilter")) {
 										// add regex-filter
@@ -320,9 +331,13 @@ public class Main {
 	public static void printHelp(final Options options) {
 		System.out.println("Examples:");
 		System.out
-				.println("Remote example: -bracketsFilter ((104,23,4)&(104,24,5))|(104,65,4) -location filename.txt -server localhost -id 1 -port 8181 -username name -password password");
+				.println("Remote example: -bracketsFilter " +
+						"((104,23,4)&(104,24,5))|(104,65,4) " +
+						"-location filename.txt -server localhost -id 1 " +
+						"-port 8181 -username name -password password");
 		System.out
-				.println("Local example: -regexFilter .*(4|3).* -device telosb -port COM1");
+				.println("Local example: -regexFilter .*(4|3).* " +
+						"-device telosb -port COM1");
 		System.out.println("");
 
 		// for help statement

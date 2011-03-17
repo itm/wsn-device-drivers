@@ -48,8 +48,9 @@ public class Messenger {
 	 * @param id the id
 	 * @param messageType the message type
 	 */
-	public Messenger(final String port, final String server, final String user, final String password,
-			final String device, final String id, final int messageType, final String timeout) {
+	public Messenger(final String port, final String server, final String user, 
+			final String password, final String device, final String id, 
+			final int messageType, final String timeout) {
 		this.port = port;
 		this.server = server;
 		this.user = user;
