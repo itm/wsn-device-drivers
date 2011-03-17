@@ -4,13 +4,10 @@ import org.apache.shiro.subject.Subject;
 
 import com.google.protobuf.RpcCallback;
 import com.google.protobuf.RpcController;
-import com.googlecode.protobuf.pro.duplex.execute.ServerRpcController;
 
 import de.uniluebeck.itm.devicedriver.ChipType;
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 import de.uniluebeck.itm.tcp.server.utils.ClientID;
-import de.uniluebeck.itm.tcp.server.utils.OperationType;
-import de.uniluebeck.itm.tcp.server.utils.ReverseMessage;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.ChipData;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.EmptyAnswer;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.ReverseAnswer;
@@ -21,7 +18,7 @@ import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.Timeout;
  * @author Andreas Maier
  *
  */
-public class GetChipTypeOperation extends AbstractOperation<ChipType> {
+public class GetChipTypeOperation extends AbstractReadOperation<ChipType> {
 
 	/**
 	 * the request of type Timeout
@@ -37,10 +34,8 @@ public class GetChipTypeOperation extends AbstractOperation<ChipType> {
 	 * @param request the Timeout request for a getChipType Operation
 	 */
 	public GetChipTypeOperation(final RpcController controller, final RpcCallback<EmptyAnswer> done, final Subject user, final ClientID id, final Timeout request) {
-		super(controller, done, user, id);
+		super(controller, done, user, id, request.getOperationKey());
 		this.request =  request;
-		setMessage(new ReverseMessage(request.getOperationKey(),ServerRpcController.getRpcChannel(controller)));
-		setOperationType(OperationType.READOPERATION);
 	}
 
 	@Override
@@ -52,20 +47,9 @@ public class GetChipTypeOperation extends AbstractOperation<ChipType> {
 			getMessage().reverseSuccess(ReverseAnswer.newBuilder().setChipData(chipData).build());
 		}
 	}
-	
+
 	@Override
-	protected void operate() {
-		
-		// erzeugen eines OperationHandle zur der Operation
-		final OperationHandle <ChipType> handle = getDeviceAsync().getChipType(request.getTimeout(),getAsyncAdapter());
-		
-		// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
-		getId().addHandleElement(request.getOperationKey(), handle);
-		
-		// hinzufuegen des OperationType dieser operation zur OperationTypeList
-		getId().addOperationType(request.getOperationKey(), getOperationType());
-		
-		getDone().run(EmptyAnswer.newBuilder().build());
-		
+	protected OperationHandle<ChipType> operate() {
+		return getDeviceAsync().getChipType(request.getTimeout(),getAsyncAdapter());
 	}
 }

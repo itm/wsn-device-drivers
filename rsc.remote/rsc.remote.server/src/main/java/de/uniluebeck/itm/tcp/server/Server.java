@@ -1,5 +1,7 @@
 package de.uniluebeck.itm.tcp.server;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -66,6 +68,8 @@ import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.STRING;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.Timeout;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.sendData;
 import de.uniluebeck.itm.tr.util.TimedCache;
+import de.uniluebeck.itm.tr.util.TimedCacheListener;
+import de.uniluebeck.itm.tr.util.Tuple;
 
 /**
  * TCP-Server
@@ -87,16 +91,16 @@ public class Server {
 	private final static int TIMEOUT = 30;
 
 	/**
-	 * stores a clientID for every open channel.
+	 * stores a clientID for every open channel;<br>
+	 * for every channel a Timer will be started
 	 */
-	private static TimedCache<RpcClientChannel, ClientID> idList = new TimedCache<RpcClientChannel, ClientID>(
-			TIMEOUT, TimeUnit.MINUTES);
+	private static Map<RpcClientChannel, ClientID> idList = new HashMap<RpcClientChannel, ClientID>();
 	/**
 	 * stores a Shiro subject for every open channel.
+	 * for every subject a Timer will be started.
 	 */
 	private static TimedCache<RpcClientChannel, Subject> authList = new TimedCache<RpcClientChannel, Subject>(
 			TIMEOUT, TimeUnit.MINUTES);
-
 	/**
 	 * contains the objects representing the devices connected to the host.
 	 */
@@ -143,12 +147,22 @@ public class Server {
 		serverDevices = new ServerDevice(devicesPath, configPath, sensorsPath,
 				metaDaten);
 	}
-
+	
 	/**
 	 * starts the whole Server.
 	 */
 	public void start() {
 
+		/* logout the user after the Timer has expired */
+		authList.setListener(new TimedCacheListener<RpcClientChannel, Subject>() {
+			
+			@Override
+			public Tuple<Long, TimeUnit> timeout(RpcClientChannel key, Subject value) {
+				value.logout();
+				return null;
+			}
+		});
+		
 		// erzeugen der Connection zu den Devices und starten der
 		// MetaDataCollection
 		serverDevices.createServerDevices();
@@ -221,11 +235,12 @@ public class Server {
 							id.getHandleList().remove(key);
 						}
 					}
-
-					// logout des Clients
-					authList.get(clientChannel).logout();
-					// entfernen des Clients aus der authentifiziert-Liste
-					authList.remove(clientChannel);
+					if(!authList.isEmpty() && null != authList.get(clientChannel)){
+						// logout des Clients
+						authList.get(clientChannel).logout();
+						// entfernen des Clients aus der authentifiziert-Liste
+						authList.remove(clientChannel);
+					}
 					// entfernen des ClientID-Objektes
 					idList.remove(clientChannel);
 				}
@@ -519,6 +534,12 @@ public class Server {
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
 
+			/* check authentification and renew the Timer */
+			if(!isAuthenticated(user, controller)){
+				done.run(null);
+				return;
+			}
+			
 			/*
 			 * erzeugen und ausfuehren einer program-Operation auf einem
 			 * physikalischen Device
@@ -546,6 +567,12 @@ public class Server {
 			// identifizieren des Users mit dem Channel
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
+			
+			/* check authentification and renew the Timer */
+			if(!isAuthenticated(user, controller)){
+				done.run(null);
+				return;
+			}
 
 			/*
 			 * erzeugen und ausfuehren einer writeMac-Operation auf einem
@@ -576,6 +603,12 @@ public class Server {
 			// identifizieren des Users mit dem Channel
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
+			
+			/* check authentification and renew the Timer */
+			if(!isAuthenticated(user, controller)){
+				done.run(null);
+				return;
+			}
 
 			/*
 			 * erzeugen und ausfuehren einer writeFlash-Operation auf einem
@@ -601,10 +634,16 @@ public class Server {
 
 			final Subject user = authList.get(ServerRpcController
 					.getRpcChannel(controller));
-
+			
 			// identifizieren des Users mit dem Channel
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
+			
+			/* check authentification and renew the Timer */
+			if(!isAuthenticated(user, controller)){
+				done.run(null);
+				return;
+			}
 
 			/*
 			 * erzeugen und ausfuehren einer eraseFlash-Operation auf einem
@@ -634,6 +673,12 @@ public class Server {
 			// identifizieren des Users mit dem Channel
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
+			
+			/* check authentification and renew the Timer */
+			if(!isAuthenticated(user, controller)){
+				done.run(null);
+				return;
+			}
 
 			/*
 			 * erzeugen und ausfuehren einer readFlash-Operation auf einem
@@ -664,6 +709,12 @@ public class Server {
 			// identifizieren des Users mit dem Channel
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
+			
+			/* check authentification and renew the Timer */
+			if(!isAuthenticated(user, controller)){
+				done.run(null);
+				return;
+			}
 
 			/*
 			 * erzeugen und ausfuehren einer readMac-Operation auf einem
@@ -693,6 +744,12 @@ public class Server {
 			// identifizieren des Users mit dem Channel
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
+			
+			/* check authentification and renew the Timer */
+			if(!isAuthenticated(user, controller)){
+				done.run(null);
+				return;
+			}
 
 			/*
 			 * erzeugen und ausfuehren einer reset-Operation auf einem
@@ -722,6 +779,12 @@ public class Server {
 			// identifizieren des Users mit dem Channel
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
+			
+			/* check authentification and renew the Timer */
+			if(!isAuthenticated(user, controller)){
+				done.run(null);
+				return;
+			}
 
 			/*
 			 * erzeugen und ausfuehren einer send-Operation auf einem
@@ -751,6 +814,12 @@ public class Server {
 			// identifizieren des Users mit dem Channel
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
+			
+			/* check authentification and renew the Timer */
+			if(!isAuthenticated(user, controller)){
+				done.run(null);
+				return;
+			}
 
 			/*
 			 * erzeugen und ausfuehren einer getChipType-Operation auf einem
@@ -759,6 +828,25 @@ public class Server {
 			new GetChipTypeOperation(controller, done, user, id, request)
 					.execute();
 		}
+
+		/**
+		 * check the Authentification of a User and restart his Authentification-Timer
+		 * @param user the User which start a Operation
+		 * @param controller the RPC-Controller for the Connection
+		 * @return true, if user is authenticated, false otherwise
+		 */
+		private boolean isAuthenticated(final Subject user, final RpcController controller){
+			if (user == null || !user.isAuthenticated()) {
+				controller.setFailed("You are not authenticated!");
+				return false;
+			}
+			else{
+				/* renew the Timer for a channel in the authList */
+				authList.put(ServerRpcController.getRpcChannel(controller), user);
+				return true;
+			}
+		}
+		
 	}
 
 	/**
@@ -788,7 +876,7 @@ public class Server {
 			final Subject user = authList.get(ServerRpcController
 					.getRpcChannel(controller));
 			if (user == null || !user.isAuthenticated()) {
-				controller.setFailed("Sie sind nicht authentifiziert!");
+				controller.setFailed("you are not authentificated!");
 				done.run(null);
 				return;
 			}
@@ -797,6 +885,10 @@ public class Server {
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
 
+			/* renew the Timer for a channel in the idList and in the authList */
+			idList.put(ServerRpcController.getRpcChannel(controller), id);
+			authList.put(ServerRpcController.getRpcChannel(controller), user);
+			
 			/* finden des richtigen Device */
 			final DeviceAsync deviceAsync = id.getDevice();
 
@@ -837,25 +929,6 @@ public class Server {
 
 			deviceAsync.addListener(listener, types);
 
-			// /*
-			// * erzeugen einer temporaeren HashMap, um die Beziehung zwischen
-			// * OpKey und Listener-Objekt zu erhalten
-			// */
-			// final HashMap<String, MessagePacketListener> temp = new
-			// HashMap<String, MessagePacketListener>();
-			// temp.put(request.getOperationKey(), listener);
-			//
-			// /*
-			// * hinzufuegen der temporaeren HashMap zur packetListenerList.
-			// Dies
-			// * ist notwendig, da ein Client den gleichen Channel benutzt aber
-			// * mehrere Operationen starten kann. Diese Beziehung muss zur
-			// * Verwaltung der Listener erhalten bleiben.
-			// */
-			// packetListenerList.put(ServerRpcController
-			// .getRpcChannel(controller), temp);
-			//
-
 			id.addPacketListener(request.getOperationKey(), listener);
 
 			done.run(EmptyAnswer.newBuilder().build());
@@ -881,7 +954,7 @@ public class Server {
 			final Subject user = authList.get(ServerRpcController
 					.getRpcChannel(controller));
 			if (user == null || !user.isAuthenticated()) {
-				controller.setFailed("Sie sind nicht authentifiziert!");
+				controller.setFailed("You are not authenticated!");
 				done.run(null);
 				return;
 			}
@@ -889,6 +962,10 @@ public class Server {
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
 
+			/* renew the Timer for a channel in the idList and in the authList */
+			idList.put(ServerRpcController.getRpcChannel(controller), id);
+			authList.put(ServerRpcController.getRpcChannel(controller), user);
+			
 			final DeviceAsync deviceAsync = id.getDevice();
 
 			if (deviceAsync == null) {
@@ -896,7 +973,7 @@ public class Server {
 				done.run(null);
 				return;
 			}
-
+			
 			final MessagePlainTextListener listener = new MessagePlainTextListener() {
 
 				@Override
@@ -911,13 +988,6 @@ public class Server {
 			};
 
 			deviceAsync.addListener(listener);
-
-			// final HashMap<String, MessagePlainTextListener> temp = new
-			// HashMap<String, MessagePlainTextListener>();
-			// temp.put(request.getOperationKey(), listener);
-			//
-			// plainTextListenerList.put(ServerRpcController
-			// .getRpcChannel(controller), temp);
 
 			id.addPlainTextListener(request.getOperationKey(), listener);
 
@@ -943,7 +1013,7 @@ public class Server {
 			final Subject user = authList.get(ServerRpcController
 					.getRpcChannel(controller));
 			if (user == null || !user.isAuthenticated()) {
-				controller.setFailed("Sie sind nicht authentifiziert!");
+				controller.setFailed("You are not authenticated!");
 				done.run(null);
 				return;
 			}
@@ -951,12 +1021,12 @@ public class Server {
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
 
+			/* renew the Timer for a channel in the idList and in the authList */
+			idList.put(ServerRpcController.getRpcChannel(controller), id);
+			authList.put(ServerRpcController.getRpcChannel(controller), user);
+			
 			/* finden des richtigen Device */
 			final DeviceAsync deviceAsync = id.getDevice();
-			// /* finden der richtigen ListenerList fuer den aktuellen Client */
-			// final HashMap<String, MessagePacketListener> temp =
-			// packetListenerList
-			// .get(ServerRpcController.getRpcChannel(controller));
 
 			/* Fehlerfall, sollte im normalen Betrieb nicht vorkommen */
 			if (deviceAsync == null
@@ -966,14 +1036,6 @@ public class Server {
 				done.run(null);
 				return;
 			}
-
-			// /* entfernen des Listener vom physikalischen Device */
-			// deviceAsync.removeListener(temp.get(request.getOperationKey()));
-			// /* entfernen des Listener aus der ListenerList des Clients */
-			// temp.remove(request.getOperationKey());
-			// /* ueberschreiben der alten ListenerList */
-			// packetListenerList.put(ServerRpcController
-			// .getRpcChannel(controller), temp);
 
 			deviceAsync.removeListener(id.getPacketListener(request
 					.getOperationKey()));
@@ -1001,7 +1063,7 @@ public class Server {
 			final Subject user = authList.get(ServerRpcController
 					.getRpcChannel(controller));
 			if (user == null || !user.isAuthenticated()) {
-				controller.setFailed("Sie sind nicht authentifiziert!");
+				controller.setFailed("You are not authenticated!");
 				done.run(null);
 				return;
 			}
@@ -1009,11 +1071,12 @@ public class Server {
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
 
+			/* renew the Timer for a channel in the idList and in the authList */
+			idList.put(ServerRpcController.getRpcChannel(controller), id);
+			authList.put(ServerRpcController.getRpcChannel(controller), user);
+			
 			final DeviceAsync deviceAsync = id.getDevice();
-			// final HashMap<String, MessagePlainTextListener> a =
-			// plainTextListenerList
-			// .get(ServerRpcController.getRpcChannel(controller));
-
+			
 			if (deviceAsync == null
 					|| id.getPlainTextListenerList().containsKey(
 							request.getOperationKey())) {
@@ -1022,11 +1085,6 @@ public class Server {
 				done.run(null);
 				return;
 			}
-
-			// deviceAsync.removeListener(a.get(request.getOperationKey()));
-			// a.remove(request.getOperationKey());
-			// plainTextListenerList.put(ServerRpcController
-			// .getRpcChannel(controller), a);
 
 			deviceAsync.removeListener(id.getPlainTextListener(request
 					.getOperationKey()));

@@ -7,12 +7,9 @@ import org.apache.shiro.subject.Subject;
 
 import com.google.protobuf.RpcCallback;
 import com.google.protobuf.RpcController;
-import com.googlecode.protobuf.pro.duplex.execute.ServerRpcController;
 
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 import de.uniluebeck.itm.tcp.server.utils.ClientID;
-import de.uniluebeck.itm.tcp.server.utils.OperationType;
-import de.uniluebeck.itm.tcp.server.utils.ReverseMessage;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.EmptyAnswer;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.ProgramPacket;
 
@@ -21,7 +18,7 @@ import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.ProgramPacket;
  * @author Andreas Maier
  *
  */
-public class ProgramOperation extends AbstractOperation<Void> {
+public class ProgramOperation extends AbstractWriteOperation<Void> {
 
 	/**
 	 * the request of type ProgramPacket
@@ -37,21 +34,13 @@ public class ProgramOperation extends AbstractOperation<Void> {
 	 * @param request the ProgramPacket request for a program Operation
 	 */
 	public ProgramOperation(final RpcController controller, final RpcCallback<EmptyAnswer> done, final Subject user, final ClientID id, final ProgramPacket request) {
-		super(controller, done, user, id);
+		super(controller, done, user, id, request.getOperationKey());
 		this.request =  request;
-		setMessage(new ReverseMessage(request.getOperationKey(),ServerRpcController.getRpcChannel(controller)));
-		setOperationType(OperationType.WRITEOPERATION);
 	}
 
 	@Override
-	protected void operate() {
+	protected OperationHandle<Void> operate() {
 		
-		if (!getUser().isPermitted("write:program")) {
-			getController().setFailed("Unauthorized: You are not allowed to write");
-			getDone().run(null);
-			return;
-		}
-
 		/* ueberpruefen der Chucksum, um eine korrekte Uebertragung der Daten sicherzustellen */
 		final byte[] data = request.getBinaryPacketList().get(0).toByteArray();
 		
@@ -61,21 +50,11 @@ public class ProgramOperation extends AbstractOperation<Void> {
 		if(request.getCrc() != checksum.getValue()){
 			getController().setFailed("CRC-Error");
 			getDone().run(null);
+			return null;
 		}else{
-		
 			// erzeugen eines OperationHandle zur der Operation
-			final OperationHandle <Void> handle = getDeviceAsync().program(data, request.getTimeout(), getAsyncAdapter());
-			
-			// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
-			getId().addHandleElement(request.getOperationKey(), handle);
-			
-			// hinzufuegen des OperationType dieser operation zur OperationTypeList
-			getId().addOperationType(request.getOperationKey(), getOperationType());
-			
-			// ausfuehren des Callbacks
-			getDone().run(EmptyAnswer.newBuilder().build());
+			return getDeviceAsync().program(data, request.getTimeout(), getAsyncAdapter());
 		}
-		
 	}
 	
 	

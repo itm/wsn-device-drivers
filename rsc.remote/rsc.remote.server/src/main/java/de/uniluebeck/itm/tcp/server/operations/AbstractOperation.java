@@ -1,14 +1,10 @@
 package de.uniluebeck.itm.tcp.server.operations;
 
-import org.apache.shiro.subject.Subject;
-
 import com.google.protobuf.RpcCallback;
-import com.google.protobuf.RpcController;
 
 import de.uniluebeck.itm.devicedriver.async.AsyncAdapter;
 import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.tcp.server.utils.ClientID;
-import de.uniluebeck.itm.tcp.server.utils.OperationType;
 import de.uniluebeck.itm.tcp.server.utils.ReverseMessage;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.EmptyAnswer;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.OpKey;
@@ -27,17 +23,9 @@ public abstract class AbstractOperation<T> {
 	// LoggerFactory.getLogger(AbstractOperation.class);
 
 	/**
-	 * RpcController
-	 */
-	private RpcController controller = null;
-	/**
 	 * RpcCallback<EmptyAnswer>
 	 */
 	private RpcCallback<EmptyAnswer> done = null;
-	/**
-	 * Shiro User
-	 */
-	private Subject user;
 	/**
 	 * ClientID Instance
 	 */
@@ -53,11 +41,6 @@ public abstract class AbstractOperation<T> {
 	private ReverseMessage message;
 
 	/**
-	 * OperationType of the Operation
-	 */
-	private OperationType operationType;
-
-	/**
 	 * Constructor
 	 * 
 	 * @param controller
@@ -69,13 +52,11 @@ public abstract class AbstractOperation<T> {
 	 * @param id
 	 *            the ClientID-Instance for the Operation
 	 */
-	public AbstractOperation(final RpcController controller,
-			final RpcCallback<EmptyAnswer> done, final Subject user,
+	public AbstractOperation(final RpcCallback<EmptyAnswer> done,
 			final ClientID id) {
-		this.controller = controller;
 		this.done = done;
-		this.user = user;
 		this.id = id;
+		this.deviceAsync = id.getDevice();
 	}
 
 	public ReverseMessage getMessage() {
@@ -95,56 +76,18 @@ public abstract class AbstractOperation<T> {
 		return deviceAsync;
 	}
 
-	public RpcController getController() {
-		return controller;
-	}
-
 	public RpcCallback<EmptyAnswer> getDone() {
 		return done;
-	}
-
-	public Subject getUser() {
-		return user;
 	}
 
 	public ClientID getId() {
 		return id;
 	}
 
-	public OperationType getOperationType() {
-		return this.operationType;
-	}
-
-	public void setOperationType(final OperationType operationType) {
-		this.operationType = operationType;
-	}
-
-	/**
-	 * Execute the different specific Operation-Functions on a
-	 * physical-Device</br> Example:</br>
-	 * 
-	 * <PRE>
-	 * 	final OperationHandle <Void> handle = getDeviceAsync().'OPERATIONNAME'('...',getAsyncAdapter());
-	 * 	getId().setHandleElement(request.getOperationKey(), handle);
-	 * 	getDone().run('...');
-	 * </PRE>
-	 */
-	abstract protected void operate();
-
 	/**
 	 * Method to start the Operation
 	 */
-	public void execute() {
-		// Shiro
-		if (user == null || !user.isAuthenticated()) {
-			controller.setFailed("Sie sind nicht authentifiziert!");
-			done.run(null);
-			return;
-		}
-
-		this.deviceAsync = id.getDevice();
-		operate();
-	}
+	abstract protected void execute();
 
 	/**
 	 * set the OnSuccess-Method for the AsyncAdapter <br>

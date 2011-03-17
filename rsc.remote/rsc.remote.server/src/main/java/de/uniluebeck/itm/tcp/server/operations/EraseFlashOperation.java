@@ -4,12 +4,9 @@ import org.apache.shiro.subject.Subject;
 
 import com.google.protobuf.RpcCallback;
 import com.google.protobuf.RpcController;
-import com.googlecode.protobuf.pro.duplex.execute.ServerRpcController;
 
 import de.uniluebeck.itm.devicedriver.async.OperationHandle;
 import de.uniluebeck.itm.tcp.server.utils.ClientID;
-import de.uniluebeck.itm.tcp.server.utils.OperationType;
-import de.uniluebeck.itm.tcp.server.utils.ReverseMessage;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.EmptyAnswer;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.Timeout;
 
@@ -18,7 +15,7 @@ import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.Timeout;
  * @author Andreas Maier
  *
  */
-public class EraseFlashOperation extends AbstractOperation<Void> {
+public class EraseFlashOperation extends AbstractWriteOperation<Void> {
 
 	/**
 	 * the request of type Timeout
@@ -34,35 +31,12 @@ public class EraseFlashOperation extends AbstractOperation<Void> {
 	 * @param request the Timeout request for a erase Operation
 	 */
 	public EraseFlashOperation(final RpcController controller, final RpcCallback<EmptyAnswer> done, final Subject user, final ClientID id, final Timeout request) {
-		super(controller, done, user, id);
+		super(controller, done, user, id, request.getOperationKey());
 		this.request =  request;
-		setMessage(new ReverseMessage(request.getOperationKey(),ServerRpcController.getRpcChannel(controller)));
-		setOperationType(OperationType.WRITEOPERATION);
 	}
 
 	@Override
-	protected void operate() {
-		
-		if (!getUser().isPermitted("write:program")) {
-			getController().setFailed("Unauthorized: You are not allowed to write");
-			getDone().run(null);
-			return;
-		}
-		
-		// erzeugen eines OperationHandle zur der Operation
-		final OperationHandle <Void> handle = getDeviceAsync().eraseFlash(request.getTimeout(), getAsyncAdapter());
-		
-		// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
-		getId().addHandleElement(request.getOperationKey(), handle);
-		
-		// hinzufuegen des OperationType dieser operation zur OperationTypeList
-		getId().addOperationType(request.getOperationKey(), getOperationType());
-		
-		// ausfuehren des Callbacks
-		getDone().run(EmptyAnswer.newBuilder().build());
-		
+	protected OperationHandle<Void> operate() {
+		return getDeviceAsync().eraseFlash(request.getTimeout(), getAsyncAdapter());
 	}
-	
-	
-
 }
