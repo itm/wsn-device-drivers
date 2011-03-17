@@ -50,25 +50,21 @@ public class OverlayClient {
 	 * @param microcontroller
 	 * @param capabilities
 	 * @throws Exception
-	 *             the exception
+	 *             exception while searching the nodes
 	 */
 	public void searchDevice(final String id, final String microcontroller,
 			final List<Capability> capabilities, final String description,
 			final String searchIP) {
 		// connecting to the server
 		MetaDatenClient client = null;
-		try {
-			if (clientPort != null) {
-				client = new MetaDatenClient(username, password, server,
-						Integer.valueOf(serverPort),
-						Integer.valueOf(clientPort));
+		if (clientPort != null) {
+			client = new MetaDatenClient(username, password, server,
+					Integer.valueOf(serverPort),
+					Integer.valueOf(clientPort));
 
-			} else {
-				client = new MetaDatenClient(username, password, server,
-						Integer.valueOf(serverPort));
-			}
-		} catch (Exception e) {
-			System.out.println("Could not connect to server!");
+		} else {
+			client = new MetaDatenClient(username, password, server,
+					Integer.valueOf(serverPort));
 		}
 
 		// searching by example

@@ -22,7 +22,8 @@ public class Main {
 	private static String ipRegex = "(((\\d{1,3}.){3})(\\d{1,3}))";
 
 	/** The capabilityList regex, to validate the List of capabilities. */
-	private static String capListRegex = "[[A-Za-z:]+,[0-9]*,[A-Za-z:]*]+(?:;[[A-Za-z:]+,[0-9]*,[A-Za-z:]*]+)*";
+	private static String capListRegex = "[[A-Za-z:]+,[0-9]*,[A-Za-z:]*]+(?:" +
+			";[[A-Za-z:]+,[0-9]*,[A-Za-z:]*]+)*";
 
 	/** The valid input gets false, when one of the input-parameters is wrong. */
 	private static boolean validInput = true;
@@ -53,7 +54,8 @@ public class Main {
 		options.addOption(
 				"capabilities",
 				true,
-				"capabilities you want to search for in this format: name,default,datatype;name,default,datatype");
+				"capabilities you want to search for in this format: name," +
+				"default,datatype;name,default,datatype");
 		options.addOption("username", true, "username to connect to the server");
 		options.addOption("password", true, "password to connect to the server");
 		options.addOption("server", true, "IP-Adress of the server");
@@ -131,14 +133,17 @@ public class Main {
 						&& capabilities == null && searchIP == null
 						&& description == null) {
 					System.out
-							.println("Wrong input: Please enter id, microcontroller, capabilities, searchIP or description to search for at least one of these parameters!");
+							.println("Wrong input: Please enter id, microcontroller, " +
+									"capabilities, searchIP or description to search " +
+									"for at least one of these parameters!");
 					validInput = false;
 				}
 				if (searchIP != null) {
 					if (!searchIP.matches(ipRegex)
 							&& !searchIP.equals("localhost")) {
 						System.out
-								.println("Wrong input: Please enter searchIP as IP-Address.");
+								.println("Wrong input: Please enter searchIP as " +
+										"IP-Address.");
 						validInput = false;
 					}
 				}
@@ -150,7 +155,9 @@ public class Main {
 				if (capabilities != null) {
 					if (!capabilities.matches(capListRegex)) {
 						System.out
-								.println("Wrong input: Please enter capability-names like name,default,datatype;name,default,datatype or name,default,datatype;name!");
+								.println("Wrong input: Please enter capability-names " +
+										"like name,default,datatype;name,default," +
+										"datatype or name,default,datatype;name!");
 						validInput = false;
 					}
 				}
@@ -191,9 +198,7 @@ public class Main {
 							Capability capabilityObject = new Capability();
 							for (int j = 0; j < capabilityAttr.length; j++) {
 								if (j == 0) {
-									String capabilityName = "urn:wisebed:node:capability:"
-											+ capabilityAttr[0];
-									capabilityObject.setName(capabilityName);
+									capabilityObject.setName(capabilityAttr[0]);
 								} else if (j == 1) {
 									if (capabilityAttr[1].matches("\\d*")) {
 										int capabilityDefault = Integer
@@ -234,21 +239,39 @@ public class Main {
 	public static void printHelp(final Options options) {
 		System.out.println("Examples:");
 		System.out
-				.println("Search by id of the node: -id 123 -server 141.48.65.111 -serverPort 8080");
+				.println("Search by id of the node: -id 123 -server 141.48.65.111 " +
+						"-serverPort 8080");
 		System.out
-				.println("Search by the microcontroller of the node: -microcontroller \"TI MSP430\" -server 141.48.65.111 -serverPort 8080");
+				.println("Search by the microcontroller of the node: " +
+						"-microcontroller \"TI MSP430\" -server 141.48.65.111 " +
+						"-serverPort 8080");
 		System.out
-				.println("Search by one capability of the node: -capabilities light -server 141.48.65.111 -serverPort 8080");
+				.println("Search by one capability of the node: " +
+						"-capabilities urn:wisebed:node:capability:light " +
+						"-server 141.48.65.111 " +
+						"-serverPort 8080");
 		System.out
-				.println("Search by three capabilities names: -capabilities light;temperature;gas -server 141.48.65.111 -serverPort 8080");
+				.println("Search by three capabilities names: " +
+						"-capabilities urn:wisebed:node:capability:light;" +
+						"urn:wisebed:node:capability:temp;urn:wisebed:node:" +
+						"capability:gas " +
+						"-server 141.48.65.111 -serverPort 8080");
 		System.out
-				.println("Search by three capabilities with name,default,datatype: -capabilities light,6,int;temperature,7,int;gas,3,int -server 141.48.65.111 -serverPort 8080");
+				.println("Search by three capabilities with name,default," +
+						"datatype: -capabilities urn:wisebed:node:capability:light," +
+						"6,int;urn:wisebed:node:capability:temp," +
+						"7,int;urn:wisebed:node:capability:gas,3,int " +
+						"-server 141.48.65.111 -serverPort 8080");
 		System.out
-				.println("Search by description of the node: -description wisebed -server 141.48.65.111 -serverPort 8080");
+				.println("Search by description of the node: -description wisebed" +
+						" -server 141.48.65.111 -serverPort 8080");
 		System.out
-				.println("Search by IP-Address of the node: -searchIP 141.49.65.111 -server 141.48.65.111 -serverPort 8080");
+				.println("Search by IP-Address of the node: -searchIP 141.49.65.111" +
+						" -server 141.48.65.111 -serverPort 8080");
 		System.out
-				.println("Search by IP-Address and description of the node: -searchIP 141.49.65.111 -description wisebed -server 141.48.65.111 -serverPort 8080");
+				.println("Search by IP-Address and description of the node: " +
+						"-searchIP 141.49.65.111 -description wisebed " +
+						"-server 141.48.65.111 -serverPort 8080");
 		System.out.println("");
 
 		// for help statement

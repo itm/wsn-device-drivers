@@ -93,7 +93,8 @@ public class Main {
 				// Begin: validate input-data
 				if (device == null && server == null) {
 					System.out
-							.println("Wrong input: Please enter device(local) or server(remote)!");
+							.println("Wrong input: Please enter device(local) " +
+									"or server(remote)!");
 					validInput = false;
 				}
 				if (device != null) {
@@ -101,7 +102,8 @@ public class Main {
 							&& !device.equals("pacemate")
 							&& !device.equals("telosb")) {
 						System.out
-								.println("Wrong input: The device parameter can only be 'jennic', 'pacemate', 'telosb' or 'mock'.");
+								.println("Wrong input: The device parameter can " +
+										"only be 'jennic', 'pacemate', 'telosb' or 'mock'.");
 						validInput = false;
 					}
 				}
@@ -200,9 +202,11 @@ public class Main {
 	public static void printHelp(final Options options) {
 		System.out.println("Examples:");
 		System.out
-				.println("Messenger: Remote example: -message 68616c6c6f -port 8181 -server localhost -id 1 -messageType 1");
+				.println("Messenger: Remote example: -message 68616c6c6f " +
+						"-port 8181 -server localhost -id 1 -messageType 1");
 		System.out
-				.println("Messenger: Local example: -message 68616c6c6f -port COM1 -device jennic -messageType 1");
+				.println("Messenger: Local example: -message 68616c6c6f " +
+						"-port COM1 -device jennic -messageType 1");
 		System.out.println("");
 		// for help statement
 		HelpFormatter formatter = new HelpFormatter();

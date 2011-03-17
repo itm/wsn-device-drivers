@@ -210,7 +210,8 @@ public class Datalogger {
 		listener = new MessagePacketListener() {
 			@Override
 			public void onMessagePacketReceived(
-					final de.uniluebeck.itm.devicedriver.event.MessageEvent<MessagePacket> event) {
+					final de.uniluebeck.itm.devicedriver.event.
+							MessageEvent<MessagePacket> event) {
 				writer.write(event.getMessage().getContent(), event
 						.getMessage().getType());
 			}

@@ -94,7 +94,8 @@ public class Main {
 					String file = cmd.getOptionValue("file");
 					if (file == null) {
 						System.out
-								.println("Wrong input: Please enter file to flash the device!");
+								.println("Wrong input: Please enter file to flash the " +
+										"device!");
 						validInput = false;
 					} else {
 						File f = new File(file);
@@ -128,7 +129,8 @@ public class Main {
 					} else {
 						if (!macAddress.matches(hexRegex)) {
 							System.out
-									.println("Wrong input: Please enter macAddress as hex!");
+									.println("Wrong input: Please enter macAddress " +
+											"as hex!");
 							validInput = false;
 						}
 					}
@@ -156,7 +158,8 @@ public class Main {
 					}
 				} else {
 					System.out
-							.println("Wrong input: Please enter program-mode flash, readmac, writemac or reset.\n");
+							.println("Wrong input: Please enter program-mode " +
+									"flash, readmac, writemac or reset.\n");
 					printHelp(options);
 				}
 			}
@@ -195,7 +198,8 @@ public class Main {
 			if (!device.equals("mock") && !device.equals("jennic")
 					&& !device.equals("pacemate") && !device.equals("telosb")) {
 				System.out
-						.println("Wrong input: The device parameter can only be 'jennic', 'pacemate', 'telosb' or 'mock'.");
+						.println("Wrong input: The device parameter can only " +
+								"be 'jennic', 'pacemate', 'telosb' or 'mock'.");
 				validInput = false;
 			}
 		}
@@ -285,15 +289,20 @@ public class Main {
 	public static void printHelp(final Options options) {
 		System.out.println("Examples:");
 		System.out
-				.println("Flash: Remote-Example: flash -port 8181 -server localhost -id 1 -file jennic.bin");
+				.println("Flash: Remote-Example: flash -port 8181 " +
+						"-server localhost -id 1 -file jennic.bin");
 		System.out
-				.println("Flash: Local-Example: flash -port COM1 -file jennic.bin -device jennic");
+				.println("Flash: Local-Example: flash -port COM1 " +
+						"-file jennic.bin -device jennic");
 		System.out
-				.println("Write Mac: Local-Example: writemac -port COM1 -device jennic -macAddress 080020aefd7e");
+				.println("Write Mac: Local-Example: writemac " +
+						"-port COM1 -device jennic -macAddress 080020aefd7e");
 		System.out
-				.println("Read Mac: Local-Example: readmac -port COM1 -device jennic");
+				.println("Read Mac: Local-Example: readmac " +
+						"-port COM1 -device jennic");
 		System.out
-				.println("Reset: Local-Example: reset -port COM1 -device telosb");
+				.println("Reset: Local-Example: reset " +
+						"-port COM1 -device telosb");
 		System.out.println("");
 
 		// for help statement
