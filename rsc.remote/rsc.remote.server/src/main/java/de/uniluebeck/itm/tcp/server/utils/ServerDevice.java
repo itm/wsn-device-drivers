@@ -16,13 +16,13 @@ import javax.xml.bind.Unmarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.devicedriver.Connection;
-import de.uniluebeck.itm.devicedriver.Device;
-import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
-import de.uniluebeck.itm.devicedriver.async.QueuedDeviceAsync;
-import de.uniluebeck.itm.devicedriver.async.thread.PausableExecutorOperationQueue;
 import de.uniluebeck.itm.metadaten.metadatenservice.metadatacollector.IMetaDataCollector;
 import de.uniluebeck.itm.metadaten.metadatenservice.metadatacollector.MetaDataCollector;
+import de.uniluebeck.itm.rsc.drivers.core.Connection;
+import de.uniluebeck.itm.rsc.drivers.core.Device;
+import de.uniluebeck.itm.rsc.drivers.core.async.DeviceAsync;
+import de.uniluebeck.itm.rsc.drivers.core.async.QueuedDeviceAsync;
+import de.uniluebeck.itm.rsc.drivers.core.async.thread.PausableExecutorOperationQueue;
 import de.uniluebeck.itm.tcp.jaxdevices.JaxbDevice;
 import de.uniluebeck.itm.tcp.jaxdevices.JaxbDeviceList;
 import de.uniluebeck.itm.tcp.jaxdevices.ObjectFactory;
@@ -149,7 +149,7 @@ public class ServerDevice {
 		return tmp.getValue();
 	}
 	
-	/* Example: ConnectionType = de.uniluebeck.itm.devicedriver.mockdevice.MockConnection */
+	/* Example: ConnectionType = de.uniluebeck.itm.rsc.drivers.core.mockdevice.MockConnection */
 	/**
 	 * creates a connection instance of the type specified in the devices.xml .
 	 * @param connectionType the Type of the Connection
@@ -170,8 +170,8 @@ public class ServerDevice {
 		return  connection;
 	}
 	
-	/* Example: DeviceName = de.uniluebeck.itm.devicedriver.mockdevice.MockDevice */
-	/* Example: DeviceName = de.uniluebeck.itm.devicedriver.jennic.JennicDevice */
+	/* Example: DeviceName = de.uniluebeck.itm.rsc.drivers.core.mockdevice.MockDevice */
+	/* Example: DeviceName = de.uniluebeck.itm.rsc.drivers.core.jennic.JennicDevice */
 	/**
 	 * creates a device instance of the type specified in the devices.xml .
 	 * @param deviceName the Name of the DeviceType

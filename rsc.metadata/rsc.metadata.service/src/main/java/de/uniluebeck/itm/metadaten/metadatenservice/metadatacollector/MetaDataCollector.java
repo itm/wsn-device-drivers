@@ -7,8 +7,8 @@ import java.net.UnknownHostException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.metadatenservice.config.Node;
+import de.uniluebeck.itm.rsc.drivers.core.async.DeviceAsync;
 
 public class MetaDataCollector implements IMetaDataCollector {
 	private static Logger log = LoggerFactory.getLogger(MetaDataCollector.class);

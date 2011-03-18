@@ -6,14 +6,14 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.uniluebeck.itm.devicedriver.Monitor;
-import de.uniluebeck.itm.devicedriver.async.AsyncAdapter;
-import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
-import de.uniluebeck.itm.devicedriver.async.OperationHandle;
-import de.uniluebeck.itm.devicedriver.async.OperationQueue;
-import de.uniluebeck.itm.devicedriver.async.thread.PausableExecutorOperationQueue;
-import de.uniluebeck.itm.devicedriver.operation.AbstractOperation;
-import de.uniluebeck.itm.devicedriver.operation.Operation;
+import de.uniluebeck.itm.rsc.drivers.core.Monitor;
+import de.uniluebeck.itm.rsc.drivers.core.async.AsyncAdapter;
+import de.uniluebeck.itm.rsc.drivers.core.async.AsyncCallback;
+import de.uniluebeck.itm.rsc.drivers.core.async.OperationHandle;
+import de.uniluebeck.itm.rsc.drivers.core.async.OperationQueue;
+import de.uniluebeck.itm.rsc.drivers.core.async.thread.PausableExecutorOperationQueue;
+import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractOperation;
+import de.uniluebeck.itm.rsc.drivers.core.operation.Operation;
 
 public class SingleThreadOperationQueueTest {
 

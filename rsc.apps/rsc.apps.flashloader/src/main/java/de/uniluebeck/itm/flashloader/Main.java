@@ -13,7 +13,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import de.uniluebeck.itm.devicedriver.MacAddress;
+import de.uniluebeck.itm.rsc.drivers.core.MacAddress;
 
 /**
  * The Class Main.

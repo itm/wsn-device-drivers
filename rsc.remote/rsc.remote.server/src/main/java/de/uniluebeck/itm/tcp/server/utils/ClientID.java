@@ -1,10 +1,11 @@
 package de.uniluebeck.itm.tcp.server.utils;
 
 import java.util.HashMap;
-import de.uniluebeck.itm.devicedriver.MessagePacketListener;
-import de.uniluebeck.itm.devicedriver.MessagePlainTextListener;
-import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
-import de.uniluebeck.itm.devicedriver.async.OperationHandle;
+
+import de.uniluebeck.itm.rsc.drivers.core.MessagePacketListener;
+import de.uniluebeck.itm.rsc.drivers.core.MessagePlainTextListener;
+import de.uniluebeck.itm.rsc.drivers.core.async.DeviceAsync;
+import de.uniluebeck.itm.rsc.drivers.core.async.OperationHandle;
 
 /**
  * Represent the Identity of every User in the TCP-Server

@@ -2,24 +2,24 @@ package de.uniluebeck.itm.datenlogger;
 
 import java.io.IOException;
 
-import de.uniluebeck.itm.devicedriver.ConnectionEvent;
-import de.uniluebeck.itm.devicedriver.ConnectionListener;
-import de.uniluebeck.itm.devicedriver.Device;
-import de.uniluebeck.itm.devicedriver.MessagePacket;
-import de.uniluebeck.itm.devicedriver.MessagePacketListener;
-import de.uniluebeck.itm.devicedriver.PacketType;
-import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
-import de.uniluebeck.itm.devicedriver.async.OperationQueue;
-import de.uniluebeck.itm.devicedriver.async.QueuedDeviceAsync;
-import de.uniluebeck.itm.devicedriver.async.thread.PausableExecutorOperationQueue;
-import de.uniluebeck.itm.devicedriver.generic.iSenseSerialPortConnection;
-import de.uniluebeck.itm.devicedriver.jennic.JennicDevice;
-import de.uniluebeck.itm.devicedriver.mockdevice.MockConnection;
-import de.uniluebeck.itm.devicedriver.mockdevice.MockDevice;
-import de.uniluebeck.itm.devicedriver.pacemate.PacemateDevice;
-import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection;
-import de.uniluebeck.itm.devicedriver.telosb.TelosbDevice;
-import de.uniluebeck.itm.devicedriver.telosb.TelosbSerialPortConnection;
+import de.uniluebeck.itm.rsc.drivers.core.ConnectionEvent;
+import de.uniluebeck.itm.rsc.drivers.core.ConnectionListener;
+import de.uniluebeck.itm.rsc.drivers.core.Device;
+import de.uniluebeck.itm.rsc.drivers.core.MessagePacket;
+import de.uniluebeck.itm.rsc.drivers.core.MessagePacketListener;
+import de.uniluebeck.itm.rsc.drivers.core.PacketType;
+import de.uniluebeck.itm.rsc.drivers.core.async.DeviceAsync;
+import de.uniluebeck.itm.rsc.drivers.core.async.OperationQueue;
+import de.uniluebeck.itm.rsc.drivers.core.async.QueuedDeviceAsync;
+import de.uniluebeck.itm.rsc.drivers.core.async.thread.PausableExecutorOperationQueue;
+import de.uniluebeck.itm.rsc.drivers.core.mockdevice.MockConnection;
+import de.uniluebeck.itm.rsc.drivers.core.mockdevice.MockDevice;
+import de.uniluebeck.itm.rsc.drivers.core.serialport.SerialPortConnection;
+import de.uniluebeck.itm.rsc.drivers.isense.iSenseSerialPortConnection;
+import de.uniluebeck.itm.rsc.drivers.jennic.JennicDevice;
+import de.uniluebeck.itm.rsc.drivers.pacemate.PacemateDevice;
+import de.uniluebeck.itm.rsc.drivers.telosb.TelosbDevice;
+import de.uniluebeck.itm.rsc.drivers.telosb.TelosbSerialPortConnection;
 import de.uniluebeck.itm.tcp.client.RemoteConnection;
 import de.uniluebeck.itm.tcp.client.RemoteDevice;
 
@@ -210,7 +210,7 @@ public class Datalogger {
 		listener = new MessagePacketListener() {
 			@Override
 			public void onMessagePacketReceived(
-					final de.uniluebeck.itm.devicedriver.event.
+					final de.uniluebeck.itm.rsc.drivers.core.event.
 							MessageEvent<MessagePacket> event) {
 				writer.write(event.getMessage().getContent(), event
 						.getMessage().getType());

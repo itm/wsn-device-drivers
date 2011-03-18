@@ -6,7 +6,7 @@ import com.google.protobuf.RpcCallback;
 import com.google.protobuf.RpcController;
 import com.googlecode.protobuf.pro.duplex.execute.ServerRpcController;
 
-import de.uniluebeck.itm.devicedriver.async.OperationHandle;
+import de.uniluebeck.itm.rsc.drivers.core.async.OperationHandle;
 import de.uniluebeck.itm.tcp.server.utils.ClientID;
 import de.uniluebeck.itm.tcp.server.utils.OperationType;
 import de.uniluebeck.itm.tcp.server.utils.ReverseMessage;

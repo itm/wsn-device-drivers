@@ -5,8 +5,8 @@ import org.apache.shiro.subject.Subject;
 import com.google.protobuf.RpcCallback;
 import com.google.protobuf.RpcController;
 
-import de.uniluebeck.itm.devicedriver.MacAddress;
-import de.uniluebeck.itm.devicedriver.async.OperationHandle;
+import de.uniluebeck.itm.rsc.drivers.core.MacAddress;
+import de.uniluebeck.itm.rsc.drivers.core.async.OperationHandle;
 import de.uniluebeck.itm.tcp.server.utils.ClientID;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.EmptyAnswer;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.MacData;

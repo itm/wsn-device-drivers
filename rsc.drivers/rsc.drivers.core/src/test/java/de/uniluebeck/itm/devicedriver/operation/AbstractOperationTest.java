@@ -4,9 +4,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.uniluebeck.itm.devicedriver.Monitor;
-import de.uniluebeck.itm.devicedriver.State;
-import de.uniluebeck.itm.devicedriver.async.AsyncAdapter;
+import de.uniluebeck.itm.rsc.drivers.core.Monitor;
+import de.uniluebeck.itm.rsc.drivers.core.State;
+import de.uniluebeck.itm.rsc.drivers.core.async.AsyncAdapter;
+import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractOperation;
+import de.uniluebeck.itm.rsc.drivers.core.operation.Operation;
 
 public class AbstractOperationTest {
 

@@ -2,11 +2,11 @@ package de.uniluebeck.itm.devicedrivier.exmaple;
 
 import java.io.File;
 
-import de.uniluebeck.itm.devicedriver.Device;
-import de.uniluebeck.itm.devicedriver.MessagePacket;
-import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection;
-import de.uniluebeck.itm.devicedriver.telosb.TelosbDevice;
-import de.uniluebeck.itm.devicedriver.telosb.TelosbSerialPortConnection;
+import de.uniluebeck.itm.rsc.drivers.core.Device;
+import de.uniluebeck.itm.rsc.drivers.core.MessagePacket;
+import de.uniluebeck.itm.rsc.drivers.core.serialport.SerialPortConnection;
+import de.uniluebeck.itm.rsc.drivers.telosb.TelosbDevice;
+import de.uniluebeck.itm.rsc.drivers.telosb.TelosbSerialPortConnection;
 
 public class TelosbDeviceExample {
 

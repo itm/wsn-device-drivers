@@ -16,7 +16,7 @@ import com.googlecode.protobuf.pro.duplex.RpcClientChannel;
 import com.googlecode.protobuf.pro.duplex.client.DuplexTcpClientBootstrap;
 import com.googlecode.protobuf.pro.duplex.execute.ThreadPoolCallExecutor;
 
-import de.uniluebeck.itm.devicedriver.AbstractConnection;
+import de.uniluebeck.itm.rsc.drivers.core.AbstractConnection;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Identification;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.Operations.BlockingInterface;

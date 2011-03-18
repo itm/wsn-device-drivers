@@ -13,12 +13,12 @@
         	</xsd:element>
             <xsd:element name="DeviceType" type="xsd:string" minOccurs="1" maxOccurs="1">
         	       	<xsd:annotation>
-						<xsd:documentation> The full-path Classname of the Device. Example: de.uniluebeck.itm.devicedriver.mockdevice.MockDevice</xsd:documentation>
+						<xsd:documentation> The full-path Classname of the Device. Example: de.uniluebeck.itm.rsc.drivers.core.mockdevice.MockDevice</xsd:documentation>
 					</xsd:annotation>
             </xsd:element>
             <xsd:element name="ConnectionType" type="xsd:string" minOccurs="1" maxOccurs="1">
             		<xsd:annotation>
-						<xsd:documentation> The full-path Classname of the Connection for the Device. Example: de.uniluebeck.itm.devicedriver.mockdevice.MockConnection</xsd:documentation>
+						<xsd:documentation> The full-path Classname of the Connection for the Device. Example: de.uniluebeck.itm.rsc.drivers.core.mockdevice.MockConnection</xsd:documentation>
 					</xsd:annotation>
             </xsd:element>
             <xsd:element name="Port" type="xsd:string" minOccurs="1" maxOccurs="1">

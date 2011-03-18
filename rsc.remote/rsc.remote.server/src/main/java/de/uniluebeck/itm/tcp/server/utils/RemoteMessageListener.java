@@ -6,11 +6,11 @@ import com.google.protobuf.RpcCallback;
 import com.google.protobuf.RpcController;
 import com.googlecode.protobuf.pro.duplex.RpcClientChannel;
 
-import de.uniluebeck.itm.devicedriver.MessagePacket;
-import de.uniluebeck.itm.devicedriver.MessagePacketListener;
-import de.uniluebeck.itm.devicedriver.MessagePlainText;
-import de.uniluebeck.itm.devicedriver.MessagePlainTextListener;
-import de.uniluebeck.itm.devicedriver.event.MessageEvent;
+import de.uniluebeck.itm.rsc.drivers.core.MessagePacket;
+import de.uniluebeck.itm.rsc.drivers.core.MessagePacketListener;
+import de.uniluebeck.itm.rsc.drivers.core.MessagePlainText;
+import de.uniluebeck.itm.rsc.drivers.core.MessagePlainTextListener;
+import de.uniluebeck.itm.rsc.drivers.core.event.MessageEvent;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.EmptyAnswer;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.ListenerData;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.PacketServiceAnswer;

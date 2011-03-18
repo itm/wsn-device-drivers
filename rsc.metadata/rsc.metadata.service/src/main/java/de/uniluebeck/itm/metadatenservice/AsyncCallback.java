@@ -1,6 +1,6 @@
 package de.uniluebeck.itm.metadatenservice;
 
-import de.uniluebeck.itm.devicedriver.Monitor;
+import de.uniluebeck.itm.rsc.drivers.core.Monitor;
 
 /**
  * Callback method for async operations.

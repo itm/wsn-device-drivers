@@ -3,8 +3,8 @@ package de.uniluebeck.itm.metadaten.metadatenservice.metadatacollector;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.metadatenservice.config.Node;
+import de.uniluebeck.itm.rsc.drivers.core.async.DeviceAsync;
 
 public class MetaDatenCollector {
 	public DeviceAsync device;

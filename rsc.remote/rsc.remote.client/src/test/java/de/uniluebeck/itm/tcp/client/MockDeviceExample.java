@@ -1,14 +1,14 @@
 package de.uniluebeck.itm.tcp.client;
 
-import de.uniluebeck.itm.devicedriver.ChipType;
-import de.uniluebeck.itm.devicedriver.MacAddress;
-import de.uniluebeck.itm.devicedriver.MessagePacket;
-import de.uniluebeck.itm.devicedriver.MessagePacketListener;
-import de.uniluebeck.itm.devicedriver.PacketType;
-import de.uniluebeck.itm.devicedriver.async.AsyncAdapter;
-import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
-import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
-import de.uniluebeck.itm.devicedriver.event.MessageEvent;
+import de.uniluebeck.itm.rsc.drivers.core.ChipType;
+import de.uniluebeck.itm.rsc.drivers.core.MacAddress;
+import de.uniluebeck.itm.rsc.drivers.core.MessagePacket;
+import de.uniluebeck.itm.rsc.drivers.core.MessagePacketListener;
+import de.uniluebeck.itm.rsc.drivers.core.PacketType;
+import de.uniluebeck.itm.rsc.drivers.core.async.AsyncAdapter;
+import de.uniluebeck.itm.rsc.drivers.core.async.AsyncCallback;
+import de.uniluebeck.itm.rsc.drivers.core.async.DeviceAsync;
+import de.uniluebeck.itm.rsc.drivers.core.event.MessageEvent;
 
 public class MockDeviceExample {
 //

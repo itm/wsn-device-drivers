@@ -5,23 +5,23 @@ import java.io.IOException;
 
 import com.google.common.io.Files;
 
-import de.uniluebeck.itm.devicedriver.ChipType;
-import de.uniluebeck.itm.devicedriver.Connection;
-import de.uniluebeck.itm.devicedriver.ConnectionEvent;
-import de.uniluebeck.itm.devicedriver.ConnectionListener;
-import de.uniluebeck.itm.devicedriver.Device;
-import de.uniluebeck.itm.devicedriver.MacAddress;
-import de.uniluebeck.itm.devicedriver.MessagePacket;
-import de.uniluebeck.itm.devicedriver.MessagePacketListener;
-import de.uniluebeck.itm.devicedriver.async.AsyncAdapter;
-import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
-import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
-import de.uniluebeck.itm.devicedriver.async.OperationQueue;
-import de.uniluebeck.itm.devicedriver.async.QueuedDeviceAsync;
-import de.uniluebeck.itm.devicedriver.async.thread.PausableExecutorOperationQueue;
-import de.uniluebeck.itm.devicedriver.event.MessageEvent;
-import de.uniluebeck.itm.devicedriver.nulldevice.NullConnection;
-import de.uniluebeck.itm.devicedriver.nulldevice.NullDevice;
+import de.uniluebeck.itm.rsc.drivers.core.ChipType;
+import de.uniluebeck.itm.rsc.drivers.core.Connection;
+import de.uniluebeck.itm.rsc.drivers.core.ConnectionEvent;
+import de.uniluebeck.itm.rsc.drivers.core.ConnectionListener;
+import de.uniluebeck.itm.rsc.drivers.core.Device;
+import de.uniluebeck.itm.rsc.drivers.core.MacAddress;
+import de.uniluebeck.itm.rsc.drivers.core.MessagePacket;
+import de.uniluebeck.itm.rsc.drivers.core.MessagePacketListener;
+import de.uniluebeck.itm.rsc.drivers.core.async.AsyncAdapter;
+import de.uniluebeck.itm.rsc.drivers.core.async.AsyncCallback;
+import de.uniluebeck.itm.rsc.drivers.core.async.DeviceAsync;
+import de.uniluebeck.itm.rsc.drivers.core.async.OperationQueue;
+import de.uniluebeck.itm.rsc.drivers.core.async.QueuedDeviceAsync;
+import de.uniluebeck.itm.rsc.drivers.core.async.thread.PausableExecutorOperationQueue;
+import de.uniluebeck.itm.rsc.drivers.core.event.MessageEvent;
+import de.uniluebeck.itm.rsc.drivers.core.nulldevice.NullConnection;
+import de.uniluebeck.itm.rsc.drivers.core.nulldevice.NullDevice;
 
 public class GenericDeviceExample implements MessagePacketListener, ConnectionListener {
 

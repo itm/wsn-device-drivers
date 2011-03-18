@@ -3,8 +3,8 @@ package de.uniluebeck.itm.metadaten.metadatenservice.metadatacollector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.metadatenservice.config.Node;
+import de.uniluebeck.itm.rsc.drivers.core.async.DeviceAsync;
 
 /**
  * Collects all Data that is delvired by the devices themself

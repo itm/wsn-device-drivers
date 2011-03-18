@@ -4,11 +4,11 @@ import com.google.protobuf.RpcController;
 import com.google.protobuf.ServiceException;
 import com.googlecode.protobuf.pro.duplex.RpcClientChannel;
 
-import de.uniluebeck.itm.devicedriver.ChipType;
-import de.uniluebeck.itm.devicedriver.MacAddress;
-import de.uniluebeck.itm.devicedriver.State;
-import de.uniluebeck.itm.devicedriver.async.AsyncCallback;
-import de.uniluebeck.itm.devicedriver.async.OperationHandle;
+import de.uniluebeck.itm.rsc.drivers.core.ChipType;
+import de.uniluebeck.itm.rsc.drivers.core.MacAddress;
+import de.uniluebeck.itm.rsc.drivers.core.State;
+import de.uniluebeck.itm.rsc.drivers.core.async.AsyncCallback;
+import de.uniluebeck.itm.rsc.drivers.core.async.OperationHandle;
 import de.uniluebeck.itm.tcp.client.files.PacketServiceAnswerImpl;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.GetHandleAnswers;
 import de.uniluebeck.itm.tcp.client.files.MessageServiceFiles.OpKey;

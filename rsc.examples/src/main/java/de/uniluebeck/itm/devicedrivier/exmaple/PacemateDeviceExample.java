@@ -2,11 +2,11 @@ package de.uniluebeck.itm.devicedrivier.exmaple;
 
 import java.io.File;
 
-import de.uniluebeck.itm.devicedriver.Device;
-import de.uniluebeck.itm.devicedriver.MessagePacket;
-import de.uniluebeck.itm.devicedriver.generic.iSenseSerialPortConnection;
-import de.uniluebeck.itm.devicedriver.pacemate.PacemateDevice;
-import de.uniluebeck.itm.devicedriver.serialport.SerialPortConnection;
+import de.uniluebeck.itm.rsc.drivers.core.Device;
+import de.uniluebeck.itm.rsc.drivers.core.MessagePacket;
+import de.uniluebeck.itm.rsc.drivers.core.serialport.SerialPortConnection;
+import de.uniluebeck.itm.rsc.drivers.isense.iSenseSerialPortConnection;
+import de.uniluebeck.itm.rsc.drivers.pacemate.PacemateDevice;
 
 public class PacemateDeviceExample extends GenericDeviceExample {
 	

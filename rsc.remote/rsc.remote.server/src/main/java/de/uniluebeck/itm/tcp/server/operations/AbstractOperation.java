@@ -2,8 +2,8 @@ package de.uniluebeck.itm.tcp.server.operations;
 
 import com.google.protobuf.RpcCallback;
 
-import de.uniluebeck.itm.devicedriver.async.AsyncAdapter;
-import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
+import de.uniluebeck.itm.rsc.drivers.core.async.AsyncAdapter;
+import de.uniluebeck.itm.rsc.drivers.core.async.DeviceAsync;
 import de.uniluebeck.itm.tcp.server.utils.ClientID;
 import de.uniluebeck.itm.tcp.server.utils.ReverseMessage;
 import de.uniluebeck.itm.tcp.server.utils.MessageServiceFiles.EmptyAnswer;

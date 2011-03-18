@@ -2,9 +2,9 @@ package de.uniluebeck.itm.metadatenservice;
 
 import java.io.File;
 
-import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.metadaten.metadatenservice.metadatacollector.IMetaDataCollector;
 import de.uniluebeck.itm.metadaten.metadatenservice.metadatacollector.MetaDataCollector;
+import de.uniluebeck.itm.rsc.drivers.core.async.DeviceAsync;
 
 public class Testtreiber {
 
