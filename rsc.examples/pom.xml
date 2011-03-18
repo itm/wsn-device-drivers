@@ -9,7 +9,7 @@
 	</parent>
 	
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>de.uni-luebeck.itm</groupId>
+	<groupId>de.uniluebeck.itm</groupId>
 	<artifactId>rsc.examples</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Remote Sensor Control Examples</name>
