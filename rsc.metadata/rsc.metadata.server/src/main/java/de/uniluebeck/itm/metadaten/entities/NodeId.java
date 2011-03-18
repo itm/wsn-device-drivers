@@ -3,9 +3,16 @@ package de.uniluebeck.itm.metadaten.entities;
 import java.io.Serializable;
 
 import javax.persistence.Embeddable;
+import javax.persistence.Transient;
 
 @Embeddable
 public class NodeId implements Serializable{
+	/**
+	 * 
+	 */
+	@Transient
+	private static final long serialVersionUID = -7922093913435426044L;
+	
 	String id;
 	String ipAdress;
 	public String getId() {

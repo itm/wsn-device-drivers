@@ -4,8 +4,8 @@ import java.io.File;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import de.uniluebeck.itm.metadaten.serverclient.metadataclienthelper.ConfigReader;
 import de.uniluebeck.itm.metadatenservice.config.Capability;
 import de.uniluebeck.itm.metadatenservice.config.Node;
@@ -21,7 +21,7 @@ public class FileCollector {
 	/**
 	 * Logger for FileCollector
 	 */
-	private static Log log = LogFactory.getLog(FileCollector.class);
+	private static Logger log = LoggerFactory.getLogger(FileCollector.class);
 	/** Constructor */
 	public FileCollector() {
 	};
@@ -63,7 +63,7 @@ public class FileCollector {
 			}
 		}
 		catch(final NullPointerException e){
-			log.error(e.getCause());
+			log.error(e.getMessage(),e);
 		}
 		return node;
 	}

@@ -10,8 +10,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
@@ -64,7 +64,7 @@ public class MetaDatenServer {
 	/**
 	 * Logger for the server
 	 */
-	private static Log log = LogFactory.getLog(MetaDatenServer.class);
+	private static Logger log = LoggerFactory.getLogger(MetaDatenServer.class);
 	/**The time period that the authorized client channel is hold in the authorization map*/
 	private final static int TIMEOUT = 300; 
 	
@@ -275,7 +275,7 @@ public class MetaDatenServer {
 			try {
 				storeDB.storeNode(node);
 			} catch (final NodeInDBException e) {
-				log.error(e.getStackTrace());
+				log.error(e.getMessage(),e);
 				controller.setFailed("Error saving Node: " + e.getMessage());
 				done.run(VOID.newBuilder().build());
 			}
@@ -321,7 +321,7 @@ public class MetaDatenServer {
 			Node node = new Node();
 			final Subject user = authList.get(ServerRpcController
 					.getRpcChannel(controller));
-			log.debug("Method: refresh: User: " + user == null
+			log.debug("Method: refresh: User: " + user
 					+ "user authenticated? " + user.isAuthenticated());
 			if (user == null || !user.isAuthenticated()) {
 				controller.setFailed("You are not authenticated!");
@@ -413,7 +413,7 @@ public class MetaDatenServer {
 				currentUser.logout();
 			}catch(final NullPointerException e){
 				log.error("Error while logging out user." );
-				log.error(e.getStackTrace());
+				log.error(e.getMessage(),e);
 			}
 			log.info("Und user noch in der Liste"
 					+ authList.get(ServerRpcController

@@ -5,19 +5,17 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.criterion.Example;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.metadaten.entities.Capability;
 import de.uniluebeck.itm.metadaten.entities.Node;
@@ -28,11 +26,12 @@ import de.uniluebeck.itm.metadaten.entities.Node;
  * @author Toralf Babel
  */
 
+@SuppressWarnings("deprecation")
 public class DatabaseToStore {
 	/**
 	 * Logger for loading operations
 	 */
-	private static Log log = LogFactory.getLog(StoreToDatabase.class);
+	private static Logger log = LoggerFactory.getLogger(StoreToDatabase.class);
 	/**SessionFactory delivers sessions for DB-actions*/
 	private static final SessionFactory OUR_SESSION_FACTORY;
 	/***/
@@ -225,11 +224,12 @@ public class DatabaseToStore {
 		// nod.getId()).list());
 		// }
 		if (resultlist.size() > 0) {
-			for (Node nod : resultlist) {
-				// nod.setCapabilityList(session.createQuery("from Capability where parentnode_id ="+
-				// nod.getId()).list());
-				resultlist.get(0).getCapabilityList().size();
-			}
+			resultlist.get(0).getCapabilityList().size();
+//			for (Node nod : resultlist) {
+//				// nod.setCapabilityList(session.createQuery("from Capability where parentnode_id ="+
+//				// nod.getId()).list());
+//				resultlist.get(0).getCapabilityList().size();
+//			}
 
 		}
 		transaction.commit();

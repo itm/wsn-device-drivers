@@ -7,8 +7,6 @@ import java.util.List;
 import de.uniluebeck.itm.metadaten.entities.Capability;
 import de.uniluebeck.itm.metadaten.entities.Node;
 import de.uniluebeck.itm.metadaten.entities.NodeId;
-import de.uniluebeck.itm.metadaten.server.exception.NodeInDBException;
-import de.uniluebeck.itm.persistence.DatabaseToStore;
 import de.uniluebeck.itm.persistence.StoreToDatabase;
 
 public class dbtest {

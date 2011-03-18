@@ -14,96 +14,21 @@
 	<packaging>jar</packaging>
 
 	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>cglib</groupId>
-			<artifactId>cglib</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.rxtx</groupId>
-			<artifactId>rxtx</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.google.inject</groupId>
-			<artifactId>guice</artifactId>
-		</dependency>
 		<!-- Kommunikation -->
-		<dependency>
-			<groupId>com.googlecode.protobuf.pro</groupId>
-			<artifactId>protobuf-rpc-pro-duplex</artifactId>
-			<version>1.1.0</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/lib/protobuf-rpc-pro-duplex-1.1.0.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>com.google.protobuf</groupId>
-			<artifactId>protobuf-java</artifactId>
-			<type>jar</type>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.netty</groupId>
-			<artifactId>netty</artifactId>
-		</dependency>
 		<!-- Shiro - Sicherheit -->
-		<dependency>
-			<groupId>org.apache.shiro</groupId>
-			<artifactId>shiro-core</artifactId>
-		</dependency>
 		<!-- Sensortreiber -->
-		<dependency>
-			<groupId>de.uniluebeck.itm</groupId>
-			<artifactId>rsc.drivers.core</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>de.uniluebeck.itm</groupId>
-			<artifactId>tr.util</artifactId>
-		</dependency>
 		<!--Logging -->
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>org.simpleframework</groupId>
 			<artifactId>simple-xml</artifactId>
 		</dependency>
 		<!-- Hibernate -->
 		<dependency>
-			<groupId>org.hibernate.javax.persistence</groupId>
-			<artifactId>hibernate-jpa-2.0-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
 		</dependency>
 
 		<!-- MySQL database driver -->
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>

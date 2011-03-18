@@ -1,10 +1,8 @@
 package de.uniluebeck.itm.metadaten.metadatenservice.metadatacollector;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.devicedriver.ChipType;
-import de.uniluebeck.itm.devicedriver.async.AsyncAdapter;
 import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.metadatenservice.config.Node;
 
@@ -16,7 +14,7 @@ import de.uniluebeck.itm.metadatenservice.config.Node;
  */
 public class DeviceCollector {
 	/** Logger */
-	private static Log log = LogFactory.getLog(DeviceCollector.class);
+	private static Logger log = LoggerFactory.getLogger(DeviceCollector.class);
 
 	/** Constructor */
 	public DeviceCollector() {

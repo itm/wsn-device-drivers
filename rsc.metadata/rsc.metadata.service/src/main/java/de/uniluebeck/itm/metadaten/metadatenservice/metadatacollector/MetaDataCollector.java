@@ -4,14 +4,14 @@ import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.devicedriver.async.DeviceAsync;
 import de.uniluebeck.itm.metadatenservice.config.Node;
 
 public class MetaDataCollector implements IMetaDataCollector {
-	private static Log log = LogFactory.getLog(MetaDataCollector.class);
+	private static Logger log = LoggerFactory.getLogger(MetaDataCollector.class);
 	private DeviceAsync device = null;
 	private String knotenId = "";
 

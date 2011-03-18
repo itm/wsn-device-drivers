@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.AnnotationConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.metadaten.entities.Capability;
 import de.uniluebeck.itm.metadaten.entities.Node;
@@ -23,11 +23,12 @@ import de.uniluebeck.itm.metadaten.server.exception.NodeInDBException;
  * 
  * @author Toralf Babel
  */
+@SuppressWarnings("deprecation")
 public class StoreToDatabase {
 	/**
 	 * Logger for saving operations
 	 */
-	private static Log log = LogFactory.getLog(StoreToDatabase.class);
+	private static Logger log = LoggerFactory.getLogger(StoreToDatabase.class);
 	/** */
 	private static final SessionFactory OURSESSIONFACTORY;
 	/** Url to Hibernate Config */

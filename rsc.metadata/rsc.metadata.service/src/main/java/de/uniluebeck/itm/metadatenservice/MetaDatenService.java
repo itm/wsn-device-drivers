@@ -1,14 +1,14 @@
 package de.uniluebeck.itm.metadatenservice;
 
 import java.io.File;
-import java.rmi.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniluebeck.itm.metadaten.metadatenservice.metadatacollector.IMetaDataCollector;
 import de.uniluebeck.itm.metadaten.serverclient.metadataclienthelper.ConfigReader;
 import de.uniluebeck.itm.metadatenservice.config.ConfigData;
@@ -16,7 +16,7 @@ import de.uniluebeck.itm.metadatenservice.config.Node;
 
 public class MetaDatenService extends TimerTask implements iMetaDatenService {
 	/**Logger*/
-	private static Log log = LogFactory.getLog(MetaDatenService.class);
+	private static Logger log = LoggerFactory.getLogger(MetaDatenService.class);
 	private ClientStub stub = null;
 	private List<IMetaDataCollector> collector = new ArrayList<IMetaDataCollector>();
 	private ConfigData config = new ConfigData();
@@ -34,7 +34,7 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService {
 		try {
 			removeData();
 		} catch (final NullPointerException npe) {
-			log.error(npe.getStackTrace());
+			log.error(npe.getMessage(),npe);
 		}
 
 		// nach 2 Sek gehts los
@@ -64,7 +64,7 @@ public class MetaDatenService extends TimerTask implements iMetaDatenService {
 		try {
 			stub.disconnect();
 		} catch (final NullPointerException npe) {
-			log.error(npe.getStackTrace());
+			log.error(npe.getMessage(),npe);
 		}
 		log.info("refreshrun disconnected:");
 	}

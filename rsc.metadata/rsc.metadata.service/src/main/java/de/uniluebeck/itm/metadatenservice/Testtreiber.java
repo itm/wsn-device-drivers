@@ -29,7 +29,7 @@ public class Testtreiber {
 		System.out.println("Collector initialisieren");
 //		IMetaDataCollector mcollector = new MetaDataCollector (device, "11"+String.valueOf(new Date().getTime()));
 		IMetaDataCollector mcollector = new MetaDataCollector (device, "280120101");
-		System.out.println("Collector hinzufügen");
+		System.out.println("Collector hinzufuegen");
 		try{
 			mclient.addMetaDataCollector(mcollector);
 		}catch(Exception e){

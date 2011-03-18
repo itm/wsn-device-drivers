@@ -5,11 +5,10 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.metadaten.entities.Node;
-import de.uniluebeck.itm.persistence.DatabaseToStore;
 import de.uniluebeck.itm.persistence.StoreToDatabase;
 /**
  * Class deletes old nodes (depending on their timestamp) in the given period
@@ -18,7 +17,7 @@ import de.uniluebeck.itm.persistence.StoreToDatabase;
  */
 public class CleanRepository extends TimerTask {
 	/**Logger*/
-	private static Log log = LogFactory.getLog(CleanRepository.class);
+	private static Logger log = LoggerFactory.getLogger(CleanRepository.class);
 	/**timeperiod that the nodes timestamp does have until it will be removed from repository*/
 	private int overageperiod;
 	/**Timer for regularly cleaning the repository*/
@@ -38,7 +37,7 @@ public class CleanRepository extends TimerTask {
 	public void run() {
 		final Node node = new Node();
 		final StoreToDatabase storeDB = new StoreToDatabase();
-		final DatabaseToStore fromDB = new DatabaseToStore();
+		//final DatabaseToStore fromDB = new DatabaseToStore();
 		final Date actDate = new Date();
 		final Date olddate = new Date();
         olddate.setTime(olddate.getTime()-overageperiod);

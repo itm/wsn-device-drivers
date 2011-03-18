@@ -46,7 +46,7 @@
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>rsc.metadata.client</artifactId>
+				<artifactId>rsc.metadata.searchclient</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
@@ -56,7 +56,7 @@
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>rsc.metadata.shared</artifactId>
+				<artifactId>rsc.metadata.service</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
@@ -75,16 +75,6 @@
 				<groupId>org.mod4j.org.apache.commons</groupId>
 				<artifactId>cli</artifactId>
 				<version>1.0.0</version>
-			</dependency>
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-api</artifactId>
-				<version>1.5.8</version>
-			</dependency>
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-log4j12</artifactId>
-				<version>1.5.8</version>
 			</dependency>
 			<dependency>
 				<groupId>org.rxtx</groupId>
@@ -107,6 +97,16 @@
 				<version>2.3.0</version>
 			</dependency>
 			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-log4j12</artifactId>
+				<version>1.5.8</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>1.5.8</version>
+			</dependency>
+			<dependency>
 				<groupId>org.apache.shiro</groupId>
 				<artifactId>shiro-core</artifactId>
 				<version>1.1.0</version>
@@ -127,9 +127,9 @@
 				<version>1.8</version>
 			</dependency>
 			<dependency>
-				<groupId>cglib</groupId>
-				<artifactId>cglib</artifactId>
-				<version>2.2</version>
+				<groupId>com.googlecode.protobuf.pro</groupId>
+				<artifactId>protobuf-rpc-pro-duplex</artifactId>
+				<version>1.1.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -138,8 +138,6 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.8.1</version>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

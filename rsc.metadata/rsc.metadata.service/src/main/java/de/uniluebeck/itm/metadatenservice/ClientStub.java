@@ -5,8 +5,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.Executors;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 
 import com.google.protobuf.RpcCallback;
@@ -30,7 +30,7 @@ public class ClientStub {
 	// TODO connect gleich im Konstruktor oder soll Verbindung fuer jeden
 	// Refresh/add-Zyklus extra
 	// durchgefuehrt werden?
-	private static Log log = LogFactory.getLog(ClientStub.class);
+	private static Logger log = LoggerFactory.getLogger(ClientStub.class);
 
 	PeerInfo server = null;
 	PeerInfo client = null;
@@ -84,7 +84,7 @@ public class ClientStub {
 			channel = bootstrap.peerWith(server);
 		} catch (IOException e) {
 			log.error("Fehler beim bootstrap" + e.getMessage());
-			log.error(e.getCause());
+			log.error(e.getMessage(),e);
 			// channel = bootstrap.peerWith(server);
 			// --- callback.onFailure(e);
 		}

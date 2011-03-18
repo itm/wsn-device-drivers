@@ -12,6 +12,7 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * A Node Entity is described.
@@ -21,6 +22,12 @@ import javax.persistence.Table;
 @Table(catalog = "metadaten_db", name = "node")
 public class Node implements Serializable {
 	
+	/**
+	 * 
+	 */
+	@Transient
+	private static final long serialVersionUID = -8016541513558233707L;
+
 	@EmbeddedId
 	NodeId id;
 

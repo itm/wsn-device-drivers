@@ -27,63 +27,49 @@
 		<org.slf4j.version>1.5.10</org.slf4j.version>
 	</properties>
 
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.netty</groupId>
+			<artifactId>netty</artifactId>
+		</dependency>
+		<!-- Shiro - Sicherheit -->
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.googlecode.protobuf.pro</groupId>
+			<artifactId>protobuf-rpc-pro-duplex</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>de.uniluebeck.itm</groupId>
+			<artifactId>rsc.drivers.core</artifactId>
+		</dependency>
+	</dependencies>
+
 	<dependencyManagement>
 		<dependencies>
-				<!--<dependency>
-				<groupId>de.uniluebeck.itm.metadaten</groupId>
+			<!--
+				<dependency> <groupId>de.uniluebeck.itm.metadaten</groupId>
 				<artifactId>metadatenserver</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
-			</dependency>-->
-			<!-- Kommunikation-->
-				<dependency>
-				<groupId>org.jboss.netty</groupId>
-				<artifactId>netty</artifactId>
-				<version>3.2.1.Final</version>
-			</dependency>
-			<!-- Shiro - Sicherheit -->
-			<dependency>
-				<groupId>org.apache.shiro</groupId>
-				<artifactId>shiro-core</artifactId>
-				<version>1.0.0-incubating</version>
-			</dependency>
-			<!--Logging-->
-			<dependency>
-				<groupId>log4j</groupId>
-				<artifactId>log4j</artifactId>
-				<version>1.2.16</version>
-			</dependency>
-			<dependency>
-				<groupId>commons-logging</groupId>
-				<artifactId>commons-logging</artifactId>
-				<version>1.1.1</version>
-			</dependency>
-			<dependency>
-				<groupId>cglib</groupId>
-				<artifactId>cglib</artifactId>
-				<version>2.2</version>
-			</dependency>
+				<version>0.0.1-SNAPSHOT</version> </dependency>
+			-->
 			<!-- Hibernate -->
-			<dependency>
-				<groupId>org.hibernate.javax.persistence</groupId>
-				<artifactId>hibernate-jpa-2.0-api</artifactId>
-				<version>1.0.0.Final</version>
-			</dependency>
-			<dependency>
-				<groupId>org.hibernate</groupId>
-				<artifactId>hibernate-core</artifactId>
-				<version>${org.hibernate.version}</version>
-			</dependency>
 			<dependency>
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-entitymanager</artifactId>
 				<version>${org.hibernate.version}</version>
 			</dependency>
 			<!-- MySQL database driver -->
-			<dependency>
-				<groupId>mysql</groupId>
-				<artifactId>mysql-connector-java</artifactId>
-				<version>5.1.9</version>
-			</dependency>
 			<dependency>
 				<groupId>joda-time</groupId>
 				<artifactId>joda-time</artifactId>

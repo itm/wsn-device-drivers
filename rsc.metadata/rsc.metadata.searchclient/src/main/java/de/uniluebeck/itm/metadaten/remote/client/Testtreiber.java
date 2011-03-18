@@ -22,7 +22,7 @@ public class Testtreiber {
 	public static void main(final String[] args) {
 		// TODO Authentifizierung fuer die Abfrage von Daten?
 		final int serverport = 8080;
-		final int clientport = 1235;
+		//final int clientport = 1235;
 		MetaDataClient mclient=null;
 		try {
 			mclient = new MetaDatenClient("frager","testPassword","localhost", serverport);

@@ -19,9 +19,9 @@
 	</properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>de.uniluebeck.itm</groupId>
-			<artifactId>rsc.metadata.client</artifactId>
-		</dependency>
+			<dependency>
+				<groupId>de.uniluebeck.itm</groupId>
+				<artifactId>rsc.metadata.searchclient</artifactId>
+			</dependency>
 	</dependencies>
 </project>

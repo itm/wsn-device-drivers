@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.protobuf.RpcController;
 import com.google.protobuf.ServiceException;
@@ -19,9 +19,9 @@ import com.googlecode.protobuf.pro.duplex.execute.ThreadPoolCallExecutor;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Identification;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.NODE;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.Operations;
-import de.uniluebeck.itm.metadaten.files.MetaDataService.Operations.BlockingInterface;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.SearchRequest;
 import de.uniluebeck.itm.metadaten.files.MetaDataService.SearchResponse;
+import de.uniluebeck.itm.metadaten.files.MetaDataService.Operations.BlockingInterface;
 import de.uniluebeck.itm.metadaten.remote.entity.Node;
 import de.uniluebeck.itm.metadaten.remote.metadataclienthelper.NodeHelper;
 
@@ -32,7 +32,7 @@ import de.uniluebeck.itm.metadaten.remote.metadataclienthelper.NodeHelper;
  */
 public class MetaDatenClient implements MetaDataClient {
 	/** Logger**/
-	private static Log log = LogFactory.getLog(MetaDatenClient.class);
+	private static Logger log = LoggerFactory.getLogger(MetaDatenClient.class);
 	/** list of nodes holds the searchresult**/
 	private List<Node> nodelist = new ArrayList<Node>();
 	/** Peerinfo of the server**/
@@ -46,7 +46,7 @@ public class MetaDatenClient implements MetaDataClient {
 	/** Channel for the communication with the server**/
 	private RpcClientChannel channel = null;
 	/** interface for the operations metadaten.proto**/
-	private Operations.Interface operationService = null;
+	//private Operations.Interface operationService = null;
 	/** user for authentication to the server**/
 	private String user = "frager";
 	/** password for the user**/
@@ -132,7 +132,7 @@ public class MetaDatenClient implements MetaDataClient {
 		log.info("RPC-Controller erzeugt");
 
 		// erzeugen eines async RPC-Objekts fuer die Operationen
-		operationService = Operations.newStub(channel);
+		//operationService = Operations.newStub(channel);
 		log.info("create Identification");
 		// aufbauen eines Identification-Packets
 		final Identification id = Identification.newBuilder().setUsername(userName)
