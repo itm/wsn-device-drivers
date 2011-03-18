@@ -45,8 +45,8 @@ public class Main {
 		options.addOption("port", true, "port");
 		options.addOption("server", true, "server");
 		options.addOption("message", true, "message to send as hex-code");
-		options.addOption("user", true, "username to connect to the server");
-		options.addOption("passwd", true, "password to connect to the server");
+		options.addOption("username", true, "username to connect to the server");
+		options.addOption("password", true, "password to connect to the server");
 		options.addOption("device", true,
 				"type of the device in local case: jennic, telosb or pacemate");
 		options.addOption("id", true, "ID of the device in remote case");
@@ -79,8 +79,8 @@ public class Main {
 				String server = cmd.getOptionValue("server");
 				String port = cmd.getOptionValue("port");
 				String id = cmd.getOptionValue("id");
-				String user = cmd.getOptionValue("user");
-				String password = cmd.getOptionValue("passwd");
+				String username = cmd.getOptionValue("username");
+				String password = cmd.getOptionValue("password");
 				String device = cmd.getOptionValue("device");
 
 				// parameters for the message
@@ -166,12 +166,12 @@ public class Main {
 					// username and password is required to connect to the
 					// server
 					if (server != null
-							&& (user == null && password == null || user == null)) {
+							&& (username == null && password == null || username == null)) {
 						System.out.println("Username and Password is missing.");
 						BufferedReader in = new BufferedReader(
 								new InputStreamReader(System.in));
 						System.out.print("Username: ");
-						user = in.readLine();
+						username = in.readLine();
 						System.out.print("Password: ");
 						password = in.readLine();
 						in.close();
@@ -185,7 +185,7 @@ public class Main {
 						in.close();
 					}
 
-					Messenger messenger = new Messenger(port, server, user,
+					Messenger messenger = new Messenger(port, server, username,
 							password, device, id, Integer.valueOf(messageType), timeout);
 					messenger.connect();
 					messenger.send(message);
@@ -203,7 +203,8 @@ public class Main {
 		System.out.println("Examples:");
 		System.out
 				.println("Messenger: Remote example: -message 68616c6c6f " +
-						"-port 8181 -server localhost -id 1 -messageType 1");
+						"-port 8181 -server localhost -id 1 -messageType 1 " +
+						"-username name -password password");
 		System.out
 				.println("Messenger: Local example: -message 68616c6c6f " +
 						"-port COM1 -device jennic -messageType 1");

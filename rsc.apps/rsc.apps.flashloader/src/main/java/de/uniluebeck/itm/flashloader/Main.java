@@ -55,8 +55,8 @@ public class Main {
 		options.addOption("port", true, "port");
 		options.addOption("server", true, "server");
 		options.addOption("file", true, "file to flash the device.");
-		options.addOption("user", true, "username to connect to the server");
-		options.addOption("passwd", true, "password to connect to the server");
+		options.addOption("username", true, "username to connect to the server");
+		options.addOption("password", true, "password to connect to the server");
 		options.addOption("device", true,
 				"type of device in local case: jennic, telosb oder pacemate");
 		options.addOption("id", true, "ID of the device in remote case");
@@ -182,8 +182,8 @@ public class Main {
 		String server = cmd.getOptionValue("server");
 		String port = cmd.getOptionValue("port");
 		String id = cmd.getOptionValue("id");
-		String user = cmd.getOptionValue("user");
-		String password = cmd.getOptionValue("passwd");
+		String username = cmd.getOptionValue("username");
+		String password = cmd.getOptionValue("password");
 		String device = cmd.getOptionValue("device");
 		// parameter to set the timeout of the operation
 		String timeout = cmd.getOptionValue("timeout");
@@ -240,12 +240,12 @@ public class Main {
 		if (validInput) {
 			// username and password is required to connect to the server
 			if (server != null
-					&& (user == null && password == null || user == null)) {
+					&& (username == null && password == null || username == null)) {
 				System.out.println("Username and Password is missing.");
 				BufferedReader in = new BufferedReader(new InputStreamReader(
 						System.in));
 				System.out.print("Username: ");
-				user = in.readLine();
+				username = in.readLine();
 				System.out.print("Password: ");
 				password = in.readLine();
 				in.close();
@@ -259,7 +259,7 @@ public class Main {
 				in.close();
 			}
 
-			flashLoader = new FlashLoader(port, server, user, password, device,
+			flashLoader = new FlashLoader(port, server, username, password, device,
 					id, timeout);
 		}
 		return flashLoader;
@@ -290,7 +290,8 @@ public class Main {
 		System.out.println("Examples:");
 		System.out
 				.println("Flash: Remote-Example: flash -port 8181 " +
-						"-server localhost -id 1 -file jennic.bin");
+						"-server localhost -id 1 -file jennic.bin " +
+						"-username name -password password");
 		System.out
 				.println("Flash: Local-Example: flash -port COM1 " +
 						"-file jennic.bin -device jennic");
