@@ -1,6 +1,8 @@
 package de.uniluebeck.itm.rsc.apps.messenger;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -10,9 +12,6 @@ import org.apache.commons.cli.*;
  * The Class Main.
  */
 public class Main {
-
-	/** The version. */
-	private static double version = 1.0;
 
 	/** The ip regex, to validate the server-address. */
 	private static String ipRegex = "(((\\d{1,3}.){3})(\\d{1,3}))";
@@ -25,6 +24,7 @@ public class Main {
 
 	/**
 	 * The main method.
+	 * 
 	 * @param args
 	 *            the arguments
 	 * @throws IOException
@@ -51,8 +51,7 @@ public class Main {
 				"type of the device in local case: jennic, telosb or pacemate");
 		options.addOption("id", true, "ID of the device in remote case");
 		options.addOption("messageType", true, "Type of the Message to be send");
-		options.addOption("timeout", true,
-				"optional timeout for the operation");
+		options.addOption("timeout", true, "optional timeout for the operation");
 
 		CommandLineParser parser = new GnuParser();
 		CommandLine cmd = null;
@@ -70,125 +69,130 @@ public class Main {
 				// standard-options
 				if (cmd.hasOption("help")) {
 					printHelp(options);
-				}
-				if (cmd.hasOption("version")) {
-					System.out.println(version);
-				}
-
-				// parameters for connection
-				String server = cmd.getOptionValue("server");
-				String port = cmd.getOptionValue("port");
-				String id = cmd.getOptionValue("id");
-				String username = cmd.getOptionValue("username");
-				String password = cmd.getOptionValue("password");
-				String device = cmd.getOptionValue("device");
-
-				// parameters for the message
-				String message = cmd.getOptionValue("message");
-				String messageType = cmd.getOptionValue("messageType");
-				
-				// parameter to set the timeout of the operation
-				String timeout = cmd.getOptionValue("timeout");
-
-				// Begin: validate input-data
-				if (device == null && server == null) {
-					System.out
-							.println("Wrong input: Please enter device(local) " +
-									"or server(remote)!");
-					validInput = false;
-				}
-				if (device != null) {
-					if (!device.equals("mock") && !device.equals("jennic")
-							&& !device.equals("pacemate")
-							&& !device.equals("telosb")) {
-						System.out
-								.println("Wrong input: The device parameter can " +
-										"only be 'jennic', 'pacemate', 'telosb' or 'mock'.");
-						validInput = false;
-					}
-				}
-				if (server != null) {
-					if (!server.matches(ipRegex) && !server.equals("localhost")) {
-						System.out
-								.println("Wrong input: This is no valid server address.");
-						validInput = false;
-					}
-				}
-				if (port == null) {
-					System.out.println("Wrong input: Please enter port!");
-					validInput = false;
+				} else if (cmd.hasOption("version")) {
+					System.out.println(getVersion());
 				} else {
-					if (!port.matches("\\d*") && !port.matches("COM\\d+")) {
-						System.out
-								.println("Wrong input: This is no valid port number.");
-						validInput = false;
-					}
-				}
-				if (server != null && id == null) {
-					System.out
-							.println("Wrong input: Please enter id of the device!");
-					validInput = false;
-				}
-				if (id != null && !id.matches("\\d*")) {
-					System.out
-							.println("Wrong input: Please enter id as integer!");
-					validInput = false;
-				}
-				if (messageType == null) {
-					System.out
-							.println("Wrong input: Please enter a messageType!");
-					validInput = false;
-				} else if (!messageType.matches("\\d*")) {
-					System.out
-							.println("Wrong input: Please enter message-type as integer!");
-					validInput = false;
-				}
-				if (message == null) {
-					System.out.println("Wrong input: Please enter message!");
-					validInput = false;
-				} else {
-					if (!message.matches(hexRegex)) {
-						System.out
-								.println("Wrong input: Please enter message as hex!");
-						validInput = false;
-					}
-				}
-				if (timeout != null) {
-					if (!timeout.matches("\\d*")) {
-						System.out
-								.println("Wrong input: Please enter timeout as integer!");
-						validInput = false;
-					}
-				}
-				// End: validate input-data
 
-				if (validInput) {
-					// username and password is required to connect to the
-					// server
-					if (server != null
-							&& (username == null && password == null || username == null)) {
-						System.out.println("Username and Password is missing.");
-						BufferedReader in = new BufferedReader(
-								new InputStreamReader(System.in));
-						System.out.print("Username: ");
-						username = in.readLine();
-						System.out.print("Password: ");
-						password = in.readLine();
-						in.close();
-					}
-					if (server != null && (password == null)) {
-						System.out.println("Password is missing.");
-						BufferedReader in = new BufferedReader(
-								new InputStreamReader(System.in));
-						System.out.print("Password: ");
-						password = in.readLine();
-						in.close();
-					}
+					// parameters for connection
+					String server = cmd.getOptionValue("server");
+					String port = cmd.getOptionValue("port");
+					String id = cmd.getOptionValue("id");
+					String username = cmd.getOptionValue("username");
+					String password = cmd.getOptionValue("password");
+					String device = cmd.getOptionValue("device");
 
-					Messenger messenger = new Messenger(port, server, username,
-							password, device, id, Integer.valueOf(messageType), timeout);
-					messenger.connect();
-					messenger.send(message);
+					// parameters for the message
+					String message = cmd.getOptionValue("message");
+					String messageType = cmd.getOptionValue("messageType");
+
+					// parameter to set the timeout of the operation
+					String timeout = cmd.getOptionValue("timeout");
+
+					// Begin: validate input-data
+					if (device == null && server == null) {
+						System.out
+								.println("Wrong input: Please enter device(local) "
+										+ "or server(remote)!");
+						validInput = false;
+					}
+					if (device != null) {
+						if (!device.equals("mock") && !device.equals("jennic")
+								&& !device.equals("pacemate")
+								&& !device.equals("telosb")) {
+							System.out
+									.println("Wrong input: The device parameter can "
+											+ "only be 'jennic', 'pacemate', " +
+													"'telosb' or 'mock'.");
+							validInput = false;
+						}
+					}
+					if (server != null) {
+						if (!server.matches(ipRegex)
+								&& !server.equals("localhost")) {
+							System.out
+									.println("Wrong input: This is no valid server address.");
+							validInput = false;
+						}
+					}
+					if (port == null) {
+						System.out.println("Wrong input: Please enter port!");
+						validInput = false;
+					} else {
+						if (!port.matches("\\d*") && !port.matches("COM\\d+")) {
+							System.out
+									.println("Wrong input: This is no valid port number.");
+							validInput = false;
+						}
+					}
+					if (server != null && id == null) {
+						System.out
+								.println("Wrong input: Please enter id of the device!");
+						validInput = false;
+					}
+					if (id != null && !id.matches("\\d*")) {
+						System.out
+								.println("Wrong input: Please enter id as integer!");
+						validInput = false;
+					}
+					if (messageType == null) {
+						System.out
+								.println("Wrong input: Please enter a messageType!");
+						validInput = false;
+					} else if (!messageType.matches("\\d*")) {
+						System.out
+								.println("Wrong input: Please enter message-type as integer!");
+						validInput = false;
+					}
+					if (message == null) {
+						System.out
+								.println("Wrong input: Please enter message!");
+						validInput = false;
+					} else {
+						if (!message.matches(hexRegex)) {
+							System.out
+									.println("Wrong input: Please enter message as hex!");
+							validInput = false;
+						}
+					}
+					if (timeout != null) {
+						if (!timeout.matches("\\d*")) {
+							System.out
+									.println("Wrong input: Please enter timeout as integer!");
+							validInput = false;
+						}
+					}
+					// End: validate input-data
+
+					if (validInput) {
+						// username and password is required to connect to the
+						// server
+						if (server != null
+								&& (username == null && password == null || username == null)) {
+							System.out
+									.println("Username and Password is missing.");
+							BufferedReader in = new BufferedReader(
+									new InputStreamReader(System.in));
+							System.out.print("Username: ");
+							username = in.readLine();
+							System.out.print("Password: ");
+							password = in.readLine();
+							in.close();
+						}
+						if (server != null && (password == null)) {
+							System.out.println("Password is missing.");
+							BufferedReader in = new BufferedReader(
+									new InputStreamReader(System.in));
+							System.out.print("Password: ");
+							password = in.readLine();
+							in.close();
+						}
+
+						Messenger messenger = new Messenger(port, server,
+								username, password, device, id,
+								Integer.valueOf(messageType), timeout);
+						messenger.connect();
+						messenger.send(message);
+					}
 				}
 			}
 		}
@@ -196,21 +200,53 @@ public class Main {
 
 	/**
 	 * Prints the help.
+	 * 
 	 * @param options
 	 *            the options
 	 */
 	public static void printHelp(final Options options) {
 		System.out.println("Examples:");
-		System.out
-				.println("Messenger: Remote example: -message 68616c6c6f " +
-						"-port 8181 -server localhost -id 1 -messageType 1 " +
-						"-username name -password password");
-		System.out
-				.println("Messenger: Local example: -message 68616c6c6f " +
-						"-port COM1 -device jennic -messageType 1");
+		System.out.println("Messenger: Remote example: -message 68616c6c6f "
+				+ "-port 8181 -server localhost -id 1 -messageType 1 "
+				+ "-username name -password password");
+		System.out.println("Messenger: Local example: -message 68616c6c6f "
+				+ "-port COM1 -device jennic -messageType 1");
 		System.out.println("");
 		// for help statement
 		HelpFormatter formatter = new HelpFormatter();
 		formatter.printHelp("help", options);
+	}
+
+	/**
+	 * Reads the version from the pom.properties.
+	 */
+	public static String getVersion() {
+		String versionNumber = "";
+		try {
+			FileInputStream fstream = new FileInputStream("target/"
+					+ "maven-archiver/pom.properties");
+			DataInputStream in = new DataInputStream(fstream);
+			BufferedReader reader = new BufferedReader(
+					new InputStreamReader(in));
+
+			// skip "#Generated by Maven"
+			reader.readLine();
+
+			// find "version=..."
+			String line;
+			while (null != (line = reader.readLine())) {
+				String[] parts = line.split("[ \t]*=[ \t]*");
+				if ("version".equals(parts[0])) {
+					versionNumber = parts[1];
+					break;
+				}
+			}
+
+			reader.close();
+
+		} catch (Exception e) {
+			System.out.println("Cannot load the pom.properties.");
+		}
+		return versionNumber;
 	}
 }
