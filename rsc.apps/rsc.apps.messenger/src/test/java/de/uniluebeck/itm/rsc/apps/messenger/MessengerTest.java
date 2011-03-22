@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.messenger;
+package de.uniluebeck.itm.rsc.apps.messenger;
 
 import org.junit.Test;
 

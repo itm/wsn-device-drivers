@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.flashloader;
+package de.uniluebeck.itm.rsc.apps.flashloader;
 
 import org.junit.Test;
 

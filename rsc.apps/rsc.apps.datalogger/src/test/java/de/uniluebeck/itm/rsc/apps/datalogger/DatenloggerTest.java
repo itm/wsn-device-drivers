@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.datenlogger;
+package de.uniluebeck.itm.rsc.apps.datalogger;
 
 import org.junit.Test;
 
