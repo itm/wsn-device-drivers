@@ -1,7 +1,9 @@
 package de.uniluebeck.itm.rsc.apps.flashloader;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -19,9 +21,6 @@ import de.uniluebeck.itm.rsc.drivers.core.MacAddress;
  * The Class Main.
  */
 public class Main {
-
-	/** The version. */
-	private static double version = 1.0;
 
 	/** The ip regex, to validate the server-address. */
 	private static String ipRegex = "(((\\d{1,3}.){3})(\\d{1,3}))";
@@ -60,8 +59,7 @@ public class Main {
 		options.addOption("device", true,
 				"type of device in local case: jennic, telosb oder pacemate");
 		options.addOption("id", true, "ID of the device in remote case");
-		options.addOption("timeout", true,
-				"optional timeout for the operation");
+		options.addOption("timeout", true, "optional timeout for the operation");
 		options.addOption("macAddress", true,
 				"the mac-address, that should be written on the device.");
 
@@ -81,86 +79,87 @@ public class Main {
 				// standard-options
 				if (cmd.hasOption("help")) {
 					printHelp(options);
-				}
-				if (cmd.hasOption("version")) {
-					System.out.println(version);
-				}
+				} else if (cmd.hasOption("version")) {
+					System.out.println(getVersion());
+				} else {
+					// read and validate the standard options
+					FlashLoader flashLoader = readCmd(cmd);
 
-				// read and validate the standard options
-				FlashLoader flashLoader = readCmd(cmd);
-
-				// flash the device with a given file
-				if (args[0].equals("flash")) {
-					String file = cmd.getOptionValue("file");
-					if (file == null) {
-						System.out
-								.println("Wrong input: Please enter file to flash the " +
-										"device!");
-						validInput = false;
-					} else {
-						File f = new File(file);
-						if (!f.exists()) {
+					// flash the device with a given file
+					if (args[0].equals("flash")) {
+						String file = cmd.getOptionValue("file");
+						if (file == null) {
 							System.out
-									.println("Wrong input: File does not exists!");
+									.println("Wrong input: Please enter file to flash the "
+											+ "device!");
 							validInput = false;
-						}
-					}
-					if (validInput) {
-						flashLoader.connect();
-						flashLoader.flash(file);
-					}
-
-				}
-				// read the mac-address of the device
-				else if (args[0].equals("readmac")) {
-					if (validInput) {
-						flashLoader.connect();
-						flashLoader.readmac();
-					}
-
-				}
-				// write the mac-address of the device with the given address
-				else if (args[0].equals("writemac")) {
-					String macAddress = cmd.getOptionValue("macAddress");
-					if (macAddress == null) {
-						System.out
-								.println("Wrong input: Please enter macAddress!");
-						validInput = false;
-					} else {
-						if (!macAddress.matches(hexRegex)) {
-							System.out
-									.println("Wrong input: Please enter macAddress " +
-											"as hex!");
-							validInput = false;
-						}
-					}
-					if (validInput) {
-						int length = macAddress.length();
-						if (length != 16) { // if the length is not 16, fill it
-											// with zeros
-							for (int i = length; i < 16; i++) {
-								macAddress = macAddress + "0";
-								length++;
+						} else {
+							File f = new File(file);
+							if (!f.exists()) {
+								System.out
+										.println("Wrong input: File does not exists!");
+								validInput = false;
 							}
 						}
-						MacAddress macAdress = new MacAddress(
-								hexStringToByteArray(macAddress));
-						flashLoader.connect();
-						flashLoader.writemac(macAdress);
-					}
+						if (validInput) {
+							flashLoader.connect();
+							flashLoader.flash(file);
+						}
 
-				}
-				// reset the device
-				else if (args[0].equals("reset")) {
-					if (validInput) {
-						flashLoader.connect();
-						flashLoader.reset();
 					}
-				} else {
-					System.out
-							.println("Wrong input: Please enter program-mode " +
-									"flash, readmac, writemac or reset.\n");
-					printHelp(options);
+					// read the mac-address of the device
+					else if (args[0].equals("readmac")) {
+						if (validInput) {
+							flashLoader.connect();
+							flashLoader.readmac();
+						}
+
+					}
+					// write the mac-address of the device with the given
+					// address
+					else if (args[0].equals("writemac")) {
+						String macAddress = cmd.getOptionValue("macAddress");
+						if (macAddress == null) {
+							System.out
+									.println("Wrong input: Please enter macAddress!");
+							validInput = false;
+						} else {
+							if (!macAddress.matches(hexRegex)) {
+								System.out
+										.println("Wrong input: Please enter macAddress "
+												+ "as hex!");
+								validInput = false;
+							}
+						}
+						if (validInput) {
+							int length = macAddress.length();
+							if (length != 16) { // if the length is not 16, fill
+												// it
+												// with zeros
+								for (int i = length; i < 16; i++) {
+									macAddress = macAddress + "0";
+									length++;
+								}
+							}
+							MacAddress macAdress = new MacAddress(
+									hexStringToByteArray(macAddress));
+							flashLoader.connect();
+							flashLoader.writemac(macAdress);
+						}
+
+					}
+					// reset the device
+					else if (args[0].equals("reset")) {
+						if (validInput) {
+							flashLoader.connect();
+							flashLoader.reset();
+						}
+					} else {
+						System.out
+								.println("Wrong input: Please enter program-mode "
+										+ "flash, readmac, writemac or reset.\n");
+						printHelp(options);
+					}
 				}
 			}
 		}
@@ -198,8 +197,8 @@ public class Main {
 			if (!device.equals("mock") && !device.equals("jennic")
 					&& !device.equals("pacemate") && !device.equals("telosb")) {
 				System.out
-						.println("Wrong input: The device parameter can only " +
-								"be 'jennic', 'pacemate', 'telosb' or 'mock'.");
+						.println("Wrong input: The device parameter can only "
+								+ "be 'jennic', 'pacemate', 'telosb' or 'mock'.");
 				validInput = false;
 			}
 		}
@@ -259,14 +258,15 @@ public class Main {
 				in.close();
 			}
 
-			flashLoader = new FlashLoader(port, server, username, password, device,
-					id, timeout);
+			flashLoader = new FlashLoader(port, server, username, password,
+					device, id, timeout);
 		}
 		return flashLoader;
 	}
 
 	/**
 	 * Converts a hex-String to a byte array to send the mac-address
+	 * 
 	 * @param s
 	 *            , hex-String
 	 * @return data, the byte array
@@ -283,31 +283,60 @@ public class Main {
 
 	/**
 	 * Prints the help.
+	 * 
 	 * @param options
 	 *            the options
 	 */
 	public static void printHelp(final Options options) {
 		System.out.println("Examples:");
-		System.out
-				.println("Flash: Remote-Example: flash -port 8181 " +
-						"-server localhost -id 1 -file jennic.bin " +
-						"-username name -password password");
-		System.out
-				.println("Flash: Local-Example: flash -port COM1 " +
-						"-file jennic.bin -device jennic");
-		System.out
-				.println("Write Mac: Local-Example: writemac " +
-						"-port COM1 -device jennic -macAddress 080020aefd7e");
-		System.out
-				.println("Read Mac: Local-Example: readmac " +
-						"-port COM1 -device jennic");
-		System.out
-				.println("Reset: Local-Example: reset " +
-						"-port COM1 -device telosb");
+		System.out.println("Flash: Remote-Example: flash -port 8181 "
+				+ "-server localhost -id 1 -file jennic.bin "
+				+ "-username name -password password");
+		System.out.println("Flash: Local-Example: flash -port COM1 "
+				+ "-file jennic.bin -device jennic");
+		System.out.println("Write Mac: Local-Example: writemac "
+				+ "-port COM1 -device jennic -macAddress 080020aefd7e");
+		System.out.println("Read Mac: Local-Example: readmac "
+				+ "-port COM1 -device jennic");
+		System.out.println("Reset: Local-Example: reset "
+				+ "-port COM1 -device telosb");
 		System.out.println("");
 
 		// for help statement
 		HelpFormatter formatter = new HelpFormatter();
 		formatter.printHelp("help", options);
+	}
+
+	/**
+	 * Reads the version from the pom.properties.
+	 */
+	public static String getVersion() {
+		String versionNumber = "";
+		try {
+			FileInputStream fstream = new FileInputStream("target/"
+					+ "maven-archiver/pom.properties");
+			DataInputStream in = new DataInputStream(fstream);
+			BufferedReader reader = new BufferedReader(
+					new InputStreamReader(in));
+
+			// skip "#Generated by Maven"
+			reader.readLine();
+
+			// find "version=..."
+			String line;
+			while (null != (line = reader.readLine())) {
+				String[] parts = line.split("[ \t]*=[ \t]*");
+				if ("version".equals(parts[0])) {
+					versionNumber = parts[1];
+					break;
+				}
+			}
+
+			reader.close();
+
+		} catch (Exception e) {
+			System.out.println("Cannot load the pom.properties.");
+		}
+		return versionNumber;
 	}
 }
