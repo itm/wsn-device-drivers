@@ -22,8 +22,8 @@ import de.uniluebeck.itm.tcp.client.RemoteConnection;
 public class Main {
 
 	/** The brackets regex, to validate the brackets-filter. */
-	private static String bracketsRegex = "([\\([0-9]+,[0-9]+,[0-9]+\\)]+(?:"
-			+ "[\\|\\&][\\([0-9]+,[0-9]+,[0-9]+\\)]+)*)";
+	private static String bracketsRegex = "([\\([0-9]+,[0-9]+,[0-9a-zA-Z]+\\)]+(?:"
+			+ "[\\|\\&][\\([0-9]+,[0-9]+,[0-9a-zA-Z]+\\)]+)*)";
 
 	/** The ip regex, to validate the server-address. */
 	private static String ipRegex = "(((\\d{1,3}.){3})(\\d{1,3}))";
@@ -259,7 +259,7 @@ public class Main {
 	public static void printHelp(final Options options) {
 		System.out.println("Examples:");
 		System.out.println("Remote example: -bracketsFilter "
-				+ "((104,23,4)&(104,24,5))|(104,65,4) "
+				+ "((104,23,1)|(104,23,2))&(104,0,M) "
 				+ "-location filename.txt -server localhost -id 1 "
 				+ "-port 8181 -username name -password password");
 		System.out.println("Local example: -regexFilter .*(4|3).* "

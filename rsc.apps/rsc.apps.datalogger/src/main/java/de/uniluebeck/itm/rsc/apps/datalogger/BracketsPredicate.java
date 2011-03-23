@@ -27,8 +27,7 @@ public class BracketsPredicate implements Predicate<CharSequence>, Serializable 
 	public BracketsPredicate(final String filter, final int messageType) {
 		this.filter = filter;
 		this.messageType = messageType;
-		this.filter = this.filter.substring(1, this.filter.length() - 1); // Deletes the
-															// brackets
+		this.filter = filter;
 	}
 
 	/**
