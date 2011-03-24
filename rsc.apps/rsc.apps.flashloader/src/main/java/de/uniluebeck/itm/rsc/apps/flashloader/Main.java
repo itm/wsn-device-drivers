@@ -97,7 +97,7 @@ public class Main {
 							File f = new File(file);
 							if (!f.exists()) {
 								System.out
-										.println("Wrong input: File does not exists!");
+										.println("Wrong input: File does not exist!");
 								validInput = false;
 							}
 						}

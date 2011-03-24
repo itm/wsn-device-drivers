@@ -46,9 +46,9 @@ public class BracketsPredicate implements Predicate<CharSequence>, Serializable 
 		}
 		// match Value
 		int begin = Integer.parseInt(singleFilter[1]);
-		CharSequence vergleichswert = incomingData.subSequence(begin, 
+		CharSequence comparativeValue = incomingData.subSequence(begin, 
 				begin + singleFilter[2].length());
-		if (!singleFilter[2].equals(vergleichswert)) {
+		if (!singleFilter[2].equals(comparativeValue)) {
 			result = false;
 		}
 		return result;

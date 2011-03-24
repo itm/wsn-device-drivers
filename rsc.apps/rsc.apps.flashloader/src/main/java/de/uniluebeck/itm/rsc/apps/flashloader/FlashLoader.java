@@ -334,6 +334,7 @@ public class FlashLoader {
 				if (connection != null) {
 					connection.shutdown(false);
 				}
+				System.exit(1);
 			}
 
 			@Override

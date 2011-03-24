@@ -192,12 +192,16 @@ public class Main {
 						List<Capability> capabilityList = null;
 						if (capabilities != null) {
 							capabilityList = new ArrayList<Capability>();
+							//split the capabilities
 							String[] singleCapabilities = capabilities
 									.split(";");
 							for (int i = 0; i < singleCapabilities.length; i++) {
 								String capability = singleCapabilities[i];
+								//split the attributes of the capability
 								String[] capabilityAttr = capability.split(",");
 								Capability capabilityObject = new Capability();
+								//assign the attributes to a capabilityObject,
+								//to use 'search by example'
 								for (int j = 0; j < capabilityAttr.length; j++) {
 									if (j == 0) {
 										capabilityObject
