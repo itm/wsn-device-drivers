@@ -22,8 +22,8 @@ import de.uniluebeck.itm.tcp.client.RemoteConnection;
 public class Main {
 
 	/** The brackets regex, to validate the brackets-filter. */
-	private static String bracketsRegex = "([\\([0-9]+,[0-9]+,[0-9a-zA-Z]+\\)]+(?:"
-			+ "[\\|\\&][\\([0-9]+,[0-9]+,[0-9a-zA-Z]+\\)]+)*)";
+	private static String bracketsRegex = "(([\\(]+[0-9]+,[0-9]+,[0-9a-zA-Z]+[\\)]+)+(?:"
+			+ "[\\|\\&]([\\(]+[0-9]+,[0-9]+,[0-9a-zA-Z]+[\\)]+)+)*)";
 
 	/** The ip regex, to validate the server-address. */
 	private static String ipRegex = "(((\\d{1,3}.){3})(\\d{1,3}))";
@@ -146,9 +146,13 @@ public class Main {
 						validInput = false;
 					}
 					if (bracketsFilter != null) {
-						if (!bracketsFilter.matches(bracketsRegex)) {
+						if (!bracketsFilter.matches(bracketsRegex) || 
+								!validateBrackets(bracketsFilter)) {
 							System.out
-									.println("Wrong input: This is no valid bracket filter.");
+									.println("Wrong input: This is no valid " +
+											"bracket filter.\nPlease use the format: " +
+											"((datatype,begin,value)|(datatype,begin,value))" +
+											"&(datatype,begin,value)");
 							validInput = false;
 						}
 					}
@@ -315,7 +319,8 @@ public class Main {
 						// add brackets-filter
 						String delims = " ";
 						String[] tokens = input.split(delims);
-						if (tokens[1].matches("[|&]?" + bracketsRegex)) {
+						if (tokens[1].matches("[|&]?" + bracketsRegex) && 
+								validateBrackets(tokens[1])) {
 							writer.addBracketFilter(tokens[1]);
 						} else {
 							System.out.println("This is no valid bracket "
@@ -387,4 +392,28 @@ public class Main {
 		return versionNumber;
 	}
 
+	/**
+	 * validates the number of opening and closing brackets.
+	 * 
+	 * @param bracketsFilter
+	 * @return true, if there are the same number of 
+	 * opening and closing brackets
+	 */
+	private static boolean validateBrackets(String bracketsFilter){
+		int opening = 0;
+		int closing = 0;
+		for(int i = 0; i < bracketsFilter.length(); i++){
+			if(bracketsFilter.charAt(i) == '('){
+				opening++;
+			}
+			if(bracketsFilter.charAt(i) == ')'){
+				closing++;
+			}
+			if(closing>opening)
+			{
+				break;
+			}
+		}		
+		return opening == closing;
+	}
 }
