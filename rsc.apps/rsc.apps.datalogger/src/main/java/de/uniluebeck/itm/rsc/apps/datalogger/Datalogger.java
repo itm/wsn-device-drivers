@@ -31,7 +31,7 @@ public class Datalogger {
 
 	private String port;
 	private String server;
-	private String user;
+	private String username;
 	private String password;
 	private boolean started = false;
 	private String deviceParameter;
@@ -61,7 +61,7 @@ public class Datalogger {
 	public Datalogger(final PausableWriter writer, final String user, final String password,
 			final String port, final String server, final String device, final String id) {
 		this.writer = writer;
-		this.user = user;
+		this.username = user;
 		this.password = password;
 		this.port = port;
 		this.server = server;
@@ -111,7 +111,7 @@ public class Datalogger {
 			connection = new RemoteConnection();
 
 			try {
-				connection.connect(user + ":" + password + "@" + server + ":"
+				connection.connect(username + ":" + password + "@" + server + ":"
 						+ port + "/" + id);
 			} catch (Exception e) {
 				System.out.println("Cannot connect to server!");
@@ -144,7 +144,11 @@ public class Datalogger {
 						}
 					});
 					device = new JennicDevice(jennicConnection);
-					jennicConnection.connect(port);
+					try{
+						jennicConnection.connect(port);
+					}catch(RuntimeException e){
+						System.out.println("Port does not exist!");
+					}
 				} else if (deviceParameter.equals("pacemate")) {
 					// Connect to the local pacemate-device.
 					SerialPortConnection pacemateConnection = null;
@@ -165,7 +169,12 @@ public class Datalogger {
 						}
 					});
 					device = new PacemateDevice(pacemateConnection);
-					pacemateConnection.connect(port);
+					try{
+						pacemateConnection.connect(port);
+					}catch(RuntimeException e){
+						System.out.println("Port does not exist!");
+					}
+
 				} else if (deviceParameter.equals("telosb")) {
 					// Connect to the local telosb-device
 					SerialPortConnection telosbConnection = null;
@@ -186,7 +195,12 @@ public class Datalogger {
 						}
 					});
 					device = new TelosbDevice(telosbConnection);
-					telosbConnection.connect(port);
+					try{
+						telosbConnection.connect(port);
+					}catch(RuntimeException e){
+						System.out.println("Port does not exist!");
+					}
+
 				} else if (deviceParameter.equals("mock")) {
 					// Connect to the mock-device for tests
 					final MockConnection connection = new MockConnection();

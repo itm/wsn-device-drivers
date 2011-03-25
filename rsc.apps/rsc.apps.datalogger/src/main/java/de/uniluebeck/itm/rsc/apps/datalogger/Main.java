@@ -12,7 +12,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import de.uniluebeck.itm.tcp.client.RemoteConnection;
+import de.uniluebeck.itm.rsc.remote.client.RemoteConnection;
 
 /**
  * The Class Main. Console program for the datalogger.
@@ -204,7 +204,9 @@ public class Main {
 							RemoteConnection connection = datalogger
 									.getConnection();
 							if (connection != null) {
-								connection.shutdown(false);
+								if(connection.isConnected()){
+									connection.shutdown(false);
+								}						
 							}
 						}
 					}

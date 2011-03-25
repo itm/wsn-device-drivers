@@ -85,8 +85,8 @@ public class FlashLoader {
 			connection = new RemoteConnection();
 
 			try {
-				connection.connect(username + ":" + password + "@" + server
-						+ ":" + port + "/" + id);
+				connection.connect(username + ":" + password + "@" + server + ":"
+						+ port + "/" + id);
 			} catch (Exception e) {
 				System.out.println("Cannot connect to server!");
 				System.exit(1);
@@ -118,7 +118,11 @@ public class FlashLoader {
 						}
 					});
 					device = new JennicDevice(jennicConnection);
-					jennicConnection.connect(port);
+					try{
+						jennicConnection.connect(port);
+					}catch(RuntimeException e){
+						System.out.println("Port does not exist!");
+					}
 				} else if (deviceParameter.equals("pacemate")) {
 					// Connect to the local pacemate-device.
 					SerialPortConnection pacemateConnection = null;
@@ -139,7 +143,12 @@ public class FlashLoader {
 						}
 					});
 					device = new PacemateDevice(pacemateConnection);
-					pacemateConnection.connect(port);
+					try{
+						pacemateConnection.connect(port);
+					}catch(RuntimeException e){
+						System.out.println("Port does not exist!");
+					}
+
 				} else if (deviceParameter.equals("telosb")) {
 					// Connect to the local telosb-device
 					SerialPortConnection telosbConnection = null;
@@ -160,7 +169,12 @@ public class FlashLoader {
 						}
 					});
 					device = new TelosbDevice(telosbConnection);
-					telosbConnection.connect(port);
+					try{
+						telosbConnection.connect(port);
+					}catch(RuntimeException e){
+						System.out.println("Port does not exist!");
+					}
+
 				} else if (deviceParameter.equals("mock")) {
 					// Connect to the mock-device for tests
 					final MockConnection connection = new MockConnection();
@@ -205,7 +219,9 @@ public class FlashLoader {
 			public void onSuccess(final Void result) {
 				System.out.println("The Device has been flashed.");
 				if (connection != null) {
-					connection.shutdown(false);
+					if(connection.isConnected()){
+						connection.shutdown(false);
+					}						
 				}
 				System.exit(1);
 			}
@@ -214,7 +230,9 @@ public class FlashLoader {
 			public void onFailure(final Throwable throwable) {
 				System.out.println("Error while flashing the device.");
 				if (connection != null) {
-					connection.shutdown(false);
+					if(connection.isConnected()){
+						connection.shutdown(false);
+					}						
 				}
 				System.exit(1);
 			}
@@ -245,7 +263,9 @@ public class FlashLoader {
 			public void onSuccess(final MacAddress result) {
 				System.out.println("Mac Address: " + result.toString());
 				if (connection != null) {
-					connection.shutdown(false);
+					if(connection.isConnected()){
+						connection.shutdown(false);
+					}						
 				}
 				System.exit(1);
 			}
@@ -253,7 +273,9 @@ public class FlashLoader {
 			public void onFailure(final Throwable throwable) {
 				System.out.println("Error while reading the mac address.");
 				if (connection != null) {
-					connection.shutdown(false);
+					if(connection.isConnected()){
+						connection.shutdown(false);
+					}						
 				}
 				System.exit(1);
 			}
@@ -290,7 +312,9 @@ public class FlashLoader {
 			public void onSuccess(final Void result) {
 				System.out.println("Mac Address written");
 				if (connection != null) {
-					connection.shutdown(false);
+					if(connection.isConnected()){
+						connection.shutdown(false);
+					}						
 				}
 				System.exit(1);
 			}
@@ -300,7 +324,9 @@ public class FlashLoader {
 				System.out.println("Error while writing the mac address.");
 				throwable.printStackTrace();
 				if (connection != null) {
-					connection.shutdown(false);
+					if(connection.isConnected()){
+						connection.shutdown(false);
+					}						
 				}
 				System.exit(1);
 			}
@@ -332,7 +358,9 @@ public class FlashLoader {
 			public void onSuccess(final Void result) {
 				System.out.println("Device has been reseted");
 				if (connection != null) {
-					connection.shutdown(false);
+					if(connection.isConnected()){
+						connection.shutdown(false);
+					}						
 				}
 				System.exit(1);
 			}
@@ -342,7 +370,9 @@ public class FlashLoader {
 				System.out.println("Error while reseting the device");
 				throwable.printStackTrace();
 				if (connection != null) {
-					connection.shutdown(false);
+					if(connection.isConnected()){
+						connection.shutdown(false);
+					}						
 				}
 				System.exit(1);
 			}
