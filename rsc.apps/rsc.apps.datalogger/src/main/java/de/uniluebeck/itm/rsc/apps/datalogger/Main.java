@@ -352,6 +352,7 @@ public class Main {
 						// change the output location
 						String delims = " ";
 						String[] tokens = input.split(delims);
+						writer.close();
 						if (tokens.length < 2) {
 							writer = initWriter(writer.getBracketFilter(),
 									writer.getRegexFilter(), null, output);
