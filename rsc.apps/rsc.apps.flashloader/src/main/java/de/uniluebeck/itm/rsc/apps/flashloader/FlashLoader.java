@@ -325,7 +325,6 @@ public class FlashLoader {
 			@Override
 			public void onFailure(final Throwable throwable) {
 				System.out.println("Error while writing the mac address.");
-				throwable.printStackTrace();
 				if (connection != null) {
 					if(connection.isConnected()){
 						connection.shutdown(false);
@@ -371,7 +370,6 @@ public class FlashLoader {
 			@Override
 			public void onFailure(final Throwable throwable) {
 				System.out.println("Error while reseting the device");
-				throwable.printStackTrace();
 				if (connection != null) {
 					if(connection.isConnected()){
 						connection.shutdown(false);
