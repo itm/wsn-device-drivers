@@ -215,6 +215,7 @@ public class Messenger {
 						connection.shutdown(false);
 					}						
 				}
+				System.exit(1);
 			}
 
 			@Override
@@ -225,6 +226,7 @@ public class Messenger {
 						connection.shutdown(false);
 					}						
 				}
+				System.exit(1);
 			}
 		});
 		System.out.println("Sending process was added to the queue.");
