@@ -44,7 +44,7 @@ public class JarUtil {
 	
 	/**
 	 * Add the native file extension to the given libName dependent of the operating system.
-	 * 
+	 * 			
 	 * @param libName The name of the library that has to be extended.
 	 * @return The name of the library with system file extension.
 	 */

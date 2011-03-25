@@ -28,7 +28,7 @@ public class Messenger {
 
 	private String port;
 	private String server;
-	private String user;
+	private String username;
 	private String password;
 	private String deviceParameter;
 	private DeviceAsync deviceAsync;
@@ -53,7 +53,7 @@ public class Messenger {
 			final int messageType, final String timeout) {
 		this.port = port;
 		this.server = server;
-		this.user = user;
+		this.username = user;
 		this.password = password;
 		this.deviceParameter = device;
 		this.id = id;
@@ -81,7 +81,7 @@ public class Messenger {
 			connection = new RemoteConnection();
 
 			try {
-				connection.connect(user + ":" + password + "@" + server + ":"
+				connection.connect(username + ":" + password + "@" + server + ":"
 						+ port + "/" + id);
 			} catch (Exception e) {
 				System.out.println("Cannot connect to server!");
@@ -114,7 +114,12 @@ public class Messenger {
 						}
 					});
 					device = new JennicDevice(jennicConnection);
-					jennicConnection.connect(port);
+					try{
+						jennicConnection.connect(port);
+					}catch(RuntimeException e){
+						System.out.println("Port does not exist!");
+						System.exit(1);
+					}
 				} else if (deviceParameter.equals("pacemate")) {
 					// Connect to the local pacemate-device.
 					SerialPortConnection pacemateConnection = null;
@@ -135,7 +140,13 @@ public class Messenger {
 						}
 					});
 					device = new PacemateDevice(pacemateConnection);
-					pacemateConnection.connect(port);
+					try{
+						pacemateConnection.connect(port);
+					}catch(RuntimeException e){
+						System.out.println("Port does not exist!");
+						System.exit(1);
+					}
+
 				} else if (deviceParameter.equals("telosb")) {
 					// Connect to the local telosb-device
 					SerialPortConnection telosbConnection = null;
@@ -156,7 +167,13 @@ public class Messenger {
 						}
 					});
 					device = new TelosbDevice(telosbConnection);
-					telosbConnection.connect(port);
+					try{
+						telosbConnection.connect(port);
+					}catch(RuntimeException e){
+						System.out.println("Port does not exist!");
+						System.exit(1);
+					}
+
 				} else if (deviceParameter.equals("mock")) {
 					// Connect to the mock-device for tests
 					final MockConnection connection = new MockConnection();
@@ -194,7 +211,9 @@ public class Messenger {
 			public void onSuccess(final Void result) {
 				System.out.println("Message sent");
 				if (connection != null) {
-					connection.shutdown(false);
+					if(connection.isConnected()){
+						connection.shutdown(false);
+					}						
 				}
 				System.exit(1);
 			}
@@ -203,7 +222,9 @@ public class Messenger {
 			public void onFailure(final Throwable throwable) {
 				System.out.println("Error while sending the message.");
 				if (connection != null) {
-					connection.shutdown(false);
+					if(connection.isConnected()){
+						connection.shutdown(false);
+					}						
 				}
 				System.exit(1);
 			}
