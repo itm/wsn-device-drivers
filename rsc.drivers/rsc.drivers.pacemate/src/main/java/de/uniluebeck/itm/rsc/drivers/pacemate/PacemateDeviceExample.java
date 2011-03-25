@@ -1,7 +1,6 @@
 package de.uniluebeck.itm.rsc.drivers.pacemate;
 
-import java.io.File;
-import java.net.URISyntaxException;
+import java.io.InputStream;
 
 import de.uniluebeck.itm.rsc.drivers.core.Device;
 import de.uniluebeck.itm.rsc.drivers.core.MessagePacket;
@@ -17,13 +16,9 @@ public class PacemateDeviceExample extends GenericDeviceExample {
 		final GenericDeviceExample example = new GenericDeviceExample();
 		example.setDevice(device);
 		
-		File image = null;
-		try {
-			image = new File(ClassLoader.getSystemResource("de/uniluebeck/itm/rsc/drivers/pacemate/pacemate.bin").toURI());
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
-		example.setImage(image);
+		final InputStream stream = PacemateDevice.class.getResourceAsStream("/de/uniluebeck/itm/rsc/drivers/pacemate/pacemate.bin");
+		example.setImageInputStream(stream);
+
 		example.setUri(args[0]);
 		final MessagePacket packet = new MessagePacket(11, new byte[] { 17 });
 		example.setMessagePacket(packet);

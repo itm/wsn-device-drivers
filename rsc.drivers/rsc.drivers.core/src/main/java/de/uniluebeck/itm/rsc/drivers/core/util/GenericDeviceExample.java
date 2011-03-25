@@ -1,9 +1,9 @@
 package de.uniluebeck.itm.rsc.drivers.core.util;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
-import com.google.common.io.Files;
+import com.google.common.io.ByteStreams;
 
 import de.uniluebeck.itm.rsc.drivers.core.ChipType;
 import de.uniluebeck.itm.rsc.drivers.core.Connection;
@@ -23,35 +23,62 @@ import de.uniluebeck.itm.rsc.drivers.core.event.MessageEvent;
 import de.uniluebeck.itm.rsc.drivers.core.nulldevice.NullConnection;
 import de.uniluebeck.itm.rsc.drivers.core.nulldevice.NullDevice;
 
+
+/**
+ * This class can be used for testing on physical devices. Simple set all parameters and execute the run method.
+ * 
+ * @author Malte Legenhausen
+ */
 public class GenericDeviceExample implements MessagePacketListener, ConnectionListener {
 
+	/**
+	 * The queue used for this example.
+	 */
 	private final OperationQueue queue = new PausableExecutorOperationQueue();
 	
+	/**
+	 * Default null device.
+	 */
 	private Device<?> device = new NullDevice();
 	
+	/**
+	 * Default null connection.
+	 */
 	private Connection connection = new NullConnection();
 	
+	/**
+	 * The device async reference for this example.
+	 */
 	private DeviceAsync deviceAsync;
 	
-	private File image;
+	/**
+	 * InputStream for the image file.
+	 */
+	private InputStream image;
 	
+	/**
+	 * The uri to which the device is attached.
+	 */
 	private String uri;
 	
+	/**
+	 * The example message packet that is send to the device.
+	 */
 	private MessagePacket messagePacket;
 
-	public void setDevice(Device<?> device) {
+	public void setDevice(final Device<?> device) {
 		this.device = device;
 	}
 
-	public void setImage(File image) {
+	public void setImageInputStream(final InputStream image) {
 		this.image = image;
 	}
 
-	public void setUri(String uri) {
+	public void setUri(final String uri) {
 		this.uri = uri;
 	}
 	
-	public void setMessagePacket(MessagePacket messagePacket) {
+	public void setMessagePacket(final MessagePacket messagePacket) {
 		this.messagePacket = messagePacket;
 	}
 
@@ -91,7 +118,7 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 			}
 		};
 		
-		final byte[] bytes = Files.toByteArray(image);
+		final byte[] bytes = ByteStreams.toByteArray(image);
 		System.out.println("Image length: " + bytes.length);
 	    deviceAsync.program(bytes, 600000, callback);
 	}
