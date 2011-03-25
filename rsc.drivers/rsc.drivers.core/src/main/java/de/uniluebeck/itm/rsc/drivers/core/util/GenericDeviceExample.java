@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.rsc.examples.drivers;
+package de.uniluebeck.itm.rsc.drivers.core.util;
 
 import java.io.File;
 import java.io.IOException;

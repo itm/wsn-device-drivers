@@ -1,12 +1,12 @@
-package de.uniluebeck.itm.rsc.examples.drivers;
+package de.uniluebeck.itm.rsc.drivers.telosb;
 
 import java.io.File;
+import java.net.URISyntaxException;
 
 import de.uniluebeck.itm.rsc.drivers.core.Device;
 import de.uniluebeck.itm.rsc.drivers.core.MessagePacket;
 import de.uniluebeck.itm.rsc.drivers.core.serialport.SerialPortConnection;
-import de.uniluebeck.itm.rsc.drivers.telosb.TelosbDevice;
-import de.uniluebeck.itm.rsc.drivers.telosb.TelosbSerialPortConnection;
+import de.uniluebeck.itm.rsc.drivers.core.util.GenericDeviceExample;
 
 public class TelosbDeviceExample {
 
@@ -20,7 +20,12 @@ public class TelosbDeviceExample {
 		example.setDevice(device);
 		example.setUri(args[0]);
 		
-		final File image = new File(ClassLoader.getSystemResource("de/uniluebeck/itm/devicedriver/example/telosb.ihex").getPath());
+		File image = null;
+		try {
+			image = new File(ClassLoader.getSystemResource("de/uniluebeck/itm/rsc/drivers/telosb/telosb.ihex").toURI());
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
 		example.setImage(image);
 		
 		final MessagePacket packet = new MessagePacket(11, new byte[] { 17 });

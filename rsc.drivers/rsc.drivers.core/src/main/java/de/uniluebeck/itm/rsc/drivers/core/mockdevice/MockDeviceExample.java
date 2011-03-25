@@ -1,9 +1,8 @@
-package de.uniluebeck.itm.rsc.examples.drivers;
+package de.uniluebeck.itm.rsc.drivers.core.mockdevice;
 
 import de.uniluebeck.itm.rsc.drivers.core.Device;
 import de.uniluebeck.itm.rsc.drivers.core.MessagePacket;
-import de.uniluebeck.itm.rsc.drivers.core.mockdevice.MockConnection;
-import de.uniluebeck.itm.rsc.drivers.core.mockdevice.MockDevice;
+import de.uniluebeck.itm.rsc.drivers.core.util.GenericDeviceExample;
 
 public class MockDeviceExample {
 	

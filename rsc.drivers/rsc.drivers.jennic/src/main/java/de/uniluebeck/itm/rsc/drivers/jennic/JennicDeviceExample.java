@@ -1,12 +1,13 @@
-package de.uniluebeck.itm.rsc.examples.drivers;
+package de.uniluebeck.itm.rsc.drivers.jennic;
 
 import java.io.File;
+import java.net.URISyntaxException;
 
 import de.uniluebeck.itm.rsc.drivers.core.Device;
 import de.uniluebeck.itm.rsc.drivers.core.MessagePacket;
 import de.uniluebeck.itm.rsc.drivers.core.serialport.SerialPortConnection;
+import de.uniluebeck.itm.rsc.drivers.core.util.GenericDeviceExample;
 import de.uniluebeck.itm.rsc.drivers.isense.iSenseSerialPortConnection;
-import de.uniluebeck.itm.rsc.drivers.jennic.JennicDevice;
 
 
 public class JennicDeviceExample {
@@ -21,7 +22,12 @@ public class JennicDeviceExample {
 		example.setDevice(device);
 		example.setUri(args[0]);
 		
-		final File image = new File(ClassLoader.getSystemResource("de/uniluebeck/itm/devicedriver/example/jennic.bin").getPath());
+		File image = null;
+		try {
+			image = new File(ClassLoader.getSystemResource("de/uniluebeck/itm/rsc/drivers/jennic/jennic.bin").toURI());
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
 		example.setImage(image);
 		
 		final MessagePacket packet = new MessagePacket(11, new byte[] { 17 });
