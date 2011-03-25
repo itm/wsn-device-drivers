@@ -82,6 +82,10 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 		this.messagePacket = messagePacket;
 	}
 
+	/**
+	 * Initialize the example.
+	 * Should be called after all parameters has been set.
+	 */
 	private void init() {
 		device.addListener(this);
 		connection = device.getConnection();
@@ -89,12 +93,20 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 		deviceAsync = new QueuedDeviceAsync(queue, device);
 	}
 	
-	public void connect() {
+	/**
+	 * Connect the device to the given uri.
+	 */
+	private void connect() {
 		System.out.println("Connecting to: " + uri);
 		connection.connect(uri);
 	}
 	
-	public void programImage() throws IOException {
+	/**
+	 * Start the programming of the device.
+	 * 
+	 * @throws IOException When the image can not be loaded.
+	 */
+	private void programImage() throws IOException {
 		if (image == null) {
 			System.out.println("Program skipped cause no image set.");
 			return;
@@ -107,13 +119,13 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 			}
 			
 			@Override
-			public void onProgressChange(float fraction) {
+			public void onProgressChange(final float fraction) {
 				final int percent = (int) (fraction * 100.0);
 				System.out.println("Programming progress: " + percent + "%");
 			}
 			
 			@Override
-			public void onSuccess(Void result) {
+			public void onSuccess(final Void result) {
 				System.out.println("Image successfully flashed");
 			}
 		};
@@ -123,21 +135,29 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 	    deviceAsync.program(bytes, 600000, callback);
 	}
 	
-	public void resetOperation() {
+	/**
+	 * Reset the device.
+	 */
+	private void resetOperation() {
 		final AsyncCallback<Void> callback = new AsyncAdapter<Void>() {
 			public void onExecute() {
 				System.out.println("Resetting device...");
 			}
 			
 			@Override
-			public void onSuccess(Void result) {
+			public void onSuccess(final Void result) {
 				System.out.println("Device successful reseted");
 			}
 		};
 		deviceAsync.reset(10000, callback);
 	}
 	
-	public void macAddressOperations() {		
+	/**
+	 * Read the current <code>MacAddress</code>.
+	 * Write a new <code>MacAddress</code>.
+	 * Read the new <code>MacAddress</code>.
+	 */
+	private void macAddressOperations() {		
 		final AsyncCallback<MacAddress> callback = new AsyncAdapter<MacAddress>() {
 			
 			@Override
@@ -146,20 +166,20 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 			}
 			
 			@Override
-			public void onProgressChange(float fraction) {
+			public void onProgressChange(final float fraction) {
 				final int percent = (int) (fraction * 100.0);
 				System.out.println("Reading mac address progress: " + percent + "%");
 			}
 			
 			@Override
-			public void onSuccess(MacAddress result) {
+			public void onSuccess(final MacAddress result) {
 				System.out.println("Mac Address: " + result);
 			}
 		};
 		
 		deviceAsync.readMac(100000, callback);
 		
-		
+		// Write a new mac address.
 		deviceAsync.writeMac(new MacAddress(1024), 300000, new AsyncAdapter<Void>() {
 
 			@Override
@@ -168,19 +188,22 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 			}
 			
 			@Override
-			public void onProgressChange(float fraction) {
+			public void onProgressChange(final float fraction) {
 				final int percent = (int) (fraction * 100.0);
 				System.out.println("Writing mac address progress: " + percent + "%");
 			}
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onSuccess(final Void result) {
 				System.out.println("Mac Address written");
 			}
 		});
 		deviceAsync.readMac(10000, callback);
 	}
 	
+	/**
+	 * Read a random value from the flash.
+	 */
 	public void readFlashOperation() {
 		final AsyncCallback<byte[]> callback = new AsyncAdapter<byte[]>() {
 			
@@ -190,19 +213,22 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 			}
 			
 			@Override
-			public void onProgressChange(float fraction) {
+			public void onProgressChange(final float fraction) {
 				final int percent = (int) (fraction * 100.0);
 				System.out.println("Reading flash progress: " + percent + "%");
 			}
 			
 			@Override
-			public void onSuccess(byte[] result) {
+			public void onSuccess(final byte[] result) {
 				System.out.println("Reading result: " + result);
 			}
 		};
 		deviceAsync.readFlash(0, 32, 10000, callback);
 	}
 	
+	/**
+	 * Read the chip type from the device.
+	 */
 	public void chipTypeOperation() {
 		deviceAsync.getChipType(100000, new AsyncAdapter<ChipType>() {
 
@@ -212,42 +238,51 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 			}
 			
 			@Override
-			public void onProgressChange(float fraction) {
+			public void onProgressChange(final float fraction) {
 				final int percent = (int) (fraction * 100.0);
 				System.out.println("Reading chip type progress: " + percent + "%");
 			}
 			
 			@Override
-			public void onSuccess(ChipType result) {
+			public void onSuccess(final ChipType result) {
 				System.out.println("Chip Type: " + result);
 			}
 		});
 	}
 	
-	public void sendOperation() {
+	/**
+	 * Send a message to the device.
+	 */
+	private void sendOperation() {
 		deviceAsync.send(messagePacket, 10000, new AsyncAdapter<Void>() {
 			public void onExecute() {
 				System.out.println("Sending message");
 			}
 			
-			public void onSuccess(Void result) {
+			public void onSuccess(final Void result) {
 				System.out.println("Message send");
 			}
 		});
 	}
 	
-	public void waitForOperationsToFinish() {
+	/**
+	 * Wait until all operations has finished.
+	 */
+	private void waitForOperationsToFinish() {
 		// Wait until the queue is empty.
 		while (!queue.getOperations().isEmpty()) {
 			try {
 				Thread.sleep(50);
-			} catch (InterruptedException e) {
+			} catch (final InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 	
-	public void shutdown() {
+	/**
+	 * Shutdown the queue and the connection.
+	 */
+	private void shutdown() {
 		System.out.println("Shutting down queue...");
 		queue.shutdown(false);
 		System.out.println("Queue terminated");
@@ -256,26 +291,32 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 		System.out.println("Connection closed");
 	}
 	
-	public void waitForMessagePackets() {
+	/**
+	 * Wait for message packets from the device.
+	 */
+	private void waitForMessagePackets() {
 		System.out.println("Waiting for messages from the device.");
 		System.out.println("Press any key to shutdown...");
 		try {
 			while(System.in.read() == -1) {
 				Thread.sleep(50);
 			}
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
+	/**
+	 * Execute the whole test case.
+	 */
 	public void run() {
 		init();
 		connect();
 		try {
 			programImage();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 		macAddressOperations();

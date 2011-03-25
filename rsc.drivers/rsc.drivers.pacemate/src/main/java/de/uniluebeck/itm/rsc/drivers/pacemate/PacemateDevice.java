@@ -121,7 +121,7 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 		final WriteMacAddressOperation operation = new AbstractWriteMacAddressOperation() {
 			@Override
 			public Void execute(Monitor monitor) throws Exception {
-				throw new UnsupportedOperationException("wirteMacAddress ist not available.");
+				throw new UnsupportedOperationException("writeMacAddress ist not available.");
 			}
 		};
 		return operation;

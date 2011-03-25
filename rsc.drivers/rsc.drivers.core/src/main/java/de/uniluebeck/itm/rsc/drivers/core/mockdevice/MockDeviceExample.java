@@ -4,12 +4,20 @@ import de.uniluebeck.itm.rsc.drivers.core.Device;
 import de.uniluebeck.itm.rsc.drivers.core.MessagePacket;
 import de.uniluebeck.itm.rsc.drivers.core.util.GenericDeviceExample;
 
+
+/**
+ * An example program for the MockDevice.
+ * 
+ * @author Malte Legenhausen
+ */
 public class MockDeviceExample {
 	
 	/**
-	 * @param args
+	 * Main method.
+	 * 
+	 * @param args Program parameters.
 	 */
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		final MockConnection connection = new MockConnection();
 		final Device<MockConnection> device = new MockDevice(connection);
 		final GenericDeviceExample example = new GenericDeviceExample();
