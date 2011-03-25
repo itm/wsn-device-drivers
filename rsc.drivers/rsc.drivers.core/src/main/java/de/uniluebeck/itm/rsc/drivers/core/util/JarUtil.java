@@ -44,7 +44,7 @@ public class JarUtil {
 	
 	/**
 	 * Add the native file extension to the given libName dependent of the operating system.
-	 * 			
+	 * 
 	 * @param libName The name of the library that has to be extended.
 	 * @return The name of the library with system file extension.
 	 */
@@ -80,6 +80,7 @@ public class JarUtil {
 			throw new IOException("Unable to find library on classpath: " + path);
 		}
 		
+		// Initialize the target file and create if necessary.
 		final File target = new File(lib);
 		if (!target.exists()) {
 			target.createNewFile();

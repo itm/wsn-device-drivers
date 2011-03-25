@@ -32,6 +32,36 @@ import de.uniluebeck.itm.rsc.drivers.core.nulldevice.NullDevice;
 public class GenericDeviceExample implements MessagePacketListener, ConnectionListener {
 
 	/**
+	 * Default sleep for the thread.
+	 */
+	private static final int DEFAULT_SLEEP = 50;
+	
+	/**
+	 * Timeout for the programming operation.
+	 */
+	private static final int PROGRAM_TIMEOUT = 600000;
+	
+	/**
+	 * Timeout for the reset operation.
+	 */
+	private static final int RESET_TIMEOUT = 10000;
+	
+	/**
+	 * Timeout for the read mac address operation.
+	 */
+	private static final int READ_MAC_ADDRESS_TIMEOUT = 100000;
+	
+	/**
+	 * Timeout for writing the mac address.
+	 */
+	private static final int WRITE_MAC_ADDRESS_TIMEOUT = 300000;
+	
+	/**
+	 * The default mac address value.
+	 */
+	private static final int DEFAULT_MAC_ADDRESS_VALUE = 1024;
+	
+	/**
 	 * The queue used for this example.
 	 */
 	private final OperationQueue queue = new PausableExecutorOperationQueue();
@@ -60,6 +90,11 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 	 * The uri to which the device is attached.
 	 */
 	private String uri;
+	
+	/**
+	 * The mac address that has to be written on writeMacAddressOperation.
+	 */
+	private MacAddress macAddress = new MacAddress(DEFAULT_MAC_ADDRESS_VALUE);
 	
 	/**
 	 * The example message packet that is send to the device.
@@ -132,7 +167,7 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 		
 		final byte[] bytes = ByteStreams.toByteArray(image);
 		System.out.println("Image length: " + bytes.length);
-	    deviceAsync.program(bytes, 600000, callback);
+	    deviceAsync.program(bytes, PROGRAM_TIMEOUT, callback);
 	}
 	
 	/**
@@ -149,7 +184,7 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 				System.out.println("Device successful reseted");
 			}
 		};
-		deviceAsync.reset(10000, callback);
+		deviceAsync.reset(RESET_TIMEOUT, callback);
 	}
 	
 	/**
@@ -177,10 +212,10 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 			}
 		};
 		
-		deviceAsync.readMac(100000, callback);
+		deviceAsync.readMac(READ_MAC_ADDRESS_TIMEOUT, callback);
 		
 		// Write a new mac address.
-		deviceAsync.writeMac(new MacAddress(1024), 300000, new AsyncAdapter<Void>() {
+		deviceAsync.writeMac(macAddress, WRITE_MAC_ADDRESS_TIMEOUT, new AsyncAdapter<Void>() {
 
 			@Override
 			public void onExecute() {
@@ -198,7 +233,7 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 				System.out.println("Mac Address written");
 			}
 		});
-		deviceAsync.readMac(10000, callback);
+		deviceAsync.readMac(READ_MAC_ADDRESS_TIMEOUT, callback);
 	}
 	
 	/**
@@ -223,14 +258,14 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 				System.out.println("Reading result: " + result);
 			}
 		};
-		deviceAsync.readFlash(0, 32, 10000, callback);
+		deviceAsync.readFlash(0, 32, RESET_TIMEOUT, callback);
 	}
 	
 	/**
 	 * Read the chip type from the device.
 	 */
 	public void chipTypeOperation() {
-		deviceAsync.getChipType(100000, new AsyncAdapter<ChipType>() {
+		deviceAsync.getChipType(READ_MAC_ADDRESS_TIMEOUT, new AsyncAdapter<ChipType>() {
 
 			@Override
 			public void onExecute() {
@@ -254,7 +289,7 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 	 * Send a message to the device.
 	 */
 	private void sendOperation() {
-		deviceAsync.send(messagePacket, 10000, new AsyncAdapter<Void>() {
+		deviceAsync.send(messagePacket, RESET_TIMEOUT, new AsyncAdapter<Void>() {
 			public void onExecute() {
 				System.out.println("Sending message");
 			}
@@ -272,7 +307,7 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 		// Wait until the queue is empty.
 		while (!queue.getOperations().isEmpty()) {
 			try {
-				Thread.sleep(50);
+				Thread.sleep(DEFAULT_SLEEP);
 			} catch (final InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -299,7 +334,7 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 		System.out.println("Press any key to shutdown...");
 		try {
 			while(System.in.read() == -1) {
-				Thread.sleep(50);
+				Thread.sleep(DEFAULT_SLEEP);
 			}
 		} catch (final InterruptedException e) {
 			e.printStackTrace();
@@ -330,12 +365,20 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 	}
 	
 	@Override
-	public void onMessagePacketReceived(MessageEvent<MessagePacket> event) {
+	public void onMessagePacketReceived(final MessageEvent<MessagePacket> event) {
 		System.out.println(new String(event.getMessage().getContent()).substring(1));
 	}
 	
 	@Override
-	public void onConnectionChange(ConnectionEvent event) {
+	public void onConnectionChange(final ConnectionEvent event) {
 		System.out.println("Connected with port: " + event.getUri());
+	}
+
+	public void setMacAddress(final MacAddress macAddress) {
+		this.macAddress = macAddress;
+	}
+
+	public MacAddress getMacAddress() {
+		return macAddress;
 	}
 }
