@@ -9,6 +9,8 @@ import de.uniluebeck.itm.rsc.drivers.core.async.AsyncAdapter;
 import de.uniluebeck.itm.rsc.drivers.core.async.AsyncCallback;
 import de.uniluebeck.itm.rsc.drivers.core.async.DeviceAsync;
 import de.uniluebeck.itm.rsc.drivers.core.event.MessageEvent;
+import de.uniluebeck.itm.rsc.remote.client.RemoteConnection;
+import de.uniluebeck.itm.rsc.remote.client.RemoteDevice;
 
 public class MockDeviceExample {
 //

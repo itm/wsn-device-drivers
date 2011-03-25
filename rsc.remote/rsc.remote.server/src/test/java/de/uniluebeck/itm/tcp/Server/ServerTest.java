@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import de.uniluebeck.itm.tcp.server.Main;
+import de.uniluebeck.itm.rsc.remote.server.Main;
 
 /**
  * Class to test the Server

@@ -23,8 +23,8 @@ import de.uniluebeck.itm.rsc.drivers.jennic.JennicDevice;
 import de.uniluebeck.itm.rsc.drivers.pacemate.PacemateDevice;
 import de.uniluebeck.itm.rsc.drivers.telosb.TelosbDevice;
 import de.uniluebeck.itm.rsc.drivers.telosb.TelosbSerialPortConnection;
-import de.uniluebeck.itm.tcp.client.RemoteConnection;
-import de.uniluebeck.itm.tcp.client.RemoteDevice;
+import de.uniluebeck.itm.rsc.remote.client.RemoteConnection;
+import de.uniluebeck.itm.rsc.remote.client.RemoteDevice;
 
 /**
  * Class FlashLoader. Functions to flash a device, read/write the Mac-Adress or
