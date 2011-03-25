@@ -21,7 +21,7 @@ public class Main {
 
 	/** The version */
 	private static String version = "1.0";
-	
+
 	/** The brackets regex, to validate the brackets-filter. */
 	private static String bracketsRegex = "(([\\(]+[0-9]+,[0-9]+,[0-9a-zA-Z]+[\\)]+)+(?:"
 			+ "[\\|\\&]([\\(]+[0-9]+,[0-9]+,[0-9a-zA-Z]+[\\)]+)+)*)";
@@ -147,13 +147,13 @@ public class Main {
 						validInput = false;
 					}
 					if (bracketsFilter != null) {
-						if (!bracketsFilter.matches(bracketsRegex) || 
-								!validateBrackets(bracketsFilter)) {
+						if (!bracketsFilter.matches(bracketsRegex)
+								|| !validateBrackets(bracketsFilter)) {
 							System.out
-									.println("Wrong input: This is no valid " +
-											"bracket filter.\nPlease use the format: " +
-											"((datatype,begin,value)|(datatype,begin,value))" +
-											"&(datatype,begin,value)");
+									.println("Wrong input: This is no valid "
+											+ "bracket filter.\nPlease use the format: "
+											+ "((datatype,begin,value)|(datatype,begin,value))"
+											+ "&(datatype,begin,value)");
 							validInput = false;
 						}
 					}
@@ -204,9 +204,9 @@ public class Main {
 							RemoteConnection connection = datalogger
 									.getConnection();
 							if (connection != null) {
-								if(connection.isConnected()){
+								if (connection.isConnected()) {
 									connection.shutdown(false);
-								}						
+								}
 							}
 						}
 					}
@@ -279,8 +279,8 @@ public class Main {
 	}
 
 	/**
-	 * provides the write-mode to change the location, 
-	 * add a filter or stop logging.
+	 * provides the write-mode to change the location, add a filter or stop
+	 * logging.
 	 * 
 	 * @param writer
 	 *            output-writer
@@ -288,7 +288,7 @@ public class Main {
 	 *            the current datalogger
 	 * @param datalogger
 	 *            the current output-parameter
-	 *            
+	 * 
 	 */
 	private static void writeMode(PausableWriter writer, Datalogger datalogger,
 			String output) throws IOException {
@@ -322,18 +322,28 @@ public class Main {
 						// add brackets-filter
 						String delims = " ";
 						String[] tokens = input.split(delims);
-						if (tokens[1].matches("[|&]?" + bracketsRegex) && 
-								validateBrackets(tokens[1])) {
-							writer.addBracketFilter(tokens[1]);
+						if (tokens[1] != null) {
+							if (tokens[1].matches("[|&]?" + bracketsRegex)
+									&& validateBrackets(tokens[1])) {
+								writer.addBracketFilter(tokens[1]);
+							} else {
+								System.out.println("This is no valid bracket "
+										+ "filter.");
+							}
 						} else {
-							System.out.println("This is no valid bracket "
-									+ "filter.");
+							System.out
+									.println("Please enter 'bracketsFilter filter'");
 						}
 					} else if (input.startsWith("regexFilter")) {
 						// add regex-filter
 						String delims = " ";
 						String[] tokens = input.split(delims);
-						writer.addRegexFilter(tokens[1]);
+						if (tokens[1] != null) {
+							writer.addRegexFilter(tokens[1]);
+						} else {
+							System.out
+									.println("Please enter 'regexFilter filter'");
+						}
 					} else if (input.equals("stoplog")) {
 						// stop logging
 						datalogger.stoplog();
@@ -365,24 +375,23 @@ public class Main {
 	 * validates the number of opening and closing brackets.
 	 * 
 	 * @param bracketsFilter
-	 * @return true, if there are the same number of 
-	 * opening and closing brackets
+	 * @return true, if there are the same number of opening and closing
+	 *         brackets
 	 */
-	private static boolean validateBrackets(String bracketsFilter){
+	private static boolean validateBrackets(String bracketsFilter) {
 		int opening = 0;
 		int closing = 0;
-		for(int i = 0; i < bracketsFilter.length(); i++){
-			if(bracketsFilter.charAt(i) == '('){
+		for (int i = 0; i < bracketsFilter.length(); i++) {
+			if (bracketsFilter.charAt(i) == '(') {
 				opening++;
 			}
-			if(bracketsFilter.charAt(i) == ')'){
+			if (bracketsFilter.charAt(i) == ')') {
 				closing++;
 			}
-			if(closing>opening)
-			{
+			if (closing > opening) {
 				break;
 			}
-		}		
+		}
 		return opening == closing;
 	}
 }
