@@ -1,12 +1,13 @@
-package de.uniluebeck.itm.rsc.examples.drivers;
+package de.uniluebeck.itm.rsc.drivers.pacemate;
 
 import java.io.File;
+import java.net.URISyntaxException;
 
 import de.uniluebeck.itm.rsc.drivers.core.Device;
 import de.uniluebeck.itm.rsc.drivers.core.MessagePacket;
 import de.uniluebeck.itm.rsc.drivers.core.serialport.SerialPortConnection;
+import de.uniluebeck.itm.rsc.drivers.core.util.GenericDeviceExample;
 import de.uniluebeck.itm.rsc.drivers.isense.iSenseSerialPortConnection;
-import de.uniluebeck.itm.rsc.drivers.pacemate.PacemateDevice;
 
 public class PacemateDeviceExample extends GenericDeviceExample {
 	
@@ -16,7 +17,12 @@ public class PacemateDeviceExample extends GenericDeviceExample {
 		final GenericDeviceExample example = new GenericDeviceExample();
 		example.setDevice(device);
 		
-		final File image = new File(ClassLoader.getSystemResource("de/uniluebeck/itm/devicedriver/example/pacemate.bin").getPath());
+		File image = null;
+		try {
+			image = new File(ClassLoader.getSystemResource("de/uniluebeck/itm/rsc/drivers/pacemate/pacemate.bin").toURI());
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
 		example.setImage(image);
 		example.setUri(args[0]);
 		final MessagePacket packet = new MessagePacket(11, new byte[] { 17 });

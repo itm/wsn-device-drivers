@@ -2,6 +2,7 @@ package de.uniluebeck.itm.rsc.drivers.core.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.zip.Adler32;
 
@@ -19,7 +20,7 @@ public class JarUtil {
 	/**
 	 * Path to the root directory of the jni libary files.
 	 */
-	private static final String JNI_PATH_ROOT = "de/uniluebeck/itm/devicedriver/jni";
+	private static final String JNI_PATH_ROOT = "de/uniluebeck/itm/rsc/drivers/core/jni";
 	
 	/**
 	 * Load a DLL or SO file that is contained in a JAR.
@@ -34,6 +35,8 @@ public class JarUtil {
 			extractLibrary(path, lib);
 			System.loadLibrary(libName);
 		} catch (final IOException e) {
+			throw new RuntimeException("Unable to extract libary to: " + path, e);
+		} catch (URISyntaxException e) {
 			throw new RuntimeException("Unable to extract libary to: " + path, e);
 		}
 	}
@@ -68,10 +71,14 @@ public class JarUtil {
 	 * @param path The path of the libary.
 	 * @param lib The destinated library name.
 	 * @throws IOException When a file operation during the extraction failed.
+	 * @throws URISyntaxException When the classloader url can not be converted to a uri.
 	 */
-	private static final void extractLibrary(final String path, final String lib) throws IOException {
+	private static final void extractLibrary(final String path, final String lib) throws IOException, URISyntaxException {
 		final URL uri = ClassLoader.getSystemResource(path);
-		final File source = new File(uri.getFile());
+		if (uri == null) {
+			throw new IOException("Unable to find library on classpath: " + path);
+		}
+		final File source = new File(uri.toURI());
 		final File target = new File(lib);
 		if (!target.exists()) {
 			target.createNewFile();
