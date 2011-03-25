@@ -122,6 +122,7 @@ public class FlashLoader {
 						jennicConnection.connect(port);
 					}catch(RuntimeException e){
 						System.out.println("Port does not exist!");
+						System.exit(1);
 					}
 				} else if (deviceParameter.equals("pacemate")) {
 					// Connect to the local pacemate-device.
@@ -147,6 +148,7 @@ public class FlashLoader {
 						pacemateConnection.connect(port);
 					}catch(RuntimeException e){
 						System.out.println("Port does not exist!");
+						System.exit(1);
 					}
 
 				} else if (deviceParameter.equals("telosb")) {
@@ -173,6 +175,7 @@ public class FlashLoader {
 						telosbConnection.connect(port);
 					}catch(RuntimeException e){
 						System.out.println("Port does not exist!");
+						System.exit(1);
 					}
 
 				} else if (deviceParameter.equals("mock")) {

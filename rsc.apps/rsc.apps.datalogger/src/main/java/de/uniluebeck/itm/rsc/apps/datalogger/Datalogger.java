@@ -148,6 +148,7 @@ public class Datalogger {
 						jennicConnection.connect(port);
 					}catch(RuntimeException e){
 						System.out.println("Port does not exist!");
+						System.exit(1);
 					}
 				} else if (deviceParameter.equals("pacemate")) {
 					// Connect to the local pacemate-device.
@@ -173,6 +174,7 @@ public class Datalogger {
 						pacemateConnection.connect(port);
 					}catch(RuntimeException e){
 						System.out.println("Port does not exist!");
+						System.exit(1);
 					}
 
 				} else if (deviceParameter.equals("telosb")) {
@@ -199,6 +201,7 @@ public class Datalogger {
 						telosbConnection.connect(port);
 					}catch(RuntimeException e){
 						System.out.println("Port does not exist!");
+						System.exit(1);
 					}
 
 				} else if (deviceParameter.equals("mock")) {
