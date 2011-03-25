@@ -2,12 +2,13 @@ package de.uniluebeck.itm.rsc.drivers.core.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.zip.Adler32;
 
 import com.google.common.base.Joiner;
 import com.google.common.io.Files;
+import com.google.common.io.InputSupplier;
 
 
 /**
@@ -20,7 +21,7 @@ public class JarUtil {
 	/**
 	 * Path to the root directory of the jni libary files.
 	 */
-	private static final String JNI_PATH_ROOT = "de/uniluebeck/itm/rsc/drivers/core/jni";
+	private static final String JNI_PATH_ROOT = "/de/uniluebeck/itm/rsc/drivers/core/jni";
 	
 	/**
 	 * Load a DLL or SO file that is contained in a JAR.
@@ -36,7 +37,7 @@ public class JarUtil {
 			System.loadLibrary(libName);
 		} catch (final IOException e) {
 			throw new RuntimeException("Unable to extract libary to: " + path, e);
-		} catch (URISyntaxException e) {
+		} catch (final URISyntaxException e) {
 			throw new RuntimeException("Unable to extract libary to: " + path, e);
 		}
 	}
@@ -73,21 +74,47 @@ public class JarUtil {
 	 * @throws IOException When a file operation during the extraction failed.
 	 * @throws URISyntaxException When the classloader url can not be converted to a uri.
 	 */
-	private static final void extractLibrary(final String path, final String lib) throws IOException, URISyntaxException {
-		final URL uri = ClassLoader.getSystemResource(path);
-		if (uri == null) {
+	private static void extractLibrary(final String path, final String lib) throws IOException, URISyntaxException {
+		final InputStream stream = JarUtil.class.getResourceAsStream(path);
+		if (stream == null) {
 			throw new IOException("Unable to find library on classpath: " + path);
 		}
-		final File source = new File(uri.toURI());
+		
 		final File target = new File(lib);
 		if (!target.exists()) {
 			target.createNewFile();
 		}
 
+		final File temp = readStreamToTemp(stream);
+		
 		// Only copy the source to target when the file has changed.
-		if (hasFileChanged(source, target)) {
-			Files.copy(source, target);
+		if (hasFileChanged(temp, target)) {
+			Files.copy(temp, target);
 		}
+		// Remove the temp file when the program is closed.
+		temp.deleteOnExit();
+	}
+	
+	/**
+	 * Reads all data from the given stream and save it to a temp file.
+	 * 
+	 * @param stream The stream with the data that has to be read.
+	 * @return The temp file object.
+	 * @throws IOException When something happend during the file operations.
+	 */
+	private static File readStreamToTemp(final InputStream stream) throws IOException {
+		final File tempDir = Files.createTempDir();
+		final File temp = new File(tempDir, "tmplib" + String.valueOf(System.currentTimeMillis()));
+		temp.createNewFile();
+		
+		final InputSupplier<InputStream> supplier = new InputSupplier<InputStream>() {
+			@Override
+			public InputStream getInput() throws IOException {
+				return stream;
+			}
+		};
+		Files.copy(supplier, temp);
+		return temp;
 	}
 	
 	/**
