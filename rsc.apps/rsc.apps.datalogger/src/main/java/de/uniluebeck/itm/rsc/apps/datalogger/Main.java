@@ -322,7 +322,7 @@ public class Main {
 						// add brackets-filter
 						String delims = " ";
 						String[] tokens = input.split(delims);
-						if (tokens[1] != null) {
+						if (tokens.length > 1) {
 							if (tokens[1].matches("[|&]?" + bracketsRegex)
 									&& validateBrackets(tokens[1])) {
 								writer.addBracketFilter(tokens[1]);
@@ -338,7 +338,7 @@ public class Main {
 						// add regex-filter
 						String delims = " ";
 						String[] tokens = input.split(delims);
-						if (tokens[1] != null) {
+						if (tokens.length > 1) {
 							writer.addRegexFilter(tokens[1]);
 						} else {
 							System.out
