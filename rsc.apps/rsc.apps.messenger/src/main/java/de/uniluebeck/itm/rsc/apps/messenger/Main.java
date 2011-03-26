@@ -63,7 +63,7 @@ public class Main {
 			try {
 				cmd = parser.parse(options, args);
 			} catch (ParseException e) {
-				System.out.println("One of these options is not registered.");
+				System.out.println(e.getMessage()+"\n");
 				printHelp(options);
 			}
 			if (cmd != null) {
@@ -118,12 +118,6 @@ public class Main {
 					if (port == null) {
 						System.out.println("Wrong input: Please enter port!");
 						validInput = false;
-					} else {
-						if (!port.matches("\\d*") && !port.matches("COM\\d+")) {
-							System.out
-									.println("Wrong input: This is no valid port number.");
-							validInput = false;
-						}
 					}
 					if (server != null && id == null) {
 						System.out

@@ -73,7 +73,7 @@ public class Main {
 			try {
 				cmd = parser.parse(options, args);
 			} catch (ParseException e) {
-				System.out.println("One of these options is not registered.");
+				System.out.println(e.getMessage()+"\n");
 				printHelp(options);
 			}
 			if (cmd != null) {
@@ -115,18 +115,6 @@ public class Main {
 					if (serverPort == null) {
 						System.out
 								.println("Wrong input: Please enter port of the server!");
-						validInput = false;
-					} else {
-						if (!serverPort.matches("\\d*")) {
-							System.out
-									.println("Wrong input: This is no valid server-port " +
-											"number.");
-							validInput = false;
-						}
-					}
-					if (clientPort != null && !clientPort.matches("\\d*")) {
-						System.out
-								.println("Wrong input: This is no valid client-port number.");
 						validInput = false;
 					}
 					if (id == null && microcontroller == null
