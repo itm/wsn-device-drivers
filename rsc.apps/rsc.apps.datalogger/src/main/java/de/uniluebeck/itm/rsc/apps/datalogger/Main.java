@@ -260,10 +260,10 @@ public class Main {
 	public static void printHelp(final Options options) {
 		System.out.println("Examples:");
 		System.out.println("Remote example: -bracketsFilter "
-				+ "((104,23,1)|(104,23,2))&(104,0,M) "
+				+ "\"((104,23,1)|(104,23,2))&(104,0,M)\" "
 				+ "-location filename.txt -server localhost -id 1 "
 				+ "-port 8181 -username name -password password");
-		System.out.println("Local example: -regexFilter .*(4|3).* "
+		System.out.println("Local example: -regexFilter \".*(4|3).*\" "
 				+ "-device telosb -port COM1");
 		System.out.println("");
 

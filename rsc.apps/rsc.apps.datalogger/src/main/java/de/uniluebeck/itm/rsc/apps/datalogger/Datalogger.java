@@ -146,7 +146,7 @@ public class Datalogger {
 					device = new JennicDevice(jennicConnection);
 					try{
 						jennicConnection.connect(port);
-					}catch(RuntimeException e){
+					}catch(RuntimeException e2){
 						System.out.println("Port does not exist!");
 						System.exit(1);
 					}

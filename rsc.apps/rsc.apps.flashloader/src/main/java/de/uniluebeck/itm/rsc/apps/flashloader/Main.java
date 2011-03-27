@@ -285,10 +285,10 @@ public class Main {
 	public static void printHelp(final Options options) {
 		System.out.println("Examples:");
 		System.out.println("Flash: Remote-Example: flash -port 8181 "
-				+ "-server localhost -id 1 -file jennic.bin "
+				+ "-server localhost -id 1 -file ../jennic.bin "
 				+ "-username name -password password");
 		System.out.println("Flash: Local-Example: flash -port COM1 "
-				+ "-file jennic.bin -device jennic");
+				+ "-file ../jennic.bin -device jennic");
 		System.out.println("Write Mac: Local-Example: writemac "
 				+ "-port COM1 -device jennic -macAddress 080020aefd7e");
 		System.out.println("Read Mac: Local-Example: readmac "
