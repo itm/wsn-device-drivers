@@ -303,6 +303,10 @@ public class Main {
 					System.out.println("Enter 'regexFilter filter' "
 							+ "to add 'filter' to the current "
 							+ "regex-filter.");
+					System.out.println("Enter 'deleteRegexFilter' "
+							+ "to delete the regex-filter.");
+					System.out.println("Enter 'deleteBracketsFilter' "
+							+ "to delete the brackets-filter.");
 					System.out.println("Enter 'location location' to "
 							+ "change the current location. "
 							+ "'location' will set the location "
@@ -342,6 +346,10 @@ public class Main {
 						// stop logging
 						datalogger.stoplog();
 						System.exit(1);
+					} else if (input.startsWith("deleteBracketsFilter")) {
+						writer.setBracketFilter("");
+					} else if (input.startsWith("deleteRegexFilter")) {
+						writer.setRegexFilter(".*");
 					} else if (input.startsWith("location")) {
 						// change the output location
 						String delims = " ";
