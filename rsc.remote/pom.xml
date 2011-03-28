@@ -50,10 +50,6 @@
 			<groupId>com.googlecode.protobuf.pro</groupId>
 			<artifactId>protobuf-rpc-pro-duplex</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
