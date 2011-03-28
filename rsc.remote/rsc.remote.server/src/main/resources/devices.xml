@@ -15,12 +15,14 @@
         <ns0:ConnectionType>de.uniluebeck.itm.rsc.drivers.core.mockdevice.MockConnection</ns0:ConnectionType>
         <ns0:Port>1112</ns0:Port>
     </ns0:jaxbDevice> 
+    <!-- 
     <ns0:jaxbDevice>
  		<ns0:DeviceId>3</ns0:DeviceId>
         <ns0:DeviceType>de.uniluebeck.itm.rsc.drivers.pacemate.PacemateDevice</ns0:DeviceType>
         <ns0:ConnectionType>de.uniluebeck.itm.rsc.drivers.isense.iSenseSerialPortConnection</ns0:ConnectionType>
         <ns0:Port>COM21</ns0:Port>
     </ns0:jaxbDevice>
+    -->
      
      <!--
      <ns0:jaxbDevice>

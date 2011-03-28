@@ -69,7 +69,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>de.uniluebeck.itm.tcp.server.Main</mainClass>
+							<mainClass>de.uniluebeck.itm.rsc.remote.server.Main</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
