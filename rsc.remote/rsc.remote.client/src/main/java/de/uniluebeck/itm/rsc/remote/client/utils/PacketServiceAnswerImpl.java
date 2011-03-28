@@ -132,12 +132,14 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 	public void sendReversePacketMessage(final RpcController controller,
 			final ListenerData request, final RpcCallback<EmptyAnswer> done) {
 
+		/* find the right callback, create a new Message and call onMessagePacketReceived */
 		packetListenerList.get(request.getOperationKey())
 				.onMessagePacketReceived(
 						new MessageEvent<MessagePacket>(request.getSource(),
 								new MessagePacket(request.getType(), request
 										.getDataList().get(0).toByteArray())));
 
+		/* return a empty Answer to the Server to quit this connection */
 		done.run(EmptyAnswer.newBuilder().build());
 
 	}
@@ -164,7 +166,8 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 	public void reverseExecuteEvent(final RpcController controller, final OpKey request,
 			final RpcCallback<EmptyAnswer> done) {
 
-		if(null != getCallback(request.getOperationKey())){ // Wenn eine onSuccess-Nachricht vor onExecute eintrifft, wird onExecute ignoriert
+		/* If a onSuccess-Message arrived before a onExecute-Message, the onExecute-Message will be ignored */
+		if(null != getCallback(request.getOperationKey())){
 			getCallback(request.getOperationKey()).onExecute();
 			done.run(EmptyAnswer.newBuilder().build());
 		}
@@ -177,7 +180,8 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 	public void reverseOnCancel(final RpcController controller, final OpKey request,
 			final RpcCallback<EmptyAnswer> done) {
 		
-		if(null != getCallback(request.getOperationKey())){ // Wenn eine onSuccess-Nachricht vor onCancel eintrifft, wird onCancel ignoriert
+		/* If a onSuccess-Message arrived before a onCancel-Message, the onCancel-Message will be ignored */
+		if(null != getCallback(request.getOperationKey())){
 			getCallback(request.getOperationKey()).onCancel();
 			removeCallback(request.getOperationKey());
 			done.run(EmptyAnswer.newBuilder().build());
@@ -195,7 +199,7 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 		Class<?> except;
 
 		try {
-			/* erstellen der richtigen Exception mittels Exceptions */
+			/* rebuild the right Exception with Reflections */
 			except = Class.forName(request.getExceptionName());
 			/* finden des richtigen Konstruktors */
 			for(final Constructor<?> constructor : except.getConstructors()){
@@ -212,7 +216,8 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 			log.error(e.getMessage(),e);
 		}
 		
-		if(null != request.getOperationKey()){ // Wenn eine onSuccess-Nachricht vor onFailure eintrifft, wird onFailure ignoriert
+		/* If a onSuccess-Message arrived before a onFailure-Message, the onFailure-Message will be ignored */
+		if(null != request.getOperationKey()){
 			getCallback(request.getOperationKey()).onFailure(exception);
 			removeCallback(request.getOperationKey());
 			done.run(EmptyAnswer.newBuilder().build());
@@ -226,7 +231,8 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 	public void reverseChangeEvent(final RpcController controller,
 			final changeMessage request, final RpcCallback<EmptyAnswer> done) {
 			
-		if (null != request.getOperationKey()) { // Wenn eine onSuccess-Nachricht vor ChangeEvent eintrifft, wird ChangeEvent ignoriert
+		/* If a onSuccess-Message arrived before a onProgressChange-Message, the onProgressChange-Message will be ignored */
+		if (null != request.getOperationKey()) {
 			getCallback(request.getOperationKey()).onProgressChange(
 						Float.parseFloat(request.getQuery()));
 			done.run(EmptyAnswer.newBuilder().build());
@@ -242,23 +248,23 @@ public class PacketServiceAnswerImpl implements PacketServiceAnswer.Interface {
 	public void reverseSuccess(final RpcController controller, final ReverseAnswer request,
 			final RpcCallback<EmptyAnswer> done) {
 
-		/* pruefe, ob die Antwort vom Typ OpKey ist */
+		/* if the answer has the type OpKey */
 		if (request.hasSuccess()) {
 			final AsyncCallback<Void> call = (AsyncCallback<Void>) getCallback(request
 					.getSuccess().getOperationKey());
 			call.onSuccess(null);
-		/* pruefe, ob die Antwort vom Typ ChipData ist */
+			/* if the answer has the type ChipData */
 		} else if (request.hasChipData()) {
 			final AsyncCallback<ChipType> call = (AsyncCallback<ChipType>) getCallback(request
 					.getChipData().getOperationKey());
 			call.onSuccess(ChipType.valueOf(request.getChipData().getType()));
-		/* pruefe, ob die Antwort vom Typ MacData ist */
+			/* if the answer has the type MacData */
 		} else if (request.hasMacAddress()) {
 			final AsyncCallback<MacAddress> call = (AsyncCallback<MacAddress>) getCallback(request
 					.getMacAddress().getOperationKey());
 			call.onSuccess(new MacAddress(request.getMacAddress()
 					.getMACADDRESSList().get(0).toByteArray()));
-		/* pruefe, ob die Antwort vom Typ ByteData ist */
+			/* if the answer has the type ByteData */
 		} else if (request.hasData()) {
 			final AsyncCallback<byte[]> call = (AsyncCallback<byte[]>) getCallback(request
 					.getData().getOperationKey());
