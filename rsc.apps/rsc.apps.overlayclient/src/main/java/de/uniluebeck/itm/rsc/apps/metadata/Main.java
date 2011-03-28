@@ -242,16 +242,16 @@ public class Main {
 				+ "-microcontroller \"TI MSP430\" -server 141.48.65.111 "
 				+ "-serverPort 8080");
 		System.out.println("Search by one capability of the node: "
-				+ "-capabilities urn:wisebed:node:capability:light "
+				+ "-capabilities \"urn:wisebed:node:capability:light\" "
 				+ "-server 141.48.65.111 " + "-serverPort 8080");
 		System.out.println("Search by three capabilities names: "
-				+ "-capabilities urn:wisebed:node:capability:light;"
+				+ "-capabilities \"urn:wisebed:node:capability:light;"
 				+ "urn:wisebed:node:capability:temp;urn:wisebed:node:"
-				+ "capability:gas " + "-server 141.48.65.111 -serverPort 8080");
+				+ "capability:gas\" " + "-server 141.48.65.111 -serverPort 8080");
 		System.out.println("Search by three capabilities with name,default,"
-				+ "datatype: -capabilities urn:wisebed:node:capability:light,"
+				+ "datatype: -capabilities \"urn:wisebed:node:capability:light,"
 				+ "6,int;urn:wisebed:node:capability:temp,"
-				+ "7,int;urn:wisebed:node:capability:gas,3,int "
+				+ "7,int;urn:wisebed:node:capability:gas,3,int\" "
 				+ "-server 141.48.65.111 -serverPort 8080");
 		System.out
 				.println("Search by description of the node: -description wisebed"
