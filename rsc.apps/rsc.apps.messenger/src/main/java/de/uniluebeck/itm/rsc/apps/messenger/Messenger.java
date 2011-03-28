@@ -221,6 +221,7 @@ public class Messenger {
 			@Override
 			public void onFailure(final Throwable throwable) {
 				System.out.println("Error while sending the message.");
+				System.out.println(throwable.getMessage());
 				if (connection != null) {
 					if(connection.isConnected()){
 						connection.shutdown(false);
