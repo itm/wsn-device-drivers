@@ -20,6 +20,10 @@
 		<!--Logging -->
 		<!-- Hibernate -->
 		<dependency>
+			<groupId>org.mod4j.org.apache.commons</groupId>
+			<artifactId>cli</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
 		</dependency>
@@ -53,17 +57,22 @@
 					</execution>
 				</executions>
 			</plugin>
+				<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>de.uniluebeck.itm.rsc.metadaten.metadatenserver.MetaDatenServer</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.dstovall</groupId>
 				<artifactId>onejar-maven-plugin</artifactId>
-				<version>1.4.4</version>
 				<executions>
 					<execution>
-						<configuration>
-							<!-- Optional -->
-							<onejarVersion>0.97</onejarVersion>
-							<mainClass>de.uniluebeck.itm.metadaten</mainClass>
-						</configuration>
 						<goals>
 							<goal>one-jar</goal>
 						</goals>

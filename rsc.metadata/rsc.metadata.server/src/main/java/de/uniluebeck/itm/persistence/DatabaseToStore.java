@@ -158,13 +158,18 @@ public class DatabaseToStore {
 			crit.add(exampleCap);
 			capresult = crit.list();
 			for (Node node : nodeexamples) {
+				log.info("Comparing node with id:" + node.getId());
 				for (Capability captemp : capresult) {
 					if (captemp.getNode().getId().equals(node.getId())) {
 						if (!(resultList.contains(node))) {
+							
 							resultList.add(node);
 						}
-					}else{
-						nodeexamples.remove(node);
+					} else {
+						if ((resultList.contains(node))) {
+							resultList.remove(node);
+							break;
+						}
 					}
 				}
 			}

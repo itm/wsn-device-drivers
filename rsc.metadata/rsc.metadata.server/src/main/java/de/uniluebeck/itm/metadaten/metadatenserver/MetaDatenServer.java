@@ -12,6 +12,13 @@ import javax.xml.bind.JAXBException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
@@ -65,13 +72,18 @@ public class MetaDatenServer {
 	 * Logger for the server
 	 */
 	private static Logger log = LoggerFactory.getLogger(MetaDatenServer.class);
-	/**The time period that the authorized client channel is hold in the authorization map*/
-	private final static int TIMEOUT = 300; 
-	
-	/**Holds the authorized client channel for the given timeperiod in the authorization map*/
+	/**
+	 * The time period that the authorized client channel is hold in the
+	 * authorization map
+	 */
+	private final static int TIMEOUT = 300;
+
+	/**
+	 * Holds the authorized client channel for the given timeperiod in the
+	 * authorization map
+	 */
 	private static TimedCache<RpcClientChannel, Subject> authList = new TimedCache<RpcClientChannel, Subject>(
 			TIMEOUT, TimeUnit.SECONDS);
-
 
 	/**
 	 * Main method for the servers
@@ -81,8 +93,61 @@ public class MetaDatenServer {
 	 * @throws URISyntaxException
 	 */
 	public static void main(final String[] args)  {
-		final String file = (args.length < 1) ? "src/main/resources/config.xml"
-				: args[0];
+		/**Filepath for config file**/
+		String file = "src/main/resources/config.xml";
+		/**Path to shiro.ini**/
+		String shirofile = "shiro.ini";
+		final Option helpOption = new Option("help", "print this message");
+		final Option versionOption = new Option("version",
+				"print the version information");
+
+		final Options options = new Options();
+
+		options.addOption(helpOption);
+		options.addOption(versionOption);
+
+		// add options for Server
+		options.addOption("c", true, "Path of config file for the Server");
+		options.addOption("sh", true, "Path for shiro.ini for authentication");
+		// for help statement
+		final HelpFormatter formatter = new HelpFormatter();
+
+		final CommandLineParser parser = new GnuParser();
+		CommandLine cmd = null;
+		if (args.length == 0) {
+			System.out.println("No Parameters found, the Server will start with default-config.");
+		} else {
+			try {
+				cmd = parser.parse(options, args);
+			} catch (final ParseException e) {
+				System.out.println("One of the parameters is not registered.");
+			}
+			if (cmd != null) {
+
+				// standard-options
+				if (cmd.hasOption("help")) {
+					System.out.println("Example:");
+					System.out
+							.println("Server: -c src/main/resources -sh src/main/resources");
+					System.out.println("");
+					formatter.printHelp("help", options);
+					System.exit(-1);
+				}
+				System.out.println("start Server...");
+				if (cmd.hasOption("c")){
+					file = cmd.getOptionValue("c");					
+				}else{
+					file = "src/main/resources/config.xml";
+
+				}
+				if (cmd.hasOption("sh")) {
+					shirofile = cmd.getOptionValue("sh");
+				} else {
+					shirofile = "shiro.ini";
+					System.out.print("No path for shiro.ini given, so standard path src/main/resources/shiro.ini will be used");
+				}
+			}
+		}
 		ConfigData config = null;
 		try {
 			config = ConfigReader.readConfigFile(new File(file));
@@ -153,7 +218,7 @@ public class MetaDatenServer {
 		Factory<SecurityManager> factory = null;
 		try {
 			factory = new IniSecurityManagerFactory(
-					ClassLoader.getSystemResource("shiro.ini").toURI().getPath());
+					ClassLoader.getSystemResource(shirofile).toURI().getPath());
 		} catch (final URISyntaxException e) {
 			log.error(e.getStackTrace().toString());
 		}
@@ -165,6 +230,7 @@ public class MetaDatenServer {
 		}
 
 	}
+		
 
 	/**
 	 * Class implements the operations used of client and server
@@ -180,7 +246,6 @@ public class MetaDatenServer {
 		@Override
 		public void connect(final RpcController controller,
 				final Identification request, final RpcCallback<VOID> done) {
-
 			// eine Moeglichkeit den benutzten channel zu identifizieren
 			final RpcClientChannel channel = ServerRpcController
 					.getRpcChannel(controller);
@@ -245,8 +310,8 @@ public class MetaDatenServer {
 				log.info("Authentication successfull");
 			} else {
 				log.error("Authentication not successful "
-						+ currentUser.isAuthenticated() + "User in authlist" + authList
-						.containsKey(channel));
+						+ currentUser.isAuthenticated() + "User in authlist"
+						+ authList.containsKey(channel));
 			}
 		}
 
@@ -275,7 +340,7 @@ public class MetaDatenServer {
 			try {
 				storeDB.storeNode(node);
 			} catch (final NodeInDBException e) {
-				log.error(e.getMessage(),e);
+				log.error(e.getMessage(), e);
 				controller.setFailed("Error saving Node: " + e.getMessage());
 				done.run(VOID.newBuilder().build());
 			}
@@ -321,8 +386,10 @@ public class MetaDatenServer {
 			Node node = new Node();
 			final Subject user = authList.get(ServerRpcController
 					.getRpcChannel(controller));
-			log.debug("Method: refresh: User: " + user
-					+ "user authenticated? " + user.isAuthenticated());
+			System.out.println("xxx" +ServerRpcController
+					.getRpcChannel(controller).getPeerInfo().getHostName());
+			log.debug("Method: refresh: User: " + user + "user authenticated? "
+					+ user.isAuthenticated());
 			if (user == null || !user.isAuthenticated()) {
 				controller.setFailed("You are not authenticated!");
 				done.run(null);
@@ -335,8 +402,6 @@ public class MetaDatenServer {
 
 				return;
 			}
-			// ClientID id =
-			// idList.get(ServerRpcController.getRpcChannel(controller));
 			node = nhelper.changeToNode(request);
 			node.setTimestamp(new Date());
 			final StoreToDatabase storeDB = new StoreToDatabase();
@@ -409,11 +474,11 @@ public class MetaDatenServer {
 					+ authList.size());
 			// idList.remove(ServerRpcController.getRpcChannel(controller));
 			// authList.remove(ServerRpcController.getRpcChannel(controller));
-			try{
+			try {
 				currentUser.logout();
-			}catch(final NullPointerException e){
-				log.error("Error while logging out user." );
-				log.error(e.getMessage(),e);
+			} catch (final NullPointerException e) {
+				log.error("Error while logging out user.");
+				log.error(e.getMessage(), e);
 			}
 			log.info("Und user noch in der Liste"
 					+ authList.get(ServerRpcController
