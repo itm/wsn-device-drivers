@@ -299,10 +299,12 @@ public class Main {
 					System.out.println("Options:");
 					System.out.println("Enter 'bracketsFilter filter' "
 							+ "to add 'filter' to the current "
-							+ "brackets-filter.");
+							+ "brackets-filter: " + writer.getBracketFilter()
+							+ ".");
 					System.out.println("Enter 'regexFilter filter' "
 							+ "to add 'filter' to the current "
-							+ "regex-filter.");
+							+ "regex-filter: " + writer.getRegexFilter() 
+							+ ".");
 					System.out.println("Enter 'deleteRegexFilter' "
 							+ "to delete the regex-filter.");
 					System.out.println("Enter 'deleteBracketsFilter' "
