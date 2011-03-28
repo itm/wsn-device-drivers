@@ -54,10 +54,6 @@
 			<groupId>de.uniluebeck.itm</groupId>
 			<artifactId>rsc.drivers.core</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-		</dependency>
 	</dependencies>
 
 	<dependencyManagement>

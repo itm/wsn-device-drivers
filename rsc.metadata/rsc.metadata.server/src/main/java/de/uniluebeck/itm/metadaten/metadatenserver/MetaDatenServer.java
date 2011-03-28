@@ -246,7 +246,6 @@ public class MetaDatenServer {
 		@Override
 		public void connect(final RpcController controller,
 				final Identification request, final RpcCallback<VOID> done) {
-
 			// eine Moeglichkeit den benutzten channel zu identifizieren
 			final RpcClientChannel channel = ServerRpcController
 					.getRpcChannel(controller);
@@ -387,6 +386,8 @@ public class MetaDatenServer {
 			Node node = new Node();
 			final Subject user = authList.get(ServerRpcController
 					.getRpcChannel(controller));
+			System.out.println("xxx" +ServerRpcController
+					.getRpcChannel(controller).getPeerInfo().getHostName());
 			log.debug("Method: refresh: User: " + user + "user authenticated? "
 					+ user.isAuthenticated());
 			if (user == null || !user.isAuthenticated()) {
