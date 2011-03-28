@@ -82,7 +82,7 @@ public class DatabaseToStore {
 		// resultlist =
 		// session.createQuery("select  from Node parentnode where id="+parentnode.getId()).list();
 		final Criteria crit = session.createCriteria(Node.class);
-		final Example exampleNode = Example.create(nodeexample);
+		final Example exampleNode = Example.create(nodeexample).ignoreCase();
 		// resultlist =
 		// session.createQuery("select  from Node parentnode where id="+parentnode.getId()).list();
 		// final List <NodeEntity> nodeIds =
@@ -92,27 +92,31 @@ public class DatabaseToStore {
 		log.info("Searching for nodes that are like the examplenode");
 		resultlist = crit.list();
 		log.info("Result before checking ID: " + resultlist.size());
-		if (!(nodeexample.getId().getId() == null)) {
-			final List<Node> templist = new ArrayList<Node>();
-			for (Node node : resultlist) {
-				if (nodeexample.getId().getId().matches(node.getId().getId())) {
-					templist.add(node);
+		try{
+			if (!(nodeexample.getId().getId() == null)) {
+				final List<Node> templist = new ArrayList<Node>();
+				for (Node node : resultlist) {
+					if (nodeexample.getId().getId().matches(node.getId().getId())) {
+						templist.add(node);
+					}
 				}
+				resultlist.clear();
+				resultlist.addAll(templist);
 			}
-			resultlist.clear();
-			resultlist.addAll(templist);
-		}
-		if (!(nodeexample.getId().getIpAdress() == null)) {
-			final List<Node> templist = new ArrayList<Node>();
-			for (Node node : resultlist) {
-				if (nodeexample.getId().getIpAdress()
-						.matches(node.getId().getIpAdress())) {
-					templist.add(node);
+		}catch(NullPointerException npe){}
+		try{
+			if (!(nodeexample.getId().getIpAdress() == null)) {
+				final List<Node> templist = new ArrayList<Node>();
+				for (Node node : resultlist) {
+					if (nodeexample.getId().getIpAdress()
+							.matches(node.getId().getIpAdress())) {
+						templist.add(node);
+					}
 				}
+				resultlist.clear();
+				resultlist.addAll(templist);
 			}
-			resultlist.clear();
-			resultlist.addAll(templist);
-		}
+		}catch(NullPointerException npe){}
 		if (resultlist.size() > 0) {
 			for (Node nod : resultlist) {
 				// nod.setCapabilityList(session.createQuery("from Capability where parentnode_id ="+
@@ -145,39 +149,48 @@ public class DatabaseToStore {
 	 * @return List <Node> list of nodes that capabilities match to the given
 	 *         capability
 	 */
-	private List<Node> searchforcapabilities(final List<Node> nodeexamples,
+	public List<Node> searchforcapabilities(final List<Node> nodeexamples,
 			final List <Capability> capList) {
 		final List<Node> resultList = new ArrayList<Node>();
 		final Session session = getSession();
+		final int capcount = capList.size();
+		List<Capability> capresult = new ArrayList<Capability>();
 		for(Capability cap : capList){
 			
 			final Transaction transaction = session.beginTransaction();
 			final Criteria crit = session.createCriteria(Capability.class);
-			final Example exampleCap = Example.create(cap);
-			List<Capability> capresult = new ArrayList<Capability>();
+			final Example exampleCap = Example.create(cap).ignoreCase();
 			crit.add(exampleCap);
-			capresult = crit.list();
-			for (Node node : nodeexamples) {
-				log.info("Comparing node with id:" + node.getId());
-				for (Capability captemp : capresult) {
-					if (captemp.getNode().getId().equals(node.getId())) {
-						if (!(resultList.contains(node))) {
-							
-							resultList.add(node);
-						}
-					} else {
-						if ((resultList.contains(node))) {
-							resultList.remove(node);
-							break;
-						}
-					}
-				}
-			}
+			capresult.addAll(crit.list());
 			transaction.commit();
+		}	
+			for (Node node : nodeexamples) {
+				for (Capability cap : capresult){					
+					int tempcount= 0;
+					log.debug("Comparing node with id:" + node.getId());
+					for (Capability captemp : capresult) {
+						log.debug("Comparing cap with id:" + captemp.getNode().getId() + " with nodeID " + node.getId());
+						if (captemp.getNode().getId().equals(node.getId())) {
+							log.debug("Ids are the same");
+							tempcount++;
+							if (!(resultList.contains(node))) {
+								log.debug("Node not in resultlist, will be added now");
+								resultList.add(node);
+							}
+						} else {
+							log.debug("Ids of capability and node differ");
+							}
+						}
+						if (!(tempcount == capcount)){
+							resultList.remove(node);
+						}
+					
+				}
 		}
 		session.close();
 		return resultList;
 	}
+	
 
 	/**
 	 * This function retrieves a Node from the DataBase and stores it to
