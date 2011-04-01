@@ -26,6 +26,12 @@
 		<dependency>
 			<groupId>de.uniluebeck.itm</groupId>
 			<artifactId>rsc.metadata.service</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.hibernate</groupId>
+					<artifactId>hibernate-entitymanager</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>de.uniluebeck.itm</groupId>
@@ -84,7 +90,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin> 
+			</plugin>
 		</plugins>
 	</build>
 
