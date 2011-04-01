@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import de.uniluebeck.itm.rsc.drivers.core.AbstractConnection;
 import de.uniluebeck.itm.rsc.drivers.core.serialport.SerialPortConnection;
 import de.uniluebeck.itm.rsc.drivers.core.util.JarUtil;
+import de.uniluebeck.itm.rsc.drivers.core.util.SysOutUtil;
 
 public class TelosbSerialPortConnection extends AbstractConnection implements SerialPortConnection {
 
@@ -58,8 +59,10 @@ public class TelosbSerialPortConnection extends AbstractConnection implements Se
 		if (serialPort != null) {
 			return;
 		}
-
+		
+		SysOutUtil.mute();
 		allIdentifiers = CommPortIdentifier.getPortIdentifiers();
+		SysOutUtil.restore();
 		while (allIdentifiers.hasMoreElements() && !portFound) {
 			portIdentifier = (CommPortIdentifier) allIdentifiers.nextElement();
 			if (portIdentifier.getName().equals(uri)) {

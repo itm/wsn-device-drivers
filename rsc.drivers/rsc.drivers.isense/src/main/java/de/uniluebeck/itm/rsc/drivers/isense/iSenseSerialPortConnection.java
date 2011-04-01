@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import de.uniluebeck.itm.rsc.drivers.core.AbstractConnection;
 import de.uniluebeck.itm.rsc.drivers.core.serialport.SerialPortConnection;
 import de.uniluebeck.itm.rsc.drivers.core.util.JarUtil;
+import de.uniluebeck.itm.rsc.drivers.core.util.SysOutUtil;
 
 public class iSenseSerialPortConnection extends AbstractConnection implements SerialPortConnection {
 	
@@ -78,7 +79,9 @@ public class iSenseSerialPortConnection extends AbstractConnection implements Se
 	}
 	
 	public void setSerialPort(String port) throws Exception {
+		SysOutUtil.mute();
 		Enumeration<?> e = CommPortIdentifier.getPortIdentifiers();
+		SysOutUtil.restore();
 		SerialPort sp = null;
 		while (e.hasMoreElements()) {
 			CommPortIdentifier cpi = (CommPortIdentifier) e.nextElement();
