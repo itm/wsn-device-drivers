@@ -58,8 +58,8 @@ public class AbstractOperationTest {
 		Assert.assertEquals(operation.getState(), State.CANCELED);
 	}
 	
-	@Test
-	public void testCallException() {
+	@Test(expected=Exception.class)
+	public void testCallException() throws Exception {
 		// Test exception
 		Operation<Void> operation = new AbstractOperation<Void>() {
 			@Override
@@ -72,11 +72,9 @@ public class AbstractOperationTest {
 		try {
 			operation.call();
 		} catch (Exception e) {
-			e.printStackTrace();
-			Assert.fail(e.getMessage());
+			Assert.assertEquals(operation.getState(), State.EXCEPTED);
+			throw e;
 		}
-		Assert.assertEquals(operation.getState(), State.EXCEPTED);
-		
 	}
 	
 	@Test

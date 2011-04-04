@@ -118,7 +118,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 			setState(State.EXCEPTED);
 			LOG.error("Exception during operation execution", e);
 			callback.onFailure(e);
-			return null;
+			throw new RuntimeException(e);
 		} finally {
 			cancelTimeout();
 		}

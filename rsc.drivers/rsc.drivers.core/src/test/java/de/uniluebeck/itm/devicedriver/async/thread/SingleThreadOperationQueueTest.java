@@ -79,4 +79,17 @@ public class SingleThreadOperationQueueTest {
 		}
 		Assert.assertTrue(queue.getOperations().isEmpty());
 	}
+	
+	@Test(expected=RuntimeException.class)
+	public void testOperationHandleException() {
+		Operation<Boolean> operation = new AbstractOperation<Boolean>() {
+			@Override
+			public Boolean execute(Monitor monitor) throws Exception {
+				Thread.sleep(500);
+				throw new NullPointerException();
+			}
+		};
+		final OperationHandle<Boolean> handle = queue.addOperation(operation, 1000, new AsyncAdapter<Boolean>());
+		handle.get();
+	}
 }
