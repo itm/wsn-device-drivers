@@ -188,6 +188,14 @@ public class Server {
 			@Override
 			public void connectionReestablished(
 					final RpcClientChannel clientChannel) {
+				
+				Subject user = authList.get(clientChannel);
+				
+				if (user != null && user.isAuthenticated()) {
+					/* renew the Timer for a channel in the authList */
+					authList.put(clientChannel, user);
+				}
+				
 				/*
 				 * TODO es waehre machbar eine verlorene oder beendete
 				 * Verbindung mit all ihren Abhaengigkeiten wieder herzustellen
@@ -533,12 +541,6 @@ public class Server {
 			// identifizieren des Users mit dem Channel
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
-
-			/* check authentification and renew the Timer */
-			if(!isAuthenticated(user, controller)){
-				done.run(null);
-				return;
-			}
 			
 			/*
 			 * erzeugen und ausfuehren einer program-Operation auf einem
@@ -567,12 +569,6 @@ public class Server {
 			// identifizieren des Users mit dem Channel
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
-			
-			/* check authentification and renew the Timer */
-			if(!isAuthenticated(user, controller)){
-				done.run(null);
-				return;
-			}
 
 			/*
 			 * erzeugen und ausfuehren einer writeMac-Operation auf einem
@@ -603,12 +599,6 @@ public class Server {
 			// identifizieren des Users mit dem Channel
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
-			
-			/* check authentification and renew the Timer */
-			if(!isAuthenticated(user, controller)){
-				done.run(null);
-				return;
-			}
 
 			/*
 			 * erzeugen und ausfuehren einer writeFlash-Operation auf einem
@@ -638,12 +628,6 @@ public class Server {
 			// identifizieren des Users mit dem Channel
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
-			
-			/* check authentification and renew the Timer */
-			if(!isAuthenticated(user, controller)){
-				done.run(null);
-				return;
-			}
 
 			/*
 			 * erzeugen und ausfuehren einer eraseFlash-Operation auf einem
@@ -673,12 +657,6 @@ public class Server {
 			// identifizieren des Users mit dem Channel
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
-			
-			/* check authentification and renew the Timer */
-			if(!isAuthenticated(user, controller)){
-				done.run(null);
-				return;
-			}
 
 			/*
 			 * erzeugen und ausfuehren einer readFlash-Operation auf einem
@@ -709,12 +687,6 @@ public class Server {
 			// identifizieren des Users mit dem Channel
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
-			
-			/* check authentification and renew the Timer */
-			if(!isAuthenticated(user, controller)){
-				done.run(null);
-				return;
-			}
 
 			/*
 			 * erzeugen und ausfuehren einer readMac-Operation auf einem
@@ -744,12 +716,6 @@ public class Server {
 			// identifizieren des Users mit dem Channel
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
-			
-			/* check authentification and renew the Timer */
-			if(!isAuthenticated(user, controller)){
-				done.run(null);
-				return;
-			}
 
 			/*
 			 * erzeugen und ausfuehren einer reset-Operation auf einem
@@ -779,12 +745,6 @@ public class Server {
 			// identifizieren des Users mit dem Channel
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
-			
-			/* check authentification and renew the Timer */
-			if(!isAuthenticated(user, controller)){
-				done.run(null);
-				return;
-			}
 
 			/*
 			 * erzeugen und ausfuehren einer send-Operation auf einem
@@ -814,12 +774,6 @@ public class Server {
 			// identifizieren des Users mit dem Channel
 			final ClientID id = idList.get(ServerRpcController
 					.getRpcChannel(controller));
-			
-			/* check authentification and renew the Timer */
-			if(!isAuthenticated(user, controller)){
-				done.run(null);
-				return;
-			}
 
 			/*
 			 * erzeugen und ausfuehren einer getChipType-Operation auf einem
@@ -827,24 +781,6 @@ public class Server {
 			 */
 			new GetChipTypeOperation(controller, done, user, id, request)
 					.execute();
-		}
-
-		/**
-		 * check the Authentification of a User and restart his Authentification-Timer
-		 * @param user the User which start a Operation
-		 * @param controller the RPC-Controller for the Connection
-		 * @return true, if user is authenticated, false otherwise
-		 */
-		private boolean isAuthenticated(final Subject user, final RpcController controller){
-			if (user == null || !user.isAuthenticated()) {
-				controller.setFailed("You are not authenticated!");
-				return false;
-			}
-			else{
-				/* renew the Timer for a channel in the authList */
-				authList.put(ServerRpcController.getRpcChannel(controller), user);
-				return true;
-			}
 		}
 		
 	}
