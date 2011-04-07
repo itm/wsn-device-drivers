@@ -192,6 +192,5 @@
 		<module>rsc.remote</module>
 		<module>rsc.metadata</module>
 		<module>rsc.apps</module>
-		<module>rsc.drivers.atmel</module>
 	</modules>
 </project>
