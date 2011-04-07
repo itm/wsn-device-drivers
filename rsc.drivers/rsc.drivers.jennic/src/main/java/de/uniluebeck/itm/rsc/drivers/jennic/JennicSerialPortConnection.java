@@ -8,6 +8,6 @@ import de.uniluebeck.itm.rsc.drivers.isense.iSenseSerialPortConnection;
  * 
  * @author Malte Legenhausen
  */
-public class JennicConnection extends iSenseSerialPortConnection {
+public class JennicSerialPortConnection extends iSenseSerialPortConnection {
 
 }

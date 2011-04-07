@@ -8,6 +8,6 @@ import de.uniluebeck.itm.rsc.drivers.isense.iSenseSerialPortConnection;
  * 
  * @author Malte Legenhausen
  */
-public class PacemateConnection extends iSenseSerialPortConnection {
+public class PacemateSerialPortConnection extends iSenseSerialPortConnection {
 
 }
