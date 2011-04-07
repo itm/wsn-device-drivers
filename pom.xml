@@ -193,4 +193,26 @@
 		<module>rsc.metadata</module>
 		<module>rsc.apps</module>
 	</modules>
+	
+	<distributionManagement>
+		<repository>
+			<id>itm-maven-repository-releases</id>
+			<name>ITM UzL Maven releases repository</name>
+			<url>scp://itm01.itm.uni-luebeck.de/www/itm/projects/maven/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>itm-maven-repository-snapshots</id>
+			<name>ITM UzL Maven snapshots repository</name>
+			<url>scp://itm01.itm.uni-luebeck.de/www/itm/projects/maven/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+	
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	
+	<scm>
+		<connection>scm:git:https://itm@github.com/itm/rsc.git</connection>
+	</scm>
+	
 </project>
