@@ -130,30 +130,15 @@ public class TelosbDevice extends AbstractSerialPortDevice implements Programabl
 		super.onConnectionChange(event);
 		
 		if (event.isConnected()) {
-			bsl = new BSLTelosb(this);
+			bsl = new BSLTelosb(getConnection());
 		}
 	}
 	
 	public void writeFlash(int address, byte[] bytes, int len) throws IOException, FlashProgramFailedException, TimeoutException, InvalidChecksumException, ReceivedIncorrectDataException, UnexpectedResponseException {
-		// verify if block range is erased
-		if (!bsl.verifyBlock(address, len, null)) {
-			throw new FlashProgramFailedException("Failed to program flash: block range is not erased completely");
-		}
-
-		// execute bsl patch first(only for BSL version <=1.10)
-		bsl.executeBSLPatch();
-
-		// program block
 		bsl.sendBSLCommand(BSLTelosb.CMD_TXDATABLOCK, address, len, bytes, false);
-
-		byte[] reply = bsl.receiveBSLReply();
+		final byte[] reply = bsl.receiveBSLReply();
 		if ((reply[0] & 0xFF) != BSLTelosb.DATA_ACK) {
 			throw new FlashProgramFailedException("Failed to program flash: received no ACK");
-		}
-
-		// verify programmed block
-		if (!bsl.verifyBlock(address, len, bytes)) {
-			throw new FlashProgramFailedException("Failed to program flash: verification of written data failed");
 		}
 	}
 }

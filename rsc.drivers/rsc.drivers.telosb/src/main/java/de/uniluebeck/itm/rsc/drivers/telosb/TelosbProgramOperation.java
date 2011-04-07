@@ -26,10 +26,11 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 	private void program(final Monitor monitor) throws Exception {
 		final TelosbBinData binData = new TelosbBinData(getBinaryImage());
 		// Write program to flash
-		log.debug("Starting to write program into flash memory...");
+		log.trace("Starting to write program into flash memory...");
 		
 		int blockCount = 0;
 		int bytesProgrammed = 0;
+		
 		for (BinDataBlock block = binData.getNextBlock(); block != null; block = binData.getNextBlock()) {
 			final byte[] data = block.getData();
 			final int address = block.getAddress();
@@ -61,7 +62,7 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 			
 			blockCount++;
 		}		
-		log.debug("Programmed " + bytesProgrammed + " bytes.");
+		log.trace("Programmed " + bytesProgrammed + " bytes.");
 	}
 	
 	@Override
