@@ -4,13 +4,13 @@
 	<parent>
 		<artifactId>rsc.remote</artifactId>
 		<groupId>de.uniluebeck.itm</groupId>
-		<version>0.1</version>
+		<version>0.2-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 
 	<groupId>de.uniluebeck.itm</groupId>
 	<artifactId>rsc.remote.client</artifactId>
-	<version>0.1</version>
+	<version>0.2-SNAPSHOT</version>
 	<name>Remote Sensor Control Remote Client</name>
 
 	<build>
