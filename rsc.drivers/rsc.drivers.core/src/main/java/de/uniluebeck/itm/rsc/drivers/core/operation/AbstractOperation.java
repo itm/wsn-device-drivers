@@ -173,7 +173,13 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	 */
 	protected <R> R executeSubOperation(final Operation<R> operation, final Monitor monitor) throws Exception {
 		subOperation = operation;
-		final R result = operation.execute(monitor);
+		// Work around to prevent sub operations to raise the progress to 1.0f.
+		final R result = operation.execute(new Monitor() {
+			@Override
+			public void onProgressChange(final float fraction) {
+				// Do nothing
+			}
+		});//monitor);
 		subOperation = null;
 		return result;
 	}
