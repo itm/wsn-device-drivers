@@ -1,9 +1,8 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.uniluebeck.itm</groupId>
 	<artifactId>rsc</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1</version>
 	<name>Remote Sensor Control</name>
 	<packaging>pom</packaging>
 
@@ -12,57 +11,57 @@
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>rsc.drivers.core</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
+				<version>0.1</version>
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>rsc.drivers.isense</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
+				<version>0.1</version>
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>rsc.drivers.jennic</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
+				<version>0.1</version>
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>rsc.drivers.pacemate</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
+				<version>0.1</version>
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>rsc.drivers.telosb</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
+				<version>0.1</version>
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>rsc.remote.client</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
+				<version>0.1</version>
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>rsc.remote.server</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
+				<version>0.1</version>
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>rsc.metadata.searchclient</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
+				<version>0.1</version>
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>rsc.metadata.server</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
+				<version>0.1</version>
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>rsc.metadata.service</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
+				<version>0.1</version>
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>rsc.apps.metadata</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
+				<version>0.1</version>
 			</dependency>
 
 			<dependency>
