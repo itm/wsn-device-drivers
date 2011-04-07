@@ -21,14 +21,14 @@ public class JennicWriteFlashOperation extends AbstractWriteFlashOperation {
 	
 	@Override
 	public Void execute(Monitor monitor) throws Exception {
-		log.debug("Writing to flash...");
+		log.trace("Writing to flash...");
 		executeSubOperation(device.createEnterProgramModeOperation(), monitor);
 		try {
 			device.writeFlash(getAddress(), getData());
 		} finally {
 			executeSubOperation(device.createLeaveProgramModeOperation(), monitor);
 		}
-		log.debug("Flash written");
+		log.trace("Flash written");
 		return null;
 	}
 

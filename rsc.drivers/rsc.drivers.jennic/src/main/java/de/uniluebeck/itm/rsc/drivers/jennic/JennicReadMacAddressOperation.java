@@ -26,11 +26,11 @@ public class JennicReadMacAddressOperation extends AbstractOperation<MacAddress>
 	
 	@Override
 	public MacAddress execute(final Monitor monitor) throws Exception {
-		log.debug("Reading MAC Adress");
+		log.trace("Reading MAC Adress");
 		// Connection established, determine chip type
 		final GetChipTypeOperation getChipTypeOperation = device.createGetChipTypeOperation();
 		final ChipType chipType = executeSubOperation(getChipTypeOperation, monitor);
-		log.debug("Chip type is " + chipType);
+		log.trace("Chip type is " + chipType);
 
 		// Connection established, read flash header
 		final int address = chipType.getMacInFlashStart();
@@ -39,7 +39,7 @@ public class JennicReadMacAddressOperation extends AbstractOperation<MacAddress>
 		final byte[] header = executeSubOperation(readFlashOperation, monitor);
 
 		final MacAddress macAddress = new MacAddress(header);
-		log.debug("Done, result is: " + macAddress);
+		log.trace("Done, result is: " + macAddress);
 		return macAddress;
 	}
 

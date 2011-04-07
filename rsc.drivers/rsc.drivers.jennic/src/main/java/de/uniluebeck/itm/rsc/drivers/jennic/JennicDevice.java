@@ -184,7 +184,7 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 	
 	public void eraseFlash(Sector sector) throws Exception {
 		enableFlashErase();
-		log.debug("Erasing sector " + sector);
+		log.trace("Erasing sector " + sector);
 		sendBootLoaderMessage(Messages.sectorEraseRequestMessage(sector));
 
 		byte[] response = receiveBootLoaderReply(Messages.SECTOR_ERASE_RESPONSE);
@@ -197,7 +197,7 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 	}
 	
 	public void configureFlash(ChipType chipType) throws Exception {
-		log.debug("Configuring flash");
+		log.trace("Configuring flash");
 
 		// Only new chips need to be configured
 		if (chipType != ChipType.JN5121) {
@@ -217,7 +217,7 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 				throw new FlashConfigurationFailedException();
 			}
 		}
-		log.debug("Done. Flash is configured");
+		log.trace("Done. Flash is configured");
 	}
 	
 	/** 
@@ -295,7 +295,7 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 			// device is supposed to respond)
 			sendBootLoaderMessage(Messages.flashReadRequestMessage(0x24, 0x20));
 			receiveBootLoaderReply(Messages.FLASH_READ_RESPONSE);
-			log.debug("Device connection established");
+			log.trace("Device connection established");
 			return true;
 		} catch (TimeoutException e) {
 			log.warn("Still waiting for a connection.");
@@ -335,8 +335,6 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 		if (response[1] != 0x0) {
 			log.error(String.format("Failed to write to flash: Response should be 0x00, yet it is: 0x%02x", response[1]));
 			throw new FlashProgramFailedException();
-		} else {
-			log.debug("Received Ack");
 		}
 	}
 }

@@ -23,7 +23,7 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 	private byte[] readFlash(final Monitor monitor) throws Exception {
 		// Wait for a connection
 		while (!isCanceled() && !device.waitForConnection()) {
-			log.info("Still waiting for a connection");
+			log.debug("Still waiting for a connection");
 		}
 
 		// Return with success if the user has requested to cancel this
@@ -55,7 +55,7 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 			sectorStart += blockSize;
 
 		}
-		log.debug("Done, result is: " + StringUtils.toHexString(flashData));
+		log.trace("Done, result is: " + StringUtils.toHexString(flashData));
 		return flashData;
 	}
 	

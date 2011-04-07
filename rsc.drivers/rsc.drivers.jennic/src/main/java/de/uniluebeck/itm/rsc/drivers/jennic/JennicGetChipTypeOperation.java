@@ -54,7 +54,7 @@ public class JennicGetChipTypeOperation extends AbstractOperation<ChipType> impl
 
 		final ChipType chipType = determineChipType(response[2], response[3]);
 
-		log.debug("Chip identified as " + chipType + " (received " + StringUtils.toHexString(response[2]) + " "
+		log.trace("Chip identified as " + chipType + " (received " + StringUtils.toHexString(response[2]) + " "
 				+ StringUtils.toHexString(response[3]) + ")");
 		return chipType;
 	}

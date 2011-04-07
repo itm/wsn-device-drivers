@@ -25,7 +25,7 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 	private void program(final ChipType chipType, final JennicBinData binData, final Monitor monitor) throws Exception {
 		// Wait for a connection
 		while (!isCanceled() && !device.waitForConnection()) {
-			log.info("Still waiting for a connection");
+			log.debug("Still waiting for a connection");
 		}
 
 		// Return with success if the user has requested to cancel this

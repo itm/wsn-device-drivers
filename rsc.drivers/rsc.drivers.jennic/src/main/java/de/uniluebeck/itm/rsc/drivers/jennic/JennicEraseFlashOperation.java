@@ -36,7 +36,7 @@ public class JennicEraseFlashOperation extends AbstractOperation<Void> implement
 		}
 		
 		monitor.onProgressChange(0.5f);
-		log.debug("Erasing flash");
+		log.trace("Erasing flash");
 		device.sendBootLoaderMessage(Messages.flashEraseRequestMessage());
 		response = device.receiveBootLoaderReply(Messages.FLASH_ERASE_RESPONSE);
 

@@ -29,7 +29,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 		
 		// Wait for a connection
 		while (!isCanceled() && !device.waitForConnection()) {
-			log.info("Still waiting for a connection");
+			log.debug("Still waiting for a connection");
 		}
 
 		// Return with success if the user has requested to cancel this
@@ -47,7 +47,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 		}
 
 		// Copy address into the header of the first sector
-		log.debug("Copy " + StringUtils.toHexString(macAddress.getMacBytes()) + " to address " + chipType.getHeaderStart() + ", length: "
+		log.trace("Copy " + StringUtils.toHexString(macAddress.getMacBytes()) + " to address " + chipType.getHeaderStart() + ", length: "
 				+ macAddress.getMacBytes().length);
 		// System.arraycopy(mac.getMacBytes(), 0, sector[0][0], ChipType.
 		// getHeaderStart(chipType),
@@ -66,7 +66,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 	
 	@Override
 	public Void execute(final Monitor monitor) throws Exception {
-		log.debug("Writing mac address...");
+		log.trace("Writing mac address...");
 		final ChipType chipType = executeSubOperation(device.createGetChipTypeOperation(), monitor);
 		// Check if the user has cancelled the operation
 		if (isCanceled()) {
@@ -78,7 +78,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 		} finally {
 			executeSubOperation(device.createLeaveProgramModeOperation(), monitor);
 		}
-		log.debug("Done, written MAC Address: " + getMacAddress());
+		log.trace("Done, written MAC Address: " + getMacAddress());
 		return null;
 	}
 	
@@ -90,7 +90,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 		int totalBlocks = length / BLOCKSIZE;
 		int residue = length - totalBlocks * BLOCKSIZE;
 
-		log.debug(String.format("length = %d, totalBlocks = %d, residue = %d", length, totalBlocks, residue));
+		log.trace(String.format("length = %d, totalBlocks = %d, residue = %d", length, totalBlocks, residue));
 
 		// Prepare byte array
 		byte[][] sector = new byte[totalBlocks + (residue > 0 ? 1 : 0)][BLOCKSIZE];
@@ -121,7 +121,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 	private void writeSector(Monitor monitor, Sector index, byte[][] sector) throws Exception {
 		int address = index.getStart();
 		for (int i = 0; i < sector.length; ++i) {
-			log.debug("Writing sector " + index + ", block " + i + ": " + StringUtils.toHexString(sector[i]));
+			log.trace("Writing sector " + index + ", block " + i + ": " + StringUtils.toHexString(sector[i]));
 			
 			device.writeFlash(address, sector[i]);
 			
