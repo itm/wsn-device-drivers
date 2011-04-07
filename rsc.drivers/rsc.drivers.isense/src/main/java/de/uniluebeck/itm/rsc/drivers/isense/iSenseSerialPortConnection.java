@@ -42,7 +42,9 @@ public class iSenseSerialPortConnection extends AbstractConnection implements Se
 	
 	static {
 		log.debug("Loading rxtxSerial from jar file");
+		SysOutUtil.mute();
 		JarUtil.loadLibrary("rxtxSerial");
+		SysOutUtil.restore();
 	}
 	
 	@Override
