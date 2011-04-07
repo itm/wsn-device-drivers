@@ -24,6 +24,14 @@ public abstract class AbstractReadOperation<T> extends AbstractOperation<T> {
 	 * the Key for this Operation
 	 */
 	private String opKey = null;
+	/**
+	 * Shiro User
+	 */
+	private Subject user;
+	/**
+	 * RpcController
+	 */
+	private RpcController controller = null;
 	
 	/**
 	 * Constructor
@@ -42,6 +50,8 @@ public abstract class AbstractReadOperation<T> extends AbstractOperation<T> {
 	public AbstractReadOperation(final RpcController controller, final RpcCallback<EmptyAnswer> done, final Subject user, final ClientID id, final String opKey) {
 		super(done, id);
 		this.opKey =  opKey;
+		this.controller = controller;
+		this.user = user;
 		setMessage(new ReverseMessage(this.opKey, ServerRpcController.getRpcChannel(controller)));
 	}
 	
@@ -54,6 +64,11 @@ public abstract class AbstractReadOperation<T> extends AbstractOperation<T> {
 	@Override
 	public void execute() {
 
+
+		if (user == null || !user.isAuthenticated()) {
+			controller.setFailed("You are not authenticated!");
+			return;
+		}
 		// ein channel-einzigartiger OperationKey wird vom Client zu jeder Operation mitgeschickt
 		getId().addHandleElement(this.opKey, operate());
 		

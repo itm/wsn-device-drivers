@@ -67,7 +67,11 @@ public abstract class AbstractWriteOperation<T> extends AbstractOperation<T> {
 	@Override
 	public void execute() {
 
-		if (!user.isPermitted("write:program")) {
+		if (user == null || !user.isAuthenticated()) {
+			controller.setFailed("You are not authenticated!");
+			return;
+		}
+		else if (!user.isPermitted("write:program")) {
 			getController().setFailed(
 					"Unauthorized: You are not allowed to write");
 			getDone().run(null);
