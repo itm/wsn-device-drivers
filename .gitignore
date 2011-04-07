@@ -3,3 +3,8 @@
 .classpath
 **/target/
 **/**/target/
+*.iml
+*.ipr
+*.iws
+**/*.iml
+**/**/*.iml
