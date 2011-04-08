@@ -5,11 +5,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.uniluebeck.itm.rsc.drivers.core.Monitor;
-import de.uniluebeck.itm.rsc.drivers.core.operation.ProgressManager;
+import de.uniluebeck.itm.rsc.drivers.core.operation.ChildProgressManager;
+import de.uniluebeck.itm.rsc.drivers.core.operation.RootProgressManager;
 
 
 /**
- * Test for the ProgressManager.
+ * Test for the AbstractProgressManager.
  * 
  * @author Malte Legenhausen
  */
@@ -23,7 +24,7 @@ public class ProgressManagerTest {
 	/**
 	 * The tested progress manager.
 	 */
-	private ProgressManager manager;
+	private RootProgressManager manager;
 	
 	/**
 	 * The fraction that is returned by the Monitor callback.
@@ -35,7 +36,7 @@ public class ProgressManagerTest {
 	 */
 	@Before
 	public void setUp() {
-		manager = new ProgressManager(new Monitor() {
+		manager = new RootProgressManager(new Monitor() {
 			@Override
 			public void onProgressChange(final float fraction) {
 				ProgressManagerTest.this.fraction = fraction;
@@ -59,10 +60,10 @@ public class ProgressManagerTest {
 	@Test
 	public void testSubWorked() {
 		manager.worked(0.5f);
-		final ProgressManager subManager = manager.createSub(0.5f);
+		final ChildProgressManager subManager = manager.createSub(0.5f);
 		subManager.worked(0.5f);
 		Assert.assertEquals(0.75f, fraction, DELTA);
-		final ProgressManager subSubManager = subManager.createSub(0.25f);
+		final ChildProgressManager subSubManager = subManager.createSub(0.25f);
 		subSubManager.worked(0.25f);
 		Assert.assertEquals(0.78125, fraction, DELTA);
 		subSubManager.worked(0.75f);
