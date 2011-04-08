@@ -15,7 +15,7 @@ import de.uniluebeck.itm.rsc.drivers.core.async.thread.PausableExecutorOperation
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractOperation;
 import de.uniluebeck.itm.rsc.drivers.core.operation.Operation;
 
-public class SingleThreadOperationQueueTest {
+public class PausableExecutorOperationQueueTest {
 
 	private OperationQueue queue;
 	
@@ -29,20 +29,10 @@ public class SingleThreadOperationQueueTest {
 		Operation<Boolean> operation = new AbstractOperation<Boolean>() {
 			@Override
 			public Boolean execute(Monitor monitor) throws Exception {
-				System.out.println("Execute");
 				return true;
 			}
 		};
 		AsyncCallback<Boolean> callback = new AsyncAdapter<Boolean>() {
-			@Override
-			public void onSuccess(Boolean result) {
-				System.out.println("Success");
-			}
-
-			@Override
-			public void onProgressChange(float fraction) {
-				System.out.println("Progress " + fraction);
-			}
 
 			@Override
 			public void onCancel() {
@@ -74,7 +64,6 @@ public class SingleThreadOperationQueueTest {
 		try {
 			Thread.sleep(200);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		Assert.assertTrue(queue.getOperations().isEmpty());
