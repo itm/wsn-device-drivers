@@ -5,11 +5,11 @@
 		<groupId>de.uniluebeck.itm</groupId>
 		<artifactId>rsc.drivers</artifactId>
 		<relativePath>../</relativePath>
-		<version>0.2</version>
+		<version>0.3-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>rsc.drivers.pacemate</artifactId>
-	<version>0.2</version>
+	<version>0.3-SNAPSHOT</version>
 	<name>Remote Sensor Control Drivers Pacemate</name>
 
 	<dependencies>

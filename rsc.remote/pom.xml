@@ -4,13 +4,13 @@
 	<parent>
 		<artifactId>rsc</artifactId>
 		<groupId>de.uniluebeck.itm</groupId>
-		<version>0.2</version>
+		<version>0.3-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 
 	<groupId>de.uniluebeck.itm</groupId>
 	<artifactId>rsc.remote</artifactId>
-	<version>0.2</version>
+	<version>0.3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Remote Sensor Control Remote</name>
 
@@ -56,12 +56,12 @@
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>rsc.remote.client</artifactId>
-				<version>0.2</version>
+				<version>0.3-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>rsc.remote.server</artifactId>
-				<version>0.2</version>
+				<version>0.3-SNAPSHOT</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
