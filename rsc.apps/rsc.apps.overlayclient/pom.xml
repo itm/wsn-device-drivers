@@ -4,11 +4,11 @@
 	<parent>
 		<groupId>de.uniluebeck.itm</groupId>
 		<artifactId>rsc.apps</artifactId>
-		<version>0.2-SNAPSHOT</version>
+		<version>0.2</version>
 	</parent>
 
 	<artifactId>rsc.apps.metadata</artifactId>
-	<version>0.2-SNAPSHOT</version>
+	<version>0.2</version>
 	<packaging>jar</packaging>
 
 	<name>Remote Sensor Control Metadata App</name>
