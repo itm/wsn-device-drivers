@@ -3,9 +3,9 @@ package de.uniluebeck.itm.rsc.drivers.telosb;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.rsc.drivers.core.Monitor;
 import de.uniluebeck.itm.rsc.drivers.core.exception.FlashEraseFailedException;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractOperation;
+import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.EraseFlashOperation;
 
 public class TelosbEraseFlashOperation extends AbstractOperation<Void> implements EraseFlashOperation {
@@ -22,7 +22,7 @@ public class TelosbEraseFlashOperation extends AbstractOperation<Void> implement
 	}
 	
 	@Override
-	public Void execute(Monitor monitor) throws Exception {
+	public Void execute(AbstractProgressManager progressManager) throws Exception {
 		byte[] reply = null;
 
 		if (bsl == null) {

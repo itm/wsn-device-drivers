@@ -4,9 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.rsc.drivers.core.ChipType;
-import de.uniluebeck.itm.rsc.drivers.core.Monitor;
 import de.uniluebeck.itm.rsc.drivers.core.exception.RamReadFailedException;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractOperation;
+import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.tr.util.StringUtils;
 
@@ -39,7 +39,7 @@ public class JennicGetChipTypeOperation extends AbstractOperation<ChipType> impl
 		return chipType;
 	}
 	
-	private ChipType getChipType(final Monitor monitor) throws Exception {
+	private ChipType getChipType(final AbstractProgressManager progressManager) throws Exception {
 		// Send chip type read request
 		device.sendBootLoaderMessage(Messages.ramReadRequestMessage(0x100000FC, 0x0004));
 
@@ -60,13 +60,13 @@ public class JennicGetChipTypeOperation extends AbstractOperation<ChipType> impl
 	}
 	
 	@Override
-	public ChipType execute(Monitor monitor) throws Exception {
+	public ChipType execute(final AbstractProgressManager progressManager) throws Exception {
 		ChipType chipType = null;
-		executeSubOperation(device.createEnterProgramModeOperation(), monitor);
+		executeSubOperation(device.createEnterProgramModeOperation(), progressManager.createSub(0.5f));
 		try {
-			chipType = getChipType(monitor);
+			chipType = getChipType(progressManager);
 		} finally {
-			executeSubOperation(device.createLeaveProgramModeOperation(), monitor);
+			executeSubOperation(device.createLeaveProgramModeOperation(), progressManager.createSub(0.5f));
 		}
 		return chipType;
 	}

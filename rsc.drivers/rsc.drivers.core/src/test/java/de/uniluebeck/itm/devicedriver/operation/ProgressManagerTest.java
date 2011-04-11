@@ -72,6 +72,34 @@ public class ProgressManagerTest {
 		Assert.assertEquals(1.0f, fraction, DELTA);
 	}
 	
+	@Test
+	public void testOnlySubWorked() {
+		final ChildProgressManager subManager = manager.createSub(0.25f);
+		subManager.worked(0.5f);
+		Assert.assertEquals(0.125f, fraction, DELTA);
+		subManager.done();
+		Assert.assertEquals(0.25f, fraction, DELTA);
+		final ChildProgressManager subManager2 = manager.createSub(0.5f);
+		subManager2.worked(0.5f);
+		Assert.assertEquals(0.5f, fraction, DELTA);
+		subManager2.done();
+		Assert.assertEquals(0.75f, fraction, DELTA);
+		final ChildProgressManager subManager3 = manager.createSub(0.25f);
+		subManager3.worked(0.5f);
+		Assert.assertEquals(0.875f, fraction, DELTA);
+		subManager3.done();
+		Assert.assertEquals(1.0f, fraction, DELTA);
+	}
+	
+	@Test
+	public void testWrongSubWorked() {
+		final ChildProgressManager subManager = manager.createSub(0.25f);
+		subManager.worked(0.5f);
+		Assert.assertEquals(0.125f, fraction, DELTA);
+		subManager.worked(1.0f);
+		Assert.assertEquals(0.25f, fraction, DELTA);
+	}
+	
 	/**
 	 * Test that negative values are not allowed.
 	 */

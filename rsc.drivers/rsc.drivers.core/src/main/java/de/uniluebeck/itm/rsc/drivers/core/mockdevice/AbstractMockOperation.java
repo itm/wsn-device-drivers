@@ -1,7 +1,7 @@
 package de.uniluebeck.itm.rsc.drivers.core.mockdevice;
 
-import de.uniluebeck.itm.rsc.drivers.core.Monitor;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractOperation;
+import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
 
 
 /**
@@ -59,13 +59,12 @@ public abstract class AbstractMockOperation<T> extends AbstractOperation<T> {
 	}
 	
 	@Override
-	public T execute(final Monitor monitor) throws Exception {
+	public T execute(final AbstractProgressManager progressManager) throws Exception {
 		prepare();
 		for(int i = 1; i <= steps && !isCanceled(); ++i) {
 			Thread.sleep(sleep);
 			iteration(i);
-			final float progress = stepSize * i;
-			monitor.onProgressChange(progress);
+			progressManager.worked(stepSize);
 		}
 		return returnResult();
 	}

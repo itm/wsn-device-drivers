@@ -5,9 +5,9 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.rsc.drivers.core.Monitor;
 import de.uniluebeck.itm.rsc.drivers.core.exception.FlashProgramFailedException;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgramOperation;
+import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.util.BinDataBlock;
 
 public class TelosbProgramOperation extends AbstractProgramOperation {
@@ -23,7 +23,7 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 		this.device = device;
 	}
 	
-	private void program(final Monitor monitor) throws Exception {
+	private void program(final AbstractProgressManager progressManager) throws Exception {
 		final TelosbBinData binData = new TelosbBinData(getBinaryImage());
 		// Write program to flash
 		log.trace("Starting to write program into flash memory...");
@@ -52,8 +52,7 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 			bytesProgrammed += data.length;
 			
 			// Notify listeners of the new status
-			final float progress = ((float) blockCount) / binData.getBlockCount();
-			monitor.onProgressChange(progress);
+			progressManager.worked(1.0f / binData.getBlockCount());
 			
 			// Return if the user has requested to cancel this operation
 			if (isCanceled()) {
@@ -66,14 +65,14 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 	}
 	
 	@Override
-	public Void execute(final Monitor monitor) throws Exception {
-		executeSubOperation(device.createEnterProgramModeOperation(), monitor);
+	public Void execute(final AbstractProgressManager progressManager) throws Exception {
+		executeSubOperation(device.createEnterProgramModeOperation(), progressManager.createSub(0.125f));
 		try {
-			program(monitor);
+			program(progressManager);
 		} finally {
-			executeSubOperation(device.createLeaveProgramModeOperation(), monitor);
+			executeSubOperation(device.createLeaveProgramModeOperation(), progressManager.createSub(0.75f));
 		}
-		executeSubOperation(device.createResetOperation(), monitor);
+		executeSubOperation(device.createResetOperation(), progressManager.createSub(0.125f));
 		return null;
 	}
 

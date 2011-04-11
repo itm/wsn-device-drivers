@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
-import de.uniluebeck.itm.rsc.drivers.core.Monitor;
 import de.uniluebeck.itm.rsc.drivers.core.State;
 import de.uniluebeck.itm.rsc.drivers.core.async.AsyncCallback;
 import de.uniluebeck.itm.rsc.drivers.core.event.StateChangedEvent;
@@ -112,7 +111,10 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 		try {
 			// Cancel execution if operation was canceled before operation changed to running.
 			if (!canceled) {
-				result = execute(callback);
+				final AbstractProgressManager progressManager = new RootProgressManager(callback);
+				progressManager.worked(0.0f);
+				result = execute(progressManager);
+				progressManager.done();
 			}
 		} catch (final Exception e) {
 			setState(State.EXCEPTED);
@@ -167,19 +169,14 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	 * 
 	 * @param <R> The return type of the sub <code>Operation</code>.
 	 * @param operation The sub <code>Operation</code> that has to be executed.
-	 * @param monitor The monitor for observing the progress.
+	 * @param progressManager The progress manager for observing the progress.
 	 * @return The result of the sub <code>Operation</code>.
 	 * @throws Exception Any exception throws be the operation.
 	 */
-	protected <R> R executeSubOperation(final Operation<R> operation, final Monitor monitor) throws Exception {
+	protected <R> R executeSubOperation(final Operation<R> operation, final AbstractProgressManager progressManager) throws Exception {
 		subOperation = operation;
-		// Work around to prevent sub operations to raise the progress to 1.0f.
-		final R result = operation.execute(new Monitor() {
-			@Override
-			public void onProgressChange(final float fraction) {
-				// Do nothing
-			}
-		});//monitor);
+		final R result = operation.execute(progressManager);
+		progressManager.done();
 		subOperation = null;
 		return result;
 	}

@@ -3,7 +3,7 @@ package de.uniluebeck.itm.rsc.drivers.jennic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.rsc.drivers.core.Monitor;
+import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractReadFlashOperation;
 import de.uniluebeck.itm.tr.util.StringUtils;
 
@@ -20,7 +20,7 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 		this.device = device;
 	}
 	
-	private byte[] readFlash(final Monitor monitor) throws Exception {
+	private byte[] readFlash(final AbstractProgressManager progressManager) throws Exception {
 		// Wait for a connection
 		while (!isCanceled() && !device.waitForConnection()) {
 			log.debug("Still waiting for a connection");
@@ -48,8 +48,7 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 			System.arraycopy(data, 0, flashData, sectorStart - address, data.length);
 			
 			// Notify listeners
-			float progress = ((float) (sectorStart - address)) / length;
-			monitor.onProgressChange(progress);
+			progressManager.worked(1.0f / length);
 
 			// Increment start address
 			sectorStart += blockSize;
@@ -60,14 +59,14 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 	}
 	
 	@Override
-	public byte[] execute(Monitor monitor) throws Exception {
+	public byte[] execute(final AbstractProgressManager progressManager) throws Exception {
 		byte[] data = null;
 		// Enter programming mode
-		executeSubOperation(device.createEnterProgramModeOperation(), monitor);
+		executeSubOperation(device.createEnterProgramModeOperation(), progressManager.createSub(0.125f));
 		try {
-			data = readFlash(monitor);
+			data = readFlash(progressManager.createSub(0.75f));
 		} finally {
-			executeSubOperation(device.createLeaveProgramModeOperation(), monitor);
+			executeSubOperation(device.createLeaveProgramModeOperation(), progressManager.createSub(0.125f));
 		}
 		return data;
 	}

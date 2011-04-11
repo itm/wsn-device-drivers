@@ -3,8 +3,8 @@ package de.uniluebeck.itm.rsc.drivers.core.serialport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.rsc.drivers.core.Monitor;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractOperation;
+import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.rsc.drivers.core.serialport.SerialPortConnection.SerialPortMode;
 
@@ -36,12 +36,11 @@ public class SerialPortLeaveProgramModeOperation extends AbstractOperation<Void>
 	}
 	
 	@Override
-	public Void execute(final Monitor monitor) throws Exception {
+	public Void execute(final AbstractProgressManager progressManager) throws Exception {
 		LOG.debug("Leaving programming mode...");
 		connection.flush();
-		monitor.onProgressChange(0.5f);
+		progressManager.worked(0.5f);
 		connection.setSerialPortMode(SerialPortMode.NORMAL);
-		monitor.onProgressChange(1.0f);
 		LOG.debug("Programming mode left");
 		return null;
 	}

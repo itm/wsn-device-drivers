@@ -2,7 +2,6 @@ package de.uniluebeck.itm.rsc.drivers.core.operation;
 
 import java.util.concurrent.Callable;
 
-import de.uniluebeck.itm.rsc.drivers.core.Monitor;
 import de.uniluebeck.itm.rsc.drivers.core.State;
 import de.uniluebeck.itm.rsc.drivers.core.async.AsyncCallback;
 
@@ -26,11 +25,11 @@ public interface Operation<T> extends Callable<T> {
 	/**
 	 * Method that is called when the operation has to be executed.
 	 * 
-	 * @param monitor The monitor for this operation.
+	 * @param progressManager The progress manager for this operation.
 	 * @return The result of the <code>Operation<code> execution.
 	 * @throws Exception Any exception that can occur during an operation execution.
 	 */
-	T execute(Monitor monitor) throws Exception;
+	T execute(AbstractProgressManager progressManager) throws Exception;
 	
 	/**
 	 * Cancel the operation.

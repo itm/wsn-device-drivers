@@ -5,9 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.rsc.drivers.core.ChipType;
 import de.uniluebeck.itm.rsc.drivers.core.MacAddress;
-import de.uniluebeck.itm.rsc.drivers.core.Monitor;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractOperation;
-import de.uniluebeck.itm.rsc.drivers.core.operation.GetChipTypeOperation;
+import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.ReadFlashOperation;
 import de.uniluebeck.itm.rsc.drivers.core.operation.ReadMacAddressOperation;
 
@@ -25,18 +24,17 @@ public class JennicReadMacAddressOperation extends AbstractOperation<MacAddress>
 	}
 	
 	@Override
-	public MacAddress execute(final Monitor monitor) throws Exception {
+	public MacAddress execute(final AbstractProgressManager progressManager) throws Exception {
 		log.trace("Reading MAC Adress");
 		// Connection established, determine chip type
-		final GetChipTypeOperation getChipTypeOperation = device.createGetChipTypeOperation();
-		final ChipType chipType = executeSubOperation(getChipTypeOperation, monitor);
+		final ChipType chipType = executeSubOperation(device.createGetChipTypeOperation(), progressManager.createSub(0.5f));
 		log.trace("Chip type is " + chipType);
 
 		// Connection established, read flash header
 		final int address = chipType.getMacInFlashStart();
 		final ReadFlashOperation readFlashOperation = device.createReadFlashOperation();
 		readFlashOperation.setAddress(address, 8);
-		final byte[] header = executeSubOperation(readFlashOperation, monitor);
+		final byte[] header = executeSubOperation(readFlashOperation, progressManager.createSub(0.5f));
 
 		final MacAddress macAddress = new MacAddress(header);
 		log.trace("Done, result is: " + macAddress);

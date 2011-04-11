@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.rsc.drivers.core.ChipType;
-import de.uniluebeck.itm.rsc.drivers.core.Monitor;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractOperation;
+import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.GetChipTypeOperation;
 
 public class PacemateGetChipTypeOperation extends AbstractOperation<ChipType> implements GetChipTypeOperation {
@@ -21,7 +21,7 @@ public class PacemateGetChipTypeOperation extends AbstractOperation<ChipType> im
 		this.device = device;
 	}
 	
-	private ChipType getChipType(final Monitor monitor) throws Exception {
+	private ChipType getChipType(final AbstractProgressManager progressManager) throws Exception {
 		device.clearStreamData();
 		device.autobaud();
 
@@ -48,17 +48,18 @@ public class PacemateGetChipTypeOperation extends AbstractOperation<ChipType> im
 		}
 
 		log.debug("Chip identified as " + chipType + " (received " + response + ")");
+		progressManager.done();
 		return chipType;
 	}
 	
 	@Override
-	public ChipType execute(final Monitor monitor) throws Exception {
-		executeSubOperation(device.createEnterProgramModeOperation(), monitor);
+	public ChipType execute(final AbstractProgressManager progressManager) throws Exception {
+		executeSubOperation(device.createEnterProgramModeOperation(), progressManager.createSub(0.25f));
 		ChipType chipType = ChipType.UNKNOWN;
 		try {
-			chipType = getChipType(monitor);
+			chipType = getChipType(progressManager.createSub(0.25f));
 		} finally {
-			executeSubOperation(device.createLeaveProgramModeOperation(), monitor);
+			executeSubOperation(device.createLeaveProgramModeOperation(), progressManager.createSub(0.5f));
 		}
 		return chipType;
 	}

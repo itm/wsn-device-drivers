@@ -3,9 +3,9 @@ package de.uniluebeck.itm.rsc.drivers.jennic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.rsc.drivers.core.Monitor;
 import de.uniluebeck.itm.rsc.drivers.core.exception.FlashEraseFailedException;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractOperation;
+import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.EraseFlashOperation;
 
 public class JennicEraseFlashOperation extends AbstractOperation<Void> implements EraseFlashOperation {
@@ -21,9 +21,9 @@ public class JennicEraseFlashOperation extends AbstractOperation<Void> implement
 		this.device = device;
 	}
 	
-	private void eraseFlash(final Monitor monitor) throws Exception {
+	private void eraseFlash(final AbstractProgressManager progressManager) throws Exception {
 		device.sendBootLoaderMessage(Messages.statusRegisterWriteMessage((byte) 0x00));
-		monitor.onProgressChange(0.25f);
+		progressManager.worked(0.25f);
 		byte[] response = device.receiveBootLoaderReply(Messages.WRITE_SR_RESPONSE);
 
 		if (response[1] != 0x0) {
@@ -35,7 +35,7 @@ public class JennicEraseFlashOperation extends AbstractOperation<Void> implement
 			return;
 		}
 		
-		monitor.onProgressChange(0.5f);
+		progressManager.worked(0.25f);
 		log.trace("Erasing flash");
 		device.sendBootLoaderMessage(Messages.flashEraseRequestMessage());
 		response = device.receiveBootLoaderReply(Messages.FLASH_ERASE_RESPONSE);
@@ -43,16 +43,16 @@ public class JennicEraseFlashOperation extends AbstractOperation<Void> implement
 		if (response[1] != 0x0) {
 			throw new FlashEraseFailedException("Failed to erase flash.");
 		}
-		monitor.onProgressChange(1.0f);
+		progressManager.done();
 	}
 	
 	@Override
-	public Void execute(Monitor monitor) throws Exception {
-		executeSubOperation(device.createEnterProgramModeOperation(), monitor);
+	public Void execute(final AbstractProgressManager progressManager) throws Exception {
+		executeSubOperation(device.createEnterProgramModeOperation(), progressManager.createSub(0.25f));
 		try {
-			eraseFlash(monitor);
+			eraseFlash(progressManager.createSub(0.5f));
 		} finally {
-			executeSubOperation(device.createLeaveProgramModeOperation(), monitor);
+			executeSubOperation(device.createLeaveProgramModeOperation(), progressManager.createSub(0.25f));
 		}
 		return null;
 	}

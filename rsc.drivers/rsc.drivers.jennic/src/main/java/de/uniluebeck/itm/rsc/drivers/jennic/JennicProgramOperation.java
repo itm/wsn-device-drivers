@@ -4,9 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.rsc.drivers.core.ChipType;
-import de.uniluebeck.itm.rsc.drivers.core.Monitor;
 import de.uniluebeck.itm.rsc.drivers.core.exception.ProgramChipMismatchException;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgramOperation;
+import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.util.BinDataBlock;
 
 public class JennicProgramOperation extends AbstractProgramOperation {
@@ -22,7 +22,7 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 		this.device = device;
 	}
 	
-	private void program(final ChipType chipType, final JennicBinData binData, final Monitor monitor) throws Exception {
+	private void program(final ChipType chipType, final JennicBinData binData, final AbstractProgressManager progressManager) throws Exception {
 		// Wait for a connection
 		while (!isCanceled() && !device.waitForConnection()) {
 			log.debug("Still waiting for a connection");
@@ -46,8 +46,7 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 			device.writeFlash(block.getAddress(), block.getData());
 			
 			// Notify listeners of the new status
-			float progress = ((float) blockCount) / ((float) binData.getBlockCount());
-			monitor.onProgressChange(progress);
+			progressManager.worked(1.0f / binData.getBlockCount());
 			
 			// Return with success if the user has requested to cancel this
 			// operation
@@ -59,7 +58,7 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 		}	
 	}
 	
-	private JennicBinData validateImage(final ChipType chipType, final Monitor monitor) throws Exception {
+	private JennicBinData validateImage(final ChipType chipType) throws Exception {
 		final JennicBinData binData = new JennicBinData(getBinaryImage());
 		// Check if file and current chip match
 		if (!binData.isCompatible(chipType)) {
@@ -69,22 +68,22 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 		return binData;
 	}
 	
-	private void insertFlashHeaderToImage(JennicBinData binData, final Monitor monitor) throws Exception {
+	private void insertFlashHeaderToImage(JennicBinData binData, final AbstractProgressManager progressManager) throws Exception {
 		// insert flash header of device
-		final byte[] flashHeader = executeSubOperation(device.createGetFlashHeaderOperation(), monitor);
+		final byte[] flashHeader = executeSubOperation(device.createGetFlashHeaderOperation(), progressManager);
 		binData.insertHeader(flashHeader);
 	}
 	
-	public Void execute(Monitor monitor) throws Exception {
-		final ChipType chipType = executeSubOperation(device.createGetChipTypeOperation(), monitor);
-		final JennicBinData binData = validateImage(chipType, monitor);
-		insertFlashHeaderToImage(binData, monitor);
+	public Void execute(final AbstractProgressManager progressManager) throws Exception {
+		final ChipType chipType = executeSubOperation(device.createGetChipTypeOperation(), progressManager.createSub(0.0625f));
+		final JennicBinData binData = validateImage(chipType);
+		insertFlashHeaderToImage(binData, progressManager.createSub(0.0625f));
 		
-		executeSubOperation(device.createEnterProgramModeOperation(), monitor);
+		executeSubOperation(device.createEnterProgramModeOperation(), progressManager.createSub(0.0625f));
 		try {
-			program(chipType, binData, monitor);
+			program(chipType, binData, progressManager.createSub(0.75f));
 		} finally {
-			executeSubOperation(device.createLeaveProgramModeOperation(), monitor);
+			executeSubOperation(device.createLeaveProgramModeOperation(), progressManager.createSub(0.0625f));
 		}
 		return null;
 	}

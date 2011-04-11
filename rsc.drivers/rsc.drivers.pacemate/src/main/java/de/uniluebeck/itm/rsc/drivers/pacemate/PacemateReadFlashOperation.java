@@ -3,7 +3,7 @@ package de.uniluebeck.itm.rsc.drivers.pacemate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.rsc.drivers.core.Monitor;
+import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractReadFlashOperation;
 
 public class PacemateReadFlashOperation extends AbstractReadFlashOperation {
@@ -19,7 +19,7 @@ public class PacemateReadFlashOperation extends AbstractReadFlashOperation {
 		this.device = device;
 	}
 	
-	private byte[] readFlash(Monitor monitor) throws Exception {
+	private byte[] readFlash(final AbstractProgressManager progressManager) throws Exception {
 		device.clearStreamData();
 		device.autobaud();
 
@@ -36,24 +36,24 @@ public class PacemateReadFlashOperation extends AbstractReadFlashOperation {
 		
 		// Send flash program request
 		device.sendBootLoaderMessage(Messages.flashReadRequestMessage(getAddress(), getLength()));
-		monitor.onProgressChange(0.5f);
+		progressManager.worked(0.5f);
 		
 		// Read flash program response
 		byte[] response = device.receiveBootLoaderReplyReadData();
-		monitor.onProgressChange(1.0f);
+		progressManager.done();
 		
 		// Return data
 		return response;
 	}
 	
 	@Override
-	public byte[] execute(Monitor monitor) throws Exception {
-		executeSubOperation(device.createEnterProgramModeOperation(), monitor);
+	public byte[] execute(final AbstractProgressManager progressManager) throws Exception {
+		executeSubOperation(device.createEnterProgramModeOperation(), progressManager.createSub(0.25f));
 		byte[] result = null;
 		try {
-			result = readFlash(monitor);
+			result = readFlash(progressManager.createSub(0.5f));
 		} finally {
-			executeSubOperation(device.createLeaveProgramModeOperation(), monitor);
+			executeSubOperation(device.createLeaveProgramModeOperation(), progressManager.createSub(0.25f));
 		}
 		return result;
 	}

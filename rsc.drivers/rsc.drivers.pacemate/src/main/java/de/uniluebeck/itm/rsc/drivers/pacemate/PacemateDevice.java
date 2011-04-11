@@ -7,11 +7,11 @@ import java.io.OutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.rsc.drivers.core.Monitor;
 import de.uniluebeck.itm.rsc.drivers.core.Programable;
 import de.uniluebeck.itm.rsc.drivers.core.exception.InvalidChecksumException;
 import de.uniluebeck.itm.rsc.drivers.core.exception.TimeoutException;
 import de.uniluebeck.itm.rsc.drivers.core.exception.UnexpectedResponseException;
+import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractWriteFlashOperation;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractWriteMacAddressOperation;
 import de.uniluebeck.itm.rsc.drivers.core.operation.EnterProgramModeOperation;
@@ -95,7 +95,7 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 	public WriteFlashOperation createWriteFlashOperation() {
 		final WriteFlashOperation operation = new AbstractWriteFlashOperation() {
 			@Override
-			public Void execute(Monitor monitor) throws Exception {
+			public Void execute(final AbstractProgressManager progressManager) throws Exception {
 				throw new UnsupportedOperationException("writeFlash is not available.");
 			}
 		};
@@ -120,7 +120,7 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 	public WriteMacAddressOperation createWriteMacAddressOperation() {
 		final WriteMacAddressOperation operation = new AbstractWriteMacAddressOperation() {
 			@Override
-			public Void execute(Monitor monitor) throws Exception {
+			public Void execute(final AbstractProgressManager progressManager) throws Exception {
 				throw new UnsupportedOperationException("writeMacAddress ist not available.");
 			}
 		};

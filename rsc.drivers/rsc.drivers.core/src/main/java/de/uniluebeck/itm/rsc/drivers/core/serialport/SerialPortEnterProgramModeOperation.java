@@ -5,9 +5,9 @@ import gnu.io.SerialPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.rsc.drivers.core.Monitor;
 import de.uniluebeck.itm.rsc.drivers.core.exception.EnterProgramModeException;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractOperation;
+import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.rsc.drivers.core.serialport.SerialPortConnection.SerialPortMode;
 
@@ -44,23 +44,22 @@ public class SerialPortEnterProgramModeOperation extends AbstractOperation<Void>
 	}
 	
 	@Override
-	public Void execute(final Monitor monitor) throws Exception {
+	public Void execute(final AbstractProgressManager progressManager) throws Exception {
 		LOG.debug("Entering program mode");
 		connection.setSerialPortMode(SerialPortMode.PROGRAM);
 		
 		final SerialPort serialPort = connection.getSerialPort();
 		try {
 			serialPort.setDTR(true);
-			monitor.onProgressChange(0.25f);
+			progressManager.worked(0.25f);
 			Thread.sleep(SLEEP);
 			serialPort.setRTS(true);
-			monitor.onProgressChange(0.5f);
+			progressManager.worked(0.25f);
 			Thread.sleep(SLEEP);
 			serialPort.setDTR(false);
-			monitor.onProgressChange(0.75f);
+			progressManager.worked(0.25f);
 			Thread.sleep(SLEEP);
 			serialPort.setRTS(false);
-			monitor.onProgressChange(1.0f);
 		} catch(final InterruptedException e) {
 			LOG.error("Unable to enter program mode.", e);
 			throw new EnterProgramModeException("Unable to enter program mode.");

@@ -3,9 +3,9 @@ package de.uniluebeck.itm.rsc.drivers.pacemate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.rsc.drivers.core.Monitor;
 import de.uniluebeck.itm.rsc.drivers.core.exception.InvalidChecksumException;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgramOperation;
+import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.util.BinDataBlock;
 
 public class PacemateProgramOperation extends AbstractProgramOperation {
@@ -21,7 +21,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 		this.device = device;
 	}
 	
-	private void program(final Monitor monitor) throws Exception {		
+	private void program(final AbstractProgressManager progressManager) throws Exception {		
 		device.clearStreamData();
 		device.autobaud();
 
@@ -131,8 +131,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 			}
 
 			// Notify listeners of the new status
-			float progress = ((float) (blockCount - 2)) / ((float) binData.getBlockCount());
-			monitor.onProgressChange(progress);
+			progressManager.worked(1.0f / binData.getBlockCount());
 
 			// Return with success if the user has requested to cancel this
 			// operation
@@ -167,20 +166,21 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 				blockNumber++;
 			}
 		}
+		progressManager.done();
 	}
 
 	@Override
-	public Void execute(final Monitor monitor) throws Exception {
+	public Void execute(final AbstractProgressManager progressManager) throws Exception {
 		log.debug("Prgramming operation executing...");
 		// Erase the complete flash
-		executeSubOperation(device.createEraseFlashOperation(), monitor);
+		executeSubOperation(device.createEraseFlashOperation(), progressManager.createSub(0.125f));
 		
 		// Now program the device
-		executeSubOperation(device.createEnterProgramModeOperation(), monitor);
+		executeSubOperation(device.createEnterProgramModeOperation(), progressManager.createSub(0.0625f));
 		try {
-			program(monitor);
+			program(progressManager.createSub(0.75f));
 		} finally {
-			executeSubOperation(device.createLeaveProgramModeOperation(), monitor);
+			executeSubOperation(device.createLeaveProgramModeOperation(), progressManager.createSub(0.0625f));
 		}		
 		log.debug("Program operation finsihed");
 		return null;

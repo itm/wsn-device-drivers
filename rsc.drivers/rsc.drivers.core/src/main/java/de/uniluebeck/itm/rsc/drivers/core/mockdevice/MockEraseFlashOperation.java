@@ -1,7 +1,7 @@
 package de.uniluebeck.itm.rsc.drivers.core.mockdevice;
 
-import de.uniluebeck.itm.rsc.drivers.core.Monitor;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractOperation;
+import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.EraseFlashOperation;
 
 
@@ -32,13 +32,13 @@ public class MockEraseFlashOperation extends AbstractOperation<Void> implements 
 	}
 	
 	@Override
-	public Void execute(final Monitor monitor) throws Exception {
+	public Void execute(final AbstractProgressManager progressManager) throws Exception {
 		final byte[] flashRom = configuration.getFlashRom();
+		final float worked = 1.0f / flashRom.length;
 		for (int i = 0; i < flashRom.length; ++i) {
 			Thread.sleep(SLEEP);
 			flashRom[i] = 0x00;
-			final float progress = (i * 1.0f) / flashRom.length;
-			monitor.onProgressChange(progress);
+			progressManager.worked(worked);
 		}
 		configuration.setFlashRom(flashRom);
 		return null;

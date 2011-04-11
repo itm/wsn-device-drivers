@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.rsc.drivers.core.ChipType;
 import de.uniluebeck.itm.rsc.drivers.core.MacAddress;
-import de.uniluebeck.itm.rsc.drivers.core.Monitor;
+import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractWriteMacAddressOperation;
 import de.uniluebeck.itm.tr.util.StringUtils;
 
@@ -24,7 +24,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 		this.device = device;
 	}
 	
-	private void writeMacAddress(final ChipType chipType, final Monitor monitor) throws Exception {
+	private void writeMacAddress(final ChipType chipType, final AbstractProgressManager progressManager) throws Exception {
 		final MacAddress macAddress = getMacAddress();
 		
 		// Wait for a connection
@@ -39,7 +39,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 		}
 		
 		// Read the first sector
-		byte[][] sector = readSector(monitor, Sector.FIRST);
+		byte[][] sector = readSector(progressManager.createSub(0.875f), Sector.FIRST);
 
 		// Check if this operation has been cancelled
 		if (isCanceled()) {
@@ -61,28 +61,28 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 		device.eraseFlash(Sector.FIRST);
 
 		// Write sector 0 with the new MAC
-		writeSector(monitor, Sector.FIRST, sector);
+		writeSector(progressManager.createSub(0.125f), Sector.FIRST, sector);
 	}
 	
 	@Override
-	public Void execute(final Monitor monitor) throws Exception {
+	public Void execute(final AbstractProgressManager progressManager) throws Exception {
 		log.trace("Writing mac address...");
-		final ChipType chipType = executeSubOperation(device.createGetChipTypeOperation(), monitor);
+		final ChipType chipType = executeSubOperation(device.createGetChipTypeOperation(), progressManager.createSub(0.0625f));
 		// Check if the user has cancelled the operation
 		if (isCanceled()) {
 			return null;
 		}
-		executeSubOperation(device.createEnterProgramModeOperation(), monitor);
+		executeSubOperation(device.createEnterProgramModeOperation(), progressManager.createSub(0.0625f));
 		try {
-			writeMacAddress(chipType, monitor);
+			writeMacAddress(chipType, progressManager.createSub(0.8125f));
 		} finally {
-			executeSubOperation(device.createLeaveProgramModeOperation(), monitor);
+			executeSubOperation(device.createLeaveProgramModeOperation(), progressManager.createSub(0.0625f));
 		}
 		log.trace("Done, written MAC Address: " + getMacAddress());
 		return null;
 	}
 	
-	protected byte[][] readSector(Monitor monitor, Sector index) throws Exception {
+	protected byte[][] readSector(final AbstractProgressManager progressManager, final Sector index) throws Exception {
 		int start = index.getStart();
 		int length = index.getEnd() - start;
 
@@ -101,8 +101,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 			sector[readBlocks] = device.readFlash(address, BLOCKSIZE);
 			address += BLOCKSIZE;
 
-			float progress = ((float) readBlocks) / ((float) (totalBlocks * 2));
-			monitor.onProgressChange(progress);
+			progressManager.worked(1.0f / (totalBlocks * 2));
 
 			// Check if the user has cancelled the operation
 			if (isCanceled()) {
@@ -118,7 +117,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 		return sector;
 	}
 	
-	private void writeSector(Monitor monitor, Sector index, byte[][] sector) throws Exception {
+	private void writeSector(final AbstractProgressManager progressManager, final Sector index, final byte[][] sector) throws Exception {
 		int address = index.getStart();
 		for (int i = 0; i < sector.length; ++i) {
 			log.trace("Writing sector " + index + ", block " + i + ": " + StringUtils.toHexString(sector[i]));
@@ -126,8 +125,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 			device.writeFlash(address, sector[i]);
 			
 			address += sector[i].length;
-			float progress = 0.5f + (i + 1.0f) / (sector.length * 2.0f);
-			monitor.onProgressChange(progress);
+			progressManager.worked(1.0f / (sector.length * 2.0f));
 		}
 	}
 }

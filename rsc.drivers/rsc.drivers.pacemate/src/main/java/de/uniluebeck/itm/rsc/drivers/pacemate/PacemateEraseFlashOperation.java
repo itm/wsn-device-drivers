@@ -3,8 +3,8 @@ package de.uniluebeck.itm.rsc.drivers.pacemate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.rsc.drivers.core.Monitor;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractOperation;
+import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.EraseFlashOperation;
 
 public class PacemateEraseFlashOperation extends AbstractOperation<Void> implements EraseFlashOperation {
@@ -24,7 +24,7 @@ public class PacemateEraseFlashOperation extends AbstractOperation<Void> impleme
 		this.device = device;
 	}
 	
-	private void eraseFlash(final Monitor monitor) throws Exception {
+	private void eraseFlash(final AbstractProgressManager progressManager) throws Exception {
 		device.clearStreamData();
 		device.autobaud();
 
@@ -39,21 +39,20 @@ public class PacemateEraseFlashOperation extends AbstractOperation<Void> impleme
 			return;
 		}
 		
-		monitor.onProgressChange(0.0f);
 		device.configureFlash(START_ADDRESS, END_ADDRESS);
-		monitor.onProgressChange(0.25f);
+		progressManager.worked(0.25f);
 		device.eraseFlash(START_ADDRESS, END_ADDRESS);
-		monitor.onProgressChange(1.0f);
+		progressManager.done();
 	}
 	
 	@Override
-	public Void execute(Monitor monitor) throws Exception {
+	public Void execute(final AbstractProgressManager progressManager) throws Exception {
 		log.debug("Erasing whole flash...");
-		executeSubOperation(device.createEnterProgramModeOperation(), monitor);
+		executeSubOperation(device.createEnterProgramModeOperation(), progressManager.createSub(0.25f));
 		try {
-			eraseFlash(monitor);
+			eraseFlash(progressManager.createSub(0.5f));
 		} finally {
-			executeSubOperation(device.createLeaveProgramModeOperation(), monitor);
+			executeSubOperation(device.createLeaveProgramModeOperation(), progressManager.createSub(0.25f));
 		}
 		log.debug("Flash completly erased");
 		return null;
