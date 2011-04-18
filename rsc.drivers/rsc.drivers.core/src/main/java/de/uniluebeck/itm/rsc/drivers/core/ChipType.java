@@ -43,17 +43,21 @@ public enum ChipType {
 	 */
 	JN513XR1("JN513xR1", 2, 0x30, 0x20, 0x30),
 	/**
+	 * Mode for JN5148 platform
+	 */
+	JN5148("JN5148", 3, 0x30, 0x20, 0x30),
+	/**
 	 * Mode for Shawn simulator
 	 */
-	Shawn("Shawn", 3),
+	Shawn("Shawn", 4),
 	/**
 	 * Mode for Telos Revision B (TelosB) platform
 	 */
-	TelosB("Telos Rev B", 4),
+	TelosB("Telos Rev B", 5),
 	/**
 	 * Mode for Pacemate LPC2136 platform
 	 */
-	LPC2136("LPC2136 Pacemate", 5),
+	LPC2136("LPC2136 Pacemate", 6),
 	/**
 	 * Mode for unknown platform
 	 */

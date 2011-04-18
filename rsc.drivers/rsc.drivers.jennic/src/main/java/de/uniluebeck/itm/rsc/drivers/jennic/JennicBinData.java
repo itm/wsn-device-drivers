@@ -185,7 +185,11 @@ public class JennicBinData {
 			}
 
 		}
-
+		else if ((bytes[0] == 0x00) && (bytes[1]==0) && (bytes[2]==(byte)0xe0)  && (bytes[3]==(byte)0xe0))
+		{
+			log.debug("File type is JN5148");
+			return ChipType.JN5148;
+		}
 		log.error("Chip type is UNKNOWN");
 		return ChipType.UNKNOWN;
 	}
