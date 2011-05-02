@@ -32,15 +32,6 @@ import de.uniluebeck.itm.tr.util.StringUtils;
  * @author Malte Legenhausen
  */
 public class MessagePacket implements Message {
-	
-	/** Special character */
-	public static final byte STX = 0x02;
-
-	/** Special character */
-	public static final byte ETX = 0x03;
-
-	/** Special character */
-	public static final byte DLE = 0x10;
 
 	/**
 	 * 

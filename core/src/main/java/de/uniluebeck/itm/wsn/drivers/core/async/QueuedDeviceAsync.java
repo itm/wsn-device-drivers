@@ -1,5 +1,8 @@
 package de.uniluebeck.itm.wsn.drivers.core.async;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,6 +123,16 @@ public class QueuedDeviceAsync implements DeviceAsync {
 		final WriteMacAddressOperation operation = device.createWriteMacAddressOperation();
 		operation.setMacAddress(macAddress);
 		return queue.addOperation(operation, timeout, callback);
+	}
+	
+	@Override
+	public InputStream getInputStream() {
+		return device.getInputStream();
+	}
+	
+	@Override
+	public OutputStream getOutputStream() {
+		return device.getOutputStream();
 	}
 	
 	/**

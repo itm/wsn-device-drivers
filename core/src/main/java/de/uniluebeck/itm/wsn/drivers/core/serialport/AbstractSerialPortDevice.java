@@ -18,6 +18,8 @@ import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.RunningOperationsMonitor;
+import de.uniluebeck.itm.wsn.drivers.core.util.LockedInputStream;
+import de.uniluebeck.itm.wsn.drivers.core.util.LockedOutputStream;
 
 
 /**
@@ -53,6 +55,16 @@ public abstract class AbstractSerialPortDevice implements Device<SerialPortConne
 	private final RunningOperationsMonitor monitor = new RunningOperationsMonitor();
 	
 	/**
+	 * Managed InputStream for secure access of the device during operation execution.
+	 */
+	private LockedInputStream lockedInputStream;
+	
+	/**
+	 * Managed OutputStream for secure access of the device during operation execution.
+	 */
+	private LockedOutputStream lockedOutputStream;
+	
+	/**
 	 * Constructor.
 	 * 
 	 * @param connection The serial port connection for this device.
@@ -85,9 +97,9 @@ public abstract class AbstractSerialPortDevice implements Device<SerialPortConne
 				dataAvailableMonitor.notifyAll();
 			}
 			
-			if (!monitor.isRunning()) {
-				receive(connection.getInputStream());
-			}
+			final boolean locked = monitor.isRunning();
+			lockedInputStream.setLocked(locked);
+			lockedOutputStream.setLocked(locked);
 			break;
 		default:
 			LOG.debug("Serial event (other than data available): " + event);
@@ -99,10 +111,12 @@ public abstract class AbstractSerialPortDevice implements Device<SerialPortConne
 	public void onConnectionChange(final ConnectionEvent event) {
 		if (event.isConnected()) {
 			try {
-				this.connection.getSerialPort().addEventListener(this);
+				connection.getSerialPort().addEventListener(this);
 			} catch (final TooManyListenersException e) {
 				LOG.error("Can not register serial port listener", e);
 			}
+			this.lockedInputStream = new LockedInputStream(connection.getInputStream());
+			this.lockedOutputStream = new LockedOutputStream(connection.getOutputStream());
 		}
 	}
 	
@@ -139,22 +153,13 @@ public abstract class AbstractSerialPortDevice implements Device<SerialPortConne
 		return available;
 	}
 	
-	/**
-	 * Receive data from the input stream and redirect it to the <code>ByteReceiver</code>s.
-	 * 
-	 * @param inputStream 
-	 */
-	private void receive(final InputStream inputStream) {
-		//TODO: Fill an output stream.
-	}
-	
 	@Override
 	public OutputStream getOutputStream() {
-		return null;
+		return lockedOutputStream;
 	}
 	
 	@Override
 	public InputStream getInputStream() {
-		return null;
+		return lockedInputStream;
 	}
 }
