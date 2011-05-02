@@ -21,7 +21,7 @@ public class JarUtil {
 	/**
 	 * Path to the root directory of the jni libary files.
 	 */
-	private static final String JNI_PATH_ROOT = "/de/uniluebeck/itm/rsc/drivers/core/jni";
+	private static final String JNI_PATH_ROOT = "/de/uniluebeck/itm/wsn/drivers/core/jni";
 	
 	/**
 	 * Load a DLL or SO file that is contained in a JAR.
