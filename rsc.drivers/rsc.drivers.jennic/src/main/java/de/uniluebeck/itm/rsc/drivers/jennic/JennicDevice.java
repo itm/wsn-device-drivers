@@ -159,7 +159,9 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 			ft = FlashType.STM25P10A;
 		else if (response[2] == (byte) 0x1F && response[3] == (byte) 0x60)
 			ft = FlashType.Atmel25F512;
-		else
+		else if (response[2] == (byte) 0x12 && response[3] == (byte) 0x12)
+			ft = FlashType.STM25P40;
+		else 
 			ft = FlashType.Unknown;
 
 		// log.debug("Flash is " + ft + " (response[2,3] was: " + Tools.toHexString(response[2]) + " " +

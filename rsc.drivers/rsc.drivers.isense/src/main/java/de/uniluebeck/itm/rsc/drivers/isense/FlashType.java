@@ -41,6 +41,10 @@ public enum FlashType {
 	 */
 	Atmel25F512(0x02),
 	/**
+	 * STM25P40 flash chip  - properly jn5148 new ones
+	 */
+	STM25P40(0x03),
+	/**
 	 * unknown flash chip
 	 */
 	Unknown(126);

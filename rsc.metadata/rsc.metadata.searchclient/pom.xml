@@ -4,11 +4,11 @@
 	<parent>
 		<groupId>de.uniluebeck.itm</groupId>
 		<artifactId>rsc.metadata</artifactId>
-		<version>0.2-SNAPSHOT</version>
+		<version>0.3-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>rsc.metadata.searchclient</artifactId>
-	<version>0.2-SNAPSHOT</version>
+	<version>0.3-SNAPSHOT</version>
 	<name>Remote Sensor Control Metadata Search Client</name>
 	<packaging>jar</packaging>
 

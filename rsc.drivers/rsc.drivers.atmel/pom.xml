@@ -3,11 +3,11 @@
 	<parent>
 		<artifactId>rsc.drivers</artifactId>
 		<groupId>de.uniluebeck.itm</groupId>
-		<version>0.2-SNAPSHOT</version>
+		<version>0.3-SNAPSHOT</version>
 	</parent>
 	<groupId>de.uniluebeck.itm</groupId>
 	<artifactId>rsc.drivers.atmel</artifactId>
-	<version>0.2-SNAPSHOT</version>
+	<version>0.3-SNAPSHOT</version>
 	<name>Remote Sensor Control Drivers Atmel</name>
 
 	<dependencies>
