@@ -19,7 +19,6 @@
 		<module>rsc.drivers.jennic</module>
 		<module>rsc.drivers.pacemate</module>
 		<module>rsc.drivers.telosb</module>
-		<module>rsc.drivers.atmel</module>
 	</modules>
 	
 </project>
