@@ -1,36 +1,36 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.uniluebeck.itm</groupId>
-	<artifactId>rsc</artifactId>
+	<artifactId>wsn-device-drivers</artifactId>
 	<version>0.3-SNAPSHOT</version>
-	<name>Remote Sensor Control</name>
+	<name>WSN Device Drivers</name>
 	<packaging>pom</packaging>
 
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>rsc.drivers.core</artifactId>
+				<artifactId>wsn-device-drivers-core</artifactId>
 				<version>0.3-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>rsc.drivers.isense</artifactId>
+				<artifactId>wsn-device-drivers-isense</artifactId>
 				<version>0.3-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>rsc.drivers.jennic</artifactId>
+				<artifactId>wsn-device-drivers-jennic</artifactId>
 				<version>0.3-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>rsc.drivers.pacemate</artifactId>
+				<artifactId>wsn-device-drivers-pacemate</artifactId>
 				<version>0.3-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>rsc.drivers.telosb</artifactId>
+				<artifactId>wsn-device-drivers-telosb</artifactId>
 				<version>0.3-SNAPSHOT</version>
 			</dependency>
 
@@ -132,11 +132,11 @@
 	</pluginRepositories>
 
 	<modules>
-		<module>rsc.drivers.core</module>
-		<module>rsc.drivers.isense</module>
-		<module>rsc.drivers.jennic</module>
-		<module>rsc.drivers.pacemate</module>
-		<module>rsc.drivers.telosb</module>
+		<module>core</module>
+		<module>isense</module>
+		<module>jennic</module>
+		<module>pacemate</module>
+		<module>telosb</module>
 	</modules>
 	
 	<distributionManagement>
@@ -157,7 +157,7 @@
 	</properties>
 	
 	<scm>
-		<connection>scm:git:https://itm@github.com/itm/rsc.git</connection>
+		<connection>scm:git:https://itm@github.com/itm/wsn-device-drivers.git</connection>
 	</scm>
 	
 </project>
