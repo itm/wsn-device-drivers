@@ -1,5 +1,0 @@
-MockDevice alive since 295 seconds (update #296)
-MockDevice alive since 296 seconds (update #297)
-MockDevice alive since 297 seconds (update #298)
-MockDevice alive since 298 seconds (update #299)
-MockDevice alive since 299 seconds (update #300)

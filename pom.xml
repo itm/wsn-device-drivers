@@ -33,36 +33,6 @@
 				<artifactId>rsc.drivers.telosb</artifactId>
 				<version>0.3-SNAPSHOT</version>
 			</dependency>
-			<dependency>
-				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>rsc.remote.client</artifactId>
-				<version>0.3-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>rsc.remote.server</artifactId>
-				<version>0.3-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>rsc.metadata.searchclient</artifactId>
-				<version>0.3-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>rsc.metadata.server</artifactId>
-				<version>0.3-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>rsc.metadata.service</artifactId>
-				<version>0.3-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>rsc.apps.metadata</artifactId>
-				<version>0.3-SNAPSHOT</version>
-			</dependency>
 
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
@@ -70,11 +40,6 @@
 				<version>0.5.5</version>
 			</dependency>
 
-			<dependency>
-				<groupId>org.mod4j.org.apache.commons</groupId>
-				<artifactId>cli</artifactId>
-				<version>1.0.0</version>
-			</dependency>
 			<dependency>
 				<groupId>org.rxtx</groupId>
 				<artifactId>rxtx</artifactId>
@@ -89,11 +54,6 @@
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
 				<version>4.8.1</version>
-			</dependency>
-			<dependency>
-				<groupId>com.google.protobuf</groupId>
-				<artifactId>protobuf-java</artifactId>
-				<version>2.3.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
@@ -111,24 +71,9 @@
 				<version>1.1.0</version>
 			</dependency>
 			<dependency>
-				<groupId>org.jboss.netty</groupId>
-				<artifactId>netty</artifactId>
-				<version>3.2.1.Final</version>
-			</dependency>
-			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
 				<version>r08</version>
-			</dependency>
-			<dependency>
-				<groupId>org.simpleframework</groupId>
-				<artifactId>simple-xml</artifactId>
-				<version>1.8</version>
-			</dependency>
-			<dependency>
-				<groupId>com.googlecode.protobuf.pro</groupId>
-				<artifactId>protobuf-rpc-pro-duplex</artifactId>
-				<version>1.1.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -188,9 +133,6 @@
 
 	<modules>
 		<module>rsc.drivers</module>
-		<module>rsc.remote</module>
-		<module>rsc.metadata</module>
-		<module>rsc.apps</module>
 	</modules>
 	
 	<distributionManagement>

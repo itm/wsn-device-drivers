@@ -1,8 +1,0 @@
-<configData>
-   <serverIP>localhost</serverIP>
-   <serverport>8080</serverport>
-   <clientport>1235</clientport>
-   <username>frager</username>
-   <password>testPassword</password>
-   <wisemlFile>sensors.xml</wisemlFile>
-</configData>

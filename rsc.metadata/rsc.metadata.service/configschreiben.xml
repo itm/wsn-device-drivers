@@ -1,7 +1,0 @@
-<configData>
-   <serverIP>localhost</serverIP>
-   <port>8080</port>
-   <clientport>1234</clientport>
-   <username>testUser</username>
-   <password>testPassword</password>
-</configData>
