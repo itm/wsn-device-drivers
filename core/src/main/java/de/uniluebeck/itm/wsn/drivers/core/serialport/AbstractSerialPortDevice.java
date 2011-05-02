@@ -115,8 +115,11 @@ public abstract class AbstractSerialPortDevice implements Device<SerialPortConne
 			} catch (final TooManyListenersException e) {
 				LOG.error("Can not register serial port listener", e);
 			}
-			this.lockedInputStream = new LockedInputStream(connection.getInputStream());
-			this.lockedOutputStream = new LockedOutputStream(connection.getOutputStream());
+			lockedInputStream = new LockedInputStream(connection.getInputStream());
+			lockedOutputStream = new LockedOutputStream(connection.getOutputStream());
+		} else {
+			lockedInputStream = null;
+			lockedOutputStream = null;
 		}
 	}
 	
