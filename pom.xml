@@ -132,7 +132,11 @@
 	</pluginRepositories>
 
 	<modules>
-		<module>rsc.drivers</module>
+		<module>rsc.drivers.core</module>
+		<module>rsc.drivers.isense</module>
+		<module>rsc.drivers.jennic</module>
+		<module>rsc.drivers.pacemate</module>
+		<module>rsc.drivers.telosb</module>
 	</modules>
 	
 	<distributionManagement>
