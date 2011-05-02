@@ -1,14 +1,9 @@
 package de.uniluebeck.itm.wsn.drivers.core.mockdevice;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-import de.uniluebeck.itm.wsn.drivers.core.ConnectionEvent;
-import de.uniluebeck.itm.wsn.drivers.core.ConnectionListener;
-import de.uniluebeck.itm.wsn.drivers.core.MessagePacket;
-import de.uniluebeck.itm.wsn.drivers.core.ObserverableDevice;
-import de.uniluebeck.itm.wsn.drivers.core.event.MessageEvent;
-import de.uniluebeck.itm.wsn.drivers.core.mockdevice.MockConnection.MockListener;
+import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
@@ -25,12 +20,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
  * 
  * @author Malte Legenhausen
  */
-public class MockDevice extends ObserverableDevice<MockConnection> implements MockListener {
-	
-	/**
-	 * Logger for this class.
-	 */
-	private static final Logger LOG = LoggerFactory.getLogger(MockDevice.class);
+public class MockDevice implements Device<MockConnection> {
 	
 	/**
 	 * The configuration of this mock device.
@@ -60,27 +50,6 @@ public class MockDevice extends ObserverableDevice<MockConnection> implements Mo
 	public MockDevice(final MockConfiguration configuration, final MockConnection connection) {
 		this.configuration = configuration;
 		this.connection = connection;
-		
-		connection.addListener(new ConnectionListener() {
-			@Override
-			public void onConnectionChange(final ConnectionEvent event) {
-				MockDevice.this.onConnectionChanged(event.isConnected());
-			}
-		});
-		onConnectionChanged(connection.isConnected());
-	}
-	
-	/**
-	 * Register or deregister the mock listener on connection change.
-	 * 
-	 * @param connected The connection state.
-	 */
-	private void onConnectionChanged(final boolean connected) {
-		if (connected) {
-			connection.addMockListener(this);
-		} else {
-			connection.removeMockListener(this);
-		}
 	}
 	
 	@Override
@@ -137,11 +106,14 @@ public class MockDevice extends ObserverableDevice<MockConnection> implements Mo
 	public SendOperation createSendOperation() {
 		return new MockSendOperation(connection);
 	}
-
+	
 	@Override
-	public void onData(final byte[] bytes) {
-		final MessagePacket messagePacket = MessagePacket.parse(bytes, 0, bytes.length);
-		LOG.debug("Emitting message packet: {}", messagePacket);
-		fireMessagePacketEvent(new MessageEvent<MessagePacket>(this, messagePacket));
+	public InputStream getInputStream() {
+		return getConnection().getInputStream();
+	}
+	
+	@Override
+	public OutputStream getOutputStream() {
+		return getConnection().getOutputStream();
 	}
 }

@@ -12,14 +12,12 @@ import de.uniluebeck.itm.wsn.drivers.core.ConnectionListener;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import de.uniluebeck.itm.wsn.drivers.core.MessagePacket;
-import de.uniluebeck.itm.wsn.drivers.core.MessagePacketListener;
 import de.uniluebeck.itm.wsn.drivers.core.async.AsyncAdapter;
 import de.uniluebeck.itm.wsn.drivers.core.async.AsyncCallback;
 import de.uniluebeck.itm.wsn.drivers.core.async.DeviceAsync;
 import de.uniluebeck.itm.wsn.drivers.core.async.OperationQueue;
 import de.uniluebeck.itm.wsn.drivers.core.async.QueuedDeviceAsync;
 import de.uniluebeck.itm.wsn.drivers.core.async.thread.PausableExecutorOperationQueue;
-import de.uniluebeck.itm.wsn.drivers.core.event.MessageEvent;
 import de.uniluebeck.itm.wsn.drivers.core.nulldevice.NullConnection;
 import de.uniluebeck.itm.wsn.drivers.core.nulldevice.NullDevice;
 
@@ -29,7 +27,7 @@ import de.uniluebeck.itm.wsn.drivers.core.nulldevice.NullDevice;
  * 
  * @author Malte Legenhausen
  */
-public class GenericDeviceExample implements MessagePacketListener, ConnectionListener {
+public class GenericDeviceExample implements ConnectionListener {
 
 	/**
 	 * Default sleep for the thread.
@@ -122,7 +120,6 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 	 * Should be called after all parameters has been set.
 	 */
 	private void init() {
-		device.addListener(this);
 		connection = device.getConnection();
 		connection.addListener(this);
 		deviceAsync = new QueuedDeviceAsync(queue, device);
@@ -327,23 +324,6 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 	}
 	
 	/**
-	 * Wait for message packets from the device.
-	 */
-	private void waitForMessagePackets() {
-		System.out.println("Waiting for messages from the device.");
-		System.out.println("Press any key to shutdown...");
-		try {
-			while(System.in.read() == -1) {
-				Thread.sleep(DEFAULT_SLEEP);
-			}
-		} catch (final InterruptedException e) {
-			e.printStackTrace();
-		} catch (final IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	/**
 	 * Execute the whole test case.
 	 */
 	public void run() {
@@ -360,13 +340,7 @@ public class GenericDeviceExample implements MessagePacketListener, ConnectionLi
 		sendOperation();
 		resetOperation();
 		waitForOperationsToFinish();
-		waitForMessagePackets();
 		shutdown();
-	}
-	
-	@Override
-	public void onMessagePacketReceived(final MessageEvent<MessagePacket> event) {
-		System.out.println(new String(event.getMessage().getContent()).substring(1));
 	}
 	
 	@Override

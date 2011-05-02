@@ -1,5 +1,8 @@
 package de.uniluebeck.itm.wsn.drivers.core;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
@@ -18,7 +21,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
  * 
  * @param <C> The connection type that is used by this device.
  */
-public interface Device<C extends Connection> extends MessageObserverable {
+public interface Device<C extends Connection> {
 	
 	/**
 	 * Returns the <code>Connection</code> object for this device.
@@ -96,4 +99,18 @@ public interface Device<C extends Connection> extends MessageObserverable {
 	 * @return The operation for sending a message packet to the device.
 	 */
 	SendOperation createSendOperation();
+	
+	/**
+	 * Getter for an OutputStream that is managed by the device.
+	 * 
+	 * @return A managed OutputStream.
+	 */
+	OutputStream getOutputStream();
+	
+	/**
+	 * Getter for an InputStream that is managed by the device.
+	 * 
+	 * @return A managed InputStream.
+	 */
+	InputStream getInputStream();
 }

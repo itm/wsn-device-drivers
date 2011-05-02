@@ -1,12 +1,17 @@
 package de.uniluebeck.itm.wsn.drivers.core.nulldevice;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.io.NullOutputStream;
+
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
+import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
-import de.uniluebeck.itm.wsn.drivers.core.ObserverableDevice;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractProgramOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractReadFlashOperation;
@@ -30,7 +35,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
  * 
  * @author Malte Legenhausen
  */
-public class NullDevice extends ObserverableDevice<Connection> {
+public class NullDevice implements Device<Connection> {
 
 	/**
 	 * Null implementation for <code>EraseFlashOperation</code>.
@@ -182,5 +187,15 @@ public class NullDevice extends ObserverableDevice<Connection> {
 				return null;
 			}
 		};
+	}
+
+	@Override
+	public OutputStream getOutputStream() {
+		return new NullOutputStream();
+	}
+
+	@Override
+	public InputStream getInputStream() {
+		return null;
 	}
 }

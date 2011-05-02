@@ -5,8 +5,7 @@ import gnu.io.SerialPortEventListener;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.OutputStream;
 import java.util.TooManyListenersException;
 
 import org.slf4j.Logger;
@@ -15,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import de.uniluebeck.itm.tr.util.TimeDiff;
 import de.uniluebeck.itm.wsn.drivers.core.ConnectionEvent;
 import de.uniluebeck.itm.wsn.drivers.core.ConnectionListener;
-import de.uniluebeck.itm.wsn.drivers.core.ObserverableDevice;
+import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.RunningOperationsMonitor;
@@ -26,7 +25,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.RunningOperationsMonitor;
  * 
  * @author Malte Legenhausen
  */
-public abstract class AbstractSerialPortDevice extends ObserverableDevice<SerialPortConnection> implements ConnectionListener, SerialPortEventListener {
+public abstract class AbstractSerialPortDevice implements Device<SerialPortConnection>, ConnectionListener, SerialPortEventListener {
 	
 	/**
 	 * Logger for this class.
@@ -37,21 +36,6 @@ public abstract class AbstractSerialPortDevice extends ObserverableDevice<Serial
 	 * The timeout that will be waited for available data.
 	 */
 	private static final int DATA_AVAILABLE_TIMEOUT = 50;
-	
-	/**
-	 * The timeout that will be waited when receiving a message packet.
-	 */
-	private static final int RECEIVE_PACKET_TIMEOUT = 1000;
-	
-	/**
-	 * Byte mask that is used after receiving a byte from the input stream.
-	 */
-	private static final int RECEIVE_MASK = 0xFF;
-	
-	/**
-	 * List for all handlers that process byte income from the device.
-	 */
-	private final List<ByteReceiver> receivers = new ArrayList<ByteReceiver>();
 	
 	/**
 	 * Synchronization object for data connection.
@@ -76,9 +60,6 @@ public abstract class AbstractSerialPortDevice extends ObserverableDevice<Serial
 	public AbstractSerialPortDevice(final SerialPortConnection connection) {
 		this.connection = connection;
 		this.connection.addListener(this);
-		
-		addByteReceiver(new MessagePacketReceiver());
-		addByteReceiver(new MessagePlainTextReceiver());
 	}
 
 	@Override
@@ -164,71 +145,16 @@ public abstract class AbstractSerialPortDevice extends ObserverableDevice<Serial
 	 * @param inputStream 
 	 */
 	private void receive(final InputStream inputStream) {
-		LOG.debug("Receiving Packet");
-		try {
-			beforeReceive();
-			while (inputStream != null && inputStream.available() > 0) {
-				final byte input = (byte) (RECEIVE_MASK & inputStream.read());
-				onReceive(input);
-			}
-			afterReceive();
-		} catch (final IOException error) {
-			LOG.error("Error on rx (Retry in 1s): " + error, error);
-			try {
-				Thread.sleep(RECEIVE_PACKET_TIMEOUT);
-			} catch (final InterruptedException e) {
-				LOG.warn(e.getMessage());
-			}
-		}
+		//TODO: Fill an output stream.
 	}
 	
-	/**
-	 * Call the beforeReceive method from all <code>ByteReceiver</code>s.
-	 */
-	private void beforeReceive() {
-		for (final ByteReceiver receiver : receivers.toArray(new ByteReceiver[receivers.size()])) {
-			receiver.beforeReceive();
-		}
+	@Override
+	public OutputStream getOutputStream() {
+		return null;
 	}
 	
-	/**
-	 * Call the onReceive method from all <code>ByteReceiver</code>s.
-	 * 
-	 * @param input The received data.
-	 */
-	private void onReceive(final byte input) {
-		for (final ByteReceiver receiver : receivers.toArray(new ByteReceiver[receivers.size()])) {
-			receiver.onReceive(input);
-		}
-	}
-	
-	/**
-	 * Call the afterReceive method from all <code>ByteReceiver</code>s.
-	 */
-	private void afterReceive() {
-		for (final ByteReceiver receiver : receivers.toArray(new ByteReceiver[receivers.size()])) {
-			receiver.afterReceive();
-		}
-	}
-	
-	/**
-	 * Add a <code>ByteReceiver</code> to the device.
-	 * 
-	 * @param receiver The <code>ByteReceiver</code> implementation.
-	 */
-	public void addByteReceiver(final ByteReceiver receiver) {
-		receiver.setDevice(this);
-		receivers.add(receiver);
-	}
-	
-	/**
-	 * Removes a <code>ByteReceiver</code> from the device.
-	 * 
-	 * @param receiver The <code>ByteReceiver</code> that has to be removed.
-	 */
-	public void removeByteReceiver(final ByteReceiver receiver) {
-		if (receivers.contains(receiver)) {
-			receivers.add(receiver);
-		}
+	@Override
+	public InputStream getInputStream() {
+		return null;
 	}
 }

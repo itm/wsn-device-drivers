@@ -9,9 +9,6 @@ import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import de.uniluebeck.itm.wsn.drivers.core.MessagePacket;
-import de.uniluebeck.itm.wsn.drivers.core.MessagePacketListener;
-import de.uniluebeck.itm.wsn.drivers.core.MessagePlainTextListener;
-import de.uniluebeck.itm.wsn.drivers.core.PacketType;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
@@ -55,36 +52,6 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	public QueuedDeviceAsync(final OperationQueue queue, final Device<?> device) {
 		this.queue = queue;
 		this.device = device;
-	}
-
-	@Override
-	public void addListener(final MessagePacketListener listener, final PacketType... types) {
-		device.addListener(listener, types);
-	}
-
-	@Override
-	public void addListener(final MessagePacketListener listener, final int... types) {
-		device.addListener(listener, types);
-	}
-	
-	@Override
-	public void addListener(final MessagePacketListener listener) {
-		device.addListener(listener);
-	}
-	
-	@Override
-	public void addListener(final MessagePlainTextListener listener) {
-		device.addListener(listener);
-	}
-	
-	@Override
-	public void removeListener(final MessagePacketListener listener) {
-		device.removeListener(listener);
-	}
-	
-	@Override
-	public void removeListener(final MessagePlainTextListener listener) {
-		device.removeListener(listener);
 	}
 	
 	@Override

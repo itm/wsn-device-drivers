@@ -2,7 +2,6 @@ package de.uniluebeck.itm.wsn.drivers.core.async;
 
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
-import de.uniluebeck.itm.wsn.drivers.core.MessageObserverable;
 import de.uniluebeck.itm.wsn.drivers.core.MessagePacket;
 
 
@@ -13,7 +12,7 @@ import de.uniluebeck.itm.wsn.drivers.core.MessagePacket;
  * 
  * @author Malte Legenhausen
  */
-public interface DeviceAsync extends MessageObserverable {
+public interface DeviceAsync {
 	
 	/**
 	 * Returns the chip type of this device.
