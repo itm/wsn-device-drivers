@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.rsc.drivers.core.ChipType;
 import de.uniluebeck.itm.rsc.drivers.core.MacAddress;
-import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
+import de.uniluebeck.itm.rsc.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractWriteMacAddressOperation;
 import de.uniluebeck.itm.tr.util.StringUtils;
 
@@ -24,7 +24,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 		this.device = device;
 	}
 	
-	private void writeMacAddress(final ChipType chipType, final AbstractProgressManager progressManager) throws Exception {
+	private void writeMacAddress(final ChipType chipType, final ProgressManager progressManager) throws Exception {
 		final MacAddress macAddress = getMacAddress();
 		
 		// Wait for a connection
@@ -65,7 +65,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 	}
 	
 	@Override
-	public Void execute(final AbstractProgressManager progressManager) throws Exception {
+	public Void execute(final ProgressManager progressManager) throws Exception {
 		log.trace("Writing mac address...");
 		final ChipType chipType = executeSubOperation(device.createGetChipTypeOperation(), progressManager.createSub(0.0625f));
 		// Check if the user has cancelled the operation
@@ -82,7 +82,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 		return null;
 	}
 	
-	protected byte[][] readSector(final AbstractProgressManager progressManager, final Sector index) throws Exception {
+	protected byte[][] readSector(final ProgressManager progressManager, final Sector index) throws Exception {
 		int start = index.getStart();
 		int length = index.getEnd() - start;
 
@@ -117,7 +117,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 		return sector;
 	}
 	
-	private void writeSector(final AbstractProgressManager progressManager, final Sector index, final byte[][] sector) throws Exception {
+	private void writeSector(final ProgressManager progressManager, final Sector index, final byte[][] sector) throws Exception {
 		int address = index.getStart();
 		for (int i = 0; i < sector.length; ++i) {
 			log.trace("Writing sector " + index + ", block " + i + ": " + StringUtils.toHexString(sector[i]));

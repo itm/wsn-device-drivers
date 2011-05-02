@@ -29,7 +29,7 @@ public interface Operation<T> extends Callable<T> {
 	 * @return The result of the <code>Operation<code> execution.
 	 * @throws Exception Any exception that can occur during an operation execution.
 	 */
-	T execute(AbstractProgressManager progressManager) throws Exception;
+	T execute(ProgressManager progressManager) throws Exception;
 	
 	/**
 	 * Cancel the operation.

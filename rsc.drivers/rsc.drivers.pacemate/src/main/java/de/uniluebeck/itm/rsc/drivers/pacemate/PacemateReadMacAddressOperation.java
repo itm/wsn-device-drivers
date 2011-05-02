@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.rsc.drivers.core.MacAddress;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractOperation;
-import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
+import de.uniluebeck.itm.rsc.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.ReadFlashOperation;
 import de.uniluebeck.itm.rsc.drivers.core.operation.ReadMacAddressOperation;
 import de.uniluebeck.itm.tr.util.StringUtils;
@@ -28,7 +28,7 @@ public class PacemateReadMacAddressOperation extends AbstractOperation<MacAddres
 	}
 	
 	@Override
-	public MacAddress execute(final AbstractProgressManager progressManager) throws Exception {
+	public MacAddress execute(final ProgressManager progressManager) throws Exception {
 		final ReadFlashOperation readFlashOperation = device.createReadFlashOperation();
 		readFlashOperation.setAddress(MAC_START, MAC_LENGTH);
 		byte[] header = executeSubOperation(readFlashOperation, progressManager);

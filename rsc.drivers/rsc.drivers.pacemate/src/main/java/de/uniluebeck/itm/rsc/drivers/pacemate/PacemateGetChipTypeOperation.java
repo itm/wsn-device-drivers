@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.rsc.drivers.core.ChipType;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractOperation;
-import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
+import de.uniluebeck.itm.rsc.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.GetChipTypeOperation;
 
 public class PacemateGetChipTypeOperation extends AbstractOperation<ChipType> implements GetChipTypeOperation {
@@ -21,7 +21,7 @@ public class PacemateGetChipTypeOperation extends AbstractOperation<ChipType> im
 		this.device = device;
 	}
 	
-	private ChipType getChipType(final AbstractProgressManager progressManager) throws Exception {
+	private ChipType getChipType(final ProgressManager progressManager) throws Exception {
 		device.clearStreamData();
 		device.autobaud();
 
@@ -53,7 +53,7 @@ public class PacemateGetChipTypeOperation extends AbstractOperation<ChipType> im
 	}
 	
 	@Override
-	public ChipType execute(final AbstractProgressManager progressManager) throws Exception {
+	public ChipType execute(final ProgressManager progressManager) throws Exception {
 		executeSubOperation(device.createEnterProgramModeOperation(), progressManager.createSub(0.25f));
 		ChipType chipType = ChipType.UNKNOWN;
 		try {

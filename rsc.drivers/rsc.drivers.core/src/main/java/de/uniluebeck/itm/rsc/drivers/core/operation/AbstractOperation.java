@@ -111,7 +111,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 		try {
 			// Cancel execution if operation was canceled before operation changed to running.
 			if (!canceled) {
-				final AbstractProgressManager progressManager = new RootProgressManager(callback);
+				final ProgressManager progressManager = new RootProgressManager(callback);
 				progressManager.worked(0.0f);
 				result = execute(progressManager);
 				progressManager.done();
@@ -173,7 +173,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	 * @return The result of the sub <code>Operation</code>.
 	 * @throws Exception Any exception throws be the operation.
 	 */
-	protected <R> R executeSubOperation(final Operation<R> operation, final AbstractProgressManager progressManager) throws Exception {
+	protected <R> R executeSubOperation(final Operation<R> operation, final ProgressManager progressManager) throws Exception {
 		subOperation = operation;
 		final R result = operation.execute(progressManager);
 		progressManager.done();

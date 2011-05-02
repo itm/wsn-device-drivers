@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import de.uniluebeck.itm.rsc.drivers.core.exception.FlashEraseFailedException;
 import de.uniluebeck.itm.rsc.drivers.core.exception.FlashProgramFailedException;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractOperation;
-import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
+import de.uniluebeck.itm.rsc.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.rsc.drivers.core.serialport.SerialPortConnection;
 import de.uniluebeck.itm.rsc.drivers.core.serialport.SerialPortConnection.SerialPortMode;
@@ -28,7 +28,7 @@ public class TelosbEnterProgramModeOperation extends AbstractOperation<Void> imp
 	}
 	
 	@Override
-	public Void execute(AbstractProgressManager progressManager) throws Exception {
+	public Void execute(ProgressManager progressManager) throws Exception {
 		connection.setSerialPortMode(SerialPortMode.PROGRAM);
 		
 		byte[] reply;

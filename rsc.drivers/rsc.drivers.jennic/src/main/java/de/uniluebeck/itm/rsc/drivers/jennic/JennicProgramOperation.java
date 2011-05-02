@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import de.uniluebeck.itm.rsc.drivers.core.ChipType;
 import de.uniluebeck.itm.rsc.drivers.core.exception.ProgramChipMismatchException;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgramOperation;
-import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
+import de.uniluebeck.itm.rsc.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.util.BinDataBlock;
 
 public class JennicProgramOperation extends AbstractProgramOperation {
@@ -22,7 +22,7 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 		this.device = device;
 	}
 	
-	private void program(final ChipType chipType, final JennicBinData binData, final AbstractProgressManager progressManager) throws Exception {
+	private void program(final ChipType chipType, final JennicBinData binData, final ProgressManager progressManager) throws Exception {
 		// Wait for a connection
 		while (!isCanceled() && !device.waitForConnection()) {
 			log.debug("Still waiting for a connection");
@@ -68,13 +68,13 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 		return binData;
 	}
 	
-	private void insertFlashHeaderToImage(JennicBinData binData, final AbstractProgressManager progressManager) throws Exception {
+	private void insertFlashHeaderToImage(JennicBinData binData, final ProgressManager progressManager) throws Exception {
 		// insert flash header of device
 		final byte[] flashHeader = executeSubOperation(device.createGetFlashHeaderOperation(), progressManager);
 		binData.insertHeader(flashHeader);
 	}
 	
-	public Void execute(final AbstractProgressManager progressManager) throws Exception {
+	public Void execute(final ProgressManager progressManager) throws Exception {
 		final ChipType chipType = executeSubOperation(device.createGetChipTypeOperation(), progressManager.createSub(0.0625f));
 		final JennicBinData binData = validateImage(chipType);
 		insertFlashHeaderToImage(binData, progressManager.createSub(0.0625f));

@@ -3,7 +3,7 @@ package de.uniluebeck.itm.rsc.drivers.pacemate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
+import de.uniluebeck.itm.rsc.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractReadFlashOperation;
 
 public class PacemateReadFlashOperation extends AbstractReadFlashOperation {
@@ -19,7 +19,7 @@ public class PacemateReadFlashOperation extends AbstractReadFlashOperation {
 		this.device = device;
 	}
 	
-	private byte[] readFlash(final AbstractProgressManager progressManager) throws Exception {
+	private byte[] readFlash(final ProgressManager progressManager) throws Exception {
 		device.clearStreamData();
 		device.autobaud();
 
@@ -47,7 +47,7 @@ public class PacemateReadFlashOperation extends AbstractReadFlashOperation {
 	}
 	
 	@Override
-	public byte[] execute(final AbstractProgressManager progressManager) throws Exception {
+	public byte[] execute(final ProgressManager progressManager) throws Exception {
 		executeSubOperation(device.createEnterProgramModeOperation(), progressManager.createSub(0.25f));
 		byte[] result = null;
 		try {

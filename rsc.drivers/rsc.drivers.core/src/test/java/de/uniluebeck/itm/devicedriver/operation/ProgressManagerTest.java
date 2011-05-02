@@ -10,7 +10,7 @@ import de.uniluebeck.itm.rsc.drivers.core.operation.RootProgressManager;
 
 
 /**
- * Test for the AbstractProgressManager.
+ * Test for the ProgressManager.
  * 
  * @author Malte Legenhausen
  */

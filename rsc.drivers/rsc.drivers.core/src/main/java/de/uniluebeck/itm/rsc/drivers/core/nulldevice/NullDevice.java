@@ -9,7 +9,7 @@ import de.uniluebeck.itm.rsc.drivers.core.MacAddress;
 import de.uniluebeck.itm.rsc.drivers.core.ObserverableDevice;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractOperation;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgramOperation;
-import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
+import de.uniluebeck.itm.rsc.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractReadFlashOperation;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractSendOperation;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractWriteFlashOperation;
@@ -39,7 +39,7 @@ public class NullDevice extends ObserverableDevice<Connection> {
 	 */
 	private class NullEraseFlashOperation extends AbstractOperation<Void> implements EraseFlashOperation {
 		@Override
-		public Void execute(final AbstractProgressManager progressManager) {
+		public Void execute(final ProgressManager progressManager) {
 			LOG.warn("Null device is used. EraseFlashOperation does nothing.");
 			return null;
 		}
@@ -52,7 +52,7 @@ public class NullDevice extends ObserverableDevice<Connection> {
 	 */
 	private class NullGetChipTypeOperation extends AbstractOperation<ChipType> implements GetChipTypeOperation {
 		@Override
-		public ChipType execute(final AbstractProgressManager progressManager) {
+		public ChipType execute(final ProgressManager progressManager) {
 			LOG.warn("Null device is used. GetChipTypeOperation does nothing.");
 			return ChipType.UNKNOWN;
 		}
@@ -65,7 +65,7 @@ public class NullDevice extends ObserverableDevice<Connection> {
 	 */
 	private class NullReadMacAddressOperation extends AbstractOperation<MacAddress> implements ReadMacAddressOperation {
 		@Override
-		public MacAddress execute(final AbstractProgressManager progressManager) {
+		public MacAddress execute(final ProgressManager progressManager) {
 			LOG.warn("Null device is used. ReadMacAddressOperation does nothing.");
 			return new MacAddress();
 		}
@@ -78,7 +78,7 @@ public class NullDevice extends ObserverableDevice<Connection> {
 	 */
 	private class NullResetOperation extends AbstractOperation<Void> implements ResetOperation {
 		@Override
-		public Void execute(final AbstractProgressManager progressManager) {
+		public Void execute(final ProgressManager progressManager) {
 			LOG.warn("Null device is used. ResetOperation does nothing.");
 			return null;
 		}
@@ -113,7 +113,7 @@ public class NullDevice extends ObserverableDevice<Connection> {
 	public ProgramOperation createProgramOperation() {
 		return new AbstractProgramOperation() {
 			@Override
-			public Void execute(final AbstractProgressManager progressManager) {
+			public Void execute(final ProgressManager progressManager) {
 				LOG.warn("Null device is used. ProgramOperation does nothing.");
 				return null;
 			}
@@ -124,7 +124,7 @@ public class NullDevice extends ObserverableDevice<Connection> {
 	public ReadFlashOperation createReadFlashOperation() {
 		return new AbstractReadFlashOperation() {
 			@Override
-			public byte[] execute(final AbstractProgressManager progressManager) {
+			public byte[] execute(final ProgressManager progressManager) {
 				LOG.warn("Null device is used. ReadFlashOperation does nothing.");
 				return new byte[] {};
 			}
@@ -155,7 +155,7 @@ public class NullDevice extends ObserverableDevice<Connection> {
 	public SendOperation createSendOperation() {
 		return new AbstractSendOperation() {
 			@Override
-			public Void execute(final AbstractProgressManager progressManager) {
+			public Void execute(final ProgressManager progressManager) {
 				LOG.warn("Null device is used. SendOperation does nothing.");
 				return null;
 			}
@@ -166,7 +166,7 @@ public class NullDevice extends ObserverableDevice<Connection> {
 	public WriteFlashOperation createWriteFlashOperation() {
 		return new AbstractWriteFlashOperation() {
 			@Override
-			public Void execute(final AbstractProgressManager progressManager) {
+			public Void execute(final ProgressManager progressManager) {
 				LOG.warn("Null device is used. WriteFlashOperation does nothing.");
 				return null;
 			}
@@ -177,7 +177,7 @@ public class NullDevice extends ObserverableDevice<Connection> {
 	public WriteMacAddressOperation createWriteMacAddressOperation() {
 		return new AbstractWriteMacAddressOperation() {
 			@Override
-			public Void execute(final AbstractProgressManager progressManager) {
+			public Void execute(final ProgressManager progressManager) {
 				LOG.warn("Null device is used. WriteMacAddressOperation does nothing.");
 				return null;
 			}

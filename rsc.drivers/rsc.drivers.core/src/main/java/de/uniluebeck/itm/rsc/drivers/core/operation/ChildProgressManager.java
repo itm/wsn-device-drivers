@@ -11,7 +11,7 @@ public class ChildProgressManager extends AbstractProgressManager {
 	/**
 	 * A parent progress manager. This is set when this progress manager is running in a sub operation.
 	 */
-	private final AbstractProgressManager parent;
+	private final ProgressManager parent;
 	
 	/**
 	 * The factor is used to limit the amount of work.
@@ -24,7 +24,7 @@ public class ChildProgressManager extends AbstractProgressManager {
 	 * @param parent The parent of this progress manager.
 	 * @param factor The amount of progress the manager can manage.
 	 */
-	public ChildProgressManager(final AbstractProgressManager parent, final float factor) {
+	public ChildProgressManager(final ProgressManager parent, final float factor) {
 		this.factor = factor;
 		this.parent = parent;
 	}

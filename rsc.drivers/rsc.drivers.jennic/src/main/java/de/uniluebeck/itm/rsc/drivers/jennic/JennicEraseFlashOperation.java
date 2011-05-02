@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.rsc.drivers.core.exception.FlashEraseFailedException;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractOperation;
-import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
+import de.uniluebeck.itm.rsc.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.EraseFlashOperation;
 
 public class JennicEraseFlashOperation extends AbstractOperation<Void> implements EraseFlashOperation {
@@ -21,7 +21,7 @@ public class JennicEraseFlashOperation extends AbstractOperation<Void> implement
 		this.device = device;
 	}
 	
-	private void eraseFlash(final AbstractProgressManager progressManager) throws Exception {
+	private void eraseFlash(final ProgressManager progressManager) throws Exception {
 		device.sendBootLoaderMessage(Messages.statusRegisterWriteMessage((byte) 0x00));
 		progressManager.worked(0.25f);
 		byte[] response = device.receiveBootLoaderReply(Messages.WRITE_SR_RESPONSE);
@@ -47,7 +47,7 @@ public class JennicEraseFlashOperation extends AbstractOperation<Void> implement
 	}
 	
 	@Override
-	public Void execute(final AbstractProgressManager progressManager) throws Exception {
+	public Void execute(final ProgressManager progressManager) throws Exception {
 		executeSubOperation(device.createEnterProgramModeOperation(), progressManager.createSub(0.25f));
 		try {
 			eraseFlash(progressManager.createSub(0.5f));

@@ -7,7 +7,7 @@ import org.junit.Test;
 import de.uniluebeck.itm.rsc.drivers.core.State;
 import de.uniluebeck.itm.rsc.drivers.core.async.AsyncAdapter;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractOperation;
-import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
+import de.uniluebeck.itm.rsc.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.Operation;
 
 public class AbstractOperationTest {
@@ -18,7 +18,7 @@ public class AbstractOperationTest {
 	public void setUp() {
 		operation = new AbstractOperation<Object>() {
 			@Override
-			public Void execute(AbstractProgressManager progressManager) throws Exception {
+			public Void execute(ProgressManager progressManager) throws Exception {
 				return null;
 			}
 		};
@@ -63,7 +63,7 @@ public class AbstractOperationTest {
 		// Test exception
 		Operation<Void> operation = new AbstractOperation<Void>() {
 			@Override
-			public Void execute(AbstractProgressManager progressManager) throws Exception {
+			public Void execute(ProgressManager progressManager) throws Exception {
 				throw new Exception("Some exception");
 			}
 		};
@@ -82,7 +82,7 @@ public class AbstractOperationTest {
 		// Test timeout
 		Operation<Void> operation = new AbstractOperation<Void>() {
 			@Override
-			public Void execute(AbstractProgressManager progressManager) throws Exception {
+			public Void execute(ProgressManager progressManager) throws Exception {
 				Thread.sleep(200);
 				return null;
 			}
@@ -122,7 +122,7 @@ public class AbstractOperationTest {
 	public void testGetTimeout() {
 		Operation<Void> operation = new AbstractOperation<Void>() {
 			@Override
-			public Void execute(AbstractProgressManager progressManager) throws Exception {
+			public Void execute(ProgressManager progressManager) throws Exception {
 				return null;
 			}
 		};

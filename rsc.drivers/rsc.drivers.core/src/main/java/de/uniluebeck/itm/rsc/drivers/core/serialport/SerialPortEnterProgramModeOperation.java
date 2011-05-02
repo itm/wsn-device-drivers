@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.rsc.drivers.core.exception.EnterProgramModeException;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractOperation;
-import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
+import de.uniluebeck.itm.rsc.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.rsc.drivers.core.serialport.SerialPortConnection.SerialPortMode;
 
@@ -44,7 +44,7 @@ public class SerialPortEnterProgramModeOperation extends AbstractOperation<Void>
 	}
 	
 	@Override
-	public Void execute(final AbstractProgressManager progressManager) throws Exception {
+	public Void execute(final ProgressManager progressManager) throws Exception {
 		LOG.debug("Entering program mode");
 		connection.setSerialPortMode(SerialPortMode.PROGRAM);
 		

@@ -1,7 +1,7 @@
 package de.uniluebeck.itm.rsc.drivers.core.mockdevice;
 
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractOperation;
-import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
+import de.uniluebeck.itm.rsc.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.ResetOperation;
 
 
@@ -38,7 +38,7 @@ public class MockResetOperation extends AbstractOperation<Void> implements Reset
 	}
 	
 	@Override
-	public Void execute(final AbstractProgressManager progressManager) throws Exception {
+	public Void execute(final ProgressManager progressManager) throws Exception {
 		Thread.sleep(SLEEP_TIME);
 		connection.stopAliveRunnable();
 		Thread.sleep(RESET_TIME);

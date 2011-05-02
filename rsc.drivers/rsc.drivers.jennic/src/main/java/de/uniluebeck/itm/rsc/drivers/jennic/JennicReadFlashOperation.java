@@ -3,7 +3,7 @@ package de.uniluebeck.itm.rsc.drivers.jennic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
+import de.uniluebeck.itm.rsc.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractReadFlashOperation;
 import de.uniluebeck.itm.tr.util.StringUtils;
 
@@ -20,7 +20,7 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 		this.device = device;
 	}
 	
-	private byte[] readFlash(final AbstractProgressManager progressManager) throws Exception {
+	private byte[] readFlash(final ProgressManager progressManager) throws Exception {
 		// Wait for a connection
 		while (!isCanceled() && !device.waitForConnection()) {
 			log.debug("Still waiting for a connection");
@@ -59,7 +59,7 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 	}
 	
 	@Override
-	public byte[] execute(final AbstractProgressManager progressManager) throws Exception {
+	public byte[] execute(final ProgressManager progressManager) throws Exception {
 		byte[] data = null;
 		// Enter programming mode
 		executeSubOperation(device.createEnterProgramModeOperation(), progressManager.createSub(0.125f));

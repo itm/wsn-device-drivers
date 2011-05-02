@@ -1,7 +1,7 @@
 package de.uniluebeck.itm.rsc.drivers.telosb;
 
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractOperation;
-import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
+import de.uniluebeck.itm.rsc.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.ResetOperation;
 
 public class TelosbResetOperation extends AbstractOperation<Void> implements ResetOperation {
@@ -13,7 +13,7 @@ public class TelosbResetOperation extends AbstractOperation<Void> implements Res
 	}
 	
 	@Override
-	public Void execute(AbstractProgressManager progressManager) throws Exception {
+	public Void execute(ProgressManager progressManager) throws Exception {
 		bsl.reset();
 		return null;
 	}

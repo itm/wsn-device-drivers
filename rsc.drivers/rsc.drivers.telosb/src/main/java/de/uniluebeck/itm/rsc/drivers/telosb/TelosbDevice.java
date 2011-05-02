@@ -9,7 +9,7 @@ import de.uniluebeck.itm.rsc.drivers.core.exception.InvalidChecksumException;
 import de.uniluebeck.itm.rsc.drivers.core.exception.ReceivedIncorrectDataException;
 import de.uniluebeck.itm.rsc.drivers.core.exception.TimeoutException;
 import de.uniluebeck.itm.rsc.drivers.core.exception.UnexpectedResponseException;
-import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
+import de.uniluebeck.itm.rsc.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractReadFlashOperation;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractWriteMacAddressOperation;
 import de.uniluebeck.itm.rsc.drivers.core.operation.EnterProgramModeOperation;
@@ -86,7 +86,7 @@ public class TelosbDevice extends AbstractSerialPortDevice implements Programabl
 	public ReadFlashOperation createReadFlashOperation() {
 		final ReadFlashOperation operation = new AbstractReadFlashOperation() {
 			@Override
-			public byte[] execute(AbstractProgressManager progressManager) throws Exception {
+			public byte[] execute(ProgressManager progressManager) throws Exception {
 				throw new UnsupportedOperationException("readFlash is not available");
 			}
 		};
@@ -104,7 +104,7 @@ public class TelosbDevice extends AbstractSerialPortDevice implements Programabl
 	public WriteMacAddressOperation createWriteMacAddressOperation() {
 		final WriteMacAddressOperation operation = new AbstractWriteMacAddressOperation() {
 			@Override
-			public Void execute(AbstractProgressManager progressManager) throws Exception {
+			public Void execute(ProgressManager progressManager) throws Exception {
 				throw new UnsupportedOperationException("writeMacAddress is not available");
 			}
 		};

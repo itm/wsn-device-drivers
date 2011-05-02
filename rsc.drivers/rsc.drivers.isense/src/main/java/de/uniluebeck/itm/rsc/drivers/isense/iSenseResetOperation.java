@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractOperation;
-import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
+import de.uniluebeck.itm.rsc.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.ResetOperation;
 import de.uniluebeck.itm.rsc.drivers.core.serialport.SerialPortConnection;
 
@@ -23,7 +23,7 @@ public class iSenseResetOperation extends AbstractOperation<Void> implements Res
 	}
 
 	@Override
-	public Void execute(AbstractProgressManager progressManager) throws Exception {
+	public Void execute(ProgressManager progressManager) throws Exception {
 		log.debug("Resetting device...");
 		SerialPort serialPort = connection.getSerialPort();
 		serialPort.setDTR(true);

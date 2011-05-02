@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractOperation;
-import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
+import de.uniluebeck.itm.rsc.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.EraseFlashOperation;
 
 public class PacemateEraseFlashOperation extends AbstractOperation<Void> implements EraseFlashOperation {
@@ -24,7 +24,7 @@ public class PacemateEraseFlashOperation extends AbstractOperation<Void> impleme
 		this.device = device;
 	}
 	
-	private void eraseFlash(final AbstractProgressManager progressManager) throws Exception {
+	private void eraseFlash(final ProgressManager progressManager) throws Exception {
 		device.clearStreamData();
 		device.autobaud();
 
@@ -46,7 +46,7 @@ public class PacemateEraseFlashOperation extends AbstractOperation<Void> impleme
 	}
 	
 	@Override
-	public Void execute(final AbstractProgressManager progressManager) throws Exception {
+	public Void execute(final ProgressManager progressManager) throws Exception {
 		log.debug("Erasing whole flash...");
 		executeSubOperation(device.createEnterProgramModeOperation(), progressManager.createSub(0.25f));
 		try {

@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractOperation;
-import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
+import de.uniluebeck.itm.rsc.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.rsc.drivers.core.serialport.SerialPortConnection.SerialPortMode;
 
@@ -36,7 +36,7 @@ public class SerialPortLeaveProgramModeOperation extends AbstractOperation<Void>
 	}
 	
 	@Override
-	public Void execute(final AbstractProgressManager progressManager) throws Exception {
+	public Void execute(final ProgressManager progressManager) throws Exception {
 		LOG.debug("Leaving programming mode...");
 		connection.flush();
 		progressManager.worked(0.5f);

@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import de.uniluebeck.itm.rsc.drivers.core.ChipType;
 import de.uniluebeck.itm.rsc.drivers.core.MacAddress;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractOperation;
-import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
+import de.uniluebeck.itm.rsc.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.ReadFlashOperation;
 import de.uniluebeck.itm.rsc.drivers.core.operation.ReadMacAddressOperation;
 
@@ -24,7 +24,7 @@ public class JennicReadMacAddressOperation extends AbstractOperation<MacAddress>
 	}
 	
 	@Override
-	public MacAddress execute(final AbstractProgressManager progressManager) throws Exception {
+	public MacAddress execute(final ProgressManager progressManager) throws Exception {
 		log.trace("Reading MAC Adress");
 		// Connection established, determine chip type
 		final ChipType chipType = executeSubOperation(device.createGetChipTypeOperation(), progressManager.createSub(0.5f));

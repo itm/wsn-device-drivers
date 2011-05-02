@@ -5,7 +5,7 @@ import java.io.OutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
+import de.uniluebeck.itm.rsc.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractSendOperation;
 
 
@@ -61,7 +61,7 @@ public class SerialPortSendOperation extends AbstractSendOperation {
 	}
 	
 	@Override
-	public Void execute(final AbstractProgressManager progressManager) throws Exception {
+	public Void execute(final ProgressManager progressManager) throws Exception {
 		LOG.debug("Executing send operation");
 		
 		final byte type = (byte) (EMPTY_TYPE & getMessagePacket().getType());

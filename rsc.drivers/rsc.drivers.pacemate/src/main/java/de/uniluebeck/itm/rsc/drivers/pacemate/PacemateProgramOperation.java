@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.rsc.drivers.core.exception.InvalidChecksumException;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgramOperation;
-import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
+import de.uniluebeck.itm.rsc.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.util.BinDataBlock;
 
 public class PacemateProgramOperation extends AbstractProgramOperation {
@@ -21,7 +21,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 		this.device = device;
 	}
 	
-	private void program(final AbstractProgressManager progressManager) throws Exception {		
+	private void program(final ProgressManager progressManager) throws Exception {		
 		device.clearStreamData();
 		device.autobaud();
 
@@ -170,7 +170,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 	}
 
 	@Override
-	public Void execute(final AbstractProgressManager progressManager) throws Exception {
+	public Void execute(final ProgressManager progressManager) throws Exception {
 		log.debug("Prgramming operation executing...");
 		// Erase the complete flash
 		executeSubOperation(device.createEraseFlashOperation(), progressManager.createSub(0.125f));

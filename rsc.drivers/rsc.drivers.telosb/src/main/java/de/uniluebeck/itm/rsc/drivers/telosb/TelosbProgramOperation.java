@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.rsc.drivers.core.exception.FlashProgramFailedException;
 import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgramOperation;
-import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractProgressManager;
+import de.uniluebeck.itm.rsc.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.rsc.drivers.core.util.BinDataBlock;
 
 public class TelosbProgramOperation extends AbstractProgramOperation {
@@ -23,7 +23,7 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 		this.device = device;
 	}
 	
-	private void program(final AbstractProgressManager progressManager) throws Exception {
+	private void program(final ProgressManager progressManager) throws Exception {
 		final TelosbBinData binData = new TelosbBinData(getBinaryImage());
 		// Write program to flash
 		log.trace("Starting to write program into flash memory...");
@@ -65,7 +65,7 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 	}
 	
 	@Override
-	public Void execute(final AbstractProgressManager progressManager) throws Exception {
+	public Void execute(final ProgressManager progressManager) throws Exception {
 		executeSubOperation(device.createEnterProgramModeOperation(), progressManager.createSub(0.125f));
 		try {
 			program(progressManager);
