@@ -4,11 +4,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.uniluebeck.itm.rsc.drivers.core.State;
-import de.uniluebeck.itm.rsc.drivers.core.async.AsyncAdapter;
-import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractOperation;
-import de.uniluebeck.itm.rsc.drivers.core.operation.ProgressManager;
-import de.uniluebeck.itm.rsc.drivers.core.operation.Operation;
+import de.uniluebeck.itm.wsn.drivers.core.State;
+import de.uniluebeck.itm.wsn.drivers.core.async.AsyncAdapter;
+import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 
 public class AbstractOperationTest {
 

@@ -61,7 +61,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>de.uniluebeck.itm.rsc.drivers.core.mockdevice.MockDeviceExample</mainClass>
+							<mainClass>de.uniluebeck.itm.wsn.drivers.core.mockdevice.MockDeviceExample</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

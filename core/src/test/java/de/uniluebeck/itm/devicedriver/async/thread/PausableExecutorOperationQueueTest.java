@@ -6,14 +6,14 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.uniluebeck.itm.rsc.drivers.core.async.AsyncAdapter;
-import de.uniluebeck.itm.rsc.drivers.core.async.AsyncCallback;
-import de.uniluebeck.itm.rsc.drivers.core.async.OperationHandle;
-import de.uniluebeck.itm.rsc.drivers.core.async.OperationQueue;
-import de.uniluebeck.itm.rsc.drivers.core.async.thread.PausableExecutorOperationQueue;
-import de.uniluebeck.itm.rsc.drivers.core.operation.AbstractOperation;
-import de.uniluebeck.itm.rsc.drivers.core.operation.ProgressManager;
-import de.uniluebeck.itm.rsc.drivers.core.operation.Operation;
+import de.uniluebeck.itm.wsn.drivers.core.async.AsyncAdapter;
+import de.uniluebeck.itm.wsn.drivers.core.async.AsyncCallback;
+import de.uniluebeck.itm.wsn.drivers.core.async.OperationHandle;
+import de.uniluebeck.itm.wsn.drivers.core.async.OperationQueue;
+import de.uniluebeck.itm.wsn.drivers.core.async.thread.PausableExecutorOperationQueue;
+import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 
 public class PausableExecutorOperationQueueTest {
 

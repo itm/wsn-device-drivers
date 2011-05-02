@@ -39,7 +39,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>de.uniluebeck.itm.rsc.drivers.jennic.JennicDeviceExample</mainClass>
+                            <mainClass>de.uniluebeck.itm.wsn.drivers.jennic.JennicDeviceExample</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

@@ -4,9 +4,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.uniluebeck.itm.rsc.drivers.core.Monitor;
-import de.uniluebeck.itm.rsc.drivers.core.operation.ChildProgressManager;
-import de.uniluebeck.itm.rsc.drivers.core.operation.RootProgressManager;
+import de.uniluebeck.itm.wsn.drivers.core.Monitor;
+import de.uniluebeck.itm.wsn.drivers.core.operation.ChildProgressManager;
+import de.uniluebeck.itm.wsn.drivers.core.operation.RootProgressManager;
 
 
 /**

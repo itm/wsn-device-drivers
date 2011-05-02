@@ -39,7 +39,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>de.uniluebeck.itm.rsc.drivers.pacemate.PacemateDeviceExample</mainClass>
+							<mainClass>de.uniluebeck.itm.wsn.drivers.pacemate.PacemateDeviceExample</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
