@@ -21,8 +21,4 @@ google-guice, http://code.google.com/p/google-guice/, Apache License 2.0
 
 guava-libraries, http://code.google.com/p/guava-libraries/, Apache License 2.0
 
-protobuf-rpc-pro, http://code.google.com/p/protobuf-rpc-pro/, Apache License 2.0
-
-XStream, http://xstream.codehaus.org/, BSD license (http://xstream.codehaus.org/license.html)
-
 JUnit, http://www.junit.org/, Common Public License - v 1.0 (http://www.junit.org/license)
