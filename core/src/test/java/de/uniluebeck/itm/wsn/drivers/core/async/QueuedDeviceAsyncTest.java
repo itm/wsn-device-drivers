@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.devicedriver.async;
+package de.uniluebeck.itm.wsn.drivers.core.async;
 
 import org.junit.Test;
 

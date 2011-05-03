@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.devicedriver.async.thread;
+package de.uniluebeck.itm.wsn.drivers.core.async.thread;
 
 import static org.junit.Assert.fail;
 
