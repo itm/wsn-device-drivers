@@ -32,7 +32,7 @@ public class JarUtil {
 	/**
 	 * The directory name of the library folder in the home directory.
 	 */
-	private static final String LIB_HOME = Joiner.on(File.separator).join(USER_HOME, ".wsn-device-drivers");
+	private static final String LIB_HOME = USER_HOME + File.separator + ".wsn-device-drivers";
 	
 	/**
 	 * System property for the java class path.
