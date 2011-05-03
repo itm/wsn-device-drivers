@@ -126,13 +126,13 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	}
 	
 	@Override
-	public InputStream getInputStream() {
-		return device.getInputStream();
+	public InputStream getManagedInputStream() {
+		return device.getManagedInputStream();
 	}
 	
 	@Override
-	public OutputStream getOutputStream() {
-		return device.getOutputStream();
+	public OutputStream getManagedOutputStream() {
+		return device.getManagedOutputStream();
 	}
 	
 	/**

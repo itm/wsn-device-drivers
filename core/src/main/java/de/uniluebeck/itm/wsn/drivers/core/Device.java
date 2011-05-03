@@ -1,5 +1,6 @@
 package de.uniluebeck.itm.wsn.drivers.core;
 
+import de.uniluebeck.itm.wsn.drivers.core.io.HasManagedStreams;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
@@ -18,7 +19,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
  * 
  * @param <C> The connection type that is used by this device.
  */
-public interface Device<C extends Connection> extends IOContainer {
+public interface Device<C extends Connection> extends HasManagedStreams {
 	
 	/**
 	 * Returns the <code>Connection</code> object for this device.

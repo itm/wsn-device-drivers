@@ -1,9 +1,9 @@
 package de.uniluebeck.itm.wsn.drivers.core.async;
 
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
-import de.uniluebeck.itm.wsn.drivers.core.IOContainer;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import de.uniluebeck.itm.wsn.drivers.core.MessagePacket;
+import de.uniluebeck.itm.wsn.drivers.core.io.HasManagedStreams;
 
 
 /**
@@ -13,7 +13,7 @@ import de.uniluebeck.itm.wsn.drivers.core.MessagePacket;
  * 
  * @author Malte Legenhausen
  */
-public interface DeviceAsync extends IOContainer {
+public interface DeviceAsync extends HasManagedStreams {
 	
 	/**
 	 * Returns the chip type of this device.

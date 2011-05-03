@@ -190,12 +190,12 @@ public class NullDevice implements Device<Connection> {
 	}
 
 	@Override
-	public OutputStream getOutputStream() {
+	public OutputStream getManagedOutputStream() {
 		return new NullOutputStream();
 	}
 
 	@Override
-	public InputStream getInputStream() {
+	public InputStream getManagedInputStream() {
 		return null;
 	}
 }

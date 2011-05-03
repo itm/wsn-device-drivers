@@ -108,12 +108,12 @@ public class MockDevice implements Device<MockConnection> {
 	}
 	
 	@Override
-	public InputStream getInputStream() {
+	public InputStream getManagedInputStream() {
 		return getConnection().getInputStream();
 	}
 	
 	@Override
-	public OutputStream getOutputStream() {
+	public OutputStream getManagedOutputStream() {
 		return getConnection().getOutputStream();
 	}
 }

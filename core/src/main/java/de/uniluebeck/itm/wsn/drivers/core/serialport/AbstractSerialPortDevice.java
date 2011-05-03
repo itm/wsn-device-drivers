@@ -16,10 +16,10 @@ import de.uniluebeck.itm.wsn.drivers.core.ConnectionEvent;
 import de.uniluebeck.itm.wsn.drivers.core.ConnectionListener;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
+import de.uniluebeck.itm.wsn.drivers.core.io.LockedInputStream;
+import de.uniluebeck.itm.wsn.drivers.core.io.LockedOutputStream;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.RunningOperationsMonitor;
-import de.uniluebeck.itm.wsn.drivers.core.util.LockedInputStream;
-import de.uniluebeck.itm.wsn.drivers.core.util.LockedOutputStream;
 
 
 /**
@@ -93,13 +93,13 @@ public abstract class AbstractSerialPortDevice implements Device<SerialPortConne
 	public void serialEvent(final SerialPortEvent event) {
 		switch (event.getEventType()) {
 		case SerialPortEvent.DATA_AVAILABLE:
-			synchronized (dataAvailableMonitor) {
-				dataAvailableMonitor.notifyAll();
-			}
-			
 			final boolean locked = monitor.isRunning();
 			lockedInputStream.setLocked(locked);
 			lockedOutputStream.setLocked(locked);
+			
+			synchronized (dataAvailableMonitor) {
+				dataAvailableMonitor.notifyAll();
+			}
 			break;
 		default:
 			LOG.debug("Serial event (other than data available): " + event);
@@ -157,12 +157,12 @@ public abstract class AbstractSerialPortDevice implements Device<SerialPortConne
 	}
 	
 	@Override
-	public OutputStream getOutputStream() {
+	public OutputStream getManagedOutputStream() {
 		return lockedOutputStream;
 	}
 	
 	@Override
-	public InputStream getInputStream() {
+	public InputStream getManagedInputStream() {
 		return lockedInputStream;
 	}
 }
