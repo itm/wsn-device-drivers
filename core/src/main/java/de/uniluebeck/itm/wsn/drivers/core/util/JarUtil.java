@@ -60,7 +60,7 @@ public class JarUtil {
 	}
 	
 	/**
-	 * Adds the library home to the classpath.
+	 * Adds the library home to the java library path.
 	 */
 	private static void prepareClassPath() throws IOException {
 		try {
