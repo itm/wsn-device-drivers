@@ -3,6 +3,7 @@ package de.uniluebeck.itm.wsn.drivers.core.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.net.URISyntaxException;
 import java.util.zip.Adler32;
 
@@ -24,6 +25,16 @@ public class JarUtil {
 	private static final String JNI_PATH_ROOT = "/de/uniluebeck/itm/wsn/drivers/core/jni";
 	
 	/**
+	 * The directory name of the library folder in the home directory.
+	 */
+	private static final String LIB_HOME = ".wsn-device-drivers";
+	
+	/**
+	 * System property for the java class path.
+	 */
+	private static final String JAVA_LIBRARY_PATH = "java.library.path";
+	
+	/**
 	 * Load a DLL or SO file that is contained in a JAR.
 	 * This method is designed to work like System.loadLibrary(libName). 
 	 * 
@@ -34,12 +45,44 @@ public class JarUtil {
 		final String path = archAwarePath(lib);
 		try {
 			extractLibrary(path, lib);
+			prepareClassPath();
 			System.loadLibrary(libName);
 		} catch (final IOException e) {
 			throw new RuntimeException("Unable to extract libary to: " + path, e);
 		} catch (final URISyntaxException e) {
 			throw new RuntimeException("Unable to extract libary to: " + path, e);
 		}
+	}
+	
+	/**
+	 * Adds the library home to the classpath.
+	 */
+	private static final void prepareClassPath() throws IOException {
+		final String dir = targetHomePath();
+		try {
+			// This enables the java.library.path to be modified at runtime
+			// From a Sun engineer at http://forums.sun.com/thread.jspa?threadID=707176
+			//
+			final Field field = ClassLoader.class.getDeclaredField("usr_paths");
+			field.setAccessible(true);
+			final String[] paths = (String[]) field.get(null);
+			for (int i = 0; i < paths.length; i++) {
+				if (dir.equals(paths[i])) {
+					return;
+				}
+			}
+			final String[] tmp = new String[paths.length + 1];
+			System.arraycopy(paths, 0, tmp, 0, paths.length);
+			tmp[paths.length] = dir;
+			field.set(null, tmp);
+			
+			final String javaLibraryPath = Joiner.on(File.pathSeparator).join(System.getProperty(JAVA_LIBRARY_PATH), dir);
+			System.setProperty(JAVA_LIBRARY_PATH, javaLibraryPath);
+		} catch (IllegalAccessException e) {
+			throw new IOException("Failed to get permissions to set library path");
+		} catch (NoSuchFieldException e) {
+			throw new IOException("Failed to get field handle to set library path");
+		}	
 	}
 	
 	/**
@@ -63,7 +106,39 @@ public class JarUtil {
 	 */
 	private static final String archAwarePath(final String lib) {
 		final String arch = System.getProperty("os.arch");
-		return Joiner.on('/').join(JNI_PATH_ROOT, arch, lib);
+		return Joiner.on(File.separator).join(JNI_PATH_ROOT, arch, lib);
+	}
+	
+	private static String targetHomePath() {
+		final String home = System.getProperty("user.home");
+		return Joiner.on(File.separator).join(home, LIB_HOME);
+	}
+	
+	/**
+	 * Converts the given lib name to the absolute path in the home directory of the user.
+	 * 
+	 * @param lib The full library name.
+	 * @return The absolute library path.
+	 */
+	private static final String targetLibraryPath(final String lib) {
+		return Joiner.on(File.separator).join(targetHomePath(), lib);
+	}
+	
+	/**
+	 * Create the target file and all necessary directories.
+	 * 
+	 * @param lib The full library name with extensions.
+	 * @return The target file.
+	 * @throws IOException when something during the IO operation happens.
+	 */
+	private static final File createTargetFile(final String lib) throws IOException {
+		final String path = targetLibraryPath(lib);
+		final File target = new File(path);
+		if (!target.exists()) {
+			Files.createParentDirs(target);
+			target.createNewFile();
+		}
+		return target;
 	}
 	
 	/**
@@ -81,18 +156,15 @@ public class JarUtil {
 		}
 		
 		// Initialize the target file and create if necessary.
-		final File target = new File(lib);
-		if (!target.exists()) {
-			target.createNewFile();
-		}
-
+		final File target = createTargetFile(lib);
+		// Read the library from the resource to a temporary file.
 		final File temp = readStreamToTemp(stream);
 		
 		// Only copy the source to target when the file has changed.
 		if (hasFileChanged(temp, target)) {
 			Files.copy(temp, target);
 		}
-		// Remove the temp file when the program is closed.
+		// Remove the temporary file when the program is closed.
 		temp.deleteOnExit();
 	}
 	
