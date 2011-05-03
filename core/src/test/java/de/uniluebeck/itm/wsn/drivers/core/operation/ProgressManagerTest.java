@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.devicedriver.operation;
+package de.uniluebeck.itm.wsn.drivers.core.operation;
 
 import org.junit.Assert;
 import org.junit.Before;
