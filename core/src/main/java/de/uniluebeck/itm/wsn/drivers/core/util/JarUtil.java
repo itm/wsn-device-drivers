@@ -25,9 +25,14 @@ public class JarUtil {
 	private static final String JNI_PATH_ROOT = "/de/uniluebeck/itm/wsn/drivers/core/jni";
 	
 	/**
+	 * The user home directory.
+	 */
+	private static final String USER_HOME = System.getProperty("user.home");
+	
+	/**
 	 * The directory name of the library folder in the home directory.
 	 */
-	private static final String LIB_HOME = ".wsn-device-drivers";
+	private static final String LIB_HOME = Joiner.on(File.separator).join(USER_HOME, ".wsn-device-drivers");
 	
 	/**
 	 * System property for the java class path.
@@ -57,8 +62,7 @@ public class JarUtil {
 	/**
 	 * Adds the library home to the classpath.
 	 */
-	private static final void prepareClassPath() throws IOException {
-		final String dir = targetHomePath();
+	private static void prepareClassPath() throws IOException {
 		try {
 			// This enables the java.library.path to be modified at runtime
 			// From a Sun engineer at http://forums.sun.com/thread.jspa?threadID=707176
@@ -66,18 +70,19 @@ public class JarUtil {
 			final Field field = ClassLoader.class.getDeclaredField("usr_paths");
 			field.setAccessible(true);
 			final String[] paths = (String[]) field.get(null);
-			for (int i = 0; i < paths.length; i++) {
-				if (dir.equals(paths[i])) {
+			for (String path : paths) {
+				if (LIB_HOME.equals(path)) {
 					return;
 				}
 			}
 			final String[] tmp = new String[paths.length + 1];
 			System.arraycopy(paths, 0, tmp, 0, paths.length);
-			tmp[paths.length] = dir;
+			tmp[paths.length] = LIB_HOME;
 			field.set(null, tmp);
 			
-			final String javaLibraryPath = Joiner.on(File.pathSeparator).join(System.getProperty(JAVA_LIBRARY_PATH), dir);
-			System.setProperty(JAVA_LIBRARY_PATH, javaLibraryPath);
+			final String javaLibraryPath = System.getProperty(JAVA_LIBRARY_PATH);
+			final String newJavaLibraryPath = Joiner.on(File.pathSeparator).join(javaLibraryPath, LIB_HOME);
+			System.setProperty(JAVA_LIBRARY_PATH, newJavaLibraryPath);
 		} catch (IllegalAccessException e) {
 			throw new IOException("Failed to get permissions to set library path");
 		} catch (NoSuchFieldException e) {
@@ -91,7 +96,7 @@ public class JarUtil {
 	 * @param libName The name of the library that has to be extended.
 	 * @return The name of the library with system file extension.
 	 */
-	private static final String nativeLibraryName(final String libName) {
+	private static String nativeLibraryName(final String libName) {
 		final String system = System.getProperty("os.name");
 		final String pattern = system.startsWith("Windows") ? "%s.dll" : "lib%s.so";
 		return String.format(pattern, libName);
@@ -104,24 +109,9 @@ public class JarUtil {
 	 * @param lib The native file name for the system.
 	 * @return The path to the library.
 	 */
-	private static final String archAwarePath(final String lib) {
+	private static String archAwarePath(final String lib) {
 		final String arch = System.getProperty("os.arch");
 		return Joiner.on(File.separator).join(JNI_PATH_ROOT, arch, lib);
-	}
-	
-	private static String targetHomePath() {
-		final String home = System.getProperty("user.home");
-		return Joiner.on(File.separator).join(home, LIB_HOME);
-	}
-	
-	/**
-	 * Converts the given lib name to the absolute path in the home directory of the user.
-	 * 
-	 * @param lib The full library name.
-	 * @return The absolute library path.
-	 */
-	private static final String targetLibraryPath(final String lib) {
-		return Joiner.on(File.separator).join(targetHomePath(), lib);
 	}
 	
 	/**
@@ -131,8 +121,8 @@ public class JarUtil {
 	 * @return The target file.
 	 * @throws IOException when something during the IO operation happens.
 	 */
-	private static final File createTargetFile(final String lib) throws IOException {
-		final String path = targetLibraryPath(lib);
+	private static File createTargetFile(final String lib) throws IOException {
+		final String path = Joiner.on(File.separator).join(LIB_HOME, lib);
 		final File target = new File(path);
 		if (!target.exists()) {
 			Files.createParentDirs(target);
@@ -198,7 +188,7 @@ public class JarUtil {
 	 * @return True when the files are not equal, so they changed, else false.
 	 * @throws IOException when something happened current the checksum calculation.
 	 */
-	private static final boolean hasFileChanged(final File source, final File target) throws IOException {
+	private static boolean hasFileChanged(final File source, final File target) throws IOException {
 		return Files.getChecksum(source, new Adler32()) != Files.getChecksum(target, new Adler32());
 	}
 }
