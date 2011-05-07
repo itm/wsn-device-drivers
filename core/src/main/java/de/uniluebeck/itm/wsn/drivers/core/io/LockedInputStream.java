@@ -39,6 +39,37 @@ public class LockedInputStream extends FilterInputStream implements Lockable {
 	}
 	
 	@Override
+	public long skip(long n) throws IOException {
+		if (locked) {
+			throw new IOException("Unable to skip. Stream is currently locked.");
+		}
+		return super.skip(n);
+	}
+	
+	@Override
+	public void close() throws IOException {
+		if (locked) {
+			throw new IOException("Unable to close. Stream is currently locked.");
+		}
+		super.close();
+	}
+	
+	@Override
+	public synchronized void mark(int readlimit) {
+		if (!locked) {
+			super.mark(readlimit);
+		}
+	}
+	
+	@Override
+	public synchronized void reset() throws IOException {
+		if (locked) {
+			throw new IOException("Unable to reset. Stream is currently locked.");
+		}
+		super.reset();
+	}
+	
+	@Override
 	public void setLocked(final boolean locked) {
 		this.locked = locked;
 	}
