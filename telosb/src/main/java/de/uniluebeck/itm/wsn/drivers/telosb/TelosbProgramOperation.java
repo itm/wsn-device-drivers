@@ -28,6 +28,7 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 		// Write program to flash
 		log.trace("Starting to write program into flash memory...");
 		
+		final float worked = 1.0f / binData.getBlockCount();
 		int blockCount = 0;
 		int bytesProgrammed = 0;
 		
@@ -43,16 +44,15 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 						"at address 0x%02x: " + e + ". Programmed " + bytesProgrammed + " bytes so far. "+
 						". Operation will be canceled.", data.length, address), e);
 				throw e;
-			} catch (IOException e) {
-				log.error("I/O error while writing flash: " +e+". Programmed "+bytesProgrammed+" bytes so far. " +
-						"Operation will be canceled!", e);
+			} catch (final IOException e) {
+				log.error("I/O error while writing flash. Programmed " + bytesProgrammed + " bytes so far.", e);
 				throw e;
 			}
 			
 			bytesProgrammed += data.length;
 			
 			// Notify listeners of the new status
-			progressManager.worked(1.0f / binData.getBlockCount());
+			progressManager.worked(worked);
 			
 			// Return if the user has requested to cancel this operation
 			if (isCanceled()) {
@@ -68,11 +68,11 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 	public Void execute(final ProgressManager progressManager) throws Exception {
 		executeSubOperation(device.createEnterProgramModeOperation(), progressManager.createSub(0.125f));
 		try {
-			program(progressManager);
+			program(progressManager.createSub(0.75f));
 		} finally {
-			executeSubOperation(device.createLeaveProgramModeOperation(), progressManager.createSub(0.75f));
+			executeSubOperation(device.createLeaveProgramModeOperation(), progressManager.createSub(0.0625f));
 		}
-		executeSubOperation(device.createResetOperation(), progressManager.createSub(0.125f));
+		executeSubOperation(device.createResetOperation(), progressManager.createSub(0.0625f));
 		return null;
 	}
 

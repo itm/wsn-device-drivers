@@ -208,6 +208,15 @@ public class GenericDeviceExample implements ConnectionListener {
 			public void onSuccess(final Void result) {
 				System.out.println("Image successfully flashed");
 			}
+			
+			@Override
+			public void onFailure(Throwable throwable) {
+				if (throwable instanceof UnsupportedOperationException) {
+					System.err.println("Program is not supported by this device.");
+				} else {
+					throwable.printStackTrace();
+				}
+			}
 		};
 		
 		final byte[] bytes = ByteStreams.toByteArray(image);
@@ -227,6 +236,15 @@ public class GenericDeviceExample implements ConnectionListener {
 			@Override
 			public void onSuccess(final Void result) {
 				System.out.println("Device successful reseted");
+			}
+			
+			@Override
+			public void onFailure(Throwable throwable) {
+				if (throwable instanceof UnsupportedOperationException) {
+					System.err.println("Reset is not supported by this device.");
+				} else {
+					throwable.printStackTrace();
+				}
 			}
 		};
 		deviceAsync.reset(RESET_TIMEOUT, callback);
@@ -255,6 +273,15 @@ public class GenericDeviceExample implements ConnectionListener {
 			public void onSuccess(final MacAddress result) {
 				System.out.println("Mac Address: " + result);
 			}
+			
+			@Override
+			public void onFailure(Throwable throwable) {
+				if (throwable instanceof UnsupportedOperationException) {
+					System.err.println("Read mac address is not supported by this device.");
+				} else {
+					throwable.printStackTrace();
+				}
+			}
 		};
 		
 		deviceAsync.readMac(READ_MAC_ADDRESS_TIMEOUT, callback);
@@ -276,6 +303,15 @@ public class GenericDeviceExample implements ConnectionListener {
 			@Override
 			public void onSuccess(final Void result) {
 				System.out.println("Mac Address written");
+			}
+			
+			@Override
+			public void onFailure(Throwable throwable) {
+				if (throwable instanceof UnsupportedOperationException) {
+					System.err.println("Write mac address is not supported by this device.");
+				} else {
+					throwable.printStackTrace();
+				}
 			}
 		});
 		deviceAsync.readMac(READ_MAC_ADDRESS_TIMEOUT, callback);
@@ -302,6 +338,15 @@ public class GenericDeviceExample implements ConnectionListener {
 			public void onSuccess(final byte[] result) {
 				System.out.println("Reading result: " + result);
 			}
+			
+			@Override
+			public void onFailure(Throwable throwable) {
+				if (throwable instanceof UnsupportedOperationException) {
+					System.err.println("Read flash is not supported by this device.");
+				} else {
+					throwable.printStackTrace();
+				}
+			}
 		};
 		deviceAsync.readFlash(0, 32, RESET_TIMEOUT, callback);
 	}
@@ -327,6 +372,15 @@ public class GenericDeviceExample implements ConnectionListener {
 			public void onSuccess(final ChipType result) {
 				System.out.println("Chip Type: " + result);
 			}
+			
+			@Override
+			public void onFailure(Throwable throwable) {
+				if (throwable instanceof UnsupportedOperationException) {
+					System.err.println("Get chip type is not supported by this device.");
+				} else {
+					throwable.printStackTrace();
+				}
+			}
 		});
 	}
 	
@@ -341,6 +395,15 @@ public class GenericDeviceExample implements ConnectionListener {
 			
 			public void onSuccess(final Void result) {
 				System.out.println("Message send");
+			}
+			
+			@Override
+			public void onFailure(Throwable throwable) {
+				if (throwable instanceof UnsupportedOperationException) {
+					System.err.println("Send is not supported by this device.");
+				} else {
+					throwable.printStackTrace();
+				}
 			}
 		});
 	}

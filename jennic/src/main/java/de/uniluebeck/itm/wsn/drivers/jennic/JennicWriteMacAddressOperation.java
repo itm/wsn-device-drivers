@@ -83,25 +83,26 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 	}
 	
 	protected byte[][] readSector(final ProgressManager progressManager, final Sector index) throws Exception {
-		int start = index.getStart();
-		int length = index.getEnd() - start;
+		final int start = index.getStart();
+		final int length = index.getEnd() - start;
 
 		// Calculate number of blocks to read
-		int totalBlocks = length / BLOCKSIZE;
-		int residue = length - totalBlocks * BLOCKSIZE;
+		final int totalBlocks = length / BLOCKSIZE;
+		final int residue = length - totalBlocks * BLOCKSIZE;
 
 		log.trace(String.format("length = %d, totalBlocks = %d, residue = %d", length, totalBlocks, residue));
 
 		// Prepare byte array
-		byte[][] sector = new byte[totalBlocks + (residue > 0 ? 1 : 0)][BLOCKSIZE];
+		final byte[][] sector = new byte[totalBlocks + (residue > 0 ? 1 : 0)][BLOCKSIZE];
 
 		// Read block after block
+		final float worked = 1.0f / totalBlocks;
 		int address = start;
 		for (int readBlocks = 0; readBlocks < totalBlocks; readBlocks++) {
 			sector[readBlocks] = device.readFlash(address, BLOCKSIZE);
 			address += BLOCKSIZE;
 
-			progressManager.worked(1.0f / (totalBlocks * 2));
+			progressManager.worked(worked);
 
 			// Check if the user has cancelled the operation
 			if (isCanceled()) {
@@ -118,6 +119,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 	}
 	
 	private void writeSector(final ProgressManager progressManager, final Sector index, final byte[][] sector) throws Exception {
+		final float worked = 1.0f / sector.length;
 		int address = index.getStart();
 		for (int i = 0; i < sector.length; ++i) {
 			log.trace("Writing sector " + index + ", block " + i + ": " + StringUtils.toHexString(sector[i]));
@@ -125,7 +127,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 			device.writeFlash(address, sector[i]);
 			
 			address += sector[i].length;
-			progressManager.worked(1.0f / (sector.length * 2.0f));
+			progressManager.worked(worked);
 		}
 	}
 }
