@@ -1,6 +1,7 @@
 package de.uniluebeck.itm.wsn.drivers.core.operation;
 
-import de.uniluebeck.itm.wsn.drivers.core.MessagePacket;
+import com.google.common.base.Preconditions;
+
 
 
 /**
@@ -13,11 +14,13 @@ public abstract class AbstractSendOperation extends AbstractOperation<Void> impl
 	/**
 	 * The message packet that has to be send.
 	 */
-	private MessagePacket messagePacket;
+	private byte[] message;
 	
 	@Override
-	public void setMessagePacket(final MessagePacket messagePacket) {
-		this.messagePacket = messagePacket;
+	public void setMessage(final byte[] message) {
+		Preconditions.checkArgument(message != null, "A null message is not allowed.");
+		this.message = new byte[message.length];
+		System.arraycopy(message, 0, this.message, 0, message.length);
 	}
 	
 	/**
@@ -25,7 +28,7 @@ public abstract class AbstractSendOperation extends AbstractOperation<Void> impl
 	 * 
 	 * @return The message packet.
 	 */
-	public MessagePacket getMessagePacket() {
-		return messagePacket;
+	public byte[] getMessage() {
+		return message;
 	}
 }

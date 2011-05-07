@@ -2,6 +2,8 @@ package de.uniluebeck.itm.wsn.drivers.core.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.google.common.io.ByteStreams;
 
@@ -11,7 +13,6 @@ import de.uniluebeck.itm.wsn.drivers.core.ConnectionEvent;
 import de.uniluebeck.itm.wsn.drivers.core.ConnectionListener;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
-import de.uniluebeck.itm.wsn.drivers.core.MessagePacket;
 import de.uniluebeck.itm.wsn.drivers.core.async.AsyncAdapter;
 import de.uniluebeck.itm.wsn.drivers.core.async.AsyncCallback;
 import de.uniluebeck.itm.wsn.drivers.core.async.DeviceAsync;
@@ -29,6 +30,44 @@ import de.uniluebeck.itm.wsn.drivers.core.nulldevice.NullDevice;
  */
 public class GenericDeviceExample implements ConnectionListener {
 
+	private class MessageReader implements Runnable {
+		
+		private final InputStream inputStream;
+		
+		private boolean canceled = false;
+		
+		public MessageReader(final InputStream inputStream) {
+			this.inputStream = inputStream;
+		}
+		
+		private void readMessage() throws IOException {
+			while (inputStream.available() != 0 && !canceled) {
+				System.out.print((char) inputStream.read());
+			}
+			System.out.print('\n');
+		}
+		
+		@Override
+		public void run() {
+			System.out.println("Reading message packets in background.");
+			try {
+				while (!canceled) {
+					readMessage();
+					Thread.sleep(50);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			System.out.println("Reading of message packets canceled.");
+		}
+		
+		public void cancel() {
+			canceled = true;
+		}
+	}
+	
 	/**
 	 * Default sleep for the thread.
 	 */
@@ -59,6 +98,8 @@ public class GenericDeviceExample implements ConnectionListener {
 	 */
 	private static final int DEFAULT_MAC_ADDRESS_VALUE = 1024;
 	
+	private final ExecutorService executor = Executors.newSingleThreadExecutor();
+	
 	/**
 	 * The queue used for this example.
 	 */
@@ -79,6 +120,8 @@ public class GenericDeviceExample implements ConnectionListener {
 	 */
 	private DeviceAsync deviceAsync;
 	
+	private MessageReader reader;
+	
 	/**
 	 * InputStream for the image file.
 	 */
@@ -97,7 +140,7 @@ public class GenericDeviceExample implements ConnectionListener {
 	/**
 	 * The example message packet that is send to the device.
 	 */
-	private MessagePacket messagePacket;
+	private byte[] messagePacket;
 
 	public void setDevice(final Device<?> device) {
 		this.device = device;
@@ -111,8 +154,9 @@ public class GenericDeviceExample implements ConnectionListener {
 		this.uri = uri;
 	}
 	
-	public void setMessagePacket(final MessagePacket messagePacket) {
-		this.messagePacket = messagePacket;
+	public void setMessage(final byte[] messagePacket) {
+		this.messagePacket = new byte[messagePacket.length];
+		System.arraycopy(messagePacket, 0, this.messagePacket, 0, messagePacket.length);
 	}
 
 	/**
@@ -312,6 +356,25 @@ public class GenericDeviceExample implements ConnectionListener {
 	}
 	
 	/**
+	 * Wait for message packets from the device.
+	 */
+	private void waitForMessagePackets() {
+		System.out.println("Waiting for messages from the device.");
+		System.out.println("Press any key to shutdown...");
+		try {
+			while(System.in.read() == -1) {
+				Thread.sleep(DEFAULT_SLEEP);
+			}
+		} catch (final InterruptedException e) {
+			e.printStackTrace();
+		} catch (final IOException e) {
+			e.printStackTrace();
+		} finally {
+			reader.cancel();
+		}
+	}
+	
+	/**
 	 * Shutdown the queue and the connection.
 	 */
 	private void shutdown() {
@@ -329,23 +392,31 @@ public class GenericDeviceExample implements ConnectionListener {
 	public void run() {
 		init();
 		connect();
-		try {
-			programImage();
-		} catch (final IOException e) {
-			e.printStackTrace();
-		}
-		macAddressOperations();
-		readFlashOperation();
-		chipTypeOperation();
-		sendOperation();
-		resetOperation();
-		waitForOperationsToFinish();
+//		try {
+//			programImage();
+//		} catch (final IOException e) {
+//			e.printStackTrace();
+//		}
+//		macAddressOperations();
+//		readFlashOperation();
+//		chipTypeOperation();
+//		sendOperation();
+//		resetOperation();
+//		waitForOperationsToFinish();
+		waitForMessagePackets();
 		shutdown();
 	}
 	
 	@Override
 	public void onConnectionChange(final ConnectionEvent event) {
 		System.out.println("Connected with port: " + event.getUri());
+		if (event.isConnected()) {
+			reader = new MessageReader(device.getInputStream());
+			executor.submit(reader);
+		} else {
+			reader.cancel();
+			reader = null;
+		}
 	}
 
 	public void setMacAddress(final MacAddress macAddress) {

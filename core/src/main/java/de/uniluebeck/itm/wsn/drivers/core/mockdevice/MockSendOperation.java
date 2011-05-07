@@ -1,6 +1,5 @@
 package de.uniluebeck.itm.wsn.drivers.core.mockdevice;
 
-import de.uniluebeck.itm.wsn.drivers.core.MessagePacket;
 import de.uniluebeck.itm.wsn.drivers.core.operation.SendOperation;
 
 
@@ -14,7 +13,7 @@ public class MockSendOperation extends AbstractMockOperation<Void> implements Se
 	/**
 	 * The <code>MessagePacket</code> that has to be send.
 	 */
-	private MessagePacket messagePacket;
+	private byte[] messagePacket;
 	
 	/**
 	 * The <code>MockConnection</code> which is used for sending the message.
@@ -31,13 +30,13 @@ public class MockSendOperation extends AbstractMockOperation<Void> implements Se
 	}
 
 	@Override
-	public void setMessagePacket(final MessagePacket messagePacket) {
+	public void setMessage(final byte[] messagePacket) {
 		this.messagePacket = messagePacket;
 	}
 	
 	@Override
 	public Void returnResult() {
-		connection.sendMessage(new String(messagePacket.getContent()));
+		connection.sendMessage(new String(messagePacket));
 		return null;
 	}
 }

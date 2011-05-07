@@ -10,7 +10,6 @@ import com.google.inject.Inject;
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
-import de.uniluebeck.itm.wsn.drivers.core.MessagePacket;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
@@ -101,10 +100,10 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	}
 
 	@Override
-	public OperationHandle<Void> send(final MessagePacket packet, final long timeout, final AsyncCallback<Void> callback) {
+	public OperationHandle<Void> send(final byte[] message, final long timeout, final AsyncCallback<Void> callback) {
 		LOG.debug("Send packet to device (timeout: " + timeout + "ms)");
 		final SendOperation operation = device.createSendOperation();
-		operation.setMessagePacket(packet);
+		operation.setMessage(message);
 		return queue.addOperation(operation, timeout, callback);
 	}
 

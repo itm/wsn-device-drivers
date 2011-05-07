@@ -22,34 +22,14 @@ public class SerialPortSendOperation extends AbstractSendOperation {
 	private static final Logger LOG = LoggerFactory.getLogger(SerialPortSendOperation.class);
 	
 	/**
-	 *  
-	 */
-	private static final byte DLE = 0x10;
-
-	/** 
-	 *
-	 */
-	private static final byte[] DLE_STX = new byte[] { DLE, 0x02 };
-
-	/** 
-	 * 
-	 */
-	private static final byte[] DLE_ETX = new byte[] { DLE, 0x03 };
-	
-	/**
 	 * Maximum length of a message.
 	 */
 	private static final int MAX_LENGTH = 150;
 	
 	/**
-	 * Empty type definition.
-	 */
-	private static final byte EMPTY_TYPE = (byte) 0xFF;
-	
-	/**
 	 * 
 	 */
-	private SerialPortConnection connection;
+	private final SerialPortConnection connection;
 	
 	/**
 	 * Constructor.
@@ -64,39 +44,14 @@ public class SerialPortSendOperation extends AbstractSendOperation {
 	public Void execute(final ProgressManager progressManager) throws Exception {
 		LOG.debug("Executing send operation");
 		
-		final byte type = (byte) (EMPTY_TYPE & getMessagePacket().getType());
-		final byte content[] = getMessagePacket().getContent();
-
-		if (content == null || type > EMPTY_TYPE) {
-			LOG.warn("Skipping empty packet or type > 0xFF.");
-			return null;
-		}
+		final byte content[] = getMessage();
 		if (content.length > MAX_LENGTH) {
 			LOG.warn("Skipping too large packet (length " + content.length + ")");
 			return null;
 		}
 
 		final OutputStream outputStream = connection.getOutputStream();
-		
-		LOG.debug("Sending start signal DLE STX");
-		outputStream.write(DLE_STX);
-
-		LOG.debug("Sending the type escaped");
-		outputStream.write(type);
-		if (type == DLE) {
-			outputStream.write(DLE);
-		}
-
-		LOG.debug("Transmiting each byte escaped");
-		for (int i = 0; i < content.length; ++i) {
-			outputStream.write(content[i]);
-			if (content[i] == DLE) {
-				outputStream.write(DLE);
-			}
-		}
-
-		LOG.debug("Sending final DLT ETX");
-		outputStream.write(DLE_ETX);
+		outputStream.write(content);
 		outputStream.flush();
 		LOG.debug("Send operation finished");
 		return null;

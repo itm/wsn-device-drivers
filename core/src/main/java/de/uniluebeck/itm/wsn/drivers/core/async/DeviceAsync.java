@@ -2,7 +2,6 @@ package de.uniluebeck.itm.wsn.drivers.core.async;
 
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
-import de.uniluebeck.itm.wsn.drivers.core.MessagePacket;
 import de.uniluebeck.itm.wsn.drivers.core.io.HasInputStream;
 
 
@@ -97,10 +96,10 @@ public interface DeviceAsync extends HasInputStream {
 	/**
 	 * Sends the <code>MessagePacket</code> to the connected iSense device.
 	 * 
-	 * @param packet The <code>MessagePacket</code> that has to be send to the device.
+	 * @param message The <code>MessagePacket</code> that has to be send to the device.
 	 * @param timeout Maximum operation time before the method will be canceled milliseconds.
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationHandle</code> for controlling the async operation.
 	 */
-	OperationHandle<Void> send(MessagePacket packet, long timeout, AsyncCallback<Void> callback);
+	OperationHandle<Void> send(byte[] message, long timeout, AsyncCallback<Void> callback);
 }
