@@ -1,12 +1,9 @@
 package de.uniluebeck.itm.wsn.drivers.core.nulldevice;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.io.NullOutputStream;
 
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
@@ -190,12 +187,7 @@ public class NullDevice implements Device<Connection> {
 	}
 
 	@Override
-	public OutputStream getManagedOutputStream() {
-		return new NullOutputStream();
-	}
-
-	@Override
-	public InputStream getManagedInputStream() {
+	public InputStream getInputStream() {
 		return null;
 	}
 }

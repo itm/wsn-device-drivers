@@ -1,7 +1,6 @@
 package de.uniluebeck.itm.wsn.drivers.core.async;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -126,13 +125,8 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	}
 	
 	@Override
-	public InputStream getManagedInputStream() {
-		return device.getManagedInputStream();
-	}
-	
-	@Override
-	public OutputStream getManagedOutputStream() {
-		return device.getManagedOutputStream();
+	public InputStream getInputStream() {
+		return device.getInputStream();
 	}
 	
 	/**

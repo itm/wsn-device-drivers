@@ -5,7 +5,6 @@ import gnu.io.SerialPortEventListener;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.TooManyListenersException;
 
 import org.slf4j.Logger;
@@ -17,7 +16,6 @@ import de.uniluebeck.itm.wsn.drivers.core.ConnectionListener;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 import de.uniluebeck.itm.wsn.drivers.core.io.LockedInputStream;
-import de.uniluebeck.itm.wsn.drivers.core.io.LockedOutputStream;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.RunningOperationsMonitor;
 
@@ -60,11 +58,6 @@ public abstract class AbstractSerialPortDevice implements Device<SerialPortConne
 	private LockedInputStream lockedInputStream;
 	
 	/**
-	 * Managed OutputStream for secure access of the device during operation execution.
-	 */
-	private LockedOutputStream lockedOutputStream;
-	
-	/**
 	 * Constructor.
 	 * 
 	 * @param connection The serial port connection for this device.
@@ -93,9 +86,7 @@ public abstract class AbstractSerialPortDevice implements Device<SerialPortConne
 	public void serialEvent(final SerialPortEvent event) {
 		switch (event.getEventType()) {
 		case SerialPortEvent.DATA_AVAILABLE:
-			final boolean locked = monitor.isRunning();
-			lockedInputStream.setLocked(locked);
-			lockedOutputStream.setLocked(locked);
+			lockedInputStream.setLocked(monitor.isRunning());
 			
 			synchronized (dataAvailableMonitor) {
 				dataAvailableMonitor.notifyAll();
@@ -116,10 +107,8 @@ public abstract class AbstractSerialPortDevice implements Device<SerialPortConne
 				LOG.error("Can not register serial port listener", e);
 			}
 			lockedInputStream = new LockedInputStream(connection.getInputStream());
-			lockedOutputStream = new LockedOutputStream(connection.getOutputStream());
 		} else {
 			lockedInputStream = null;
-			lockedOutputStream = null;
 		}
 	}
 	
@@ -157,12 +146,7 @@ public abstract class AbstractSerialPortDevice implements Device<SerialPortConne
 	}
 	
 	@Override
-	public OutputStream getManagedOutputStream() {
-		return lockedOutputStream;
-	}
-	
-	@Override
-	public InputStream getManagedInputStream() {
+	public InputStream getInputStream() {
 		return lockedInputStream;
 	}
 }

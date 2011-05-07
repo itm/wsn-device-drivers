@@ -1,7 +1,6 @@
 package de.uniluebeck.itm.wsn.drivers.core.mockdevice;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
@@ -108,12 +107,7 @@ public class MockDevice implements Device<MockConnection> {
 	}
 	
 	@Override
-	public InputStream getManagedInputStream() {
+	public InputStream getInputStream() {
 		return getConnection().getInputStream();
-	}
-	
-	@Override
-	public OutputStream getManagedOutputStream() {
-		return getConnection().getOutputStream();
 	}
 }
