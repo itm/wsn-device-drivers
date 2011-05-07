@@ -37,6 +37,7 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 		final int length = getLength();
 		final byte flashData[] = new byte[length];
 		final int sectorEnd = address + length;
+		final float worked = 32.0f / length;
 		int sectorStart = address;
 
 		while (sectorStart < sectorEnd) {
@@ -48,7 +49,7 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 			System.arraycopy(data, 0, flashData, sectorStart - address, data.length);
 			
 			// Notify listeners
-			progressManager.worked(1.0f / length);
+			progressManager.worked(worked);
 
 			// Increment start address
 			sectorStart += blockSize;
