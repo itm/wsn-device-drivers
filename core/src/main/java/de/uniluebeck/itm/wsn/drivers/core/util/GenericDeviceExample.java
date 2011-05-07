@@ -482,6 +482,7 @@ public class GenericDeviceExample implements ConnectionListener {
 			executor.submit(reader);
 		} else {
 			reader.cancel();
+			executor.shutdownNow();
 			reader = null;
 		}
 	}
