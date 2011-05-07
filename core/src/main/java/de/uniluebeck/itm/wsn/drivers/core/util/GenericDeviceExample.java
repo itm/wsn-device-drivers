@@ -41,10 +41,14 @@ public class GenericDeviceExample implements ConnectionListener {
 		}
 		
 		private void readMessage() throws IOException {
-			while (inputStream.available() != 0 && !canceled) {
-				System.out.print((char) inputStream.read());
+			int available = inputStream.available();
+			if (available != 0) {
+				while (available != 0 && !canceled) {
+					System.out.print((char) inputStream.read());
+					available = inputStream.available();
+				}
+				System.out.print('\n');
 			}
-			System.out.print('\n');
 		}
 		
 		@Override
@@ -392,17 +396,17 @@ public class GenericDeviceExample implements ConnectionListener {
 	public void run() {
 		init();
 		connect();
-//		try {
-//			programImage();
-//		} catch (final IOException e) {
-//			e.printStackTrace();
-//		}
-//		macAddressOperations();
-//		readFlashOperation();
-//		chipTypeOperation();
-//		sendOperation();
-//		resetOperation();
-//		waitForOperationsToFinish();
+		try {
+			programImage();
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
+		macAddressOperations();
+		readFlashOperation();
+		chipTypeOperation();
+		sendOperation();
+		resetOperation();
+		waitForOperationsToFinish();
 		waitForMessagePackets();
 		shutdown();
 	}
