@@ -1,6 +1,7 @@
 package de.uniluebeck.itm.wsn.drivers.core.async;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import com.google.inject.Inject;
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
+import de.uniluebeck.itm.wsn.drivers.core.io.SendOutputStreamWrapper;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
@@ -126,6 +128,11 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	@Override
 	public InputStream getInputStream() {
 		return device.getInputStream();
+	}
+	
+	@Override
+	public OutputStream getOutputStream() {
+		return new SendOutputStreamWrapper(this);
 	}
 	
 	/**

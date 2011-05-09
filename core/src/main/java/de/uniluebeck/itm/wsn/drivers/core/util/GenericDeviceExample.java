@@ -2,6 +2,7 @@ package de.uniluebeck.itm.wsn.drivers.core.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import com.google.common.io.ByteStreams;
 
@@ -373,6 +374,15 @@ public class GenericDeviceExample implements ConnectionListener {
 				}
 			}
 		});
+		
+		System.out.println("Sending via OutputStream.");
+		try {
+			final OutputStream outputStream = deviceAsync.getOutputStream();
+			outputStream.write(messagePacket);
+			outputStream.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**

@@ -3,6 +3,7 @@ package de.uniluebeck.itm.wsn.drivers.core.async;
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import de.uniluebeck.itm.wsn.drivers.core.io.HasInputStream;
+import de.uniluebeck.itm.wsn.drivers.core.io.HasOutputStream;
 
 
 /**
@@ -12,7 +13,7 @@ import de.uniluebeck.itm.wsn.drivers.core.io.HasInputStream;
  * 
  * @author Malte Legenhausen
  */
-public interface DeviceAsync extends HasInputStream {
+public interface DeviceAsync extends HasInputStream, HasOutputStream {
 	
 	/**
 	 * Returns the chip type of this device.
