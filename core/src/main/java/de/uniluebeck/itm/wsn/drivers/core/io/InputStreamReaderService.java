@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.wsn.drivers.core.util;
+package de.uniluebeck.itm.wsn.drivers.core.io;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
+
 
 /**
  * Service for receiving automatically all available data from an input stream.

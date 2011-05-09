@@ -2,8 +2,8 @@ package de.uniluebeck.itm.wsn.drivers.core.mockdevice;
 
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
+import de.uniluebeck.itm.wsn.drivers.core.io.BufferedByteReceiver;
 import de.uniluebeck.itm.wsn.drivers.core.util.GenericDeviceExample;
-import de.uniluebeck.itm.wsn.drivers.core.util.BufferedByteReceiver;
 
 
 /**
