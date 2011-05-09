@@ -26,25 +26,25 @@ public class MockResetOperation extends AbstractOperation<Void> implements Reset
 	/**
 	 * The <code>MockConnection</code> that is used for the reset.
 	 */
-	private final MockConnection connection;
+	private final MockDevice device;
 	
 	/**
 	 * Constructor.
 	 * 
 	 * @param connection The <code>MockConnection</code> that is used for the reset.
 	 */
-	public MockResetOperation(final MockConnection connection) {
-		this.connection = connection;
+	public MockResetOperation(final MockDevice device) {
+		this.device = device;
 	}
 	
 	@Override
 	public Void execute(final ProgressManager progressManager) throws Exception {
 		Thread.sleep(SLEEP_TIME);
-		connection.stopAliveRunnable();
+		device.stopAliveRunnable();
 		Thread.sleep(RESET_TIME);
-		connection.sendMessage("Booting MockDevice...");
+		device.sendMessage("Booting MockDevice...");
 		Thread.sleep(SLEEP_TIME);
-		connection.scheduleAliveRunnable();
+		device.scheduleAliveRunnable();
 		return null;
 	}
 }

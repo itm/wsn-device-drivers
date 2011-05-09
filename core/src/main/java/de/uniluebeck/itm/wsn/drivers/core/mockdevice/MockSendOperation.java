@@ -13,30 +13,30 @@ public class MockSendOperation extends AbstractMockOperation<Void> implements Se
 	/**
 	 * The <code>MessagePacket</code> that has to be send.
 	 */
-	private byte[] messagePacket;
+	private byte[] message;
 	
 	/**
 	 * The <code>MockConnection</code> which is used for sending the message.
 	 */
-	private final MockConnection connection;
+	private final MockDevice device;
 	
 	/**
 	 * Constructor.
 	 * 
-	 * @param connection The <code>MockConnection</code> which is used for sending the message.
+	 * @param device The <code>MockConnection</code> which is used for sending the message.
 	 */
-	public MockSendOperation(final MockConnection connection) {
-		this.connection = connection;
+	public MockSendOperation(final MockDevice device) {
+		this.device = device;
 	}
 
 	@Override
-	public void setMessage(final byte[] messagePacket) {
-		this.messagePacket = messagePacket;
+	public void setMessage(final byte[] message) {
+		this.message = message;
 	}
 	
 	@Override
 	public Void returnResult() {
-		connection.sendMessage(new String(messagePacket));
+		device.sendMessage(message);
 		return null;
 	}
 }

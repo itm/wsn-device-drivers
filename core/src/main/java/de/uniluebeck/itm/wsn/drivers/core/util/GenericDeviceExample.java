@@ -47,7 +47,7 @@ public class GenericDeviceExample implements ConnectionListener {
 					System.out.print((char) inputStream.read());
 					available = inputStream.available();
 				}
-				System.out.print('\n');
+				System.out.println();
 			}
 		}
 		
@@ -62,7 +62,7 @@ public class GenericDeviceExample implements ConnectionListener {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				
 			}
 			System.out.println("Reading of message packets canceled.");
 		}

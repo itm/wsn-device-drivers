@@ -1,5 +1,6 @@
 package de.uniluebeck.itm.wsn.drivers.core.mockdevice;
 
+import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.util.GenericDeviceExample;
 
@@ -17,11 +18,11 @@ public class MockDeviceExample {
 	 * @param args Program parameters.
 	 */
 	public static void main(final String[] args) {
-		final MockConnection connection = new MockConnection();
-		final Device<MockConnection> device = new MockDevice(connection);
+		final Connection connection = new MockConnection();
+		final Device<Connection> device = new MockDevice(connection);
 		final GenericDeviceExample example = new GenericDeviceExample();
 		example.setDevice(device);
-		example.setMessage("Hallo Welt".getBytes());
+		example.setMessage("This is a test message".getBytes());
 		example.run();
 	}
 
