@@ -21,7 +21,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                                *
  **********************************************************************************************************************/
 
-package de.uniluebeck.itm.wsn.drivers.core;
+package de.uniluebeck.itm.wsn.drivers.isense;
 
 /**
  * Contains constants to identify the packet types ({@link de.uniluebeck.itm.wsn.devicedrivers.generic.MessagePacket#getType()}.
