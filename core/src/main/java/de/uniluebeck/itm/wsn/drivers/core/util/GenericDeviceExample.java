@@ -2,8 +2,6 @@ package de.uniluebeck.itm.wsn.drivers.core.util;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import com.google.common.io.ByteStreams;
 
@@ -29,48 +27,6 @@ import de.uniluebeck.itm.wsn.drivers.core.nulldevice.NullDevice;
  * @author Malte Legenhausen
  */
 public class GenericDeviceExample implements ConnectionListener {
-
-	private class MessageReader implements Runnable {
-		
-		private final InputStream inputStream;
-		
-		private boolean canceled = false;
-		
-		public MessageReader(final InputStream inputStream) {
-			this.inputStream = inputStream;
-		}
-		
-		private void readMessage() throws IOException {
-			int available = inputStream.available();
-			if (available != 0) {
-				while (available != 0 && !canceled) {
-					System.out.print((char) inputStream.read());
-					available = inputStream.available();
-				}
-				System.out.println();
-			}
-		}
-		
-		@Override
-		public void run() {
-			System.out.println("Reading message packets in background.");
-			try {
-				while (!canceled) {
-					readMessage();
-					Thread.sleep(50);
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (InterruptedException e) {
-				
-			}
-			System.out.println("Reading of message packets canceled.");
-		}
-		
-		public void cancel() {
-			canceled = true;
-		}
-	}
 	
 	/**
 	 * Default sleep for the thread.
@@ -102,8 +58,6 @@ public class GenericDeviceExample implements ConnectionListener {
 	 */
 	private static final int DEFAULT_MAC_ADDRESS_VALUE = 1024;
 	
-	private final ExecutorService executor = Executors.newSingleThreadExecutor();
-	
 	/**
 	 * The queue used for this example.
 	 */
@@ -124,7 +78,7 @@ public class GenericDeviceExample implements ConnectionListener {
 	 */
 	private DeviceAsync deviceAsync;
 	
-	private MessageReader reader;
+	private InputStreamReaderService reader;
 	
 	/**
 	 * InputStream for the image file.
@@ -437,7 +391,7 @@ public class GenericDeviceExample implements ConnectionListener {
 		} catch (final IOException e) {
 			e.printStackTrace();
 		} finally {
-			reader.cancel();
+			reader.stop();
 		}
 	}
 	
@@ -478,11 +432,10 @@ public class GenericDeviceExample implements ConnectionListener {
 	public void onConnectionChange(final ConnectionEvent event) {
 		System.out.println("Connected with port: " + event.getUri());
 		if (event.isConnected()) {
-			reader = new MessageReader(device.getInputStream());
-			executor.submit(reader);
+			reader = new InputStreamReaderService(connection.getInputStream());
+			reader.start();
 		} else {
-			reader.cancel();
-			executor.shutdownNow();
+			reader.stopAndWait();
 			reader = null;
 		}
 	}
