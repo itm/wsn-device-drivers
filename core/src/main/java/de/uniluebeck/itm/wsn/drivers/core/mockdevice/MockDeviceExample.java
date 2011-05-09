@@ -3,6 +3,7 @@ package de.uniluebeck.itm.wsn.drivers.core.mockdevice;
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.util.GenericDeviceExample;
+import de.uniluebeck.itm.wsn.drivers.core.util.BufferedByteReceiver;
 
 
 /**
@@ -21,6 +22,7 @@ public class MockDeviceExample {
 		final Connection connection = new MockConnection();
 		final Device<Connection> device = new MockDevice(connection);
 		final GenericDeviceExample example = new GenericDeviceExample();
+		example.addByteReceiver(new BufferedByteReceiver());
 		example.setDevice(device);
 		example.setMessage("This is a test message".getBytes());
 		example.run();

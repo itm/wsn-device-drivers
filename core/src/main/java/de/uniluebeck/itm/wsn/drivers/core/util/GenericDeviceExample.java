@@ -78,7 +78,10 @@ public class GenericDeviceExample implements ConnectionListener {
 	 */
 	private DeviceAsync deviceAsync;
 	
-	private InputStreamReaderService reader;
+	/**
+	 * Reader for the input stream.
+	 */
+	private InputStreamReaderService service = new InputStreamReaderService();
 	
 	/**
 	 * InputStream for the image file.
@@ -99,6 +102,14 @@ public class GenericDeviceExample implements ConnectionListener {
 	 * The example message packet that is send to the device.
 	 */
 	private byte[] messagePacket;
+	
+	public void addByteReceiver(ByteReceiver receiver) {
+		service.addByteReceiver(receiver);
+	}
+	
+	public void removeByteReceiver(ByteReceiver receiver) {
+		service.removeByteReceiver(receiver);
+	}
 
 	public void setDevice(final Device<?> device) {
 		this.device = device;
@@ -391,7 +402,7 @@ public class GenericDeviceExample implements ConnectionListener {
 		} catch (final IOException e) {
 			e.printStackTrace();
 		} finally {
-			reader.stop();
+			service.stop();
 		}
 	}
 	
@@ -432,11 +443,10 @@ public class GenericDeviceExample implements ConnectionListener {
 	public void onConnectionChange(final ConnectionEvent event) {
 		System.out.println("Connected with port: " + event.getUri());
 		if (event.isConnected()) {
-			reader = new InputStreamReaderService(connection.getInputStream());
-			reader.start();
+			service.setInputStream(device.getInputStream());
+			service.start();
 		} else {
-			reader.stopAndWait();
-			reader = null;
+			service.stopAndWait();
 		}
 	}
 
