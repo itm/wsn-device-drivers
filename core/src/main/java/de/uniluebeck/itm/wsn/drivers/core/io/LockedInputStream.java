@@ -17,7 +17,7 @@ public class LockedInputStream extends FilterInputStream implements Lockable {
 	/**
 	 * The lock flag.
 	 */
-	private boolean locked;
+	private boolean locked = false;
 	
 	/**
 	 * Constructor.
