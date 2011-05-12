@@ -137,6 +137,7 @@
 		<module>jennic</module>
 		<module>pacemate</module>
 		<module>telosb</module>
+		<module>factories</module>
 	</modules>
 	
 	<distributionManagement>
