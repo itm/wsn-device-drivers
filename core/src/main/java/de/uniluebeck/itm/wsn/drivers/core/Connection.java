@@ -40,7 +40,7 @@ public interface Connection {
 	void shutdown(boolean force);
 	
 	/**
-	 * Return if a connection is esablished.
+	 * Return if a connection is established.
 	 * 
 	 * @return true if there is a connection established else false.
 	 */
