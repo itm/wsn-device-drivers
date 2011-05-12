@@ -24,6 +24,12 @@ The following commands show how to clone the WSN Device Drivers repository and h
     $ git status
     $ git push origin master
 
+This project is using [gitflow][]. Simply type the following command in the command line after the cloning.
+
+	$ git flow init
+	
+Accept all default values that are provided by gitflow.
+
 Build and Start the WSN Device Drivers with Maven
 -------------------------------------------------
 
@@ -40,3 +46,4 @@ Take a look at our [wiki][].
 
 [wiki]:https://github.com/itm/wsn-device-drivers/wiki
 [testbed-runtime]:https://github.com/itm/testbed-runtime
+[gitflow]:https://github.com/nvie/gitflow
