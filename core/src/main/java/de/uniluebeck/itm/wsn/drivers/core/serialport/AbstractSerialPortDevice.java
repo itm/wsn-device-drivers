@@ -14,10 +14,12 @@ import de.uniluebeck.itm.tr.util.TimeDiff;
 import de.uniluebeck.itm.wsn.drivers.core.ConnectionEvent;
 import de.uniluebeck.itm.wsn.drivers.core.ConnectionListener;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
+import de.uniluebeck.itm.wsn.drivers.core.State;
+import de.uniluebeck.itm.wsn.drivers.core.event.StateChangedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 import de.uniluebeck.itm.wsn.drivers.core.io.LockedInputStream;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.RunningOperationsMonitor;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
 
 
 /**
@@ -48,11 +50,6 @@ public abstract class AbstractSerialPortDevice implements Device<SerialPortConne
 	private final SerialPortConnection connection;
 	
 	/**
-	 * Monitor for observe operations that are in <code>State.RUNNING</code>.
-	 */
-	private final RunningOperationsMonitor monitor = new RunningOperationsMonitor();
-	
-	/**
 	 * Managed InputStream for secure access of the device during operation execution.
 	 */
 	private LockedInputStream lockedInputStream;
@@ -79,15 +76,20 @@ public abstract class AbstractSerialPortDevice implements Device<SerialPortConne
 	 * @param operation The operation object that has to be monitored.
 	 */
 	protected <T> void monitorState(final Operation<T> operation) {
-		monitor.monitorState(operation);
+		operation.addListener(new OperationListener<T>() {
+			@Override
+			public void onStateChanged(StateChangedEvent<T> event) {
+				if (lockedInputStream != null) {
+					lockedInputStream.setLocked(State.RUNNING.equals(event.getNewState()));
+				}
+			}
+		});
 	}
 	
 	@Override
 	public void serialEvent(final SerialPortEvent event) {
 		switch (event.getEventType()) {
-		case SerialPortEvent.DATA_AVAILABLE:
-			lockedInputStream.setLocked(monitor.isRunning());
-			
+		case SerialPortEvent.DATA_AVAILABLE:			
 			synchronized (dataAvailableMonitor) {
 				dataAvailableMonitor.notifyAll();
 			}
