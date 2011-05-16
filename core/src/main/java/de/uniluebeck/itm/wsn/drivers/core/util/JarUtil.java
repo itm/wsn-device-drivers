@@ -111,7 +111,7 @@ public class JarUtil {
 	 */
 	private static String archAwarePath(final String lib) {
 		final String arch = System.getProperty("os.arch");
-		return Joiner.on(File.separator).join(JNI_PATH_ROOT, arch, lib);
+		return Joiner.on("/").join(JNI_PATH_ROOT, arch, lib);
 	}
 	
 	/**
