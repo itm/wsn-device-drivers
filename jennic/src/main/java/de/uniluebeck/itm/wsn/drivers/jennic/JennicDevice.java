@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniluebeck.itm.tr.util.StringUtils;
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.Programable;
 import de.uniluebeck.itm.wsn.drivers.core.exception.FlashConfigurationFailedException;
@@ -249,11 +250,13 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 	 * 
 	 */
 	public byte[] receiveBootLoaderReply(int type) throws TimeoutException, UnexpectedResponseException, InvalidChecksumException, IOException, NullPointerException {
+		log.trace("Receiving Boot Loader Reply...");
 		final InputStream inputStream = getConnection().getInputStream();
 		
 		waitDataAvailable(TIMEOUT);
 		// Read message length
 		int length = (int) inputStream.read();
+		log.trace("receiveBootLoaderReply length: " + length);
 
 		// Allocate message buffer
 		byte[] message = new byte[length - 1];
@@ -263,12 +266,12 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 			waitDataAvailable(TIMEOUT);
 			message[i] = (byte) inputStream.read();
 		}
-
-		// log.debug("Received boot loader msg: " + Tools.toHexString(message));
+		log.trace("Received boot loader msg: " + StringUtils.toHexString(message));
 
 		// Read checksum
 		waitDataAvailable(TIMEOUT);
 		byte recvChecksum = (byte) inputStream.read();
+		log.trace("Received Checksum: " + StringUtils.toHexString(recvChecksum));
 
 		// Concatenate length and message for checksum calculation
 		byte[] fullMessage = new byte[message.length + 1];
@@ -278,7 +281,8 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 		// Throw exception if checksums diffe
 		byte checksum = Messages.calculateChecksum(fullMessage);
 		if (checksum != recvChecksum) {
-			throw new InvalidChecksumException();
+			String msg = "Received: " + StringUtils.toHexString(recvChecksum) + ", Calculated: " + StringUtils.toHexString(checksum);
+			throw new InvalidChecksumException(msg);
 		}
 		// Check if the response type is unexpected
 		if (message[0] != type) {

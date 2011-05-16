@@ -64,6 +64,7 @@ public class SerialPortEnterProgramModeOperation extends AbstractOperation<Void>
 			LOG.error("Unable to enter program mode.", e);
 			throw new EnterProgramModeException("Unable to enter program mode.");
 		}
+		connection.flush();
 		LOG.debug("Program mode entered");
 		return null;
 	}

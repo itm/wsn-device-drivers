@@ -42,11 +42,11 @@ public class JennicGetChipTypeOperation extends AbstractOperation<ChipType>
 		return chipType;
 	}
 
-	private ChipType getChipType(final ProgressManager monitor)
-			throws Exception {
+	private ChipType getChipType(final ProgressManager monitor) throws Exception {
+		log.trace("Getting ChipType...");
 
 		ChipType chipType = ChipType.UNKNOWN;
-
+		
 		device.sendBootLoaderMessage(Messages.chipIdMessage());
 
 		try {
