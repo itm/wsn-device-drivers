@@ -1,5 +1,6 @@
 package de.uniluebeck.itm.wsn.drivers.core.nulldevice;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -28,9 +29,9 @@ public class NullConnection implements Connection {
 	public void connect(final String uri) {
 		
 	}
-
+	
 	@Override
-	public void shutdown(final boolean force) {
+	public void close() throws IOException {
 		
 	}
 

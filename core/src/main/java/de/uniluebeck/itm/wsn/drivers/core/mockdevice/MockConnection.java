@@ -38,16 +38,8 @@ public class MockConnection extends AbstractConnection {
 	}
 	
 	@Override
-	public void shutdown(boolean force) {
-		try {
-			outputStream.close();
-			inputStream.close();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} finally {
-			setOutputStream(null);
-			setInputStream(null);
-			setConnected(false);
-		}
+	public void close() throws IOException {
+		super.close();
+		setConnected(false);
 	}
 }

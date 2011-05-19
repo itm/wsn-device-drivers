@@ -1,7 +1,9 @@
 package de.uniluebeck.itm.wsn.drivers.core;
 
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.Closeable;
+
+import de.uniluebeck.itm.wsn.drivers.core.io.HasInputStream;
+import de.uniluebeck.itm.wsn.drivers.core.io.HasOutputStream;
 
 
 /**
@@ -9,21 +11,7 @@ import java.io.OutputStream;
  * 
  * @author Malte Legenhausen
  */
-public interface Connection {
-
-	/**
-	 * Returns the <code>InputStream</code> of the connected iSense device.
-	 * 
-	 * @return The <code>InputStream</code> of the connected iSense device.
-	 */
-	InputStream getInputStream();
-	
-	/**
-	 * Returns the <code>OutputStream</code> of the connected iSense device.
-	 * 
-	 * @return The <code>OutputStream</code> of the connected iSense device.
-	 */
-	OutputStream getOutputStream();
+public interface Connection extends HasInputStream, HasOutputStream, Closeable {
 	
 	/**
 	 * Establish the connection with the device and return a useable device instance.
@@ -31,13 +19,6 @@ public interface Connection {
 	 * @param uri URI that identifies the resource to which a connection has to be established.
 	 */
 	void connect(String uri);
-	
-	/**
-	 * Close the connection to the device.
-	 * 
-	 * @param force Shutdown without waiting for current running processes to finish.
-	 */
-	void shutdown(boolean force);
 	
 	/**
 	 * Return if a connection is established.

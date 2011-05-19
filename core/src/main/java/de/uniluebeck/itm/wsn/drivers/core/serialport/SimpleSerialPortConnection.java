@@ -1,18 +1,22 @@
 package de.uniluebeck.itm.wsn.drivers.core.serialport;
 
-import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
 import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
 import gnu.io.UnsupportedCommOperationException;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Enumeration;
+import java.util.Iterator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterators;
+import com.google.common.io.ByteStreams;
 
 import de.uniluebeck.itm.wsn.drivers.core.AbstractConnection;
 import de.uniluebeck.itm.wsn.drivers.core.util.JarUtil;
@@ -25,11 +29,11 @@ import de.uniluebeck.itm.wsn.drivers.core.util.SysOutUtil;
  * @author Malte Legenhausen
  */
 public class SimpleSerialPortConnection extends AbstractConnection implements SerialPortConnection {
-
+	
 	/**
-	 * The default max retries when calling the connect mehtod.
+	 * Logger for this class.
 	 */
-	public static final int DEFAULT_MAX_RETRIES = 5;
+	private static final Logger LOG = LoggerFactory.getLogger(SimpleSerialPortConnection.class);
 	
 	/**
 	 * The default baudrate.
@@ -42,24 +46,9 @@ public class SimpleSerialPortConnection extends AbstractConnection implements Se
 	public static final int DEFAULT_PROGRAM_BAUDRATE = 38400;
 	
 	/**
-	 * Logger for this class.
-	 */
-	private static final Logger LOG = LoggerFactory.getLogger(SimpleSerialPortConnection.class);
-	
-	/**
-	 * Time that is waited between each reconnect.
-	 */
-	private static final int SLEEP_BETWEEN_RETRIES = 200;
-	
-	/**
 	 * The maximum timeout for a connection try.
 	 */
 	private static final int MAX_CONNECTION_TIMEOUT = 1000;
-	
-	/**
-	 * The amount of retrys before canceling the connect process.
-	 */
-	private int maxRetries = DEFAULT_MAX_RETRIES;
 	
 	/**
 	 * The baudrate that is used for normal operation.
@@ -97,7 +86,7 @@ public class SimpleSerialPortConnection extends AbstractConnection implements Se
 	private SerialPort serialPort;
 	
 	static {
-		LOG.debug("Loading rxtxSerial from jar file");
+		LOG.trace("Loading rxtxSerial from jar file");
 		JarUtil.loadLibrary("rxtxSerial");
 	}
 	
@@ -115,16 +104,13 @@ public class SimpleSerialPortConnection extends AbstractConnection implements Se
 			connectSerialPort(port);
 			setConnected(true);
 		} catch (final PortInUseException e) {
-			LOG.error("Port already in use. Connection will be removed. ");
-			if (serialPort != null) {
-				serialPort.close();
-			}
+			LOG.error("Port already in use. Connection will be removed.", e);
+			throw new RuntimeException(e);
+		} catch (final ClassCastException e) {
+			LOG.error("Port " + port + " is not a serial port.", e);
 			throw new RuntimeException(e);
 		} catch (final Exception e) {
-			if (serialPort != null) {
-				serialPort.close();
-			}
-			LOG.error("Port " + port + " does not exist. Connection will be removed. " + e, e);
+			LOG.error("Port " + port + " does not exist. Connection will be removed.", e);
 			throw new RuntimeException(e);
 		}
 	}
@@ -139,32 +125,15 @@ public class SimpleSerialPortConnection extends AbstractConnection implements Se
 		SysOutUtil.mute();
 		final Enumeration<?> identifiers = CommPortIdentifier.getPortIdentifiers();
 		SysOutUtil.restore();
-		SerialPort sp = null;
-		while (identifiers.hasMoreElements()) {
-			final CommPortIdentifier cpi = (CommPortIdentifier) identifiers.nextElement();
-			if (cpi.getName().equals(port)) {
-				CommPort commPort = null;
-				for (int i = 0; i < maxRetries; i++) {
-					try {
-						commPort = cpi.open(this.getClass().getName(), MAX_CONNECTION_TIMEOUT);
-						break;
-					} catch (final PortInUseException piue) {
-						LOG.error("Port in Use Retrying to connect");
-						if (i >= maxRetries - 1) {
-							throw piue;
-						}
-						Thread.sleep(SLEEP_BETWEEN_RETRIES);
-					}
-				}
-				if (commPort instanceof SerialPort) {
-					sp = (SerialPort) commPort;// cpi.open("iShell", 1000);
-				} else {
-					LOG.debug("Port is no SerialPort");
-				}
-				break;
+		final Iterator<?> iterator = Iterators.forEnumeration(identifiers);
+		final CommPortIdentifier commPortIdentifier = (CommPortIdentifier) Iterators.find(iterator, new Predicate<Object>() {
+			@Override
+			public boolean apply(final Object input) {
+				final CommPortIdentifier commPortIdentifier = (CommPortIdentifier) input;
+				return commPortIdentifier.getName().equals(port);
 			}
-		}
-		serialPort = sp;
+		});
+		serialPort = (SerialPort) commPortIdentifier.open(getClass().getName(), MAX_CONNECTION_TIMEOUT);
 		serialPort.notifyOnDataAvailable(true);
 
 		setUri(port);
@@ -176,45 +145,32 @@ public class SimpleSerialPortConnection extends AbstractConnection implements Se
 	public void setSerialPortMode(final SerialPortMode mode) {
 		int baudrate = normalBaudrate;
 		int parityBit = normalParityBit;
-		if (mode == SerialPortMode.PROGRAM) {
+		if (SerialPortMode.PROGRAM.equals(mode)) {
 			baudrate = programBaudrate;
 			parityBit = programParitiyBit;
 		}
 
-		LOG.debug("Set com port " + baudrate + " " + databits + " " + stopbits + " " + parityBit);
 		try {
 			serialPort.setSerialPortParams(baudrate, databits, stopbits, parityBit);
 		} catch (final UnsupportedCommOperationException e) {
-			LOG.warn("Problem while setting serial port params", e);
+			LOG.warn("Problem while setting serial port params.", e);
 		}
 
 		serialPort.setDTR(false);
 		serialPort.setRTS(false);
-		LOG.debug("Setting COM-Port parameters (new style): baudrate: " + serialPort.getBaudRate());
+		LOG.debug("COM-Port parameters set to baudrate: " + serialPort.getBaudRate());
 	}
-
+	
 	@Override
-	public void shutdown(final boolean force) {
-		try {
-			if (getInputStream() != null) {
-				getInputStream().close();
-			}
-		} catch (final IOException e) {
-			LOG.error("Failed to close in-stream :" + e, e);
-		}
-		try {
-			if (getOutputStream() != null) {
-				getOutputStream().close();
-			}
-		} catch (final IOException e) {
-			LOG.error("Failed to close out-stream :" + e, e);
-		}
+	public void close() throws IOException {
+		super.close();
+		
 		if (serialPort != null) {
 			serialPort.removeEventListener();
 			serialPort.close();
-			setConnected(false);
-			serialPort = null;
+			serialPort = null;	
 		}
+		setConnected(false);
 	}
 
 	/** 
@@ -222,24 +178,13 @@ public class SimpleSerialPortConnection extends AbstractConnection implements Se
 	 */
 	@Override
 	public void flush() {
-		long count = 0;
-		LOG.debug("Flushing serial rx buffer");
+		LOG.trace("Flushing serial rx buffer");
+		final InputStream in = getInputStream();
 		try {
-			while ((count = getInputStream().available()) > 0) {
-				LOG.debug("Skipping " + count + " characters while flushing on the serial rx");
-				getInputStream().skip(count);
-			}
-		} catch (final IOException e) {
+			ByteStreams.skipFully(in, in.available());
+		} catch (IOException e) {
 			LOG.error("Error while serial rx flushing buffer: " + e, e);
 		}
-	}
-
-	public int getMaxRetries() {
-		return maxRetries;
-	}
-
-	public void setMaxRetries(final int maxRetries) {
-		this.maxRetries = maxRetries;
 	}
 
 	public int getNormalBaudrate() {

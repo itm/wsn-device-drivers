@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import com.google.common.io.ByteStreams;
+import com.google.common.io.Closeables;
 
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
@@ -426,7 +427,7 @@ public class GenericDeviceExample implements ConnectionListener {
 		queue.shutdown(false);
 		System.out.println("Queue terminated");
 		System.out.println("Closing connection...");
-		connection.shutdown(true);
+		Closeables.closeQuietly(connection);
 		System.out.println("Connection closed");
 	}
 	
