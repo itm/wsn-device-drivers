@@ -1,5 +1,7 @@
 package de.uniluebeck.itm.wsn.drivers.core.async.thread;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -9,7 +11,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Pausable single thread executor.
- * 
+ *
  * @author Malte Legenhausen
  */
 public class PausableSingleThreadExecutor extends ThreadPoolExecutor implements PausableExecutorService {
@@ -18,12 +20,12 @@ public class PausableSingleThreadExecutor extends ThreadPoolExecutor implements 
 	 * Flag for storing pause state.
 	 */
 	private boolean isPaused;
-	
+
 	/**
 	 * Pause lock.
 	 */
 	private final ReentrantLock pauseLock = new ReentrantLock();
-	
+
 	/**
 	 * Condition to wait for unpause.
 	 */
@@ -33,7 +35,9 @@ public class PausableSingleThreadExecutor extends ThreadPoolExecutor implements 
 	 * Constructor.
 	 */
 	public PausableSingleThreadExecutor() {
-		super(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+		super(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(),
+				new ThreadFactoryBuilder().setNameFormat("PausableSingleThreadExecutor %d").build()
+		);
 	}
 
 	@Override
@@ -71,12 +75,12 @@ public class PausableSingleThreadExecutor extends ThreadPoolExecutor implements 
 			pauseLock.unlock();
 		}
 	}
-	
+
 	@Override
 	public boolean isPaused() {
 		return isPaused;
 	}
-	
+
 	@Override
 	protected void finalize() {
 		shutdown();
