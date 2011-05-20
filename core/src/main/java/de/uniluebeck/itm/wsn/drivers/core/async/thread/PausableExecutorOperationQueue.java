@@ -77,39 +77,33 @@ public class PausableExecutorOperationQueue implements OperationQueue {
 		operation.setAsyncCallback(callback);
 		operation.setTimeout(timeout);
 		
-		// Add listener for removing operation.
-		operation.addListener(new OperationListener<T>() {
-			@Override
-			public void onStateChanged(final StateChangedEvent<T> event) {
-				fireStateChangedEvent(event);
-				if (event.getNewState().isFinishState()) {
-					removeOperation(event.getOperation());
-				}
-			}
-		});
-		
 		// Pause the executor to submit the operation and savely add the timeout handler.
-		LOG.debug("Pause executor");
+		LOG.trace("Pause executor");
 		executor.pause();
 		
 		// Submit the operation to the executor.
-		LOG.debug("Submit " + operation + " to executor queue.");
+		LOG.trace("Submit " + operation + " to executor queue.");
 		final Future<T> future = executor.submit(operation);
 		
-		// Add listener for timeout handling.
+		// Add listener for timeout handling and removing operation.
 		operation.addListener(new OperationListener<T>() {
 			@Override
 			public void onStateChanged(final StateChangedEvent<T> event) {
-				if (event.getNewState().equals(State.TIMEDOUT)) {
-					cancelOperation(event.getOperation(), future);
+				final Operation<T> operation = event.getOperation();
+				if (State.TIMEDOUT.equals(event.getNewState())) {
+					cancelOperation(operation, future);
 				}
+				if (State.isFinishState(event.getNewState())) {
+					removeOperation(operation);
+				}
+				fireStateChangedEvent(event);
 			}
 		});
 		
 		addOperation(operation);
 		
 		// Resume executor to execute new submitted operations.
-		LOG.debug("Resume executor");
+		LOG.trace("Resume executor");
 		executor.resume();
 		
 		return new FutureOperationHandle<T>(future, operation);
@@ -151,7 +145,7 @@ public class PausableExecutorOperationQueue implements OperationQueue {
 	 */
 	private <T> void removeOperation(final Operation<T> operation) {
 		operations.remove(operation);
-		LOG.debug("Operation removed from internal operation list");
+		LOG.trace("Operation removed from internal operation list");
 		fireRemovedEvent(new RemovedEvent<T>(this, operation));
 	}
 
