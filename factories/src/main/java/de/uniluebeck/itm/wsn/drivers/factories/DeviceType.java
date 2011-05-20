@@ -8,13 +8,14 @@ public enum DeviceType {
 	PACEMATE,
 	MOCK,
 	NULL;
-	
+
 	public static DeviceType fromString(String deviceTypeString) {
 		for (DeviceType deviceType : DeviceType.values()) {
-			if (deviceType.name().equalsIgnoreCase(deviceTypeString))
+			if (deviceType.name().equalsIgnoreCase(deviceTypeString)) {
 				return deviceType;
+			}
 		}
 		throw new RuntimeException("Unknown device type \"" + deviceTypeString + "\"");
 	}
-	
+
 }
