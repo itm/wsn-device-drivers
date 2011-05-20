@@ -5,6 +5,8 @@ import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 import de.uniluebeck.itm.wsn.drivers.jennic.JennicDevice;
 import de.uniluebeck.itm.wsn.drivers.mock.MockDevice;
+import de.uniluebeck.itm.wsn.drivers.nulldevice.NullConnection;
+import de.uniluebeck.itm.wsn.drivers.nulldevice.NullDevice;
 import de.uniluebeck.itm.wsn.drivers.pacemate.PacemateDevice;
 import de.uniluebeck.itm.wsn.drivers.telosb.TelosbDevice;
 
@@ -20,6 +22,8 @@ public abstract class DeviceFactory {
 			return new TelosbDevice((SerialPortConnection) connection);
 		case MOCK:
 			return new MockDevice(connection);
+		case NULL:
+			return new NullDevice((NullConnection) connection);
 		}
 		throw new RuntimeException("Unhandled device type \"" + deviceType
 				+ "\". Maybe someone forgot to add this (new) device type to " + ConnectionFactory.class.getName()
