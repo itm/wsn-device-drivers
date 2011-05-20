@@ -1,28 +1,32 @@
 package de.uniluebeck.itm.wsn.drivers.factories;
 
+import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 import de.uniluebeck.itm.wsn.drivers.jennic.JennicDevice;
+import de.uniluebeck.itm.wsn.drivers.mock.MockDevice;
 import de.uniluebeck.itm.wsn.drivers.pacemate.PacemateDevice;
 import de.uniluebeck.itm.wsn.drivers.telosb.TelosbDevice;
 
 public abstract class DeviceFactory {
 
-	public static Device<SerialPortConnection> create(DeviceType deviceType, SerialPortConnection connection) {
+	public static <C extends Connection> Device<? extends Connection> create(DeviceType deviceType, C connection) {
 		switch (deviceType) {
 		case ISENSE:
-			return new JennicDevice(connection);
+			return new JennicDevice((SerialPortConnection) connection);
 		case PACEMATE:
-			return new PacemateDevice(connection);
+			return new PacemateDevice((SerialPortConnection) connection);
 		case TELOSB:
-			return new TelosbDevice(connection);
+			return new TelosbDevice((SerialPortConnection) connection);
+		case MOCK:
+			return new MockDevice(connection);
 		}
 		throw new RuntimeException("Unhandled device type \"" + deviceType
 				+ "\". Maybe someone forgot to add this (new) device type to " + ConnectionFactory.class.getName()
 				+ "?");
 	}
 	
-	public static Device<SerialPortConnection> create(String deviceType, SerialPortConnection connection) {
+	public static <C extends Connection> Device<? extends Connection> create(String deviceType, C connection) {
 		return create(DeviceType.fromString(deviceType), connection);
 	}
 

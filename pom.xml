@@ -34,6 +34,11 @@
 				<artifactId>wsn-device-drivers-telosb</artifactId>
 				<version>0.3-SNAPSHOT</version>
 			</dependency>
+			<dependency>
+				<groupId>de.uniluebeck.itm</groupId>
+				<artifactId>wsn-device-drivers-mock</artifactId>
+				<version>0.3-SNAPSHOT</version>
+			</dependency>
 
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
@@ -139,6 +144,7 @@
 		<module>pacemate</module>
 		<module>telosb</module>
 		<module>factories</module>
+		<module>mock</module>
 	</modules>
 
 	<distributionManagement>
