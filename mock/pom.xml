@@ -8,9 +8,9 @@
 		<version>0.3-SNAPSHOT</version>
 	</parent>
 	
-	<artifactId>wsn-device-drivers-isense</artifactId>
+	<artifactId>wsn-device-drivers-mock</artifactId>
 	<version>0.3-SNAPSHOT</version>
-	<name>WSN Device Drivers iSense</name>
+	<name>WSN Device Drivers Mock</name>
   
 	<dependencies>
 		<dependency>

@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.wsn.drivers.core.mockdevice;
+package de.uniluebeck.itm.wsn.drivers.mock;
 
 import java.io.IOException;
 import java.io.PipedInputStream;

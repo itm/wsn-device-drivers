@@ -5,7 +5,8 @@ public enum DeviceType {
 
 	ISENSE,
 	TELOSB,
-	PACEMATE;
+	PACEMATE,
+	MOCK;
 	
 	public static DeviceType fromString(String deviceTypeString) {
 		for (DeviceType deviceType : DeviceType.values()) {

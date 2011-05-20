@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.wsn.drivers.core.mockdevice;
+package de.uniluebeck.itm.wsn.drivers.mock;
 
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;

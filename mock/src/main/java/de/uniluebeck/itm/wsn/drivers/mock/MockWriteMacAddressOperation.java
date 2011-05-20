@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.wsn.drivers.core.mockdevice;
+package de.uniluebeck.itm.wsn.drivers.mock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
