@@ -1,30 +1,14 @@
-package de.uniluebeck.itm.wsn.drivers.core.nulldevice;
-
-import java.io.InputStream;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package de.uniluebeck.itm.wsn.drivers.nulldevice;
 
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractProgramOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractReadFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractSendOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractWriteFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractWriteMacAddressOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.SendOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.WriteFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.InputStream;
 
 
 /**
@@ -33,6 +17,11 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
  * @author Malte Legenhausen
  */
 public class NullDevice implements Device<Connection> {
+
+	@SuppressWarnings("unused")
+	public NullDevice(NullConnection connection) {
+
+	}
 
 	/**
 	 * Null implementation for <code>EraseFlashOperation</code>.
@@ -89,7 +78,7 @@ public class NullDevice implements Device<Connection> {
 	/**
 	 * Logger for this class.
 	 */
-	private static final Logger LOG = LoggerFactory.getLogger(NullDevice.class);
+	private static final Logger LOG = LoggerFactory.getLogger(de.uniluebeck.itm.wsn.drivers.nulldevice.NullDevice.class);
 	
 	/**
 	 * All possible channels for a device.

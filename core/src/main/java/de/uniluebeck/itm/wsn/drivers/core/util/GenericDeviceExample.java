@@ -21,8 +21,6 @@ import de.uniluebeck.itm.wsn.drivers.core.async.QueuedDeviceAsync;
 import de.uniluebeck.itm.wsn.drivers.core.async.thread.PausableExecutorOperationQueue;
 import de.uniluebeck.itm.wsn.drivers.core.io.ByteReceiver;
 import de.uniluebeck.itm.wsn.drivers.core.io.InputStreamReaderService;
-import de.uniluebeck.itm.wsn.drivers.core.nulldevice.NullConnection;
-import de.uniluebeck.itm.wsn.drivers.core.nulldevice.NullDevice;
 
 
 /**
@@ -70,12 +68,12 @@ public class GenericDeviceExample implements ConnectionListener {
 	/**
 	 * Default null device.
 	 */
-	private Device<?> device = new NullDevice();
+	private Device<?> device = null;
 	
 	/**
 	 * Default null connection.
 	 */
-	private Connection connection = new NullConnection();
+	private Connection connection = null;
 	
 	/**
 	 * The device async reference for this example.

@@ -4,12 +4,12 @@
 	<parent>
 		<groupId>de.uniluebeck.itm</groupId>
 		<artifactId>wsn-device-drivers</artifactId>
-		<version>0.3-SNAPSHOT</version>
+		<version>0.4-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 	
 	<artifactId>wsn-device-drivers-factories</artifactId>
-	<version>0.3-SNAPSHOT</version>
+	<version>0.4-SNAPSHOT</version>
 	<name>WSN Device Drivers Factories</name>
 	
 	<dependencies>
@@ -32,6 +32,10 @@
   		<dependency>
   			<groupId>de.uniluebeck.itm</groupId>
 			<artifactId>wsn-device-drivers-mock</artifactId>
+  		</dependency>
+  		<dependency>
+  			<groupId>de.uniluebeck.itm</groupId>
+			<artifactId>wsn-device-drivers-nulldevice</artifactId>
   		</dependency>
 	</dependencies>
 	

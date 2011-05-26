@@ -3,6 +3,7 @@ package de.uniluebeck.itm.wsn.drivers.core.async;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +44,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	/**
 	 * The <code>Device</code> that has to be executed async.
 	 */
-	private final Device<?> device;
+	private final Device<? extends Connection> device;
 	
 	/**
 	 * Constructor.
@@ -52,7 +53,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	 * @param device The <code>Device</code> that provides all operations that can be executed.
 	 */
 	@Inject
-	public QueuedDeviceAsync(final OperationQueue queue, final Device<?> device) {
+	public QueuedDeviceAsync(final OperationQueue queue, final Device<? extends Connection> device) {
 		this.queue = queue;
 		this.device = device;
 	}
@@ -140,6 +141,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	 * 
 	 * @return The <code>OperationQueue</code> instance.
 	 */
+	@SuppressWarnings("unused")
 	public OperationQueue getOperationQueue() {
 		return queue;
 	}

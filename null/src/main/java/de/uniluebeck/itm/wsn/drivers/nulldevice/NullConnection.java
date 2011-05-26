@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.wsn.drivers.core.nulldevice;
+package de.uniluebeck.itm.wsn.drivers.nulldevice;
 
 import java.io.IOException;
 import java.io.InputStream;
