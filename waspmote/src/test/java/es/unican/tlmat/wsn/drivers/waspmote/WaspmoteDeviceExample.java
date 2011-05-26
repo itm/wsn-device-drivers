@@ -149,6 +149,7 @@ public class WaspmoteDeviceExample implements ConnectionListener, Runnable {
 		System.out.println(device.getNodeID() + ": Shutting down queue...");
 		queue.shutdown(false);
 		System.out.println(device.getNodeID() + ": Device queue terminated");
+		// Add device.shutdown()
 	}
 
 	/**
