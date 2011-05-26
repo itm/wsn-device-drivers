@@ -59,35 +59,35 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 	@Override
 	public EnterProgramModeOperation createEnterProgramModeOperation() {
 		final EnterProgramModeOperation operation = new SerialPortEnterProgramModeOperation(getConnection());
-		monitorState(operation);
+		monitor(operation);
 		return operation;
 	}
 	
 	@Override
 	public LeaveProgramModeOperation createLeaveProgramModeOperation() {
 		final LeaveProgramModeOperation operation = new SerialPortLeaveProgramModeOperation(getConnection());
-		monitorState(operation);
+		monitor(operation);
 		return operation;
 	}
 
 	@Override
 	public GetChipTypeOperation createGetChipTypeOperation() {
 		final GetChipTypeOperation operation = new PacemateGetChipTypeOperation(this);
-		monitorState(operation);
+		monitor(operation);
 		return operation;
 	}
 
 	@Override
 	public ProgramOperation createProgramOperation() {
 		final ProgramOperation operation = new PacemateProgramOperation(this);
-		monitorState(operation);
+		monitor(operation);
 		return operation;
 	}
 
 	@Override
 	public EraseFlashOperation createEraseFlashOperation() {
 		final EraseFlashOperation operation = new PacemateEraseFlashOperation(this);
-		monitorState(operation);
+		monitor(operation);
 		return operation;
 	}
 
@@ -105,14 +105,14 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 	@Override
 	public ReadFlashOperation createReadFlashOperation() {
 		final ReadFlashOperation operation = new PacemateReadFlashOperation(this);
-		monitorState(operation);
+		monitor(operation);
 		return operation;
 	}
 
 	@Override
 	public ReadMacAddressOperation createReadMacAddressOperation() {
 		final ReadMacAddressOperation operation = new PacemateReadMacAddressOperation(this);
-		monitorState(operation);
+		monitor(operation);
 		return operation;
 	}
 
@@ -130,14 +130,14 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 	@Override
 	public ResetOperation createResetOperation() {
 		final ResetOperation operation = new iSenseResetOperation(getConnection());
-		monitorState(operation);
+		monitor(operation);
 		return operation;
 	}
 
 	@Override
 	public SendOperation createSendOperation() {
 		final SendOperation operation = new SerialPortSendOperation(getConnection());
-		monitorState(operation);
+		monitor(operation);
 		return operation;
 	}
 	

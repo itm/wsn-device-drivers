@@ -44,42 +44,42 @@ public class TelosbDevice extends AbstractSerialPortDevice implements Programabl
 	@Override
 	public EnterProgramModeOperation createEnterProgramModeOperation() {
 		final EnterProgramModeOperation operation = new TelosbEnterProgramModeOperation(getConnection(), bsl);
-		monitorState(operation);
+		monitor(operation);
 		return operation;
 	}
 	
 	@Override
 	public LeaveProgramModeOperation createLeaveProgramModeOperation() {
 		final LeaveProgramModeOperation operation = new SerialPortLeaveProgramModeOperation(getConnection());
-		monitorState(operation);
+		monitor(operation);
 		return operation;
 	}
 	
 	@Override
 	public GetChipTypeOperation createGetChipTypeOperation() {
 		final GetChipTypeOperation operation = new TelosbGetChipTypeOperation();
-		monitorState(operation);
+		monitor(operation);
 		return operation;
 	}
 
 	@Override
 	public ProgramOperation createProgramOperation() {
 		final ProgramOperation operation = new TelosbProgramOperation(this);
-		monitorState(operation);
+		monitor(operation);
 		return operation;
 	}
 
 	@Override
 	public EraseFlashOperation createEraseFlashOperation() {
 		final EraseFlashOperation operation = new TelosbEraseFlashOperation(bsl);
-		monitorState(operation);
+		monitor(operation);
 		return operation;
 	}
 
 	@Override
 	public WriteFlashOperation createWriteFlashOperation() {
 		final WriteFlashOperation operation = new TelosbWriteFlashOperation(this);
-		monitorState(operation);
+		monitor(operation);
 		return operation;
 	}
 
@@ -96,7 +96,7 @@ public class TelosbDevice extends AbstractSerialPortDevice implements Programabl
 	@Override
 	public ReadMacAddressOperation createReadMacAddressOperation() {
 		final ReadMacAddressOperation operation = new TelosbReadMacAddressOperation();
-		monitorState(operation);
+		monitor(operation);
 		return operation;
 	}
 
@@ -114,14 +114,14 @@ public class TelosbDevice extends AbstractSerialPortDevice implements Programabl
 	@Override
 	public ResetOperation createResetOperation() {
 		final ResetOperation operation = new TelosbResetOperation(bsl);
-		monitorState(operation);
+		monitor(operation);
 		return operation;
 	}
 
 	@Override
 	public SendOperation createSendOperation() {
 		final SendOperation operation = new SerialPortSendOperation(getConnection());
-		monitorState(operation);
+		monitor(operation);
 		return operation;
 	}
 	
