@@ -53,83 +53,83 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 	@Override
 	public EnterProgramModeOperation createEnterProgramModeOperation() {
 		final EnterProgramModeOperation operation = new SerialPortEnterProgramModeOperation(getConnection());
-		monitorState(operation);
+		monitor(operation);
 		return operation;
 	}
 	
 	@Override
 	public LeaveProgramModeOperation createLeaveProgramModeOperation() {
 		final LeaveProgramModeOperation operation = new SerialPortLeaveProgramModeOperation(getConnection());
-		monitorState(operation);
+		monitor(operation);
 		return operation;
 	}
 	
 	@Override
 	public EraseFlashOperation createEraseFlashOperation() {
 		final EraseFlashOperation operation = new JennicEraseFlashOperation(this);
-		monitorState(operation);
+		monitor(operation);
 		return operation;
 	}
 
 	@Override
 	public GetChipTypeOperation createGetChipTypeOperation() {
 		GetChipTypeOperation operation = new JennicGetChipTypeOperation(this);
-		monitorState(operation);
+		monitor(operation);
 		return operation;
 	}
 	
 	public GetFlashHeaderOperation createGetFlashHeaderOperation() {
 		final GetFlashHeaderOperation operation = new JennicGetFlashHeaderOperation(this);
-		monitorState(operation);
+		monitor(operation);
 		return operation;
 	}
 
 	@Override
 	public ProgramOperation createProgramOperation() {
 		final ProgramOperation operation = new JennicProgramOperation(this);
-		monitorState(operation);
+		monitor(operation);
 		return operation;
 	}
 
 	@Override
 	public ReadFlashOperation createReadFlashOperation() {
 		final ReadFlashOperation operation = new JennicReadFlashOperation(this);
-		monitorState(operation);
+		monitor(operation);
 		return operation;
 	}
 
 	@Override
 	public ReadMacAddressOperation createReadMacAddressOperation() {
 		final ReadMacAddressOperation operation = new JennicReadMacAddressOperation(this);
-		monitorState(operation);
+		monitor(operation);
 		return operation;
 	}
 
 	@Override
 	public ResetOperation createResetOperation() {
 		final ResetOperation operation = new iSenseResetOperation(getConnection());
-		monitorState(operation);
+		monitor(operation);
 		return operation;
 	}
 
 	@Override
 	public SendOperation createSendOperation() {
 		final SendOperation operation = new SerialPortSendOperation(getConnection());
-		monitorState(operation);
+		monitor(operation);
 		return operation;
 	}
 
 	@Override
 	public WriteFlashOperation createWriteFlashOperation() {
 		final WriteFlashOperation operation = new JennicWriteFlashOperation(this);
-		monitorState(operation);
+		monitor(operation);
 		return operation;
 	}
 
 	@Override
 	public WriteMacAddressOperation createWriteMacAddressOperation() {
 		final WriteMacAddressOperation operation = new JennicWriteMacAddressOperation(this);
-		monitorState(operation);
+		monitor(operation);
 		return operation;
 	}
 

@@ -65,8 +65,8 @@ public enum State {
 	 * 
 	 * @return A boolean for representing a finished state.
 	 */
-	public boolean isFinishState() {
-		return this == State.DONE || this == State.EXCEPTED || this == State.CANCELED || this == State.TIMEDOUT;
+	public static boolean isFinishState(final State state) {
+		return state != null && (state == State.DONE || state == State.EXCEPTED || state == State.CANCELED || state == State.TIMEDOUT);
 	}
 	
 	/**

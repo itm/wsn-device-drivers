@@ -98,7 +98,12 @@ public class JarUtil {
 	 */
 	private static String nativeLibraryName(final String libName) {
 		final String system = System.getProperty("os.name");
-		final String pattern = system.startsWith("Windows") ? "%s.dll" : "lib%s.so";
+		String pattern = "lib%s.so";
+		if (system.startsWith("Windows")) {
+			pattern = "%s.dll";
+		} else if (system.startsWith("Mac OS X")) {
+			pattern = "lib%s.jnilib";
+		}
 		return String.format(pattern, libName);
 	}
 	
