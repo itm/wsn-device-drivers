@@ -7,6 +7,7 @@ import gnu.io.SerialPort;
 import gnu.io.UnsupportedCommOperationException;
 
 import java.io.IOException;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,7 @@ import com.google.common.base.Preconditions;
 import de.uniluebeck.itm.wsn.drivers.core.AbstractConnection;
 import de.uniluebeck.itm.wsn.drivers.core.util.JarUtil;
 import es.unican.tlmat.wsn.drivers.waspmote.multiplexer.WaspmoteConnectionMultiplexer;
+import es.unican.tlmat.wsn.drivers.waspmote.multiplexer.WaspmoteDataChannel;
 
 /**
  * @author TLMAT UC
@@ -45,7 +47,7 @@ public class WaspmoteMultiplexedSerialPortConnection extends AbstractConnection 
 
 	private static WaspmoteMultiplexedSerialPortConnection instance;
 
-	public WaspmoteMultiplexedSerialPortConnection getInstance() {
+	public static WaspmoteMultiplexedSerialPortConnection getInstance() {
 		if (instance == null) {
 			instance = new WaspmoteMultiplexedSerialPortConnection();
 		}
@@ -126,9 +128,17 @@ public class WaspmoteMultiplexedSerialPortConnection extends AbstractConnection 
 		setInputStream(serialPort.getInputStream());
 	}
 
-	
+	@Override
 	public void shutdown(boolean force) {
-		this.shutdownPort();
+		if (force) {
+			// Not sure of the implications of closing serial ports when devices
+			// are still connected
+			this.shutdownPort();
+		} else {
+			if (WaspmoteDataChannel.getChannelSet().isEmpty()) {
+				this.shutdownPort();
+			}
+		}
 	}
 
 	private void shutdownPort() {

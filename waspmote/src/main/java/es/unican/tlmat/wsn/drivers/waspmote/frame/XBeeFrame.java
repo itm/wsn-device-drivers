@@ -1,6 +1,6 @@
 package es.unican.tlmat.wsn.drivers.waspmote.frame;
 
-import es.unican.tlmat.wsn.drivers.util.DoubleByte;
+import es.unican.tlmat.util.DoubleByte;
 
 /**
  * @author TLMAT UC

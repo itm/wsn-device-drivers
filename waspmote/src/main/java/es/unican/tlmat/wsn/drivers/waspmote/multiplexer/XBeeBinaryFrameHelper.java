@@ -1,7 +1,7 @@
 package es.unican.tlmat.wsn.drivers.waspmote.multiplexer;
 
-import es.unican.tlmat.wsn.drivers.util.DoubleByte;
-import es.unican.tlmat.wsn.drivers.util.ExtendedMacAddress;
+import es.unican.tlmat.util.ExtendedMacAddress;
+import es.unican.tlmat.util.DoubleByte;
 import es.unican.tlmat.wsn.drivers.waspmote.frame.XBeeFrame;
 import es.unican.tlmat.wsn.drivers.waspmote.frame.xbeeDigi.XBeeDigiRequest;
 import es.unican.tlmat.wsn.drivers.waspmote.frame.xbeeDigi.XBeeDigiResponse;

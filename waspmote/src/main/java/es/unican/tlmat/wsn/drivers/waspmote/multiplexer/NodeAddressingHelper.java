@@ -6,9 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import es.unican.tlmat.wsn.drivers.util.ExtendedMacAddress;
-import es.unican.tlmat.wsn.drivers.util.HexUtils;
-import es.unican.tlmat.wsn.drivers.util.LRUcache;
+import es.unican.tlmat.util.ExtendedMacAddress;
+import es.unican.tlmat.util.HexUtils;
+import es.unican.tlmat.util.LRUcache;
 import es.unican.tlmat.wsn.drivers.waspmote.frame.XBeeFrame;
 
 /**

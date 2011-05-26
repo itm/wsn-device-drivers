@@ -1,4 +1,4 @@
-package es.unican.tlmat.wsn.drivers.util;
+package es.unican.tlmat.util;
 
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 

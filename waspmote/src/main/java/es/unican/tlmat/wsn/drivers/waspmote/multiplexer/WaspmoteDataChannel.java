@@ -3,6 +3,7 @@ package es.unican.tlmat.wsn.drivers.waspmote.multiplexer;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -51,6 +52,10 @@ public class WaspmoteDataChannel {
 			channelsRegistry.put(nodeID, channel);
 		}
 		return channel;
+	}
+
+	public static Set<Integer> getChannelSet() {
+		return channelsRegistry.keySet();
 	}
 
 	/**

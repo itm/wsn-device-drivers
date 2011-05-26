@@ -7,7 +7,7 @@ import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;
-import es.unican.tlmat.wsn.drivers.util.HexUtils;
+import es.unican.tlmat.util.HexUtils;
 import es.unican.tlmat.wsn.drivers.waspmote.WaspmoteDevice;
 import es.unican.tlmat.wsn.drivers.waspmote.frame.XBeeFrame;
 import es.unican.tlmat.wsn.drivers.waspmote.frame.xbeeDigi.XBeeDigiRequest;

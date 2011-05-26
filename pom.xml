@@ -155,7 +155,7 @@
 		<module>factories</module>
 		<module>mock</module>
 		<module>null</module>
-    <module>wsn-device-drivers-waspmote</module>
+    	<module>waspmote</module>
   </modules>
 
 	<distributionManagement>

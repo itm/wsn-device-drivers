@@ -1,6 +1,6 @@
 package es.unican.tlmat.wsn.drivers.waspmote.multiplexer;
 
-import es.unican.tlmat.wsn.drivers.util.DoubleByte;
+import es.unican.tlmat.util.DoubleByte;
 import es.unican.tlmat.wsn.drivers.waspmote.frame.XBeeFrame;
 import es.unican.tlmat.wsn.drivers.waspmote.frame.xbeeDigi.XBeeDigiRequest;
 import gnu.io.SerialPortEvent;
