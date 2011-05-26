@@ -7,7 +7,6 @@ import gnu.io.SerialPort;
 import gnu.io.UnsupportedCommOperationException;
 
 import java.io.IOException;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +45,10 @@ public class WaspmoteMultiplexedSerialPortConnection extends AbstractConnection 
 	}
 
 	private static WaspmoteMultiplexedSerialPortConnection instance;
+
+	private WaspmoteMultiplexedSerialPortConnection() {
+		super();
+	}
 
 	public static WaspmoteMultiplexedSerialPortConnection getInstance() {
 		if (instance == null) {
@@ -128,7 +131,6 @@ public class WaspmoteMultiplexedSerialPortConnection extends AbstractConnection 
 		setInputStream(serialPort.getInputStream());
 	}
 
-	@Override
 	public void shutdown(boolean force) {
 		if (force) {
 			// Not sure of the implications of closing serial ports when devices

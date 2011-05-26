@@ -58,7 +58,8 @@ public class WaspmoteDeviceExample implements ConnectionListener, Runnable {
 			e.printStackTrace();
 		} finally {
 			System.out.println("Closing multiplexed connection...");
-			connection.shutdown(true);
+			// It has to be modified and replaced by device.shutdown in run();
+			connection32.shutdown(true);
 			System.out.println("Multiplexed connection closed");
 		}
 	}

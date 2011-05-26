@@ -3,7 +3,7 @@
   <parent>
     <artifactId>wsn-device-drivers</artifactId>
     <groupId>de.uniluebeck.itm</groupId>
-    <version>0.3-SNAPSHOT</version>
+    <version>0.4-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
   <groupId>es.unican.tlmat</groupId>
@@ -47,10 +47,11 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>de.uniluebeck.itm</groupId>
-      <artifactId>wsn-device-drivers-core</artifactId>
-      <version>0.3-SNAPSHOT</version>
-      <scope>compile</scope>
+    	<groupId>de.uniluebeck.itm</groupId>
+    	<artifactId>wsn-device-drivers-core</artifactId>
+    	<version>0.4-SNAPSHOT</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
     </dependency>
   </dependencies>
 </project>

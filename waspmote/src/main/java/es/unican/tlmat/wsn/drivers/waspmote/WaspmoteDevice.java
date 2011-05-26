@@ -12,7 +12,6 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.RunningOperationsMonitor;
 import de.uniluebeck.itm.wsn.drivers.core.operation.SendOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.WriteFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
@@ -31,7 +30,6 @@ public class WaspmoteDevice implements Device<WaspmoteMultiplexedSerialPortConne
 
 	private final int nodeID;
 	private final WaspmoteMultiplexedSerialPortConnection multiplexedConnection;
-	private final RunningOperationsMonitor monitor = new RunningOperationsMonitor();
 
 	public WaspmoteDevice(int nodeID, WaspmoteMultiplexedSerialPortConnection multiplexedConnection) {
 		this.nodeID = nodeID;
@@ -48,7 +46,6 @@ public class WaspmoteDevice implements Device<WaspmoteMultiplexedSerialPortConne
 	}
 
 	protected <T> void monitorState(final Operation<T> operation) {
-		monitor.monitorState(operation);
 	}
 
 	@Override
