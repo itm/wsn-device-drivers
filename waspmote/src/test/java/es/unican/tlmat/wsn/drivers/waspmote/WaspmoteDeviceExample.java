@@ -56,11 +56,6 @@ public class WaspmoteDeviceExample implements ConnectionListener, Runnable {
 			t137.join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		} finally {
-			System.out.println("Closing multiplexed connection...");
-			// It has to be modified and replaced by device.shutdown in run();
-			connection32.shutdown(true);
-			System.out.println("Multiplexed connection closed");
 		}
 	}
 
@@ -149,7 +144,9 @@ public class WaspmoteDeviceExample implements ConnectionListener, Runnable {
 		System.out.println(device.getNodeID() + ": Shutting down queue...");
 		queue.shutdown(false);
 		System.out.println(device.getNodeID() + ": Device queue terminated");
-		// Add device.shutdown()
+		System.out.println(device.getNodeID() + ": Closing device connection...");
+		device.shutdown();
+		System.out.println(device.getNodeID() + ": Device connection closed");
 	}
 
 	/**

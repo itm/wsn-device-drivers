@@ -134,7 +134,7 @@ public class WaspmoteDataChannel {
 	/**
 	 * Release all resources associated with a whole channel
 	 */
-	public synchronized void shutDownChannel() {
+	public synchronized void shutdownChannel() {
 		Collection<Thread> c = nodeIdFrameMultiplexer.keySet();
 		Iterator<Thread> itr = c.iterator();
 		while (itr.hasNext()) {

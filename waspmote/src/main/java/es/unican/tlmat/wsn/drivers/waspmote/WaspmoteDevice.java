@@ -58,7 +58,11 @@ public class WaspmoteDevice implements Device<WaspmoteMultiplexedSerialPortConne
 		return null;
 	}
 
-
+	// It should be present in the Device<?> Interface
+	public void shutdown() {
+		WaspmoteDataChannel.getChannel(nodeID).shutdownChannel();
+		multiplexedConnection.shutdown(false);
+	}
 
 	@Override
 	public GetChipTypeOperation createGetChipTypeOperation() {
