@@ -22,13 +22,12 @@ public class WaspmoteDeviceExample implements ConnectionListener, Runnable {
 	 */
 	public static void main(String[] args) {
 		final String port = args[0];
-		// final String port = "/dev/ttyTestbedRuntime";
 
-		final WaspmoteMultiplexedSerialPortConnection connection38 = WaspmoteMultiplexedSerialPortConnection.getInstance();
-		final WaspmoteDevice device38 = new WaspmoteDevice(38, connection38);
-		final WaspmoteDeviceExample example38 = new WaspmoteDeviceExample();
-		example38.setDevice(device38);
-		example38.setPort(port);
+//		final WaspmoteMultiplexedSerialPortConnection connection38 = WaspmoteMultiplexedSerialPortConnection.getInstance();
+//		final WaspmoteDevice device38 = new WaspmoteDevice(38, connection38);
+//		final WaspmoteDeviceExample example38 = new WaspmoteDeviceExample();
+//		example38.setDevice(device38);
+//		example38.setPort(port);
 
 		final WaspmoteMultiplexedSerialPortConnection connection32 = WaspmoteMultiplexedSerialPortConnection.getInstance();
 		final WaspmoteDevice device32 = new WaspmoteDevice(32, connection32);
@@ -42,21 +41,22 @@ public class WaspmoteDeviceExample implements ConnectionListener, Runnable {
 		example137.setDevice(device137);
 		example137.setPort(port);
 
-		Thread t38 = new Thread(example38);
+//		Thread t38 = new Thread(example38);
 		Thread t32 = new Thread(example32);
 		Thread t137 = new Thread(example137);
 
-		t38.start();
+//		t38.start();
 		t32.start();
 		t137.start();
 
 		try {
-			t38.join();
+//			t38.join();
 			t32.join();
 			t137.join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		return;
 	}
 
 	private static final int DEFAULT_SLEEP = 50;

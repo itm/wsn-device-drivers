@@ -17,23 +17,23 @@ import es.unican.tlmat.wsn.drivers.waspmote.frame.xbeeDigi.XBeeDigiStatusRespons
 /**
  * @author TLMAT UC
  */
-public class WaspmoteReadIdOperation extends AbstractOperation<MacAddress> implements ReadMacAddressOperation {
+public class WaspmoteReadDigiMacAddressOperation extends AbstractOperation<MacAddress> implements ReadMacAddressOperation {
 
 	/**
 	 * Logger for this class.
 	 */
-	private static final Logger LOG = LoggerFactory.getLogger(WaspmoteReadIdOperation.class);
+	private static final Logger LOG = LoggerFactory.getLogger(WaspmoteReadDigiMacAddressOperation.class);
 
 	WaspmoteDevice device;
 
-	public WaspmoteReadIdOperation(WaspmoteDevice device) {
+	public WaspmoteReadDigiMacAddressOperation(WaspmoteDevice device) {
 		this.device = device;
 	}
 
 	@Override
 	public MacAddress execute(ProgressManager progressManager) throws Exception {
 		LOG.debug("Read NodeID Operation in progress...");
-		byte[] payload = HexUtils.hexString2ByteArray("ab 01 23 01 00 13 a2 00 40 68 6d c0");
+		byte[] payload = HexUtils.hexString2ByteArray("AB");
 		XBeeDigiRequest xBeeDigiRequest = new XBeeDigiRequest(device.getNodeID(), payload);
 		device.sendXBeeMessage(xBeeDigiRequest, true);
 		progressManager.worked(0.25f);

@@ -19,7 +19,7 @@ import es.unican.tlmat.wsn.drivers.waspmote.frame.XBeeFrame;
 import es.unican.tlmat.wsn.drivers.waspmote.frame.xbeeDigi.XBeeDigiRequest;
 import es.unican.tlmat.wsn.drivers.waspmote.multiplexer.WaspmoteConnectionMultiplexer;
 import es.unican.tlmat.wsn.drivers.waspmote.multiplexer.WaspmoteDataChannel;
-import es.unican.tlmat.wsn.drivers.waspmote.operation.WaspmoteReadIdOperation;
+import es.unican.tlmat.wsn.drivers.waspmote.operation.WaspmoteReadDigiMacAddressOperation;
 
 /**
  * @author TLMAT UC
@@ -58,7 +58,7 @@ public class WaspmoteDevice implements Device<WaspmoteMultiplexedSerialPortConne
 		return null;
 	}
 
-	// It should be present in the Device<?> Interface
+	// It should be present in the Device Interface
 	public void shutdown() {
 		WaspmoteDataChannel.getChannel(nodeID).shutdownChannel();
 		multiplexedConnection.shutdown(false);
@@ -91,7 +91,7 @@ public class WaspmoteDevice implements Device<WaspmoteMultiplexedSerialPortConne
 
 	@Override
 	public ReadMacAddressOperation createReadMacAddressOperation() {
-		final ReadMacAddressOperation operation = new WaspmoteReadIdOperation(this);
+		final ReadMacAddressOperation operation = new WaspmoteReadDigiMacAddressOperation(this);
 		monitorState(operation);
 		return operation;
 	}
