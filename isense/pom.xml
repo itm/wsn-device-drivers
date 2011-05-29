@@ -5,11 +5,11 @@
 		<groupId>de.uniluebeck.itm</groupId>
 		<artifactId>wsn-device-drivers</artifactId>
 		<relativePath>../</relativePath>
-		<version>0.3.3</version>
+		<version>0.3.4-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>wsn-device-drivers-isense</artifactId>
-	<version>0.3.3</version>
+	<version>0.3.4-SNAPSHOT</version>
 	<name>WSN Device Drivers iSense</name>
   
 	<dependencies>
