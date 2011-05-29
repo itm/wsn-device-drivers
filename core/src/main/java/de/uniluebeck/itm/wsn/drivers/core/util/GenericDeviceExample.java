@@ -58,7 +58,7 @@ public class GenericDeviceExample implements ConnectionListener {
 	/**
 	 * The default mac address value.
 	 */
-	private static final int DEFAULT_MAC_ADDRESS_VALUE = 1024;
+	private static final long DEFAULT_MAC_ADDRESS_VALUE = 1024;
 	
 	/**
 	 * The queue used for this example.
