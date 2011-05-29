@@ -108,7 +108,7 @@ public class WaspmoteDeviceExample implements ConnectionListener, Runnable {
 
 			@Override
 			public void onSuccess(final MacAddress result) {
-				System.out.println(device.getNodeID() + ": MAC Address: " + HexUtils.byteArray2HexString(result.getMacBytes(), ":"));
+				System.out.println(device.getNodeID() + ": MAC Address: " + HexUtils.byteArray2HexString(result.getMacBytes(), ':'));
 			}
 
 			@Override
