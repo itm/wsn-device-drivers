@@ -3,9 +3,12 @@ package de.uniluebeck.itm.wsn.drivers.core.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.net.URISyntaxException;
 import java.util.zip.Adler32;
+
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang.reflect.FieldUtils;
 
 import com.google.common.base.Joiner;
 import com.google.common.io.Files;
@@ -25,14 +28,9 @@ public class JarUtil {
 	private static final String JNI_PATH_ROOT = "/de/uniluebeck/itm/wsn/drivers/core/jni";
 	
 	/**
-	 * The user home directory.
-	 */
-	private static final String USER_HOME = System.getProperty("user.home");
-	
-	/**
 	 * The directory name of the library folder in the home directory.
 	 */
-	private static final String LIB_HOME = USER_HOME + File.separator + ".wsn-device-drivers";
+	private static final String LIB_HOME = SystemUtils.USER_HOME + File.separator + ".wsn-device-drivers";
 	
 	/**
 	 * System property for the java class path.
@@ -40,10 +38,15 @@ public class JarUtil {
 	private static final String JAVA_LIBRARY_PATH = "java.library.path";
 	
 	/**
+	 * Property name for library paths.
+	 */
+	private static final String USR_PATHS = "usr_paths";
+	
+	/**
 	 * Load a DLL or SO file that is contained in a JAR.
 	 * This method is designed to work like System.loadLibrary(libName). 
 	 * 
-	 * @param libName The name of the libary without fileextension.
+	 * @param libName The name of the library without file extension.
 	 */
 	public static void loadLibrary(final String libName) {
 		final String lib = nativeLibraryName(libName);
@@ -66,28 +69,15 @@ public class JarUtil {
 		try {
 			// This enables the java.library.path to be modified at runtime
 			// From a Sun engineer at http://forums.sun.com/thread.jspa?threadID=707176
-			//
-			final Field field = ClassLoader.class.getDeclaredField("usr_paths");
-			field.setAccessible(true);
-			final String[] paths = (String[]) field.get(null);
-			for (String path : paths) {
-				if (LIB_HOME.equals(path)) {
-					return;
-				}
+			Object[] paths = (Object[]) FieldUtils.readDeclaredStaticField(ClassLoader.class, USR_PATHS, true);
+			if (!ArrayUtils.contains(paths, LIB_HOME)) {
+				paths = ArrayUtils.add(paths, LIB_HOME);
+				FieldUtils.writeDeclaredStaticField(ClassLoader.class, USR_PATHS, paths, true);
 			}
-			final String[] tmp = new String[paths.length + 1];
-			System.arraycopy(paths, 0, tmp, 0, paths.length);
-			tmp[paths.length] = LIB_HOME;
-			field.set(null, tmp);
-			
-			final String javaLibraryPath = System.getProperty(JAVA_LIBRARY_PATH);
-			final String newJavaLibraryPath = Joiner.on(File.pathSeparator).join(javaLibraryPath, LIB_HOME);
-			System.setProperty(JAVA_LIBRARY_PATH, newJavaLibraryPath);
+			System.setProperty(JAVA_LIBRARY_PATH, SystemUtils.JAVA_LIBRARY_PATH + File.pathSeparator + LIB_HOME);
 		} catch (IllegalAccessException e) {
 			throw new IOException("Failed to get permissions to set library path");
-		} catch (NoSuchFieldException e) {
-			throw new IOException("Failed to get field handle to set library path");
-		}	
+		}
 	}
 	
 	/**
@@ -97,12 +87,15 @@ public class JarUtil {
 	 * @return The name of the library with system file extension.
 	 */
 	private static String nativeLibraryName(final String libName) {
-		final String system = System.getProperty("os.name");
-		String pattern = "lib%s.so";
-		if (system.startsWith("Windows")) {
+		String pattern = null;
+		if (SystemUtils.IS_OS_WINDOWS) {
 			pattern = "%s.dll";
-		} else if (system.startsWith("Mac OS X")) {
+		} else if (SystemUtils.IS_OS_MAC_OSX) {
 			pattern = "lib%s.jnilib";
+		} else if (SystemUtils.IS_OS_LINUX) {
+			pattern = "lib%s.so";
+		} else {
+			throw new RuntimeException("Your operating system is not supported.");
 		}
 		return String.format(pattern, libName);
 	}
@@ -115,8 +108,7 @@ public class JarUtil {
 	 * @return The path to the library.
 	 */
 	private static String archAwarePath(final String lib) {
-		final String arch = System.getProperty("os.arch");
-		return Joiner.on("/").join(JNI_PATH_ROOT, arch, lib);
+		return Joiner.on("/").join(JNI_PATH_ROOT, SystemUtils.OS_ARCH, lib);
 	}
 	
 	/**
@@ -127,7 +119,7 @@ public class JarUtil {
 	 * @throws IOException when something during the IO operation happens.
 	 */
 	private static File createTargetFile(final String lib) throws IOException {
-		final String path = Joiner.on(File.separator).join(LIB_HOME, lib);
+		final String path = LIB_HOME + File.separator + lib;
 		final File target = new File(path);
 		if (!target.exists()) {
 			Files.createParentDirs(target);

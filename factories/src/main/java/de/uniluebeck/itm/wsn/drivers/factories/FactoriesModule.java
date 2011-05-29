@@ -23,13 +23,16 @@
 
 package de.uniluebeck.itm.wsn.drivers.factories;
 
-import de.uniluebeck.itm.wsn.drivers.core.Connection;
-import de.uniluebeck.itm.wsn.drivers.core.async.DeviceAsync;
-import de.uniluebeck.itm.wsn.drivers.core.async.OperationQueue;
+import com.google.inject.Binder;
+import com.google.inject.Module;
 
-public interface DeviceAsyncFactory {
+public class FactoriesModule implements Module {
 
-	DeviceAsync create(DeviceType deviceType, Connection connection, OperationQueue operationQueue);
+	@Override
+	public void configure(final Binder binder) {
+		binder.bind(ConnectionFactoryImpl.class).to(ConnectionFactoryImpl.class);
+		binder.bind(DeviceFactory.class).to(DeviceFactoryImpl.class);
+		binder.bind(DeviceAsyncFactoryImpl.class).to(DeviceAsyncFactoryImpl.class);
+	}
 
-	DeviceAsync create(String deviceType, Connection connection, OperationQueue operationQueue);
 }
