@@ -30,9 +30,9 @@ public class FactoriesModule implements Module {
 
 	@Override
 	public void configure(final Binder binder) {
-		binder.bind(ConnectionFactoryImpl.class).to(ConnectionFactoryImpl.class);
+		binder.bind(ConnectionFactory.class).to(ConnectionFactoryImpl.class);
 		binder.bind(DeviceFactory.class).to(DeviceFactoryImpl.class);
-		binder.bind(DeviceAsyncFactoryImpl.class).to(DeviceAsyncFactoryImpl.class);
+		binder.bind(DeviceAsyncFactory.class).to(DeviceAsyncFactoryImpl.class);
 	}
 
 }
