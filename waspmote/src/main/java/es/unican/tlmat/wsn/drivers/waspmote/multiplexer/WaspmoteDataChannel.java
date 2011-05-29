@@ -140,6 +140,6 @@ public class WaspmoteDataChannel {
 		while (itr.hasNext()) {
 			nodeIdFrameMultiplexer.remove(itr.next()).clear();
 		}
-		WaspmoteDataChannel channel = channelsRegistry.remove(nodeID);
+		channelsRegistry.remove(nodeID);
 	}
 }

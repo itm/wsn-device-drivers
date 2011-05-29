@@ -28,7 +28,7 @@ public class ExtendedMacAddress extends MacAddress {
 
 	@Override
 	public String toString() {
-		return HexUtils.byteArray2HexString(getMacBytes(), "");
+		return HexUtils.byteArray2HexString(getMacBytes(), null);
 	}
 
 
