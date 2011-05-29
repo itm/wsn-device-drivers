@@ -47,12 +47,12 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 		}
 
 		// Copy address into the header of the first sector
-		log.trace("Copy " + StringUtils.toHexString(macAddress.getMacBytes()) + " to address " + chipType.getHeaderStart() + ", length: "
-				+ macAddress.getMacBytes().length);
-		// System.arraycopy(mac.getMacBytes(), 0, sector[0][0], ChipType.
+		log.trace("Copy " + StringUtils.toHexString(macAddress.toByteArray()) + " to address " + chipType.getHeaderStart() + ", length: "
+				+ macAddress.toByteArray().length);
+		// System.arraycopy(mac.toByteArray(), 0, sector[0][0], ChipType.
 		// getHeaderStart(chipType),
-		// mac.getMacBytes().length);
-		System.arraycopy(macAddress.getMacBytes(), 0, sector[0], chipType.getHeaderStart(), macAddress.getMacBytes().length);
+		// mac.toByteArray().length);
+		System.arraycopy(macAddress.toByteArray(), 0, sector[0], chipType.getHeaderStart(), macAddress.toByteArray().length);
 
 		// Configure flash
 		device.configureFlash(chipType);

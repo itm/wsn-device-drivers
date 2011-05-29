@@ -58,7 +58,7 @@ public class NullDevice implements Device<Connection> {
 		@Override
 		public MacAddress execute(final ProgressManager progressManager) {
 			LOG.warn("Null device is used. ReadMacAddressOperation does nothing.");
-			return new MacAddress();
+			return new MacAddress(0);
 		}
 	}
 	

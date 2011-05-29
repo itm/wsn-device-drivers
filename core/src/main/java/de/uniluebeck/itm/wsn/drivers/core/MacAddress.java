@@ -23,129 +23,110 @@
 
 package de.uniluebeck.itm.wsn.drivers.core;
 
-import de.uniluebeck.itm.tr.util.StringUtils;
-
 /**
  * <code>MacAddress</code> object representation.
- * 
+ *
  * @author Malte Legenhausen
  */
 public class MacAddress {
-	
-	/**
-	 * Bit mask for the mac address entries.
-	 */
-	private static final int BIT_MASK = 0xFF;
-	
-	/**
-	 * Shift for the penultimate byte fo output as int.
-	 */
-	private static final int PENULTIMATE_SHIFT = 8;
-	
+
 	/**
 	 * The length of a mac address.
 	 */
 	private static final int LENGTH = 8;
-	
-	/**
-	 * Index of the last element of the address.
-	 */
-	private static final int ULTIMATE = 7;
-	
-	/**
-	 * Index of the next to last element of the address.
-	 */
-	private static final int PENULTIMATE = 6;
 
 	/**
-	 * Suppose the MAC address is: 00:15:8D:00:00:04:7D:50. Then 0x00 will be
-	 * stored at address[0] and 0x50 at address[7]. The least significant value
-	 * isx50. 0x00 0x15 0x8D 0x00 0x00 0x04 0x7D 0x50 
+	 * Suppose the MAC address is: 00:15:8D:00:00:04:7D:50. Then 0x00 will be stored at address[0] and 0x50 at address[7].
+	 * The least significant value isx50. 0x00 0x15 0x8D 0x00 0x00 0x04 0x7D 0x50
 	 */
-	private final byte[] address = new byte[LENGTH];
+	private final byte[] array = new byte[LENGTH];
 
 	/**
 	 * Constructor.
+	 *
+	 * @param macAddress Address as long value.
 	 */
-	public MacAddress() {
-		
-	}
-	
-	/**
-	 * Constructor.
-	 * 
-	 * @param lower16 The last two bytes of the mac address.
-	 */
-	public MacAddress(final int lower16) {
-		address[PENULTIMATE] = (byte) (lower16 >> PENULTIMATE_SHIFT & BIT_MASK);
-		address[ULTIMATE] = (byte) (lower16 & BIT_MASK);
+    public MacAddress(final long macAddress) {
+		setArray(macAddress);
 	}
 
 	/**
 	 * Constructor.
-	 * 
-	 * @param address Address as byte array.
+	 *
+	 * @param macAddress Address as byte array.
 	 */
-	public MacAddress(final byte[] address) {
-		this(address, 0);
+	public MacAddress(final byte[] macAddress) {
+		System.arraycopy(macAddress, 0, array, 0, LENGTH);
 	}
 
 	/**
-	 * Constructor.
-	 * 
-	 * @param address The address as byte array.
-	 * @param offset The mac address offset.
+	 * Constructs an instance from a String value. The value may either be specified as decimal ("1234"),
+	 * hexadecimal ("0x4d2") or binary ("0b10011010010").
+	 *
+	 * @param macAddress Address as String value
 	 */
-	public MacAddress(final byte[] address, final int offset) {
-		System.arraycopy(address, offset, this.address, 0, LENGTH);
+	public MacAddress(final String macAddress) {
+		if (macAddress.startsWith("0x")) {
+			setArray(Long.parseLong(macAddress.substring(2), 16));
+		} else if (macAddress.startsWith("0b")) {
+			setArray(Long.parseLong(macAddress.substring(2), 2));
+		} else {
+			setArray(Long.parseLong(macAddress, 10));
+		}
 	}
 
 	/**
 	 * Returns the mac address as byte array.
-	 * 
+	 *
 	 * @return The mac address as byte array.
 	 */
-	public byte[] getMacBytes() {
+	public byte[] toByteArray() {
 		final byte[] tmp = new byte[LENGTH];
-		System.arraycopy(address, 0, tmp, 0, LENGTH);
+		System.arraycopy(array, 0, tmp, 0, LENGTH);
 		return tmp;
 	}
 
 	/**
-	 * Getter for the last two bytes of the mac address.
-	 * 
-	 * @return Returns the last two bytes of the mac address.
+	 * Returns the MAC address as long value.
+	 *
+	 * @return the MAC address as long value
 	 */
-	public int getMacLowest16() {
-		return address[PENULTIMATE] >> PENULTIMATE_SHIFT + address[ULTIMATE];
+	public long toLong() {
+		return  ((long) array[0] & 0xff) << 56 |
+                ((long) array[1] & 0xff) << 48 |
+                ((long) array[2] & 0xff) << 40 |
+                ((long) array[3] & 0xff) << 32 |
+                ((long) array[4] & 0xff) << 24 |
+                ((long) array[5] & 0xff) << 16 |
+                ((long) array[6] & 0xff) <<  8 |
+                ((long) array[7] & 0xff) <<  0;
 	}
 
-	/**
-	 * Checks if the lowest 16 bit of the address equals to the given integer id.
-	 * 
-	 * @param id The low 2 bytes.
-	 * @return True if equal else false.
-	 */
-	public boolean equalsLower16(final int id) {
-		return id == getMacLowest16();
-	}
-
-	@Override
-	public boolean equals(final Object o) {
-		if (o != null && o instanceof MacAddress) {
-			final MacAddress m = (MacAddress) o;
-			m.toString().equals(toString());
-		}
-		return super.equals(o);
-	}
-	
-	@Override
-	public int hashCode() {
-		return super.hashCode();
-	}
-	
 	@Override
 	public String toString() {
-		return StringUtils.toHexString(address);
+		return toHexString();
+	}
+
+	public String toHexString() {
+		return "0x" + Long.toString(toLong(), 16);
+	}
+
+	public String toDecString() {
+		return Long.toString(toLong(), 10);
+	}
+
+	public String toBinString() {
+		return "0b" + Long.toString(toLong(), 2);
+	}
+
+	private void setArray(final long value) {
+		array[0] = (byte) (value >>> 56);
+        array[1] = (byte) (value >>> 48);
+        array[2] = (byte) (value >>> 40);
+        array[3] = (byte) (value >>> 32);
+        array[4] = (byte) (value >>> 24);
+        array[5] = (byte) (value >>> 16);
+        array[6] = (byte) (value >>> 8);
+        array[7] = (byte) (value >>> 0);
 	}
 }
