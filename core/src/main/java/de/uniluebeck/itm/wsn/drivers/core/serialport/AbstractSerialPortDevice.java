@@ -105,8 +105,6 @@ public abstract class AbstractSerialPortDevice implements Device<SerialPortConne
 			} catch (final TooManyListenersException e) {
 				LOG.error("Can not register serial port listener", e);
 			}
-		} else {
-			connection.getSerialPort().removeEventListener();
 		}
 	}
 	

@@ -7,12 +7,28 @@ public class OutputStreamBridge extends OutputStream {
 
 	private OutputStream outputStream;
 	
-	@Override
-	public void write(int b) throws IOException {
+	private void checkOutputStream() throws IOException {
 		if (outputStream == null) {
 			throw new IOException("Thie bridged OutputStream is not available");
 		}
+	}
+	
+	@Override
+	public void write(int b) throws IOException {
+		checkOutputStream();
 		outputStream.write(b);
+	}
+	
+	@Override
+	public void flush() throws IOException {
+		checkOutputStream();
+		outputStream.flush();
+	}
+	
+	@Override
+	public void close() throws IOException {
+		checkOutputStream();
+		outputStream.close();
 	}
 	
 	public void setOutputStream(OutputStream outputStream) {

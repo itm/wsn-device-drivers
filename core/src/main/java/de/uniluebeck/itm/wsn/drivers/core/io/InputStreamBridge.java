@@ -1,25 +1,19 @@
 package de.uniluebeck.itm.wsn.drivers.core.io;
 
-import java.io.IOException;
+import java.io.FilterInputStream;
 import java.io.InputStream;
 
-public class InputStreamBridge extends InputStream {
-
-	private InputStream inputStream;
+public class InputStreamBridge extends FilterInputStream {
 	
-	@Override
-	public int read() throws IOException {
-		if (inputStream == null) {
-			throw new IOException("The bridged InputStream is not available");
-		}
-		return inputStream.read();
+	public InputStreamBridge() {
+		super(null);
 	}
 
 	public InputStream getInputStream() {
-		return inputStream;
+		return in;
 	}
 	
 	public void setInputStream(InputStream inputStream) {
-		this.inputStream = inputStream;
+		in = inputStream;
 	}
 }
