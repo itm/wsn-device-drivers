@@ -141,7 +141,6 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	 * 
 	 * @return The <code>OperationQueue</code> instance.
 	 */
-	@SuppressWarnings("unused")
 	public OperationQueue getOperationQueue() {
 		return queue;
 	}

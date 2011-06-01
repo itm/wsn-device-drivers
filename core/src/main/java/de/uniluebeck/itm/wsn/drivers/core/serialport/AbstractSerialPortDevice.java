@@ -14,9 +14,12 @@ import de.uniluebeck.itm.tr.util.TimeDiff;
 import de.uniluebeck.itm.wsn.drivers.core.ConnectionEvent;
 import de.uniluebeck.itm.wsn.drivers.core.ConnectionListener;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
+import de.uniluebeck.itm.wsn.drivers.core.State;
+import de.uniluebeck.itm.wsn.drivers.core.event.StateChangedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
-import de.uniluebeck.itm.wsn.drivers.core.io.LockedInputStreamManager;
+import de.uniluebeck.itm.wsn.drivers.core.io.LockedInputStream;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
 
 
 /**
@@ -46,10 +49,7 @@ public abstract class AbstractSerialPortDevice implements Device<SerialPortConne
 	 */
 	private final SerialPortConnection connection;
 	
-	/**
-	 * Manager for managing a <code>LockedInputStream</code>.
-	 */
-	private final LockedInputStreamManager lockedInputStreamManager = new LockedInputStreamManager();
+	private final LockedInputStream lockedInputStream;
 	
 	/**
 	 * Constructor.
@@ -59,7 +59,7 @@ public abstract class AbstractSerialPortDevice implements Device<SerialPortConne
 	public AbstractSerialPortDevice(final SerialPortConnection connection) {
 		this.connection = connection;
 		this.connection.addListener(this);
-		this.connection.addListener(lockedInputStreamManager);
+		lockedInputStream = new LockedInputStream(connection.getInputStream());
 	}
 
 	@Override
@@ -74,7 +74,13 @@ public abstract class AbstractSerialPortDevice implements Device<SerialPortConne
 	 * @param operation The operation object that has to be monitored.
 	 */
 	protected <T> Operation<T> monitor(final Operation<T> operation) {
-		return lockedInputStreamManager.monitor(operation);
+		operation.addListener(new OperationListener<T>() {
+			@Override
+			public void onStateChanged(final StateChangedEvent<T> event) {
+				lockedInputStream.setLocked(State.RUNNING.equals(event.getNewState()));
+			}
+		});
+		return operation;
 	}
 	
 	@Override
@@ -99,6 +105,8 @@ public abstract class AbstractSerialPortDevice implements Device<SerialPortConne
 			} catch (final TooManyListenersException e) {
 				LOG.error("Can not register serial port listener", e);
 			}
+		} else {
+			connection.getSerialPort().removeEventListener();
 		}
 	}
 	
@@ -137,6 +145,6 @@ public abstract class AbstractSerialPortDevice implements Device<SerialPortConne
 	
 	@Override
 	public InputStream getInputStream() {
-		return lockedInputStreamManager.getInputStream();
+		return lockedInputStream;
 	}
 }
