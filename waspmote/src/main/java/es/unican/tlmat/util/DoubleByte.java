@@ -1,4 +1,4 @@
-package es.unican.tlmat.wsn.drivers.util;
+package es.unican.tlmat.util;
 
 /**
  * @author TLMAT UC

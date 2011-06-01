@@ -1,12 +1,13 @@
 package es.unican.tlmat.wsn.drivers.waspmote.multiplexer;
 
+import es.unican.tlmat.wsn.drivers.waspmote.frame.XBeeFrame;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-
-import es.unican.tlmat.wsn.drivers.waspmote.frame.XBeeFrame;
 
 /**
  * @author TLMAT UC
@@ -51,6 +52,10 @@ public class WaspmoteDataChannel {
 			channelsRegistry.put(nodeID, channel);
 		}
 		return channel;
+	}
+
+	public static Set<Integer> getChannelSet() {
+		return channelsRegistry.keySet();
 	}
 
 	/**
@@ -129,12 +134,12 @@ public class WaspmoteDataChannel {
 	/**
 	 * Release all resources associated with a whole channel
 	 */
-	public synchronized void shutDownChannel() {
+	public synchronized void shutdownChannel() {
 		Collection<Thread> c = nodeIdFrameMultiplexer.keySet();
 		Iterator<Thread> itr = c.iterator();
 		while (itr.hasNext()) {
 			nodeIdFrameMultiplexer.remove(itr.next()).clear();
 		}
-		channelsRegistry.remove(this);
+		channelsRegistry.remove(nodeID);
 	}
 }

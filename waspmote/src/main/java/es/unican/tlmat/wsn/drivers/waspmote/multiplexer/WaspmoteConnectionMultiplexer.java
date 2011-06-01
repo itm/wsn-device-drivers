@@ -1,18 +1,17 @@
 package es.unican.tlmat.wsn.drivers.waspmote.multiplexer;
 
-import es.unican.tlmat.wsn.drivers.util.DoubleByte;
+import es.unican.tlmat.util.DoubleByte;
 import es.unican.tlmat.wsn.drivers.waspmote.frame.XBeeFrame;
 import es.unican.tlmat.wsn.drivers.waspmote.frame.xbeeDigi.XBeeDigiRequest;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author TLMAT UC

@@ -1,8 +1,7 @@
 package es.unican.tlmat.wsn.drivers.waspmote.frame;
 
-import es.unican.tlmat.wsn.drivers.util.DoubleByte;
-import es.unican.tlmat.wsn.drivers.util.ExtendedMacAddress;
-
+import es.unican.tlmat.util.DoubleByte;
+import es.unican.tlmat.util.ExtendedMacAddress;
 /**
  * @author TLMAT UC
  */
@@ -47,19 +46,22 @@ public abstract class XBeeFrame {
 	 * @param frameType
 	 */
 	public XBeeFrame(int nodeID, int frameType) {
-	    //TODO consider removing this constructor 
 		this.nodeID = new DoubleByte(nodeID);
 		this.frameType = frameType;
 		this.protocol = getProtocol(frameType);
 	}
-	
-	public XBeeFrame(ExtendedMacAddress macAddress, int frameType){
-	    this.macAddress=macAddress;
-	    this.frameType=frameType;
-	    this.protocol=getProtocol(frameType);
-	}
 
-	public DoubleByte getNodeID() {
+	/**
+     * @param macAddress
+     * @param frameType
+     */
+    public XBeeFrame(ExtendedMacAddress macAddress, int frameType) {
+        this.macAddress = macAddress;
+        this.frameType = frameType;
+        this.protocol = getProtocol(frameType);
+    }
+
+    public DoubleByte getNodeID() {
 		return nodeID;
 	}
 

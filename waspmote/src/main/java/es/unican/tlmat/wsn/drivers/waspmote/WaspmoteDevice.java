@@ -1,26 +1,16 @@
 package es.unican.tlmat.wsn.drivers.waspmote;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
-import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
-
-import de.uniluebeck.itm.wsn.drivers.core.operation.SendOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.WriteFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.*;
 import es.unican.tlmat.wsn.drivers.waspmote.frame.XBeeFrame;
 import es.unican.tlmat.wsn.drivers.waspmote.frame.xbeeDigi.XBeeDigiRequest;
 import es.unican.tlmat.wsn.drivers.waspmote.multiplexer.WaspmoteConnectionMultiplexer;
 import es.unican.tlmat.wsn.drivers.waspmote.multiplexer.WaspmoteDataChannel;
-import es.unican.tlmat.wsn.drivers.waspmote.operation.WaspmoteReadIdOperation;
+import es.unican.tlmat.wsn.drivers.waspmote.operation.WaspmoteReadDigiMacAddressOperation;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @author TLMAT UC
@@ -31,8 +21,6 @@ public class WaspmoteDevice implements Device<WaspmoteMultiplexedSerialPortConne
 
 	private final int nodeID;
 	private final WaspmoteMultiplexedSerialPortConnection multiplexedConnection;
-	// TODO: check operationsmonitor
-	//private final RunningOperationsMonitor monitor = new RunningOperationsMonitor();
 
 	public WaspmoteDevice(int nodeID, WaspmoteMultiplexedSerialPortConnection multiplexedConnection) {
 		this.nodeID = nodeID;
@@ -49,8 +37,6 @@ public class WaspmoteDevice implements Device<WaspmoteMultiplexedSerialPortConne
 	}
 
 	protected <T> void monitorState(final Operation<T> operation) {
-		//TODO: check operations monitor
-	    //monitor.monitorState(operation);
 	}
 
 	@Override
@@ -61,6 +47,12 @@ public class WaspmoteDevice implements Device<WaspmoteMultiplexedSerialPortConne
 	@Override
 	public int[] getChannels() {
 		return null;
+	}
+
+	// It should be present in the Device Interface
+	public void shutdown() {
+		WaspmoteDataChannel.getChannel(nodeID).shutdownChannel();
+		multiplexedConnection.shutdown(false);
 	}
 
 	@Override
@@ -90,7 +82,7 @@ public class WaspmoteDevice implements Device<WaspmoteMultiplexedSerialPortConne
 
 	@Override
 	public ReadMacAddressOperation createReadMacAddressOperation() {
-		final ReadMacAddressOperation operation = new WaspmoteReadIdOperation(this);
+		final ReadMacAddressOperation operation = new WaspmoteReadDigiMacAddressOperation(this);
 		monitorState(operation);
 		return operation;
 	}

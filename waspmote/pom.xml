@@ -11,29 +11,50 @@
 	</parent>
 	<groupId>eu.smartsantander</groupId>
 	<artifactId>wsn-device-drivers-waspmote</artifactId>
-	<version>0.4-SNAPSHOT</version>
-	<name>WSN Device Drivers Waspmote</name>
-	<url>http://maven.apache.org</url>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
-
+	<version>0.2-SNAPSHOT</version>
+	<name>Wisebed compatible drivers for Waspmote</name>
+	<organization>
+		<name>Universidad de Cantabria (GIT)</name>
+		<url>www.tlmat.unican.es</url>
+	</organization>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.1</version>
+			</plugin>
+			<plugin>
+				<groupId>org.dstovall</groupId>
+				<artifactId>onejar-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>one-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 	<dependencies>
 		<dependency>
 			<groupId>de.uniluebeck.itm</groupId>
 			<artifactId>wsn-device-drivers-core</artifactId>
-		</dependency>
-			<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.8.2</version>
-			<scope>test</scope>
+			<version>0.4-SNAPSHOT</version>
+			<type>jar</type>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>bouncycastle</groupId>
-			<artifactId>bcprov-jdk16</artifactId>
-			<version>140</version>
-			<scope>compile</scope>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+            <version>4.8.2</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

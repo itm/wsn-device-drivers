@@ -1,4 +1,4 @@
-package es.unican.tlmat.wsn.drivers.util;
+package es.unican.tlmat.util;
 
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;

@@ -1,4 +1,4 @@
-package es.unican.tlmat.wsn.drivers.util;
+package es.unican.tlmat.util;
 
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 
@@ -28,7 +28,7 @@ public class ExtendedMacAddress extends MacAddress {
 
 	@Override
 	public String toString() {
-		return HexUtils.byteArray2HexString(getMacBytes(), "");
+		return HexUtils.byteArray2HexString(getMacBytes(), null);
 	}
 
 

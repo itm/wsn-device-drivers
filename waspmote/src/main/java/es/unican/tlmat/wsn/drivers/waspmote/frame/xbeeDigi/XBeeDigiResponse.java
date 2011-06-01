@@ -1,6 +1,6 @@
 package es.unican.tlmat.wsn.drivers.waspmote.frame.xbeeDigi;
 
-import es.unican.tlmat.wsn.drivers.util.ExtendedMacAddress;
+import es.unican.tlmat.util.ExtendedMacAddress;
 import es.unican.tlmat.wsn.drivers.waspmote.frame.XBeeFrame;
 
 /**
