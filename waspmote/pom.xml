@@ -7,10 +7,11 @@
 		<artifactId>wsn-device-drivers</artifactId>
 		<groupId>de.uniluebeck.itm</groupId>
 		<version>0.4-SNAPSHOT</version>
+		<relativePath>../</relativePath>
 	</parent>
 	<groupId>eu.smartsantander</groupId>
 	<artifactId>wsn-device-drivers-waspmote</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>0.4-SNAPSHOT</version>
 	<name>WSN Device Drivers Waspmote</name>
 	<url>http://maven.apache.org</url>
 	<properties>
@@ -22,12 +23,17 @@
 			<groupId>de.uniluebeck.itm</groupId>
 			<artifactId>wsn-device-drivers-core</artifactId>
 		</dependency>
-	
-   <dependency>
-      <groupId>bouncycastle</groupId>
-      <artifactId>bcprov-jdk16</artifactId>
-      <version>140</version>
-      <scope>compile</scope>
-    </dependency>
-    </dependencies>
+			<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>bouncycastle</groupId>
+			<artifactId>bcprov-jdk16</artifactId>
+			<version>140</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
 </project>

@@ -76,7 +76,6 @@ public class WaspmoteConnectionMultiplexer implements SerialPortEventListener {
 			byte[] response = readXbeeFrameFromSerialPort();
 			XBeeFrame xbeeFrame = null;
 			Thread consumerTID = null;
-			;
 			int frameType = (int) (response[3] & 0x00ff);
 			switch (frameType) {
 			case XBeeFrame.TRANSMIT_STATUS:

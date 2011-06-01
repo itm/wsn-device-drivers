@@ -14,13 +14,25 @@ public class XBeeBinaryFrameHelper {
 
 	private static Byte frameIDcounter = 0x01;
 
-	protected static byte[] createBinaryFrame(XBeeDigiRequest xbeeDigiRequest, boolean generateLocalAck) {
+	public static byte[] createBinaryFrame(XBeeDigiRequest xbeeDigiRequest, boolean generateLocalAck) {
 		ExtendedMacAddress destinationAddress = NodeAddressingHelper.getMACAddress(xbeeDigiRequest.getNodeID16BitValue(),
 				xbeeDigiRequest.getProtocol());
 		if (destinationAddress == null) {
 			return null;
 		}
-		byte[] payload = xbeeDigiRequest.getPayload();
+		
+		return createBinaryFrame(xbeeDigiRequest, generateLocalAck, destinationAddress);
+	}
+
+    /**
+     * @param xbeeDigiRequest
+     * @param generateLocalAck
+     * @param destinationAddress
+     * @return
+     */
+    public static byte[] createBinaryFrame(XBeeDigiRequest xbeeDigiRequest, boolean generateLocalAck,
+            ExtendedMacAddress destinationAddress) {
+        byte[] payload = xbeeDigiRequest.getPayload();
 		byte[] binaryFrame = new byte[payload.length + 18];
 		binaryFrame[0] = (byte) 0x7E;
 		DoubleByte length = new DoubleByte(payload.length + 14);
@@ -46,7 +58,7 @@ public class XBeeBinaryFrameHelper {
 		binaryFrame[binaryFrame.length - 1] = calculateLibeliumChecksum(binaryFrame, 3, binaryFrame.length - 4);
 
 		return binaryFrame;
-	}
+    }
 
 	protected static byte calculateLibeliumChecksum(byte[] binaryFrame, int pos, int length) {
 		long sum = 0;
@@ -58,18 +70,14 @@ public class XBeeBinaryFrameHelper {
 		return cs;
 	}
 
-	protected static XBeeDigiResponse createXBeeDigiResponse(byte[] binaryFrame) {
+	public static XBeeDigiResponse createXBeeDigiResponse(byte[] binaryFrame) {
 		int frameType = (int) binaryFrame[3] & 0x00ff;
 		if (frameType == XBeeFrame.RECEIVE_PACKET) {
 			ExtendedMacAddress originAddress = new ExtendedMacAddress(binaryFrame, 4);
-			Integer tempID = NodeAddressingHelper.getNodeID(originAddress, XBeeFrame.getProtocol(frameType));
-			if (tempID == null) {
-				return null;
-			}
-			int nodeID = tempID.intValue();
+			
 			byte[] payload = new byte[binaryFrame.length - 16];
 			System.arraycopy(binaryFrame, 15, payload, 0, payload.length);
-			return new XBeeDigiResponse(nodeID, binaryFrame[14], payload);
+			return new XBeeDigiResponse(originAddress, binaryFrame[14], payload);
 		} else {
 			throw new IllegalArgumentException("binaryFrame is not a Receive Packet (0x90) frame.");
 		}
@@ -83,5 +91,7 @@ public class XBeeBinaryFrameHelper {
 			throw new IllegalArgumentException("binaryFrame is not a Transmit Status (0x8B) frame.");
 		}
 	}
+
+
 
 }

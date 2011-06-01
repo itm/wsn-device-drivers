@@ -1,5 +1,6 @@
 package es.unican.tlmat.wsn.drivers.waspmote.frame.xbeeDigi;
 
+import es.unican.tlmat.wsn.drivers.util.ExtendedMacAddress;
 import es.unican.tlmat.wsn.drivers.waspmote.frame.XBeeFrame;
 
 /**
@@ -19,6 +20,12 @@ public class XBeeDigiResponse extends XBeeFrame {
 		this.payload = payload;
 	}
 
+	public XBeeDigiResponse(ExtendedMacAddress macAddress, int options, byte[] payload) {
+        super(macAddress, XBeeFrame.RECEIVE_PACKET);
+        this.options = options;
+        this.payload = payload;
+    }
+	
 	public int getOptions() {
 		return options;
 	}
