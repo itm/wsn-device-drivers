@@ -20,6 +20,18 @@ public class OutputStreamBridge extends OutputStream {
 	}
 	
 	@Override
+	public void write(byte[] b) throws IOException {
+		checkOutputStream();
+		outputStream.write(b);
+	}
+	
+	@Override
+	public void write(byte[] b, int off, int len) throws IOException {
+		checkOutputStream();
+		outputStream.write(b, off, len);
+	}
+	
+	@Override
 	public void flush() throws IOException {
 		checkOutputStream();
 		outputStream.flush();
