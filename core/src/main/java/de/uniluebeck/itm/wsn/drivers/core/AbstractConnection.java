@@ -11,6 +11,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.io.Closeables;
 
+import de.uniluebeck.itm.wsn.drivers.core.io.InputStreamBridge;
+import de.uniluebeck.itm.wsn.drivers.core.io.OutputStreamBridge;
+
 
 /**
  * Class that implement the common functionality of a connection class.
@@ -37,12 +40,12 @@ public abstract class AbstractConnection implements Connection {
 	/**
 	 * Input stream of the connection.
 	 */
-	private InputStream inputStream;
+	private InputStreamBridge inputStream = new InputStreamBridge();
 	
 	/**
 	 * Output stream of the connection.
 	 */
-	private OutputStream outputStream;
+	private OutputStreamBridge outputStream = new OutputStreamBridge();
 	
 	/**
 	 * The uri of the connected resource.
@@ -78,7 +81,7 @@ public abstract class AbstractConnection implements Connection {
 	 * @param inputStream The input stream object.
 	 */
 	protected void setInputStream(final InputStream inputStream) {
-		this.inputStream = inputStream;
+		this.inputStream.setInputStream(inputStream);
 	}
 	
 	/**
@@ -87,7 +90,7 @@ public abstract class AbstractConnection implements Connection {
 	 * @param outputStream The output stream object.
 	 */
 	protected void setOutputStream(final OutputStream outputStream) {
-		this.outputStream = outputStream;
+		this.outputStream.setOutputStream(outputStream);
 	}
 	
 	/**
