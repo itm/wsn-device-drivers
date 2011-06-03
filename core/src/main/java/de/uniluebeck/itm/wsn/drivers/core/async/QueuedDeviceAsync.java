@@ -3,15 +3,16 @@ package de.uniluebeck.itm.wsn.drivers.core.async;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
+import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
+import de.uniluebeck.itm.wsn.drivers.core.io.LockedInputStream;
 import de.uniluebeck.itm.wsn.drivers.core.io.SendOutputStreamWrapper;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
@@ -46,6 +47,8 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	 */
 	private final Device<? extends Connection> device;
 	
+	private LockedInputStream lockedInputStream;
+	
 	/**
 	 * Constructor.
 	 * 
@@ -56,6 +59,10 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	public QueuedDeviceAsync(final OperationQueue queue, final Device<? extends Connection> device) {
 		this.queue = queue;
 		this.device = device;
+		
+		InputStream inputStream = device.getConnection().getInputStream();
+		lockedInputStream = new LockedInputStream(inputStream);
+		new LockedInputStreamManager(queue, lockedInputStream);
 	}
 	
 	@Override
@@ -128,7 +135,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	
 	@Override
 	public InputStream getInputStream() {
-		return device.getInputStream();
+		return lockedInputStream;
 	}
 	
 	@Override
