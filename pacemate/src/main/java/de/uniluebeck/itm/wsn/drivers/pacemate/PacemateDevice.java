@@ -7,6 +7,8 @@ import java.io.OutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.io.Flushables;
+
 import de.uniluebeck.itm.tr.util.StringUtils;
 import de.uniluebeck.itm.wsn.drivers.core.Programable;
 import de.uniluebeck.itm.wsn.drivers.core.exception.InvalidChecksumException;
@@ -547,7 +549,7 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 			log.warn("Exception while waiting for connection", error);
 		}
 
-		getConnection().flush();
+		Flushables.flushQuietly(getConnection());
 		return false;
 	}
 

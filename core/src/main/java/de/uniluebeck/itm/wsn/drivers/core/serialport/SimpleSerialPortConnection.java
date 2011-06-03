@@ -177,14 +177,10 @@ public class SimpleSerialPortConnection extends AbstractConnection implements Se
 	 * 
 	 */
 	@Override
-	public void flush() {
+	public void flush() throws IOException {
 		LOG.trace("Flushing serial rx buffer");
 		final InputStream in = getInputStream();
-		try {
-			ByteStreams.skipFully(in, in.available());
-		} catch (IOException e) {
-			LOG.error("Error while serial rx flushing buffer: " + e, e);
-		}
+		ByteStreams.skipFully(in, in.available());
 	}
 
 	public int getNormalBaudrate() {

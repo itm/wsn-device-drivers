@@ -1,5 +1,7 @@
 package de.uniluebeck.itm.wsn.drivers.core.serialport;
 
+import java.io.Flushable;
+
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import gnu.io.SerialPort;
 
@@ -8,7 +10,7 @@ import gnu.io.SerialPort;
  * 
  * @author Malte Legenhausen
  */
-public interface SerialPortConnection extends Connection {
+public interface SerialPortConnection extends Connection, Flushable {
 	
 	/**
 	 * Serial port modes for normal usage and programming.
@@ -39,9 +41,4 @@ public interface SerialPortConnection extends Connection {
 	 * @param mode Set the port to normal or programming mode.
 	 */
 	void setSerialPortMode(SerialPortMode mode);
-	
-	/**
-	 * Flush the receive buffer.
-	 */
-	void flush();
 }

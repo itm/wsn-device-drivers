@@ -7,6 +7,8 @@ import java.io.OutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.io.Flushables;
+
 import de.uniluebeck.itm.tr.util.StringUtils;
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.Programable;
@@ -309,7 +311,7 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 			log.error("Exception while waiting for connection", e);
 		}
 
-		getConnection().flush();
+		Flushables.flushQuietly(getConnection());
 		return false;
 	}
 	
