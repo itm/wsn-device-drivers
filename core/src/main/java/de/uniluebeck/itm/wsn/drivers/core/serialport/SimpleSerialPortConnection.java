@@ -3,6 +3,8 @@ package de.uniluebeck.itm.wsn.drivers.core.serialport;
 import gnu.io.CommPortIdentifier;
 import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
+import gnu.io.SerialPortEvent;
+import gnu.io.SerialPortEventListener;
 import gnu.io.UnsupportedCommOperationException;
 
 import java.io.IOException;
@@ -18,7 +20,9 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import com.google.common.io.ByteStreams;
 
+import de.uniluebeck.itm.tr.util.TimeDiff;
 import de.uniluebeck.itm.wsn.drivers.core.AbstractConnection;
+import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 import de.uniluebeck.itm.wsn.drivers.core.util.JarUtil;
 import de.uniluebeck.itm.wsn.drivers.core.util.SysOutUtil;
 
@@ -28,12 +32,17 @@ import de.uniluebeck.itm.wsn.drivers.core.util.SysOutUtil;
  * 
  * @author Malte Legenhausen
  */
-public class SimpleSerialPortConnection extends AbstractConnection implements SerialPortConnection {
+public class SimpleSerialPortConnection extends AbstractConnection implements SerialPortConnection, SerialPortEventListener {
 	
 	/**
 	 * Logger for this class.
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(SimpleSerialPortConnection.class);
+	
+	/**
+	 * The timeout that will be waited for available data.
+	 */
+	private static final int DATA_AVAILABLE_TIMEOUT = 50;
 	
 	/**
 	 * The default baudrate.
@@ -85,6 +94,11 @@ public class SimpleSerialPortConnection extends AbstractConnection implements Se
 	 */
 	private SerialPort serialPort;
 	
+	/**
+	 * Synchronization object for data connection.
+	 */
+	private final Object dataAvailableMonitor = new Object();
+	
 	static {
 		LOG.trace("Loading rxtxSerial from jar file");
 		JarUtil.loadLibrary("rxtxSerial");
@@ -135,6 +149,7 @@ public class SimpleSerialPortConnection extends AbstractConnection implements Se
 		});
 		serialPort = (SerialPort) commPortIdentifier.open(getClass().getName(), MAX_CONNECTION_TIMEOUT);
 		serialPort.notifyOnDataAvailable(true);
+		serialPort.addEventListener(this);
 
 		setUri(port);
 		setOutputStream(serialPort.getOutputStream());
@@ -181,6 +196,46 @@ public class SimpleSerialPortConnection extends AbstractConnection implements Se
 		LOG.trace("Flushing serial rx buffer");
 		final InputStream in = getInputStream();
 		ByteStreams.skipFully(in, in.available());
+	}
+	
+	@Override
+	public void serialEvent(final SerialPortEvent event) {
+		switch (event.getEventType()) {
+		case SerialPortEvent.DATA_AVAILABLE:			
+			synchronized (dataAvailableMonitor) {
+				dataAvailableMonitor.notifyAll();
+			}
+			break;
+		default:
+			LOG.debug("Serial event (other than data available): " + event);
+			break;
+		}
+	}
+	
+	@Override
+	public int waitDataAvailable(final int timeout) throws TimeoutException, IOException {
+		LOG.trace("Waiting for data...");
+		
+		final InputStream inputStream = getInputStream();
+		final TimeDiff timeDiff = new TimeDiff();
+		int available = inputStream.available();
+
+		while (available == 0) {
+			if (timeout > 0 && timeDiff.ms() >= timeout) {
+				LOG.warn("Timeout waiting for data (waited: " + timeDiff.ms() + ", timeoutMs:" + timeout + ")");
+				throw new TimeoutException();
+			}
+
+			synchronized (dataAvailableMonitor) {
+				try {
+					dataAvailableMonitor.wait(DATA_AVAILABLE_TIMEOUT);
+				} catch (final InterruptedException e) {
+					LOG.error("Interrupted: " + e, e);
+				}
+			}
+			available = inputStream.available();
+		}
+		return available;
 	}
 
 	public int getNormalBaudrate() {

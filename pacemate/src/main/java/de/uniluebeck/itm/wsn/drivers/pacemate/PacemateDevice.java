@@ -29,11 +29,11 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.SendOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.WriteFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.AbstractSerialPortDevice;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortEnterProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortLeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortSendOperation;
 import de.uniluebeck.itm.wsn.drivers.isense.iSenseResetOperation;
-import de.uniluebeck.itm.wsn.drivers.isense.iSenseSerialPortConnection;
 
 public class PacemateDevice extends AbstractSerialPortDevice implements Programable {
 
@@ -46,13 +46,10 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 	
 	private static final int TIMEOUT = 2000;
 	
-	private final iSenseSerialPortConnection connection;
-	
 	private boolean echo = true;
 
-	public PacemateDevice(iSenseSerialPortConnection connection) {
+	public PacemateDevice(SerialPortConnection connection) {
 		super(connection);
-		this.connection = connection;
 	}
 	
 	@Override
@@ -469,6 +466,7 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 	 * @throws IOException
 	 */
 	private byte[] readInputStream(int CRLFcount) throws TimeoutException, IOException {
+		final SerialPortConnection connection = getConnection();
 		final byte[] message = new byte[255];
 
 		int index = 0;

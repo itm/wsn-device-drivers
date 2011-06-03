@@ -30,12 +30,12 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.SendOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.WriteFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.AbstractSerialPortDevice;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortEnterProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortLeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortSendOperation;
 import de.uniluebeck.itm.wsn.drivers.isense.FlashType;
 import de.uniluebeck.itm.wsn.drivers.isense.iSenseResetOperation;
-import de.uniluebeck.itm.wsn.drivers.isense.iSenseSerialPortConnection;
 import de.uniluebeck.itm.wsn.drivers.isense.exception.FlashTypeReadFailedException;
 import de.uniluebeck.itm.wsn.drivers.jennic.exception.SectorEraseException;
 
@@ -48,11 +48,8 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 	
 	private static final int TIMEOUT = 2000;
 	
-	private final iSenseSerialPortConnection connection;
-	
-	public JennicDevice(iSenseSerialPortConnection connection) {
+	public JennicDevice(SerialPortConnection connection) {
 		super(connection);
-		this.connection = connection;
 	}
 	
 	@Override
@@ -256,7 +253,8 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 	 */
 	public byte[] receiveBootLoaderReply(int type) throws TimeoutException, UnexpectedResponseException, InvalidChecksumException, IOException, NullPointerException {
 		log.trace("Receiving Boot Loader Reply...");
-		final InputStream inputStream = getConnection().getInputStream();
+		final SerialPortConnection connection = getConnection();
+		final InputStream inputStream = connection.getInputStream();
 		
 		connection.waitDataAvailable(TIMEOUT);
 		// Read message length

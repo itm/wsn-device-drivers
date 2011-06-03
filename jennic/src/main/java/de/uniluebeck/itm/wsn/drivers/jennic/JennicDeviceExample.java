@@ -14,7 +14,7 @@ public class JennicDeviceExample {
 	 * @param args
 	 */
 	public static void main(String[] args) {		
-		final JennicSerialPortConnection connection = new JennicSerialPortConnection();		
+		final SerialPortConnection connection = new JennicSerialPortConnection();		
 		final Device<SerialPortConnection> device = new JennicDevice(connection);
 		final GenericDeviceExample example = new GenericDeviceExample();
 		example.addByteReceiver(new MessagePacketReceiver());
