@@ -11,6 +11,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,9 +99,14 @@ public class SimpleSerialPortConnection extends AbstractConnection implements Se
 	private SerialPort serialPort;
 	
 	/**
-	 * Synchronization object for data connection.
+	 * Data available lock.
 	 */
-	private final Object dataAvailableMonitor = new Object();
+	private final Lock dataAvailableLock = new ReentrantLock();
+	
+	/**
+	 * Condition that indicates when data is available.
+	 */
+	private final Condition isDataAvailable = dataAvailableLock.newCondition();
 	
 	static {
 		LOG.trace("Loading rxtxSerial from jar file");
@@ -194,16 +203,19 @@ public class SimpleSerialPortConnection extends AbstractConnection implements Se
 	@Override
 	public void flush() throws IOException {
 		LOG.trace("Flushing serial rx buffer");
-		final InputStream in = getInputStream();
-		ByteStreams.skipFully(in, in.available());
+		final InputStream inputStream = getInputStream();
+		ByteStreams.skipFully(inputStream, inputStream.available());
 	}
 	
 	@Override
 	public void serialEvent(final SerialPortEvent event) {
 		switch (event.getEventType()) {
-		case SerialPortEvent.DATA_AVAILABLE:			
-			synchronized (dataAvailableMonitor) {
-				dataAvailableMonitor.notifyAll();
+		case SerialPortEvent.DATA_AVAILABLE:
+			dataAvailableLock.lock();
+			try {
+				isDataAvailable.signal();
+			} finally {
+				dataAvailableLock.unlock();
 			}
 			break;
 		default:
@@ -226,12 +238,13 @@ public class SimpleSerialPortConnection extends AbstractConnection implements Se
 				throw new TimeoutException();
 			}
 
-			synchronized (dataAvailableMonitor) {
-				try {
-					dataAvailableMonitor.wait(DATA_AVAILABLE_TIMEOUT);
-				} catch (final InterruptedException e) {
-					LOG.error("Interrupted: " + e, e);
-				}
+			dataAvailableLock.lock();
+			try {
+				isDataAvailable.await(DATA_AVAILABLE_TIMEOUT, TimeUnit.MILLISECONDS);
+			} catch (final InterruptedException e) {
+				LOG.error("Interrupted: " + e, e);
+			} finally {
+				dataAvailableLock.unlock();
 			}
 			available = inputStream.available();
 		}
