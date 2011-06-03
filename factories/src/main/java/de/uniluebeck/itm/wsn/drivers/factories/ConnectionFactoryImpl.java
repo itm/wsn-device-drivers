@@ -24,12 +24,37 @@
 package de.uniluebeck.itm.wsn.drivers.factories;
 
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
-import de.uniluebeck.itm.wsn.drivers.core.async.DeviceAsync;
-import de.uniluebeck.itm.wsn.drivers.core.async.OperationQueue;
+import de.uniluebeck.itm.wsn.drivers.isense.iSenseSerialPortConnection;
+import de.uniluebeck.itm.wsn.drivers.mock.MockConnection;
+import de.uniluebeck.itm.wsn.drivers.nulldevice.NullConnection;
+import de.uniluebeck.itm.wsn.drivers.pacemate.PacemateSerialPortConnection;
+import de.uniluebeck.itm.wsn.drivers.telosb.TelosbSerialPortConnection;
 
-public interface DeviceAsyncFactory {
+public class ConnectionFactoryImpl implements ConnectionFactory {
 
-	DeviceAsync create(DeviceType deviceType, Connection connection, OperationQueue operationQueue);
+	@Override
+	public Connection create(DeviceType deviceType) {
+		switch (deviceType) {
+			case ISENSE:
+				return new iSenseSerialPortConnection();
+			case PACEMATE:
+				return new PacemateSerialPortConnection();
+			case TELOSB:
+				return new TelosbSerialPortConnection();
+			case MOCK:
+				return new MockConnection();
+			case NULL:
+				return new NullConnection();
+		}
+		throw new RuntimeException("Unhandled device type \"" + deviceType
+				+ "\". Maybe someone forgot to add this (new) device type to " + ConnectionFactoryImpl.class.getName()
+				+ "?"
+		);
+	}
 
-	DeviceAsync create(String deviceType, Connection connection, OperationQueue operationQueue);
+	@Override
+	public Connection create(String deviceType) {
+		return create(DeviceType.fromString(deviceType));
+	}
+
 }
