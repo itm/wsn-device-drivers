@@ -3,6 +3,7 @@ package de.uniluebeck.itm.wsn.drivers.telosb;
 import java.io.IOException;
 
 import de.uniluebeck.itm.wsn.drivers.core.ConnectionEvent;
+import de.uniluebeck.itm.wsn.drivers.core.ConnectionListener;
 import de.uniluebeck.itm.wsn.drivers.core.Programable;
 import de.uniluebeck.itm.wsn.drivers.core.exception.FlashProgramFailedException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.InvalidChecksumException;
@@ -28,12 +29,18 @@ import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortLeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortSendOperation;
 
-public class TelosbDevice extends AbstractSerialPortDevice implements Programable {
+public class TelosbDevice extends AbstractSerialPortDevice implements Programable, ConnectionListener {
 	
 	private BSLTelosb bsl;
 	
 	public TelosbDevice(SerialPortConnection connection) {
 		super(connection);
+		connection.addListener(this);
+		initBSL(connection.isConnected());
+	}
+	
+	private void initBSL(boolean connected) {
+		bsl = connected ? new BSLTelosb(getConnection()) : null;
 	}
 
 	@Override
@@ -127,11 +134,7 @@ public class TelosbDevice extends AbstractSerialPortDevice implements Programabl
 	
 	@Override
 	public void onConnectionChange(ConnectionEvent event) {
-		super.onConnectionChange(event);
-		
-		if (event.isConnected()) {
-			bsl = new BSLTelosb(getConnection());
-		}
+		initBSL(event.isConnected());
 	}
 	
 	public void writeFlash(int address, byte[] bytes, int len) throws IOException, FlashProgramFailedException, TimeoutException, InvalidChecksumException, ReceivedIncorrectDataException, UnexpectedResponseException {

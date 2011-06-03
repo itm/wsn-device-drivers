@@ -26,6 +26,7 @@ package de.uniluebeck.itm.wsn.drivers.factories;
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
+import de.uniluebeck.itm.wsn.drivers.isense.iSenseSerialPortConnection;
 import de.uniluebeck.itm.wsn.drivers.jennic.JennicDevice;
 import de.uniluebeck.itm.wsn.drivers.mock.MockDevice;
 import de.uniluebeck.itm.wsn.drivers.nulldevice.NullConnection;
@@ -39,9 +40,9 @@ public class DeviceFactoryImpl implements DeviceFactory {
 	public <C extends Connection> Device<? extends Connection> create(DeviceType deviceType, C connection) {
 		switch (deviceType) {
 			case ISENSE:
-				return new JennicDevice((SerialPortConnection) connection);
+				return new JennicDevice((iSenseSerialPortConnection) connection);
 			case PACEMATE:
-				return new PacemateDevice((SerialPortConnection) connection);
+				return new PacemateDevice((iSenseSerialPortConnection) connection);
 			case TELOSB:
 				return new TelosbDevice((SerialPortConnection) connection);
 			case MOCK:

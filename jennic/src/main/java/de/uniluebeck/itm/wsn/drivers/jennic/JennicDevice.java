@@ -30,12 +30,12 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.SendOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.WriteFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.AbstractSerialPortDevice;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortEnterProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortLeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortSendOperation;
 import de.uniluebeck.itm.wsn.drivers.isense.FlashType;
 import de.uniluebeck.itm.wsn.drivers.isense.iSenseResetOperation;
+import de.uniluebeck.itm.wsn.drivers.isense.iSenseSerialPortConnection;
 import de.uniluebeck.itm.wsn.drivers.isense.exception.FlashTypeReadFailedException;
 import de.uniluebeck.itm.wsn.drivers.jennic.exception.SectorEraseException;
 
@@ -48,8 +48,11 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 	
 	private static final int TIMEOUT = 2000;
 	
-	public JennicDevice(SerialPortConnection connection) {
+	private final iSenseSerialPortConnection connection;
+	
+	public JennicDevice(iSenseSerialPortConnection connection) {
 		super(connection);
+		this.connection = connection;
 	}
 	
 	@Override
@@ -255,7 +258,7 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 		log.trace("Receiving Boot Loader Reply...");
 		final InputStream inputStream = getConnection().getInputStream();
 		
-		waitDataAvailable(TIMEOUT);
+		connection.waitDataAvailable(TIMEOUT);
 		// Read message length
 		int length = (int) inputStream.read();
 		log.trace("receiveBootLoaderReply length: " + length);
@@ -265,13 +268,13 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 
 		// Read rest of the message (except the checksum
 		for (int i = 0; i < message.length; ++i) {
-			waitDataAvailable(TIMEOUT);
+			connection.waitDataAvailable(TIMEOUT);
 			message[i] = (byte) inputStream.read();
 		}
 		log.trace("Received boot loader msg: " + StringUtils.toHexString(message));
 
 		// Read checksum
-		waitDataAvailable(TIMEOUT);
+		connection.waitDataAvailable(TIMEOUT);
 		byte recvChecksum = (byte) inputStream.read();
 		log.trace("Received Checksum: " + StringUtils.toHexString(recvChecksum));
 

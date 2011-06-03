@@ -6,12 +6,11 @@ import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 import de.uniluebeck.itm.wsn.drivers.core.util.GenericDeviceExample;
 import de.uniluebeck.itm.wsn.drivers.isense.MessagePacketReceiver;
-import de.uniluebeck.itm.wsn.drivers.isense.iSenseSerialPortConnection;
 
 public class PacemateDeviceExample extends GenericDeviceExample {
 	
 	public static void main(String[] args) {
-		final SerialPortConnection connection = new iSenseSerialPortConnection();
+		final PacemateSerialPortConnection connection = new PacemateSerialPortConnection();
 		final Device<SerialPortConnection> device = new PacemateDevice(connection);
 		final GenericDeviceExample example = new GenericDeviceExample();
 		example.addByteReceiver(new MessagePacketReceiver());
