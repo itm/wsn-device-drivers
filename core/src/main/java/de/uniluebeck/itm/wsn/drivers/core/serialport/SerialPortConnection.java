@@ -1,6 +1,10 @@
 package de.uniluebeck.itm.wsn.drivers.core.serialport;
 
+import java.io.Flushable;
+import java.io.IOException;
+
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
+import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 import gnu.io.SerialPort;
 
 /**
@@ -8,7 +12,7 @@ import gnu.io.SerialPort;
  * 
  * @author Malte Legenhausen
  */
-public interface SerialPortConnection extends Connection {
+public interface SerialPortConnection extends Connection, Flushable {
 	
 	/**
 	 * Serial port modes for normal usage and programming.
@@ -41,7 +45,12 @@ public interface SerialPortConnection extends Connection {
 	void setSerialPortMode(SerialPortMode mode);
 	
 	/**
-	 * Flush the receive buffer.
+	 * Wait at most timeoutMillis for the input stream to become available
+	 * 
+	 * @param timeout Milliseconds to wait until timeout, 0 for no timeout
+	 * @return The number of characters available
+	 * @throws TimeoutException when no data was available for the timeout duration.
+	 * @throws IOException when something went wrong with the input stream.
 	 */
-	void flush();
+	int waitDataAvailable(int timeout) throws TimeoutException, IOException;
 }

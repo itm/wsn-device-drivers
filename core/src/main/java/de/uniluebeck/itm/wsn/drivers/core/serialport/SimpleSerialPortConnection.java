@@ -3,12 +3,18 @@ package de.uniluebeck.itm.wsn.drivers.core.serialport;
 import gnu.io.CommPortIdentifier;
 import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
+import gnu.io.SerialPortEvent;
+import gnu.io.SerialPortEventListener;
 import gnu.io.UnsupportedCommOperationException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +24,9 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import com.google.common.io.ByteStreams;
 
+import de.uniluebeck.itm.tr.util.TimeDiff;
 import de.uniluebeck.itm.wsn.drivers.core.AbstractConnection;
+import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 import de.uniluebeck.itm.wsn.drivers.core.util.JarUtil;
 import de.uniluebeck.itm.wsn.drivers.core.util.SysOutUtil;
 
@@ -28,12 +36,17 @@ import de.uniluebeck.itm.wsn.drivers.core.util.SysOutUtil;
  * 
  * @author Malte Legenhausen
  */
-public class SimpleSerialPortConnection extends AbstractConnection implements SerialPortConnection {
+public class SimpleSerialPortConnection extends AbstractConnection implements SerialPortConnection, SerialPortEventListener {
 	
 	/**
 	 * Logger for this class.
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(SimpleSerialPortConnection.class);
+	
+	/**
+	 * The timeout that will be waited for available data.
+	 */
+	private static final int DATA_AVAILABLE_TIMEOUT = 50;
 	
 	/**
 	 * The default baudrate.
@@ -85,6 +98,16 @@ public class SimpleSerialPortConnection extends AbstractConnection implements Se
 	 */
 	private SerialPort serialPort;
 	
+	/**
+	 * Data available lock.
+	 */
+	private final Lock dataAvailableLock = new ReentrantLock();
+	
+	/**
+	 * Condition that indicates when data is available.
+	 */
+	private final Condition isDataAvailable = dataAvailableLock.newCondition();
+	
 	static {
 		LOG.trace("Loading rxtxSerial from jar file");
 		JarUtil.loadLibrary("rxtxSerial");
@@ -135,6 +158,7 @@ public class SimpleSerialPortConnection extends AbstractConnection implements Se
 		});
 		serialPort = (SerialPort) commPortIdentifier.open(getClass().getName(), MAX_CONNECTION_TIMEOUT);
 		serialPort.notifyOnDataAvailable(true);
+		serialPort.addEventListener(this);
 
 		setUri(port);
 		setOutputStream(serialPort.getOutputStream());
@@ -177,14 +201,54 @@ public class SimpleSerialPortConnection extends AbstractConnection implements Se
 	 * 
 	 */
 	@Override
-	public void flush() {
+	public void flush() throws IOException {
 		LOG.trace("Flushing serial rx buffer");
-		final InputStream in = getInputStream();
-		try {
-			ByteStreams.skipFully(in, in.available());
-		} catch (IOException e) {
-			LOG.error("Error while serial rx flushing buffer: " + e, e);
+		final InputStream inputStream = getInputStream();
+		ByteStreams.skipFully(inputStream, inputStream.available());
+	}
+	
+	@Override
+	public void serialEvent(final SerialPortEvent event) {
+		switch (event.getEventType()) {
+		case SerialPortEvent.DATA_AVAILABLE:
+			dataAvailableLock.lock();
+			try {
+				isDataAvailable.signal();
+			} finally {
+				dataAvailableLock.unlock();
+			}
+			break;
+		default:
+			LOG.debug("Serial event (other than data available): " + event);
+			break;
 		}
+	}
+	
+	@Override
+	public int waitDataAvailable(final int timeout) throws TimeoutException, IOException {
+		LOG.trace("Waiting for data...");
+		
+		final InputStream inputStream = getInputStream();
+		final TimeDiff timeDiff = new TimeDiff();
+		int available = inputStream.available();
+
+		while (available == 0) {
+			if (timeout > 0 && timeDiff.ms() >= timeout) {
+				LOG.warn("Timeout waiting for data (waited: " + timeDiff.ms() + ", timeoutMs:" + timeout + ")");
+				throw new TimeoutException();
+			}
+
+			dataAvailableLock.lock();
+			try {
+				isDataAvailable.await(DATA_AVAILABLE_TIMEOUT, TimeUnit.MILLISECONDS);
+			} catch (final InterruptedException e) {
+				LOG.error("Interrupted: " + e, e);
+			} finally {
+				dataAvailableLock.unlock();
+			}
+			available = inputStream.available();
+		}
+		return available;
 	}
 
 	public int getNormalBaudrate() {

@@ -6,7 +6,6 @@ import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 import de.uniluebeck.itm.wsn.drivers.core.util.GenericDeviceExample;
 import de.uniluebeck.itm.wsn.drivers.isense.MessagePacketReceiver;
-import de.uniluebeck.itm.wsn.drivers.isense.iSenseSerialPortConnection;
 
 
 public class JennicDeviceExample {
@@ -15,7 +14,7 @@ public class JennicDeviceExample {
 	 * @param args
 	 */
 	public static void main(String[] args) {		
-		final SerialPortConnection connection = new iSenseSerialPortConnection();		
+		final SerialPortConnection connection = new JennicSerialPortConnection();		
 		final Device<SerialPortConnection> device = new JennicDevice(connection);
 		final GenericDeviceExample example = new GenericDeviceExample();
 		example.addByteReceiver(new MessagePacketReceiver());

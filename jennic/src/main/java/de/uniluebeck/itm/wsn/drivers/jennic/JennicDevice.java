@@ -7,6 +7,8 @@ import java.io.OutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.io.Flushables;
+
 import de.uniluebeck.itm.tr.util.StringUtils;
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.Programable;
@@ -251,9 +253,10 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 	 */
 	public byte[] receiveBootLoaderReply(int type) throws TimeoutException, UnexpectedResponseException, InvalidChecksumException, IOException, NullPointerException {
 		log.trace("Receiving Boot Loader Reply...");
-		final InputStream inputStream = getConnection().getInputStream();
+		final SerialPortConnection connection = getConnection();
+		final InputStream inputStream = connection.getInputStream();
 		
-		waitDataAvailable(TIMEOUT);
+		connection.waitDataAvailable(TIMEOUT);
 		// Read message length
 		int length = (int) inputStream.read();
 		log.trace("receiveBootLoaderReply length: " + length);
@@ -263,13 +266,13 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 
 		// Read rest of the message (except the checksum
 		for (int i = 0; i < message.length; ++i) {
-			waitDataAvailable(TIMEOUT);
+			connection.waitDataAvailable(TIMEOUT);
 			message[i] = (byte) inputStream.read();
 		}
 		log.trace("Received boot loader msg: " + StringUtils.toHexString(message));
 
 		// Read checksum
-		waitDataAvailable(TIMEOUT);
+		connection.waitDataAvailable(TIMEOUT);
 		byte recvChecksum = (byte) inputStream.read();
 		log.trace("Received Checksum: " + StringUtils.toHexString(recvChecksum));
 
@@ -309,7 +312,7 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 			log.error("Exception while waiting for connection", e);
 		}
 
-		getConnection().flush();
+		Flushables.flushQuietly(getConnection());
 		return false;
 	}
 	

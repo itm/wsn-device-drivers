@@ -1,5 +1,6 @@
 package de.uniluebeck.itm.wsn.drivers.isense;
 
+import gnu.io.SerialPortEventListener;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SimpleSerialPortConnection;
 
 
@@ -8,7 +9,7 @@ import de.uniluebeck.itm.wsn.drivers.core.serialport.SimpleSerialPortConnection;
  * 
  * @author Malte Legenhausen
  */
-public class iSenseSerialPortConnection extends SimpleSerialPortConnection {
+public class iSenseSerialPortConnection extends SimpleSerialPortConnection implements SerialPortEventListener {
 	
 	private static final int NORMAL_BAUDRATE = 115200;
 

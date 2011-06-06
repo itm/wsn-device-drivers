@@ -7,6 +7,8 @@ import java.io.OutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.io.Flushables;
+
 import de.uniluebeck.itm.tr.util.StringUtils;
 import de.uniluebeck.itm.wsn.drivers.core.Programable;
 import de.uniluebeck.itm.wsn.drivers.core.exception.InvalidChecksumException;
@@ -464,12 +466,13 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 	 * @throws IOException
 	 */
 	private byte[] readInputStream(int CRLFcount) throws TimeoutException, IOException {
+		final SerialPortConnection connection = getConnection();
 		final byte[] message = new byte[255];
 
 		int index = 0;
 		int counter = 0;
 		int wait = 5;
-		waitDataAvailable(TIMEOUT);
+		connection.waitDataAvailable(TIMEOUT);
 
 		// Read the message - read CRLFcount lines of response
 		final InputStream inStream = getConnection().getInputStream();
@@ -490,7 +493,7 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 				}
 				
 				try {
-					waitDataAvailable(1000);
+					connection.waitDataAvailable(1000);
 				} catch (final TimeoutException e) {
 					// Do nothing
 				}
@@ -547,7 +550,7 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 			log.warn("Exception while waiting for connection", error);
 		}
 
-		getConnection().flush();
+		Flushables.flushQuietly(getConnection());
 		return false;
 	}
 
