@@ -23,10 +23,15 @@
 
 package de.uniluebeck.itm.wsn.drivers.core;
 
+import java.util.Arrays;
+
+import de.uniluebeck.itm.wsn.drivers.core.util.HexUtils;
+
 /**
  * <code>MacAddress</code> object representation.
  *
  * @author Malte Legenhausen
+ * @author TLMAT UC
  */
 public class MacAddress {
 
@@ -36,43 +41,54 @@ public class MacAddress {
 	private static final int LENGTH = 8;
 
 	/**
-	 * Suppose the MAC address is: 00:15:8D:00:00:04:7D:50. Then 0x00 will be stored at address[0] and 0x50 at address[7].
-	 * The least significant value isx50. 0x00 0x15 0x8D 0x00 0x00 0x04 0x7D 0x50
+	 * Suppose the MAC address is: 00:15:8D:00:00:04:7D:50. Then 0x00 will be
+	 * stored at address[0] and 0x50 at address[7]. The least significant value
+	 * is 0x50. 0x00 0x15 0x8D 0x00 0x00 0x04 0x7D 0x50
 	 */
 	private final byte[] array = new byte[LENGTH];
 
 	/**
 	 * Constructor.
 	 *
-	 * @param macAddress Address as long value.
+	 * @param macAddress
+	 *            Address as long value.
 	 */
-    public MacAddress(final long macAddress) {
+	public MacAddress(final long macAddress) {
 		setArray(macAddress);
 	}
 
 	/**
 	 * Constructor.
 	 *
-	 * @param macAddress Address as byte array.
+	 * @param macAddress
+	 *            Address as byte array.
 	 */
 	public MacAddress(final byte[] macAddress) {
 		System.arraycopy(macAddress, 0, array, 0, LENGTH);
 	}
 
 	/**
-	 * Constructs an instance from a String value. The value may either be specified as decimal ("1234"),
-	 * hexadecimal ("0x4d2") or binary ("0b10011010010").
+	 * Constructor.
 	 *
-	 * @param macAddress Address as String value
+	 * @param byteArray
+	 *            Byte array including macAddress.
+	 * @param offset
+	 *            Offset to apply until macAddress.
+	 */
+	public MacAddress(final byte[] byteArray, int offset) {
+		System.arraycopy(byteArray, offset, array, 0, LENGTH);
+	}
+
+	/**
+	 * Constructs an instance from an hexadecimal String value. Only first 8
+	 * recognised bytes will be used. Any of the characters included in
+	 * HexUtils.getIgnoredChars() will be bypassed.
+	 *
+	 * @param macAddress
+	 *            Address as String value
 	 */
 	public MacAddress(final String macAddress) {
-		if (macAddress.startsWith("0x")) {
-			setArray(Long.parseLong(macAddress.substring(2), 16));
-		} else if (macAddress.startsWith("0b")) {
-			setArray(Long.parseLong(macAddress.substring(2), 2));
-		} else {
-			setArray(Long.parseLong(macAddress, 10));
-		}
+		System.arraycopy(HexUtils.hexString2ByteArray(macAddress), 0, array, 0, LENGTH);
 	}
 
 	/**
@@ -91,6 +107,7 @@ public class MacAddress {
 	 *
 	 * @return the MAC address as long value
 	 */
+	//@formatter:off
 	public long toLong() {
 		return  ((long) array[0] & 0xff) << 56 |
                 ((long) array[1] & 0xff) << 48 |
@@ -101,32 +118,29 @@ public class MacAddress {
                 ((long) array[6] & 0xff) <<  8 |
                 ((long) array[7] & 0xff) <<  0;
 	}
+	//@formatter:on
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof MacAddress) {
+			return (Arrays.equals(this.array, ((MacAddress) obj).array));
+		}
+		return false;
+	}
 
 	@Override
 	public String toString() {
-		return toHexString();
-	}
-
-	public String toHexString() {
-		return "0x" + Long.toString(toLong(), 16);
-	}
-
-	public String toDecString() {
-		return Long.toString(toLong(), 10);
-	}
-
-	public String toBinString() {
-		return "0b" + Long.toString(toLong(), 2);
+		return HexUtils.byteArray2HexString(this.toByteArray(), ':');
 	}
 
 	private void setArray(final long value) {
 		array[0] = (byte) (value >>> 56);
-        array[1] = (byte) (value >>> 48);
-        array[2] = (byte) (value >>> 40);
-        array[3] = (byte) (value >>> 32);
-        array[4] = (byte) (value >>> 24);
-        array[5] = (byte) (value >>> 16);
-        array[6] = (byte) (value >>> 8);
-        array[7] = (byte) (value >>> 0);
+		array[1] = (byte) (value >>> 48);
+		array[2] = (byte) (value >>> 40);
+		array[3] = (byte) (value >>> 32);
+		array[4] = (byte) (value >>> 24);
+		array[5] = (byte) (value >>> 16);
+		array[6] = (byte) (value >>> 8);
+		array[7] = (byte) (value >>> 0);
 	}
 }

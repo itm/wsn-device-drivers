@@ -6,16 +6,16 @@
 	<parent>
 		<artifactId>wsn-device-drivers</artifactId>
 		<groupId>de.uniluebeck.itm</groupId>
-		<version>0.4-SNAPSHOT</version>
+		<version>0.3.4-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<groupId>eu.smartsantander</groupId>
 	<artifactId>wsn-device-drivers-waspmote</artifactId>
-	<version>0.2-SNAPSHOT</version>
-	<name>Wisebed compatible drivers for Waspmote</name>
+	<version>0.3.4-SNAPSHOT</version>
+	<name>WSN Device Drivers Waspmote</name>
 	<organization>
-		<name>Universidad de Cantabria (GIT)</name>
-		<url>www.tlmat.unican.es</url>
+		<name>SmartSantander Fire Project</name>
+		<url>http://www.smartsantander.eu/</url>
 	</organization>
 	<build>
 		<plugins>
@@ -54,7 +54,7 @@
 		<dependency>
 			<groupId>de.uniluebeck.itm</groupId>
 			<artifactId>wsn-device-drivers-core</artifactId>
-			<version>0.4-SNAPSHOT</version>
+			<version>0.3.4-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
