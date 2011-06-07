@@ -1,0 +1,61 @@
+<!--
+/*
+ * Copyright 2005-2008 Sun Microsystems, Inc. All Rights Reserved.
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER
+ * 
+ * This code is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2
+ * only, as published by the Free Software Foundation.
+ * 
+ * This code is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License version 2 for more details (a copy is
+ * included in the LICENSE file that accompanied this code).
+ * 
+ * You should have received a copy of the GNU General Public License
+ * version 2 along with this work; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA
+ * 
+ * Please contact Sun Microsystems, Inc., 16 Network Circle, Menlo
+ * Park, CA 94025 or visit www.sun.com if you need additional
+ * information or have any questions.
+ */
+-->
+
+<project name="compile">
+	<target name="-pre-compile"/>
+	
+    <target name="-do-compile">
+    	<condition property="utility.jars.on.classpath" value="${utility.jars}">
+    		<isset property="utility.jars"/>
+    	</condition>
+    	<property name="utility.jars.on.classpath" value="" />
+    	
+        <mkdir dir="${build.dir}"/>
+        <javac sourcepath="" srcdir="${src.dir}"
+               destdir="${build.dir}"
+               includeAntRuntime="no"
+               includeJavaRuntime="no"
+               bootclasspath="${sunspot.bootclasspath}"
+               classpath="${sunspot.classpath}${path.separator}${utility.jars.on.classpath}"
+               target="1.2"
+               source="1.3"
+               debug="true"
+               fork="yes"
+        	   includes="${spot.javac.include.src}"
+    		   excludes="${spot.javac.exclude.src}"/>
+    </target>
+
+    <target name="-post-compile"/>
+
+    <target name="-pre-compile-single"/>
+	
+    <target name="-do-compile-single">
+        <fail unless="javac.includes">Must select some files in the IDE or set javac.includes</fail>
+    	<antcall target="-do-compile"/>
+    </target>
+	
+    <target name="-post-compile-single"/>
+</project>

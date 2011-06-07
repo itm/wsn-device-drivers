@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content="HTML Tidy for Mac OS X (vers 1st December 2004), see www.w3.org" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="keywords" content="troubleshooting, problems" />
+  <meta name="description" content="troubleshooting"/>
+      
+  <title>Troubleshooting</title>
+  <link href="../css/task_style.css" type="text/css" rel="stylesheet" media="all" />
+</head>
+    
+<body>
+  <div id="banner">
+    <a name="troubleshooting" id="troubleshooting"></a>
+    
+    <div id="machelp">
+      <a class="bread" href="../SolariumHelp.html">Solarium Help</a>
+    </div>
+    
+    <div id="index">
+      <a class="leftborder" href="index.html">Index</a>
+    </div>
+  </div>
+
+  <div id="mainbox">
+    <div id="caticon">
+      <img src="../gfx/SPOTWorldIcon32x32.gif" alt="Solarium Icon" height="32" width="32" border="0" />
+    </div>
+
+    <div id="pagetitle">
+      <h1>Troubleshooting</h1>
+    </div>
+
+    <p>
+      If you're having trouble with Solarium, please give the following a try:
+    </p>
+    
+    <table class="dots" width="100%" border="0" cellspacing="0" cellpadding="0" summary="One column table with heading">
+      <tr>
+	<td class="blue" colspan="2">
+	  <h3>1) Make sure you are using the latest release</h3>
+	</td>
+      </tr>
+      
+      <tr>
+	<td valign="top">
+	   <p>
+	     If you're using an older version, the
+             <a class="ext_link" href="http://www.sunspotworld.com">
+              [TBD link to newest release of Solarium]</a> 
+             may already include a fix for your problem.
+           </p>
+	</td>
+      </tr>
+    </table>
+    <br />
+
+    <table class="dots" width="100%" border="0" cellspacing="0" cellpadding="0" summary="One column table with heading">
+      <tr>
+	<td class="blue" colspan="2">
+	  <h3>2) Make sure the SDK is installed correctly</h3>
+	</td>
+      </tr>
+      
+      <tr>
+	<td valign="top">
+	  <p>
+            If you're having trouble interacting with SPOTs,
+            make sure that you can execute all of the basic
+            commands outlined in the SPOT Developer's
+            guide. There are command-line equivalents
+            for most Solarium menu items (type <b>ant help</b>
+            in a terminal window for a list of available commands).
+            Make sure that these ant commands work properly.
+          </p>
+        </td>
+      </tr>
+    </table>
+    <br/>
+
+    <table class="dots" width="100%" border="0" cellspacing="0" cellpadding="0" summary="One column table with heading">
+      <tr>
+	<td class="blue" colspan="2">
+	  <h3>3) Check for known issues</h3>
+	</td>
+      </tr>
+      
+      <tr>
+	<td valign="top">
+	  <p>
+            Here are some of the known issues in this release of Solarium.
+          </p>
+          
+          <ul>
+            <li>
+              The Emulator does not currently work if the file path
+              where the Sun SPOT SDK has been installed includes an
+              embedded space character. Windows users might especially
+              encounter this problem as the standard installation
+              location for Windows is C:\Program Files\. The current
+              workaround is to install the SDK in a different location
+              where none of the folders in the file path has a name
+              with an embedded space character.
+            </li>
+
+            <li>
+              Only simple applications can be paused/resumed or
+              migrated from one SPOT to another because the current
+              framework for saving and restoring an application's
+              state is incomplete. In particular, applications with
+              active network connections cannot be paused/resumed or 
+              migrated properly.
+            </li>
+          </ul>
+        </td>
+      </tr>
+    </table>
+    <br/>
+
+    <table class="dots" width="100%" border="0" cellspacing="0" cellpadding="0" summary="One column table with heading">
+      <tr>
+	<td class="blue" colspan="2">
+	  <h3>If it still doesn't work</h3>
+	</td>
+      </tr>
+      
+      <tr>
+	<td valign="top">
+	  <p>
+	    Still have your problem? Please report it on the <a class="ext_link"
+	    href="http://www.sunspotworld.com/forums">Sun SPOT
+            forums</a>. It could be a known problem for which
+            someone may have already discovered a workaround or
+            a previously unreported issue requiring a new bug report.
+	  </p>					
+	</td>
+      </tr>
+    </table>
+    <br />
+  </div>
+</body>
+</html>

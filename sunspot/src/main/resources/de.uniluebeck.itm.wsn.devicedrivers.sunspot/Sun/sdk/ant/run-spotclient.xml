@@ -1,0 +1,167 @@
+<!--
+/*
+ * Copyright 2005-2008 Sun Microsystems, Inc. All Rights Reserved.
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER
+ * 
+ * This code is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2
+ * only, as published by the Free Software Foundation.
+ * 
+ * This code is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License version 2 for more details (a copy is
+ * included in the LICENSE file that accompanied this code).
+ * 
+ * You should have received a copy of the GNU General Public License
+ * version 2 along with this work; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA
+ * 
+ * Please contact Sun Microsystems, Inc., 16 Network Circle, Menlo
+ * Park, CA 94025 or visit www.sun.com if you need additional
+ * information or have any questions.
+ */
+-->
+
+<project name="run-spotclient">
+	<import file="find-spots.xml"/>
+	
+	<!-- This is the only target that should be called from outside this file. -->
+	<target name="-run-spotclient"
+			depends="-check-run-spotclient-parameters,
+					-run-spotclient-once-with-remote-id,
+					-run-spotclient-multiple-times-with-remote-id,
+					-run-spotclient-once-locally,
+					-run-spotclient-multiple-times-locally" />
+
+	<!-- Work out which top-level target we're running and check and setup a few key parameters -->
+	<target name="-check-run-spotclient-parameters">
+		<condition property="multiple.remoteids">
+			<contains string="${remoteId}" substring="," />
+		</condition>
+		<condition property="multiple.ports">
+			<contains string="${port}" substring="," />
+		</condition>
+
+		<fail>
+>
+You cannot supply a list for both port and remoteId. 
+Make port a list for locally connected SPOTs,
+and remoteId a list for remote SPOTs
+			<condition>
+				<and><isset property="multiple.ports" /><isset property="multiple.remoteids" /></and>
+			</condition>
+		</fail>
+
+		<condition property="multiple.runs.required">
+			<or><isset property="multiple.ports" /><isset property="multiple.remoteids" /></or>
+		</condition>
+	
+		<!-- decide which of the four top level targets we will actually run. -->
+		<condition property="multiple.remote.runs.required">
+			<and><isset property="multiple.runs.required" /><isset property="remoteId" /></and>
+		</condition>
+		<condition property="multiple.local.runs.required">
+			<and><isset property="multiple.runs.required" /><not><isset property="remoteId" /></not></and>
+		</condition>
+		<condition property="one.remote.run.required">
+			<and><not><isset property="multiple.runs.required" /></not><isset property="remoteId" /></and>
+		</condition>
+		<condition property="one.local.run.required">
+			<and><not><isset property="multiple.runs.required" /></not><not><isset property="remoteId" /></not></and>
+		</condition>
+
+		<!-- Initialise parameters -->
+		<condition property="spotclient...verbose" value="-v">
+			<isset property="spotclient.verbose"/>
+		</condition>
+		<property name="spotclient...verbose" value=""/>
+		<property name="extra.args" value="" />
+	</target>
+
+	<target name="-run-spotclient-multiple-times-locally" if="multiple.local.runs.required">
+		<property name="all.extra.args" value="${extra.args} ${spotclient...verbose}" />
+		<foreach list="${port}"
+			delimiter=","
+			param="portInList"
+			target="-run-spotclient-once"
+			inheritall="true" 
+	 		parallel="true" />
+	</target>
+
+	<target name="-run-spotclient-once-locally" if="one.local.run.required">
+		<property name="all.extra.args" value="${extra.args} ${spotclient...verbose}" />
+		<antcall target="-run-spotclient-once">
+			<param name="portInList" value="${port}" />
+		</antcall>
+	</target>
+
+
+	<target name="-run-spotclient-multiple-times-with-remote-id" if="multiple.remote.runs.required">
+		<foreach list="${remoteId}" 
+			delimiter=","
+			param="rspotId"
+			target="-run-spotclient-for-one-remote-id"
+			inheritall="true"
+			parallel="${basestation.shared}" />
+	</target>
+
+	<target name="-run-spotclient-once-with-remote-id" if="one.remote.run.required">
+		<antcall target="-run-spotclient-for-one-remote-id">
+			<param name="rspotId" value="${remoteId}" />
+		</antcall>
+	</target>
+	
+	<target name="-run-spotclient-for-one-remote-id">
+		<property name="portInList" value="${port}" />
+		<antcall target="-run-spotclient-once">
+			<param name="all.extra.args" 
+				value="-remote.address=${rspotId} ${extra.args} ${spotclient...verbose}" />
+		</antcall>
+	</target>
+
+	<target name="-run-spotclient-once" depends="-echo-progress-for-remote-runs,-echo-progress-for-local-runs">
+		<mkdir dir="${sunspot.home}/temp"/>
+		<tempfile property="tmp.script" destdir="${sunspot.home}/temp" prefix="spot-temp-"/>
+		<echo file="${tmp.script}" message="${spotclient.script.contents}${line.separator}quit"/>
+		<property name="error.log" value="${sunspot.home}/temp/error.log"/>
+		<property name="spotclient.script.argument" value="-F${tmp.script}"/>
+		<java classpath="${spotclient.classpath}"
+		      classname="com.sun.spot.client.ui.SpotClientCommandLineUI"
+		      fork="true"
+		      failonerror="true">
+		    <jvmarg value="-Djava.library.path=${sunspot.lib}"/>
+		    <jvmarg value="-Dexecutable.path=${executable.path}"/>
+		    <sysproperty key="squawk.startup.arguments" value="${squawk.startup.arguments}"/>
+		    <sysproperty key="spot.mesh.route.logging" value="${spot.mesh.route.logging}"/>
+		    <sysproperty key="remote.channel" value="${remote.channel}"/>
+		    <sysproperty key="remote.pan.id" value="${remote.pan.id}"/>
+		    <sysproperty key="remote.transmit.power" value="${remote.transmit.power}"/>
+		    <sysproperty key="spotclient.verbose" value="${spotclient.verbose}"/>
+		    <sysproperty key="error.log" value="${error.log}"/>
+		    <sysproperty key="spot.basestation.sharing" value="${basestation.shared}" />
+		    <sysproperty key="spotclient.addin.classes" value="${spotclient.all.addin.classes}" />
+			<arg value="-app${basedir}/${suite.dir}/${image.name}"/>
+			<arg value="-sysBin${spotclient.sysBin.dir}"/>
+			<arg value="-libFile${spotclient.libFile}"/>
+			<arg value="-keyStorePath${spotclient.keyStore.dir}"/>
+			<arg value="-p${portInList}"/>
+			<arg value="-i${spotfinder.exec.portlist}"/>
+			<arg value="${spotclient.script.argument}"/>
+			<arg line="${all.extra.args}"/>
+		</java>
+		<delete file="${tmp.script}"/>
+	</target>
+	
+	<target name="-echo-progress-for-remote-runs" if="multiple.remote.runs.required">
+		<echo>=================================================================</echo>
+		<echo>Called for ${rspotId} in ${remoteId}</echo>
+	</target>
+
+	<target name="-echo-progress-for-local-runs" if="multiple.local.runs.required">
+		<echo>=================================================================</echo>
+		<echo>Called for ${portInList} in ${port}</echo>
+	</target>
+</project>
+

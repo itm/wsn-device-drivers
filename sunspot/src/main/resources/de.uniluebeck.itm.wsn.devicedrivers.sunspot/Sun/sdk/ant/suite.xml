@@ -1,0 +1,85 @@
+<!--
+/*
+ * Copyright 2005-2008 Sun Microsystems, Inc. All Rights Reserved.
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER
+ * 
+ * This code is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2
+ * only, as published by the Free Software Foundation.
+ * 
+ * This code is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License version 2 for more details (a copy is
+ * included in the LICENSE file that accompanied this code).
+ * 
+ * You should have received a copy of the GNU General Public License
+ * version 2 along with this work; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA
+ * 
+ * Please contact Sun Microsystems, Inc., 16 Network Circle, Menlo
+ * Park, CA 94025 or visit www.sun.com if you need additional
+ * information or have any questions.
+ */
+-->
+
+<project name="suite">
+    <target name="-pre-suite"/>
+
+    <target name="-do-suite">
+    	<!-- clean up files that might be around as a result of previous versions of the sdk -->
+    	<delete file="squawk.suite" failonerror="false" />
+    	
+       	<property name="KEEPSYMBOLS" value="true" /> <!-- Default value used if not -->
+    												 <!-- set previously by a properties file -->
+    	<condition property="suite.symbols.lnt" value="-lnt">
+    		<equals arg1="${KEEPSYMBOLS}" arg2="true" casesensitive="no" trim="yes" />
+    	</condition>    	
+    	<property name="suite.symbols.lnt" value="-v" /> <!-- this just duplicates the -v we always have -->
+    	
+    	<condition property="suite.symbols.strip" value="-strip:d">
+    	    <equals arg1="${KEEPSYMBOLS}" arg2="true" casesensitive="no" trim="yes" />
+    	</condition>
+    	<property name="suite.symbols.strip" value="-strip:a" />
+
+    	<condition property="verbose.argument" value="-verbose">
+    		<istrue value="${spotclient.verbose}" />
+    	</condition>
+    	<property name="verbose.argument" value="-nobuildproperties" /> <!-- just a dummy argument: can't leave it blank on some platforms -->
+
+    	<java classpath="${romizer.classpath}"
+              classname="com.sun.squawk.Romizer" 
+              fork="true"
+              maxmemory="128M"
+              failonerror="true">
+            <arg value="${verbose.argument}"/>
+            <arg value="-nobuildproperties"/>
+            <arg value="-suitepath:${spot.library.path}"/>
+            <arg value="-boot:squawk"/>
+            <arg value="-parent:${spot.library.name}"/>
+            <arg value="-metadata"/>
+            <arg value="${suite.symbols.lnt}"/>
+            <arg value="${suite.symbols.strip}"/>
+            <arg value="-cp:${from.jar.file}"/>
+            <arg value="-endian:little"/>
+            <arg value="-o:${image.name}"/>
+            <arg value="${from.jar.file}"/>
+        </java>
+
+        <!-- Copy the new files to the suite directory -->
+    	<unzip src="${from.jar.file}" dest="${suite.dir}" overwrite="true">
+    	    <patternset>
+    	        <include name="**/manifest.mf"/>
+    	        <include name="**/MANIFEST.MF"/>
+        		<include name="**/Manifest.mf"/>
+    	    </patternset>
+    	</unzip>
+        <move file="${image.name}.suite" todir="${suite.dir}"/>
+        <move file="${image.name}.suite.metadata" todir="${suite.dir}"/>
+        <move file="${image.name}.sym" tofile="${suite.dir}/${image.name}.sym"/>
+        <delete file="${image.name}.suite.api"/>
+    </target>
+	
+    <target name="-post-suite"/>
+</project>

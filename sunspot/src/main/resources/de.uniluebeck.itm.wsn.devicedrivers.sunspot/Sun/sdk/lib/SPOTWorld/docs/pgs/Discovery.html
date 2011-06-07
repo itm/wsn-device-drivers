@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <meta name="keywords" content="discovery" />
+  <meta name="description" content="discovery" />
+  <title>Discovering and Displaying SPOTs</title>
+  <link href="../css/task_style.css" type="text/css" rel="stylesheet"
+  media="all" />
+</head>
+
+<body>
+
+<div id="banner">
+<a name="discovery" id="discovery"></a> 
+
+<div id="machelp">
+<a class="bread" href="../SolariumHelp.html">Solarium Help</a> </div>
+
+<div id="index">
+<a class="leftborder" href="index.html">Index</a> </div>
+</div>
+
+<div id="mainbox">
+
+<div id="caticon">
+<img src="../gfx/SPOTWorldIcon32x32.gif" alt="Solarium Icon" height="32"
+width="32" border="0" /> </div>
+
+<div id="pagetitle">
+<h1>Discovering and Displaying SPOTs</h1>
+</div>
+
+<p>Solarium can detect and display SPOTs that are connected to the desktop via
+USB either directly or through one or more USB hubs. It can also detect nearby
+SPOTs via wireless communication. </p>
+
+<table id="OTAcommandserver" class="dots" width="100%" border="0"
+cellspacing="0" cellpadding="0" summary="One column table with heading">
+  <tbody>
+    <tr>
+      <td class="blue" colspan="1"><h3>Turning on the OTA Command Server</h3>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top"><p>The "over-the-air" (OTA) command server is a piece of
+        software that runs on the SPOTs and listens for management commands
+        sent wirelessly from a host application such as Solarium. </p>
+
+        <p>SPOTs must have their OTA command server turned on to be
+        discoverable via wireless communication. The OTA command server is
+        turned on by default. If it is turned off for some reason (as indicated
+        by <tt>ant system-properties</tt> showing <tt>spot.ota.enable:
+        false</tt>), it can be turned on again by connecting the SPOT to the
+        desktop via USB and using any one of the following options:<br />
+        <ul>
+          <li>Issuing the <tt>ant enableota</tt> command in a terminal window.
+          </li>
+          <li>Using the "Enable OTA" button in SPOT Manager </li>
+        </ul>
+        </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br />
+
+
+<table class="dots" width="100%" border="0" cellspacing="0" cellpadding="0"
+summary="One column table with heading">
+  <tbody>
+    <tr>
+      <td class="blue" colspan="1"><h3>Controlling SPOT Discovery</h3>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top"><p>The <b>Discovery</b> pull-down menu in the main
+        Solarium menu bar allows you to control the discovery process that
+        Solarium uses to find the local SPOTs. The choices are: </p>
+
+        <p>
+        <center>
+        <img src="../gfx/DiscoveryMenu.png"
+        alt="Discovery pull-down                    Menu" height="auto"
+        width="500" border="0" /> </center>
+        </p>
+
+        <p><ul>
+          <li><b>Discovery Filters</b> <br />
+            This command allows the discovered SPOTs to be filtered according
+            to a white (include) or black (exclude) list. It also allows one to
+            edit which SPOT addresses go on the white or black lists. </li>
+          <li><b>Discover Sun SPOTs</b> <br />
+            This choice sends a broadcast discovery message, asking Sun SPOTs
+            to identify themselves. If the broadcast message reaches a Sun SPOT
+            running the OTA command that SPOT will respond with basic
+            information, <i>e.g.</i>its IEEE address, the version of its SDK
+            <i>etc.</i>. This command also causes Solarium to scan the USB
+            ports on the host and discover any connected SPOTs (even if they
+            have their OTA command server turned off). Discovered SPOTs are
+            displayed in Solarium. </li>
+          <li><b>Discover one... </b><br />
+            This choice allows you to send a unicast discovery message to a
+            specific IEEE address. Solarium will attempt to find that
+            particular SPOT. The broadcast hop count setting described below is
+            ignored when the discovery message is sent as a unicast. </li>
+          <li><b>Set discovery time out... </b><br />
+            This choice specifies how long Solarium will wait for an answer to
+            its broadcast discovery message. It defaults to three seconds. </li>
+          <li><b>Set discovery hop count... </b><br />
+            This choice specifies how many radio hops a broadcast discovery
+            message may traverse before it is no longer forwarded from SPOT to
+            SPOT. When using a shared basestation, this setting must be at
+            least two, since the communication between the host application and
+            the shared basestation counts as one hop. Therefore, at least two
+            hops are required to reach any actual SPOTs. If you want Solarium
+            to reach SPOTs beyond the direct radio range of the basestation,
+            the hop count should be set to three or more. </li>
+          <li><b>Set radio channel... </b><br />
+            Allows you to specify the radio channel used for discovery.
+            Defaults to 26. <br />
+            <i>Note:</i> It is not possible to change the radio channel when
+            using a shared basestation. </li>
+          <li><b>Set radio PAN Id... </b><br />
+            Allows you to specify the PAN ID used by Solarium during discovery.
+            Defaults to 3.<br />
+            <i>Note:</i> It is not possible to change the PAN ID when using a
+            shared basestation. </li>
+          <li><b>Set radio transmit power... </b><br />
+            Allows you to specify the transmit power used by Solarium during
+            discovery. Defaults to full power (0).<br />
+            <i>Note:</i> It is not possible to change the transmit power when
+            using a shared basestation. </li>
+        </ul>
+        </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br />
+
+
+<table class="dots" width="100%" border="0" cellspacing="0" cellpadding="0"
+summary="One column table with heading">
+  <tbody>
+    <tr>
+      <td class="blue" colspan="1"><h3>Controlling which SPOTs are
+        displayed</h3>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top"><p>By default, Solarium displays all of the SPOTs it
+        discovers. In an environment with lots of SPOTs, a user might want to
+        ignore some of them to avoid cluttering the Solarium display
+        unnecessarily. The <tt>.solarium.properties</tt> file in the user's
+        home directory allows one to specify either a "blacklist" or a
+        "whitelist" of SPOTs. If a whitelist is specified, only the SPOTs on
+        that list are displayed, all others are ignored. If a blacklist is
+        specified, SPOTs on that list are ignored and all others are displayed.
+        To edit these lists, simply select the “manage...” item from the
+        “Discovery &gt; Discovery Filters” menu. If you wish to edit these
+        lists without using the tool, you can (carefully) change your
+        .solarium.properties file. For example, to ignore all SPOTs except
+        those with the IEEE address of 0014.4F01.0000.020B or
+        0014.4F01.0000.048D insert the following line in your
+        .solarium.properties file:</p>
+
+        <p>&lt;entry
+        key="spots.whitelist"&gt;0014.4F01.0000.020B,0014.4F01.0000.048D&lt;/entry&gt;<tt>
+        </tt> </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br />
+
+
+<table class="dots" width="100%" border="0" cellspacing="0" cellpadding="0"
+summary="One column table with heading">
+  <tbody>
+    <tr>
+      <td class="blue" colspan="1"><h3>Controlling how SPOTs are displayed</h3>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top"><p>SPOTs can be displayed in several different ways by
+        Solarium. By default Solarium starts up displaying a tree-like
+        <i>Inspector View</i>, shown here to the left, and a 2-dimensional
+        <i>SPOT View</i>, shown here against the quadrille background to the
+        right. The views exposed are controlled through the <b>View</b>
+        pull-down menu on the menu bar. Both these views also show the
+        applications running on each SPOT. </p>
+
+        <center>
+        <img src="../gfx/ViewMenu.png" alt="Solarium Views" height="auto"
+        width="450" border="0" /> </center>
+
+        <p>After Solarium discovers the SPOTs, it will display all of them
+        along with the running applications currently running on those devices.
+        </p>
+
+        <p>The <i>Deployment View</i>, <i>Radio View</i> and <i>Robot View</i>
+        will be described below. </p>
+
+        <p><i>Note:</i> Multiple views can be combined (tiled) in a single
+        window. Just grab and drag the view's title bar, e.g. where it says
+        <i>Inspector View</i>. Views can be dragged into an existing window, or
+        dragged off onto the screen to make a new window. Thanks to Benjamin
+        Sigg, the creator of <a
+        href="http://dock.javaforge.com/">DockingFrames</a> for his open source
+        Java Swing docking framework. </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br />
+
+
+<table class="dots" width="100%" border="0" cellspacing="0" cellpadding="0"
+summary="One column table with heading">
+  <tbody>
+    <tr>
+      <td class="blue" colspan="1"><h3>Interpreting Visual Cues</h3>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top"><p>Solarium uses a number of visual cues to indicate
+        status information about the SPOTs:<br />
+        <ul>
+          <li>USB-connected SPOTs are drawn with a <i>tail</i> to indicate a
+            USB cable. </li>
+          <li>A yellow warning rectangle on a SPOT indicates that Solarium
+            cannot fully manage that SPOT. Clicking on the yellow sign will
+            bring up a panel listing all of the reasons, <i>e.g.</i>, that SPOT
+            may have a different owner or may have a version of the SDK that's
+            different from the version under which Solarium is running.
+            <p></p>
+            The figure below shows a USB-connected SPOT that cannot be fully
+            managed for the reasons shown. 
+            <p></p>
+
+            <center>
+            <img src="../gfx/NotFullyManaged.png"
+            alt="A SPOT that cannot be fully managed" height="auto" width="450"
+            border="0" /> </center>
+          </li>
+          <li>An application running in the <a
+            href="Terminology.html#MasterIsolate">master isolate</a> is drawn
+            as greenish-bllue rectangle with a raised bezel while an
+            application running in <a
+            href="Terminology.html#ChildIsolate">child isolate</a> is drawn as
+            a greenish-bllue rectangle with a plain bezel. An application that
+            is currently paused is drawn as an muted yellow colored rectangle.
+            Only applications running in a child isolate can be paused. 
+            <p></p>
+            In the figure below, the <i>LightSensor</i> application is running
+            in the master isolate, the <i>SPOTBounce</i> application is running
+            in a child isolate and the <i>LEDSampleCode</i> application is
+            paused. 
+            <p></p>
+
+            <center>
+            <img src="../gfx/Applications.png"
+            alt="Running applications on a SPOT" height="auto" width="250"
+            border="0" /> </center>
+          </li>
+          <li>Remaining battery power is shown in the small gray rectangle
+            drawn in the bottom, left of the SPOT. In this case the SPOT has
+            84% of its battery capacity remaining. </li>
+        </ul>
+        </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br />
+</div>
+</body>
+</html>

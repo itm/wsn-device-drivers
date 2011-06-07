@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content="HTML Tidy for Mac OS X (vers 1st December 2004), see www.w3.org" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="keywords" content="interaction" />
+  <meta name="description" content="interaction"/>
+      
+  <title>Robot View</title>
+  <link href="../css/task_style.css" type="text/css" rel="stylesheet" media="all" />
+</head>
+    
+<body>
+  <div id="banner">
+    <a name="interaction" id="interaction"></a>
+    
+    <div id="machelp">
+      <a class="bread" href="../SolariumHelp.html">Solarium Help</a>
+    </div>
+    
+    <div id="index">
+      <a class="leftborder" href="index.html">Index</a>
+    </div>
+  </div>
+
+  <div id="mainbox">
+    <div id="caticon">
+      <img src="../gfx/SPOTWorldIcon32x32.gif" alt="Solarium Icon" height="32" width="32" border="0" />
+    </div>
+
+    <div id="pagetitle">
+      <h1>Robot View</h1>
+    </div>
+
+    <p>
+      As part of the Sun SPOT team collaboration with educators we have added to Solarium an emulator for the <a href="http://store.irobot.com/shop/index.jsp?categoryId=3311368&camp=Google">iRobot Create</a>. The simulation roughly mimics the environment that is used in the <a href="http://iaroc.org/">International Autonomous Robotics Competition (iARoC)</a> competition held in San Diego each year sponsored by <a href="http://www.wintrisstech.org/">Wintriss School</a>. In this competition students use Sun SPOTs to control an iRobot Create to get it to navigate a maze. The Create is very much like its more popular sibling, the Roomba, except it can be easily controlled by an external computer, in this case a Sun SPOT.
+    </p>
+    <center>
+     <img src="../gfx/Create.png" alt="Image of iRobot Create" border="0" />
+    </center>
+<p>
+In the simulation you write software for a Sun SPOT, and then in Solarium, create a <b>Robot View</b> from the <b>View</b> menu. Pushing the <b>Add robot</b> button will create a Robot/VIrtual Sun SPOT combination. Back on the SPOT View, you will now see a Virtual SPOT.
+    </p>
+    <center>
+     <img src="../gfx/RobotView2.png" alt="Image of Robot View" height="auto" width="800" border="0" />
+    </center>
+  <p>
+You deploy and run your software on this Virtual SPOT and it will control your simulated robot. You have your choice of three different environments to run in; an empty room, a maze, or an obstacle course. Each view includes an 'X' as a starting point and a 'O' as an ending point. Your robot includes sensors that allow you to sense when your robot is over one of these marks.
+  <p>
+The <tt>iRobotCreateDemo</tt> in the SDK Demos folder provides a simple application that can use the Create's bump sensor to find the center of the room. Deploy the demo to the virtual SPOT and when you run it the Create will move under the SPOT's direction. 
+  <p>
+<i>Note:</i> the <b>Pause</b> button only affects the Create, it does not cause any application running on the SPOT to be paused. Similarly if the SPOT application quits without stopping the Create, e.g. it throws a fatal exception, then the Create will continue with whatever values were specified by the last drive command.
+  <p>
+The Create API used by the Robot Emulator can also be used by a real SPOT to control an actual Create—--all that is needed is to require the appropriate Create library jar file in your project's build.properties file.
+           </p>
+
+  </div>
+</body>
+</html>

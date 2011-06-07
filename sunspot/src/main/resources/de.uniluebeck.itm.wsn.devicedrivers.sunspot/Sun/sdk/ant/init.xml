@@ -1,0 +1,129 @@
+<!--
+/*
+ * Copyright 2005-2008 Sun Microsystems, Inc. All Rights Reserved.
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER
+ * 
+ * This code is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2
+ * only, as published by the Free Software Foundation.
+ * 
+ * This code is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License version 2 for more details (a copy is
+ * included in the LICENSE file that accompanied this code).
+ * 
+ * You should have received a copy of the GNU General Public License
+ * version 2 along with this work; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA
+ * 
+ * Please contact Sun Microsystems, Inc., 16 Network Circle, Menlo
+ * Park, CA 94025 or visit www.sun.com if you need additional
+ * information or have any questions.
+ */
+-->
+
+<project name="init">
+    <target name="-pre-init"/>
+
+    <target name="-post-init"/>
+
+    <target name="-do-init">
+        <property file="${user.properties.file}"/>
+        <property file="${sunspot.home}/default.properties"/>
+
+    	<property environment="env" />
+    	
+     	<property name="jvm.dll.path" value="${java.home}/bin/client/jvm.dll" />
+    	
+    	<condition property="do.set.jvmdll" value="true" >
+    		<and>
+    			<contains string="${os.name}" substring="windows" casesensitive="no" />
+    			<available file="${jvm.dll.path}" />
+    			<not> <isset property="env.JVMDLL" /> </not>
+    		</and>	
+    	</condition>    	
+    	<property name="do.set.jvmdll" value="false" />
+
+    	<condition property="JVMDLL.KEY" value="JVMDLL" >
+    		<istrue value="${do.set.jvmdll}" />
+    	</condition>
+    	<condition property="JVMDLL.VALUE" value="${jvm.dll.path}" >
+    		<istrue value="${do.set.jvmdll}" />
+    	</condition>
+    	<property name="JVMDLL.KEY" value="ZCZCNOTUSEDZCZC" />
+    	<property name="JVMDLL.VALUE" value="ZCZCNOTUSEDZCZC" />
+
+    	<!-- End of properties for suite -->
+    	
+        <property name="work.dir" value="${basedir}"/>
+        <!-- 
+            NOTE:
+            These two properties are just a default.
+            We explicit specify the source and target
+            when doing compilation.
+          -->
+        <property value="1.3" name="default.javac.source"/>
+        <property value="1.2" name="default.javac.target"/>
+    	
+    	<!-- Do substitutions for commonly mistyped properties  -->
+    	<condition property="remoteId" value ="${remoteid}">
+    		<isset property="remoteid"/>
+     	</condition>
+    	<condition property="remoteId" value ="${remoteID}">
+    		<isset property="remoteID"/>
+    	</condition>
+    	
+    	<!-- Make -Dv=t function like -Dspotclient.verbose=true -->
+    	<condition property="spotclient.verbose" value ="true">
+    		<or>
+    			<isset property="v"/>
+    			<isset property="verbose"/>
+    		</or>
+    	</condition>
+
+	<!-- Setup radio parameters for remote deploy, run, etc. -->
+	<condition property="remote.channel" value="${radio.channel}" else="">
+		<isset property="radio.channel"/>
+    	</condition>
+	<condition property="remote.pan.id" value="${radio.pan.id}" else="">
+		<isset property="radio.pan.id"/>
+    	</condition>
+	<condition property="remote.transmit.power" value="${radio.transmit.power}" else="">
+		<isset property="radio.transmit.power"/>
+    	</condition>
+
+	<!-- Use deprecated multi.process.basestation.sharing if set -->
+	<condition property="basestation.shared" value="${multi.process.basestation.sharing}" else="false">
+		<isset property="multi.process.basestation.sharing"/>
+    	</condition>
+
+    </target>
+    		
+    <target name="init" depends="-pre-init,-do-init,-post-init,-warn-jar-file">
+
+        <!-- properties (defaults from default.properties) -->
+
+        <fail unless="sunspot.home">Must set sunspot.home</fail>
+        <fail unless="src.dir">Must set src.dir</fail>
+        <fail unless="build.dir">Must set build.dir</fail>
+        <fail unless="suite.dir">Must set suite.dir</fail>
+        <fail unless="preverify.dir">Must set preverify.dir</fail>
+        <fail unless="sunspot.bootclasspath">Must set sunspot.bootclasspath</fail>
+        <fail unless="sunspot.classpath">Must set sunspot.classpath</fail>
+        <fail unless="squawk.executable">Must set squawk.executable</fail>
+        <fail unless="squawk.suite">Must set squawk.suite</fail>        
+        <fail unless="translator.suite">Must set translator.suite</fail>
+        <fail unless="preverify.executable">Must set preverify.exectuable</fail>
+        <fail unless="image.name">Must set image.name</fail>
+    </target>
+	
+	<target name="-warn-jar-file" if="jar.file">
+		<echo>
+**** Warning - the property jar.file is no longer supported. Use to.jar.file or from.jar.file.
+Setting to.jar.file to ${jar.file}
+</echo>
+		<property name="to.jar.file" value="${jar.file}" />
+	</target>
+</project>

@@ -1,0 +1,104 @@
+<!--
+/*
+ * Copyright 2005-2008 Sun Microsystems, Inc. All Rights Reserved.
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER
+ * 
+ * This code is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2
+ * only, as published by the Free Software Foundation.
+ * 
+ * This code is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License version 2 for more details (a copy is
+ * included in the LICENSE file that accompanied this code).
+ * 
+ * You should have received a copy of the GNU General Public License
+ * version 2 along with this work; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA
+ * 
+ * Please contact Sun Microsystems, Inc., 16 Network Circle, Menlo
+ * Park, CA 94025 or visit www.sun.com if you need additional
+ * information or have any questions.
+ */
+-->
+
+<project name="library">
+	<target name="-pre-library"/>
+
+	<target name="-set-properties">
+		<property file="${sunspot.home}/version.properties"/>
+	</target>
+	
+	<target name="-combine-manifests">
+		<property name="build.manifest.root.dir" value="${sunspot.home}/temp/libmanifest" />
+		<property name="build.manifest.dir" value="${build.manifest.root.dir}/META-INF" />
+		<mkdir dir="${build.manifest.dir}" />
+		<property name="build.manifest.name" value="${build.manifest.dir}/MANIFEST.MF" />
+    	<delete file="${build.manifest.name}" failonerror="false" />
+		<property name="working.folder" value="${sunspot.home}/temp/lib" />
+		<delete dir="${working.folder}" failonerror="false"/>
+		<mkdir dir="${working.folder}" />
+		<pathconvert property="library.jar.list" pathsep=",">
+			<path>
+				<pathelement path="${spot.library.base.jars}"/>
+				<pathelement path="${spot.library.addin.jars}"/>
+			</path>
+		</pathconvert>
+		<foreach target="-append-manifest-contents" param="-jar.name" list="${library.jar.list}" inheritall="true"/>
+	</target>
+
+	<target name="-append-manifest-contents">
+		<unjar src="${-jar.name}" dest="${working.folder}"/>
+		<concat destfile="${build.manifest.name}" append="true">
+			<fileset casesensitive="no" dir="${working.folder}">
+				<include name="META-INF/MANIFEST.MF" />
+			</fileset>
+		</concat>
+		<delete includeemptydirs="true">
+			<fileset dir="${working.folder}" includes="**/*"/>
+		</delete>
+	</target>
+
+	<target name="create-manifest" depends="-set-properties,-combine-manifests">
+		<echo file="${build.manifest.name}" message="BootloaderTimestamp: ${version.datestamp}" append="true"/>
+	</target>
+
+    <target name="-do-library" depends="-pre-library,create-manifest" >
+       	<property name="KEEPSYMBOLS" value="false" /> <!-- Default value used if not -->
+    												 <!-- set previously by a properties file -->
+    	<condition property="suite.symbols.lnt" value="-lnt">
+    		<equals arg1="${KEEPSYMBOLS}" arg2="true" casesensitive="no" trim="yes" />
+    	</condition>    	
+    	<property name="suite.symbols.lnt" value="-v" /> <!-- this just duplicates the -v we always have -->
+
+    	<!-- Build a squawk suite -->
+    	<java classpath="${romizer.classpath}"
+              classname="com.sun.squawk.Romizer" 
+              fork="true"
+              failonerror="true">
+            <arg value="-verbose"/>
+            <arg value="-suitepath:${spot.library.path}"/>
+            <arg value="-boot:squawk"/>
+            <arg value="-metadata"/>
+            <arg value="${suite.symbols.lnt}"/>
+            <arg value="-strip:e"/>
+        	<!-- ${build.manifest.root.dir} is at the end of this cp. This is because of a bug in SuiteCreator, which takes
+        	the *last* MANIFEST file it finds on the cp instead of the first. When bugzilla#256 is resolved,
+        	then it will need to be moved to the front. -->
+            <arg value="-cp:${spot.library.addin.jars}${path.separator}${spot.library.base.jars}${path.separator}${build.manifest.root.dir}"/>
+            <arg value="-endian:little"/>
+            <arg value="-o:${spot.library.name}"/>
+            <arg line="${spot.library.addin.jars} ${spot.library.base.jars} ${build.manifest.root.dir} ${suitecreator.prefixes}"/>
+        </java>
+
+        <!-- Copy the new files to the arm directory -->
+        <move file="${spot.library.name}.suite" todir="${spot.library.path}"/>
+        <move file="${spot.library.name}.suite.metadata" todir="${spot.library.path}"/>
+        <move file="${spot.library.name}.sym" todir="${spot.library.path}"/>
+        <delete file="${spot.library.name}.suite.api"/>
+    </target>
+
+    <target name="-post-library"/>
+</project>

@@ -1,0 +1,59 @@
+<!--
+/*
+ * Copyright 2005-2008 Sun Microsystems, Inc. All Rights Reserved.
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER
+ * 
+ * This code is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2
+ * only, as published by the Free Software Foundation.
+ * 
+ * This code is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License version 2 for more details (a copy is
+ * included in the LICENSE file that accompanied this code).
+ * 
+ * You should have received a copy of the GNU General Public License
+ * version 2 along with this work; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA
+ * 
+ * Please contact Sun Microsystems, Inc., 16 Network Circle, Menlo
+ * Park, CA 94025 or visit www.sun.com if you need additional
+ * information or have any questions.
+ */
+-->
+
+<project name="deploy">
+	<import file="jar-app.xml"/>
+	
+	<target name="-pre-deploy"/>
+	<target name="-do-deploy" depends="-set-uri">
+	    <property name="master" value="true"/>
+	    <antcall target="-run-spotclient">
+		<param name="spotclient.script.contents" value="flashapp ${master} ${midlet} ${uri}"/>
+	    </antcall>
+	</target>
+	<target name="-post-deploy"/>
+	
+	<target name="-pre-undeploy"/>
+	<target name="-do-undeploy" depends="-check-for-uri">
+	    <antcall target="-run-spotclient">
+    		<param name="spotclient.script.contents" value="undeploy ${uri}"/>
+	    </antcall>
+	</target>
+	<target name="-post-undeploy"/>
+	
+	<target name="-check-for-jar">
+		<available file="${from.jar.file}" property="jar.exists"/>
+		<fail unless="jar.exists" message="The jar file '${from.jar.file}' cannot be found"/>
+	</target>
+	
+	<target name="-set-uri">
+		<property name="uri" value="*"/>
+	</target>
+	
+	<target name="-check-for-uri">
+		<fail unless="uri" message="uri must be specified using -Duri=xxx"/>
+	</target>
+</project>

@@ -1,0 +1,49 @@
+<project name="CryptoExtensions">
+    <target name="genspotkeysncert" depends="init,-do-find-spots" description="Generate the SPOTs key pair and sign its certificate">
+        <antcall target="-run-spotclient">
+            <param name="spotclient.script.contents" value="genspotkeysncert"/>
+        </antcall>
+    </target>
+
+    <target name="deletespotkeysncert" depends="init,-do-find-spots" description="Delete the SPOTs certificate">
+        <antcall target="-run-spotclient">
+            <param name="spotclient.script.contents" value="deletespotkeysncert"/>
+        </antcall>
+    </target>
+
+    <target name="addtrustedkey" depends="init,-do-find-spots" description="Add the given trusted key to the SPOTs key store with given trust flags and bind it to the given nickname">
+        <fail unless="cert">Must define the property "cert" (-Dcert=xxxx)</fail>
+        <fail unless="nickname">Must define the property "nickname" (-Dnickname=xxxx)</fail>
+        <fail unless="trustFlags">Must define the property "trustFlags" (-DtrustFlags=xxxx)</fail>
+        <antcall target="-run-spotclient">
+            <param name="spotclient.script.contents" value="addtrustedkey ${cert} ${nickname} ${trustFlags}"/>
+        </antcall>
+    </target>
+
+    <target name="deletetrustedkey" depends="init,-do-find-spots" description="Delete the key bound to the given nickname">
+        <fail unless="nickname">Must define the property "nickname" (-Dnickname=xxxx)</fail>
+        <antcall target="-run-spotclient">
+            <param name="spotclient.script.contents" value="deletetrustedkey ${nickname}"/>
+        </antcall>
+    </target>
+
+    <target name="cleartrustedkeys" depends="init,-do-find-spots" description="Clear the SPOTs key store">
+        <antcall target="-run-spotclient">
+            <param name="spotclient.script.contents" value="cleartrustedkeys"/>
+        </antcall>
+    </target>
+
+    <target name="listtrustedkeys" depends="init,-do-find-spots" description="List the keys in the SPOTs key store">
+        <antcall target="-run-spotclient">
+            <param name="spotclient.script.contents" value="listtrustedkeys"/>
+        </antcall>
+    </target>
+    
+    <target name="listtrustedkey" depends="init,-do-find-spots" description="List the key in the SPOTs key store for specified nickname">
+        <fail unless="nickname">Must define the property "nickname" (-Dnickname=xxxx)</fail>
+        <echo> nickname is (${nickname}) </echo>
+        <antcall target="-run-spotclient">
+            <param name="spotclient.script.contents" value="listtrustedkey ${nickname}"/>
+        </antcall>
+    </target>
+</project>

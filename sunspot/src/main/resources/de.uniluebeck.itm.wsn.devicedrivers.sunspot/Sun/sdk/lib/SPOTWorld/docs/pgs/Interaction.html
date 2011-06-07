@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <meta name="keywords" content="interaction" />
+  <meta name="description" content="interaction" />
+  <title>Interacting with SPOTs</title>
+  <link href="../css/task_style.css" type="text/css" rel="stylesheet"
+  media="all" />
+</head>
+
+<body>
+
+<div id="banner">
+<a name="interaction" id="interaction"></a> 
+
+<div id="machelp">
+<a class="bread" href="../SolariumHelp.html">Solarium Help</a> </div>
+
+<div id="index">
+<a class="leftborder" href="index.html">Index</a> </div>
+</div>
+
+<div id="mainbox">
+
+<div id="caticon">
+<img src="../gfx/SPOTWorldIcon32x32.gif" alt="Solarium Icon" height="32"
+width="32" border="0" /> </div>
+
+<div id="pagetitle">
+<h1>Interacting with SPOTs</h1>
+</div>
+
+<p>The following sections highlight the various ways in which a user may
+interact with SPOTs. Refer to the <a href="Emulator.html">Emulator
+documentation</a> on how to interact with virtual SPOTs. </p>
+
+<table class="dots" width="100%" border="0" cellspacing="0" cellpadding="0"
+summary="One column table with heading">
+  <tbody>
+    <tr>
+      <td class="blue" colspan="1"><h3>Manipulating SPOTs</h3>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top"><p>If you right-click on a SPOT, the following menu will
+        display. Some of the menu items are only enabled for USB-connected
+        SPOTs while others require a SPOT to have its <a
+        href="Discovery.html#OTAcommandserver">OTA command server</a> enabled.
+        Disabled menu items are displayed in gray. <br />
+        <img src="../gfx/SPOTMenu.png" alt="Image of SPOT              Menu"
+        height="auto" width="200" border="0" /> </p>
+        <ul>
+          <li><b>Run</b> 
+            <p>This menu option brings up a sub-menu listing all installed
+            applications and selecting any application on this list starts it
+            running. </p>
+
+            <center>
+            <img src="../gfx/RunMenu.png" alt="Run Menu" height="auto"
+            width="350" border="0" /> </center>
+          </li>
+          <li><b>Run in Main Isolate</b> 
+            <p>This menu option brings up a panel where the user can choose
+            which application (if any) to run in the <a
+            href="Terminology.html#MainIsolate">main isolate</a>. Only one
+            application may run in the main isolate and the SPOT must be reset
+            for this change to take effect. After the reset, the only
+            application running on the SPOT would be the chosen one, all other
+            previously running applications will be terminated. <br />
+            <img src="../gfx/RunInMainMenu.png" alt="Run Menu" height="auto"
+            width="275" border="0" /> </p>
+          </li>
+          <li><b>Deploy MIDlet bundle ...</b> 
+            <p>Allows you to specify a project to be deployed to the selected
+            Sun SPOT. The following dialog box will display:<br />
+            </p>
+
+            <center>
+            <img src="../gfx/DeploymentOptions.png" alt="Deployment options"
+            height="auto" width="550" border="0" /> </center>
+            <p>By default, the project directory will be cleaned, all source
+            code will be recompiled and the resulting <a
+            href="Terminology.html#suite">suite</a> will be installed on the
+            SPOT. The clean and compile steps may be skipped by unchecking the
+            appropriate boxes. This might make sense, for example, if the
+            application suite was created recently and the same suite is being
+            deployed on multiple SPOTs. </p>
+          </li>
+          <li><b>Undeploy</b> 
+            <p>This menu option brings up a sub-menu listing all installed
+            suites and selecting any suite on this list will unload it from the
+            SPOT. The command will fail if the suite is in use, <i>e.g.</i>,
+            one of the applications in the suite is currently active. If a
+            suite includes <a
+            href="Terminology.html#MultipleApplications">multiple
+            applications</a>, all of them will be unloaded together. </p>
+          </li>
+          <li><b>Deploy library ...</b> 
+            <p>Downloads to the SPOT a fresh copy of the current library (as
+            specified by the <tt>spot.library.name</tt> property in the
+            <tt>.sunspot.properties</tt> file in the user's home directory) on
+            to the SPOTin the active SDK. After the library is installed, the
+            SPOT will be reset and all previously running applications
+            terminated. </p>
+            <p>This command is useful, for example, when a user has created a
+            new library using the <tt>ant library</tt> command. Refer to the
+            <i>Sun SPOT Developer's Guide</i> for details on how to rebuild the
+            library. </p>
+          </li>
+          <li><b>Synchronize SDK ...</b> 
+            <p>Downloads system software from the Sun SPOT SDK currently active
+            on the host (where Solarium is running) to the selected SPOT. This
+            option is only enabled for USB-connected SPOTs. </p>
+          </li>
+          <li><b>Blink LEDs</b> 
+            <p>Causes the SPOT to blink its LEDs. This command is useful for
+            locating the physical SPOT corresponding to the SPOT on display.
+            </p>
+            <p>On SPOTs equipped with the eDemo sensor board, all of its eight
+            tricolor LEDs as well as the Activity LED on the main board are
+            flashed. If a SPOT does not have the eDemo sensor board installed,
+            only the activity LED is flashed. Refer to the <i>Sun SPOT Owner's
+            Manual</i> for the location of the Activity LED. </p>
+          </li>
+          <li><b>Get Info</b> 
+            <p>Opens a window containing multiple tabs. Each tab has
+            information on a different aspect of the selected Sun SPOT,
+            <i>e.g.</i>, installed applications, system properties, and
+            energy/memory statistics.<br />
+            </p>
+
+            <center>
+            <img src="../gfx/InfoPanel.png" alt="Information panel"
+            height="auto" width="575" border="0" /> </center>
+          </li>
+          <li><b>Show commLog</b> 
+            <p>Opens a window showing a log of all the <a
+            href="Discovery.html#OTAcommandserver">OTA commands</a> issued to
+            the selected SPOT.<br />
+            </p>
+
+            <center>
+            <img src="../gfx/CommLog.png" alt="Communication log" height="auto"
+            width="550" border="0" /> </center>
+          </li>
+          <li><b>System printout</b> 
+            <p>Opens a window to display standard output from the main isolate
+            operating on that SPOT. The image below shows standard output from
+            the <i>LightSensor</i> application. </p>
+
+            <center>
+            <img src="../gfx/SystemPrintOut.png" alt="System printout"
+            height="auto" width="450" border="0" /> </center>
+          </li>
+          <li><b>Set Name</b> 
+            <p>The first time a SPOT displays in Solarium, the second half of
+            its full IEEE numerical address is used as its name and displayed
+            at the top of the SPOT image. This command allows you to specify a
+            more meaningful name as a replacement. The name will be stored in
+            persistent memory on the SPOT itself. </p>
+          </li>
+          <li><b>Enable OTA Commands</b> 
+            <p>Allows the user to turn on the SPOT's <a
+            href="Discovery.html#OTAcommandserver">OTA command server</a>. This
+            option is only enabled for USB-connected SPOTs that have their OTA
+            command server turned off. </p>
+          </li>
+          <li><b>Reset</b> 
+            <p>Resets the SPOT. It has the same effect as pressing the Control
+            button. It will restart the master isolate. </p>
+          </li>
+          <li><b>Refresh</b> 
+            <p>Queries the SPOT for its current list of installed and running
+            applications and refreshes the display. </p>
+          </li>
+          <li><b>Remove</b> 
+            <p>Removes this SPOT from the Solarium display. Removed SPOTs can
+            be added again through the <a href="Discovery.html">SPOT
+            discovery</a> process. </p>
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br />
+
+
+<table class="dots" width="100%" border="0" cellspacing="0" cellpadding="0"
+summary="One column table with heading">
+  <tbody>
+    <tr>
+      <td class="blue" colspan="1"><h3>Pausing, Resuming and Terminating
+        Applications</h3>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top"><p>Once an application has been launched in a <a
+        href="Terminology.html#ChildIsolate">child isolate</a>, the user can
+        pause, resume or terminate it. Clicking on the application object,
+        brings up the menu shown below:<br />
+        </p>
+
+        <center>
+        <img src="../gfx/ApplicationMenu.png" alt="Application menu"
+        height="auto" width="300" border="0" /> </center>
+        <ul>
+          <li><b>Pause</b> 
+            <p>Pauses execution of the selected application. </p>
+          </li>
+          <li><b>Resume</b> 
+            <p>Resumes execution of a paused application. </p>
+          </li>
+          <li><b>Exit</b> 
+            <p>Stops execution of the selected application. </p>
+          </li>
+          <li><b>Start remote printing</b> 
+            <p>Opens a dialog box that directs System.out for the selected
+            application to a window. The window can be a new window or a pane
+            within the Solarium window. </p>
+          </li>
+        </ul>
+
+        <p><i>Note:</i> The current framework only supports pausing and
+        resuming of simple applications, <i>e.g.</i>, those that do not have
+        currently active network connections. </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br />
+
+
+<table id="RadioView" class="dots" width="100%" border="0" cellspacing="0"
+cellpadding="0" summary="One column table with heading">
+  <tbody>
+    <tr>
+      <td class="blue" colspan="1"><h3>Radio View</h3>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top"><p>When debugging an application running on a network of
+        SPOTs it can be quite helpful to be able to visualize the radio
+        connectivity, i.e. which SPOTs can talk to each other. The Radio View
+        provides a way for Solarium to discover and graphically depict the
+        radio topology. Below is an example of a network of eight SPOTs and one
+        basestation (shown in green). <br />
+        </p>
+
+        <center>
+        <img src="../gfx/RadioView.png" alt="Radio View example" height="auto"
+        width="600" border="0" /> </center>
+
+        <p>When the Radio View window is first opened, Solarium sends commands
+        to each known SPOT asking it to discover its neighbors. The red lines
+        show which SPOTs that can exchange radio packets. After all the SPOTs
+        have replied a graphing algorithm is used to create the best layout
+        that shows the radio topology. The Radio View has no knowledge of where
+        the SPOTs are located physically, so the layout algorithm can only try
+        to minimize the number of connections that cross each other. </p>
+
+        <p>Since the radio topology can change over time, pushing the
+        <b>Rediscover radio connections</b> button will cause Solarium to again
+        ask each SPOT to discover its neighbors and then repeat the layout
+        process. If the resulting layout is not clear enough, push the <b>Redo
+        layout</b> button to try to find a better one. </p>
+
+        <p>If you hover the mouse over a radio connection a tooltip will appear
+        showing the link quality in each direction as measured by the two
+        SPOTs. <br />
+        </p>
+
+        <center>
+        <img src="../gfx/RadioConnection.png" alt="Sample radio connection"
+        height="auto" width="120" border="0" /> </center>
+
+        <p>Link Quality is uniquely determined by the CORR value: CORR is a
+        correlation measure provided directly by the radio part. Link Quality
+        values range from 100% (the best, corresponding to a CORR value greater
+        than 100) to 0% (the worst, which means the CORR value is less than
+        50).</p>
+
+        <p> </p>
+
+        <p>The Radio View can also be used to show the route two SPOTs would
+        use to talk to each other. Click on one of the SPOTs to bring up a
+        pop-up menu where you can select the address of the SPOT to seek a
+        route to. Below is the route from the basestation to 09F5. <br />
+        </p>
+
+        <center>
+        <img src="../gfx/RadioRoute.png" alt="Sample radio route used"
+        height="auto" width="370" border="0" /> </center>
+
+        <p><i>Note:</i> SPOTs must have OTA enabled to participate in Radio
+        View. </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br />
+</div>
+</body>
+</html>
