@@ -3,14 +3,14 @@ package eu.smartsantander.wsn.drivers.waspmote;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniluebeck.itm.wsn.drivers.core.Device;
+import de.uniluebeck.itm.wsn.drivers.core.State;
+import de.uniluebeck.itm.wsn.drivers.core.event.StateChangedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
-import de.uniluebeck.itm.wsn.drivers.core.io.LockedInputStreamManager;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;
@@ -30,11 +30,6 @@ import eu.smartsantander.wsn.drivers.waspmote.operation.WaspmoteReadDigiMacAddre
 public class WaspmoteDevice implements Device<WaspmoteVirtualSerialPortConnection> {
 
 	/**
-	 * Logger for this class.
-	 */
-	private static final Logger LOG = LoggerFactory.getLogger(WaspmoteDevice.class);
-
-	/**
 	 * The default timeout that will be waited for available data when in
 	 * synchronous mode.
 	 */
@@ -43,7 +38,7 @@ public class WaspmoteDevice implements Device<WaspmoteVirtualSerialPortConnectio
 	/**
 	 * The 16 bits node identifier for this device.
 	 */
-	private final int nodeID;
+	private int nodeID;
 
 	/**
 	 * <code>WaspmoteVirtualSerialPortConnection</code> for this device.
@@ -64,9 +59,23 @@ public class WaspmoteDevice implements Device<WaspmoteVirtualSerialPortConnectio
 	 *            The virtual serial port connection for this device.
 	 */
 	public WaspmoteDevice(int nodeID, WaspmoteVirtualSerialPortConnection connection) {
-		this.nodeID = nodeID;
-		connection.setDeviceNodeID(nodeID);
 		this.connection = connection;
+		this.identifyNode(nodeID);
+	}
+
+	/**
+	 * Constructor.
+	 *
+	 * @param connection
+	 *            The virtual serial port connection for this device.
+	 */
+	public WaspmoteDevice(WaspmoteVirtualSerialPortConnection connection) {
+		this.connection = connection;
+	}
+
+	public void identifyNode(int nodeID) {
+		this.nodeID = nodeID;
+		this.connection.setDeviceNodeID(nodeID);
 	}
 
 	/**
@@ -120,7 +129,9 @@ public class WaspmoteDevice implements Device<WaspmoteVirtualSerialPortConnectio
 
 	@Override
 	public ReadMacAddressOperation createReadMacAddressOperation() {
-		final ReadMacAddressOperation operation = new WaspmoteReadDigiMacAddressOperation(this, deviceOperationID++);
+		int subchannelID = deviceOperationID++;
+		final ReadMacAddressOperation operation = new WaspmoteReadDigiMacAddressOperation(this, subchannelID);
+		monitor(operation, subchannelID);
 		return operation;
 	}
 
@@ -161,7 +172,7 @@ public class WaspmoteDevice implements Device<WaspmoteVirtualSerialPortConnectio
 	}
 
 	public XBeeFrame receiveXBeeFrame(int operationID) throws TimeoutException, InterruptedException {
-		return this.receiveXBeeFrame(DEFAULT_DATA_AVAILABLE_TIMEOUT);
+		return this.receiveXBeeFrame(operationID, DEFAULT_DATA_AVAILABLE_TIMEOUT);
 	}
 
 	public XBeeFrame receiveXBeeFrame(int operationID, int timeout) throws TimeoutException, InterruptedException {
@@ -173,4 +184,21 @@ public class WaspmoteDevice implements Device<WaspmoteVirtualSerialPortConnectio
 		return xbeeFrame;
 	}
 
+	/**
+	 * Register a created operation for monitoring purposes by the device.
+	 *
+	 * @param <T> Return type of the operation.
+	 * @param operation The operation object that has to be monitored.
+	 */
+	protected <T> Operation<T> monitor(final Operation<T> operation, final int subchannelID) {
+		operation.addListener(new OperationListener<T>() {
+			@Override
+			public void onStateChanged(final StateChangedEvent<T> event) {
+				if(event.getNewState() != State.RUNNING) {
+					WaspmoteDataChannel.getChannel(nodeID).releaseSubchannel(subchannelID);
+				}
+			}
+		});
+		return operation;
+	}
 }

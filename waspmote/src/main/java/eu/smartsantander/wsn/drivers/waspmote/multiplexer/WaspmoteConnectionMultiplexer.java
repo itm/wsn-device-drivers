@@ -1,6 +1,7 @@
 package eu.smartsantander.wsn.drivers.waspmote.multiplexer;
 
 import de.uniluebeck.itm.wsn.drivers.core.util.DoubleByte;
+import de.uniluebeck.itm.wsn.drivers.core.util.HexUtils;
 import eu.smartsantander.wsn.drivers.waspmote.frame.smartSantander.SmartSantanderFrame;
 import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeFrame;
 import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.xbeeDigi.XBeeDigiRequest;
@@ -116,10 +117,14 @@ public class WaspmoteConnectionMultiplexer implements SerialPortEventListener {
 				break;
 			case XBeeFrame.RECEIVE_PACKET_DIGI:
 				XBeeDigiResponse xbeeDigiResponse = XBeeBinaryFrameHelper.createXBeeDigiResponse(response);
-				DoubleByte cmdTypeAndReqID = new DoubleByte(xbeeDigiResponse.getPayload()[0], xbeeDigiResponse.getPayload()[1]);
+				if (xbeeDigiResponse == null) {
+					return;
+				}
+				DoubleByte cmdTypeAndReqID = new DoubleByte(xbeeDigiResponse.getPayload()[0],xbeeDigiResponse.getPayload()[1]);
 				if (cmdTypeAndReqID.equals(new DoubleByte(SmartSantanderFrame.SERVICE_FRAME_HEADER))) {
-					OutputStream multiplexedChannelWriteStream = upperLayerFramesLookupTable.get(xbeeDigiResponse.getNodeID16BitValue());
-					if(multiplexedChannelWriteStream != null) {
+					OutputStream multiplexedChannelWriteStream = upperLayerFramesLookupTable.get(xbeeDigiResponse
+							.getNodeID16BitValue());
+					if (multiplexedChannelWriteStream != null) {
 						multiplexedChannelWriteStream.write(xbeeDigiResponse.getPayload().length);
 						multiplexedChannelWriteStream.write(xbeeDigiResponse.getPayload());
 					}

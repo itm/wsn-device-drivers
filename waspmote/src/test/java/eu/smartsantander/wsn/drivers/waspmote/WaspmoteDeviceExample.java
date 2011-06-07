@@ -1,6 +1,9 @@
 package eu.smartsantander.wsn.drivers.waspmote;
 
 import java.io.IOException;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import com.google.common.io.Closeables;
 
@@ -8,14 +11,15 @@ import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.ConnectionEvent;
 import de.uniluebeck.itm.wsn.drivers.core.ConnectionListener;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
-import de.uniluebeck.itm.wsn.drivers.core.async.AsyncCallback;
 import de.uniluebeck.itm.wsn.drivers.core.async.AsyncAdapter;
+import de.uniluebeck.itm.wsn.drivers.core.async.AsyncCallback;
 import de.uniluebeck.itm.wsn.drivers.core.async.DeviceAsync;
 import de.uniluebeck.itm.wsn.drivers.core.async.OperationQueue;
 import de.uniluebeck.itm.wsn.drivers.core.async.QueuedDeviceAsync;
 import de.uniluebeck.itm.wsn.drivers.core.async.thread.PausableExecutorOperationQueue;
-import de.uniluebeck.itm.wsn.drivers.core.io.ByteReceiver;
 import de.uniluebeck.itm.wsn.drivers.core.io.InputStreamReaderService;
+import de.uniluebeck.itm.wsn.drivers.core.io.MessagePacketListener;
+import de.uniluebeck.itm.wsn.drivers.core.util.HexUtils;
 
 /**
  * @author TLMAT UC
@@ -24,16 +28,30 @@ public class WaspmoteDeviceExample implements ConnectionListener, Runnable {
 
 	/**
 	 * @param args
+	 * @throws InterruptedException
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		final String port = args[0];
 
-		final WaspmoteVirtualSerialPortConnection connection38 = new WaspmoteVirtualSerialPortConnection();
-		final WaspmoteDevice device38 = new WaspmoteDevice(38, connection38);
+		final ArrayBlockingQueue<Runnable> queue = new ArrayBlockingQueue<Runnable>(5);
+		final ThreadPoolExecutor threadPool = new ThreadPoolExecutor(3, 3, 10, TimeUnit.SECONDS, queue);
 
-		final WaspmoteDeviceExample example38 = new WaspmoteDeviceExample();
-		example38.setDevice(device38);
-		example38.setPort(port);
+		final WaspmoteDevice device77 = new WaspmoteDevice(77, new WaspmoteVirtualSerialPortConnection());
+		final WaspmoteDeviceExample example77 = new WaspmoteDeviceExample();
+		example77.setDevice(device77);
+		example77.setPort(port);
+
+		final WaspmoteDevice device34 = new WaspmoteDevice(34, new WaspmoteVirtualSerialPortConnection());
+		final WaspmoteDeviceExample example34 = new WaspmoteDeviceExample();
+		example34.setDevice(device34);
+		example34.setPort(port);
+
+		threadPool.execute(example77);
+		threadPool.execute(example34);
+		threadPool.shutdown();
+		threadPool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+
+		System.out.println("===== THE END =====");
 	}
 
 	private static final int DEFAULT_SLEEP = 50;
@@ -46,14 +64,6 @@ public class WaspmoteDeviceExample implements ConnectionListener, Runnable {
 	private InputStreamReaderService service = new InputStreamReaderService();
 	private String port;
 
-	public void addByteReceiver(ByteReceiver receiver) {
-		service.addByteReceiver(receiver);
-	}
-
-	public void removeByteReceiver(ByteReceiver receiver) {
-		service.removeByteReceiver(receiver);
-	}
-
 	public void setDevice(final WaspmoteDevice device) {
 		this.device = device;
 	}
@@ -65,7 +75,18 @@ public class WaspmoteDeviceExample implements ConnectionListener, Runnable {
 	private void init() {
 		connection = device.getConnection();
 		connection.addListener(this);
+		connection.addListener(service);
 		deviceAsync = new QueuedDeviceAsync(queue, device);
+
+		XBeeMessagePacketReceiver xbeeMessagePacketReceiver = new XBeeMessagePacketReceiver();
+		xbeeMessagePacketReceiver.addListener(new MessagePacketListener() {
+
+			@Override
+			public void onMessagePacketReceived(byte[] event) {
+				System.out.println(device.getNodeID() + ": Received Service Frame: " + HexUtils.byteArray2HexString(event, ' '));
+			}
+		});
+		service.addByteReceiver(xbeeMessagePacketReceiver);
 	}
 
 	private void connect() {
@@ -82,22 +103,23 @@ public class WaspmoteDeviceExample implements ConnectionListener, Runnable {
 
 			@Override
 			public void onExecute() {
-				System.out.println(device.getNodeID() + ": Reading mac address...");
+				System.out.println(device.getNodeID() + ": Reading MAC address...");
 			}
 
 			@Override
 			public void onProgressChange(final float fraction) {
 				final int percent = (int) (fraction * 100.0);
-				System.out.println(device.getNodeID() + ": Reading mac address progress: " + percent + "%");
+				System.out.println(device.getNodeID() + ": Reading MAC address progress: " + percent + "%");
 			}
 
 			@Override
 			public void onSuccess(final MacAddress result) {
-				System.out.println(device.getNodeID() + ": MAC Address: " + result);
+				System.out.println(device.getNodeID() + ": MAC address: " + result);
 			}
 
 			@Override
 			public void onFailure(Throwable throwable) {
+				System.out.println(device.getNodeID() + ": Reading MAC address progress: Failed");
 				if (throwable instanceof UnsupportedOperationException) {
 					System.err.println("Read mac address is not supported by this device.");
 				} else {
@@ -126,8 +148,7 @@ public class WaspmoteDeviceExample implements ConnectionListener, Runnable {
 	 * Wait for message packets from the device.
 	 */
 	private void waitForMessagePackets() {
-		System.out.println("Waiting for messages from the device.");
-		System.out.println("Press any key to shutdown...");
+		System.out.println(device.getNodeID() + ": Waiting for messages from the device. Press Enter to shutdown...");
 		try {
 			while(System.in.read() == -1) {
 				Thread.sleep(DEFAULT_SLEEP);

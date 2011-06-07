@@ -47,6 +47,7 @@ public class WaspmoteVirtualSerialPortConnection extends AbstractConnection {
 	public void connect(String uri) {
 		if (!isConnected() && nodeID != -1) {
 			connection.connect(uri);
+			this.setUri(uri);
 			this.setInputStream(connection.getSerialPortMultiplexer().registerNode(nodeID));
 			this.setOutputStream(connection.getOutputStream());
 			this.setConnected(true);
@@ -60,6 +61,7 @@ public class WaspmoteVirtualSerialPortConnection extends AbstractConnection {
 		setOutputStream(null);
 		connection.getSerialPortMultiplexer().deregisterNode(nodeID);
 		connection.shutdown(false);
+		this.setConnected(false);
 	}
 
 }

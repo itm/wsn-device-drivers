@@ -3,13 +3,13 @@ package de.uniluebeck.itm.wsn.drivers.core.async;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
+import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import de.uniluebeck.itm.wsn.drivers.core.io.SendOutputStreamWrapper;
@@ -26,29 +26,29 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
 /**
  * Class that implements the <code>DeviceAsync</code> interface as a queue.
  * For using this implementation an <code>OperationQueue</code> is needed.
- * 
+ *
  * @author Malte Legenhausen
  */
 public class QueuedDeviceAsync implements DeviceAsync {
-	
+
 	/**
 	 * Logger for this class.
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(QueuedDeviceAsync.class);
-	
+
 	/**
 	 * Queue that schedules all <code>Operation</code> instances.
 	 */
 	private final OperationQueue queue;
-	
+
 	/**
 	 * The <code>Device</code> that has to be executed async.
 	 */
 	private final Device<? extends Connection> device;
-	
+
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param queue The <code>OperationQueue</code> that schedules all operations.
 	 * @param device The <code>Device</code> that provides all operations that can be executed.
 	 */
@@ -57,7 +57,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 		this.queue = queue;
 		this.device = device;
 	}
-	
+
 	@Override
 	public OperationHandle<ChipType> getChipType(final long timeout, final AsyncCallback<ChipType> callback) {
 		LOG.debug("Reading Chip Type (Timeout: " + timeout + "ms");
@@ -125,20 +125,20 @@ public class QueuedDeviceAsync implements DeviceAsync {
 		operation.setMacAddress(macAddress);
 		return queue.addOperation(operation, timeout, callback);
 	}
-	
+
 	@Override
 	public InputStream getInputStream() {
 		return device.getInputStream();
 	}
-	
+
 	@Override
 	public OutputStream getOutputStream() {
 		return new SendOutputStreamWrapper(this);
 	}
-	
+
 	/**
 	 * Getter for the queue that is used by this class.
-	 * 
+	 *
 	 * @return The <code>OperationQueue</code> instance.
 	 */
 	public OperationQueue getOperationQueue() {

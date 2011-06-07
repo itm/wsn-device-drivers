@@ -2,6 +2,7 @@ package eu.smartsantander.wsn.drivers.waspmote.multiplexer;
 
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import de.uniluebeck.itm.wsn.drivers.core.util.DoubleByte;
+import de.uniluebeck.itm.wsn.drivers.core.util.HexUtils;
 import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeFrame;
 import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.xbeeDigi.XBeeDigiRequest;
 import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.xbeeDigi.XBeeDigiResponse;

@@ -66,6 +66,7 @@ public class WaspmoteMultiplexedSerialPortConnection extends AbstractConnection 
 			Preconditions.checkNotNull(port, "The given port can not be null.");
 			try {
 				connectSerialPort(port);
+				flush();
 				setConnected(true);
 				multiplexer = new WaspmoteConnectionMultiplexer(getInputStream(), getOutputStream());
 				serialPort.addEventListener(multiplexer);
@@ -139,8 +140,7 @@ public class WaspmoteMultiplexedSerialPortConnection extends AbstractConnection 
 
 	public void shutdown(boolean force) {
 		if (force) {
-			// Not sure of the implications of closing serial ports when devices
-			// are still connected
+			// Not sure of the implications of closing serial ports when devices are still connected
 			this.shutdownPort();
 		} else {
 			if (!multiplexer.isAnyNodeRegistered()) {

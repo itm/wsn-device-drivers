@@ -133,6 +133,10 @@ public class MacAddress {
 		return HexUtils.byteArray2HexString(this.toByteArray(), ':');
 	}
 
+	public String toString(Character sep) {
+		return HexUtils.byteArray2HexString(this.toByteArray(), sep);
+	}
+
 	private void setArray(final long value) {
 		array[0] = (byte) (value >>> 56);
 		array[1] = (byte) (value >>> 48);

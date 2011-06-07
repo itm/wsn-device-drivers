@@ -68,10 +68,10 @@ public class NodeAddressingHelper {
 			String mysqlQuery;
 			switch (protocol) {
 			case XBeeFrame.PROTOCOL_802_15_4:
-				mysqlQuery = "SELECT nodeID FROM Nodes where mac1='" + macAddress.toString() + "';";
+				mysqlQuery = "SELECT nodeID FROM Nodes where mac1='" + macAddress.toString(null) + "';";
 				break;
 			case XBeeFrame.PROTOCOL_DIGIMESH:
-				mysqlQuery = "SELECT nodeID FROM Nodes where mac2='" + macAddress.toString() + "';";
+				mysqlQuery = "SELECT nodeID FROM Nodes where mac2='" + macAddress.toString(null) + "';";
 				break;
 			default:
 				return null;

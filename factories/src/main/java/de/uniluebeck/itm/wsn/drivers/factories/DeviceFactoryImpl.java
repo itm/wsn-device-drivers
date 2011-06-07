@@ -32,6 +32,8 @@ import de.uniluebeck.itm.wsn.drivers.nulldevice.NullConnection;
 import de.uniluebeck.itm.wsn.drivers.nulldevice.NullDevice;
 import de.uniluebeck.itm.wsn.drivers.pacemate.PacemateDevice;
 import de.uniluebeck.itm.wsn.drivers.telosb.TelosbDevice;
+import eu.smartsantander.wsn.drivers.waspmote.WaspmoteDevice;
+import eu.smartsantander.wsn.drivers.waspmote.WaspmoteVirtualSerialPortConnection;
 
 public class DeviceFactoryImpl implements DeviceFactory {
 
@@ -44,6 +46,8 @@ public class DeviceFactoryImpl implements DeviceFactory {
 				return new PacemateDevice((SerialPortConnection) connection);
 			case TELOSB:
 				return new TelosbDevice((SerialPortConnection) connection);
+			case WASPMOTE:
+				return new WaspmoteDevice((WaspmoteVirtualSerialPortConnection) connection);
 			case MOCK:
 				return new MockDevice(connection);
 			case NULL:
