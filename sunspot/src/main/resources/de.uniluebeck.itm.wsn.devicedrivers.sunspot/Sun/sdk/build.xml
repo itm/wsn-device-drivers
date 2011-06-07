@@ -1,0 +1,388 @@
+<!--
+/*
+ * Copyright 2005-2008 Sun Microsystems, Inc. All Rights Reserved.
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER
+ * 
+ * This code is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2
+ * only, as published by the Free Software Foundation.
+ * 
+ * This code is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License version 2 for more details (a copy is
+ * included in the LICENSE file that accompanied this code).
+ * 
+ * You should have received a copy of the GNU General Public License
+ * version 2 along with this work; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA
+ * 
+ * Please contact Sun Microsystems, Inc., 16 Network Circle, Menlo
+ * Park, CA 94025 or visit www.sun.com if you need additional
+ * information or have any questions.
+ */
+-->
+
+<project default="help" basedir=".">
+	<property file="${user.home}/.sunspot.properties"/>
+
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+	  <classpath>
+	    <pathelement location="${sunspot.home}/ant/ant-contrib.jar"/>
+	  </classpath>
+	</taskdef>
+	
+	<!-- Do user imports -->
+	<property name="user.import.paths" value=""	/>
+	<for list="${user.import.paths}" param="path">
+	  <sequential>
+		<import file="@{path}" />
+	  </sequential>
+	</for>
+
+	<import file="ant/clean.xml"/>
+	<import file="ant/compile.xml"/>
+	<import file="ant/find-spots.xml"/>
+	<import file="ant/sysadmin.xml"/>
+	<import file="ant/run-spotclient.xml"/>
+	<import file="ant/echo.xml"/>
+	<import file="ant/debug-proxy.xml"/>
+	<import file="ant/deploy.xml"/>
+	<import file="ant/help.xml"/>
+	<import file="ant/host-compile.xml"/>
+	<import file="ant/host-run.xml"/>
+	<import file="ant/init.xml"/>
+	<import file="ant/library.xml"/>
+	<import file="ant/preverify.xml"/>
+	<import file="ant/run.xml"/>
+	<import file="ant/suite.xml"/>
+	<import file="ant/jar-app.xml"/>
+	<import file="ant/sdk-info.xml"/>
+	<import file="ant/upgrade.xml"/>
+	<import file="ant/restore.xml"/>
+	<import file="ant/socket-proxy.xml"/>
+	<import file="ant/networktools-run.xml"/>
+	<import file="ant/solarium.xml"/>	
+	<import file="ant/solarium-ota-extensions.xml" />
+		
+	<target name="help" depends="init,-help" description="Show SPOT ant command help."/>
+	<target name="clean" depends="init,-pre-clean,-do-clean,-post-clean" description="Clean build products."/>
+	<target name="compile" depends="init,-pre-compile,-do-compile,-post-compile" description="Compile project."/>
+	<target name="compile-single" depends="init,-pre-compile-single,-do-compile-single,-post-compile-single"/>
+	<target name="find-spots" depends="init,-do-find-spots" description="Find SPOTs connected via USB."/>
+	<target name="start-shared-basestation" depends="-set-basestation-sharing,init,-set-selector-for-host-run,-do-find-spots" description="Start a shared basestation"/>
+	<target name="sysadmin" depends="init,-do-find-spots,-pre-sysadmin,-do-sysadmin,-post-sysadmin" description="Start interactive SPOT Client."/>
+	<target name="debug" depends="init,-set-selector-for-host-run,-do-find-spots, -do-debug" description="Debug SPOT application."/>
+	<target name="debug-run" depends="debug" description="Debug SPOT application."/>
+	<target name="debug-proxy" depends="init,-set-selector-for-host-run,-do-find-spots,-pre-debug-proxy-run,-do-debug-proxy-run,-post-debug-proxy-run" description="Run the debug proxy."/>
+	<target name="debug-proxy-run" depends="debug-proxy" description="Run the debug proxy."/>
+	<target name="socket-proxy" depends="init,-set-selector-for-socket-proxy-run,-do-find-spots,-pre-socket-proxy-run,-do-socket-proxy-run,-post-socket-proxy-run" description="Run the socket proxy in headless mode."/>
+	<target name="socket-proxy-gui" depends="init,-set-selector-for-socket-proxy-run,-do-find-spots,-pre-socket-proxy-run,-do-socket-proxy-gui-run,-post-socket-proxy-run" description="Run the socket proxy in gui mode."/>
+	<target name="deploy" depends="init,-set-selector-for-nonbasestation,-do-find-spots,-jar-and-deploy,-deploy-only" description="Optionally build, and then deploy the IMlet."/>
+	<target name="jar-deploy" depends="init,-set-from-jar-name-and-deploy" description="Deploy an IMlet jar."/>
+	<target name="-jar-and-deploy" unless="from.jar.file">
+		<antcall target="-do-jar-and-deploy" />
+	</target>
+	<target name="-deploy-only" if="from.jar.file">
+		<antcall target="-do-deploy-only" />
+	</target>
+	<target name="-do-jar-and-deploy" depends="jar-app,-set-from-jar-name,-do-deploy-only"/>
+	<target name="-do-deploy-only" depends="-check-for-jar,-pre-suite,-do-suite,-post-suite,flashapp"/>
+	<target name="jar-suite" depends="init,-check-for-jar,-pre-suite,-do-suite,-post-suite"/>
+	<target name="flashapp" depends="init,-do-find-spots,-pre-deploy,-do-deploy,-post-deploy" description="Deploy the application."/>
+	<target name="undeploy" depends="init,-set-selector-for-nonbasestation,-do-find-spots,-pre-undeploy,-do-undeploy,-post-undeploy" description="Remove the child IMlet from the SPOT."/>    
+	<target name="host-compile" depends="init,-pre-host-compile,-do-host-compile,-post-host-compile" description="Compile project for J2SE."/>
+	<target name="host-run" depends="init,-set-selector-for-host-run,-do-find-spots,host-compile,-pre-host-run,-do-host-run,-post-host-run" description="Watch your host application run."/>
+	<target name="library" depends="init,-pre-library,-do-library,-post-library" description="Build a library suite."/>
+	<target name="preverify" depends="init,compile,-pre-preverify,-do-preverify,-post-preverify" description="Preverify the classes" />
+	<target name="run" depends="init,-set-selector-for-nonbasestation,-do-find-spots,-pre-run,-do-run,-post-run" description="Watch your application run."/>
+	<target name="fork" depends="init,-set-selector-for-nonbasestation,-do-find-spots,-set-flag-for-fork,-pre-run,-do-run,-post-run" description="Start your application and continue."/>
+	<target name="suite" depends="init,jar-app,-set-from-jar-name,-pre-suite,-do-suite,-post-suite" description="Build a suite for this application."/>
+	<target name="jar-app" depends="init,-set-to-jar-name,clean,preverify,-pre-jar-app,-do-jar-app,-post-jar-app" description="Create a jar for this application."/>
+	<target name="sdk-info" depends="init,-do-sdk-info" description="Describe important features of this installation."/>
+	<target name="echo" depends="init,-do-find-spots,-do-echo" description="Display output received from USB-connected SPOT."/>
+	<target name="netinfo" depends="-do-netinfo-init,init,-set-selector-for-host-run,-do-find-spots,-do-networktools-run" description="Display Network Information about a SPOT."/>
+	<target name="tracert" depends="-do-networktools-init,init,-set-selector-for-host-run,-do-find-spots,-do-networktools-run" description="Display the route to a SPOT."/>
+	<target name="solarium" depends="init,-set-basestation-not-required,-set-selector-for-host-run,-do-find-spots,-do-run-solarium" description="Runs Solarium from ${sunspot.lib}/SPOTWorld"/>
+	<target name="spotworld" depends="init,-set-basestation-not-required,-set-selector-for-host-run,-do-find-spots,-do-run-solarium" description="Runs Solarium from ${sunspot.lib}/SPOTWorld"/>
+
+	<target name="-set-to-jar-name" unless="to.jar.file" depends="-check-for-manifest">
+	    <echo>No to.jar.file specified.</echo>
+            <loadproperties srcfile="${manifest.name}" />
+            <fail unless="MIDlet-Name">
+                No MIDlet-Name specified in ${manifest.name}
+            </fail>
+            <fail unless="MIDlet-Version">
+                No MIDlet-Version specified in ${manifest.name}
+            </fail>
+            <property name="to.jar.file" 
+                  value="${suite.dir}${file.separator}${MIDlet-Name}_${MIDlet-Version}.jar" />
+            <echo>Using "${to.jar.file}"</echo>
+	</target>
+
+	<target name="-set-from-jar-name" unless="from.jar.file">
+            <fail unless="to.jar.file" message="No from.jar.file specified."/>
+            <property name="from.jar.file" value="${to.jar.file}" />
+            <echo>Using "${from.jar.file}"</echo>
+	</target>
+
+	<target name="-try-set-from-jar-name-and-deploy" unless="from.jar.file">
+	    <antcall>
+		<target name="-set-to-jar-name" />
+		<target name="-set-from-jar-name" />
+		<target name="deploy" />
+	    </antcall>
+	</target>
+
+	<target name="-deploy-from-jar-name" if="from.jar.file">
+	    <antcall target="deploy" />
+	</target>
+
+	<target name="-set-from-jar-name-and-deploy" depends="-try-set-from-jar-name-and-deploy,-deploy-from-jar-name" />
+
+	<target name="-set-selector-for-nonbasestation">
+            <property name="spotselector.findnonbasestation" value="true" />    
+	</target>
+
+	<target name="-set-basestation-not-required"> 
+            <property name="basestation.not.required" value="true" />
+	</target>
+
+	<target name="-set-basestation-sharing"> 
+            <property name="basestation.shared" value="true" />
+	    <condition property="fail.because.basestation.sharing.is.disabled">
+		<isfalse value="${basestation.shared}"/>
+	    </condition>
+	    <fail if="fail.because.basestation.sharing.is.disabled">
+Cannot start a shared basestation because basestation.shared is set to false.
+</fail>
+	</target>
+
+	<target name="setstartup" depends="init,-do-find-spots" description="Set the SPOT to run a specified midlet on startup">
+	    <condition property="uri.temp" value="${library.suite.url}">
+		<equals arg1="${uri}" arg2="none" casesensitive="no"/>
+	    </condition>
+	    <property name="uri" value="${library.suite.url}" />
+	    <property name="uri.temp" value="${uri}" />
+	    <condition property="midlet.temp" value="com.sun.spot.util.DummyApp">
+		<equals arg1="${midlet}" arg2="none" casesensitive="no"/>
+	    </condition>
+	    <condition property="midlet.temp" value="${midlet}">
+		<not>
+		    <equals arg1="${uri.temp}" arg2="${library.suite.url}" />
+		</not>
+	    </condition>
+	    <property name="midlet.temp" value="com.sun.spot.util.DummyApp" />
+	    <antcall target="-run-spotclient">
+    		<param name="spotclient.script.contents" value="setstartup ${uri.temp} ${midlet.temp}"/>
+	    </antcall>
+	</target>
+
+	<target name="getstartup" depends="init,-do-find-spots" description="Get startup settings">
+	    <antcall target="-run-spotclient">
+    		<param name="spotclient.script.contents" value="getstartup"/>
+	    </antcall>
+	</target>
+
+	<target name="selectmeshrouter" depends="init,-failIfRemote,-do-find-spots" description="Set the SPOT to operate as a mesh network router">
+	    <antcall target="-run-spotclient">
+	        <param name="spotclient.script.contents" value="setstartup ${library.suite.url} com.sun.spot.peripheral.radio.MeshRouterDaemon"/>
+	    </antcall>
+	</target>
+
+	<target name="selectbasestation" description="Deprecated, please use startbasestation instead">
+	    <echo>selectbasestation has been deprecated, please use startbasestation instead.</echo>
+	    <antcall target="startbasestation">
+	    </antcall>
+	</target>
+
+	<target name="startbasestation" depends="init,-failIfRemote,-do-find-spots" description="Set the SPOT to operate as a base station and start it">
+	    <antcall target="-run-spotclient">
+	        <param name="squawk.startup.arguments" value="${squawk.startup.arguments} -Dspot.start.manifest.daemons=false"/>
+	        <param name="spotclient.script.contents" value="setstartup ${library.suite.url} com.sun.spot.peripheral.basestation.BaseStation${line.separator}run fork"/>
+	    </antcall>
+	</target>
+
+	<target name="slots" depends="info" description="Report the contents of the application slots"/>
+	<target name="info" depends="init,-do-find-spots" description="Report on the configuration of a SPOT">
+	    <antcall target="-run-spotclient">
+    		<param name="spotclient.script.contents" value="info"/>
+	    </antcall>
+	</target>
+
+	<target name="settime" depends="init,-do-find-spots" description="Set the SPOT system clock to match the host system clock.">
+	    <antcall target="-run-spotclient">
+    		<param name="spotclient.script.contents" value="settime"/>
+	    </antcall>
+	</target>
+
+	<target name="setserialnumber" depends="init,-failIfRemote,-do-find-spots" description="Set the SPOT's serial number. This is an irreversible one-time-only operation that is normally performed during manufacture.">
+	    <fail unless="serial.number">Must set serial.number on command line (-Dserial.number=xxxx)</fail>
+	    <antcall target="-run-spotclient">
+	        <param name="spotclient.script.contents" value="setserialnumber ${serial.number}${line.separator}flashprops"/>
+	    </antcall>
+	</target>
+	
+	<target name="enableota" depends="init,-do-find-spots" description="Sets the SPOT to run the OTA command server to enable over-the-air deployment of applications.">
+	    <antcall target="-run-spotclient">
+    		<param name="spotclient.script.contents" value="setsystemproperty spot.ota.enable true"/>
+	    </antcall>
+	</target>
+	
+	<target name="disableota" depends="init,-do-find-spots" description="Sets the SPOT not to run the OTA command server (see enableota).">
+	    <antcall target="-run-spotclient">
+    		<param name="spotclient.script.contents" value="setsystemproperty spot.ota.enable false"/>
+	    </antcall>
+	</target>
+
+	<target name="flashvm" depends="init,-failIfRemote,-do-find-spots" description="Flash the VM">
+	    <antcall target="-run-spotclient">
+	        <param name="spotclient.script.contents" value="flashvm"/>
+	    </antcall>
+	</target>
+	
+	<target name="setpublickey" depends="init,-do-find-spots" description="Set the public key on the SPOT to the one defined on the desktop.">
+	    <antcall target="-run-spotclient">
+		<param name="spotclient.script.contents" value="setpublickey"/>
+	    </antcall>
+	</target>
+	
+	<target name="deletepublickey" depends="init,-do-find-spots" description="Delete the public key from the SPOT.">
+	    <antcall target="-run-spotclient">
+    		<param name="spotclient.script.contents" value="deletepublickey"/>
+	    </antcall>
+	</target>
+
+	<target name="system-properties" depends="init,-do-find-spots" description="Display the system properties on the SPOT.">
+	    <antcall target="-run-spotclient">
+    		<param name="spotclient.script.contents" value="getsystemproperties"/>
+	    </antcall>
+	</target>
+
+	<target name="get-selected-system-properties" depends="init,-do-find-spots" description="Display selected system properties on the SPOT (needs -Dkeys=key1,key2,...)">
+	    <fail unless="keys">Must specify a comma-separated list of property keys (-Dkeys=key1,key2,...)</fail>
+	    <antcall target="-run-spotclient">
+    		<param name="spotclient.script.contents" value="getspotproperty ${keys}"/>
+	    </antcall>
+	</target>
+	
+	<target name="set-system-property" depends="init,-do-find-spots" description="Sets (or adds) a system property on the SPOT.">
+	    <fail unless="key">Must define the property key (-Dkey=xxxx)</fail>
+	    <fail unless="value">Must define the property value (-Dvalue=xxxx)</fail>
+	    <antcall target="-run-spotclient">
+    		<param name="spotclient.script.contents" value="setsystemproperty ${key} ${value}"/>
+	    </antcall>
+	</target>
+
+	<target name="delete-system-property" depends="init,-do-find-spots" description="Deletes a system property from the SPOT.">
+	    <fail unless="key">Must define the property key (-Dkey=xxxx)</fail>
+	    <antcall target="-run-spotclient">
+    		<param name="spotclient.script.contents" value="deletesystemproperty ${key}"/>
+	    </antcall>
+	</target>
+
+	<target name="set-radio-properties" depends="init,-do-find-spots" description="Sets the default radio settings via system properties on the SPOT.">
+	    <condition property="srp.rc" value="setsystemproperty radio.channel ${radio.channel}" else="deletesystemproperty radio.channel false">
+		<isset property="radio.channel"/>
+	    </condition>
+	    <condition property="srp.rpi" value="setsystemproperty radio.pan.id ${radio.pan.id}" else="deletesystemproperty radio.pan.id false">
+		<isset property="radio.pan.id"/>
+	    </condition>
+	    <condition property="srp.rtp" value="setsystemproperty radio.transmit.power ${radio.transmit.power}" else="deletesystemproperty radio.transmit.power false">
+		<isset property="radio.transmit.power"/>
+	    </condition>
+
+	    <antcall target="-run-spotclient">
+		<param name="spotclient.script.contents" value="${srp.rc}${line.separator}${srp.rpi}${line.separator}${srp.rtp}"/>
+	    </antcall>
+	</target>
+	
+	<target name="delete-radio-properties" depends="init,-do-find-spots" description="Resets the default radio settings via system properties on the SPOT.">
+	    <antcall target="-run-spotclient">
+    		<param name="spotclient.script.contents" value="deletesystemproperty radio.channel false${line.separator}deletesystemproperty radio.pan.id false${line.separator}deletesystemproperty radio.transmit.power false"/>
+	    </antcall>
+	</target>
+
+	<target name="flashbootloader" depends="init,-failIfRemote,-do-find-spots" description="Flash the bootloader">
+	    <antcall target="-run-spotclient">
+	        <param name="spotclient.script.contents" value="setslowstartup on${line.separator}flashbootloader"/>
+	    </antcall>
+	    <sleep seconds="4"/>
+	    <antcall target="-run-spotclient">
+	        <param name="spotclient.script.contents" value="setslowstartup off"/>
+	    </antcall>
+	</target>
+
+	<target name="flashbootstrap" depends="init,-failIfRemote,-do-find-spots" description="Flash the bootstrap">
+	    <antcall target="-run-spotclient">
+	        <param name="spotclient.script.contents" value="flashvb"/>
+	    </antcall>
+	</target>
+
+	<target name="flashlibrary" depends="init,-do-find-spots" description="Flash the library">
+	    <antcall target="-run-spotclient">
+		<param name="spotclient.script.contents" value="flashlib${line.separator}setstartup ${library.suite.url} com.sun.spot.util.DummyApp"/>
+	    </antcall>
+	</target>
+
+	<target name="resetlibrary" depends="init,-do-find-spots" description="Flash the library via the bootloader">
+	    <antcall target="-run-spotclient">
+		<param name="spotclient.script.contents" value="resetlib${line.separator}setstartup ${library.suite.url} com.sun.spot.util.DummyApp"/>
+	    </antcall>
+	</target>
+
+	<target name="flashconfig" depends="init,-do-find-spots" description="Flash the config page">
+	    <antcall target="-run-spotclient">
+    		<param name="spotclient.script.contents" value="flashprops"/>
+	    </antcall>
+	</target>
+
+	<target name="resetfat" depends="init,-failIfRemote,-do-find-spots" description="Reset the FAT">
+	    <antcall target="-run-spotclient">
+		<param name="spotclient.script.contents" value="resetfat"/>
+	    </antcall>
+	</target>
+
+
+	<target name="reboot" depends="init,-do-find-spots" description="Reset the SPOT">
+	    <antcall target="-run-spotclient">
+		<param name="spotclient.script.contents" value="reboot"/>
+	    </antcall>
+	</target>
+
+	<target name="make-host-jar" depends="init,host-compile">
+		<fail unless="to.jar.file">Must define the jar file to create (-Dto.jar.file=xxxx)</fail>
+		<zip destfile="${to.jar.file}">
+			<fileset dir="${build.dir}" />
+		</zip>
+	</target>
+
+	<target name="blink" depends="init, -do-find-spots" description="Blink LED on SPOT.">
+	    <property name="duration" value="10"/>
+	    <antcall target="-run-spotclient">
+    		<param name="spotclient.script.contents" value="blink ${duration}"/>
+	    </antcall>
+	</target>
+
+	<target name="hello" depends="init,-set-selector-for-host-run,-do-find-spots" description="Get basic information about reachable SPOTs.">
+		<antcall target="-run-spotclient">
+			<param name="spotclient.script.contents" value="hello ${spotclient.hello.timeout} ${spotclient.hello.hops} ${spotclient.hello.destination}"/>
+			<param name="extra.args" value="-nosync"/>
+		</antcall>
+	</target>
+
+	<target name="upgrade" depends="init,-failIfRemote,-do-find-spots,-do-upgrade" description="Upgrade SPOT to the latest SDK release" />
+
+	<target name="system-restore" depends="init,-failIfRemote,-do-find-spots,-do-restore" description="Restores SPOT to factory-fresh state if this SDK were installed at manufacture time" />
+
+	<target name="-failIfSerial">
+	    <fail unless="remoteId">Currently this function can only be performed on a remote SPOT</fail>
+	</target>
+
+	<target name="-failIfRemote">
+		<fail if="remoteId">This function cannot be performed on a remote SPOT</fail>
+		<fail if="remoteid">This function cannot be performed on a remote SPOT</fail>
+		<fail if="remoteID">This function cannot be performed on a remote SPOT</fail>
+	</target>
+</project>

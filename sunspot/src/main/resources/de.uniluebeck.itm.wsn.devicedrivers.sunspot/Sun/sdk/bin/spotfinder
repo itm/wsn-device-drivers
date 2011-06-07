@@ -1,0 +1,81 @@
+#!/bin/sh 
+
+######################################################################## 
+#                   Portfinder script for Linux                        # 
+#  Tries to detect the port to which a Sun SPOT is connected.          # 
+#  Prints a comma separated listed of ports and SPOT Ids on stderr.    #
+#                                                                      # 
+#  Contributors:                                                       #
+#        Bart Braem and Kurt Smolderen - PATS Research Group           # 
+########################################################################
+
+PATH=/usr/bin:/bin:/sbin:/usr/sbin 
+check_hal() 
+{ 
+   hashal=`which hal-device 2> /dev/null` 
+   if [ "$hashal" != "" ]; then 
+        return 1 
+    else 
+        return 0 
+   fi 
+} 
+
+PORTCOUNT=0 
+PORTLIST="" 
+
+# Try our luck using HAL 
+check_hal 
+case "$?" in 
+   1) 
+    echo "Using Hardware Abstraction Layer (HAL) to probe Sun SPOTS..." 
+    # Get a list of UDIs that have "Sun SPOT" as their product name 
+    spotlist=`hal-find-by-property --key info.product --string "Sun SPOT"` 
+    for spot in $spotlist; do 
+      # id is located in HAL as serial number 
+      spotid=`hal-get-property --udi "$spot" --key 'usb_device.serial'` 
+      # find CDC_ACM driven devices with SPOT parents 
+      acmdrivenlist=`hal-find-by-property --key info.linux.driver --string "cdc_acm" --key info.parent --string "$spot"` 
+      for acmdriven in $acmdrivenlist; do 
+        # find the serial port that the CDC_ACM driver offers 
+        serialportdevicelist=`hal-find-by-property --key info.product --string "Serial Port" --key info.parent --string "$acmdriven"` 
+        for serialportdevice in $serialportdevicelist; do 
+          # extract the serial port 
+          serialport=`hal-get-property --udi "$serialportdevice" --key 'serial.device'` 
+          if [ "${PORTLIST}" = "" ]; then
+              PORTLIST="$serialport ($spotid)"
+          else 
+              PORTLIST="$PORTLIST, $serialport ($spotid)"
+          fi
+        done 
+      done 
+    done 
+    ;; 
+   0) 
+    LS=/bin/ls 
+    PATTERN=/dev/ttyACM* 
+    PORTS=`$LS $PATTERN 2> /dev/null` 
+    # Create a comma separated list 
+    for PORT in $PORTS 
+    do 
+        PORTCOUNT=`expr $PORTCOUNT + 1` 
+        if [ "${PORTLIST}" = "" ]; then 
+            PORTLIST="$PORT" 
+        else 
+            PORTLIST="$PORTLIST, $PORT" 
+        fi 
+    done 
+
+    echo "WARNING: Your Linux installation does not" 
+    echo "include the 'hal-device' application. The" 
+    echo "spotfinder utility will treat all devices" 
+    echo "matching the pattern:" 
+    echo "     $PATTERN" 
+    echo "as Sun SPOT devices. If no Sun SPOT device" 
+    echo "is connected but another device matching this" 
+    echo "pattern is available, that device will be " 
+    echo "selected automatically." 
+    echo "" 
+    echo "" 
+esac 
+echo $PORTLIST >&2 
+exit 0

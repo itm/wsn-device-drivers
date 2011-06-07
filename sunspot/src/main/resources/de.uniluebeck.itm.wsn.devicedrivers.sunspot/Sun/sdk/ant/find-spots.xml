@@ -1,0 +1,307 @@
+<!--
+/*
+ * Copyright 2005-2009 Sun Microsystems, Inc. All Rights Reserved.
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER
+ * 
+ * This code is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2
+ * only, as published by the Free Software Foundation.
+ * 
+ * This code is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License version 2 for more details (a copy is
+ * included in the LICENSE file that accompanied this code).
+ * 
+ * You should have received a copy of the GNU General Public License
+ * version 2 along with this work; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA
+ * 
+ * Please contact Sun Microsystems, Inc., 16 Network Circle, Menlo
+ * Park, CA 94025 or visit www.sun.com if you need additional
+ * information or have any questions.
+ */
+-->
+ 
+<project name="find-spots">
+	
+	<target name="-do-find-spots" 
+          depends="-override-warning-find-spots,
+				-prepare-conditions-for-find-spots,
+				-find-shared-basestation,
+				-run-spotfinder,
+				-check-spotfinder-result,
+				-decide-whether-to-run-spotselector,
+				-run-spotselector,
+		        -collect-spotselector-result,
+		 		-clean-up-spotselector-output-file,
+		        -spotselector-fail,
+				-decide-whether-to-start-basestation-manager,
+				-start-new-basestation-manager">
+		<property name="port" value="dummyport"/>
+		<property name="do.find.spots.has.executed" value="true"/>
+	</target>
+
+	<target name="-override-warning-find-spots" if="port" unless="do.find.spots.has.executed">
+		<echo>
+WARNING: Using the port specified in the 
+"port" property without any checks.
+
+We recommend setting the "spotport" (rather
+than the "port") property to enable features
+like interactive selection of another valid 
+port if the specified port is unavailable.
+    </echo>
+	</target>
+
+	<target name="-prepare-conditions-for-find-spots">
+		<condition property="spotselector.findbasestation">
+			<isset property="remoteId"/>
+		</condition>
+		<condition property="spotselector.findsharedbasestation">
+			<and>
+				<isset property="spotselector.findbasestation"/>
+				<istrue value="${basestation.shared}"/>
+			</and>
+		</condition>
+		<condition property="spotselector.spotselector.done">
+			<isset property="port"/>
+		</condition>
+	</target>
+	
+	<target name="-find-shared-basestation" if="spotselector.findsharedbasestation" unless="do.find.spots.has.executed">
+		<echo message="Checking for shared basestation..."/>
+		<condition property="port.or.empty.string" value="${port}">
+			<isset property="port"/>
+		</condition>
+		<condition property="port.or.empty.string" value="${spotport}">
+			<isset property="spotport"/>
+		</condition>
+		<property name="port.or.empty.string" value="" />
+		<java classname="com.sun.spot.spotselector.SharedBasestationFinder" 
+	          classpath="${spotselector.classpath}${path.separator}${hostagent.base.run.classpath}" 
+	          fork="true" 
+	    	  failonerror="false" >
+			<redirector errorproperty="spotselector.sharedbasestationfound" />
+			<sysproperty key="sunspot.lib" value="${sunspot.lib}" />
+			<sysproperty key="spot.mesh.routing.enable" value="endnode" />
+			<sysproperty key="spot.basestation.sharing" value="true" />
+			<jvmarg value="-Xbootclasspath/p:${sunspot.lib}/imp_classes.jar"/>
+			<arg value="${port.or.empty.string}"/>
+		</java>
+		<echo message="Shared basestation result: ${spotselector.sharedbasestationfound}" />
+		<condition property="start.shared.basestation">
+			<isfalse value="${spotselector.sharedbasestationfound}"/>
+		</condition>
+		<condition property="port" value="dummyport">
+			<istrue value="${spotselector.sharedbasestationfound}"/>
+		</condition>
+		<condition property="spotselector.spotselector.done" value="true">
+			<istrue value="${spotselector.sharedbasestationfound}"/>
+		</condition>
+	</target>
+	
+	<target name="-decide-whether-to-start-basestation-manager">
+		<condition property="spotselector.should.start.shared.basestation">
+			<and>
+				<isset property="start.shared.basestation"/>
+				<isset property="port"/>
+			</and>
+		</condition>
+	</target>
+	
+	<target name="-start-new-basestation-manager" if="spotselector.should.start.shared.basestation" unless="do.find.spots.has.executed">
+		<echo message="Starting new shared basestation..." />
+		<java classname="com.sun.spot.peripheral.radio.BasestationManagerGUI" 
+          		classpath="${spotselector.classpath}${path.separator}${hostagent.base.run.classpath}" 
+          		fork="true"
+		  	spawn="true"
+    	  		failonerror="false" >
+			<jvmarg value="-Xbootclasspath/p:${sunspot.lib}/imp_classes.jar"/>
+            		<jvmarg value="-Djava.library.path=${sunspot.lib}${path.separator}${user.library.path}"/>
+			<sysproperty key="spot.basestation.sharing" value="true" />
+			<sysproperty key="spot.mesh.route.logging" value="${spot.mesh.route.logging}"/>
+			<sysproperty key="remote.channel" value="${remote.channel}"/>
+			<sysproperty key="remote.pan.id" value="${remote.pan.id}"/>
+			<sysproperty key="remote.transmit.power" value="${remote.transmit.power}"/>
+			<sysproperty key="SERIAL_PORT" value="${port}" />
+		</java>
+	</target>
+	
+	<target name="-run-spotfinder">
+		<!-- Call the platform specific spotfinder executable to
+         retrieve a coma-separated list of ports to which Sun SPOT
+         devices are connected  -->
+		<exec executable="${spotfinder.executable}"
+			resultproperty="spotfinder.result"
+			errorproperty="spotfinder.exec.portlist" />
+	</target>
+
+	<!-- The result of running this target is either that the 'port' property
+	gets set or execution fails -->
+	<target name="-check-spotfinder-result" unless="port">
+		<property name="spotfinder.portlist" value="${spotfinder.exec.portlist}" />
+		<condition property="spotselector.spotfinder.failed">
+			<not>
+				<equals arg1="${spotfinder.result}" arg2="0" />
+			</not>
+		</condition>
+
+		<!-- This can be tested by forcing spotfinder to return non-zero -->
+		<fail>
+>
+Execution of the platform-specific binary
+   ${spotfinder.executable}
+failed (this can happen if you are using an 
+unsupported platform).
+
+You can force the build scripts to use a
+particular port by specifying it in the
+"port" property (either in a properties 
+file or using -Dport=XXX on the commandline).
+       		<condition>
+				<isset property="spotselector.spotfinder.failed" />
+			</condition>
+		</fail>
+
+		<condition property="spotfinder.nospotfound">
+			<equals arg1="${spotfinder.portlist}" arg2="" />
+		</condition>
+		<fail>
+>
+No Sun SPOT devices found. Connect a device 
+and retry or, if you know that one is already 
+connected, specify its port using the "port" 
+property (either in a properties file or using
+-Dport=XXX at the commandline). This will force
+the build scripts to use that port.
+			<condition>
+				<and>
+					<isset property="spotfinder.nospotfound"/>
+					<not>
+						<and>
+							<istrue value="${basestation.not.required}"/>
+							<isset property="spotselector.findbasestation"/>
+						</and>
+					</not>
+				</and>
+			</condition>
+	    </fail>
+	</target>
+	
+	<target name="-decide-whether-to-run-spotselector">
+		<condition property="spotselector.spotselector.done">
+			<or>
+				<isset property="spotfinder.nospotfound"/>
+				<isset property="port"/>
+			</or>
+		</condition>		
+	</target>
+	
+	<target name="-run-spotselector" unless="spotselector.spotselector.done">
+		<!-- 
+         Call the java spotselector application. This application
+         enables several user friendly features, e.g. if the user
+         does not specify any port, it can automatically use an
+         available port (if there is just one) or prompt the user
+         to choose one of the other available options (if the user
+         specified port wasn't found). The port list discovered
+         by the platform specific binary is passed as a commandline
+         option. The result is written to a file that is read in
+         -collect-spotselector-result
+		
+		The following types of errors can occur:
+
+           -    No suitable ports available.
+           -    Operation cancelled by user.
+      -->
+		
+		<!-- Set spottype appropriately based on whether this ant target needs a 
+         basestation or any Sun SPOT device. -->
+		<condition property="spottype" value="Sun SPOT basestation">
+			<isset property="spotselector.findbasestation" />
+		</condition>
+		<property name="spottype" value="Sun SPOT device" />
+
+		<!-- Set querytype appropriately based on whether this ant target needs a 
+         basestation or any Sun SPOT device. -->
+		<condition property="querytype" value="2">
+			<isset property="spotselector.findbasestation" />
+		</condition>
+		<condition property="querytype" value="1">
+			<isset property="spotselector.findnonbasestation" />
+		</condition>
+		<property name="querytype" value="0"/>
+
+		<!-- Set preferred port appropriately. -->
+		<condition property="spotselector.preferred.port" value="${spotselector.basestation.lastport}">
+			<and>
+				<isset property="spotselector.findbasestation" />
+				<isset property="spotselector.basestation.lastport" />
+			</and>
+		</condition>
+		<condition property="spotselector.preferred.port" value="${spotport}">
+			<isset property="spotport" />
+		</condition>
+		<property name="spotselector.preferred.port" value="NOT_SET"/>
+
+		<property name="spotselector.inhibit.full.basestation.check" value="false"/>
+		
+		<mkdir dir="${sunspot.home}/temp"/>
+		<tempfile property="spotselector.out.file" destdir="${sunspot.home}/temp" prefix="spotselector-"/>
+
+		<java classname="com.sun.spot.spotselector.CommandLineSpotSelector" 
+	          classpath="${spotselector.classpath}${path.separator}${hostagent.base.run.classpath}" 
+	          fork="true" 
+    		  failonerror="false"
+		  resultproperty="spotselector.result"
+   		>	          
+	            <jvmarg value="-Djava.library.path=${sunspot.lib}"/>
+			<sysproperty key="spotselector.inhibit.full.basestation.check" value="${spotselector.inhibit.full.basestation.check}" />
+			<sysproperty key="spotclient.verbose" value="${spotclient.verbose}" />
+			<sysproperty key="spot.mesh.routing.enable" value="endnode" />
+			<arg value="${spotfinder.portlist}"/>
+			<arg value="${querytype}"/>
+			<arg value="${spotselector.preferred.port}"/>
+			<arg value="${spotselector.out.file}"/>
+		</java>
+
+		<condition property="spotselector.spotselector.done">
+			<not>
+				<equals arg1="${spotselector.result}" arg2="0" />
+			</not>
+		</condition>
+		<condition property="spotselector.spotselector.failed">
+			<and>
+				<not>
+					<equals arg1="${spotselector.result}" arg2="0" />
+				</not>
+				<not>
+					<and>
+						<istrue value="${basestation.not.required}"/>
+						<isset property="spotselector.findbasestation"/>
+					</and>					
+				</not>
+			</and>
+		</condition>
+	</target>
+	
+	<target name="-collect-spotselector-result" unless="spotselector.spotselector.done">
+		<property name="spotselector.spotselector.done" value="true"/>
+		<loadfile property="port" srcfile="${spotselector.out.file}" failonerror="false"/>
+		<echo>
+Using ${spottype} on port ${port}</echo>
+	</target>
+
+	<target name="-spotselector-fail" if="spotselector.spotselector.failed">
+		<fail>
+Spotselector failed or was cancelled
+		</fail>
+	</target>
+
+	<target name="-clean-up-spotselector-output-file" if="spotselector.out.file">
+		<delete file="${spotselector.out.file}" failonerror="false" quiet="true"/>		
+	</target>
+		
+</project>

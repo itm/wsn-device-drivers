@@ -1,0 +1,64 @@
+<!--
+/*
+ * Copyright 2005-2008 Sun Microsystems, Inc. All Rights Reserved.
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER
+ * 
+ * This code is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2
+ * only, as published by the Free Software Foundation.
+ * 
+ * This code is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License version 2 for more details (a copy is
+ * included in the LICENSE file that accompanied this code).
+ * 
+ * You should have received a copy of the GNU General Public License
+ * version 2 along with this work; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA
+ * 
+ * Please contact Sun Microsystems, Inc., 16 Network Circle, Menlo
+ * Park, CA 94025 or visit www.sun.com if you need additional
+ * information or have any questions.
+ */
+-->
+
+<project name="preverify">
+	
+	<target name="-pre-preverify"/>
+	
+	<target name="-make-preverify-directory">
+		<mkdir dir="${preverify.dir}"/>
+	</target>
+	
+	<target name="-unjar-utility-jar">
+		<if>
+			<available file="${-jar.name}"/>
+			<then>
+				<unjar src="${-jar.name}" dest="${preverify.dir}" />
+			</then>
+		</if>
+	</target>
+	
+	<target name="-unjar-utility-jars" if="utility.jars">
+		<pathconvert property="utility.jar.list" pathsep=",">
+			<path>
+				<pathelement path="${utility.jars}"/>
+			</path>
+		</pathconvert>
+		<foreach target="-unjar-utility-jar" param="-jar.name" list="${utility.jar.list}" inheritall="true"/>
+	</target>
+
+    <target name="-do-preverify" depends="-make-preverify-directory, -unjar-utility-jars">
+        <exec executable="${preverify.executable}" failonerror="true">
+            <arg value="-d"/>
+            <arg value="${preverify.dir}"/>
+            <arg value="-classpath"/>
+            <arg value="${sunspot.bootclasspath}${path.separator}${sunspot.classpath}${path.separator}${preverify.dir}"/>
+            <arg value="${build.dir}"/>
+        </exec>
+    </target>
+
+    <target name="-post-preverify"/>
+</project>

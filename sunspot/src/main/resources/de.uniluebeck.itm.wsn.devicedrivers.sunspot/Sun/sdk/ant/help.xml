@@ -1,0 +1,198 @@
+<!--
+/*
+ * Copyright 2005-2008 Sun Microsystems, Inc. All Rights Reserved.
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER
+ * 
+ * This code is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2
+ * only, as published by the Free Software Foundation.
+ * 
+ * This code is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License version 2 for more details (a copy is
+ * included in the LICENSE file that accompanied this code).
+ * 
+ * You should have received a copy of the GNU General Public License
+ * version 2 along with this work; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA
+ * 
+ * Please contact Sun Microsystems, Inc., 16 Network Circle, Menlo
+ * Park, CA 94025 or visit www.sun.com if you need additional
+ * information or have any questions.
+ */
+-->
+
+<project name="help">
+    <target name="-help">
+        <echo>    build.xml
+    sunspot.home=${sunspot.home}
+
+usage: ant [target]
+where [target] is one of:
+
+help                     displays this message
+sdk-info                 displays information about the current SDK installation
+
+info                     displays information about the configuration of a SPOT
+clean                    delete all compiled/generated files
+compile                  compiles java source files to classes
+compile-single           (used by IDEs) compiles all files in ${javac.includes}
+jar-app                  create a jar for this application
+suite                    builds a suite suitable for deployment
+find-spots               locate USB ports where SPOTs are connected
+deploy                   optionally build, and then deploy the application to a SPOT as an IMlet
+jar-deploy               deploy the jar file for this application to a SPOT as an IMlet
+run                      connect to a device and watch the application
+fork                     start the application running and continue
+reboot                   reboot a SPOT
+settime                  set the system clock on the SPOT to match the host system clock
+setpublickey             set the public key on the SPOT to the one defined on the desktop
+deletepublickey          erase the public key from the SPOT
+echo                     display all characters received from a USB-connected SPOT
+
+solarium                 start the Solarium application
+        	
+system-properties        display the system properties on the SPOT.
+get-selected-system-properties  
+                         display selected properties on the SPOT 
+                         (requires -Dkeys=key1,key2,...).
+set-system-property      set (or adds) a system property on the SPOT.
+delete-system-property   delete a system property from the SPOT.
+set-radio-properties     set the default radio channel, pan id &amp; transmit power on the SPOT
+delete-radio-properties  reset the default radio channel, pan id &amp; transmit power on the SPOT
+
+enableota                set the SPOT to run the OTA command server to enable over-the-air
+                         deployment of applications.
+disableota               set the SPOT not to run the OTA command server (see enableota).
+
+debug                    configure the SPOT to run the debug agent and then start the debug proxy
+debug-proxy              start the proxy for the high-level debugger
+        	
+tracert                  trace the route to a SPOT
+blink                    blink LED on SPOT (use -Dduration=n to override default duration)
+hello                    display basic information about all reachable SPOTs
+
+sysadmin                 start interactive spot client
+
+socket-proxy             start the socket proxy in headless mode for HTTP connections on device 
+socket-proxy-gui         start the socket proxy in gui mode for HTTP connections on device
+
+library                  builds a replacement library suite (use with care!)
+
+startbasestation         configures the SPOT so that it runs as a basestation and starts it
+selectmeshrouter         configures the SPOT so that it will run as a mesh network router
+setstartup               set which application and midlet will run at the next reboot
+getstartup               answer which application and midlet will run at the next reboot
+        	
+flashlibrary             flash the library suite
+resetlibrary             flash the library suite via the bootloader. This should be used to recover
+                         if a corrupt or buggy library has been flashed. This function cannot be
+        	             executed on a remote SPOT.
+flashconfig              flash the config section
+
+host-compile             compile a host application
+host-run                 run a host application (requires property main.class)
+make-host-jar            compile source for host execution and build a jar
+start-shared-basestation start a shared basestation (requires basestation SPOT to be running)
+
+deploychild              deploy the application to a SPOT as a child IMlet
+undeploy                 remove a child IMlet from a SPOT (requires -Duri=xxx)
+
+upgrade                  upgrade the SPOT to the lastest SDK release
+system-restore           like upgrade but installs "bounce" demo, removes user-defined
+                         properties and leaves the SPOT ownerless
+
+getmemorystats           get memory information, e.g. free and total RAM
+getpowerstats            get information related to the power controller
+getsleepinfo             get information related to the sleep manager
+getavailablesuites       get information on installed application
+                         suites. The uris returned by this command
+                         can be passed as an argument to the 
+                         getsuitemanifest and startapp commands.
+getsuitemanifest         get contents of the MANIFEST for a given suite.
+                         The suite is specified using the 
+                         -Duri=uri-string argument. The manifest lists available 
+                         MIDlets that can be launched using startapp.
+startapp                 start the MIDlet number specified using the
+                         -Dmidlet=n argument (defaults to 1). This command
+    			 also needs a -Duri argument. The
+                         command returns an isolateId which can be 
+                         passed as an argument to pauseapp/resumeapp/
+                         stopapp.
+pauseapp                 pause the application specified using the
+                         -DisolateId=isolate-id-string argument. This 
+                         is an experimental feature and may not work
+                         correctly for all applications.
+resumeapp                resume the application specified using the
+                         -DisolateId=isolate-id-string argument. This 
+                         is an experimental feature and may not work
+                         correctly for all applications.
+stopapp                  stop the application specified using the
+                         -DisolateId=isolate-id-string argument
+getappstatus             get current status (e.g. alive, paused, exited) 
+                         on the application specified using the
+                         -DisolateId=isolate-id-string argument
+getallappsstatus         get status on all applications
+receiveapp               prepare a SPOT to receive a running isolate
+                         specified using -DisolateId from the SPOT
+                         whose address is specified using -DisolateSrc
+                         NOTE: This is an experimental feature!!!
+                         Currently, isolate migration only transfers
+                         running state not code. The application
+                         containing the isolate code must already be
+                         loaded on the receiver. Only very simple
+                         applications (e.g. those that blink LEDs but
+                         do not open network connections) can be
+                         migrated.
+sendapp                  send the isolate specified using -DisolateId
+                         to the SPOT whose address is specified using
+                         -DisolateDst
+                         NOTE: This is an experimental feature!!!
+                         Only very simple applications can be migrated
+                         and the destination SPOT must be ready
+                         to receive the isolate (see receiveapp).
+
+
+
+Useful command line properties:
+
+-projecthelp             shows the full list of available commands
+-Dbasestation.addr=1234  set the address of the basestation
+-DremoteId=1234          set the target for remote run/deploy/debug-proxy-run.
+-Dmain.class=com.example.MyStartUp
+                         specify the main class for host-run
+-Dspotport=COM2          set the port name for communicating with the SPOT
+-Dport=COM2              set the port name for communicating with the SPOT,
+                         bypassing all checks on port validity
+-Dto.jar.file=example.jar   set the jar file for jar-app and make-host-jar
+-Dfrom.jar.file=example.jar set the jar file for deploy
+-Dmidlet=2               select a midlet to run for selectapplication
+                         or deploy targets (defaults to 1)
+-Dutility.jars=utils.jar a classpath separator delimited list of jars to be 
+        	             included with the application
+-Dbasestation.not.required=true
+                         host-run won't fail if no basestation is available
+
+Batch operations
+  Either of the parameters port and remoteId may be specified as a comma-separated
+  list, in which case the same operation will be applied to multiple SPOTs connected
+  locally or remotely. If the SPOTs are connected locally then the operations will apply 
+  in parallel: if remotely then the operations will apply in parallel only if 
+  basestation sharing is enabled. In parallel cases the output from multiple operations
+  may be interspersed.
+        	
+NOTE:
+  For more information about customizing this build process, see
+  ${sunspot.home}/build.xml and ${sunspot.home}/default.properties.
+  You can also use the template and read the documentation that
+  came with the development kit.
+</echo>
+    	<foreach list="${user.all.help.targets}" delimiter="," target="-user-help" param="target" />
+    </target>
+	
+	<target name="-user-help">
+		<antcall target="${target}" />
+	</target>
+</project>

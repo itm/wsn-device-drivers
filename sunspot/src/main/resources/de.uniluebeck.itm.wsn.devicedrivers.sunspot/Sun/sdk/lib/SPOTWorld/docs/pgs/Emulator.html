@@ -1,0 +1,492 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <meta name="keywords" content="emulator" />
+  <meta name="description" content="emulator" />
+  <title>SPOT Emulator</title>
+  <link href="../css/task_style.css" type="text/css" rel="stylesheet"
+  media="all" />
+</head>
+
+<body>
+
+<div id="banner">
+<a name="SPOT Emulator" id="SPOT Emulator"></a> 
+
+<div id="machelp">
+<a class="bread" href="../SolariumHelp.html">Solarium Help</a> </div>
+
+<div id="index">
+<a class="leftborder" href="index.html">Index</a> </div>
+</div>
+
+<div id="mainbox">
+
+<div id="caticon">
+<img src="../gfx/SPOTWorldIcon32x32.gif" alt="Solarium Icon" height="32"
+width="32" border="0" /> </div>
+
+<div id="pagetitle">
+<h1>SPOT Emulator</h1>
+</div>
+
+<p>Solarium also includes an emulator capable of running a Sun SPOT application
+on your desktop computer -- either for testing or when a real SPOT is not
+available. </p>
+
+<p>Instead of a physical sensorboard, virtual SPOTs have a <a
+href="#sensorpanel">sensor panel</a> that can be used to set any of the
+potential sensor inputs (e.g. light level, temperature, digital pin inputs,
+analog input voltages, and accelerometer values). Your application can control
+the LEDs' color that is displayed in the virtual SPOT image, just like it would
+a real SPOT. You can click with the mouse on the push button switches in the
+virtual SPOT image to press and release the switches. </p>
+
+<p>Receiving and sending via the radio is also supported. Each virtual SPOT is
+assigned its own address and can broadcast or unicast to the other virtual
+SPOTs. If a shared basestation is available a virtual SPOT can also interact
+over the radio with real SPOTs. </p>
+
+<table id="virtualspot" class="dots" width="100%" border="0" cellspacing="0"
+cellpadding="0" summary="One column table with heading">
+  <tbody>
+    <tr>
+      <td class="blue" colspan="1"><h3>Manipulating Virtual SPOTs</h3>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top"><p>Once Solarium is running make sure that a graphic
+        <i>Grid View</i> is displayed (<b>View</b> -&gt; <b>Grid View</b>).
+        Then from the <b>File</b> pull-down menu in the main Solarium menu bar,
+        select the command <b>New virtual SPOT</b>. This will create and
+        display a new virtual SPOT. It will appear to have a blue rather than a
+        smoke-colored plastic case. You can use the mouse to place the virtual
+        SPOT any place in the display.<br />
+        </p>
+
+        <center>
+        <img src="../gfx/EmulatorMenu.png"
+        alt="Virtual SPOT                    Menu" height="auto" width="500"
+        border="0" /> </center>
+
+        <p>If you right-click on the virtual SPOT you will see a menu of
+        possible commands.<br />
+        </p>
+
+        <center>
+        <img src="../gfx/VirtualSPOTMenu.png"
+        alt="Virtual SPOT                    Menu" height="auto" width="550"
+        border="0" /> </center>
+        <ul>
+          <li><b>Set Name</b> <br />
+            The allows you to give the virtual SPOT a descriptive name to help
+            you identify it. Each virtual SPOT has a label above it with its
+            name and another label below it with its IEEE radio address. </li>
+          <li><b>Deploy MIDlet bundle…</b> <br />
+            This command lets you <i>deploy</i> a SPOT application to the
+            virtual SPOT. It will bring up a file chooser dialog that you can
+            use to navigate to a SPOT project directory. You can select an
+            existing jar file created with the <tt>ant jar-app</tt> command or
+            the project's build.xml file, in which case a process will be
+            spawned to compile the source code, build the jar file, and then
+            load it. </li>
+          <li><b>Run MIDlet</b> <br />
+            This will list all of the MIDlets contained in the deployed jar
+            file and allow you to start up whatever ones you want. Any running
+            MIDlets will be displayed in a box to the right of the virtual
+            SPOT. Clicking on a running MIDlet will display a popup menu that
+            lets you tell the MIDlet to exit. 
+            <p>For example, use the <b>Deploy MIDlet bundle…</b> command to
+            load in the <i>emulator_demo.jar</i> file located in the
+            <i>Demos/EmulatorDemo</i> folder. Once it is loaded run the
+            <i>Sawtooth</i> MIDlet. As it runs you will see the LEDs of the
+            virtual SPOT be turned on, one by one, each brighter than the
+            previous, until all are lit at which point they are all turned off
+            and the cycle repeats. Right click on the Sawtooth application box
+            and exit it. </p>
+            <p></p>
+          </li>
+          <li><b>Debug MIDlet</b><br />
+            This will list all of the MIDlets contained in the deployed jar
+            file and allow you to connect an external Java Debugger to whatever
+            ones you want in order to debug it. </li>
+          <li><b>Reset virtual SPOT...</b><br />
+            This command will cause any running MIDlets to be killed and the
+            Squawk VM to be restarted. If a jar file had been specified
+            earlier, then it will be automatically reloaded and you can run any
+            of the MIDlets defined in it. </li>
+          <li><b>Display application output</b> <br />
+            This command will display a new window where anything printed by
+            the SPOT application to System.out or System.err will be displayed.
+            This new window can be an Internal Frame that is displayed beneath
+            the virtual SPOT in the main Solarium window, or it can be in a New
+            Window. If you reset the virtual SPOT you will see messages printed
+            when the old Squawk VM exits and the new one is started up. If the
+            output window is covered up this command will bring it to the
+            front. </li>
+          <li><b>Display sensor panel</b> <br />
+            This brings up a sensor panel that can be used to control sensor
+            inputs to the virtual SPOT. Refer to the section on <a
+            href="#sensorpanel">sensor panel</a> for additional details. </li>
+          <li><b>Blink LEDs</b> <br />
+            Causes a virtual SPOT to blink its LEDs. This command when issued
+            from the popup menu in the <i>Tree view</i> is useful for locating
+            the corresponding SPOT in the <i>Grid View</i>. </li>
+          <li><b>Get Info</b> <br />
+            This command will bring up a new window giving some information
+            about the virtual SPOT: its IEEE address, the jar file loaded (if
+            any), and the names of all available MIDlets. </li>
+          <li><b>Delete virtual SPOT</b><br />
+            Use this command to delete the virtual SPOT from Solarium when you
+            are done using it. </li>
+        </ul>
+
+        <p>From the <b>Emulator</b> pull-down menu in the main Solarium menu
+        bar, one can use the <b>Save virtual configuration...</b> command to
+        write out a file that will store the state of all of the virtual SPOTs:
+        each virtual SPOT's name and radio address, what jar file it is using,
+        what MIDlets are running, and where the virtual SPOT is located on the
+        grid. You can specify whether you want the current radio address kept
+        for use when the configuration is read back in or whether you want a
+        new address to be used. You can also specify whether or not to
+        automatically restart any currently running MIDlets when the
+        configuration is read in. Along with the configuration you can include
+        a textual description that will be displayed when the configuration is
+        reloaded. </p>
+
+        <p>The <b>Open virtual SPOT...</b> pull-down menu allows you to select
+        a previously saved configuration file and reload it. When it is
+        reloaded, any descriptive text associated with it will be displayed in
+        a new window. You can cause this window to be redisplayed at any time
+        using the <b>Display virtual configuration description</b> command. </p>
+
+        <p>Finally, the <b>Delete all virtual SPOTs...</b> command in the
+        <b>Emulator</b> pull-down menu can be used to remove any virtual SPOTs
+        currently defined in Solarium. </p>
+
+        <p>For an example of loading a predefined configuration do <b>Delete
+        all virtual SPOTs...</b> followed by <b>Open virtual
+        configuration...</b> and select the file <i>emulator_demo.xml</i> from
+        the <i>EmulatorDemo</i> in the <i>Demos </i>folder. That will create
+        four virtual Spots in Solarium, and start three of them running various
+        demo applications. It will also display a window with a textual
+        description of the available MIDlets. </p>
+
+        <p>Note: if you start Solarium from the command line you can specify a
+        previously saved configuration file and have it automatically loaded
+        when Solarium starts up. To do so just set the ant property
+        <tt>config.file</tt> either on the command line (e.g.
+        <tt>"-Dconfig.file=<i><                path to config file></i>"</tt>)
+        or in your project's <tt>build.properties</tt> file. For example: </p>
+        <pre>        cd SunSPOT/sdk/Demos/EmulatorDemo
+        ant solarium -Dconfig.file=emulator_demo.xml</pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br />
+
+
+<table id="sensorpanel" class="dots" width="100%" border="0" cellspacing="0"
+cellpadding="0" summary="One column table with heading">
+  <tbody>
+    <tr>
+      <td class="blue" colspan="1"><h3>Using the Sensor Panel</h3>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top"><p>Virtual SPOTs do not have a physical sensorboard so
+        an alternate mechanism is needed to feed sensor input. Choosing the
+        <b>Display sensor panel</b> menu option brings up a window with five
+        tabs. Each tab corresponds to a set of input pins or sensors on the
+        virtual SPOT and allows you to determine what values will be fed to the
+        virtual SPOT. The tabs are:<br />
+        </p>
+        <ul>
+          <li>Enviro - Light sensor and temperature sensor </li>
+          <li>Analog In - The input levels on analog pins A0 to A5 </li>
+          <li>Digital Pins - The input on digital pins D0 through D4. Also
+            displays the output to pins H0 through H3. </li>
+          <li>Accel - The input from the accelerometer </li>
+          <li>LEDs - The input from the two switches on the sensor board. Also
+            displays the output from the LEDs. </li>
+          <li>Power - The input voltage from the battery and charging rate.
+          </li>
+        </ul>
+        <br />
+
+
+        <center>
+        <img src="../gfx/SensorPanel.png" alt="sensor                    panel"
+        height="auto" width="500" border="0" /> </center>
+
+        <p>To demonstrate how to change the various sensor values, run the
+        <i>SensorChecker</i> demo after loading the <i>emulator_demo.jar</i>
+        file. This application uses the LEDs on the virtual SPOT to display a
+        value read from one of the SPOT's sensors. When it is started the light
+        sensor reading is displayed in white. To change the light sensor value
+        use the <b>Display sensor panel</b> command to bring up the sensor
+        panel. On the leftmost <i>Enviro</i> tab are two sliders for
+        controlling the value the SPOT will read for the light sensor and for
+        the internal thermometer. As you move the light sensor slider left and
+        right you will see the number of LEDs change appropriately. </p>
+
+        <p>Temperature is specified in degrees Fahrenheit, light readings in
+        the raw value returned from the A/D, analog inputs in volts, and
+        acceleration in gravities (G's). </p>
+
+        <p>The <i>SensorChecker</i> demo has four different modes:<br />
+        </p>
+        <ol>
+          <li>Display the light sensor reading in white. </li>
+          <li>Display the temperature sensor reading in red. </li>
+          <li>Display the analog input A0 in green. </li>
+          <li>Display the Z acceleration in blue. </li>
+        </ol>
+
+        <p>Push the left switch (SW1) by clicking on it with the mouse to
+        advance to the next mode. Switch to the different tabs of the sensor
+        panel to access the different sensors. As you move the slider for the
+        current sensor you will see the LED display change. </p>
+
+        <p>If you go to the <i>Digital Pins</i> tab you will see the current
+        mode shown by the application setting one of the high current output
+        pins, H0-H3, to high. As you cycle through the different modes the SPOT
+        application will change which pin is set to high. The digital
+        input/output pins, D0-D4, are enabled when they are being used as an
+        input so you can set their value. When they are being used as an output
+        they are disabled and the SPOT application can set their value to low
+        or high. For the <i>SensorChecker</i> demo D0 is an output, while D1-D4
+        are set as inputs. The application reads the value of D1 and then sets
+        D0 to be the same. Try changing the value of D1 and watch as D0 is also
+        changed. </p>
+
+        <p><i>Note:</i> the popup menu for a virtual SPOT can also be used from
+        the <i>Tree View</i>. From the <i>Tree View</i> the <b>Display sensor
+        panel</b> command will create a new window to display the sensor panel.
+        </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br />
+
+
+<table class="dots" width="100%" border="0" cellspacing="0" cellpadding="0"
+summary="One column table with heading">
+  <tbody>
+    <tr>
+      <td class="blue" colspan="1"><h3>Using the Radio</h3>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top"><p>Virtual SPOTs can communicate with each other by
+        opening radio connections, both broadcast and point-to-point. Instead
+        of using an actual radio these connections take place over regular and
+        multicast sockets. When a basestation SPOT is connected to the host
+        computer and a shared basestation is running, virtual SPOTs can also
+        use it to communicate with real SPOTs using the basestations's radio.
+        The advantage of using a shared basestation is that multiple host
+        applications can then all access the radio. One disadvantage is that
+        communication from a host application to a target SPOT takes two radio
+        hops, in contrast to the one hop needed with a dedicated basestation.
+        Another disadvantage is that run-time manipulation of the basestation
+        SPOT’s radio channel, pan id or output power is not currently
+        possible. </p>
+
+        <p>To always use a shared basestation add the following line to your
+        <tt>.sunspot.properties</tt> file: <br />
+        <tt>basestation.shared=true</tt> </p>
+
+        <p>Please note that some Linux distributions (e.g. SuSE) may not have
+        multicasting enabled by default, which will prevent shared basestation
+        operation and also any “radio” use by virtual SPOTs. </p>
+
+        <p><i>Note:</i> virtual SPOTs can also communicate with SPOT host
+        applications using the radio, but only if the host application is run
+        with <tt>basestation.shared</tt> set to <tt>true</tt>. </p>
+
+        <p>The <i>EmulatorDemo</i> provides several sample MIDlets that use the
+        radio. Start with the <i>BroadcastCount</i> demo which uses the left
+        switch (SW1) to broadcast a message to set the color displayed in the
+        LEDs of all receiving SPOTs and the right switch (SW2) to count in
+        binary on the receiving SPOTs' LEDs. If a shared basestation is
+        available then try deploying the <i>EmulatorDemo</i> to a real,
+        physical SPOT and having it then interact with the virtual SPOTs via
+        the radio. </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br />
+
+
+<table class="dots" width="100%" border="0" cellspacing="0" cellpadding="0"
+summary="One column table with heading">
+  <tbody>
+    <tr>
+      <td class="blue" colspan="1"><h3>How the Emulator Works</h3>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top"><p>When you create a new virtual SPOT in Solarium, a new
+        process is started to run the emulator code in a Squawk VM. The
+        emulator code communicates over a socket connection with the virtual
+        SPOT GUI code in Solarium. For example when the SPOT application
+        changes the RGB value of an LED that information is passed to the
+        virtual SPOT GUI code that updates the display for that LED with the
+        new RGB value. Likewise when the user clicks one of the virtual SPOT's
+        switches using the mouse, Solarium sends a message to the emulator code
+        that the switch has been clicked, which can then be noticed by the SPOT
+        application. </p>
+
+        <p>Here's a block diagram of the Emulator architecture:<br />
+        </p>
+
+        <center>
+        <img src="../gfx/EmulatorArchitecture.gif" alt="Emulator block diagram"
+        height="auto" width="450" border="0" /> </center>
+
+        <p>Each virtual SPOT has its own Squawk VM running in a separate
+        process on the host computer. Each Squawk VM contains a complete
+        host-side radio stack as part of the SPOT library, which allows the
+        SPOT application to communicate with other SPOT applications running on
+        the host computer, such as other virtual SPOTs, using sockets or real
+        SPOTs via radio if a shared basestation is running. </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br />
+
+
+<table class="dots" width="100%" border="0" cellspacing="0" cellpadding="0"
+summary="One column table with heading">
+  <tbody>
+    <tr>
+      <td class="blue" colspan="1"><h3>Emulation vs Simulation</h3>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top"><p>The distinction between emulation and simulation is
+        not always clear, so it is worth explaining how the two terms are used
+        here. When a computer application is “run” in an emulator, the
+        emulator is mimicking the behavior of a different computer system,
+        which allows the user program to run as if it were on that other
+        system. While the important functionality is preserved, other aspects,
+        such as the time to do a given operation, may be quite different. Hence
+        a program may run much slower when it is emulated. </p>
+
+        <p>A simulation, in comparison, is built by creating a model of a
+        system and identifying various properties that will be accurately
+        modeled as to how their values change. There is usually some sort of
+        abstraction involved, for example a weather simulation does not model
+        individual molecules but rather breaks the world up into a grid of
+        cells of various sizes (ranging from meters to kilometers) and then
+        characterizes several parameters for each cell. </p>
+
+        <p>The current Solarium implementation is primarily an emulator since
+        it actually runs a SPOT application in a Squawk VM, just like the VM on
+        a real SPOT. Likewise radio interaction between virtual SPOTs is
+        emulated with data sent via packets and streams from one (virtual) SPOT
+        to another. Only the SPOT's interaction with the environment is
+        simulated using a simple model where the user needs to explicitly set
+        the current sensor values. Future versions may incorporate more
+        simulation for SPOT properties like battery level or radio range. </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br />
+
+
+<table class="dots" width="100%" border="0" cellspacing="0" cellpadding="0"
+summary="One column table with heading">
+  <tbody>
+    <tr>
+      <td class="blue" colspan="1"><h3>What's missing from the Emulator?</h3>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top"><p>The initial version of the Emulator allows a SPOT
+        application to control the LEDs and digital output pins, read various
+        sensor inputs—switches, light level, temperature, digital input pins,
+        analog input voltages, and accelerometer values—and send and receive
+        radio messages. However there are other aspects of the Sun SPOT that
+        are not currently implemented. </p>
+
+        <p>Like any SPOT host application using a shared basestation, a virtual
+        SPOT cannot control the radio channel, pan id or power level. Nor is
+        there the ability to turn the radio off and on. </p>
+
+        <p>Not available is various sensorboard functionality such as the UART,
+        tone generation, servo control—including pulse width modulation
+        (PWM), pulse generation, timing a pulse's width, and doing logical
+        operations on the Atmega registers. These unimplemented features
+        currently act as no-ops rather than throwing any exceptions. </p>
+
+        <p>There is currently no emulation of the low-level processor hardware
+        functionality provided by the following classes and interfaces in the
+        SPOT library: <i>ISpiMaster, IAT91_PIO, IAT91_AIC, IAT91_TC,
+        IProprietaryRadio, I802_15_4_PHY, SpotPins, FiqInterruptDaemon,
+        ISecuredSiliconArea, ConfigPage, ExternalBoardMap,
+        ExternalBoardProperties, IFlashMemoryDevice, ISleepManager, ILTC3455,
+        IUSBPowerDaemon, IAT91_PowerManager, IDMAMemoryManager, </i> and
+        <i>OTACommandServer</i>. Nor is there support for saving persistent
+        properties, getting the SPOT's public key or reading the current system
+        tick. Attempts by an emulated SPOT application to use these
+        unimplemented features will cause a <i>SpotFatalException</i> to be
+        thrown. </p>
+
+        <p>Also missing is the Java ME record management system (RMS)
+        functionality and the ability to connect a user program to an external
+        debugger. </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br />
+
+
+<table class="dots" width="100%" border="0" cellspacing="0" cellpadding="0"
+summary="One column table with heading">
+  <tbody>
+    <tr>
+      <td class="blue" colspan="1"><h3>Future Directions for the Emulator</h3>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top"><p>While there is no schedule for when additional
+        features will be added to the Emulator here are some likely areas for
+        improvement in the not too distant future. </p>
+
+        <p>Currently no statistics or metrics are kept. Instrumenting the
+        virtual SPOT's software stack should make it possible to report on an
+        applications activities such as radio usage, idle time, memory usage
+        (including number of GCs needed), etc. </p>
+
+        <p>The current architecture of the Emulator makes it fairly easy to add
+        code to Solarium that can dynamically generate sensor readings for a
+        virtual SPOT. This may take the form of a palette of virtual devices,
+        such as a signal generator that could be hooked up to an analog input,
+        or a way to load user written Java code into Solarium and have it
+        control the input to a virtual SPOT, e.g. to compute the acceleration
+        on the SPOT as it is moved. </p>
+
+        <p>Some more ambitious possible future directions involve adding
+        simulation of the radio—controlling the topology of radio
+        connections, varying the percentage of dropped packets, setting
+        transmission power levels, or making transmissions visible in the
+        Emulator so as to visualize the radio traffic—or of the power
+        controller—simulating battery usage. </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br />
+</div>
+</body>
+</html>

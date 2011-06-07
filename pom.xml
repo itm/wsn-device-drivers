@@ -47,6 +47,11 @@
 				<artifactId>wsn-device-drivers-nulldevice</artifactId>
 				<version>0.3.4-SNAPSHOT</version>
 			</dependency>
+            <dependency>
+				<groupId>de.uniluebeck.itm</groupId>
+				<artifactId>wsn-device-drivers-sunspot</artifactId>
+				<version>0.3.4-SNAPSHOT</version>
+			</dependency>
 
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
@@ -94,7 +99,21 @@
 			    <artifactId>commons-lang</artifactId>
 			    <version>2.6</version>
 			</dependency>
-		</dependencies>
+
+
+        <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>1.8.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>1.2</version>
+        </dependency>
+	</dependencies>
+
 	</dependencyManagement>
 
 	<build>
@@ -159,6 +178,7 @@
 		<module>factories</module>
 		<module>mock</module>
 		<module>null</module>
+        <module>sunspot</module>
 	</modules>
 
 	<distributionManagement>

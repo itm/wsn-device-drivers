@@ -1,0 +1,71 @@
+<!--
+/*
+ * Copyright 2005-2008 Sun Microsystems, Inc. All Rights Reserved.
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER
+ * 
+ * This code is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2
+ * only, as published by the Free Software Foundation.
+ * 
+ * This code is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License version 2 for more details (a copy is
+ * included in the LICENSE file that accompanied this code).
+ * 
+ * You should have received a copy of the GNU General Public License
+ * version 2 along with this work; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA
+ * 
+ * Please contact Sun Microsystems, Inc., 16 Network Circle, Menlo
+ * Park, CA 94025 or visit www.sun.com if you need additional
+ * information or have any questions.
+ */
+-->
+
+<project name="jar-app">
+    <target name="-pre-jar-app"/>
+
+    <target name="-do-jar-app" depends="-check-for-manifest" >
+		<mkdir dir="${suite.dir}" />
+		<jar destfile="${to.jar.file}" manifest="${manifest.name}">
+			<fileset dir="${preverify.dir}" />
+			<fileset dir="${resources.dir}"
+				excludes="CVS/** .svn" />
+		</jar>
+	</target>
+	
+    <target name="-post-jar-app"/>
+
+	<target name="-check-for-manifest">
+		<condition property="manifest.name" value="${resources.dir}/META-INF/MANIFEST.MF">
+			<available file="${resources.dir}/META-INF/MANIFEST.MF"/>
+		</condition>
+		<condition property="manifest.name" value="${resources.dir}/META-INF/manifest.mf">
+			<available file="${resources.dir}/META-INF/manifest.mf"/>
+		</condition>
+		<condition property="manifest.name" value="${resources.dir}/META-INF/Manifest.mf">
+			<available file="${resources.dir}/META-INF/Manifest.mf"/>
+		</condition>
+		<condition property="manifest.name" value="${resources.dir}/meta-inf/MANIFEST.MF">
+			<available file="${resources.dir}/meta-inf/MANIFEST.MF"/>
+		</condition>
+		<condition property="manifest.name" value="${resources.dir}/meta-inf/manifest.mf">
+			<available file="${resources.dir}/meta-inf/manifest.mf"/>
+		</condition>
+		<condition property="manifest.name" value="${resources.dir}/meta-inf/Manifest.mf">
+			<available file="${resources.dir}/meta-inf/Manifest.mf"/>
+		</condition>
+		<condition property="manifest.name" value="${resources.dir}/Meta-inf/MANIFEST.MF">
+			<available file="${resources.dir}/Meta-inf/MANIFEST.MF"/>
+		</condition>
+		<condition property="manifest.name" value="${resources.dir}/Meta-inf/manifest.mf">
+			<available file="${resources.dir}/Meta-inf/manifest.mf"/>
+		</condition>
+		<condition property="manifest.name" value="${resources.dir}/Meta-inf/Manifest.mf">
+			<available file="${resources.dir}/Meta-inf/Manifest.mf"/>
+		</condition>
+		<fail unless="manifest.name" message="Cannot find manifest file at ${resources.dir}/META-INF/MANIFEST.MF. This is required for deploying imlets."/>
+	</target>
+</project>

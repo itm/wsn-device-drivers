@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content="HTML Tidy for Mac OS X (vers 1st December 2004), see www.w3.org" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="keywords" content="interaction" />
+  <meta name="description" content="interaction"/>
+      
+  <title>Managing Sun SPOTs</title>
+  <link href="../css/task_style.css" type="text/css" rel="stylesheet" media="all" />
+</head>
+    
+<body>
+  <div id="banner">
+    <a name="interaction" id="interaction"></a>
+    
+    <div id="machelp">
+      <a class="bread" href="../SolariumHelp.html">Solarium Help</a>
+    </div>
+    
+    <div id="index">
+      <a class="leftborder" href="index.html">Index</a>
+    </div>
+  </div>
+
+  <div id="mainbox">
+    <div id="caticon">
+      <img src="../gfx/SPOTWorldIcon32x32.gif" alt="Solarium Icon" height="32" width="32" border="0" />
+    </div>
+
+    <div id="pagetitle">
+      <h1>Managing Sun SPOTs</h1>
+    </div>
+
+    <p>
+Solarium provides a special <i>Deployment View</i> to make it easier to manage a network of Sun SPOTs. A deployment specifies what application should be loaded on each SPOT and allows you to deploy those applications with a single button press. The Deployment View also shows the current status of each SPOT. A deployment can also specify any associated host applications that need to be run.
+    </p>
+    <p>
+Here is a simple deployment that describes the <tt>SendDataDemo</tt>.
+    </p>
+    <center>
+     <img src="../gfx/SimpleDeploymentView.png" alt="Simple Deployment View" height="auto" width="500" border="0" />
+    </center>
+<p>
+The deployment information is in three main sections. First is some information about the deployment as a whole. This includes the deployment name, an optional image file to be used as a map of the deployment (not used above), and a text description of the deployment. Note the small box with a minus sign in it to the left of the descriptive text. Clicking it with the mouse will cause the text area to expand. Below the description is the <b>Deploy & Run All</b> button that can be used to load the latest version of your SPOT applications on all the SPOTs in the deployment and start them all up. Solarium tries to determine if the code currently installed on each SPOT is up to date or not. If the <b>deploy only if needed</b> checkbox is selected then any SPOTs that have the latest version of the application  on them will not be updated.
+    </p>
+    <p>
+The next section specifies what SPOTs are part of this deployment, what application they should run, and their current status. Since it is often the case that many SPOTs will be running the same application, this section consists of a series of<i>Roles</i>, one for each application used, where each role includes a list of SPOTs performing that role. Each role has a short one-line name, the filename for the <tt>build.xml</tt> file used to build the application, a longer description, and then a list of SPOTs to be loaded with this application. Each SPOT entry consists of the SPOT's IEEE radio address, an optional short description of where it is located, and its current status. At the end of the list of SPOTs is the <b>Add new SPOT</b> button used to add another SPOT to this role. Note that the SPOT's address has a pull-down menu that lists all SPOTs currently discovered by Solarium. This makes it easy to assign a SPOT to a role. The list of SPOTs also includes a <b>New Virtual SPOT</b> menu item if you wish to select an emulated SPOT. In the above sample deployment there is one role defined, with one SPOT associated with it.
+    </p>
+    <p>
+The final section specifies any host applications used by the deployment. The sample above has one host app that is used to receive the data broadcast by the SPOT and display it. Each host application has a name that the application will use to register itself when it starts up. When Solarium goes to discover SPOTs it now also will discover any host applications that have enabled OTA by calling:
+<code>
+	<tt>OTACommandServer.start("SendDataDemo");</tt>
+</code>
+where <tt>"SendDataDemo"</tt> is the same as the host application name specified in the deployment. The remainder of the host application fields are similar to those for a SPOT Role with the addition of the command line to be used to start up the application. Normally this will just be  ant host-run.
+    </p>
+    <p>
+Note: Solarium must be started with the property <tt>basestation.shared=true</tt> in order to discover host applications.
+    </p>
+    <p>
+Here is what the <i>Inspector View</i> looks like when using a virtual SPOT:
+    </p>
+    <center>
+     <img src="../gfx/DeploymentInspector.png" alt="Inspector View showing Deployments" border="0" />
+    </center>
+    <p>
+Note that the <i>Inspector View</i> lists all of the deployments that Solarium knows about. You can open one of them by right clicking on it with the mouse and selecting the View menu option. When you create a new deployment (<b>View -&gt; Deployment -&gt; New...</b>), a new file is created to hold the deployment information. The name you give the deployment is added to the list of deployments. The <tt>SendDataDemo</tt> included as part of the Sun SPOT SDK now also specifies a deployment.xml file that you can open (<b>View -&gt; Deployment -&gt; Open...</b>) that is the same as the sample deployment shown above.
+    </p>
+    <p>
+Here is an example of a deployment of eleven SPOTs used at Sun Labs.
+    </p>
+    <center>
+     <img src="../gfx/spotnet1a.png" alt="Deployment View with map" height="auto" width="800" border="0" />
+    </center>
+    <p>
+This deployment specifies a map file to use that is displayed in the right half of the window. Each SPOT is shown on the map with a small balloon containing its number. You can drag the balloon to wherever the SPOT is located. While not visible in the above screenshot, this deployment has a second role defined for SPOT number 11, which is running a different application than the other ten SPOTs.
+    </p>
+    <p>
+<i>Note:</i> right clicking on a SPOT or its balloon will bring up a pop-up menu allowing you to deploy the application to the SPOT, run it, remove this SPOT from the deployment, and all of the normal Solarium commands for a SPOT.
+  </div>
+<br>
+</body>
+</html>

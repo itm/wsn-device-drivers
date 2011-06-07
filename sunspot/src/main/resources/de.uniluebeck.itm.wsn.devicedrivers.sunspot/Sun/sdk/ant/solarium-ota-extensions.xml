@@ -1,0 +1,169 @@
+<!--
+Technically, all of these commands would work on SPOTs connected via
+USB but not all of them would produce meaningful results in that 
+configuration. So we disable all commands except getpowerstats and
+getsuitemanifest for USB connected SPOTs.
+
+Some of the commands require a suiteId (in preparation for a future
+release that will support multiple suites on a SPOT). Currently,
+the suiteId is ignored so we set it to a dummy value as part of the
+command.
+-->
+
+<project name="SpotWorldExtensions">
+  <target name="getmemorystats"
+          depends="init,-failIfSerial,-do-find-spots"
+          description="Get memory stats, e.g. free and total memory">
+    <antcall target="-run-spotclient">
+      <param name="spotclient.script.contents" value="getmemorystats"/>
+    </antcall>
+  </target>
+
+  <target name="getpowerstats"
+          depends="init,-do-find-spots"
+          description="Get power stats">
+    <antcall target="-run-spotclient">
+      <param name="spotclient.script.contents" value="getpowerstats"/>
+    </antcall>
+  </target>
+
+  <target name="getsleepinfo"
+          depends="init,-failIfSerial,-do-find-spots"
+          description="Get SleepManager info">
+    <antcall target="-run-spotclient">
+      <param name="spotclient.script.contents" value="getsleepinfo"/>
+    </antcall>
+  </target>
+
+  <target name="getavailablesuites"
+          depends="init,-do-find-spots"
+          description="Get available suites">
+    <antcall target="-run-spotclient">
+      <param name="spotclient.script.contents" value="getavailablesuites"/>
+    </antcall>
+  </target>
+
+  <target name="getsuitemanifest"
+          depends="init,-do-find-spots"
+          description="Gets the manifest for the specified suite">
+    <fail unless="uri">
+      Must specify the property "uri" (-Duri=xxx)
+    </fail>
+    <antcall target="-run-spotclient">
+      <param name="spotclient.script.contents"
+             value="getsuitemanifest ${uri}"/>
+    </antcall>
+  </target>
+
+  <target name="startapp"
+          depends="init,-failIfSerial,-do-find-spots"
+          description="Start specified MIDlet in suite">
+    <fail unless="uri">
+      Must specify the property "uri" (-Duri=xxx)
+    </fail>
+    <antcall target="-run-spotclient">
+      <param name="spotclient.script.contents" 
+             value="startapp ${uri} ${midlet}"/>
+    </antcall>
+  </target>
+
+  <target name="pauseapp"
+          depends="init,-failIfSerial,-do-find-spots"
+          description="Pause specified application">
+    <fail unless="isolateId">
+      Must specify the property "isolateId" (-DisolateId=xxx)
+    </fail>
+    <antcall target="-run-spotclient">
+      <param name="spotclient.script.contents"
+             value="pauseapp ${isolateId}"/>
+    </antcall>
+  </target>
+
+  <target name="resumeapp"
+          depends="init,-failIfSerial,-do-find-spots"
+          description="Resume specified application">
+    <fail unless="isolateId">
+      Must specify the property "isolateId" (-DisolateId=xxx)
+    </fail>
+    <antcall target="-run-spotclient">
+      <param name="spotclient.script.contents"
+             value="resumeapp ${isolateId}"/>
+    </antcall>
+  </target>
+  
+  <target name="stopapp"
+          depends="init,-failIfSerial,-do-find-spots"
+          description="Stop specified application">
+    <fail unless="isolateId">
+      Must specify the property "isolateId" (-DisolateId=xxx)
+    </fail>
+    <antcall target="-run-spotclient">
+      <param name="spotclient.script.contents"
+             value="stopapp ${isolateId}"/>
+    </antcall>
+  </target>
+
+  <target name="getallappsstatus"
+          depends="init,-failIfSerial,-do-find-spots"
+          description="Get status of all applications">
+      <antcall target="-run-spotclient">
+          <param name="spotclient.script.contents" value="getallappsstatus"/>
+      </antcall>
+  </target>
+  
+  <target name="getappstatus"
+          depends="init,-failIfSerial,-do-find-spots"
+          description="Get application status">
+      <fail unless="isolateId">
+          Must specify the property "isolateId" (-DisolateId=xxx)
+      </fail>
+      <antcall target="-run-spotclient">
+          <param name="spotclient.script.contents"
+                 value="getappstatus ${isolateId}"/>
+      </antcall>
+  </target>
+
+  <target name="receiveapp"
+          depends="init,-failIfSerial,-do-find-spots"
+          description="Prepare to receive isolate from another SPOT">
+      <fail unless="isolateId">
+          Must specify the property "isolateId" (-DisolateId=xxx)
+      </fail>
+      <fail unless="isolateSrc">
+          Must specify the property "isolateSrc" (-DisolateSrc=0014.4F01...xxx)
+      </fail>
+      <echo>
+        WARNING: Isolate migration is an experimental 
+        feature with several limitations as described
+        in 'ant help'.
+      </echo>
+      <antcall target="-run-spotclient">
+          <param name="spotclient.script.contents"
+                 value="receiveapp ${isolateId} ${isolateSrc}"/>
+      </antcall>
+  </target>
+
+  <target name="sendapp"
+          depends="init,-failIfSerial,-do-find-spots"
+          description="Send a running isolate to another SPOT">
+      <fail unless="isolateId">
+          Must specify the property "isolateId" (-DisolateId=xxx)
+      </fail>
+      <fail unless="isolateDst">
+          Must specify the property "isolateDst" (-DisolateDst=0014.4F01...xxx)
+      </fail>
+      <echo>
+        WARNING: Isolate migration is an experimental 
+        feature with several limitations as described
+        in 'ant help'.
+      </echo>
+      <!-- the last parameter to migrateapp determines if
+           the action is a copy or move: true=copy, 
+           false=move
+           -->
+      <antcall target="-run-spotclient">
+          <param name="spotclient.script.contents"
+                 value="migrateapp ${isolateId} ${isolateDst} false"/>
+      </antcall>
+  </target>
+</project>

@@ -1,0 +1,107 @@
+<!--
+/*
+ * Copyright 2005-2008 Sun Microsystems, Inc. All Rights Reserved.
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER
+ * 
+ * This code is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2
+ * only, as published by the Free Software Foundation.
+ * 
+ * This code is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License version 2 for more details (a copy is
+ * included in the LICENSE file that accompanied this code).
+ * 
+ * You should have received a copy of the GNU General Public License
+ * version 2 along with this work; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA
+ * 
+ * Please contact Sun Microsystems, Inc., 16 Network Circle, Menlo
+ * Park, CA 94025 or visit www.sun.com if you need additional
+ * information or have any questions.
+ */
+-->
+
+<project name="restore">
+	<property name="edemoupdater.uri" value="spotsuite://edemoupdater" />
+ 	<target name="-do-restore">
+ 		<antcall target="-run-spotclient">
+	        <param name="spotclient.script.contents" value="resetconfigpage${line.separator}setslowstartup on${line.separator}flashbootloader"/> <!-- NB: we rely on setslowstartup to reflash an obsolete config page -->
+ 		</antcall>
+ 		<sleep seconds="4"/>
+        <antcall target="-run-spotclient">
+	        <param name="spotclient.script.contents" value="resetconfigpage${line.separator}flashprops${line.separator}resetsystemproperties${line.separator}resetfat${line.separator}flashvm${line.separator}flashvb${line.separator}resetlib"/>
+	    </antcall>
+		<property file="${sunspot.home}/version.properties"/>
+        <antcall target="-run-spotclient">
+	        <param name="spotclient.script.contents" value="setsystemproperty spot.start.manifest.daemons false${line.separator}setsystemproperty spot.sdk.version ${version.datestamp}"/>
+	    </antcall>
+ 		<available file="${sunspot.home}/upgrade/pctrlfirmware.jar" property="pctrlfirmware.jar.available" />
+ 		<!-- use ant instead of antcall so we can control the folder in which it executes, and hence which temp folder
+ 		     is used for the suite file -->
+ 		<ant antfile="../build.xml" dir="${sunspot.home}/upgrade" target="-conditionally-upgrade-pctrlfirmware" />
+ 		<sleep seconds="4"/>
+        <antcall target="-run-spotclient">
+	        <param name="spotclient.script.contents" value="setslowstartup off"/>
+	    </antcall>
+
+ 		<available file="${sunspot.home}/upgrade/demosensorboardfirmware.jar" property="demosensorboardfirmware.jar.available" />
+ 		<!-- use ant instead of antcall so we can control the folder in which it executes, and hence which temp folder
+ 		     is used for the suite file -->
+ 		<ant antfile="../build.xml" dir="${sunspot.home}/upgrade" target="-conditionally-upgrade-demosensorboardfirmware" />
+
+        <antcall target="-run-spotclient">
+	        <param name="spotclient.script.contents" value="deletesystemproperty spot.start.manifest.daemons false"/>
+	    </antcall>
+
+ 		<available file="${sunspot.home}/upgrade/oobd.jar" property="oobd.jar.available" />
+ 		<ant antfile="../build.xml" dir="${sunspot.home}/upgrade" target="-conditionally-deploy-oobd" />
+ 			
+        <antcall target="-run-spotclient">
+			<param name="spotclient.script.contents"
+			       value="deletepublickey${line.separator}setsystemproperty spot.ota.enable true"/>
+		</antcall>
+<echo>
+Upgrade complete
+
+IMPORTANT
+
+If the device restored is to be a basestation then you must now restart it:
+    		
+ant startbasestation
+</echo>
+    </target>
+
+ 	<target name="-conditionally-deploy-oobd" depends="-deploy-oobd-if-oobd-available,-setstartup-if-oobd-notavailable"/>
+
+ 	<target name="-deploy-oobd-if-oobd-available" if="oobd.jar.available">
+ 		<antcall target="deploy">
+ 		    <param name="from.jar.file" value="${sunspot.home}/upgrade/oobd.jar" />
+ 			<param name="midlet" value="1" />
+ 			<param name="uri" value="spotsuite://out-of-the-box-demo"/>
+ 		</antcall>
+	</target>
+
+	<target name="-setstartup-if-oobd-notavailable" unless="oobd.jar.available">
+	    <antcall target="setstartup" />
+	</target>
+
+ 	<target name="-conditionally-upgrade-demosensorboardfirmware" if="demosensorboardfirmware.jar.available" unless="nofirmware">
+ 		<antcall target="deploy">
+ 		    <param name="from.jar.file" value="${sunspot.home}/upgrade/demosensorboardfirmware.jar" />
+ 			<param name="midlet" value="1" />
+ 			<param name="uri" value="${edemoupdater.uri}"/>
+ 		</antcall>
+ 		<antcall target="run" />
+ 	</target>
+	
+	<target name="-conditionally-upgrade-pctrlfirmware" if="pctrlfirmware.jar.available" unless="nofirmware">
+ 		<antcall target="deploy">
+ 		    <param name="from.jar.file" value="${sunspot.home}/upgrade/pctrlfirmware.jar" />
+ 			<param name="midlet" value="1" />
+ 		</antcall>
+ 		<antcall target="run" />
+ 	</target>
+</project>

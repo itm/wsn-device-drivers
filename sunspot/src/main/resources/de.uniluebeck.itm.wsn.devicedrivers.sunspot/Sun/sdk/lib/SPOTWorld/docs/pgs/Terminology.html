@@ -1,0 +1,301 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content="HTML Tidy for Mac OS X (vers 1st December 2004), see www.w3.org" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="keywords" content="terminology" />
+  <meta name="description" content="terminology"/>
+      
+  <title>Terminology</title>
+  <link href="../css/task_style.css" type="text/css" rel="stylesheet" media="all" />
+</head>
+    
+<body>
+  <div id="banner">
+    <a name="terminology" id="terminology"></a>
+    
+    <div id="machelp">
+      <a class="bread" href="../SolariumHelp.html">Solarium Help</a>
+    </div>
+    
+    <div id="index">
+      <a class="leftborder" href="index.html">Index</a>
+    </div>
+  </div>
+
+  <div id="mainbox">
+    <div id="caticon">
+      <img src="../gfx/SPOTWorldIcon32x32.gif" alt="Solarium Icon" height="32" width="32" border="0" />
+    </div>
+
+    <div id="pagetitle">
+      <h1>Terminology</h1>
+    </div>
+
+    <p>
+      Familiarity with the following terminology is essential to fully
+      understanding how to use Solarium.
+    </p>
+    
+    <table id="midlet-isolate" class="dots" width="100%" border="0" cellspacing="0" cellpadding="0" summary="One column table with heading">
+      <tr>
+	<td class="blue" colspan="2">
+	  <h3>Applications, MIDlets, Isolates and JAR Files</h3>
+	</td>
+      </tr>
+      
+      <tr>
+	<td valign="top">
+           <p>
+             In Java SE, an application consists of a static main()
+             method defined in one of the loaded classes or it extends
+             the Applet class if it is to run in a browser. In Java
+             ME, an application is defined as a class that extends the
+             MIDlet class. The Squawk VM used by Sun SPOTs implements
+             Java ME, so all Sun SPOT applications extend the MIDlet
+             class.
+           </p>
+           
+           <p>
+             In standard Java ME, only one application can be run at a
+             time in a Java VM, though that application may consist of
+             many threads. Squawk allows for multiple applications to
+             be run together in a single SPOT and uses a special
+             Isolate class to prevent one application from interfering
+             with the execution of another. Each MIDlet-based
+             application is run in a separate isolate. While one
+             isolate cannot directly access the instances in another,
+             they all share the same underlying SPOT resources.
+           </p>
+           
+           <p>
+             Some resources are unique, such as a radio connection on
+             a specific port number. The first isolate to ask for that
+             port will successfully be given access to it, while any
+             subsequent requests from other isolates will fail. Other
+             resources are truly shared such as the LEDs: One isolate
+             might turn an LED on, and then another might turn it off
+             or change its color.
+           </p>
+           
+           <p>
+
+             The isolate controlling the Sun SPOT at the system level
+             is the master isolate. There is only one master isolate
+             per SPOT. The master isolate controls the radio stack for
+             the SPOT and access to the other components of the
+             SPOT. Normally a SPOT application consists of a single
+             MIDlet that is run in the master isolate.
+           </p>
+           
+           <p>
+             Solarium allows you to start and stop multiple MIDlets
+             on a SPOT. These MIDlets are run as child isolates. Child
+             isolates may suffer a slight performance penalty; for
+             example, their radio transmissions have additional
+             overhead because the child isolate must send requests to
+             the master isolate to access the radio.
+           </p>
+           
+           <p>
+             Java ME allows you to package up several MIDlets into a
+             single jar file. The MIDlets must all be listed in a
+             special file, <tt>manifest.mf</tt>. The 
+             <tt>manifest.mf</tt> file can be found in your project's
+             <tt>resources/META-INF</tt> directory.Â
+           </p>
+           
+           <p>
+             When you add a new MIDlet to your project you must add a
+             new line for it in the manifest file. If you use the SPOT
+             modules for NetBeans, you can use the pop-up menu on the
+             package (select the <b>New</b> -&gt; <b>File/Folder</b>
+             command and then select “MIDlet Class” from “Java
+             Classes”) to create the new MIDlet. NetBeans will
+             automatically update the manifest file. NetBeans will
+             also update the manifest if you rename an existing
+             MIDlet.
+           </p>
+           
+           <p>
+             When the jar file is deployed to a Sun SPOT, all of the
+             MIDlets are then available to be started from
+             Solarium. One of them may be specified to be
+             automatically run in the master isolate when the SPOT is
+             rebooted. For now only one jar file may be deployed on a
+             SPOT, but in the future it may be possible to deploy
+             several.
+           </p>
+	</td>
+      </tr>
+    </table>
+    <br/>
+
+    <table id="MultipleApplications" class="dots" width="100%" border="0" cellspacing="0" cellpadding="0" summary="One column table with heading">
+      <tr>
+	<td class="blue" colspan="2">
+	  <h3>Creating a JAR File with Multiple MIDlets</h3>
+	</td>
+      </tr>
+      
+      <tr>
+	<td valign="top">
+	   <p>
+             With this theoretical background in place, we will
+             briefly go through an example of the creating of a jar
+             file with two MIDlets. We will use two existing
+             demonstration projects: the Bounce demo and the AirText
+             demo. If you have worked your way through the Sun SPOT
+             tutorial, as we strongly suggest, you will be familiar
+             with these demos.
+           </p>
+
+           <p>
+             Briefly, we will copy the classes from the Bounce demo
+             and the AirText demo into a new project, then edit the
+             manifest file. After that, we will compile the new jar
+             file and it will be available to deploy to a Sun SPOT.
+           </p>
+
+           <ol>
+             <li>
+               <p>
+                 Open NetBeans. Select the Project tab in the upper
+                 left, and select the <i>BounceDemo-OnSPOT</i>
+                 project. Right click on the project and
+                 select <b>Copy Project</b>. <br/>
+               </p>
+
+               <img src="../gfx/NetbeansCopyProject.gif" 
+                    alt="Copy Project Menu in Netbeans"
+                    height="auto" width="450" border="0" />
+
+               <p>
+                 A dialog box will display allowing you to specify the
+                 new project name. Here, we give it the name
+                 ExampleJar. If we were to compile this project now,
+                 we would get a jar file with one MIDlet in it, the
+                 Bounce demo. Now we need to add the AirText demo to
+                 the same project.
+               </p>
+             </li>
+
+             <li>
+               <p>
+                 Select the AirText demo, click on the “+” to its
+                 left, then open up the src selection with in it, then
+                 open the <tt>org.sunspotworld.demo</tt> selection within
+                 <tt>src</tt>. Select all of the Java classes, right
+                 click, and select <b>Copy</b>. 
+               </p>
+
+               <img src="../gfx/Netbeans2.gif" 
+                    alt="Copy Project Menu in Netbeans"
+                    height="auto" width="450" border="0" />
+             </li>
+
+             <li>
+               <p>
+                 Select the ExampleJar project, click on the “+” to
+                 the left of it, then open up the src selection with
+                 in it, select the <tt>org.sunspotworld.demo</tt> node
+                 within src, right click
+                 on <tt>org.sunspotworld.demo</tt>, 
+                 and select <b>Paste</b>.
+               </p>
+
+               <p>
+                 The AirText classes should now be copied into the
+                 ExampleJar project.
+               </p>
+             </li>
+
+             <li>
+               <p>
+                 Select the Files tab in the upper left of NetBeans.
+                 Open the ExampleJar project, and
+                 the <tt>resources</tt> node within it. Open the
+                 resource <tt>META-INF</tt> and open the
+                 <tt>manifest.mf</tt> file within it.
+               </p>
+
+               <p>
+                 The manifest file will display in a new window to the
+                 right:<br/>
+                 <tt>
+                   MIDlet-Name: eSPOT Bounce Demo-OnSPOT <br/>
+                   MIDlet-Version: 1.0.0 <br/>
+                   MIDlet-Vendor: Sun Microsystems Inc <br/>
+                   MIDlet-1: ,, org.sunspotworld.demo.SPOTBounce <br/>
+                   MicroEdition-Profile: IMP-1.0 <br/>
+                   MicroEdition-Configuration: CLDC-1.1 <br/>
+                 </tt>
+               </p>
+               
+               <p>
+                 The format of the manifest file is <br/>
+                 &lt;property-name&gt;:
+                 &lt;space&gt;&lt;property-value&gt;
+               </p>
+
+               <p>
+                 The individual MIDlets are specified with property
+                 names of “MIDlet-1”, “MIDlet-2” and so on. The
+                 MIDlet property value is a string of three,
+                 comma-separated, arguments. The first argument is a
+                 name for the application, the second is intended to
+                 define an icon, but is not used in Sun SPOTs, and the
+                 third specifies the application’s main
+                 class.
+               </p>
+
+               <p>
+                 We will edit the manifest file to give it a new
+                 MIDlet-name and tell it where to find the AirText
+                 demo. We will also give the MIDlet descriptions some
+                 user-friendly names.
+               </p>
+             </li>
+
+             <li>
+               <p>
+                 Replace the MIDlet name with “Example Jar with two
+                 MIDlets”. Edit the MIDlet-1 line to include the
+                 phrase “Bounce Demo” between the colon and the
+                 first comma. Add a second line, below it, that
+                 reads:<br/>
+
+                 <tt>MIDlet-2: Air Text Demo,,org.sunspotworld.demo.AirTextDemo</tt>
+               </p>
+
+               <p>
+                 The manifest file should now read:<br/>
+                 <tt>
+                   MIDlet-Name: Example Jar with two MIDlets<br/>
+                   MIDlet-Version: 1.0.0<br/>
+                   MIDlet-Vendor: Sun Microsystems Inc<br/>
+                   MIDlet-1: Bounce Demo,, org.sunspotworld.demo.SPOTBounce<br/>
+                   MIDlet-2: Air Text Demo, ,org.sunspotworld.demo.AirTextDemo<br/>
+                   MicroEdition-Profile: IMP-1.0<br/>
+                   MicroEdition-Configuration: CLDC-1.1<br/>
+                 </tt>
+               </p>
+
+               <p>
+                 Save the new version of the manifest file. If you
+                 were to compile the project now, you would have a
+                 single jar with two MIDlets in it. We can use that
+                 jar file in Solarium.
+               </p>
+             </li>
+           </ol>
+        </td>
+      </tr>
+    </table>
+    <br/>
+
+  </div>
+</body>
+</html>
