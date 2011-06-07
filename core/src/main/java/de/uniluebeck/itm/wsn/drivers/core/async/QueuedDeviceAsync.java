@@ -3,18 +3,19 @@ package de.uniluebeck.itm.wsn.drivers.core.async;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
+import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import de.uniluebeck.itm.wsn.drivers.core.io.SendOutputStreamWrapper;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;
@@ -62,6 +63,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	public OperationHandle<ChipType> getChipType(final long timeout, final AsyncCallback<ChipType> callback) {
 		LOG.debug("Reading Chip Type (Timeout: " + timeout + "ms");
 		final GetChipTypeOperation operation = device.createGetChipTypeOperation();
+		checkNotNullOperation(operation, "The Operation getChipType is not available");
 		return queue.addOperation(operation, timeout, callback);
 	}
 
@@ -69,6 +71,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	public OperationHandle<Void> eraseFlash(final long timeout, final AsyncCallback<Void> callback) {
 		LOG.debug("Erase flash (Timeout: " + timeout + "ms)");
 		final EraseFlashOperation operation = device.createEraseFlashOperation();
+		checkNotNullOperation(operation, "The Operation eraseFlash is not avialable");
 		return queue.addOperation(operation, timeout, callback);
 	}
 
@@ -77,6 +80,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 		LOG.debug("Program device (timeout: " + timeout + "ms)");
 		final ProgramOperation operation = device.createProgramOperation();
 		operation.setBinaryImage(data);
+		checkNotNullOperation(operation, "The Operation program is not available");
 		return queue.addOperation(operation, timeout, callback);
 	}
 
@@ -85,6 +89,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 		LOG.debug("Read flash (address: " + address + ", length: " + length + ", timeout: " + timeout + "ms)");
 		final ReadFlashOperation operation = device.createReadFlashOperation();
 		operation.setAddress(address, length);
+		checkNotNullOperation(operation, "The Operation readFlash is not available");
 		return queue.addOperation(operation, timeout, callback);
 	}
 
@@ -92,6 +97,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	public OperationHandle<MacAddress> readMac(final long timeout, final AsyncCallback<MacAddress> callback) {
 		LOG.debug("Read mac (timeout: " + timeout + "ms)");
 		final ReadMacAddressOperation operation = device.createReadMacAddressOperation();
+		checkNotNullOperation(operation, "The Operation readMac is not available");
 		return queue.addOperation(operation, timeout, callback);
 	}
 
@@ -99,6 +105,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	public OperationHandle<Void> reset(final long timeout, final AsyncCallback<Void> callback) {
 		LOG.debug("Reset device (timeout: " + timeout + "ms)");
 		final ResetOperation operation = device.createResetOperation();
+		checkNotNullOperation(operation, "The Operation reset is not available");
 		return queue.addOperation(operation, timeout, callback);
 	}
 
@@ -107,6 +114,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 		LOG.debug("Send packet to device (timeout: " + timeout + "ms)");
 		final SendOperation operation = device.createSendOperation();
 		operation.setMessage(message);
+		checkNotNullOperation(operation, "The Operation send is not available");
 		return queue.addOperation(operation, timeout, callback);
 	}
 
@@ -115,6 +123,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 		LOG.debug("Write flash (address: " + address + ", length: " + length + ", timeout: " + timeout + "ms)");
 		final WriteFlashOperation operation = device.createWriteFlashOperation();
 		operation.setData(address, data, length);
+		checkNotNullOperation(operation, "The Operation writeFlash is not available");
 		return queue.addOperation(operation, timeout, callback);
 	}
 
@@ -123,6 +132,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 		LOG.debug("Write mac (mac address: " + macAddress + ", timeout: " + timeout + "ms)");
 		final WriteMacAddressOperation operation = device.createWriteMacAddressOperation();
 		operation.setMacAddress(macAddress);
+		checkNotNullOperation(operation, "The Operation writeMac is not available");
 		return queue.addOperation(operation, timeout, callback);
 	}
 	
@@ -143,5 +153,11 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	 */
 	public OperationQueue getOperationQueue() {
 		return queue;
+	}
+	
+	private void checkNotNullOperation(Operation<?> operation, String message) {
+		if (operation == null) {
+			throw new UnsupportedOperationException(message);
+		}
 	}
 }
