@@ -31,35 +31,35 @@ package de.uniluebeck.itm.wsn.drivers.core;
  */
 public enum ChipType {
 	/**
-	 * Mode for JN5121 platform
+	 * Mode for JN5121 platform.
 	 */
 	JN5121("JN5121", 0, 0x24, 0x20, 0x24),
 	/**
-	 * Mode for JN513X platform
+	 * Mode for JN513X platform.
 	 */
 	JN513X("JN513x", 1, 0x24, 0x20, 0x24),
 	/**
-	 * Mode for JN513XR1 platform
+	 * Mode for JN513XR1 platform.
 	 */
 	JN513XR1("JN513xR1", 2, 0x30, 0x20, 0x30),
 	/**
-	 * Mode for JN5148 platform
+	 * Mode for JN5148 platform.
 	 */
 	JN5148("JN5148", 3, 0x30, 0x20, 0x30),
 	/**
-	 * Mode for Shawn simulator
+	 * Mode for Shawn simulator.
 	 */
 	Shawn("Shawn", 4),
 	/**
-	 * Mode for Telos Revision B (TelosB) platform
+	 * Mode for Telos Revision B (TelosB) platform.
 	 */
 	TelosB("Telos Rev B", 5),
 	/**
-	 * Mode for Pacemate LPC2136 platform
+	 * Mode for Pacemate LPC2136 platform.
 	 */
 	LPC2136("LPC2136 Pacemate", 6),
 	/**
-	 * Mode for unknown platform
+	 * Mode for unknown platform.
 	 */
 	UNKNOWN("Unknown", -1);
 
@@ -107,7 +107,7 @@ public enum ChipType {
 	 * @param headerLength Length of the header.
 	 * @param macInFlashStart 
 	 */
-	private ChipType(final String name, final int type, final int headerStart, final int headerLength, final int macInFlashStart) {
+	private ChipType(String name, int type, int headerStart, int headerLength, int macInFlashStart) {
 		this.name = name;
 		this.type = (short) type;
 		this.headerStart = headerStart;

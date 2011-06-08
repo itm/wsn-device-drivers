@@ -34,9 +34,18 @@ public class MacAddress {
 	 * The length of a mac address.
 	 */
 	private static final int LENGTH = 8;
-
+	
+	private static final int FULL_BYTE_MASK = 0xff;
+	
+	private static final int FULL_BYTE_SHIFT = 8;
+	
+	private static final int DEC_BASE = 10;
+	
+	private static final int HEX_BASE = 16;
+	
 	/**
-	 * Suppose the MAC address is: 00:15:8D:00:00:04:7D:50. Then 0x00 will be stored at address[0] and 0x50 at address[7].
+	 * Suppose the MAC address is: 00:15:8D:00:00:04:7D:50. Then 0x00 will be 
+	 * stored at address[0] and 0x50 at address[7].
 	 * The least significant value isx50. 0x00 0x15 0x8D 0x00 0x00 0x04 0x7D 0x50
 	 */
 	private final byte[] array = new byte[LENGTH];
@@ -67,11 +76,11 @@ public class MacAddress {
 	 */
 	public MacAddress(final String macAddress) {
 		if (macAddress.startsWith("0x")) {
-			setArray(Long.parseLong(macAddress.substring(2), 16));
+			setArray(Long.parseLong(macAddress.substring(2), HEX_BASE));
 		} else if (macAddress.startsWith("0b")) {
 			setArray(Long.parseLong(macAddress.substring(2), 2));
 		} else {
-			setArray(Long.parseLong(macAddress, 10));
+			setArray(Long.parseLong(macAddress, DEC_BASE));
 		}
 	}
 
@@ -92,14 +101,11 @@ public class MacAddress {
 	 * @return the MAC address as long value
 	 */
 	public long toLong() {
-		return  ((long) array[0] & 0xff) << 56 |
-                ((long) array[1] & 0xff) << 48 |
-                ((long) array[2] & 0xff) << 40 |
-                ((long) array[3] & 0xff) << 32 |
-                ((long) array[4] & 0xff) << 24 |
-                ((long) array[5] & 0xff) << 16 |
-                ((long) array[6] & 0xff) <<  8 |
-                ((long) array[7] & 0xff) <<  0;
+		long result = 0L;
+		for (int i = 0; i < array.length; i++) {
+			result |= (array[LENGTH - 1 - i] & FULL_BYTE_MASK) << (i * FULL_BYTE_SHIFT);
+		}
+		return result;
 	}
 
 	@Override
@@ -108,11 +114,11 @@ public class MacAddress {
 	}
 
 	public String toHexString() {
-		return "0x" + Long.toString(toLong(), 16);
+		return "0x" + Long.toString(toLong(), HEX_BASE);
 	}
 
 	public String toDecString() {
-		return Long.toString(toLong(), 10);
+		return Long.toString(toLong(), DEC_BASE);
 	}
 
 	public String toBinString() {
@@ -120,13 +126,8 @@ public class MacAddress {
 	}
 
 	private void setArray(final long value) {
-		array[0] = (byte) (value >>> 56);
-        array[1] = (byte) (value >>> 48);
-        array[2] = (byte) (value >>> 40);
-        array[3] = (byte) (value >>> 32);
-        array[4] = (byte) (value >>> 24);
-        array[5] = (byte) (value >>> 16);
-        array[6] = (byte) (value >>> 8);
-        array[7] = (byte) (value >>> 0);
+		for (int i = 0; i < array.length; i++) {
+			array[LENGTH - 1 - i] = (byte) (value >>> (FULL_BYTE_SHIFT * i));
+		}
 	}
 }

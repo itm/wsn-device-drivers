@@ -42,7 +42,8 @@ public interface Device<C extends Connection> {
 	GetChipTypeOperation createGetChipTypeOperation();
 	
 	/**
-	 * Create a program operation for this device with the given binaryImage without removing the current MAC address.
+	 * Create a program operation for this device with the given binaryImage without 
+	 * removing the current MAC address.
 	 * 
 	 * @return The operation for programming the device.
 	 */

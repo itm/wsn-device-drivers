@@ -52,7 +52,7 @@ public class FutureOperationHandle<T> implements OperationHandle<T> {
 	public T get() {
 		try {
 			return future.get();
-		} catch(final InterruptedException e) {
+		} catch (final InterruptedException e) {
 			throw new RuntimeException(e);
 		} catch (final ExecutionException e) {
 			throw new RuntimeException(e);
