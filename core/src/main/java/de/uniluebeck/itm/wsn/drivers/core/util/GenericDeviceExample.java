@@ -61,6 +61,11 @@ public class GenericDeviceExample implements ConnectionListener {
 	private static final long DEFAULT_MAC_ADDRESS_VALUE = 1024;
 	
 	/**
+	 * The length to read.
+	 */
+	private static final int READ_LENGTH = 32;
+	
+	/**
 	 * The queue used for this example.
 	 */
 	private final OperationQueue queue = new PausableExecutorOperationQueue();
@@ -117,17 +122,17 @@ public class GenericDeviceExample implements ConnectionListener {
 		this.device = device;
 	}
 
-	public void setImageInputStream(final InputStream image) {
-		this.image = image;
+	public void setImageInputStream(final InputStream anImage) {
+		image = anImage;
 	}
 
 	public void setUri(final String uri) {
 		this.uri = uri;
 	}
 	
-	public void setMessage(final byte[] messagePacket) {
-		this.messagePacket = new byte[messagePacket.length];
-		System.arraycopy(messagePacket, 0, this.messagePacket, 0, messagePacket.length);
+	public void setMessage(final byte[] aMessagePacket) {
+		this.messagePacket = new byte[aMessagePacket.length];
+		System.arraycopy(aMessagePacket, 0, this.messagePacket, 0, aMessagePacket.length);
 	}
 
 	/**
@@ -320,7 +325,7 @@ public class GenericDeviceExample implements ConnectionListener {
 			}
 		};
 		try {
-			deviceAsync.readFlash(0, 32, RESET_TIMEOUT, callback);
+			deviceAsync.readFlash(0, READ_LENGTH, RESET_TIMEOUT, callback);
 		} catch (UnsupportedOperationException e) {
 			System.err.println(e.getMessage());
 		}

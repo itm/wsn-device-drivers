@@ -36,10 +36,10 @@ public abstract class AbstractProgressManager implements ProgressManager {
 	/**
 	 * Method is called when the worked method was successfully applied.
 	 * 
-	 * @param progress The current new progress.
+	 * @param aProgress The current new progress.
 	 * @param worked The work that was added.
 	 */
-	protected void onWorked(float progress, float worked) {
+	protected void onWorked(float aProgress, float worked) {
 		
 	}
 	

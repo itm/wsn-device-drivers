@@ -131,7 +131,7 @@
 					<dependency>
 						<groupId>de.uniluebeck.itm</groupId>
 						<artifactId>itm-build-tools</artifactId>
-						<version>1.0</version>
+						<version>1.0.1</version>
 					</dependency>
 				</dependencies>
 				<configuration>
@@ -177,6 +177,10 @@
 		<pluginRepository>
 			<id>onejar-maven-plugin.googlecode.com</id>
 			<url>http://onejar-maven-plugin.googlecode.com/svn/mavenrepo</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>itm-maven-repository-releases</id>
+			<url>http://www.itm.uni-luebeck.de/projects/maven/releases/</url>
 		</pluginRepository>
 	</pluginRepositories>
 

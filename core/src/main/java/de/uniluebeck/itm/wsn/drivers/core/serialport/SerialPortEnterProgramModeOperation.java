@@ -51,13 +51,13 @@ public class SerialPortEnterProgramModeOperation extends AbstractOperation<Void>
 		final SerialPort serialPort = connection.getSerialPort();
 		try {
 			serialPort.setDTR(true);
-			progressManager.worked(0.25f);
+			progressManager.worked(ProgressManager.WORKED_QUARTER);
 			Thread.sleep(SLEEP);
 			serialPort.setRTS(true);
-			progressManager.worked(0.25f);
+			progressManager.worked(ProgressManager.WORKED_QUARTER);
 			Thread.sleep(SLEEP);
 			serialPort.setDTR(false);
-			progressManager.worked(0.25f);
+			progressManager.worked(ProgressManager.WORKED_QUARTER);
 			Thread.sleep(SLEEP);
 			serialPort.setRTS(false);
 		} catch (final InterruptedException e) {

@@ -39,7 +39,7 @@ public class SerialPortLeaveProgramModeOperation extends AbstractOperation<Void>
 	public Void execute(final ProgressManager progressManager) throws Exception {
 		LOG.debug("Leaving programming mode...");
 		connection.flush();
-		progressManager.worked(0.5f);
+		progressManager.worked(ProgressManager.WORKED_HALF);
 		connection.setSerialPortMode(SerialPortMode.NORMAL);
 		LOG.debug("Programming mode left");
 		return null;

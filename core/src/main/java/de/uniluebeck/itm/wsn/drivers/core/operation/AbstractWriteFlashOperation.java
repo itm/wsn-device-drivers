@@ -26,10 +26,10 @@ public abstract class AbstractWriteFlashOperation extends AbstractOperation<Void
 	private int length;
 	
 	@Override
-	public void setData(final int address, final byte[] data, final int length) {
-		this.address = address;
-		this.data = data;
-		this.length = length;
+	public void setData(final int anAddress, final byte[] aData, final int aLength) {
+		address = anAddress;
+		data = aData;
+		length = aLength;
 	}
 	
 	/**

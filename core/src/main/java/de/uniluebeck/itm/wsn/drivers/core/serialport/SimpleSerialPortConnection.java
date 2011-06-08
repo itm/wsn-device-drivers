@@ -36,7 +36,8 @@ import de.uniluebeck.itm.wsn.drivers.core.util.SysOutUtil;
  * 
  * @author Malte Legenhausen
  */
-public class SimpleSerialPortConnection extends AbstractConnection implements SerialPortConnection, SerialPortEventListener {
+public class SimpleSerialPortConnection extends AbstractConnection 
+	implements SerialPortConnection, SerialPortEventListener {
 	
 	/**
 	 * Logger for this class.

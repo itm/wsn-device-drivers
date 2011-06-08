@@ -98,8 +98,8 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	}
 	
 	@Override
-	public void setAsyncCallback(final AsyncCallback<T> callback) {
-		this.callback = callback;
+	public void setAsyncCallback(final AsyncCallback<T> aCallback) {
+		callback = aCallback;
 	}
 	
 	@Override
