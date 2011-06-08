@@ -136,6 +136,7 @@
 				</dependencies>
 				<configuration>
 					<configLocation>itm_checks.xml</configLocation>
+					<headerLocation>LICENSE.txt</headerLocation>
 					<enableRulesSummary>false</enableRulesSummary>
 				</configuration>
 			</plugin>
