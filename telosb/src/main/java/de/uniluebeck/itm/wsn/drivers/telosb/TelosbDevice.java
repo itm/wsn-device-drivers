@@ -81,7 +81,7 @@ public class TelosbDevice extends AbstractSerialPortDevice implements Programabl
 
 	@Override
 	public ReadMacAddressOperation createReadMacAddressOperation() {
-		return new TelosbReadMacAddressOperation();
+		return null;
 	}
 
 	@Override
