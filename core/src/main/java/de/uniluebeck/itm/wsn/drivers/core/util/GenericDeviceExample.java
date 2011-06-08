@@ -454,7 +454,7 @@ public class GenericDeviceExample implements ConnectionListener {
 	public void onConnectionChange(final ConnectionEvent event) {
 		System.out.println("Connected with port: " + event.getUri());
 		if (event.isConnected()) {
-			service.setInputStream(device.getInputStream());
+			service.setInputStream(deviceAsync.getInputStream());
 			service.start();
 		} else {
 			service.stopAndWait();

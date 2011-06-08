@@ -47,7 +47,7 @@ public class StateChangedEvent<T> extends OperationEvent<T> {
 	 * @param oldState The old state of the operation.
 	 * @param newState The new state of the operation.
 	 */
-	public StateChangedEvent(final Object source, final Operation<T> operation, final State oldState, final State newState) {
+	public StateChangedEvent(Object source, Operation<T> operation, State oldState, State newState) {
 		super(source, operation);
 		
 		this.oldState = oldState;

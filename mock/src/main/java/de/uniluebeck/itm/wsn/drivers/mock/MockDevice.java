@@ -1,7 +1,6 @@
 package de.uniluebeck.itm.wsn.drivers.mock;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Random;
@@ -181,11 +180,6 @@ public class MockDevice implements Device<Connection>, ConnectionListener {
 	@Override
 	public SendOperation createSendOperation() {
 		return new MockSendOperation(this);
-	}
-	
-	@Override
-	public InputStream getInputStream() {
-		return getConnection().getInputStream();
 	}
 	
 	/**

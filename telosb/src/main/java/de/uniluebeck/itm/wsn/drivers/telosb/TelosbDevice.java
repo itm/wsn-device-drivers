@@ -47,44 +47,32 @@ public class TelosbDevice extends AbstractSerialPortDevice implements Programabl
 
 	@Override
 	public EnterProgramModeOperation createEnterProgramModeOperation() {
-		final EnterProgramModeOperation operation = new TelosbEnterProgramModeOperation(getConnection(), bsl);
-		monitor(operation);
-		return operation;
+		return new TelosbEnterProgramModeOperation(getConnection(), bsl);
 	}
 	
 	@Override
 	public LeaveProgramModeOperation createLeaveProgramModeOperation() {
-		final LeaveProgramModeOperation operation = new SerialPortLeaveProgramModeOperation(getConnection());
-		monitor(operation);
-		return operation;
+		return new SerialPortLeaveProgramModeOperation(getConnection());
 	}
 	
 	@Override
 	public GetChipTypeOperation createGetChipTypeOperation() {
-		final GetChipTypeOperation operation = new TelosbGetChipTypeOperation();
-		monitor(operation);
-		return operation;
+		return new TelosbGetChipTypeOperation();
 	}
 
 	@Override
 	public ProgramOperation createProgramOperation() {
-		final ProgramOperation operation = new TelosbProgramOperation(this);
-		monitor(operation);
-		return operation;
+		return new TelosbProgramOperation(this);
 	}
 
 	@Override
 	public EraseFlashOperation createEraseFlashOperation() {
-		final EraseFlashOperation operation = new TelosbEraseFlashOperation(bsl);
-		monitor(operation);
-		return operation;
+		return new TelosbEraseFlashOperation(bsl);
 	}
 
 	@Override
 	public WriteFlashOperation createWriteFlashOperation() {
-		final WriteFlashOperation operation = new TelosbWriteFlashOperation(this);
-		monitor(operation);
-		return operation;
+		return new TelosbWriteFlashOperation(this);
 	}
 
 	public ReadFlashOperation createReadFlashOperation() {
@@ -93,9 +81,7 @@ public class TelosbDevice extends AbstractSerialPortDevice implements Programabl
 
 	@Override
 	public ReadMacAddressOperation createReadMacAddressOperation() {
-		final ReadMacAddressOperation operation = new TelosbReadMacAddressOperation();
-		monitor(operation);
-		return operation;
+		return new TelosbReadMacAddressOperation();
 	}
 
 	@Override
@@ -105,16 +91,12 @@ public class TelosbDevice extends AbstractSerialPortDevice implements Programabl
 
 	@Override
 	public ResetOperation createResetOperation() {
-		final ResetOperation operation = new TelosbResetOperation(bsl);
-		monitor(operation);
-		return operation;
+		return new TelosbResetOperation(bsl);
 	}
 
 	@Override
 	public SendOperation createSendOperation() {
-		final SendOperation operation = new SerialPortSendOperation(getConnection());
-		monitor(operation);
-		return operation;
+		return new SerialPortSendOperation(getConnection());
 	}
 	
 	@Override

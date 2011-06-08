@@ -1,6 +1,5 @@
 package de.uniluebeck.itm.wsn.drivers.core;
 
-import de.uniluebeck.itm.wsn.drivers.core.io.HasInputStream;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
@@ -19,7 +18,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
  * 
  * @param <C> The connection type that is used by this device.
  */
-public interface Device<C extends Connection> extends HasInputStream {
+public interface Device<C extends Connection> {
 	
 	/**
 	 * Returns the <code>Connection</code> object for this device.
@@ -43,7 +42,8 @@ public interface Device<C extends Connection> extends HasInputStream {
 	GetChipTypeOperation createGetChipTypeOperation();
 	
 	/**
-	 * Create a program operation for this device with the given binaryImage without removing the current MAC address.
+	 * Create a program operation for this device with the given binaryImage without 
+	 * removing the current MAC address.
 	 * 
 	 * @return The operation for programming the device.
 	 */

@@ -1,5 +1,7 @@
 package de.uniluebeck.itm.wsn.drivers.core;
 
+import java.util.Arrays;
+
 /**
  * Enum for all states of an <code>Operation</code>.
  * 
@@ -37,6 +39,8 @@ public enum State {
 	 */
 	DONE("Done");
 	
+	private static final State[] FINISH_STATES = {State.DONE, State.EXCEPTED, State.CANCELED, State.TIMEDOUT};
+	
 	/**
 	 * The name of the state.
 	 */
@@ -66,7 +70,7 @@ public enum State {
 	 * @return A boolean for representing a finished state.
 	 */
 	public static boolean isFinishState(final State state) {
-		return state != null && (state == State.DONE || state == State.EXCEPTED || state == State.CANCELED || state == State.TIMEDOUT);
+		return state != null && Arrays.asList(FINISH_STATES).contains(state);
 	}
 	
 	/**

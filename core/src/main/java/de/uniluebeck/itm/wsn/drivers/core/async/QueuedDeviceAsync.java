@@ -6,12 +6,17 @@ import java.io.OutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterators;
 import com.google.inject.Inject;
 
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
+import de.uniluebeck.itm.wsn.drivers.core.State;
+import de.uniluebeck.itm.wsn.drivers.core.event.StateChangedEvent;
+import de.uniluebeck.itm.wsn.drivers.core.io.LockedInputStream;
 import de.uniluebeck.itm.wsn.drivers.core.io.SendOutputStreamWrapper;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
@@ -48,6 +53,11 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	private final Device<? extends Connection> device;
 	
 	/**
+	 * Lockable InputStream that allows secure access to the underlying source InputStream.
+	 */
+	private LockedInputStream lockedInputStream;
+	
+	/**
 	 * Constructor.
 	 * 
 	 * @param queue The <code>OperationQueue</code> that schedules all operations.
@@ -57,6 +67,17 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	public QueuedDeviceAsync(final OperationQueue queue, final Device<? extends Connection> device) {
 		this.queue = queue;
 		this.device = device;
+		
+		final Connection connection = device.getConnection();
+		if (connection != null) {
+			this.lockedInputStream = new LockedInputStream(connection.getInputStream());
+			queue.addListener(new OperationQueueAdapter<Object>() {
+				@Override
+				public void onStateChanged(final StateChangedEvent<Object> event) {
+					lockInputStreamIfAnyRunning();
+				}
+			});
+		}
 	}
 	
 	@Override
@@ -79,8 +100,8 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	public OperationHandle<Void> program(final byte[] data, final long timeout, final AsyncCallback<Void> callback) {
 		LOG.debug("Program device (timeout: " + timeout + "ms)");
 		final ProgramOperation operation = device.createProgramOperation();
-		operation.setBinaryImage(data);
 		checkNotNullOperation(operation, "The Operation program is not available");
+		operation.setBinaryImage(data);
 		return queue.addOperation(operation, timeout, callback);
 	}
 
@@ -88,8 +109,8 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	public OperationHandle<byte[]> readFlash(final int address, final int length, final long timeout, final AsyncCallback<byte[]> callback) {
 		LOG.debug("Read flash (address: " + address + ", length: " + length + ", timeout: " + timeout + "ms)");
 		final ReadFlashOperation operation = device.createReadFlashOperation();
-		operation.setAddress(address, length);
 		checkNotNullOperation(operation, "The Operation readFlash is not available");
+		operation.setAddress(address, length);
 		return queue.addOperation(operation, timeout, callback);
 	}
 
@@ -113,8 +134,8 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	public OperationHandle<Void> send(final byte[] message, final long timeout, final AsyncCallback<Void> callback) {
 		LOG.debug("Send packet to device (timeout: " + timeout + "ms)");
 		final SendOperation operation = device.createSendOperation();
-		operation.setMessage(message);
 		checkNotNullOperation(operation, "The Operation send is not available");
+		operation.setMessage(message);
 		return queue.addOperation(operation, timeout, callback);
 	}
 
@@ -122,8 +143,8 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	public OperationHandle<Void> writeFlash(final int address, final byte[] data, final int length, final long timeout, final AsyncCallback<Void> callback) {
 		LOG.debug("Write flash (address: " + address + ", length: " + length + ", timeout: " + timeout + "ms)");
 		final WriteFlashOperation operation = device.createWriteFlashOperation();
-		operation.setData(address, data, length);
 		checkNotNullOperation(operation, "The Operation writeFlash is not available");
+		operation.setData(address, data, length);
 		return queue.addOperation(operation, timeout, callback);
 	}
 
@@ -131,14 +152,14 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	public OperationHandle<Void> writeMac(final MacAddress macAddress, final long timeout, final AsyncCallback<Void> callback) {
 		LOG.debug("Write mac (mac address: " + macAddress + ", timeout: " + timeout + "ms)");
 		final WriteMacAddressOperation operation = device.createWriteMacAddressOperation();
-		operation.setMacAddress(macAddress);
 		checkNotNullOperation(operation, "The Operation writeMac is not available");
+		operation.setMacAddress(macAddress);
 		return queue.addOperation(operation, timeout, callback);
 	}
 	
 	@Override
 	public InputStream getInputStream() {
-		return device.getInputStream();
+		return lockedInputStream;
 	}
 	
 	@Override
@@ -155,9 +176,20 @@ public class QueuedDeviceAsync implements DeviceAsync {
 		return queue;
 	}
 	
+
 	private void checkNotNullOperation(Operation<?> operation, String message) {
 		if (operation == null) {
 			throw new UnsupportedOperationException(message);
 		}
+	}
+
+	private void lockInputStreamIfAnyRunning() {
+		boolean locked = Iterators.any(queue.getOperations().iterator(), new Predicate<Operation<?>>() {
+			@Override
+			public boolean apply(Operation<?> input) {
+				return State.RUNNING.equals(input.getState());
+			}
+		});
+		lockedInputStream.setLocked(locked);
 	}
 }
