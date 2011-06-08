@@ -14,14 +14,11 @@ import de.uniluebeck.itm.wsn.drivers.core.Programable;
 import de.uniluebeck.itm.wsn.drivers.core.exception.InvalidChecksumException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.UnexpectedResponseException;
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractWriteFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractWriteMacAddressOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
@@ -85,13 +82,7 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 
 	@Override
 	public WriteFlashOperation createWriteFlashOperation() {
-		final WriteFlashOperation operation = new AbstractWriteFlashOperation() {
-			@Override
-			public Void execute(final ProgressManager progressManager) throws Exception {
-				throw new UnsupportedOperationException("writeFlash is not available.");
-			}
-		};
-		return operation;
+		return null;
 	}
 
 	@Override
@@ -106,13 +97,7 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 
 	@Override
 	public WriteMacAddressOperation createWriteMacAddressOperation() {
-		final WriteMacAddressOperation operation = new AbstractWriteMacAddressOperation() {
-			@Override
-			public Void execute(final ProgressManager progressManager) throws Exception {
-				throw new UnsupportedOperationException("writeMacAddress ist not available.");
-			}
-		};
-		return operation;
+		return null;
 	}
 
 	@Override

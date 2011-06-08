@@ -10,14 +10,11 @@ import de.uniluebeck.itm.wsn.drivers.core.exception.InvalidChecksumException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.ReceivedIncorrectDataException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.UnexpectedResponseException;
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractReadFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractWriteMacAddressOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
@@ -79,29 +76,17 @@ public class TelosbDevice extends AbstractSerialPortDevice implements Programabl
 	}
 
 	public ReadFlashOperation createReadFlashOperation() {
-		final ReadFlashOperation operation = new AbstractReadFlashOperation() {
-			@Override
-			public byte[] execute(ProgressManager progressManager) throws Exception {
-				throw new UnsupportedOperationException("readFlash is not available");
-			}
-		};
-		return operation;
+		return null;
 	}
 
 	@Override
 	public ReadMacAddressOperation createReadMacAddressOperation() {
-		return new TelosbReadMacAddressOperation();
+		return null;
 	}
 
 	@Override
 	public WriteMacAddressOperation createWriteMacAddressOperation() {
-		final WriteMacAddressOperation operation = new AbstractWriteMacAddressOperation() {
-			@Override
-			public Void execute(ProgressManager progressManager) throws Exception {
-				throw new UnsupportedOperationException("writeMacAddress is not available");
-			}
-		};
-		return operation;
+		return null;
 	}
 
 	@Override

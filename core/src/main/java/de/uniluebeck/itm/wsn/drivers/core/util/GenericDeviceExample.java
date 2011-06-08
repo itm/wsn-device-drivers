@@ -178,17 +178,17 @@ public class GenericDeviceExample implements ConnectionListener {
 			
 			@Override
 			public void onFailure(Throwable throwable) {
-				if (throwable instanceof UnsupportedOperationException) {
-					System.err.println("Program is not supported by this device.");
-				} else {
-					throwable.printStackTrace();
-				}
+				throwable.printStackTrace();
 			}
 		};
 		
 		final byte[] bytes = ByteStreams.toByteArray(image);
 		System.out.println("Image length: " + bytes.length);
-	    deviceAsync.program(bytes, PROGRAM_TIMEOUT, callback);
+		try {
+			deviceAsync.program(bytes, PROGRAM_TIMEOUT, callback);
+		} catch (UnsupportedOperationException e) {
+			System.err.println(e.getMessage());
+		}
 	}
 	
 	/**
@@ -207,14 +207,14 @@ public class GenericDeviceExample implements ConnectionListener {
 			
 			@Override
 			public void onFailure(Throwable throwable) {
-				if (throwable instanceof UnsupportedOperationException) {
-					System.err.println("Reset is not supported by this device.");
-				} else {
-					throwable.printStackTrace();
-				}
+				throwable.printStackTrace();
 			}
 		};
-		deviceAsync.reset(RESET_TIMEOUT, callback);
+		try {
+			deviceAsync.reset(RESET_TIMEOUT, callback);
+		} catch (UnsupportedOperationException e) {
+			System.err.println(e.getMessage());
+		}
 	}
 	
 	/**
@@ -243,18 +243,17 @@ public class GenericDeviceExample implements ConnectionListener {
 			
 			@Override
 			public void onFailure(Throwable throwable) {
-				if (throwable instanceof UnsupportedOperationException) {
-					System.err.println("Read mac address is not supported by this device.");
-				} else {
-					throwable.printStackTrace();
-				}
+				throwable.printStackTrace();
 			}
 		};
-		
-		deviceAsync.readMac(READ_MAC_ADDRESS_TIMEOUT, callback);
+		try {
+			deviceAsync.readMac(READ_MAC_ADDRESS_TIMEOUT, callback);
+		} catch (UnsupportedOperationException e) {
+			System.err.println(e.getMessage());
+		}
 		
 		// Write a new mac address.
-		deviceAsync.writeMac(macAddress, WRITE_MAC_ADDRESS_TIMEOUT, new AsyncAdapter<Void>() {
+		AsyncCallback<Void> writeMacCallback = new AsyncAdapter<Void>() {
 
 			@Override
 			public void onExecute() {
@@ -274,14 +273,19 @@ public class GenericDeviceExample implements ConnectionListener {
 			
 			@Override
 			public void onFailure(Throwable throwable) {
-				if (throwable instanceof UnsupportedOperationException) {
-					System.err.println("Write mac address is not supported by this device.");
-				} else {
-					throwable.printStackTrace();
-				}
+				throwable.printStackTrace();
 			}
-		});
-		deviceAsync.readMac(READ_MAC_ADDRESS_TIMEOUT, callback);
+		};
+		try {
+			deviceAsync.writeMac(macAddress, WRITE_MAC_ADDRESS_TIMEOUT, writeMacCallback);
+		} catch (UnsupportedOperationException e) {
+			System.err.println(e.getMessage());
+		}
+		try {
+			deviceAsync.readMac(READ_MAC_ADDRESS_TIMEOUT, callback);
+		} catch (UnsupportedOperationException e) {
+			System.err.println(e.getMessage());
+		}
 	}
 	
 	/**
@@ -315,14 +319,19 @@ public class GenericDeviceExample implements ConnectionListener {
 				}
 			}
 		};
-		deviceAsync.readFlash(0, 32, RESET_TIMEOUT, callback);
+		try {
+			deviceAsync.readFlash(0, 32, RESET_TIMEOUT, callback);
+		} catch (UnsupportedOperationException e) {
+			System.err.println(e.getMessage());
+		}
+		
 	}
 	
 	/**
 	 * Read the chip type from the device.
 	 */
 	public void chipTypeOperation() {
-		deviceAsync.getChipType(READ_MAC_ADDRESS_TIMEOUT, new AsyncAdapter<ChipType>() {
+		AsyncCallback<ChipType> callback = new AsyncAdapter<ChipType>() {
 
 			@Override
 			public void onExecute() {
@@ -348,33 +357,18 @@ public class GenericDeviceExample implements ConnectionListener {
 					throwable.printStackTrace();
 				}
 			}
-		});
+		};
+		try {
+			deviceAsync.getChipType(READ_MAC_ADDRESS_TIMEOUT, callback);
+		} catch (UnsupportedOperationException e) {
+			System.err.println(e.getMessage());
+		}
 	}
 	
 	/**
 	 * Send a message to the device.
 	 */
 	private void sendOperation() {
-		deviceAsync.send(messagePacket, RESET_TIMEOUT, new AsyncAdapter<Void>() {
-			public void onExecute() {
-				System.out.println("Sending message");
-			}
-			
-			public void onSuccess(final Void result) {
-				System.out.println("Message send");
-			}
-			
-			@Override
-			public void onFailure(Throwable throwable) {
-				if (throwable instanceof UnsupportedOperationException) {
-					System.err.println("Send is not supported by this device.");
-				} else {
-					throwable.printStackTrace();
-				}
-			}
-		});
-		
-		System.out.println("Sending via OutputStream.");
 		try {
 			final OutputStream outputStream = deviceAsync.getOutputStream();
 			outputStream.write(messagePacket);
