@@ -68,7 +68,7 @@ public abstract class AbstractConnection implements Connection {
 	 * @param connected True when connected else false.
 	 */
 	protected void fireConnectionChange(final boolean connected) {
-		LOG.debug(connected ? "Connected" : "Disconnected");
+		LOG.debug("Connected: " + connected);
 		final ConnectionEvent event = new ConnectionEvent(this, uri, connected);
 		for (final ConnectionListener listener : listeners.toArray(new ConnectionListener[listeners.size()])) {
 			listener.onConnectionChange(event);

@@ -32,11 +32,6 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
  */
 public class NullDevice implements Device<Connection> {
 
-	@SuppressWarnings("unused")
-	public NullDevice(NullConnection connection) {
-
-	}
-
 	/**
 	 * Null implementation for <code>EraseFlashOperation</code>.
 	 * 

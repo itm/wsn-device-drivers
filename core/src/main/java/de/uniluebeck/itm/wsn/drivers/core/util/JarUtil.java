@@ -20,7 +20,7 @@ import com.google.common.io.InputSupplier;
  * 
  * @author Malte Legenhausen
  */
-public class JarUtil {
+public final class JarUtil {
 
 	/**
 	 * Path to the root directory of the jni libary files.
@@ -41,6 +41,13 @@ public class JarUtil {
 	 * Property name for library paths.
 	 */
 	private static final String USR_PATHS = "usr_paths";
+	
+	/**
+	 * Constructor.
+	 */
+	private JarUtil() {
+		
+	}
 	
 	/**
 	 * Load a DLL or SO file that is contained in a JAR.

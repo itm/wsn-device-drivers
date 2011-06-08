@@ -64,7 +64,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	 * @param device The <code>Device</code> that provides all operations that can be executed.
 	 */
 	@Inject
-	public QueuedDeviceAsync(final OperationQueue queue, final Device<? extends Connection> device) {
+	public QueuedDeviceAsync(OperationQueue queue, Device<? extends Connection> device) {
 		this.queue = queue;
 		this.device = device;
 		
@@ -81,66 +81,70 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	}
 	
 	@Override
-	public OperationHandle<ChipType> getChipType(final long timeout, final AsyncCallback<ChipType> callback) {
+	public OperationHandle<ChipType> getChipType(long timeout, AsyncCallback<ChipType> callback) {
 		LOG.debug("Reading Chip Type (Timeout: " + timeout + "ms");
-		final GetChipTypeOperation operation = device.createGetChipTypeOperation();
+		GetChipTypeOperation operation = device.createGetChipTypeOperation();
 		checkNotNullOperation(operation, "The Operation getChipType is not available");
 		return queue.addOperation(operation, timeout, callback);
 	}
 
 	@Override
-	public OperationHandle<Void> eraseFlash(final long timeout, final AsyncCallback<Void> callback) {
+	public OperationHandle<Void> eraseFlash(long timeout, AsyncCallback<Void> callback) {
 		LOG.debug("Erase flash (Timeout: " + timeout + "ms)");
-		final EraseFlashOperation operation = device.createEraseFlashOperation();
+		EraseFlashOperation operation = device.createEraseFlashOperation();
 		checkNotNullOperation(operation, "The Operation eraseFlash is not avialable");
 		return queue.addOperation(operation, timeout, callback);
 	}
 
 	@Override
-	public OperationHandle<Void> program(final byte[] data, final long timeout, final AsyncCallback<Void> callback) {
+	public OperationHandle<Void> program(byte[] data, long timeout, AsyncCallback<Void> callback) {
 		LOG.debug("Program device (timeout: " + timeout + "ms)");
-		final ProgramOperation operation = device.createProgramOperation();
+		ProgramOperation operation = device.createProgramOperation();
 		checkNotNullOperation(operation, "The Operation program is not available");
 		operation.setBinaryImage(data);
 		return queue.addOperation(operation, timeout, callback);
 	}
 
 	@Override
-	public OperationHandle<byte[]> readFlash(final int address, final int length, final long timeout, final AsyncCallback<byte[]> callback) {
+	public OperationHandle<byte[]> readFlash(int address, int length, long timeout, AsyncCallback<byte[]> callback) {
 		LOG.debug("Read flash (address: " + address + ", length: " + length + ", timeout: " + timeout + "ms)");
-		final ReadFlashOperation operation = device.createReadFlashOperation();
+		ReadFlashOperation operation = device.createReadFlashOperation();
 		checkNotNullOperation(operation, "The Operation readFlash is not available");
 		operation.setAddress(address, length);
 		return queue.addOperation(operation, timeout, callback);
 	}
 
 	@Override
-	public OperationHandle<MacAddress> readMac(final long timeout, final AsyncCallback<MacAddress> callback) {
+	public OperationHandle<MacAddress> readMac(long timeout, AsyncCallback<MacAddress> callback) {
 		LOG.debug("Read mac (timeout: " + timeout + "ms)");
-		final ReadMacAddressOperation operation = device.createReadMacAddressOperation();
+		ReadMacAddressOperation operation = device.createReadMacAddressOperation();
 		checkNotNullOperation(operation, "The Operation readMac is not available");
 		return queue.addOperation(operation, timeout, callback);
 	}
 
 	@Override
-	public OperationHandle<Void> reset(final long timeout, final AsyncCallback<Void> callback) {
+	public OperationHandle<Void> reset(long timeout, AsyncCallback<Void> callback) {
 		LOG.debug("Reset device (timeout: " + timeout + "ms)");
-		final ResetOperation operation = device.createResetOperation();
+		ResetOperation operation = device.createResetOperation();
 		checkNotNullOperation(operation, "The Operation reset is not available");
 		return queue.addOperation(operation, timeout, callback);
 	}
 
 	@Override
-	public OperationHandle<Void> send(final byte[] message, final long timeout, final AsyncCallback<Void> callback) {
+	public OperationHandle<Void> send(byte[] message, long timeout, AsyncCallback<Void> callback) {
 		LOG.debug("Send packet to device (timeout: " + timeout + "ms)");
-		final SendOperation operation = device.createSendOperation();
+		SendOperation operation = device.createSendOperation();
 		checkNotNullOperation(operation, "The Operation send is not available");
 		operation.setMessage(message);
 		return queue.addOperation(operation, timeout, callback);
 	}
 
 	@Override
-	public OperationHandle<Void> writeFlash(final int address, final byte[] data, final int length, final long timeout, final AsyncCallback<Void> callback) {
+	public OperationHandle<Void> writeFlash(int address, 
+											byte[] data, 
+											int length, 
+											long timeout, 
+											AsyncCallback<Void> callback) {
 		LOG.debug("Write flash (address: " + address + ", length: " + length + ", timeout: " + timeout + "ms)");
 		final WriteFlashOperation operation = device.createWriteFlashOperation();
 		checkNotNullOperation(operation, "The Operation writeFlash is not available");
@@ -149,7 +153,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	}
 
 	@Override
-	public OperationHandle<Void> writeMac(final MacAddress macAddress, final long timeout, final AsyncCallback<Void> callback) {
+	public OperationHandle<Void> writeMac(MacAddress macAddress, long timeout, AsyncCallback<Void> callback) {
 		LOG.debug("Write mac (mac address: " + macAddress + ", timeout: " + timeout + "ms)");
 		final WriteMacAddressOperation operation = device.createWriteMacAddressOperation();
 		checkNotNullOperation(operation, "The Operation writeMac is not available");

@@ -4,6 +4,13 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+
+/**
+ * This class allows dynamically bind an InputStream.
+ * Usable for null object pattern.
+ * 
+ * @author Malte Legenhausen
+ */
 public class InputStreamBridge extends FilterInputStream {
 	
 	public InputStreamBridge() {
@@ -49,7 +56,11 @@ public class InputStreamBridge extends FilterInputStream {
 	
 	@Override
 	public boolean markSupported() {
-		return in != null ? super.markSupported() : false;
+		boolean result = false;
+		if (in != null) {
+			result = super.markSupported();
+		}
+		return result;
 	}
 	
 	@Override

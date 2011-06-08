@@ -45,7 +45,7 @@ public interface SerialPortConnection extends Connection, Flushable {
 	void setSerialPortMode(SerialPortMode mode);
 	
 	/**
-	 * Wait at most timeoutMillis for the input stream to become available
+	 * Wait at most timeoutMillis for the input stream to become available.
 	 * 
 	 * @param timeout Milliseconds to wait until timeout, 0 for no timeout
 	 * @return The number of characters available

@@ -51,7 +51,7 @@ public class InvalidMacAddressException extends Exception {
 	}
 
 	/**
-	 * Returns the MacAddress
+	 * Returns the MacAddress.
 	 * 
 	 * @return The invalid mac address.
 	 */

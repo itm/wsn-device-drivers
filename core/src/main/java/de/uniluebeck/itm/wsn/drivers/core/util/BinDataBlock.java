@@ -36,12 +36,12 @@ package de.uniluebeck.itm.wsn.drivers.core.util;
 public class BinDataBlock {
 	
 	/**
-	 * Address in flash memory that this segment will be written to
+	 * Address in flash memory that this segment will be written to.
 	 */
 	private final int address;
 	
 	/**
-	 * Actual block of data bytes of the segment 
+	 * Actual block of data bytes of the segment.
 	 */
 	private final byte[] data;
 	

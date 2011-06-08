@@ -21,9 +21,12 @@ public abstract class AbstractProgressManager implements ProgressManager {
 	private float progress = 0.0f;
 	
 	@Override
-	public void worked(final float amount) {
+	public void worked(float amount) {
 		Preconditions.checkArgument(amount >= 0.0f, "Amount can not be negative");
-		final float result = progress + amount <= 1.0f ? amount : 1.0f - progress;
+		float result = amount;
+		if (progress + amount > 1.0f) {
+			result = 1.0f - progress;
+		}
 		if (!isDone() && progress < progress + result) {
 			progress += result;
 			onWorked(progress, result);
@@ -36,7 +39,7 @@ public abstract class AbstractProgressManager implements ProgressManager {
 	 * @param progress The current new progress.
 	 * @param worked The work that was added.
 	 */
-	protected void onWorked(final float progress, final float worked) {
+	protected void onWorked(float progress, float worked) {
 		
 	}
 	

@@ -399,7 +399,7 @@ public class GenericDeviceExample implements ConnectionListener {
 		System.out.println("Waiting for messages from the device.");
 		System.out.println("Press any key to shutdown...");
 		try {
-			while(System.in.read() == -1) {
+			while (System.in.read() == -1) {
 				Thread.sleep(DEFAULT_SLEEP);
 			}
 		} catch (final InterruptedException e) {

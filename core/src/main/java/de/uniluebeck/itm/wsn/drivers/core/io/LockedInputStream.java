@@ -56,7 +56,11 @@ public class LockedInputStream extends FilterInputStream implements Lockable {
 	
 	@Override
 	public int available() throws IOException {
-		return locked ? 0 : super.available();
+		int result = 0;
+		if (!locked) {
+			result = super.available();
+		}
+		return result;
 	}
 	
 	@Override

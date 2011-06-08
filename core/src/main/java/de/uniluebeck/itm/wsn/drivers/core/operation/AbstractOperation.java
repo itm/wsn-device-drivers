@@ -1,5 +1,8 @@
 package de.uniluebeck.itm.wsn.drivers.core.operation;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -7,8 +10,6 @@ import java.util.TimerTask;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Preconditions;
 
 import de.uniluebeck.itm.wsn.drivers.core.State;
 import de.uniluebeck.itm.wsn.drivers.core.async.AsyncCallback;
@@ -173,7 +174,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	 * @return The result of the sub <code>Operation</code>.
 	 * @throws Exception Any exception throws be the operation.
 	 */
-	protected <R> R executeSubOperation(final Operation<R> operation, final ProgressManager progressManager) throws Exception {
+	protected <R> R executeSubOperation(Operation<R> operation, ProgressManager progressManager) throws Exception {
 		subOperation = operation;
 		final R result = operation.execute(progressManager);
 		progressManager.done();
@@ -219,8 +220,8 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	 */
 	@Override
 	public void setTimeout(final long timeout) {
-		Preconditions.checkArgument(timeout >= 0, "Negativ timeout is not allowed");
-		Preconditions.checkState(!State.RUNNING.equals(state), "Timeout can not be set when operation is in running state");
+		checkArgument(timeout >= 0, "Negativ timeout is not allowed");
+		checkState(!State.RUNNING.equals(state), "Timeout can not be set when operation is in running state");
 		this.timeout = timeout;
 	}
 

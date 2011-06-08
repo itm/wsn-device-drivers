@@ -60,7 +60,7 @@ public class SerialPortEnterProgramModeOperation extends AbstractOperation<Void>
 			progressManager.worked(0.25f);
 			Thread.sleep(SLEEP);
 			serialPort.setRTS(false);
-		} catch(final InterruptedException e) {
+		} catch (final InterruptedException e) {
 			LOG.error("Unable to enter program mode.", e);
 			throw new EnterProgramModeException("Unable to enter program mode.");
 		}

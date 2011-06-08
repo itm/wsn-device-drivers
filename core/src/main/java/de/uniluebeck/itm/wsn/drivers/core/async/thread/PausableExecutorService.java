@@ -4,7 +4,8 @@ import java.util.concurrent.ExecutorService;
 
 
 /**
- * This Interface defindes a executor service which allows to pause and unpause further execution of <code>Runnable</code>s.
+ * This Interface defindes a executor service which allows to pause and 
+ * unpause further execution of <code>Runnable</code>s.
  * 
  * @author Malte Legenhausen
  */

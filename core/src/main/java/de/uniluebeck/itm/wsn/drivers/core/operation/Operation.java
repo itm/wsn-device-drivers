@@ -26,7 +26,7 @@ public interface Operation<T> extends Callable<T> {
 	 * Method that is called when the operation has to be executed.
 	 * 
 	 * @param progressManager The progress manager for this operation.
-	 * @return The result of the <code>Operation<code> execution.
+	 * @return The result of the <code>Operation</code> execution.
 	 * @throws Exception Any exception that can occur during an operation execution.
 	 */
 	T execute(ProgressManager progressManager) throws Exception;

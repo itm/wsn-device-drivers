@@ -265,7 +265,7 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 		}
 		// Check if the response type is unexpected
 		if (message[0] != type) {
-			throw new UnexpectedResponseException(type, message[0]);
+			throw new UnexpectedResponseException(type, (int) message[0]);
 		}
 		return message;
 	}
