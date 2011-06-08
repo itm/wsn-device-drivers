@@ -3,18 +3,24 @@ package de.uniluebeck.itm.wsn.drivers.core.async;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterators;
 import com.google.inject.Inject;
 
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
+import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
+import de.uniluebeck.itm.wsn.drivers.core.State;
+import de.uniluebeck.itm.wsn.drivers.core.event.StateChangedEvent;
+import de.uniluebeck.itm.wsn.drivers.core.io.LockedInputStream;
 import de.uniluebeck.itm.wsn.drivers.core.io.SendOutputStreamWrapper;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;
@@ -47,6 +53,11 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	private final Device<? extends Connection> device;
 	
 	/**
+	 * Lockable InputStream that allows secure access to the underlying source InputStream.
+	 */
+	private LockedInputStream lockedInputStream;
+	
+	/**
 	 * Constructor.
 	 * 
 	 * @param queue The <code>OperationQueue</code> that schedules all operations.
@@ -56,6 +67,17 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	public QueuedDeviceAsync(final OperationQueue queue, final Device<? extends Connection> device) {
 		this.queue = queue;
 		this.device = device;
+		
+		final Connection connection = device.getConnection();
+		if (connection != null) {
+			this.lockedInputStream = new LockedInputStream(connection.getInputStream());
+			queue.addListener(new OperationQueueAdapter<Object>() {
+				@Override
+				public void onStateChanged(final StateChangedEvent<Object> event) {
+					lockInputStreamIfAnyRunning();
+				}
+			});
+		}
 	}
 	
 	@Override
@@ -128,7 +150,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	
 	@Override
 	public InputStream getInputStream() {
-		return device.getInputStream();
+		return lockedInputStream;
 	}
 	
 	@Override
@@ -143,5 +165,15 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	 */
 	public OperationQueue getOperationQueue() {
 		return queue;
+	}
+	
+	private void lockInputStreamIfAnyRunning() {
+		boolean locked = Iterators.any(queue.getOperations().iterator(), new Predicate<Operation<?>>() {
+			@Override
+			public boolean apply(Operation<?> input) {
+				return State.RUNNING.equals(input.getState());
+			}
+		});
+		lockedInputStream.setLocked(locked);
 	}
 }

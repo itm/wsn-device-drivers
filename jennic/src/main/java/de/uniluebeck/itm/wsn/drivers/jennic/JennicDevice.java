@@ -44,7 +44,7 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 	/**
 	 * Logger for this class.
 	 */
-	private static final Logger log = LoggerFactory.getLogger(JennicDevice.class);
+	private static final Logger LOG = LoggerFactory.getLogger(JennicDevice.class);
 	
 	private static final int TIMEOUT = 2000;
 	
@@ -54,85 +54,61 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 	
 	@Override
 	public EnterProgramModeOperation createEnterProgramModeOperation() {
-		final EnterProgramModeOperation operation = new SerialPortEnterProgramModeOperation(getConnection());
-		monitor(operation);
-		return operation;
+		return new SerialPortEnterProgramModeOperation(getConnection());
 	}
 	
 	@Override
 	public LeaveProgramModeOperation createLeaveProgramModeOperation() {
-		final LeaveProgramModeOperation operation = new SerialPortLeaveProgramModeOperation(getConnection());
-		monitor(operation);
-		return operation;
+		return new SerialPortLeaveProgramModeOperation(getConnection());
 	}
 	
 	@Override
 	public EraseFlashOperation createEraseFlashOperation() {
-		final EraseFlashOperation operation = new JennicEraseFlashOperation(this);
-		monitor(operation);
-		return operation;
+		return new JennicEraseFlashOperation(this);
 	}
 
 	@Override
 	public GetChipTypeOperation createGetChipTypeOperation() {
-		GetChipTypeOperation operation = new JennicGetChipTypeOperation(this);
-		monitor(operation);
-		return operation;
+		return new JennicGetChipTypeOperation(this);
 	}
 	
 	public GetFlashHeaderOperation createGetFlashHeaderOperation() {
-		final GetFlashHeaderOperation operation = new JennicGetFlashHeaderOperation(this);
-		monitor(operation);
-		return operation;
+		return new JennicGetFlashHeaderOperation(this);
 	}
 
 	@Override
 	public ProgramOperation createProgramOperation() {
-		final ProgramOperation operation = new JennicProgramOperation(this);
-		monitor(operation);
-		return operation;
+		return new JennicProgramOperation(this);
 	}
 
 	@Override
 	public ReadFlashOperation createReadFlashOperation() {
-		final ReadFlashOperation operation = new JennicReadFlashOperation(this);
-		monitor(operation);
-		return operation;
+		return new JennicReadFlashOperation(this);
 	}
 
 	@Override
 	public ReadMacAddressOperation createReadMacAddressOperation() {
-		final ReadMacAddressOperation operation = new JennicReadMacAddressOperation(this);
-		monitor(operation);
-		return operation;
+		return new JennicReadMacAddressOperation(this);
 	}
 
 	@Override
 	public ResetOperation createResetOperation() {
-		final ResetOperation operation = new iSenseResetOperation(getConnection());
-		monitor(operation);
-		return operation;
+		return new iSenseResetOperation(getConnection());
 	}
 
 	@Override
 	public SendOperation createSendOperation() {
-		final SendOperation operation = new SerialPortSendOperation(getConnection());
-		monitor(operation);
-		return operation;
+		return new SerialPortSendOperation(getConnection());
 	}
 
 	@Override
 	public WriteFlashOperation createWriteFlashOperation() {
-		final WriteFlashOperation operation = new JennicWriteFlashOperation(this);
-		monitor(operation);
-		return operation;
+		return new JennicWriteFlashOperation(this);
 	}
 
 	@Override
 	public WriteMacAddressOperation createWriteMacAddressOperation() {
-		final WriteMacAddressOperation operation = new JennicWriteMacAddressOperation(this);
-		monitor(operation);
-		return operation;
+		return new JennicWriteMacAddressOperation(this);
 	}
 
 	@Override
@@ -149,7 +125,7 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 
 		// Throw error if reading failed
 		if (response[1] != 0x00) {
-			log.error(String.format("Failed to read flash type: Response should be 0x00, yet it is: 0x%02x",
+			LOG.error(String.format("Failed to read flash type: Response should be 0x00, yet it is: 0x%02x",
 					response[1]));
 			throw new FlashTypeReadFailedException();
 		}
@@ -167,13 +143,13 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 		else 
 			ft = FlashType.Unknown;
 
-		// log.debug("Flash is " + ft + " (response[2,3] was: " + Tools.toHexString(response[2]) + " " +
+		// LOG.debug("Flash is " + ft + " (response[2,3] was: " + Tools.toHexString(response[2]) + " " +
 		// Tools.toHexString(response[3]) + ")");
 		return ft;
 	}
 	
 	void enableFlashErase() throws Exception {
-		// log.debug("Setting FLASH status register to zero");
+		// LOG.debug("Setting FLASH status register to zero");
 		sendBootLoaderMessage(Messages.statusRegisterWriteMessage((byte) 0x00)); // see
 		// AN
 		// -
@@ -182,27 +158,27 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 		byte[] response = receiveBootLoaderReply(Messages.WRITE_SR_RESPONSE);
 
 		if (response[1] != 0x0) {
-			log.error(String.format("Failed to write status register."));
+			LOG.error(String.format("Failed to write status register."));
 			throw new FlashEraseFailedException();
 		}
 	}
 	
 	public void eraseFlash(Sector sector) throws Exception {
 		enableFlashErase();
-		log.trace("Erasing sector " + sector);
+		LOG.trace("Erasing sector " + sector);
 		sendBootLoaderMessage(Messages.sectorEraseRequestMessage(sector));
 
 		byte[] response = receiveBootLoaderReply(Messages.SECTOR_ERASE_RESPONSE);
 
 		if (response[1] != 0x0) {
-			log.error(String.format("Failed to erase flash sector."));
+			LOG.error(String.format("Failed to erase flash sector."));
 			throw new SectorEraseException(sector);
 		}
 
 	}
 	
 	public void configureFlash(ChipType chipType) throws Exception {
-		log.trace("Configuring flash");
+		LOG.trace("Configuring flash");
 
 		// Only new chips need to be configured
 		if (chipType != ChipType.JN5121) {
@@ -217,12 +193,12 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 
 			// Throw error if configuration failed
 			if (response[1] != 0x00) {
-				log.error(String.format("Failed to configure flash ROM: Response should be 0x00, yet it is: 0x%02x",
+				LOG.error(String.format("Failed to configure flash ROM: Response should be 0x00, yet it is: 0x%02x",
 						response[1]));
 				throw new FlashConfigurationFailedException();
 			}
 		}
-		log.trace("Done. Flash is configured");
+		LOG.trace("Done. Flash is configured");
 	}
 	
 	/** 
@@ -252,14 +228,14 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 	 * 
 	 */
 	public byte[] receiveBootLoaderReply(int type) throws TimeoutException, UnexpectedResponseException, InvalidChecksumException, IOException, NullPointerException {
-		log.trace("Receiving Boot Loader Reply...");
+		LOG.trace("Receiving Boot Loader Reply...");
 		final SerialPortConnection connection = getConnection();
 		final InputStream inputStream = connection.getInputStream();
 		
 		connection.waitDataAvailable(TIMEOUT);
 		// Read message length
 		int length = (int) inputStream.read();
-		log.trace("receiveBootLoaderReply length: " + length);
+		LOG.trace("receiveBootLoaderReply length: " + length);
 
 		// Allocate message buffer
 		byte[] message = new byte[length - 1];
@@ -269,12 +245,12 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 			connection.waitDataAvailable(TIMEOUT);
 			message[i] = (byte) inputStream.read();
 		}
-		log.trace("Received boot loader msg: " + StringUtils.toHexString(message));
+		LOG.trace("Received boot loader msg: " + StringUtils.toHexString(message));
 
 		// Read checksum
 		connection.waitDataAvailable(TIMEOUT);
 		byte recvChecksum = (byte) inputStream.read();
-		log.trace("Received Checksum: " + StringUtils.toHexString(recvChecksum));
+		LOG.trace("Received Checksum: " + StringUtils.toHexString(recvChecksum));
 
 		// Concatenate length and message for checksum calculation
 		byte[] fullMessage = new byte[message.length + 1];
@@ -304,12 +280,12 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 			// device is supposed to respond)
 			sendBootLoaderMessage(Messages.flashReadRequestMessage(0x24, 0x20));
 			receiveBootLoaderReply(Messages.FLASH_READ_RESPONSE);
-			log.trace("Device connection established");
+			LOG.trace("Device connection established");
 			return true;
 		} catch (TimeoutException e) {
-			log.warn("Still waiting for a connection.");
+			LOG.warn("Still waiting for a connection.");
 		} catch (Exception e) {
-			log.error("Exception while waiting for connection", e);
+			LOG.error("Exception while waiting for connection", e);
 		}
 
 		Flushables.flushQuietly(getConnection());
@@ -334,7 +310,7 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 	
 	public void writeFlash(int address, byte[] data) throws IOException, NullPointerException, TimeoutException, UnexpectedResponseException, InvalidChecksumException, FlashProgramFailedException {
 		// Send flash program request
-		// log.debug("Sending program request for address " + address + " with " + data.length + " bytes");
+		// LOG.debug("Sending program request for address " + address + " with " + data.length + " bytes");
 		sendBootLoaderMessage(Messages.flashProgramRequestMessage(address, data));
 
 		// Read flash program response
@@ -342,7 +318,7 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 
 		// Throw error if writing failed
 		if (response[1] != 0x0) {
-			log.error(String.format("Failed to write to flash: Response should be 0x00, yet it is: 0x%02x", response[1]));
+			LOG.error(String.format("Failed to write to flash: Response should be 0x00, yet it is: 0x%02x", response[1]));
 			throw new FlashProgramFailedException();
 		}
 	}
