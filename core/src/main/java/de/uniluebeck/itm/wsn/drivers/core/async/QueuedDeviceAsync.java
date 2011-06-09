@@ -3,18 +3,24 @@ package de.uniluebeck.itm.wsn.drivers.core.async;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterators;
 import com.google.inject.Inject;
 
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
+import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
+import de.uniluebeck.itm.wsn.drivers.core.State;
+import de.uniluebeck.itm.wsn.drivers.core.event.StateChangedEvent;
+import de.uniluebeck.itm.wsn.drivers.core.io.LockedInputStream;
 import de.uniluebeck.itm.wsn.drivers.core.io.SendOutputStreamWrapper;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;
@@ -47,88 +53,117 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	private final Device<? extends Connection> device;
 	
 	/**
+	 * Lockable InputStream that allows secure access to the underlying source InputStream.
+	 */
+	private LockedInputStream lockedInputStream;
+	
+	/**
 	 * Constructor.
 	 * 
 	 * @param queue The <code>OperationQueue</code> that schedules all operations.
 	 * @param device The <code>Device</code> that provides all operations that can be executed.
 	 */
 	@Inject
-	public QueuedDeviceAsync(final OperationQueue queue, final Device<? extends Connection> device) {
+	public QueuedDeviceAsync(OperationQueue queue, Device<? extends Connection> device) {
 		this.queue = queue;
 		this.device = device;
+		
+		final Connection connection = device.getConnection();
+		if (connection != null) {
+			this.lockedInputStream = new LockedInputStream(connection.getInputStream());
+			queue.addListener(new OperationQueueAdapter<Object>() {
+				@Override
+				public void onStateChanged(final StateChangedEvent<Object> event) {
+					lockInputStreamIfAnyRunning();
+				}
+			});
+		}
 	}
 	
 	@Override
-	public OperationHandle<ChipType> getChipType(final long timeout, final AsyncCallback<ChipType> callback) {
+	public OperationHandle<ChipType> getChipType(long timeout, AsyncCallback<ChipType> callback) {
 		LOG.debug("Reading Chip Type (Timeout: " + timeout + "ms");
-		final GetChipTypeOperation operation = device.createGetChipTypeOperation();
+		GetChipTypeOperation operation = device.createGetChipTypeOperation();
+		checkNotNullOperation(operation, "The Operation getChipType is not available");
 		return queue.addOperation(operation, timeout, callback);
 	}
 
 	@Override
-	public OperationHandle<Void> eraseFlash(final long timeout, final AsyncCallback<Void> callback) {
+	public OperationHandle<Void> eraseFlash(long timeout, AsyncCallback<Void> callback) {
 		LOG.debug("Erase flash (Timeout: " + timeout + "ms)");
-		final EraseFlashOperation operation = device.createEraseFlashOperation();
+		EraseFlashOperation operation = device.createEraseFlashOperation();
+		checkNotNullOperation(operation, "The Operation eraseFlash is not avialable");
 		return queue.addOperation(operation, timeout, callback);
 	}
 
 	@Override
-	public OperationHandle<Void> program(final byte[] data, final long timeout, final AsyncCallback<Void> callback) {
+	public OperationHandle<Void> program(byte[] data, long timeout, AsyncCallback<Void> callback) {
 		LOG.debug("Program device (timeout: " + timeout + "ms)");
-		final ProgramOperation operation = device.createProgramOperation();
+		ProgramOperation operation = device.createProgramOperation();
+		checkNotNullOperation(operation, "The Operation program is not available");
 		operation.setBinaryImage(data);
 		return queue.addOperation(operation, timeout, callback);
 	}
 
 	@Override
-	public OperationHandle<byte[]> readFlash(final int address, final int length, final long timeout, final AsyncCallback<byte[]> callback) {
+	public OperationHandle<byte[]> readFlash(int address, int length, long timeout, AsyncCallback<byte[]> callback) {
 		LOG.debug("Read flash (address: " + address + ", length: " + length + ", timeout: " + timeout + "ms)");
-		final ReadFlashOperation operation = device.createReadFlashOperation();
+		ReadFlashOperation operation = device.createReadFlashOperation();
+		checkNotNullOperation(operation, "The Operation readFlash is not available");
 		operation.setAddress(address, length);
 		return queue.addOperation(operation, timeout, callback);
 	}
 
 	@Override
-	public OperationHandle<MacAddress> readMac(final long timeout, final AsyncCallback<MacAddress> callback) {
+	public OperationHandle<MacAddress> readMac(long timeout, AsyncCallback<MacAddress> callback) {
 		LOG.debug("Read mac (timeout: " + timeout + "ms)");
-		final ReadMacAddressOperation operation = device.createReadMacAddressOperation();
+		ReadMacAddressOperation operation = device.createReadMacAddressOperation();
+		checkNotNullOperation(operation, "The Operation readMac is not available");
 		return queue.addOperation(operation, timeout, callback);
 	}
 
 	@Override
-	public OperationHandle<Void> reset(final long timeout, final AsyncCallback<Void> callback) {
+	public OperationHandle<Void> reset(long timeout, AsyncCallback<Void> callback) {
 		LOG.debug("Reset device (timeout: " + timeout + "ms)");
-		final ResetOperation operation = device.createResetOperation();
+		ResetOperation operation = device.createResetOperation();
+		checkNotNullOperation(operation, "The Operation reset is not available");
 		return queue.addOperation(operation, timeout, callback);
 	}
 
 	@Override
-	public OperationHandle<Void> send(final byte[] message, final long timeout, final AsyncCallback<Void> callback) {
+	public OperationHandle<Void> send(byte[] message, long timeout, AsyncCallback<Void> callback) {
 		LOG.debug("Send packet to device (timeout: " + timeout + "ms)");
-		final SendOperation operation = device.createSendOperation();
+		SendOperation operation = device.createSendOperation();
+		checkNotNullOperation(operation, "The Operation send is not available");
 		operation.setMessage(message);
 		return queue.addOperation(operation, timeout, callback);
 	}
 
 	@Override
-	public OperationHandle<Void> writeFlash(final int address, final byte[] data, final int length, final long timeout, final AsyncCallback<Void> callback) {
+	public OperationHandle<Void> writeFlash(int address, 
+											byte[] data, 
+											int length, 
+											long timeout, 
+											AsyncCallback<Void> callback) {
 		LOG.debug("Write flash (address: " + address + ", length: " + length + ", timeout: " + timeout + "ms)");
 		final WriteFlashOperation operation = device.createWriteFlashOperation();
+		checkNotNullOperation(operation, "The Operation writeFlash is not available");
 		operation.setData(address, data, length);
 		return queue.addOperation(operation, timeout, callback);
 	}
 
 	@Override
-	public OperationHandle<Void> writeMac(final MacAddress macAddress, final long timeout, final AsyncCallback<Void> callback) {
+	public OperationHandle<Void> writeMac(MacAddress macAddress, long timeout, AsyncCallback<Void> callback) {
 		LOG.debug("Write mac (mac address: " + macAddress + ", timeout: " + timeout + "ms)");
 		final WriteMacAddressOperation operation = device.createWriteMacAddressOperation();
+		checkNotNullOperation(operation, "The Operation writeMac is not available");
 		operation.setMacAddress(macAddress);
 		return queue.addOperation(operation, timeout, callback);
 	}
 	
 	@Override
 	public InputStream getInputStream() {
-		return device.getInputStream();
+		return lockedInputStream;
 	}
 	
 	@Override
@@ -143,5 +178,22 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	 */
 	public OperationQueue getOperationQueue() {
 		return queue;
+	}
+	
+
+	private void checkNotNullOperation(Operation<?> operation, String message) {
+		if (operation == null) {
+			throw new UnsupportedOperationException(message);
+		}
+	}
+
+	private void lockInputStreamIfAnyRunning() {
+		boolean locked = Iterators.any(queue.getOperations().iterator(), new Predicate<Operation<?>>() {
+			@Override
+			public boolean apply(Operation<?> input) {
+				return State.RUNNING.equals(input.getState());
+			}
+		});
+		lockedInputStream.setLocked(locked);
 	}
 }

@@ -6,9 +6,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.io.Closeables;
 
 import de.uniluebeck.itm.wsn.drivers.core.io.InputStreamBridge;
@@ -21,11 +18,6 @@ import de.uniluebeck.itm.wsn.drivers.core.io.OutputStreamBridge;
  * @author Malte Legenhausen
  */
 public abstract class AbstractConnection implements Connection {
-
-	/**
-	 * Logger for this class.
-	 */
-	private static final Logger LOG = LoggerFactory.getLogger(AbstractConnection.class);
 	
 	/**
 	 * List for listeners that want to be notified on connection state changes.
@@ -59,18 +51,16 @@ public abstract class AbstractConnection implements Connection {
 	 */
 	protected void setConnected(final boolean connected) {
 		this.connected = connected;
-		fireConnectionChange(connected);
+		fireConnectionChange(new ConnectionEvent(this, uri, connected));
 	}
 	
 	/**
 	 * Fire a connection change event to all registered listeners.
 	 * 
-	 * @param connected True when connected else false.
+	 * @param event The event you want to fire.
 	 */
-	protected void fireConnectionChange(final boolean connected) {
-		LOG.debug(connected ? "Connected" : "Disconnected");
-		final ConnectionEvent event = new ConnectionEvent(this, uri, connected);
-		for (final ConnectionListener listener : listeners.toArray(new ConnectionListener[listeners.size()])) {
+	protected void fireConnectionChange(ConnectionEvent event) {
+		for (final ConnectionListener listener : listeners.toArray(new ConnectionListener[0])) {
 			listener.onConnectionChange(event);
 		}
 	}

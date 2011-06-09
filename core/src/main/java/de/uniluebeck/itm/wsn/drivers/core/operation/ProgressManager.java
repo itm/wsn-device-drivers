@@ -9,6 +9,16 @@ package de.uniluebeck.itm.wsn.drivers.core.operation;
 public interface ProgressManager {
 	
 	/**
+	 * Constant value for 50% worked.
+	 */
+	float WORKED_HALF = 0.5f;
+	
+	/**
+	 * Constant value for 25% worked.
+	 */
+	float WORKED_QUARTER = 0.25f;
+	
+	/**
 	 * Creates a child progress manager that manages the given amount.
 	 * 
 	 * @param amount The amount of progress the manager is allowed to handle.

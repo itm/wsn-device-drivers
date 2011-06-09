@@ -3,6 +3,13 @@ package de.uniluebeck.itm.wsn.drivers.core.io;
 import java.io.IOException;
 import java.io.OutputStream;
 
+
+/**
+ * This class allows dynamically bind an OutputStream.
+ * Usable for null object pattern.
+ * 
+ * @author Malte Legenhausen
+ */
 public class OutputStreamBridge extends OutputStream {
 
 	private OutputStream outputStream;

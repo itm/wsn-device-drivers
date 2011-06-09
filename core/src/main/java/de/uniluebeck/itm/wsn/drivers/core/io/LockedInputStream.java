@@ -3,6 +3,9 @@ package de.uniluebeck.itm.wsn.drivers.core.io;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -13,6 +16,16 @@ import java.io.InputStream;
  * @author Malte Legenhausen
  */
 public class LockedInputStream extends FilterInputStream implements Lockable {
+	
+	/**
+	 * Lock for signaling a lock change.
+	 */
+	private final Lock lock = new ReentrantLock();
+	
+	/**
+	 * The condition for waiting for a lock change.
+	 */
+	private final Condition isLocked = lock.newCondition();
 	
 	/**
 	 * The lock flag.
@@ -30,12 +43,24 @@ public class LockedInputStream extends FilterInputStream implements Lockable {
 	
 	@Override
 	public int read() throws IOException {
-		return locked ? -1 : super.read();
+		if (locked) {
+			lock.lock();
+			try {
+				isLocked.awaitUninterruptibly();
+			} finally {
+				lock.unlock();
+			}
+		}
+		return super.read();
 	}
 	
 	@Override
 	public int available() throws IOException {
-		return locked ? 0 : super.available();
+		int result = 0;
+		if (!locked) {
+			result = super.available();
+		}
+		return result;
 	}
 	
 	@Override
@@ -72,11 +97,18 @@ public class LockedInputStream extends FilterInputStream implements Lockable {
 	@Override
 	public void setLocked(final boolean locked) {
 		this.locked = locked;
+		if (!locked) {
+			lock.lock();
+			try {
+				isLocked.signal();
+			} finally {
+				lock.unlock();
+			}
+		}
 	}
 
 	@Override
 	public boolean isLocked() {
 		return locked;
 	}
-
 }

@@ -10,12 +10,19 @@ import com.google.common.io.NullOutputStream;
  * 
  * @author Malte Legenhausen
  */
-public class SysOutUtil {
+public final class SysOutUtil {
 	
 	/**
 	 * Default System.out for this system.
 	 */
 	private static PrintStream defaultSystemOut = System.out;
+	
+	/**
+	 * Constructor.
+	 */
+	private SysOutUtil() {
+		
+	}
 	
 	/**
 	 * Mutes the current print stream.

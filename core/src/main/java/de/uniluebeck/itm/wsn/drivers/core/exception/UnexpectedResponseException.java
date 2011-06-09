@@ -35,26 +35,38 @@ public class UnexpectedResponseException extends Exception {
 	 * Serial UID.
 	 */
 	private static final long serialVersionUID = 2887597938554231905L;
+	
+	/**
+	 * Pattern for added expected and received response.
+	 */
+	private static final String MESSAGE = "Expected type: 0x%02x, received type: 0x%02x.";
 
 	/**
 	 * The expected response from the device.
 	 */
-	private int expectedResponse = -1;
+	private final Integer expectedResponse;
 
 	/**
 	 * The unexpected received response from the device.
 	 */
-	private int receivedResponse = -1;
+	private final Integer receivedResponse;
 
+	/**
+	 * Constructor.
+	 */
+	public UnexpectedResponseException() {
+		this(null, null);
+	}
+	
 	/**
 	 * Constructor.
 	 * 
 	 * @param expectedResponse The expected response from the device.
 	 * @param receivedResponse The received response from the device.
 	 */
-	public UnexpectedResponseException(final int expectedResponse, final int receivedResponse) {
+	public UnexpectedResponseException(final Integer expectedResponse, final Integer receivedResponse) {
 		this.expectedResponse = expectedResponse;
-		this.expectedResponse = receivedResponse;
+		this.receivedResponse = receivedResponse;
 	}
 	
 	/**
@@ -64,10 +76,10 @@ public class UnexpectedResponseException extends Exception {
 	 * @param expectedResponse The expected response from the device.
 	 * @param receivedResponse The received response from the device.
 	 */
-	public UnexpectedResponseException(final String message, final int expectedResponse, final int receivedResponse) {
+	public UnexpectedResponseException(String message, int expectedResponse, int receivedResponse) {
 		super(message);
 		this.expectedResponse = expectedResponse;
-		this.expectedResponse = receivedResponse;
+		this.receivedResponse = receivedResponse;
 	}
 
 	/**
@@ -90,10 +102,10 @@ public class UnexpectedResponseException extends Exception {
 
 	@Override
 	public String getMessage() {
-		if (expectedResponse == -1 || receivedResponse == -1) {
-			return getMessage();
+		if (expectedResponse == null || receivedResponse == null) {
+			return super.getMessage();
 		} else {
-			return String.format(getMessage() + " Expected type: 0x%02x, received type: 0x%02x.",expectedResponse, receivedResponse);
+			return String.format(super.getMessage() + " " + MESSAGE, expectedResponse, receivedResponse);
 		}
 	}
 }

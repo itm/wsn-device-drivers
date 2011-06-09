@@ -61,6 +61,11 @@ public class GenericDeviceExample implements ConnectionListener {
 	private static final long DEFAULT_MAC_ADDRESS_VALUE = 1024;
 	
 	/**
+	 * The length to read.
+	 */
+	private static final int READ_LENGTH = 32;
+	
+	/**
 	 * The queue used for this example.
 	 */
 	private final OperationQueue queue = new PausableExecutorOperationQueue();
@@ -117,17 +122,17 @@ public class GenericDeviceExample implements ConnectionListener {
 		this.device = device;
 	}
 
-	public void setImageInputStream(final InputStream image) {
-		this.image = image;
+	public void setImageInputStream(final InputStream anImage) {
+		image = anImage;
 	}
 
 	public void setUri(final String uri) {
 		this.uri = uri;
 	}
 	
-	public void setMessage(final byte[] messagePacket) {
-		this.messagePacket = new byte[messagePacket.length];
-		System.arraycopy(messagePacket, 0, this.messagePacket, 0, messagePacket.length);
+	public void setMessage(final byte[] aMessagePacket) {
+		this.messagePacket = new byte[aMessagePacket.length];
+		System.arraycopy(aMessagePacket, 0, this.messagePacket, 0, aMessagePacket.length);
 	}
 
 	/**
@@ -178,17 +183,17 @@ public class GenericDeviceExample implements ConnectionListener {
 			
 			@Override
 			public void onFailure(Throwable throwable) {
-				if (throwable instanceof UnsupportedOperationException) {
-					System.err.println("Program is not supported by this device.");
-				} else {
-					throwable.printStackTrace();
-				}
+				throwable.printStackTrace();
 			}
 		};
 		
 		final byte[] bytes = ByteStreams.toByteArray(image);
 		System.out.println("Image length: " + bytes.length);
-	    deviceAsync.program(bytes, PROGRAM_TIMEOUT, callback);
+		try {
+			deviceAsync.program(bytes, PROGRAM_TIMEOUT, callback);
+		} catch (UnsupportedOperationException e) {
+			System.err.println(e.getMessage());
+		}
 	}
 	
 	/**
@@ -207,14 +212,14 @@ public class GenericDeviceExample implements ConnectionListener {
 			
 			@Override
 			public void onFailure(Throwable throwable) {
-				if (throwable instanceof UnsupportedOperationException) {
-					System.err.println("Reset is not supported by this device.");
-				} else {
-					throwable.printStackTrace();
-				}
+				throwable.printStackTrace();
 			}
 		};
-		deviceAsync.reset(RESET_TIMEOUT, callback);
+		try {
+			deviceAsync.reset(RESET_TIMEOUT, callback);
+		} catch (UnsupportedOperationException e) {
+			System.err.println(e.getMessage());
+		}
 	}
 	
 	/**
@@ -243,18 +248,17 @@ public class GenericDeviceExample implements ConnectionListener {
 			
 			@Override
 			public void onFailure(Throwable throwable) {
-				if (throwable instanceof UnsupportedOperationException) {
-					System.err.println("Read mac address is not supported by this device.");
-				} else {
-					throwable.printStackTrace();
-				}
+				throwable.printStackTrace();
 			}
 		};
-		
-		deviceAsync.readMac(READ_MAC_ADDRESS_TIMEOUT, callback);
+		try {
+			deviceAsync.readMac(READ_MAC_ADDRESS_TIMEOUT, callback);
+		} catch (UnsupportedOperationException e) {
+			System.err.println(e.getMessage());
+		}
 		
 		// Write a new mac address.
-		deviceAsync.writeMac(macAddress, WRITE_MAC_ADDRESS_TIMEOUT, new AsyncAdapter<Void>() {
+		AsyncCallback<Void> writeMacCallback = new AsyncAdapter<Void>() {
 
 			@Override
 			public void onExecute() {
@@ -274,14 +278,19 @@ public class GenericDeviceExample implements ConnectionListener {
 			
 			@Override
 			public void onFailure(Throwable throwable) {
-				if (throwable instanceof UnsupportedOperationException) {
-					System.err.println("Write mac address is not supported by this device.");
-				} else {
-					throwable.printStackTrace();
-				}
+				throwable.printStackTrace();
 			}
-		});
-		deviceAsync.readMac(READ_MAC_ADDRESS_TIMEOUT, callback);
+		};
+		try {
+			deviceAsync.writeMac(macAddress, WRITE_MAC_ADDRESS_TIMEOUT, writeMacCallback);
+		} catch (UnsupportedOperationException e) {
+			System.err.println(e.getMessage());
+		}
+		try {
+			deviceAsync.readMac(READ_MAC_ADDRESS_TIMEOUT, callback);
+		} catch (UnsupportedOperationException e) {
+			System.err.println(e.getMessage());
+		}
 	}
 	
 	/**
@@ -315,14 +324,19 @@ public class GenericDeviceExample implements ConnectionListener {
 				}
 			}
 		};
-		deviceAsync.readFlash(0, 32, RESET_TIMEOUT, callback);
+		try {
+			deviceAsync.readFlash(0, READ_LENGTH, RESET_TIMEOUT, callback);
+		} catch (UnsupportedOperationException e) {
+			System.err.println(e.getMessage());
+		}
+		
 	}
 	
 	/**
 	 * Read the chip type from the device.
 	 */
 	public void chipTypeOperation() {
-		deviceAsync.getChipType(READ_MAC_ADDRESS_TIMEOUT, new AsyncAdapter<ChipType>() {
+		AsyncCallback<ChipType> callback = new AsyncAdapter<ChipType>() {
 
 			@Override
 			public void onExecute() {
@@ -348,33 +362,18 @@ public class GenericDeviceExample implements ConnectionListener {
 					throwable.printStackTrace();
 				}
 			}
-		});
+		};
+		try {
+			deviceAsync.getChipType(READ_MAC_ADDRESS_TIMEOUT, callback);
+		} catch (UnsupportedOperationException e) {
+			System.err.println(e.getMessage());
+		}
 	}
 	
 	/**
 	 * Send a message to the device.
 	 */
 	private void sendOperation() {
-		deviceAsync.send(messagePacket, RESET_TIMEOUT, new AsyncAdapter<Void>() {
-			public void onExecute() {
-				System.out.println("Sending message");
-			}
-			
-			public void onSuccess(final Void result) {
-				System.out.println("Message send");
-			}
-			
-			@Override
-			public void onFailure(Throwable throwable) {
-				if (throwable instanceof UnsupportedOperationException) {
-					System.err.println("Send is not supported by this device.");
-				} else {
-					throwable.printStackTrace();
-				}
-			}
-		});
-		
-		System.out.println("Sending via OutputStream.");
 		try {
 			final OutputStream outputStream = deviceAsync.getOutputStream();
 			outputStream.write(messagePacket);
@@ -405,7 +404,7 @@ public class GenericDeviceExample implements ConnectionListener {
 		System.out.println("Waiting for messages from the device.");
 		System.out.println("Press any key to shutdown...");
 		try {
-			while(System.in.read() == -1) {
+			while (System.in.read() == -1) {
 				Thread.sleep(DEFAULT_SLEEP);
 			}
 		} catch (final InterruptedException e) {
@@ -454,7 +453,7 @@ public class GenericDeviceExample implements ConnectionListener {
 	public void onConnectionChange(final ConnectionEvent event) {
 		System.out.println("Connected with port: " + event.getUri());
 		if (event.isConnected()) {
-			service.setInputStream(device.getInputStream());
+			service.setInputStream(deviceAsync.getInputStream());
 			service.start();
 		} else {
 			service.stopAndWait();

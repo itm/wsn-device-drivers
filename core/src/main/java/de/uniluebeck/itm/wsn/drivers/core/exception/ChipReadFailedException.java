@@ -25,7 +25,7 @@ package de.uniluebeck.itm.wsn.drivers.core.exception;
 
 
 /**
- * Specific Exception
+ * Specific Exception.
  * 
  * @author Malte Legenhausen
  */

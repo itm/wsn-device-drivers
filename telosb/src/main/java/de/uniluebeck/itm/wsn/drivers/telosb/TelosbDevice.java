@@ -10,14 +10,11 @@ import de.uniluebeck.itm.wsn.drivers.core.exception.InvalidChecksumException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.ReceivedIncorrectDataException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.UnexpectedResponseException;
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractReadFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractWriteMacAddressOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
@@ -50,86 +47,56 @@ public class TelosbDevice extends AbstractSerialPortDevice implements Programabl
 
 	@Override
 	public EnterProgramModeOperation createEnterProgramModeOperation() {
-		final EnterProgramModeOperation operation = new TelosbEnterProgramModeOperation(getConnection(), bsl);
-		monitor(operation);
-		return operation;
+		return new TelosbEnterProgramModeOperation(getConnection(), bsl);
 	}
 	
 	@Override
 	public LeaveProgramModeOperation createLeaveProgramModeOperation() {
-		final LeaveProgramModeOperation operation = new SerialPortLeaveProgramModeOperation(getConnection());
-		monitor(operation);
-		return operation;
+		return new SerialPortLeaveProgramModeOperation(getConnection());
 	}
 	
 	@Override
 	public GetChipTypeOperation createGetChipTypeOperation() {
-		final GetChipTypeOperation operation = new TelosbGetChipTypeOperation();
-		monitor(operation);
-		return operation;
+		return new TelosbGetChipTypeOperation();
 	}
 
 	@Override
 	public ProgramOperation createProgramOperation() {
-		final ProgramOperation operation = new TelosbProgramOperation(this);
-		monitor(operation);
-		return operation;
+		return new TelosbProgramOperation(this);
 	}
 
 	@Override
 	public EraseFlashOperation createEraseFlashOperation() {
-		final EraseFlashOperation operation = new TelosbEraseFlashOperation(bsl);
-		monitor(operation);
-		return operation;
+		return new TelosbEraseFlashOperation(bsl);
 	}
 
 	@Override
 	public WriteFlashOperation createWriteFlashOperation() {
-		final WriteFlashOperation operation = new TelosbWriteFlashOperation(this);
-		monitor(operation);
-		return operation;
+		return new TelosbWriteFlashOperation(this);
 	}
 
 	public ReadFlashOperation createReadFlashOperation() {
-		final ReadFlashOperation operation = new AbstractReadFlashOperation() {
-			@Override
-			public byte[] execute(ProgressManager progressManager) throws Exception {
-				throw new UnsupportedOperationException("readFlash is not available");
-			}
-		};
-		return operation;
+		return null;
 	}
 
 	@Override
 	public ReadMacAddressOperation createReadMacAddressOperation() {
-		final ReadMacAddressOperation operation = new TelosbReadMacAddressOperation();
-		monitor(operation);
-		return operation;
+		return null;
 	}
 
 	@Override
 	public WriteMacAddressOperation createWriteMacAddressOperation() {
-		final WriteMacAddressOperation operation = new AbstractWriteMacAddressOperation() {
-			@Override
-			public Void execute(ProgressManager progressManager) throws Exception {
-				throw new UnsupportedOperationException("writeMacAddress is not available");
-			}
-		};
-		return operation;
+		return null;
 	}
 
 	@Override
 	public ResetOperation createResetOperation() {
-		final ResetOperation operation = new TelosbResetOperation(bsl);
-		monitor(operation);
-		return operation;
+		return new TelosbResetOperation(bsl);
 	}
 
 	@Override
 	public SendOperation createSendOperation() {
-		final SendOperation operation = new SerialPortSendOperation(getConnection());
-		monitor(operation);
-		return operation;
+		return new SerialPortSendOperation(getConnection());
 	}
 	
 	@Override

@@ -36,7 +36,8 @@ import de.uniluebeck.itm.wsn.drivers.core.util.SysOutUtil;
  * 
  * @author Malte Legenhausen
  */
-public class SimpleSerialPortConnection extends AbstractConnection implements SerialPortConnection, SerialPortEventListener {
+public class SimpleSerialPortConnection extends AbstractConnection 
+	implements SerialPortConnection, SerialPortEventListener {
 	
 	/**
 	 * Logger for this class.
@@ -146,10 +147,10 @@ public class SimpleSerialPortConnection extends AbstractConnection implements Se
 	 */
 	protected void connectSerialPort(final String port) throws Exception {
 		SysOutUtil.mute();
-		final Enumeration<?> identifiers = CommPortIdentifier.getPortIdentifiers();
+		Enumeration<?> identifiers = CommPortIdentifier.getPortIdentifiers();
 		SysOutUtil.restore();
-		final Iterator<?> iterator = Iterators.forEnumeration(identifiers);
-		final CommPortIdentifier commPortIdentifier = (CommPortIdentifier) Iterators.find(iterator, new Predicate<Object>() {
+		Iterator<?> iterator = Iterators.forEnumeration(identifiers);
+		CommPortIdentifier commPortIdentifier = (CommPortIdentifier) Iterators.find(iterator, new Predicate<Object>() {
 			@Override
 			public boolean apply(final Object input) {
 				final CommPortIdentifier commPortIdentifier = (CommPortIdentifier) input;

@@ -19,9 +19,9 @@ public abstract class AbstractReadFlashOperation extends AbstractOperation<byte[
 	private int length;
 	
 	@Override
-	public void setAddress(final int address, final int length) {
-		this.address = address;
-		this.length = length;
+	public void setAddress(final int anAddress, final int aLength) {
+		address = anAddress;
+		length = aLength;
 	}
 	
 	/**

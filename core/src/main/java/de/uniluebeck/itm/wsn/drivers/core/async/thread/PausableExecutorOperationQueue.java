@@ -73,7 +73,9 @@ public class PausableExecutorOperationQueue implements OperationQueue {
 	}
 	
 	@Override
-	public synchronized <T> OperationHandle<T> addOperation(final Operation<T> operation, final long timeout, final AsyncCallback<T> callback) {
+	public synchronized <T> OperationHandle<T> addOperation(Operation<T> operation, 
+															long timeout, 
+															AsyncCallback<T> callback) {
 		operation.setAsyncCallback(callback);
 		operation.setTimeout(timeout);
 		
@@ -181,7 +183,7 @@ public class PausableExecutorOperationQueue implements OperationQueue {
 	 * @param event The event that will notify about the state change.
 	 */
 	private <T> void fireStateChangedEvent(final StateChangedEvent<T> event) {
-		for (final OperationQueueListener<T> listener : listeners.toArray(new OperationQueueListener[listeners.size()])) {
+		for (final OperationQueueListener<T> listener : listeners.toArray(new OperationQueueListener[0])) {
 			listener.onStateChanged(event);
 		}
 	}
@@ -193,7 +195,7 @@ public class PausableExecutorOperationQueue implements OperationQueue {
 	 * @param event The event that will notify about the add of an operation.
 	 */
 	private <T> void fireAddedEvent(final AddedEvent<T> event) {
-		for (final OperationQueueListener<T> listener : listeners.toArray(new OperationQueueListener[listeners.size()])) {
+		for (final OperationQueueListener<T> listener : listeners.toArray(new OperationQueueListener[0])) {
 			listener.onAdded(event);
 		}
 	}
@@ -205,7 +207,7 @@ public class PausableExecutorOperationQueue implements OperationQueue {
 	 * @param event The event that will notify about the remove of an operation.
 	 */
 	private <T> void fireRemovedEvent(final RemovedEvent<T> event) {
-		for (final OperationQueueListener<T> listener : listeners.toArray(new OperationQueueListener[listeners.size()])) {
+		for (final OperationQueueListener<T> listener : listeners.toArray(new OperationQueueListener[0])) {
 			listener.onRemoved(event);
 		}
 	}

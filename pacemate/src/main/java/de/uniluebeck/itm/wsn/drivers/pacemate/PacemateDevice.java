@@ -14,14 +14,11 @@ import de.uniluebeck.itm.wsn.drivers.core.Programable;
 import de.uniluebeck.itm.wsn.drivers.core.exception.InvalidChecksumException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.UnexpectedResponseException;
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractWriteFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractWriteMacAddressOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
@@ -42,7 +39,7 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 	 */
 	public static final long START_ADDRESS_IN_RAM = 1073742336;
 	
-	private static final Logger log = LoggerFactory.getLogger(PacemateDevice.class);
+	private static final Logger LOG = LoggerFactory.getLogger(PacemateDevice.class);
 	
 	private static final int TIMEOUT = 2000;
 	
@@ -60,87 +57,57 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 	
 	@Override
 	public EnterProgramModeOperation createEnterProgramModeOperation() {
-		final EnterProgramModeOperation operation = new SerialPortEnterProgramModeOperation(getConnection());
-		monitor(operation);
-		return operation;
+		return new SerialPortEnterProgramModeOperation(getConnection());
 	}
 	
 	@Override
 	public LeaveProgramModeOperation createLeaveProgramModeOperation() {
-		final LeaveProgramModeOperation operation = new SerialPortLeaveProgramModeOperation(getConnection());
-		monitor(operation);
-		return operation;
+		return new SerialPortLeaveProgramModeOperation(getConnection());
 	}
 
 	@Override
 	public GetChipTypeOperation createGetChipTypeOperation() {
-		final GetChipTypeOperation operation = new PacemateGetChipTypeOperation(this);
-		monitor(operation);
-		return operation;
+		return new PacemateGetChipTypeOperation(this);
 	}
 
 	@Override
 	public ProgramOperation createProgramOperation() {
-		final ProgramOperation operation = new PacemateProgramOperation(this);
-		monitor(operation);
-		return operation;
+		return new PacemateProgramOperation(this);
 	}
 
 	@Override
 	public EraseFlashOperation createEraseFlashOperation() {
-		final EraseFlashOperation operation = new PacemateEraseFlashOperation(this);
-		monitor(operation);
-		return operation;
+		return new PacemateEraseFlashOperation(this);
 	}
 
 	@Override
 	public WriteFlashOperation createWriteFlashOperation() {
-		final WriteFlashOperation operation = new AbstractWriteFlashOperation() {
-			@Override
-			public Void execute(final ProgressManager progressManager) throws Exception {
-				throw new UnsupportedOperationException("writeFlash is not available.");
-			}
-		};
-		return operation;
+		return null;
 	}
 
 	@Override
 	public ReadFlashOperation createReadFlashOperation() {
-		final ReadFlashOperation operation = new PacemateReadFlashOperation(this);
-		monitor(operation);
-		return operation;
+		return new PacemateReadFlashOperation(this);
 	}
 
 	@Override
 	public ReadMacAddressOperation createReadMacAddressOperation() {
-		final ReadMacAddressOperation operation = new PacemateReadMacAddressOperation(this);
-		monitor(operation);
-		return operation;
+		return new PacemateReadMacAddressOperation(this);
 	}
 
 	@Override
 	public WriteMacAddressOperation createWriteMacAddressOperation() {
-		final WriteMacAddressOperation operation = new AbstractWriteMacAddressOperation() {
-			@Override
-			public Void execute(final ProgressManager progressManager) throws Exception {
-				throw new UnsupportedOperationException("writeMacAddress ist not available.");
-			}
-		};
-		return operation;
+		return null;
 	}
 
 	@Override
 	public ResetOperation createResetOperation() {
-		final ResetOperation operation = new iSenseResetOperation(getConnection());
-		monitor(operation);
-		return operation;
+		return new iSenseResetOperation(getConnection());
 	}
 
 	@Override
 	public SendOperation createSendOperation() {
-		final SendOperation operation = new SerialPortSendOperation(getConnection());
-		monitor(operation);
-		return operation;
+		return new SerialPortSendOperation(getConnection());
 	}
 	
 	public boolean isEcho() {
@@ -188,7 +155,7 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 				message[index] = (byte) inStream.read();
 				//System.out.println("************ Done reading from stream");
 			} catch (IOException e) {
-				log.error("" + e, e);
+				LOG.error("" + e, e);
 			}
 			if (message[index] == -1) {
 				a = false;
@@ -199,7 +166,7 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 	}
 	
 	public void configureFlash(int start, int end) throws Exception {
-		log.debug("Configuring flash from " + start + " to " + end + "...");
+		LOG.debug("Configuring flash from " + start + " to " + end + "...");
 
 		enableFlashErase();
 
@@ -209,7 +176,7 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 		// Read flash configure response
 		receiveBootLoaderReplySuccess(Messages.CMD_SUCCESS);
 
-		log.debug("Flash is configured");
+		LOG.debug("Flash is configured");
 	}
 	
 	/**
@@ -217,29 +184,29 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 	 */
 	public void copyRAMToFlash(long flashAddress, long ramAddress, int length) throws Exception {
 		// Send flash program request
-		log.debug("Sending program request for address " + ramAddress + " with " + length + " bytes");
+		LOG.debug("Sending program request for address " + ramAddress + " with " + length + " bytes");
 		sendBootLoaderMessage(Messages.copyRAMToFlashRequestMessage(flashAddress, ramAddress, length));
 
 		// Read flash program response
 		receiveBootLoaderReplySuccess(Messages.CMD_SUCCESS);
 
-		log.debug("Copy Ram to Flash ok");
+		LOG.debug("Copy Ram to Flash ok");
 	}
 	
 	public void eraseFlash(int start, int end) throws Exception {
-		log.debug("Erasing sector from " + start + " to " + end + "...");
+		LOG.debug("Erasing sector from " + start + " to " + end + "...");
 		sendBootLoaderMessage(Messages.flashEraseRequestMessage(start, end));
 		receiveBootLoaderReplySuccess(Messages.CMD_SUCCESS);
 		try {
 			receiveBootLoaderReplySuccess(Messages.CMD_SUCCESS);
 		} catch (TimeoutException e) {
-			log.debug("one line erase response");
+			LOG.debug("one line erase response");
 		}
-		log.debug("Flash erased");
+		LOG.debug("Flash erased");
 	}
 	
 	public void enableFlashErase() throws Exception {
-		log.debug("Enabling Erase Flash...");
+		LOG.debug("Enabling Erase Flash...");
 		sendBootLoaderMessage(Messages.Unlock_RequestMessage());
 		receiveBootLoaderReplySuccess(Messages.CMD_SUCCESS);
 	}
@@ -275,7 +242,7 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 		String[] parts = replyStr.split("<CR><LF>");
 
 		for (final String part : parts) {
-			log.debug("BL parts " + part);
+			LOG.debug("BL parts " + part);
 		}
 
 		// does the node echo all messages or not
@@ -441,14 +408,14 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 			if (parts[1].compareTo(Messages.OK) == 0) {
 				return reply;
 			} else {
-				log.debug("Received boot loader msg: " + replyStr);
+				LOG.debug("Received boot loader msg: " + replyStr);
 				throw new InvalidChecksumException("Invalid checksum - resend " + replyStr);
 			}
 		} else {
 			if (parts[0].compareTo(Messages.OK) == 0) {
 				return reply;
 			} else {
-				log.debug("Received boot loader msg: " + replyStr);
+				LOG.debug("Received boot loader msg: " + replyStr);
 				throw new InvalidChecksumException("Invalid checksum - resend " + replyStr);
 			}
 		}
@@ -512,7 +479,7 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 		// copy to real length
 		byte[] fullMessage = new byte[index];
 		System.arraycopy(message, 0, fullMessage, 0, index);
-		log.debug("read lines " + StringUtils.toASCIIString(fullMessage));
+		LOG.debug("read lines " + StringUtils.toASCIIString(fullMessage));
 		return fullMessage;
 	}
 
@@ -523,7 +490,7 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 	 * @param index
 	 */
 	private boolean checkResponseMessage(byte[] message, int index) {
-		//log.info("Check Response "+message[index-5]+" "+message[index-4]+" "+message[index-3]+" "+message[index-2]+" "+message[index-1]);
+		//LOG.info("Check Response "+message[index-5]+" "+message[index-4]+" "+message[index-3]+" "+message[index-2]+" "+message[index-1]);
 		if ((message[index - 5] == 13)		 // cr
 				&& (message[index - 4] == 10)  // lf
 				&& (message[index - 3] == 48)  // 0
@@ -542,12 +509,12 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 			// device is supposed to respond)
 			sendBootLoaderMessage(Messages.ReadPartIDRequestMessage());
 			receiveBootLoaderReplySuccess(Messages.CMD_SUCCESS);
-			log.debug("Device connection established");
+			LOG.debug("Device connection established");
 			return true;
 		} catch (TimeoutException to) {
-			log.debug("Still waiting for a connection.");
+			LOG.debug("Still waiting for a connection.");
 		} catch (Exception error) {
-			log.warn("Exception while waiting for connection", error);
+			LOG.warn("Exception while waiting for connection", error);
 		}
 
 		Flushables.flushQuietly(getConnection());
@@ -562,11 +529,11 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 			receiveBootLoaderReplySynchronized(Messages.SYNCHRONIZED);
 			sendBootLoaderMessage(Messages.AutoBaudRequest3Message());
 			receiveBootLoaderReplySynchronized(Messages.SYNCHRONIZED_OK);
-			log.debug("Autobaud");
+			LOG.debug("Autobaud");
 		} catch (TimeoutException to) {
-			log.debug("Still waiting for a connection.");
+			LOG.debug("Still waiting for a connection.");
 		} catch (Exception error) {
-			log.warn("Exception while waiting for connection", error);
+			LOG.warn("Exception while waiting for connection", error);
 		}
 		return true;
 	}
@@ -576,13 +543,13 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 	 */
 	public void writeToRAM(long address, int len) throws Exception {
 		// Send flash program request
-		// log.debug("Sending program request for address " + address + " with " + data.length + " bytes");
+		// LOG.debug("Sending program request for address " + address + " with " + data.length + " bytes");
 		sendBootLoaderMessage(Messages.writeToRAMRequestMessage(address, len));
 		//System.out.println("send ready");
 		// Read flash program response
 		receiveBootLoaderReplySuccess(Messages.CMD_SUCCESS);
 
-		// log.debug("write to RAM ok");
+		// LOG.debug("write to RAM ok");
 	}
 	
 	/**
@@ -608,7 +575,7 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 		data[dataMessage.length + 1] = 0x0A; // <LF>
 
 		// Print message
-		// log.debug("Sending data msg: " + Tools.toASCIIString(data));
+		// LOG.debug("Sending data msg: " + Tools.toASCIIString(data));
 
 		// Send message
 		final OutputStream outputStream = getConnection().getOutputStream();
@@ -628,7 +595,7 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 	 */
 	public void sendChecksum(long CRC) throws IOException, TimeoutException, UnexpectedResponseException, InvalidChecksumException, NullPointerException {
 
-		// log.debug("Send CRC after 20 Lines or end of Block");
+		// LOG.debug("Send CRC after 20 Lines or end of Block");
 		sendBootLoaderMessage(Messages.writeCRCRequestMessage(CRC));
 
 		receiveBootLoaderReplyReadCRCOK();
@@ -651,26 +618,26 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 		crc_bytes[254] = (byte) ((crc & 0xff00) >> 8);
 		crc_bytes[255] = (byte) (crc & 0xff);
 
-		log.debug("CRC = " + crc + " " + crc_bytes[254] + " " + crc_bytes[255]);
+		LOG.debug("CRC = " + crc + " " + crc_bytes[254] + " " + crc_bytes[255]);
 
 		try {
 			configureFlash(14, 14);
 		} catch (Exception e) {
-			log.debug("Error while configure flash!");
+			LOG.debug("Error while configure flash!");
 			return false;
 		}
 
 		try {
 			eraseFlash(14, 14);
 		} catch (Exception e) {
-			log.debug("Error while erasing flash!");
+			LOG.debug("Error while erasing flash!");
 			return false;
 		}
 
 		try {
 			writeToRAM(START_ADDRESS_IN_RAM, 256);
 		} catch (Exception e) {
-			log.debug("Error while write to RAM!");
+			LOG.debug("Error while write to RAM!");
 			return false;
 		}
 
@@ -704,8 +671,8 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 				crc_checksum = PacemateBinData.calcCRCChecksum(crc_checksum, line[i]);
 			}
 
-			if (log.isDebugEnabled()) {
-				log.debug("Sending data msg: " + StringUtils.toHexString(line));
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Sending data msg: " + StringUtils.toHexString(line));
 			}
 
 			sendDataMessage(PacemateBinData.encodeCRCData(line, line.length - offset));
@@ -714,20 +681,20 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 		try {
 			sendChecksum(crc_checksum);
 		} catch (Exception e) {
-			log.debug("Error while sending checksum for crc!");
+			LOG.debug("Error while sending checksum for crc!");
 			return false;
 		}
 
 		// if block is completed copy data from RAM to Flash
 		int crc_block_start = 0x3ff00;
 
-		log.debug("Prepare Flash and Copy Ram to Flash 14 14 " + crc_block_start);
+		LOG.debug("Prepare Flash and Copy Ram to Flash 14 14 " + crc_block_start);
 
 		try {
 			configureFlash(14, 14);
 			copyRAMToFlash(crc_block_start, START_ADDRESS_IN_RAM, 256);
 		} catch (Exception e) {
-			log.debug("Error while copy RAM to Flash!");
+			LOG.debug("Error while copy RAM to Flash!");
 			return false;
 		}
 
