@@ -23,6 +23,8 @@
 
 package de.uniluebeck.itm.wsn.drivers.core;
 
+import java.util.Arrays;
+
 /**
  * <code>MacAddress</code> object representation.
  *
@@ -129,5 +131,25 @@ public class MacAddress {
 		for (int i = 0; i < array.length; i++) {
 			array[LENGTH - 1 - i] = (byte) (value >>> (FULL_BYTE_SHIFT * i));
 		}
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+
+		final MacAddress that = (MacAddress) o;
+
+		return Arrays.equals(array, that.array);
+
+	}
+
+	@Override
+	public int hashCode() {
+		return Arrays.hashCode(array);
 	}
 }
