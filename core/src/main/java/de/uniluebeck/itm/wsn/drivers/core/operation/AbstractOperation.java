@@ -149,8 +149,9 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	 * Start the timer with the given timeout.
 	 */
 	private void scheduleTimeout() {
+		LOG.trace("Init timer");
 		timer = new Timer(getClass().getName());
-		LOG.debug("Schduling timeout timer (Timout: + " + timeout + "ms");
+		LOG.trace("Schduling timeout timer (Timout: + " + timeout + "ms)");
 		timer.schedule(task, timeout);
 	}
 	
@@ -158,7 +159,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	 * Cancel the scheduled timer.
 	 */
 	private void cancelTimeout() {
-		LOG.debug("Canceling timeout timer");
+		LOG.trace("Canceling timeout timer");
 		if (timer != null) {
 			timer.cancel();
 		}
@@ -201,8 +202,9 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	 * @param event The state change event.
 	 */
 	private void fireStateChangedEvent(final StateChangedEvent<T> event) {
-		LOG.debug("Operation state changed from " + event.getOldState() + " to " + event.getNewState());
-		for (OperationListener<T> listener : listeners.toArray(new OperationListener[listeners.size()])) {
+		String msg = "Operation state of {} changed from {} to {}";
+		LOG.trace(msg, new Object[] {this.getClass().getName(), event.getOldState(), event.getNewState()});
+		for (OperationListener<T> listener : listeners.toArray(new OperationListener[0])) {
 			listener.onStateChanged(event);
 		}
 	}

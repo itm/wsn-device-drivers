@@ -2,6 +2,8 @@ package de.uniluebeck.itm.wsn.drivers.core.async;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -188,7 +190,9 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	}
 
 	private void lockInputStreamIfAnyRunning() {
-		boolean locked = Iterators.any(queue.getOperations().iterator(), new Predicate<Operation<?>>() {
+		// Preventing the operation to die not deterministically in the queue, without any exception.
+		List<Operation<?>> operations = new ArrayList<Operation<?>>(queue.getOperations());
+		boolean locked = Iterators.any(operations.iterator(), new Predicate<Operation<?>>() {
 			@Override
 			public boolean apply(Operation<?> input) {
 				return State.RUNNING.equals(input.getState());
