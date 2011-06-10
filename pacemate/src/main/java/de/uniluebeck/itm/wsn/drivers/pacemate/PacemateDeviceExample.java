@@ -16,7 +16,7 @@ public class PacemateDeviceExample extends GenericDeviceExample {
 		example.addByteReceiver(new MessagePacketReceiver());
 		example.setDevice(device);
 		
-		final InputStream stream = PacemateDevice.class.getResourceAsStream("/de/uniluebeck/itm/rsc/drivers/pacemate/pacemate.bin");
+		final InputStream stream = PacemateDevice.class.getResourceAsStream("/de/uniluebeck/itm/wsn/drivers/pacemate/pacemate.bin");
 		example.setImageInputStream(stream);
 
 		example.setUri(args[0]);
