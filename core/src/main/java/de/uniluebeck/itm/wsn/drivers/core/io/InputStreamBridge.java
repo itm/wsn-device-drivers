@@ -12,48 +12,48 @@ import java.io.InputStream;
  * @author Malte Legenhausen
  */
 public class InputStreamBridge extends FilterInputStream {
-	
+
 	public InputStreamBridge() {
 		super(null);
 	}
-	
-	private void checkIutputStream() throws IOException {
+
+	private void checkInputStream() throws IOException {
 		if (in == null) {
-			throw new IOException("Thie bridged IutputStream is not available");
+			throw new IOException("This bridged InputStream is not available");
 		}
 	}
-	
+
 	@Override
 	public int read() throws IOException {
-		checkIutputStream();
+		checkInputStream();
 		return super.read();
 	}
-	
+
 	@Override
 	public int read(byte[] b, int off, int len) throws IOException {
-		checkIutputStream();
+		checkInputStream();
 		return super.read(b, off, len);
 	}
-	
+
 	@Override
 	public int available() throws IOException {
-		checkIutputStream();
+		checkInputStream();
 		return super.available();
 	}
-	
+
 	@Override
 	public void close() throws IOException {
-		checkIutputStream();
+		checkInputStream();
 		super.close();
 	}
-	
+
 	@Override
 	public synchronized void mark(int readlimit) {
 		if (in != null) {
 			super.mark(readlimit);
 		}
 	}
-	
+
 	@Override
 	public boolean markSupported() {
 		boolean result = false;
@@ -62,17 +62,17 @@ public class InputStreamBridge extends FilterInputStream {
 		}
 		return result;
 	}
-	
+
 	@Override
 	public synchronized void reset() throws IOException {
-		checkIutputStream();
+		checkInputStream();
 		super.reset();
 	}
 
 	public InputStream getInputStream() {
 		return in;
 	}
-	
+
 	public void setInputStream(InputStream inputStream) {
 		in = inputStream;
 	}

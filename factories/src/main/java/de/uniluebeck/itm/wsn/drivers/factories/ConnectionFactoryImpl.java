@@ -29,6 +29,7 @@ import de.uniluebeck.itm.wsn.drivers.mock.MockConnection;
 import de.uniluebeck.itm.wsn.drivers.nulldevice.NullConnection;
 import de.uniluebeck.itm.wsn.drivers.pacemate.PacemateSerialPortConnection;
 import de.uniluebeck.itm.wsn.drivers.telosb.TelosbSerialPortConnection;
+import eu.smartsantander.wsn.drivers.waspmote.WaspmoteVirtualSerialPortConnection;
 
 public class ConnectionFactoryImpl implements ConnectionFactory {
 
@@ -41,6 +42,8 @@ public class ConnectionFactoryImpl implements ConnectionFactory {
 				return new PacemateSerialPortConnection();
 			case TELOSB:
 				return new TelosbSerialPortConnection();
+			case WASPMOTE:
+				return new WaspmoteVirtualSerialPortConnection();
 			case MOCK:
 				return new MockConnection();
 			case NULL:

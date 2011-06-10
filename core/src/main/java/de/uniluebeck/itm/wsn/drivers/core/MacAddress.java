@@ -25,10 +25,15 @@ package de.uniluebeck.itm.wsn.drivers.core;
 
 import java.util.Arrays;
 
+
+import de.uniluebeck.itm.wsn.drivers.core.util.HexUtils;
+
+
 /**
  * <code>MacAddress</code> object representation.
  *
  * @author Malte Legenhausen
+ * @author TLMAT UC
  */
 public class MacAddress {
 
@@ -55,26 +60,42 @@ public class MacAddress {
 	/**
 	 * Constructor.
 	 *
-	 * @param macAddress Address as long value.
+	 * @param macAddress
+	 *            Address as long value.
 	 */
-    public MacAddress(final long macAddress) {
+	public MacAddress(final long macAddress) {
 		setArray(macAddress);
 	}
 
 	/**
 	 * Constructor.
 	 *
-	 * @param macAddress Address as byte array.
+	 * @param macAddress
+	 *            Address as byte array.
 	 */
 	public MacAddress(final byte[] macAddress) {
 		System.arraycopy(macAddress, 0, array, 0, LENGTH);
 	}
 
 	/**
-	 * Constructs an instance from a String value. The value may either be specified as decimal ("1234"),
-	 * hexadecimal ("0x4d2") or binary ("0b10011010010").
+	 * Constructor.
 	 *
-	 * @param macAddress Address as String value
+	 * @param byteArray
+	 *            Byte array including macAddress.
+	 * @param offset
+	 *            Offset to apply until macAddress.
+	 */
+	public MacAddress(final byte[] byteArray, int offset) {
+		System.arraycopy(byteArray, offset, array, 0, LENGTH);
+	}
+
+	/**
+	 * Constructs an instance from an hexadecimal String value. Only first 8
+	 * recognised bytes will be used. Any of the characters included in
+	 * HexUtils.getIgnoredChars() will be bypassed.
+	 *
+	 * @param macAddress
+	 *            Address as String value
 	 */
 	public MacAddress(final String macAddress) {
 		if (macAddress.startsWith("0x")) {
@@ -102,6 +123,7 @@ public class MacAddress {
 	 *
 	 * @return the MAC address as long value
 	 */
+	//@formatter:off
 	public long toLong() {
 		long result = 0L;
 		for (int i = 0; i < array.length; i++) {
@@ -109,8 +131,10 @@ public class MacAddress {
 		}
 		return result;
 	}
+	//@formatter:on
 
 	@Override
+
 	public String toString() {
 		return toHexString();
 	}
@@ -123,11 +147,12 @@ public class MacAddress {
 		return Long.toString(toLong(), DEC_BASE);
 	}
 
-	public String toBinString() {
-		return "0b" + Long.toString(toLong(), 2);
+	public String toString(Character sep) {
+		return HexUtils.byteArray2HexString(this.toByteArray(), sep);
 	}
 
 	private void setArray(final long value) {
+
 		for (int i = 0; i < array.length; i++) {
 			array[LENGTH - 1 - i] = (byte) (value >>> (FULL_BYTE_SHIFT * i));
 		}
