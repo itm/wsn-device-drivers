@@ -8,39 +8,43 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
 
+import de.uniluebeck.itm.wsn.drivers.core.Connection;
+import de.uniluebeck.itm.wsn.drivers.core.ConnectionEvent;
+import de.uniluebeck.itm.wsn.drivers.core.ConnectionListener;
+
 
 /**
  * Service for receiving automatically all available data from an input stream.
  * The received data can then be proceed by a ByteReceiver.
- * 
+ *
  * @author Malte Legenhausen
  */
-public class InputStreamReaderService extends AbstractExecutionThreadService implements ByteReceiver {
+public class InputStreamReaderService extends AbstractExecutionThreadService implements ByteReceiver, ConnectionListener {
 
 	/**
 	 * Sleep between a data receive.
 	 */
 	private static final int DATA_AVAILABLE_SLEEP = 50;
-	
+
 	/**
 	 * All <code>ByteReceiver</code> that handle the received data.
 	 */
 	private final List<ByteReceiver> receivers = new ArrayList<ByteReceiver>();
-	
+
 	/**
 	 * The <code>InputStream</code> which has to be read from.
 	 */
 	private InputStream inputStream;
-	
+
 	/**
 	 * The shutdown flag.
 	 */
 	private boolean shutdown = false;
-	
+
 	public void setInputStream(InputStream inputStream) {
 		this.inputStream = inputStream;
 	}
-	
+
 	@Override
 	protected void run() throws Exception {
 		Preconditions.checkState(inputStream != null, "InputStream is not set. Set the InputStream before start.");
@@ -55,7 +59,7 @@ public class InputStreamReaderService extends AbstractExecutionThreadService imp
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void processData() throws IOException {
 		int available = inputStream.available();
 		if (available != 0) {
@@ -67,7 +71,7 @@ public class InputStreamReaderService extends AbstractExecutionThreadService imp
 			afterReceive();
 		}
 	}
-	
+
 	@Override
 	protected void triggerShutdown() {
 		shutdown = true;
@@ -93,22 +97,32 @@ public class InputStreamReaderService extends AbstractExecutionThreadService imp
 			receiver.afterReceive();
 		}
 	}
-	
+
 	/**
 	 * Add a <code>ByteReceiver</code> for data processing.
-	 * 
+	 *
 	 * @param receiver The <code>ByteReceiver</code> that has to be added.
 	 */
 	public void addByteReceiver(final ByteReceiver receiver) {
 		receivers.add(receiver);
 	}
-	
+
 	/**
 	 * Remove the given <code>ByteReceiver</code> from the internal list.
-	 * 
+	 *
 	 * @param receiver The <code>ByteReceiver</code> that has to be removed.
 	 */
 	public void removeByteReceiver(final ByteReceiver receiver) {
 		receivers.remove(receiver);
+	}
+
+	@Override
+	public void onConnectionChange(ConnectionEvent event) {
+		if (event.isConnected()) {
+			this.setInputStream(((Connection) event.getSource()).getInputStream());
+			this.start();
+		} else {
+			this.stopAndWait();
+		}
 	}
 }

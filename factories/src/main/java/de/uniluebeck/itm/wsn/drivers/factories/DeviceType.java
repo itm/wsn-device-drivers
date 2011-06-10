@@ -28,6 +28,7 @@ public enum DeviceType {
 	ISENSE,
 	TELOSB,
 	PACEMATE,
+	WASPMOTE,
 	MOCK,
 	NULL;
 
