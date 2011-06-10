@@ -21,7 +21,7 @@ public class JennicDeviceExample {
 		example.setDevice(device);
 		example.setUri(args[0]);
 		
-		InputStream stream = JennicDeviceExample.class.getResourceAsStream("/de/uniluebeck/itm/rsc/drivers/jennic/jennic.bin");
+		InputStream stream = JennicDeviceExample.class.getResourceAsStream("/de/uniluebeck/itm/wsn/drivers/jennic/jennic.bin");
 		example.setImageInputStream(stream);
 		example.setMessage(new byte[] { 11, 17 });
 		example.run();

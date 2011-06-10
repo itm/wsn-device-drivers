@@ -34,7 +34,6 @@ import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortEnterProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortLeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortSendOperation;
-import de.uniluebeck.itm.wsn.drivers.isense.FlashType;
 import de.uniluebeck.itm.wsn.drivers.isense.iSenseResetOperation;
 import de.uniluebeck.itm.wsn.drivers.isense.exception.FlashTypeReadFailedException;
 import de.uniluebeck.itm.wsn.drivers.jennic.exception.SectorEraseException;

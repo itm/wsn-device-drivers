@@ -19,7 +19,7 @@ public class TelosbDeviceExample {
 		example.addByteReceiver(new MessagePacketReceiver());
 		example.setDevice(device);
 		example.setUri(args[0]);
-		InputStream stream = TelosbDeviceExample.class.getResourceAsStream("/de/uniluebeck/itm/rsc/drivers/telosb/telosb.ihex");
+		InputStream stream = TelosbDeviceExample.class.getResourceAsStream("/de/uniluebeck/itm/wsn/drivers/telosb/telosb.ihex");
 		example.setImageInputStream(stream);
 		example.setMessage(new byte[] { 11, 17 });
 		example.run();

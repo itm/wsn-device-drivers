@@ -25,8 +25,6 @@ package de.uniluebeck.itm.wsn.drivers.jennic;
 
 import java.nio.ByteBuffer;
 
-import de.uniluebeck.itm.wsn.drivers.isense.FlashType;
-
 /**
  * @author Markus Class defining specific message types
  */

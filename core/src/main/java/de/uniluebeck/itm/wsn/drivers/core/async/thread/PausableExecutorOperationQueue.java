@@ -183,6 +183,8 @@ public class PausableExecutorOperationQueue implements OperationQueue {
 	 * @param event The event that will notify about the state change.
 	 */
 	private <T> void fireStateChangedEvent(final StateChangedEvent<T> event) {
+		String msg = "Operation state of {} changed";
+		LOG.trace(msg, new Object[] {event.getOperation().getClass().getName()});
 		for (final OperationQueueListener<T> listener : listeners.toArray(new OperationQueueListener[0])) {
 			listener.onStateChanged(event);
 		}

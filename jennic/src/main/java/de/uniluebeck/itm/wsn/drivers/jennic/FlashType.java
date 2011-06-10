@@ -21,7 +21,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                                *
  **********************************************************************************************************************/
 
-package de.uniluebeck.itm.wsn.drivers.isense;
+package de.uniluebeck.itm.wsn.drivers.jennic;
 
 /**
  *Enumeration defining the flashType
