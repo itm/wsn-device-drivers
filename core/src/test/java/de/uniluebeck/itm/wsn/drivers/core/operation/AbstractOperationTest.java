@@ -24,7 +24,6 @@ public class AbstractOperationTest {
 			}
 		};
 		operation.setTimeout(1000);
-		operation.setAsyncCallback(new AsyncAdapter<Object>());
 	}
 	
 	@Test
@@ -48,7 +47,6 @@ public class AbstractOperationTest {
 	@Test
 	public void testCallCancel() {
 		// Test cancel
-		operation.setAsyncCallback(new AsyncAdapter<Object>());
 		operation.cancel();
 		try {
 			operation.call();
@@ -69,7 +67,6 @@ public class AbstractOperationTest {
 			}
 		};
 		operation.setTimeout(1000);
-		operation.setAsyncCallback(new AsyncAdapter<Void>());
 		try {
 			operation.call();
 		} catch (Exception e) {
@@ -88,7 +85,6 @@ public class AbstractOperationTest {
 				return null;
 			}
 		};
-		operation.setAsyncCallback(new AsyncAdapter<Void>());
 		operation.setTimeout(100);
 		try {
 			operation.call();
