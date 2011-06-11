@@ -1,5 +1,8 @@
 package de.uniluebeck.itm.wsn.drivers.core.async;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.internal.Nullable;
 
 import de.uniluebeck.itm.wsn.drivers.core.State;
 import de.uniluebeck.itm.wsn.drivers.core.event.AddedEvent;
@@ -75,7 +79,10 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	@Override
 	public synchronized <T> OperationFuture<T> addOperation(Operation<T> operation, 
 															long timeout, 
-															AsyncCallback<T> callback) {
+															@Nullable AsyncCallback<T> callback) {
+		checkNotNull(operation, "Null Operation is not allowed.");
+		checkArgument(timeout >= 0, "Negative timeout is not allowed.");
+		
 		operation.setAsyncCallback(callback);
 		operation.setTimeout(timeout);
 		
@@ -83,11 +90,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 		operation.addListener(new OperationListener<T>() {
 			@Override
 			public void onStateChanged(StateChangedEvent<T> event) {
-				Operation<T> operation = event.getOperation();
-				if (State.isFinishState(event.getNewState())) {
-					removeOperation(operation);
-				}
-				fireStateChangedEvent(event);
+				ExecutorServiceOperationQueue.this.onStateChanged(event);
 			}
 		});
 		addOperation(operation);
@@ -96,6 +99,14 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 		LOG.trace("Submit " + operation + " to executor queue.");
 		ListenableFuture<T> future = Futures.makeListenable(executor.submit(operation));
 		return new SimpleOperationFuture<T>(future, operation);
+	}
+	
+	private void onStateChanged(StateChangedEvent<?> event) {
+		Operation<?> operation = event.getOperation();
+		if (State.isFinishState(event.getNewState())) {
+			removeOperation(operation);
+		}
+		fireStateChangedEvent(event);
 	}
 	
 	/**
@@ -129,11 +140,13 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 
 	@Override
 	public void addListener(final OperationQueueListener<?> listener) {
+		checkNotNull(listener, "Null listener is not allowed.");
 		listeners.add(listener);
 	}
 
 	@Override
 	public void removeListener(final OperationQueueListener<?> listener) {
+		checkNotNull(listener, "Null listener is not allowed.");
 		listeners.remove(listener);
 	}
 	

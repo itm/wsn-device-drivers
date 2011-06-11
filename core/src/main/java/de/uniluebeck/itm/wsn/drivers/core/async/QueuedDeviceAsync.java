@@ -1,5 +1,8 @@
 package de.uniluebeck.itm.wsn.drivers.core.async;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -45,6 +48,21 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	private static final Logger LOG = LoggerFactory.getLogger(QueuedDeviceAsync.class);
 	
 	/**
+	 * Message for the exception that is thrown when a negative timeout was given.
+	 */
+	private static final String NEGATIVE_TIMEOUT_MESSAGE = "Negative timeout is not allowed.";
+	
+	/**
+	 * Message for the exception that is thrown when a negative address was given.
+	 */
+	private static final String NEGATIVE_ADDRESS_MESSAGE = "Negative address is not allowed.";
+	
+	/**
+	 * Message for the exception that is thrown when a negative length was given.
+	 */
+	private static final String NEGATIVE_LENGTH_MESSAGE = "Negative length is not allowed.";
+	
+	/**
 	 * Queue that schedules all <code>Operation</code> instances.
 	 */
 	private final OperationQueue queue;
@@ -84,7 +102,8 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	
 	@Override
 	public OperationFuture<ChipType> getChipType(long timeout, AsyncCallback<ChipType> callback) {
-		LOG.debug("Reading Chip Type (Timeout: " + timeout + "ms");
+		LOG.trace("Reading Chip Type (Timeout: " + timeout + "ms)");
+		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
 		GetChipTypeOperation operation = device.createGetChipTypeOperation();
 		checkNotNullOperation(operation, "The Operation getChipType is not available");
 		return queue.addOperation(operation, timeout, callback);
@@ -92,7 +111,8 @@ public class QueuedDeviceAsync implements DeviceAsync {
 
 	@Override
 	public OperationFuture<Void> eraseFlash(long timeout, AsyncCallback<Void> callback) {
-		LOG.debug("Erase flash (Timeout: " + timeout + "ms)");
+		LOG.trace("Erase flash (Timeout: " + timeout + "ms)");
+		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
 		EraseFlashOperation operation = device.createEraseFlashOperation();
 		checkNotNullOperation(operation, "The Operation eraseFlash is not avialable");
 		return queue.addOperation(operation, timeout, callback);
@@ -100,7 +120,8 @@ public class QueuedDeviceAsync implements DeviceAsync {
 
 	@Override
 	public OperationFuture<Void> program(byte[] data, long timeout, AsyncCallback<Void> callback) {
-		LOG.debug("Program device (timeout: " + timeout + "ms)");
+		LOG.trace("Program device (timeout: " + timeout + "ms)");
+		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
 		ProgramOperation operation = device.createProgramOperation();
 		checkNotNullOperation(operation, "The Operation program is not available");
 		operation.setBinaryImage(data);
@@ -109,7 +130,10 @@ public class QueuedDeviceAsync implements DeviceAsync {
 
 	@Override
 	public OperationFuture<byte[]> readFlash(int address, int length, long timeout, AsyncCallback<byte[]> callback) {
-		LOG.debug("Read flash (address: " + address + ", length: " + length + ", timeout: " + timeout + "ms)");
+		LOG.trace("Read flash (address: " + address + ", length: " + length + ", timeout: " + timeout + "ms)");
+		checkArgument(address >= 0, NEGATIVE_LENGTH_MESSAGE);
+		checkArgument(length >= 0, NEGATIVE_ADDRESS_MESSAGE);
+		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
 		ReadFlashOperation operation = device.createReadFlashOperation();
 		checkNotNullOperation(operation, "The Operation readFlash is not available");
 		operation.setAddress(address, length);
@@ -118,7 +142,8 @@ public class QueuedDeviceAsync implements DeviceAsync {
 
 	@Override
 	public OperationFuture<MacAddress> readMac(long timeout, AsyncCallback<MacAddress> callback) {
-		LOG.debug("Read mac (timeout: " + timeout + "ms)");
+		LOG.trace("Read mac (timeout: " + timeout + "ms)");
+		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
 		ReadMacAddressOperation operation = device.createReadMacAddressOperation();
 		checkNotNullOperation(operation, "The Operation readMac is not available");
 		return queue.addOperation(operation, timeout, callback);
@@ -126,7 +151,8 @@ public class QueuedDeviceAsync implements DeviceAsync {
 
 	@Override
 	public OperationFuture<Void> reset(long timeout, AsyncCallback<Void> callback) {
-		LOG.debug("Reset device (timeout: " + timeout + "ms)");
+		LOG.trace("Reset device (timeout: " + timeout + "ms)");
+		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
 		ResetOperation operation = device.createResetOperation();
 		checkNotNullOperation(operation, "The Operation reset is not available");
 		return queue.addOperation(operation, timeout, callback);
@@ -134,7 +160,8 @@ public class QueuedDeviceAsync implements DeviceAsync {
 
 	@Override
 	public OperationFuture<Void> send(byte[] message, long timeout, AsyncCallback<Void> callback) {
-		LOG.debug("Send packet to device (timeout: " + timeout + "ms)");
+		LOG.trace("Send packet to device (timeout: " + timeout + "ms)");
+		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
 		SendOperation operation = device.createSendOperation();
 		checkNotNullOperation(operation, "The Operation send is not available");
 		operation.setMessage(message);
@@ -147,8 +174,12 @@ public class QueuedDeviceAsync implements DeviceAsync {
 											int length, 
 											long timeout, 
 											AsyncCallback<Void> callback) {
-		LOG.debug("Write flash (address: " + address + ", length: " + length + ", timeout: " + timeout + "ms)");
-		final WriteFlashOperation operation = device.createWriteFlashOperation();
+		LOG.trace("Write flash (address: " + address + ", length: " + length + ", timeout: " + timeout + "ms)");
+		checkArgument(address >= 0, NEGATIVE_LENGTH_MESSAGE);
+		checkNotNull(data, "Null data is not allowed.");
+		checkArgument(length >= 0, NEGATIVE_ADDRESS_MESSAGE);
+		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
+		WriteFlashOperation operation = device.createWriteFlashOperation();
 		checkNotNullOperation(operation, "The Operation writeFlash is not available");
 		operation.setData(address, data, length);
 		return queue.addOperation(operation, timeout, callback);
@@ -156,8 +187,10 @@ public class QueuedDeviceAsync implements DeviceAsync {
 
 	@Override
 	public OperationFuture<Void> writeMac(MacAddress macAddress, long timeout, AsyncCallback<Void> callback) {
-		LOG.debug("Write mac (mac address: " + macAddress + ", timeout: " + timeout + "ms)");
-		final WriteMacAddressOperation operation = device.createWriteMacAddressOperation();
+		LOG.trace("Write mac (mac address: " + macAddress + ", timeout: " + timeout + "ms)");
+		checkNotNull(macAddress, "Null macAdress is not allowed.");
+		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
+		WriteMacAddressOperation operation = device.createWriteMacAddressOperation();
 		checkNotNullOperation(operation, "The Operation writeMac is not available");
 		operation.setMacAddress(macAddress);
 		return queue.addOperation(operation, timeout, callback);
@@ -182,7 +215,6 @@ public class QueuedDeviceAsync implements DeviceAsync {
 		return queue;
 	}
 	
-
 	private void checkNotNullOperation(Operation<?> operation, String message) {
 		if (operation == null) {
 			throw new UnsupportedOperationException(message);

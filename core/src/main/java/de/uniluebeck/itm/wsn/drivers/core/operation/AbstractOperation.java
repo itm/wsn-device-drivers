@@ -1,6 +1,7 @@
 package de.uniluebeck.itm.wsn.drivers.core.operation;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.util.ArrayList;
@@ -10,11 +11,15 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.SimpleTimeLimiter;
 import com.google.common.util.concurrent.TimeLimiter;
 import com.google.common.util.concurrent.UncheckedTimeoutException;
+import com.google.inject.internal.Nullable;
 
 import de.uniluebeck.itm.wsn.drivers.core.State;
+import de.uniluebeck.itm.wsn.drivers.core.async.AsyncAdapter;
 import de.uniluebeck.itm.wsn.drivers.core.async.AsyncCallback;
 import de.uniluebeck.itm.wsn.drivers.core.event.StateChangedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
@@ -51,6 +56,11 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	private final List<OperationListener<T>> listeners = new ArrayList<OperationListener<T>>();
 	
 	/**
+	 * Limiter for the execution time of an operation.
+	 */
+	private final TimeLimiter timeLimiter;
+	
+	/**
 	 * The timeout after which the application will be canceled.
 	 */
 	private long timeout = DEFAULT_TIMEOUT;
@@ -70,8 +80,6 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	 */
 	private boolean canceled;
 	
-	private final TimeLimiter timeLimiter;
-	
 	/**
 	 * Constructor.
 	 */
@@ -79,13 +87,19 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 		this(new SimpleTimeLimiter());
 	}
 	
+	/**
+	 * Constructor.
+	 * 
+	 * @param timeLimiter The limiter used for limiting the operation execution time.
+	 */
 	public AbstractOperation(TimeLimiter timeLimiter) {
+		checkNotNull(timeLimiter, "Null TimeLimiter is not allowed.");
 		this.timeLimiter = timeLimiter;
 	}
 	
 	@Override
-	public void setAsyncCallback(final AsyncCallback<T> aCallback) {
-		callback = aCallback;
+	public void setAsyncCallback(@Nullable AsyncCallback<T> aCallback) {
+		callback = Objects.firstNonNull(aCallback, new AsyncAdapter<T>());
 	}
 	
 	@Override
@@ -142,6 +156,8 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	 * @throws Exception Any exception throws be the operation.
 	 */
 	protected <R> R executeSubOperation(Operation<R> operation, ProgressManager progressManager) throws Exception {
+		checkNotNull(operation, "Null operations are not allowed");
+		checkNotNull(progressManager, "Null ProgressManager is not allowed.");
 		subOperation = operation;
 		final R result = operation.execute(progressManager);
 		progressManager.done();
@@ -200,11 +216,13 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	
 	@Override
 	public void addListener(final OperationListener<T> listener) {
+		checkNotNull(listener, "Null listener are not allowed.");
 		listeners.add(listener);
 	}
 	
 	@Override
 	public void removeOperationListener(final OperationListener<T> listener) {
+		checkNotNull(listener, "Null listener are not allowed");
 		listeners.remove(listener);
 	}
 
