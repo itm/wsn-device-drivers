@@ -196,7 +196,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	/**
 	 * Notify all listeners that a operation was removed from the queue.
 	 * 
-	 * @param <T> THe type of the operation.
+	 * @param <T> The type of the operation.
 	 * @param event The event that will notify about the remove of an operation.
 	 */
 	private <T> void fireRemovedEvent(final RemovedEvent<T> event) {
