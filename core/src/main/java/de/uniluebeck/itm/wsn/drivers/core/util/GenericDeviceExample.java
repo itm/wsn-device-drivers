@@ -17,7 +17,7 @@ import de.uniluebeck.itm.wsn.drivers.core.async.AsyncAdapter;
 import de.uniluebeck.itm.wsn.drivers.core.async.AsyncCallback;
 import de.uniluebeck.itm.wsn.drivers.core.async.DeviceAsync;
 import de.uniluebeck.itm.wsn.drivers.core.async.OperationQueue;
-import de.uniluebeck.itm.wsn.drivers.core.async.PausableExecutorOperationQueue;
+import de.uniluebeck.itm.wsn.drivers.core.async.ExecutorServiceOperationQueue;
 import de.uniluebeck.itm.wsn.drivers.core.async.QueuedDeviceAsync;
 import de.uniluebeck.itm.wsn.drivers.core.io.ByteReceiver;
 import de.uniluebeck.itm.wsn.drivers.core.io.InputStreamReaderService;
@@ -68,7 +68,7 @@ public class GenericDeviceExample implements ConnectionListener {
 	/**
 	 * The queue used for this example.
 	 */
-	private final OperationQueue queue = new PausableExecutorOperationQueue();
+	private final OperationQueue queue = new ExecutorServiceOperationQueue();
 	
 	/**
 	 * Default null device.
