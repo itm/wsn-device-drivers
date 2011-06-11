@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.inject.internal.Nullable;
 
 import de.uniluebeck.itm.wsn.drivers.core.State;
@@ -55,7 +56,8 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	 * Constructor.
 	 */
 	public ExecutorServiceOperationQueue() {
-		this(Executors.newSingleThreadExecutor());
+		this(Executors.newSingleThreadExecutor(
+				new ThreadFactoryBuilder().setNameFormat("SingleThreadExecutor %d").build()));
 	}
 	
 	/**
@@ -96,11 +98,16 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 		addOperation(operation);
 		
 		// Submit the operation to the executor.
-		LOG.trace("Submit " + operation + " to executor queue.");
+		LOG.trace("Submit {} to executor.",  operation.getClass().getName());
 		ListenableFuture<T> future = Futures.makeListenable(executor.submit(operation));
 		return new SimpleOperationFuture<T>(future, operation);
 	}
 	
+	/**
+	 * Remove the operation from the internal list and fire the state change.
+	 * 
+	 * @param event
+	 */
 	private void onStateChanged(StateChangedEvent<?> event) {
 		Operation<?> operation = event.getOperation();
 		if (State.isFinishState(event.getNewState())) {
@@ -117,7 +124,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	 */
 	private <T> void addOperation(final Operation<T> operation) {
 		operations.add(operation);
-		LOG.debug("Operation added to internal operation list");
+		LOG.trace("{} added to internal operation list", operation.getClass().getName());
 		fireAddedEvent(new AddedEvent<T>(this, operation));
 	}
 	
@@ -129,7 +136,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	 */
 	private <T> void removeOperation(final Operation<T> operation) {
 		operations.remove(operation);
-		LOG.trace("Operation removed from internal operation list");
+		LOG.trace("{} removed from internal operation list", operation.getClass().getName());
 		fireRemovedEvent(new RemovedEvent<T>(this, operation));
 	}
 
