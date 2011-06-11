@@ -8,9 +8,12 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+
 import de.uniluebeck.itm.wsn.drivers.core.State;
 import de.uniluebeck.itm.wsn.drivers.core.async.AsyncCallback;
-import de.uniluebeck.itm.wsn.drivers.core.async.OperationHandle;
+import de.uniluebeck.itm.wsn.drivers.core.async.OperationFuture;
 import de.uniluebeck.itm.wsn.drivers.core.async.OperationQueue;
 import de.uniluebeck.itm.wsn.drivers.core.async.OperationQueueListener;
 import de.uniluebeck.itm.wsn.drivers.core.event.AddedEvent;
@@ -73,7 +76,7 @@ public class PausableExecutorOperationQueue implements OperationQueue {
 	}
 	
 	@Override
-	public synchronized <T> OperationHandle<T> addOperation(Operation<T> operation, 
+	public synchronized <T> OperationFuture<T> addOperation(Operation<T> operation, 
 															long timeout, 
 															AsyncCallback<T> callback) {
 		operation.setAsyncCallback(callback);
@@ -85,7 +88,7 @@ public class PausableExecutorOperationQueue implements OperationQueue {
 		
 		// Submit the operation to the executor.
 		LOG.trace("Submit " + operation + " to executor queue.");
-		final Future<T> future = executor.submit(operation);
+		final ListenableFuture<T> future = Futures.makeListenable(executor.submit(operation));
 		
 		// Add listener for timeout handling and removing operation.
 		operation.addListener(new OperationListener<T>() {
@@ -108,7 +111,7 @@ public class PausableExecutorOperationQueue implements OperationQueue {
 		LOG.trace("Resume executor");
 		executor.resume();
 		
-		return new FutureOperationHandle<T>(future, operation);
+		return new SimpleOperationFuture<T>(future, operation);
 	}
 	
 	/**
