@@ -99,7 +99,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	
 	@Override
 	public void setAsyncCallback(@Nullable AsyncCallback<T> aCallback) {
-		callback = Objects.firstNonNull(aCallback, callback);
+		callback = Objects.firstNonNull(aCallback, new AsyncAdapter<T>());
 	}
 	
 	@Override
