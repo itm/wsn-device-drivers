@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.wsn.drivers.core.async.thread;
+package de.uniluebeck.itm.wsn.drivers.core.async;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -12,10 +12,6 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import de.uniluebeck.itm.wsn.drivers.core.State;
-import de.uniluebeck.itm.wsn.drivers.core.async.AsyncCallback;
-import de.uniluebeck.itm.wsn.drivers.core.async.OperationFuture;
-import de.uniluebeck.itm.wsn.drivers.core.async.OperationQueue;
-import de.uniluebeck.itm.wsn.drivers.core.async.OperationQueueListener;
 import de.uniluebeck.itm.wsn.drivers.core.event.AddedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.event.RemovedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.event.StateChangedEvent;

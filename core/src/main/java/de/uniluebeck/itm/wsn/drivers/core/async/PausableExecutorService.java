@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.wsn.drivers.core.async.thread;
+package de.uniluebeck.itm.wsn.drivers.core.async;
 
 import java.util.concurrent.ExecutorService;
 

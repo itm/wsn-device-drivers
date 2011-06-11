@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.wsn.drivers.core.async.thread;
+package de.uniluebeck.itm.wsn.drivers.core.async;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
@@ -7,7 +7,6 @@ import java.util.concurrent.TimeoutException;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
-import de.uniluebeck.itm.wsn.drivers.core.async.OperationFuture;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 
 

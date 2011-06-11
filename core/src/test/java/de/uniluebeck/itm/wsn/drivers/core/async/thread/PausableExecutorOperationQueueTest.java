@@ -12,6 +12,7 @@ import de.uniluebeck.itm.wsn.drivers.core.async.AsyncAdapter;
 import de.uniluebeck.itm.wsn.drivers.core.async.AsyncCallback;
 import de.uniluebeck.itm.wsn.drivers.core.async.OperationFuture;
 import de.uniluebeck.itm.wsn.drivers.core.async.OperationQueue;
+import de.uniluebeck.itm.wsn.drivers.core.async.PausableExecutorOperationQueue;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
