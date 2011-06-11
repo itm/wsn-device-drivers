@@ -2,7 +2,7 @@ package de.uniluebeck.itm.wsn.drivers.core.async;
 
 import de.uniluebeck.itm.wsn.drivers.core.event.AddedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.event.RemovedEvent;
-import de.uniluebeck.itm.wsn.drivers.core.event.StateChangedEvent;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
 
 
 /**
@@ -12,14 +12,7 @@ import de.uniluebeck.itm.wsn.drivers.core.event.StateChangedEvent;
  * 
  * @param <T> The type of the operation.
  */
-public interface OperationQueueListener<T> {
-	
-	/**
-	 * Method is called when an operation state change occurs.
-	 * 
-	 * @param event Event that describes a state change.
-	 */
-	void onStateChanged(StateChangedEvent<T> event);
+public interface OperationQueueListener<T> extends OperationListener<T> {
 	
 	/**
 	 * Method is called when a operation is added to the queue.

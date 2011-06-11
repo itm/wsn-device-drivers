@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import de.uniluebeck.itm.wsn.drivers.core.State;
 import de.uniluebeck.itm.wsn.drivers.core.async.AsyncAdapter;
+import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
@@ -23,7 +24,6 @@ public class AbstractOperationTest {
 			}
 		};
 		operation.setTimeout(1000);
-		operation.setAsyncCallback(new AsyncAdapter<Object>());
 	}
 	
 	@Test
@@ -47,7 +47,6 @@ public class AbstractOperationTest {
 	@Test
 	public void testCallCancel() {
 		// Test cancel
-		operation.setAsyncCallback(new AsyncAdapter<Object>());
 		operation.cancel();
 		try {
 			operation.call();
@@ -68,7 +67,6 @@ public class AbstractOperationTest {
 			}
 		};
 		operation.setTimeout(1000);
-		operation.setAsyncCallback(new AsyncAdapter<Void>());
 		try {
 			operation.call();
 		} catch (Exception e) {
@@ -77,8 +75,8 @@ public class AbstractOperationTest {
 		}
 	}
 	
-	@Test
-	public void testCallTimeout() {
+	@Test(expected=TimeoutException.class)
+	public void testCallTimeout() throws Exception {
 		// Test timeout
 		Operation<Void> operation = new AbstractOperation<Void>() {
 			@Override
@@ -87,15 +85,13 @@ public class AbstractOperationTest {
 				return null;
 			}
 		};
-		operation.setAsyncCallback(new AsyncAdapter<Void>());
 		operation.setTimeout(100);
 		try {
 			operation.call();
 		} catch(Exception e) {
-			e.printStackTrace();
-			Assert.fail(e.getMessage());
+			Assert.assertEquals(State.TIMEDOUT, operation.getState());
+			throw e;
 		}
-		Assert.assertEquals(State.TIMEDOUT, operation.getState());
 	}
 
 	@Test

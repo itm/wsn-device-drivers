@@ -1,15 +1,21 @@
 package de.uniluebeck.itm.wsn.drivers.core.async;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.Future;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.google.inject.internal.Nullable;
 
 import de.uniluebeck.itm.wsn.drivers.core.State;
 import de.uniluebeck.itm.wsn.drivers.core.event.AddedEvent;
@@ -24,12 +30,12 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
  * 
  * @author Malte Legenhausen
  */
-public class PausableExecutorOperationQueue implements OperationQueue {
+public class ExecutorServiceOperationQueue implements OperationQueue {
 	
 	/**
 	 * Logger for this class.
 	 */
-	private static final Logger LOG = LoggerFactory.getLogger(PausableExecutorOperationQueue.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ExecutorServiceOperationQueue.class);
 	
 	/**
 	 * List that contains all listeners.
@@ -44,13 +50,14 @@ public class PausableExecutorOperationQueue implements OperationQueue {
 	/**
 	 * The single thread executor that runs the <code>OperationContainer</code>.
 	 */
-	private final PausableExecutorService executor;
+	private final ExecutorService executor;
 	
 	/**
 	 * Constructor.
 	 */
-	public PausableExecutorOperationQueue() {
-		this(new PausableSingleThreadExecutor());
+	public ExecutorServiceOperationQueue() {
+		this(Executors.newSingleThreadExecutor(
+				new ThreadFactoryBuilder().setNameFormat("SingleThreadExecutor %d").build()));
 	}
 	
 	/**
@@ -58,7 +65,7 @@ public class PausableExecutorOperationQueue implements OperationQueue {
 	 * 
 	 * @param executor Set a custom <code>PausableExecutorService</code>.
 	 */
-	public PausableExecutorOperationQueue(final PausableExecutorService executor) {
+	public ExecutorServiceOperationQueue(final ExecutorService executor) {
 		this.executor = executor;
 	}
 	
@@ -67,47 +74,46 @@ public class PausableExecutorOperationQueue implements OperationQueue {
 	 * 
 	 * @return The executor for this queue.
 	 */
-	public PausableExecutorService getExecutorService() {
+	public ExecutorService getExecutorService() {
 		return executor;
 	}
 	
 	@Override
 	public synchronized <T> OperationFuture<T> addOperation(Operation<T> operation, 
 															long timeout, 
-															AsyncCallback<T> callback) {
+															@Nullable AsyncCallback<T> callback) {
+		checkNotNull(operation, "Null Operation is not allowed.");
+		checkArgument(timeout >= 0, "Negative timeout is not allowed.");
+		
 		operation.setAsyncCallback(callback);
 		operation.setTimeout(timeout);
 		
-		// Pause the executor to submit the operation and savely add the timeout handler.
-		LOG.trace("Pause executor");
-		executor.pause();
-		
-		// Submit the operation to the executor.
-		LOG.trace("Submit " + operation + " to executor queue.");
-		final ListenableFuture<T> future = Futures.makeListenable(executor.submit(operation));
-		
-		// Add listener for timeout handling and removing operation.
+		// Add listener for removing operation.
 		operation.addListener(new OperationListener<T>() {
 			@Override
-			public void onStateChanged(final StateChangedEvent<T> event) {
-				final Operation<T> operation = event.getOperation();
-				if (State.TIMEDOUT.equals(event.getNewState())) {
-					cancelOperation(operation, future);
-				}
-				if (State.isFinishState(event.getNewState())) {
-					removeOperation(operation);
-				}
-				fireStateChangedEvent(event);
+			public void onStateChanged(StateChangedEvent<T> event) {
+				ExecutorServiceOperationQueue.this.onStateChanged(event);
 			}
 		});
-		
 		addOperation(operation);
 		
-		// Resume executor to execute new submitted operations.
-		LOG.trace("Resume executor");
-		executor.resume();
-		
+		// Submit the operation to the executor.
+		LOG.trace("Submit {} to executor.",  operation.getClass().getName());
+		ListenableFuture<T> future = Futures.makeListenable(executor.submit(operation));
 		return new SimpleOperationFuture<T>(future, operation);
+	}
+	
+	/**
+	 * Remove the operation from the internal list and fire the state change.
+	 * 
+	 * @param event
+	 */
+	private void onStateChanged(StateChangedEvent<?> event) {
+		Operation<?> operation = event.getOperation();
+		if (State.isFinishState(event.getNewState())) {
+			removeOperation(operation);
+		}
+		fireStateChangedEvent(event);
 	}
 	
 	/**
@@ -118,24 +124,8 @@ public class PausableExecutorOperationQueue implements OperationQueue {
 	 */
 	private <T> void addOperation(final Operation<T> operation) {
 		operations.add(operation);
-		LOG.debug("Operation added to internal operation list");
+		LOG.trace("{} added to internal operation list", operation.getClass().getName());
 		fireAddedEvent(new AddedEvent<T>(this, operation));
-	}
-	
-	/**
-	 * Cancel the operation when the state changed to timeout.
-	 * 
-	 * @param <T> Return type of the operation and the future object.
-	 * @param operation The operation that reached the timeout.
-	 * @param future The future object to force the operation cancel.
-	 */
-	private <T> void cancelOperation(final Operation<T> operation, final Future<T> future) {
-		final long timeout = operation.getTimeout();
-		LOG.warn("Operation " + operation + " will be canceled cause timeout of " + timeout + "ms was reached");
-		// Try to cancel in a normal way.
-		operation.cancel();
-		// Now kill the thread hard.
-		future.cancel(true);
 	}
 	
 	/**
@@ -146,7 +136,7 @@ public class PausableExecutorOperationQueue implements OperationQueue {
 	 */
 	private <T> void removeOperation(final Operation<T> operation) {
 		operations.remove(operation);
-		LOG.trace("Operation removed from internal operation list");
+		LOG.trace("{} removed from internal operation list", operation.getClass().getName());
 		fireRemovedEvent(new RemovedEvent<T>(this, operation));
 	}
 
@@ -157,11 +147,13 @@ public class PausableExecutorOperationQueue implements OperationQueue {
 
 	@Override
 	public void addListener(final OperationQueueListener<?> listener) {
+		checkNotNull(listener, "Null listener is not allowed.");
 		listeners.add(listener);
 	}
 
 	@Override
 	public void removeListener(final OperationQueueListener<?> listener) {
+		checkNotNull(listener, "Null listener is not allowed.");
 		listeners.remove(listener);
 	}
 	
@@ -204,7 +196,7 @@ public class PausableExecutorOperationQueue implements OperationQueue {
 	/**
 	 * Notify all listeners that a operation was removed from the queue.
 	 * 
-	 * @param <T> THe type of the operation.
+	 * @param <T> The type of the operation.
 	 * @param event The event that will notify about the remove of an operation.
 	 */
 	private <T> void fireRemovedEvent(final RemovedEvent<T> event) {

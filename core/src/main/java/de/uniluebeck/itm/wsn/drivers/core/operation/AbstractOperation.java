@@ -1,17 +1,25 @@
 package de.uniluebeck.itm.wsn.drivers.core.operation;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
+import com.google.common.util.concurrent.SimpleTimeLimiter;
+import com.google.common.util.concurrent.TimeLimiter;
+import com.google.common.util.concurrent.UncheckedTimeoutException;
+import com.google.inject.internal.Nullable;
+
 import de.uniluebeck.itm.wsn.drivers.core.State;
+import de.uniluebeck.itm.wsn.drivers.core.async.AsyncAdapter;
 import de.uniluebeck.itm.wsn.drivers.core.async.AsyncCallback;
 import de.uniluebeck.itm.wsn.drivers.core.event.StateChangedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
@@ -48,6 +56,11 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	private final List<OperationListener<T>> listeners = new ArrayList<OperationListener<T>>();
 	
 	/**
+	 * Limiter for the execution time of an operation.
+	 */
+	private final TimeLimiter timeLimiter;
+	
+	/**
 	 * The timeout after which the application will be canceled.
 	 */
 	private long timeout = DEFAULT_TIMEOUT;
@@ -55,7 +68,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	/**
 	 * The callback that is called when the operation has finished, canceled or when an exception occured.
 	 */
-	private AsyncCallback<T> callback;
+	private AsyncCallback<T> callback = new AsyncAdapter<T>();
 	
 	/**
 	 * The current state of the <code>Operation</code>.
@@ -63,75 +76,54 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	private State state = State.WAITING;
 	
 	/**
-	 * <code>Timer</code> that executes the timeout operation.
-	 */
-	private Timer timer = null;
-	
-	/**
 	 * Boolean thats stores if the operatio has to be canceled.
 	 */
 	private boolean canceled;
 	
 	/**
-	 * The task that will be executed when the timeout occurs.
-	 */
-	private final TimerTask task;
-	
-	/**
 	 * Constructor.
 	 */
 	public AbstractOperation() {
-		task = new TimerTask() {			
-			@Override
-			public void run() {
-				onTimeout();
-			}
-		};
+		this(new SimpleTimeLimiter());
 	}
 	
 	/**
-	 * Method is called when a timeout occured.
+	 * Constructor.
+	 * 
+	 * @param timeLimiter The limiter used for limiting the operation execution time.
 	 */
-	protected void onTimeout() {
-		setState(State.TIMEDOUT);
-		callback.onFailure(new TimeoutException("Operation timeout " + timeout + "ms reached."));
+	public AbstractOperation(TimeLimiter timeLimiter) {
+		checkNotNull(timeLimiter, "Null TimeLimiter is not allowed.");
+		this.timeLimiter = timeLimiter;
 	}
 	
 	@Override
-	public void setAsyncCallback(final AsyncCallback<T> aCallback) {
-		callback = aCallback;
+	public void setAsyncCallback(@Nullable AsyncCallback<T> aCallback) {
+		callback = Objects.firstNonNull(aCallback, new AsyncAdapter<T>());
 	}
 	
 	@Override
-	public T call() {
+	public T call() throws Exception {
 		setState(State.RUNNING);
-		scheduleTimeout();
 		
 		callback.onExecute();
 		T result = null;
 		try {
 			// Cancel execution if operation was canceled before operation changed to running.
 			if (!canceled) {
-				final ProgressManager progressManager = new RootProgressManager(callback);
-				progressManager.worked(0.0f);
-				result = execute(progressManager);
-				progressManager.done();
+				result = executeOperation();
 			}
-		} catch (final Exception e) {
+		} catch (UncheckedTimeoutException e) {
+			setState(State.TIMEDOUT);
+			LOG.error("Timeout reached during operation execution", e);
+			TimeoutException timeoutException = new TimeoutException("Operation timeout " + timeout + "ms reached.");
+			callback.onFailure(timeoutException);
+			throw timeoutException;
+		} catch (Exception e) {
 			setState(State.EXCEPTED);
 			LOG.error("Exception during operation execution", e);
 			callback.onFailure(e);
-			throw new RuntimeException(e);
-		} finally {
-			cancelTimeout();
-		}
-		
-		// Do nothing after a timeout happens and execute finished.
-		synchronized (state) {
-			if (state.equals(State.TIMEDOUT)) {
-				LOG.warn("Operation finsihed but timeout occured.");
-				return null;
-			}
+			throw e;
 		}	
 		
 		if (canceled) {
@@ -145,26 +137,14 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 		return result;
 	}
 	
-	/**
-	 * Start the timer with the given timeout.
-	 */
-	private void scheduleTimeout() {
-		LOG.trace("Init timer");
-		timer = new Timer(getClass().getName());
-		LOG.trace("Schduling timeout timer (Timout: + " + timeout + "ms)");
-		timer.schedule(task, timeout);
+	private T executeOperation() throws Exception {
+		Operation<T> operation = timeLimiter.newProxy(this, Operation.class, timeout, TimeUnit.MILLISECONDS);
+		final ProgressManager progressManager = new RootProgressManager(callback);
+		progressManager.worked(0.0f);
+		T result = operation.execute(progressManager);
+		progressManager.done();
+		return result;
 	}
-	
-	/**
-	 * Cancel the scheduled timer.
-	 */
-	private void cancelTimeout() {
-		LOG.trace("Canceling timeout timer");
-		if (timer != null) {
-			timer.cancel();
-		}
-	}
-	
 	
 	/**
 	 * Call this method when another <code>Operation</code> has to be executed while this <code>Operation</code>.
@@ -176,6 +156,8 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	 * @throws Exception Any exception throws be the operation.
 	 */
 	protected <R> R executeSubOperation(Operation<R> operation, ProgressManager progressManager) throws Exception {
+		checkNotNull(operation, "Null operations are not allowed");
+		checkNotNull(progressManager, "Null ProgressManager is not allowed.");
 		subOperation = operation;
 		final R result = operation.execute(progressManager);
 		progressManager.done();
@@ -234,11 +216,13 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	
 	@Override
 	public void addListener(final OperationListener<T> listener) {
+		checkNotNull(listener, "Null listener are not allowed.");
 		listeners.add(listener);
 	}
 	
 	@Override
 	public void removeOperationListener(final OperationListener<T> listener) {
+		checkNotNull(listener, "Null listener are not allowed");
 		listeners.remove(listener);
 	}
 
