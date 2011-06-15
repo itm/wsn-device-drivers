@@ -35,8 +35,15 @@ public class PausableSingleThreadExecutor extends ThreadPoolExecutor implements 
 	 * Constructor.
 	 */
 	public PausableSingleThreadExecutor() {
+		this(null);
+	}
+
+	/**
+	 * Constructor.
+	 */
+	public PausableSingleThreadExecutor(String threadName) {
 		super(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(),
-				new ThreadFactoryBuilder().setNameFormat("PausableSingleThreadExecutor %d").build()
+				new ThreadFactoryBuilder().setNameFormat(threadName == null ? "PausableSingleThreadExecutor %d" : threadName).build()
 		);
 	}
 
