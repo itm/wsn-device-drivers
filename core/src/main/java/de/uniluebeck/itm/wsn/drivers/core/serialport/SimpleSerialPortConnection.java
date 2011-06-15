@@ -9,6 +9,8 @@ import gnu.io.UnsupportedCommOperationException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
@@ -109,9 +111,23 @@ public class SimpleSerialPortConnection extends AbstractConnection
 	 */
 	private final Condition isDataAvailable = dataAvailableLock.newCondition();
 	
+	private final PipedOutputStream saveOuputStream = new PipedOutputStream();
+	
+	private boolean isOperationRunning = false;
+	
+	private PipedInputStream saveInputStream;
+	
 	static {
 		LOG.trace("Loading rxtxSerial from jar file");
 		JarUtil.loadLibrary("rxtxSerial");
+	}
+	
+	public SimpleSerialPortConnection() {
+		try {
+			saveInputStream = new PipedInputStream(saveOuputStream);
+		} catch (IOException e) {
+			LOG.error("Unable to create save input stream.", e);
+		}
 	}
 	
 	@Override
@@ -202,6 +218,8 @@ public class SimpleSerialPortConnection extends AbstractConnection
 			serialPort.close();
 			serialPort = null;	
 		}
+		saveInputStream.close();
+		saveOuputStream.close();
 		setConnected(false);
 	}
 
@@ -225,10 +243,22 @@ public class SimpleSerialPortConnection extends AbstractConnection
 			} finally {
 				dataAvailableLock.unlock();
 			}
+			if (!isOperationRunning) {
+				copyToSaveInputStream();
+			}
 			break;
 		default:
 			LOG.debug("Serial event (other than data available): " + event);
 			break;
+		}
+	}
+	
+	private void copyToSaveInputStream() {
+		final InputStream inputStream = getInputStream();
+		try {
+			ByteStreams.copy(inputStream, saveOuputStream);
+		} catch (IOException e) {
+			LOG.error("Unable to copy.", e);
 		}
 	}
 	
@@ -305,5 +335,15 @@ public class SimpleSerialPortConnection extends AbstractConnection
 
 	public void setProgramParitiyBit(final int programParitiyBit) {
 		this.programParitiyBit = programParitiyBit;
+	}
+	
+	@Override
+	public InputStream getSaveInputStream() {
+		return saveInputStream;
+	}
+	
+	@Override
+	public void setOperationRunning(boolean running) {
+		isOperationRunning = running;
 	}
 }

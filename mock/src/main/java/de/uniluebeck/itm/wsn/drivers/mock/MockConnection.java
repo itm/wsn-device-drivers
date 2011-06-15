@@ -1,6 +1,7 @@
 package de.uniluebeck.itm.wsn.drivers.mock;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 
@@ -41,5 +42,17 @@ public class MockConnection extends AbstractConnection {
 	public void close() throws IOException {
 		super.close();
 		setConnected(false);
+	}
+	
+	@Override
+	public InputStream getSaveInputStream() {
+		// TODO Auto-generated method stub
+		return inputStream;
+	}
+	
+	@Override
+	public void setOperationRunning(boolean running) {
+		// TODO Auto-generated method stub
+		
 	}
 }

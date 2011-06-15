@@ -1,6 +1,7 @@
 package de.uniluebeck.itm.wsn.drivers.core;
 
 import java.io.Closeable;
+import java.io.InputStream;
 
 import de.uniluebeck.itm.wsn.drivers.core.io.HasInputStream;
 import de.uniluebeck.itm.wsn.drivers.core.io.HasOutputStream;
@@ -40,4 +41,8 @@ public interface Connection extends HasInputStream, HasOutputStream, Closeable {
 	 * @param listener The listener that has to be removed.
 	 */
 	void removeListener(ConnectionListener listener);
+	
+	void setOperationRunning(boolean running);
+	
+	InputStream getSaveInputStream();
 }

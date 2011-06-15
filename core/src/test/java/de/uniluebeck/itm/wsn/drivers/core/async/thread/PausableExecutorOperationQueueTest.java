@@ -2,15 +2,17 @@ package de.uniluebeck.itm.wsn.drivers.core.async.thread;
 
 import static org.junit.Assert.fail;
 
+import java.util.concurrent.ExecutionException;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import de.uniluebeck.itm.wsn.drivers.core.async.AsyncAdapter;
 import de.uniluebeck.itm.wsn.drivers.core.async.AsyncCallback;
-import de.uniluebeck.itm.wsn.drivers.core.async.OperationHandle;
+import de.uniluebeck.itm.wsn.drivers.core.async.OperationFuture;
 import de.uniluebeck.itm.wsn.drivers.core.async.OperationQueue;
-import de.uniluebeck.itm.wsn.drivers.core.async.thread.PausableExecutorOperationQueue;
+import de.uniluebeck.itm.wsn.drivers.core.async.ExecutorServiceOperationQueue;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
@@ -21,11 +23,11 @@ public class PausableExecutorOperationQueueTest {
 	
 	@Before
 	public void setUp() {
-		queue = new PausableExecutorOperationQueue();
+		queue = new ExecutorServiceOperationQueue();
 	}
 	
 	@Test
-	public void testAddOperation() {
+	public void testAddOperation() throws InterruptedException, ExecutionException {
 		Operation<Boolean> operation = new AbstractOperation<Boolean>() {
 			@Override
 			public Boolean execute(ProgressManager progressManager) throws Exception {
@@ -44,7 +46,7 @@ public class PausableExecutorOperationQueueTest {
 				fail("No failure was expected");
 			}
 		};
-		OperationHandle<Boolean> handle = queue.addOperation(operation, 1000, callback);
+		OperationFuture<Boolean> handle = queue.addOperation(operation, 1000, callback);
 		if (!handle.get()) {
 			fail("Execution failed");
 		}
@@ -69,8 +71,8 @@ public class PausableExecutorOperationQueueTest {
 		Assert.assertTrue(queue.getOperations().isEmpty());
 	}
 	
-	@Test(expected=RuntimeException.class)
-	public void testOperationHandleException() {
+	@Test(expected=ExecutionException.class)
+	public void testOperationHandleException() throws ExecutionException, InterruptedException {
 		Operation<Boolean> operation = new AbstractOperation<Boolean>() {
 			@Override
 			public Boolean execute(ProgressManager progressManager) throws Exception {
@@ -78,7 +80,7 @@ public class PausableExecutorOperationQueueTest {
 				throw new NullPointerException();
 			}
 		};
-		final OperationHandle<Boolean> handle = queue.addOperation(operation, 1000, new AsyncAdapter<Boolean>());
+		final OperationFuture<Boolean> handle = queue.addOperation(operation, 1000, new AsyncAdapter<Boolean>());
 		handle.get();
 	}
 }
