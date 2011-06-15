@@ -50,4 +50,14 @@ public class NullConnection implements Connection {
 
 	}
 
+	@Override
+	public void setOperationRunning(boolean running) {
+		
+	}
+
+	@Override
+	public InputStream getSaveInputStream() {
+		return null;
+	}
+
 }

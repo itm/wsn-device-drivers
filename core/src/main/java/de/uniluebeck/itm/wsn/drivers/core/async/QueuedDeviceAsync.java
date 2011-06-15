@@ -21,7 +21,6 @@ import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import de.uniluebeck.itm.wsn.drivers.core.State;
 import de.uniluebeck.itm.wsn.drivers.core.event.StateChangedEvent;
-import de.uniluebeck.itm.wsn.drivers.core.io.LockedInputStream;
 import de.uniluebeck.itm.wsn.drivers.core.io.SendOutputStreamWrapper;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
@@ -73,11 +72,6 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	private final Device<? extends Connection> device;
 	
 	/**
-	 * Lockable InputStream that allows secure access to the underlying source InputStream.
-	 */
-	private LockedInputStream lockedInputStream;
-	
-	/**
 	 * Constructor.
 	 * 
 	 * @param queue The <code>OperationQueue</code> that schedules all operations.
@@ -90,7 +84,6 @@ public class QueuedDeviceAsync implements DeviceAsync {
 		
 		final Connection connection = device.getConnection();
 		if (connection != null) {
-			this.lockedInputStream = new LockedInputStream(connection.getInputStream());
 			queue.addListener(new OperationQueueAdapter<Object>() {
 				@Override
 				public void onStateChanged(final StateChangedEvent<Object> event) {
@@ -198,7 +191,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	
 	@Override
 	public InputStream getInputStream() {
-		return lockedInputStream;
+		return device.getConnection().getSaveInputStream();
 	}
 	
 	@Override
@@ -230,6 +223,6 @@ public class QueuedDeviceAsync implements DeviceAsync {
 				return State.RUNNING.equals(input.getState());
 			}
 		});
-		lockedInputStream.setLocked(locked);
+		device.getConnection().setOperationRunning(locked);
 	}
 }
