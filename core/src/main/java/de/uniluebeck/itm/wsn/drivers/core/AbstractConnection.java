@@ -120,9 +120,9 @@ public abstract class AbstractConnection implements Connection {
 	@Override
 	public void close() throws IOException {
 		Closeables.close(inputStream, true);
-		inputStream = null;
+		inputStream.setInputStream(null);
 		
 		Closeables.close(outputStream, true);
-		outputStream = null;
+		outputStream.setOutputStream(null);
 	}
 }
