@@ -211,6 +211,9 @@ public class SimpleSerialPortConnection extends AbstractConnection
 	
 	@Override
 	public void close() throws IOException {
+		saveInputStream.close();
+		saveOuputStream.close();
+		
 		super.close();
 		
 		if (serialPort != null) {
@@ -218,8 +221,7 @@ public class SimpleSerialPortConnection extends AbstractConnection
 			serialPort.close();
 			serialPort = null;	
 		}
-		saveInputStream.close();
-		saveOuputStream.close();
+		
 		setConnected(false);
 	}
 
@@ -237,14 +239,14 @@ public class SimpleSerialPortConnection extends AbstractConnection
 	public void serialEvent(final SerialPortEvent event) {
 		switch (event.getEventType()) {
 		case SerialPortEvent.DATA_AVAILABLE:
+			if (!isOperationRunning) {
+				copyToSaveInputStream();
+			}
 			dataAvailableLock.lock();
 			try {
 				isDataAvailable.signal();
 			} finally {
 				dataAvailableLock.unlock();
-			}
-			if (!isOperationRunning) {
-				copyToSaveInputStream();
 			}
 			break;
 		default:
@@ -256,7 +258,9 @@ public class SimpleSerialPortConnection extends AbstractConnection
 	private void copyToSaveInputStream() {
 		final InputStream inputStream = getInputStream();
 		try {
-			ByteStreams.copy(inputStream, saveOuputStream);
+			byte[] buffer = new byte[inputStream.available()];
+			inputStream.read(buffer);
+			saveOuputStream.write(buffer);
 		} catch (IOException e) {
 			LOG.error("Unable to copy.", e);
 		}
