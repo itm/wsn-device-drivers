@@ -144,13 +144,13 @@ public class SimpleSerialPortConnection extends AbstractConnection
 			connectSerialPort(port);
 			setConnected(true);
 		} catch (final PortInUseException e) {
-			LOG.error("Port already in use. Connection will be removed.", e);
+			LOG.error("Port {} already in use.", port);
 			throw new RuntimeException(e);
 		} catch (final ClassCastException e) {
-			LOG.error("Port " + port + " is not a serial port.", e);
+			LOG.error("Port {} is not a serial port.", port);
 			throw new RuntimeException(e);
 		} catch (final Exception e) {
-			LOG.error("Port " + port + " does not exist. Connection will be removed.", e);
+			LOG.error("Exception while connecting to port {}: ", port, e);
 			throw new RuntimeException(e);
 		}
 	}
@@ -162,9 +162,15 @@ public class SimpleSerialPortConnection extends AbstractConnection
 	 * @throws Exception 
 	 */
 	protected void connectSerialPort(final String port) throws Exception {
+
 		SysOutUtil.mute();
-		Enumeration<?> identifiers = CommPortIdentifier.getPortIdentifiers();
-		SysOutUtil.restore();
+		Enumeration<?> identifiers;
+		try {
+			identifiers = CommPortIdentifier.getPortIdentifiers();
+		} finally {
+			SysOutUtil.restore();
+		}
+
 		Iterator<?> iterator = Iterators.forEnumeration(identifiers);
 		CommPortIdentifier commPortIdentifier = (CommPortIdentifier) Iterators.find(iterator, new Predicate<Object>() {
 			@Override
@@ -173,6 +179,7 @@ public class SimpleSerialPortConnection extends AbstractConnection
 				return commPortIdentifier.getName().equals(port);
 			}
 		});
+
 		serialPort = (SerialPort) commPortIdentifier.open(getClass().getName(), MAX_CONNECTION_TIMEOUT);
 		serialPort.notifyOnDataAvailable(true);
 		serialPort.addEventListener(this);

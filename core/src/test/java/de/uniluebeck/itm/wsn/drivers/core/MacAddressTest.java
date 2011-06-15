@@ -8,17 +8,19 @@ import static org.junit.Assert.*;
 
 public class MacAddressTest {
 
-	private static final String MAC_DEC_STRING = "1234";
+	private static final String MAC_DEC_STRING = "74565";
 
-	private static final String MAC_HEX_STRING = "0x4d2";
+	private static final String MAC_HEX_STRING = "0x12345";
 
-	private static final String MAC_BIN_STRING = "0b10011010010";
+	private static final String MAC_BIN_STRING = "0b10010001101000101";
 
-	private static final long MAC_LONG = 1234;
+	private static final long MAC_LONG = 0x12345;
 
-	private static final byte[] MAC_BYTES = new byte[]{0, 0, 0, 0, 0, 0, 4, -46};
+	private static final byte[] MAC_BYTES = new byte[]{0, 0, 0, 0, 0, 1, 35, 69};
 
-	private static final byte[] MAC_BYTES_OTHER = new byte[]{0, 0, 0, 0, 0, 0, 4, -47};
+	private static final byte[] MAC_BYTES_16_BIT = new byte[]{0, 0, 0, 0, 0, 0, 35, 69};
+
+	private static final byte[] MAC_BYTES_OTHER = new byte[]{0, 1, 0, 0, 0, 1, 35, 70};
 
 	@Test
 	public void fromStringToString() {
@@ -109,6 +111,15 @@ public class MacAddressTest {
 		assertThat(new MacAddress(MAC_HEX_STRING).hashCode(), not(equalTo(new MacAddress(MAC_BYTES_OTHER).hashCode())));
 		assertThat(new MacAddress(MAC_DEC_STRING).hashCode(), not(equalTo(new MacAddress(MAC_BYTES_OTHER).hashCode())));
 		assertThat(new MacAddress(MAC_BIN_STRING).hashCode(), not(equalTo(new MacAddress(MAC_BYTES_OTHER).hashCode())));
+	}
+
+	@Test
+	public void to16BitMacAddressTest() {
+
+		assertEquals(new MacAddress(MAC_BYTES_16_BIT), new MacAddress(MAC_BYTES).to16BitMacAddress());
+		assertEquals(new MacAddress(MAC_BYTES_16_BIT), new MacAddress(MAC_HEX_STRING).to16BitMacAddress());
+		assertEquals(new MacAddress(MAC_BYTES_16_BIT), new MacAddress(MAC_DEC_STRING).to16BitMacAddress());
+		assertEquals(new MacAddress(MAC_BYTES_16_BIT), new MacAddress(MAC_BIN_STRING).to16BitMacAddress());
 	}
 
 }
