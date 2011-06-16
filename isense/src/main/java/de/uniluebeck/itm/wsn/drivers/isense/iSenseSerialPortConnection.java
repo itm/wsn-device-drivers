@@ -1,7 +1,12 @@
 package de.uniluebeck.itm.wsn.drivers.isense;
 
+import gnu.io.PortInUseException;
 import gnu.io.SerialPortEventListener;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SimpleSerialPortConnection;
+
+import java.io.IOException;
+import java.util.NoSuchElementException;
+import java.util.TooManyListenersException;
 
 
 /**
@@ -21,7 +26,8 @@ public class iSenseSerialPortConnection extends SimpleSerialPortConnection imple
 	}
 	
 	@Override
-	protected void connectSerialPort(String port) throws Exception {
+	protected void connectSerialPort(String port) throws NoSuchElementException, PortInUseException,
+			TooManyListenersException, IOException {
 		super.connectSerialPort(port);
 		setSerialPortMode(SerialPortMode.NORMAL);
 	}

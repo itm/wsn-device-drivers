@@ -5,6 +5,8 @@ import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import de.uniluebeck.itm.wsn.drivers.core.io.HasInputStream;
 import de.uniluebeck.itm.wsn.drivers.core.io.HasOutputStream;
 
+import java.io.Closeable;
+
 
 /**
  * Async definition of the <code>Device</code> interface.
@@ -13,7 +15,7 @@ import de.uniluebeck.itm.wsn.drivers.core.io.HasOutputStream;
  * 
  * @author Malte Legenhausen
  */
-public interface DeviceAsync extends HasInputStream, HasOutputStream {
+public interface DeviceAsync extends HasInputStream, HasOutputStream, Closeable {
 	
 	/**
 	 * Returns the chip type of this device.

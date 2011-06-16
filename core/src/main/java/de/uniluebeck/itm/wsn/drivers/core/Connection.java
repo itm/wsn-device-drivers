@@ -4,6 +4,7 @@ import java.io.Closeable;
 
 import de.uniluebeck.itm.wsn.drivers.core.io.HasInputStream;
 import de.uniluebeck.itm.wsn.drivers.core.io.HasOutputStream;
+import gnu.io.SerialPort;
 
 
 /**
@@ -40,4 +41,9 @@ public interface Connection extends HasInputStream, HasOutputStream, Closeable {
 	 * @param listener The listener that has to be removed.
 	 */
 	void removeListener(ConnectionListener listener);
+
+	void addListener(DataAvailableListener listener);
+
+	void removeListener(DataAvailableListener listener);
+
 }

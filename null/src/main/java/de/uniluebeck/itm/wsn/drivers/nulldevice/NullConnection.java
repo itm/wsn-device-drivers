@@ -6,6 +6,7 @@ import java.io.OutputStream;
 
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.ConnectionListener;
+import de.uniluebeck.itm.wsn.drivers.core.DataAvailableListener;
 
 
 /**
@@ -47,6 +48,16 @@ public class NullConnection implements Connection {
 
 	@Override
 	public void removeListener(final ConnectionListener listener) {
+
+	}
+
+	@Override
+	public void addListener(final DataAvailableListener listener) {
+
+	}
+
+	@Override
+	public void removeListener(final DataAvailableListener listener) {
 
 	}
 

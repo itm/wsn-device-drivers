@@ -3,10 +3,14 @@ package de.uniluebeck.itm.wsn.drivers.core.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
 
+import de.uniluebeck.itm.tr.util.ExecutorUtils;
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.ConnectionEvent;
@@ -109,7 +113,9 @@ public class GenericDeviceExample implements ConnectionListener {
 	 * The example message packet that is send to the device.
 	 */
 	private byte[] messagePacket;
-	
+
+	private ExecutorService executorService;
+
 	public void addByteReceiver(ByteReceiver receiver) {
 		service.addByteReceiver(receiver);
 	}
@@ -140,9 +146,10 @@ public class GenericDeviceExample implements ConnectionListener {
 	 * Should be called after all parameters has been set.
 	 */
 	private void init() {
+		executorService = Executors.newCachedThreadPool();
 		connection = device.getConnection();
 		connection.addListener(this);
-		deviceAsync = new QueuedDeviceAsync(queue, device);
+		deviceAsync = new QueuedDeviceAsync(executorService, queue, device);
 	}
 	
 	/**
@@ -426,6 +433,9 @@ public class GenericDeviceExample implements ConnectionListener {
 		System.out.println("Closing connection...");
 		Closeables.closeQuietly(connection);
 		System.out.println("Connection closed");
+		System.out.println("Shutting down executor...");
+		ExecutorUtils.shutdown(executorService, 10, TimeUnit.SECONDS);
+		System.out.println("Executor shut down");
 	}
 	
 	/**

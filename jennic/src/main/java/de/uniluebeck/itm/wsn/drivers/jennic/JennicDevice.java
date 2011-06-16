@@ -45,7 +45,7 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(JennicDevice.class);
 	
-	private static final int TIMEOUT = 2000;
+	private static final int TIMEOUT = 2500;
 	
 	public JennicDevice(SerialPortConnection connection) {
 		super(connection);

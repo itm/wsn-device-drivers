@@ -1,54 +1,48 @@
 package de.uniluebeck.itm.wsn.drivers.core.serialport;
 
-import gnu.io.CommPortIdentifier;
-import gnu.io.PortInUseException;
-import gnu.io.SerialPort;
-import gnu.io.SerialPortEvent;
-import gnu.io.SerialPortEventListener;
-import gnu.io.UnsupportedCommOperationException;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterators;
+import com.google.common.io.ByteStreams;
+import de.uniluebeck.itm.tr.util.TimeDiff;
+import de.uniluebeck.itm.wsn.drivers.core.AbstractConnection;
+import de.uniluebeck.itm.wsn.drivers.core.exception.PortNotFoundException;import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
+import de.uniluebeck.itm.wsn.drivers.core.util.JarUtil;
+import de.uniluebeck.itm.wsn.drivers.core.util.SysOutUtil;
+import gnu.io.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.TooManyListenersException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterators;
-import com.google.common.io.ByteStreams;
-
-import de.uniluebeck.itm.tr.util.TimeDiff;
-import de.uniluebeck.itm.wsn.drivers.core.AbstractConnection;
-import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
-import de.uniluebeck.itm.wsn.drivers.core.util.JarUtil;
-import de.uniluebeck.itm.wsn.drivers.core.util.SysOutUtil;
-
 
 /**
  * A simple serial port connection implementation for general purpose use of the serial port.
- * 
+ *
  * @author Malte Legenhausen
  */
-public class SimpleSerialPortConnection extends AbstractConnection 
-	implements SerialPortConnection, SerialPortEventListener {
-	
+public class SimpleSerialPortConnection extends AbstractConnection
+		implements SerialPortConnection, SerialPortEventListener {
+
 	/**
 	 * Logger for this class.
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(SimpleSerialPortConnection.class);
-	
+
 	/**
 	 * The timeout that will be waited for available data.
 	 */
 	private static final int DATA_AVAILABLE_TIMEOUT = 50;
-	
+
 	/**
 	 * The default baudrate.
 	 */
@@ -58,22 +52,22 @@ public class SimpleSerialPortConnection extends AbstractConnection
 	 * The default program baudrate.
 	 */
 	public static final int DEFAULT_PROGRAM_BAUDRATE = 38400;
-	
+
 	/**
 	 * The maximum timeout for a connection try.
 	 */
 	private static final int MAX_CONNECTION_TIMEOUT = 1000;
-	
+
 	/**
 	 * The baudrate that is used for normal operation.
 	 */
 	private int normalBaudrate = DEFAULT_NORMAL_BAUDRATE;
-	
+
 	/**
 	 * the baudrate that is used for programming the device.
 	 */
 	private int programBaudrate = DEFAULT_PROGRAM_BAUDRATE;
-	
+
 	/**
 	 * Serial port stop bits.
 	 */
@@ -88,7 +82,7 @@ public class SimpleSerialPortConnection extends AbstractConnection
 	 * Paritiy bit that is used for normal operations.
 	 */
 	private int normalParityBit = SerialPort.PARITY_NONE;
-	
+
 	/**
 	 * Paritiy bit that is used for programing.
 	 */
@@ -98,27 +92,27 @@ public class SimpleSerialPortConnection extends AbstractConnection
 	 * The serial port instance.
 	 */
 	private SerialPort serialPort;
-	
+
 	/**
 	 * Data available lock.
 	 */
 	private final Lock dataAvailableLock = new ReentrantLock();
-	
+
 	/**
 	 * Condition that indicates when data is available.
 	 */
 	private final Condition isDataAvailable = dataAvailableLock.newCondition();
-	
+
 	static {
 		LOG.trace("Loading rxtxSerial from jar file");
 		JarUtil.loadLibrary("rxtxSerial");
 	}
-	
+
 	@Override
 	public SerialPort getSerialPort() {
 		return serialPort;
 	}
-	
+
 	@Override
 	public void connect(final String port) {
 		Preconditions.checkNotNull(port, "The given port can not be null.");
@@ -127,6 +121,9 @@ public class SimpleSerialPortConnection extends AbstractConnection
 		try {
 			connectSerialPort(port);
 			setConnected(true);
+		} catch (final NoSuchElementException e) {
+			LOG.warn("Port {} not found.", port);
+			throw new PortNotFoundException(e);
 		} catch (final PortInUseException e) {
 			LOG.error("Port {} already in use.", port);
 			throw new RuntimeException(e);
@@ -134,18 +131,20 @@ public class SimpleSerialPortConnection extends AbstractConnection
 			LOG.error("Port {} is not a serial port.", port);
 			throw new RuntimeException(e);
 		} catch (final Exception e) {
-			LOG.error("Exception while connecting to port {}: ", port, e);
+			LOG.error("Exception while connecting to port {}: {}", port, e);
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	/**
 	 * Connect to the serial port for this device.
-	 * 
+	 *
 	 * @param port The port string.
-	 * @throws Exception 
+	 *
+	 * @throws Exception
 	 */
-	protected void connectSerialPort(final String port) throws Exception {
+	protected void connectSerialPort(final String port)
+			throws NoSuchElementException, PortInUseException, TooManyListenersException, IOException {
 
 		SysOutUtil.mute();
 		Enumeration<?> identifiers;
@@ -162,7 +161,8 @@ public class SimpleSerialPortConnection extends AbstractConnection
 				final CommPortIdentifier commPortIdentifier = (CommPortIdentifier) input;
 				return commPortIdentifier.getName().equals(port);
 			}
-		});
+		}
+		);
 
 		serialPort = (SerialPort) commPortIdentifier.open(getClass().getName(), MAX_CONNECTION_TIMEOUT);
 		serialPort.notifyOnDataAvailable(true);
@@ -172,7 +172,7 @@ public class SimpleSerialPortConnection extends AbstractConnection
 		setOutputStream(serialPort.getOutputStream());
 		setInputStream(serialPort.getInputStream());
 	}
-	
+
 	@Override
 	public void setSerialPortMode(final SerialPortMode mode) {
 		int baudrate = normalBaudrate;
@@ -192,21 +192,21 @@ public class SimpleSerialPortConnection extends AbstractConnection
 		serialPort.setRTS(false);
 		LOG.debug("COM-Port parameters set to baudrate: " + serialPort.getBaudRate());
 	}
-	
+
 	@Override
 	public void close() throws IOException {
 		super.close();
-		
+
 		if (serialPort != null) {
 			serialPort.removeEventListener();
 			serialPort.close();
-			serialPort = null;	
+			serialPort = null;
 		}
 		setConnected(false);
 	}
 
-	/** 
-	 * 
+	/**
+	 *
 	 */
 	@Override
 	public void flush() throws IOException {
@@ -214,28 +214,29 @@ public class SimpleSerialPortConnection extends AbstractConnection
 		final InputStream inputStream = getInputStream();
 		ByteStreams.skipFully(inputStream, inputStream.available());
 	}
-	
+
 	@Override
 	public void serialEvent(final SerialPortEvent event) {
 		switch (event.getEventType()) {
-		case SerialPortEvent.DATA_AVAILABLE:
-			dataAvailableLock.lock();
-			try {
-				isDataAvailable.signal();
-			} finally {
-				dataAvailableLock.unlock();
-			}
-			break;
-		default:
-			LOG.debug("Serial event (other than data available): " + event);
-			break;
+			case SerialPortEvent.DATA_AVAILABLE:
+				dataAvailableLock.lock();
+				try {
+					isDataAvailable.signal();
+				} finally {
+					dataAvailableLock.unlock();
+				}
+				notifyDataAvailableListeners();
+				break;
+			default:
+				LOG.debug("Serial event (other than data available): " + event);
+				break;
 		}
 	}
-	
+
 	@Override
 	public int waitDataAvailable(final int timeout) throws TimeoutException, IOException {
 		LOG.trace("Waiting for data...");
-		
+
 		final InputStream inputStream = getInputStream();
 		final TimeDiff timeDiff = new TimeDiff();
 		int available = inputStream.available();
@@ -290,7 +291,7 @@ public class SimpleSerialPortConnection extends AbstractConnection
 	public void setDatabits(final int databits) {
 		this.databits = databits;
 	}
-	
+
 	public int getNormalParityBit() {
 		return normalParityBit;
 	}
