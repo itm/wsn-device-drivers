@@ -23,11 +23,8 @@ public class PacemateReadFlashOperation extends AbstractReadFlashOperation {
 		device.clearStreamData();
 		device.autobaud();
 
-		// Wait for a connection
-		while (!isCanceled() && !device.waitForConnection()) {
-			log.info("Still waiting for a connection");
-		}
-		
+		device.waitForBootLoader();
+
 		// Return with success if the user has requested to cancel this
 		// operation
 		if (isCanceled()) {

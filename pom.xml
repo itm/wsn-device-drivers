@@ -1,11 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>de.uniluebeck.itm</groupId>
 	<artifactId>wsn-device-drivers</artifactId>
-	<version>0.3.4-SNAPSHOT</version>
+	<version>0.4-SNAPSHOT</version>
 
 	<name>WSN Device Drivers</name>
 	<url>https://github.com/itm/wsn-device-drivers</url>
@@ -17,37 +16,37 @@
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>wsn-device-drivers-core</artifactId>
-				<version>0.3.4-SNAPSHOT</version>
+				<version>0.4-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>wsn-device-drivers-isense</artifactId>
-				<version>0.3.4-SNAPSHOT</version>
+				<version>0.4-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>wsn-device-drivers-jennic</artifactId>
-				<version>0.3.4-SNAPSHOT</version>
+				<version>0.4-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>wsn-device-drivers-pacemate</artifactId>
-				<version>0.3.4-SNAPSHOT</version>
+				<version>0.4-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>wsn-device-drivers-telosb</artifactId>
-				<version>0.3.4-SNAPSHOT</version>
+				<version>0.4-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>wsn-device-drivers-mock</artifactId>
-				<version>0.3.4-SNAPSHOT</version>
+				<version>0.4-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>wsn-device-drivers-nulldevice</artifactId>
-				<version>0.3.4-SNAPSHOT</version>
+				<version>0.4-SNAPSHOT</version>
 			</dependency>
 
 			<dependency>

@@ -27,9 +27,11 @@ import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.async.DeviceAsync;
 import de.uniluebeck.itm.wsn.drivers.core.async.OperationQueue;
 
+import java.util.concurrent.ExecutorService;
+
 public interface DeviceAsyncFactory {
 
-	DeviceAsync create(DeviceType deviceType, Connection connection, OperationQueue operationQueue);
+	DeviceAsync create(ExecutorService executorService, DeviceType deviceType, Connection connection, OperationQueue operationQueue);
 
-	DeviceAsync create(String deviceType, Connection connection, OperationQueue operationQueue);
+	DeviceAsync create(ExecutorService executorService, String deviceType, Connection connection, OperationQueue operationQueue);
 }

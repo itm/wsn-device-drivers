@@ -83,7 +83,8 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 		try {
 			program(chipType, binData, progressManager.createSub(0.75f));
 		} finally {
-			executeSubOperation(device.createLeaveProgramModeOperation(), progressManager.createSub(0.0625f));
+			executeSubOperation(device.createLeaveProgramModeOperation(), progressManager.createSub(0.0125f));
+			executeSubOperation(device.createResetOperation(), progressManager.createSub(0.0500f));
 		}
 		return null;
 	}

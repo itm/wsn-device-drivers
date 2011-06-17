@@ -1,9 +1,10 @@
 package de.uniluebeck.itm.wsn.drivers.core;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.io.Closeables;
@@ -20,9 +21,11 @@ import de.uniluebeck.itm.wsn.drivers.core.io.OutputStreamBridge;
 public abstract class AbstractConnection implements Connection {
 	
 	/**
-	 * List for listeners that want to be notified on connection state changes.
+	 * List for connectionListeners that want to be notified on connection state changes.
 	 */
-	private final List<ConnectionListener> listeners = new ArrayList<ConnectionListener>();
+	private final List<ConnectionListener> connectionListeners = newArrayList();
+
+	private final List<DataAvailableListener> dataAvailableListeners = newArrayList();
 	
 	/**
 	 * Current connection state.
@@ -55,12 +58,12 @@ public abstract class AbstractConnection implements Connection {
 	}
 	
 	/**
-	 * Fire a connection change event to all registered listeners.
+	 * Fire a connection change event to all registered connectionListeners.
 	 * 
 	 * @param event The event you want to fire.
 	 */
 	protected void fireConnectionChange(ConnectionEvent event) {
-		for (final ConnectionListener listener : listeners.toArray(new ConnectionListener[0])) {
+		for (final ConnectionListener listener : connectionListeners.toArray(new ConnectionListener[0])) {
 			listener.onConnectionChange(event);
 		}
 	}
@@ -109,12 +112,22 @@ public abstract class AbstractConnection implements Connection {
 
 	@Override
 	public void addListener(final ConnectionListener listener) {
-		listeners.add(listener);
+		connectionListeners.add(listener);
 	}
 
 	@Override
 	public void removeListener(final ConnectionListener listener) {
-		listeners.remove(listener);
+		connectionListeners.remove(listener);
+	}
+
+	@Override
+	public void addListener(final DataAvailableListener listener) {
+		dataAvailableListeners.add(listener);
+	}
+
+	@Override
+	public void removeListener(final DataAvailableListener listener) {
+		dataAvailableListeners.remove(listener);
 	}
 	
 	@Override
@@ -124,5 +137,11 @@ public abstract class AbstractConnection implements Connection {
 		
 		Closeables.close(outputStream, true);
 		outputStream.setOutputStream(null);
+	}
+
+	protected void notifyDataAvailableListeners() {
+		for (DataAvailableListener dataAvailableListener : dataAvailableListeners) {
+			dataAvailableListener.dataAvailable(this);
+		}
 	}
 }

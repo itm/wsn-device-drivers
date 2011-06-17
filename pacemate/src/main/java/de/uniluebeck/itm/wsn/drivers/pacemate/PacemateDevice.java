@@ -502,7 +502,7 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 		return false;
 	}
 
-	protected boolean waitForConnection() {
+	protected void waitForBootLoader() throws IOException {
 		try {
 			// Send flash read request (in fact, this could be any valid message
 			// to which the
@@ -510,15 +510,13 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 			sendBootLoaderMessage(Messages.ReadPartIDRequestMessage());
 			receiveBootLoaderReplySuccess(Messages.CMD_SUCCESS);
 			LOG.debug("Device connection established");
-			return true;
-		} catch (TimeoutException to) {
-			LOG.debug("Still waiting for a connection.");
+
 		} catch (Exception error) {
 			LOG.warn("Exception while waiting for connection", error);
+			Flushables.flushQuietly(getConnection());
+			throw new IOException(error);
 		}
 
-		Flushables.flushQuietly(getConnection());
-		return false;
 	}
 
 	public boolean autobaud() {

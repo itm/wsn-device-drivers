@@ -30,6 +30,8 @@ import de.uniluebeck.itm.wsn.drivers.core.async.DeviceAsync;
 import de.uniluebeck.itm.wsn.drivers.core.async.OperationQueue;
 import de.uniluebeck.itm.wsn.drivers.core.async.QueuedDeviceAsync;
 
+import java.util.concurrent.ExecutorService;
+
 public class DeviceAsyncFactoryImpl implements DeviceAsyncFactory {
 
 	private DeviceFactory deviceFactory;
@@ -40,18 +42,19 @@ public class DeviceAsyncFactoryImpl implements DeviceAsyncFactory {
 	}
 
 	@Override
-	public DeviceAsync create(final DeviceType deviceType, final Connection connection,
+	public DeviceAsync create(final ExecutorService executorService, final DeviceType deviceType,
+							  final Connection connection,
 							  final OperationQueue operationQueue) {
 
 		Device<? extends Connection> device = deviceFactory.create(deviceType, connection);
-		return new QueuedDeviceAsync(operationQueue, device);
+		return new QueuedDeviceAsync(executorService, operationQueue, device);
 	}
 
 	@Override
-	public DeviceAsync create(final String deviceType, final Connection connection,
+	public DeviceAsync create(final ExecutorService executorService, final String deviceType, final Connection connection,
 							  final OperationQueue operationQueue) {
 
-		return create(DeviceType.fromString(deviceType), connection, operationQueue);
+		return create(executorService, DeviceType.fromString(deviceType), connection, operationQueue);
 	}
 
 }

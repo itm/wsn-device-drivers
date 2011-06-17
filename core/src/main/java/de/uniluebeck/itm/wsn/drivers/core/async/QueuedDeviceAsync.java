@@ -3,10 +3,16 @@ package de.uniluebeck.itm.wsn.drivers.core.async;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +23,7 @@ import com.google.inject.Inject;
 
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
+import de.uniluebeck.itm.wsn.drivers.core.DataAvailableListener;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import de.uniluebeck.itm.wsn.drivers.core.State;
@@ -34,18 +41,18 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.WriteFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
 
 /**
- * Class that implements the <code>DeviceAsync</code> interface as a queue.
- * For using this implementation an <code>OperationQueue</code> is needed.
- * 
+ * Class that implements the <code>DeviceAsync</code> interface as a queue. For using this implementation an
+ * <code>OperationQueue</code> is needed.
+ *
  * @author Malte Legenhausen
  */
 public class QueuedDeviceAsync implements DeviceAsync {
-	
+
 	/**
 	 * Logger for this class.
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(QueuedDeviceAsync.class);
-	
+
 	/**
 	 * Message for the exception that is thrown when a negative timeout was given.
 	 */
@@ -65,34 +72,118 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	 * Queue that schedules all <code>Operation</code> instances.
 	 */
 	private final OperationQueue queue;
-	
+
 	/**
 	 * The <code>Device</code> that has to be executed async.
 	 */
 	private final Device<? extends Connection> device;
-	
-	/**
-	 * Constructor.
-	 * 
-	 * @param queue The <code>OperationQueue</code> that schedules all operations.
-	 * @param device The <code>Device</code> that provides all operations that can be executed.
-	 */
-	@Inject
-	public QueuedDeviceAsync(OperationQueue queue, Device<? extends Connection> device) {
-		this.queue = queue;
-		this.device = device;
+
+	private PipedInputStream inputStreamPipedInputStream = new PipedInputStream();
+
+	private PipedOutputStream inputStreamPipedOutputStream = new PipedOutputStream();
+
+	private volatile boolean deviceInputStreamAvailableForReading = true;
+
+	private final Lock deviceInputStreamLock = new ReentrantLock();
+
+	private final Condition deviceInputStreamDataAvailable = deviceInputStreamLock.newCondition();
+
+	private class DeviceInputStreamToPipeCopyWorker implements Runnable {
 		
-		final Connection connection = device.getConnection();
-		if (connection != null) {
-			queue.addListener(new OperationQueueAdapter<Object>() {
-				@Override
-				public void onStateChanged(final StateChangedEvent<Object> event) {
-					lockInputStreamIfAnyRunning();
+		public volatile boolean shutdown = false;
+
+		@Override
+		public void run() {
+			try {
+				final InputStream inputStream = device.getConnection().getInputStream();
+				while (!shutdown) {
+					deviceInputStreamLock.lock();
+					try {
+						deviceInputStreamDataAvailable.await();
+					} catch (InterruptedException e) {
+						LOG.error("" + e, e);
+					} finally {
+						deviceInputStreamLock.unlock();
+					}
+
+					if (deviceInputStreamAvailableForReading) {
+						copyAvailableBytes(inputStream, inputStreamPipedOutputStream);
+					}
 				}
-			});
+
+			} catch (IOException e) {
+				LOG.error("IOException while reading from device InputStream: " + e, e);
+			}
+		}
+
+		private void copyAvailableBytes(final InputStream inputStream, final OutputStream outputStream)
+				throws IOException {
+
+			final int bytesAvailable = inputStream.available();
+
+			if (bytesAvailable > 0) {
+
+				byte[] buffer = new byte[bytesAvailable];
+				final int read = inputStream.read(buffer);
+
+				outputStream.write(buffer, 0, read);
+			}
+		}
+		
+		public void shutdown() {
+			shutdown = true;
 		}
 	}
 	
+	private final DeviceInputStreamToPipeCopyWorker deviceInputStreamToPipeCopyWorker =
+			new DeviceInputStreamToPipeCopyWorker();
+
+	/**
+	 * Constructor.
+	 *
+	 * @param queue  The <code>OperationQueue</code> that schedules all operations.
+	 * @param device The <code>Device</code> that provides all operations that can be executed.
+	 */
+	@Inject
+	public QueuedDeviceAsync(final ExecutorService executorService, final OperationQueue queue,
+							 final Device<? extends Connection> device) {
+
+		checkNotNull(executorService);
+		checkNotNull(queue);
+		checkNotNull(device);
+		checkNotNull(device.getConnection());
+
+		this.queue = queue;
+		this.device = device;
+
+		try {
+			this.inputStreamPipedInputStream.connect(inputStreamPipedOutputStream);
+		} catch (IOException e) {
+			LOG.error("" + e, e);
+			throw new RuntimeException(e);
+		}
+
+		queue.addListener(new OperationQueueAdapter<Object>() {
+			@Override
+			public void onStateChanged(final StateChangedEvent<Object> event) {
+				deviceInputStreamAvailableForReading = !isOperationRunning();
+			}
+		});
+
+		device.getConnection().addListener(new DataAvailableListener() {
+			@Override
+			public void dataAvailable(final Connection connection) {
+				deviceInputStreamLock.lock();
+				try {
+					deviceInputStreamDataAvailable.signal();
+				} finally {
+					deviceInputStreamLock.unlock();
+				}
+			}
+		});
+		executorService.execute(deviceInputStreamToPipeCopyWorker);
+	}
+
 	@Override
 	public OperationFuture<ChipType> getChipType(long timeout, AsyncCallback<ChipType> callback) {
 		LOG.trace("Reading Chip Type (Timeout: " + timeout + "ms)");
@@ -162,10 +253,10 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	}
 
 	@Override
-	public OperationFuture<Void> writeFlash(int address, 
-											byte[] data, 
-											int length, 
-											long timeout, 
+	public OperationFuture<Void> writeFlash(int address,
+											byte[] data,
+											int length,
+											long timeout,
 											AsyncCallback<Void> callback) {
 		LOG.trace("Write flash (address: " + address + ", length: " + length + ", timeout: " + timeout + "ms)");
 		checkArgument(address >= 0, NEGATIVE_LENGTH_MESSAGE);
@@ -188,41 +279,34 @@ public class QueuedDeviceAsync implements DeviceAsync {
 		operation.setMacAddress(macAddress);
 		return queue.addOperation(operation, timeout, callback);
 	}
-	
+
 	@Override
 	public InputStream getInputStream() {
-		return device.getConnection().getSaveInputStream();
+		return inputStreamPipedInputStream;
 	}
-	
+
 	@Override
 	public OutputStream getOutputStream() {
 		return new SendOutputStreamWrapper(this);
 	}
-	
-	/**
-	 * Getter for the queue that is used by this class.
-	 * 
-	 * @return The <code>OperationQueue</code> instance.
-	 */
-	public OperationQueue getOperationQueue() {
-		return queue;
+
+	@Override
+	public void close() throws IOException {
+		deviceInputStreamToPipeCopyWorker.shutdown();
 	}
-	
+
 	private void checkNotNullOperation(Operation<?> operation, String message) {
 		if (operation == null) {
 			throw new UnsupportedOperationException(message);
 		}
 	}
 
-	private void lockInputStreamIfAnyRunning() {
-		// Preventing the operation to die not deterministically in the queue, without any exception.
-		List<Operation<?>> operations = new ArrayList<Operation<?>>(queue.getOperations());
-		boolean locked = Iterators.any(operations.iterator(), new Predicate<Operation<?>>() {
+	private boolean isOperationRunning() {
+		return Iterators.any(queue.getOperations().iterator(), new Predicate<Operation<?>>() {
 			@Override
 			public boolean apply(Operation<?> input) {
 				return State.RUNNING.equals(input.getState());
 			}
 		});
-		device.getConnection().setOperationRunning(locked);
 	}
 }
