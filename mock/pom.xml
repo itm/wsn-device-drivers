@@ -5,11 +5,11 @@
 		<groupId>de.uniluebeck.itm</groupId>
 		<artifactId>wsn-device-drivers</artifactId>
 		<relativePath>../</relativePath>
-		<version>0.3.4-SNAPSHOT</version>
+		<version>0.3.4</version>
 	</parent>
 	
 	<artifactId>wsn-device-drivers-mock</artifactId>
-	<version>0.3.4-SNAPSHOT</version>
+	<version>0.3.4</version>
 	<name>WSN Device Drivers Mock</name>
   
 	<dependencies>
