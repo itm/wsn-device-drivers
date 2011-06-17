@@ -23,6 +23,8 @@ import com.google.inject.Inject;
 
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
+import de.uniluebeck.itm.wsn.drivers.core.ConnectionEvent;
+import de.uniluebeck.itm.wsn.drivers.core.ConnectionListener;
 import de.uniluebeck.itm.wsn.drivers.core.DataAvailableListener;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
@@ -90,7 +92,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 
 	private class DeviceInputStreamToPipeCopyWorker implements Runnable {
 		
-		public volatile boolean shutdown = false;
+		public boolean shutdown = false;
 
 		@Override
 		public void run() {
@@ -99,18 +101,17 @@ public class QueuedDeviceAsync implements DeviceAsync {
 				while (!shutdown) {
 					deviceInputStreamLock.lock();
 					try {
-						deviceInputStreamDataAvailable.await();
+						deviceInputStreamDataAvailable.await(50, TimeUnit.MILLISECONDS);
 					} catch (InterruptedException e) {
 						LOG.error("" + e, e);
 					} finally {
 						deviceInputStreamLock.unlock();
 					}
 
-					if (deviceInputStreamAvailableForReading) {
+					if (device.getConnection().isConnected() && deviceInputStreamAvailableForReading) {
 						copyAvailableBytes(inputStream, inputStreamPipedOutputStream);
 					}
 				}
-
 			} catch (IOException e) {
 				LOG.error("IOException while reading from device InputStream: " + e, e);
 			}
