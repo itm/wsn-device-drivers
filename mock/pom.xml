@@ -1,22 +1,23 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<groupId>de.uniluebeck.itm</groupId>
 		<artifactId>wsn-device-drivers</artifactId>
+		<version>0.3.6-SNAPSHOT</version>
 		<relativePath>../</relativePath>
-		<version>0.4-SNAPSHOT</version>
 	</parent>
-	
+
 	<artifactId>wsn-device-drivers-mock</artifactId>
-	<version>0.4-SNAPSHOT</version>
 	<name>WSN Device Drivers Mock</name>
-  
+
 	<dependencies>
+
 		<dependency>
-  			<groupId>de.uniluebeck.itm</groupId>
+			<groupId>de.uniluebeck.itm</groupId>
 			<artifactId>wsn-device-drivers-core</artifactId>
-  		</dependency>
+		</dependency>
+
 	</dependencies>
 
 </project>
