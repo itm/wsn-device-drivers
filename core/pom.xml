@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -9,13 +11,13 @@
 	</parent>
 
 	<artifactId>wsn-device-drivers-core</artifactId>
-	<version>0.3.4-SNAPSHOT</version>
 	<name>WSN Device Drivers Core</name>
 
 	<dependencies>
+
 		<dependency>
-			<groupId>de.uniluebeck.itm</groupId>
-			<artifactId>tr.util</artifactId>
+			<groupId>de.uniluebeck.itm.itmutils</groupId>
+			<artifactId>itmutils</artifactId>
 		</dependency>
 
 		<dependency>
@@ -39,14 +41,16 @@
 			<artifactId>guava</artifactId>
 		</dependency>
 		<dependency>
-		    <groupId>commons-lang</groupId>
-		    <artifactId>commons-lang</artifactId>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -67,4 +71,5 @@
 			</resource>
 		</resources>
 	</build>
+
 </project>
