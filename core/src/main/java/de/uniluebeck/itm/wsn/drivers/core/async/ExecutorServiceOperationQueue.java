@@ -1,26 +1,29 @@
 package de.uniluebeck.itm.wsn.drivers.core.async;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Lists.newArrayList;
+
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.inject.internal.Nullable;
+
 import de.uniluebeck.itm.wsn.drivers.core.State;
 import de.uniluebeck.itm.wsn.drivers.core.event.AddedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.event.RemovedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.event.StateChangedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Class that implements the queue with the single thread executor from the Java Concurrency Framework. Only one
@@ -38,12 +41,12 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	/**
 	 * List that contains all listeners.
 	 */
-	private final List<OperationQueueListener<?>> listeners = new ArrayList<OperationQueueListener<?>>();
+	private final List<OperationQueueListener<?>> listeners = newArrayList();
 
 	/**
 	 * Queue for all <code>OperationContainer</code> that are in progress.
 	 */
-	private final List<Operation<?>> operations = new LinkedList<Operation<?>>();
+	private final List<Operation<?>> operations = Collections.synchronizedList(new LinkedList<Operation<?>>());
 
 	/**
 	 * The single thread executor that runs the <code>OperationContainer</code>.
@@ -79,9 +82,10 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	}
 
 	@Override
-	public synchronized <T> OperationFuture<T> addOperation(Operation<T> operation,
-															long timeout,
-															@Nullable AsyncCallback<T> callback) {
+	public <T> OperationFuture<T> addOperation(Operation<T> operation, 
+											   long timeout, 
+											   @Nullable AsyncCallback<T> callback) {
+		
 		checkNotNull(operation, "Null Operation is not allowed.");
 		checkArgument(timeout >= 0, "Negative timeout is not allowed.");
 
@@ -94,8 +98,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 			public void onStateChanged(StateChangedEvent<T> event) {
 				ExecutorServiceOperationQueue.this.onStateChanged(event);
 			}
-		}
-		);
+		});
 		addOperation(operation);
 
 		// Submit the operation to the executor.
@@ -124,7 +127,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	 * @param operation The operation that has to be added to the internal operation list.
 	 */
 	private <T> void addOperation(final Operation<T> operation) {
-		operations.add(operation);
+		operations.add(operation);	
 		LOG.trace("{} added to internal operation list", operation.getClass().getName());
 		fireAddedEvent(new AddedEvent<T>(this, operation));
 	}
@@ -143,7 +146,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 
 	@Override
 	public List<Operation<?>> getOperations() {
-		return operations;
+		return newArrayList(operations);
 	}
 
 	@Override

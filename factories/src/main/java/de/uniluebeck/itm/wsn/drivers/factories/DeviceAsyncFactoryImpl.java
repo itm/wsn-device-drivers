@@ -23,14 +23,15 @@
 
 package de.uniluebeck.itm.wsn.drivers.factories;
 
+import java.util.concurrent.ScheduledExecutorService;
+
 import com.google.inject.Inject;
+
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.async.DeviceAsync;
 import de.uniluebeck.itm.wsn.drivers.core.async.OperationQueue;
 import de.uniluebeck.itm.wsn.drivers.core.async.QueuedDeviceAsync;
-
-import java.util.concurrent.ExecutorService;
 
 public class DeviceAsyncFactoryImpl implements DeviceAsyncFactory {
 
@@ -42,7 +43,8 @@ public class DeviceAsyncFactoryImpl implements DeviceAsyncFactory {
 	}
 
 	@Override
-	public DeviceAsync create(final ExecutorService executorService, final DeviceType deviceType,
+	public DeviceAsync create(final ScheduledExecutorService executorService, 
+							  final DeviceType deviceType,
 							  final Connection connection,
 							  final OperationQueue operationQueue) {
 
@@ -51,7 +53,9 @@ public class DeviceAsyncFactoryImpl implements DeviceAsyncFactory {
 	}
 
 	@Override
-	public DeviceAsync create(final ExecutorService executorService, final String deviceType, final Connection connection,
+	public DeviceAsync create(final ScheduledExecutorService executorService, 
+							  final String deviceType, 
+							  final Connection connection,
 							  final OperationQueue operationQueue) {
 
 		return create(executorService, DeviceType.fromString(deviceType), connection, operationQueue);
