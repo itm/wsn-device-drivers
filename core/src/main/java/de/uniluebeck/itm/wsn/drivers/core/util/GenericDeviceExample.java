@@ -71,6 +71,9 @@ public class GenericDeviceExample implements ConnectionListener {
 	 */
 	private static final int READ_LENGTH = 32;
 	
+	/**
+	 * Timeout that is used for waiting for the executors to shutdown.
+	 */
 	private static final int EXECUTOR_TIMEOUT = 10;
 	
 	/**

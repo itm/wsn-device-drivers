@@ -129,7 +129,10 @@ public class MacAddress {
 	}
 
 	public MacAddress to16BitMacAddress() {
-		return new MacAddress(new byte[]{0, 0, 0, 0, 0, 0, array[6], array[7]});
+		byte[] result = new byte[LENGTH];
+		int offset = LENGTH - 2;
+		System.arraycopy(array, offset, result, offset, 2);
+		return new MacAddress(result);
 	}
 
 	private void setArray(final long value) {

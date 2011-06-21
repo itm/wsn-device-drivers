@@ -153,7 +153,7 @@ public class SimpleSerialPortConnection extends AbstractConnection
 	 * @throws Exception
 	 */
 	protected void connectSerialPort(final String port)
-			throws NoSuchElementException, PortInUseException, TooManyListenersException, IOException {
+			throws PortInUseException, TooManyListenersException, IOException {
 
 		SysOutUtil.mute();
 		Enumeration<?> identifiers;

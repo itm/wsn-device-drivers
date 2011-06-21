@@ -6,14 +6,13 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.SimpleTimeLimiter;
 import com.google.common.util.concurrent.TimeLimiter;
 import com.google.common.util.concurrent.UncheckedTimeoutException;
@@ -139,10 +138,15 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	}
 	
 	private T executeOperation() throws Exception {
-		Operation<T> operation = timeLimiter.newProxy(this, Operation.class, timeout, TimeUnit.MILLISECONDS);
 		final ProgressManager progressManager = new RootProgressManager(callback);
 		progressManager.worked(0.0f);
-		T result = operation.execute(progressManager);
+		Callable<T> callable = new Callable<T>() {
+			@Override
+			public T call() throws Exception {
+				return execute(progressManager);
+			}
+		};
+		T result = timeLimiter.callWithTimeout(callable, timeout, TimeUnit.MILLISECONDS, false);
 		progressManager.done();
 		return result;
 	}
