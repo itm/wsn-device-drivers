@@ -2,8 +2,8 @@ package de.uniluebeck.itm.wsn.drivers.core.async;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Lists.newArrayList;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,7 +41,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	/**
 	 * List that contains all listeners.
 	 */
-	private final List<OperationQueueListener<?>> listeners = new ArrayList<OperationQueueListener<?>>();
+	private final List<OperationQueueListener<?>> listeners = newArrayList();
 
 	/**
 	 * Queue for all <code>OperationContainer</code> that are in progress.
@@ -82,9 +82,10 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	}
 
 	@Override
-	public synchronized <T> OperationFuture<T> addOperation(Operation<T> operation,
-															long timeout,
-															@Nullable AsyncCallback<T> callback) {
+	public <T> OperationFuture<T> addOperation(Operation<T> operation, 
+											   long timeout, 
+											   @Nullable AsyncCallback<T> callback) {
+		
 		checkNotNull(operation, "Null Operation is not allowed.");
 		checkArgument(timeout >= 0, "Negative timeout is not allowed.");
 
@@ -97,8 +98,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 			public void onStateChanged(StateChangedEvent<T> event) {
 				ExecutorServiceOperationQueue.this.onStateChanged(event);
 			}
-		}
-		);
+		});
 		addOperation(operation);
 
 		// Submit the operation to the executor.
@@ -127,7 +127,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	 * @param operation The operation that has to be added to the internal operation list.
 	 */
 	private <T> void addOperation(final Operation<T> operation) {
-		operations.add(operation);
+		operations.add(operation);	
 		LOG.trace("{} added to internal operation list", operation.getClass().getName());
 		fireAddedEvent(new AddedEvent<T>(this, operation));
 	}
@@ -146,7 +146,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 
 	@Override
 	public List<Operation<?>> getOperations() {
-		return operations;
+		return newArrayList(operations);
 	}
 
 	@Override

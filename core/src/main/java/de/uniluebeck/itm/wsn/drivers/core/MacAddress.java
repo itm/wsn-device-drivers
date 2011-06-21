@@ -47,7 +47,8 @@ public class MacAddress {
 	private static final int HEX_BASE = 16;
 
 	/**
-	 * Suppose the MAC address is: 00:15:8D:00:00:04:7D:50. Then 0x00 will be stored at address[0] and 0x50 at address[7].
+	 * Suppose the MAC address is: 00:15:8D:00:00:04:7D:50. Then 0x00 will be stored at address[0] 
+	 * and 0x50 at address[7].
 	 * The least significant value isx50. 0x00 0x15 0x8D 0x00 0x00 0x04 0x7D 0x50
 	 */
 	private final byte[] array = new byte[LENGTH];

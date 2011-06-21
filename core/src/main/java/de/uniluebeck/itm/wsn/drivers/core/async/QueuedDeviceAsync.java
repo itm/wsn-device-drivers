@@ -9,8 +9,8 @@ import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -79,6 +79,8 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	 * The <code>Device</code> that has to be executed async.
 	 */
 	private final Device<? extends Connection> device;
+	
+	private final ScheduledExecutorService executorService;
 
 	private PipedInputStream inputStreamPipedInputStream = new PipedInputStream();
 
@@ -94,7 +96,9 @@ public class QueuedDeviceAsync implements DeviceAsync {
 
 	private class DeviceInputStreamToPipeCopyWorker implements Runnable {
 		
-		public boolean shutdown = false;
+		private static final int DATA_AVAILABLE_TIMEOUT = 50;
+		
+		private volatile boolean shutdown = false;
 
 		@Override
 		public void run() {
@@ -103,7 +107,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 				while (!shutdown) {
 					deviceInputStreamLock.lock();
 					try {
-						deviceInputStreamDataAvailable.await(50, TimeUnit.MILLISECONDS);
+						deviceInputStreamDataAvailable.await(DATA_AVAILABLE_TIMEOUT, TimeUnit.MILLISECONDS);
 					} catch (InterruptedException e) {
 						LOG.error("" + e, e);
 					} finally {
@@ -148,7 +152,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	 * @param device The <code>Device</code> that provides all operations that can be executed.
 	 */
 	@Inject
-	public QueuedDeviceAsync(final ExecutorService executorService, final OperationQueue queue,
+	public QueuedDeviceAsync(final ScheduledExecutorService executorService, final OperationQueue queue,
 							 final Device<? extends Connection> device) {
 
 		checkNotNull(executorService);
@@ -158,6 +162,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 
 		this.queue = queue;
 		this.device = device;
+		this.executorService = executorService;
 
 		try {
 			this.inputStreamPipedInputStream.connect(inputStreamPipedOutputStream);
@@ -290,7 +295,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 
 	@Override
 	public OutputStream getOutputStream() {
-		return new SendOutputStreamWrapper(this);
+		return new SendOutputStreamWrapper(this, executorService);
 	}
 
 	@Override

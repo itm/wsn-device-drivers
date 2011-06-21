@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.io.ByteStreams;
@@ -70,6 +71,8 @@ public class GenericDeviceExample implements ConnectionListener {
 	 */
 	private static final int READ_LENGTH = 32;
 	
+	private static final int EXECUTOR_TIMEOUT = 10;
+	
 	/**
 	 * Executor Service for the OperationQueue.
 	 */
@@ -122,7 +125,9 @@ public class GenericDeviceExample implements ConnectionListener {
 	 */
 	private byte[] messagePacket;
 
-	private ExecutorService executorService;
+	private ScheduledExecutorService deviceExecutorService;
+	
+	private OutputStream outputStream;
 
 	public void addByteReceiver(ByteReceiver receiver) {
 		service.addByteReceiver(receiver);
@@ -154,12 +159,13 @@ public class GenericDeviceExample implements ConnectionListener {
 	 * Should be called after all parameters has been set.
 	 */
 	private void init() {
-		executorService = Executors.newCachedThreadPool(
+		deviceExecutorService = Executors.newScheduledThreadPool(2, 
 				new ThreadFactoryBuilder().setNameFormat("GenericDeviceExample-Thread %d").build()
 		);
 		connection = device.getConnection();
 		connection.addListener(this);
-		deviceAsync = new QueuedDeviceAsync(executorService, queue, device);
+		deviceAsync = new QueuedDeviceAsync(deviceExecutorService, queue, device);
+		outputStream = deviceAsync.getOutputStream();
 	}
 	
 	/**
@@ -392,9 +398,7 @@ public class GenericDeviceExample implements ConnectionListener {
 	 */
 	private void sendOperation() {
 		try {
-			final OutputStream outputStream = deviceAsync.getOutputStream();
 			outputStream.write(messagePacket);
-			outputStream.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -437,15 +441,19 @@ public class GenericDeviceExample implements ConnectionListener {
 	 * Shutdown the queue and the connection.
 	 */
 	private void shutdown() {
+		System.out.println("Closing OutputStream...");
+		Closeables.closeQuietly(outputStream);
+		System.out.println("OutputStream closed");
 		System.out.println("Shutting down queue...");
-		ExecutorUtils.shutdown(queueExecutorService, 10, TimeUnit.SECONDS);
+		ExecutorUtils.shutdown(queueExecutorService, EXECUTOR_TIMEOUT, TimeUnit.SECONDS);
 		System.out.println("Queue terminated");
+		System.out.println("Shutting down executor...");
+		ExecutorUtils.shutdown(deviceExecutorService, EXECUTOR_TIMEOUT, TimeUnit.SECONDS);
+		System.out.println("Executor shut down");
 		System.out.println("Closing connection...");
 		Closeables.closeQuietly(connection);
 		System.out.println("Connection closed");
-		System.out.println("Shutting down executor...");
-		ExecutorUtils.shutdown(executorService, 10, TimeUnit.SECONDS);
-		System.out.println("Executor shut down");
+		
 	}
 	
 	/**
