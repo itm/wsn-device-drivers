@@ -1,26 +1,29 @@
 package de.uniluebeck.itm.wsn.drivers.core.async;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.inject.internal.Nullable;
+
 import de.uniluebeck.itm.wsn.drivers.core.State;
 import de.uniluebeck.itm.wsn.drivers.core.event.AddedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.event.RemovedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.event.StateChangedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Class that implements the queue with the single thread executor from the Java Concurrency Framework. Only one
@@ -43,7 +46,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	/**
 	 * Queue for all <code>OperationContainer</code> that are in progress.
 	 */
-	private final List<Operation<?>> operations = new LinkedList<Operation<?>>();
+	private final List<Operation<?>> operations = Collections.synchronizedList(new LinkedList<Operation<?>>());
 
 	/**
 	 * The single thread executor that runs the <code>OperationContainer</code>.
