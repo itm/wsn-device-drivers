@@ -23,7 +23,7 @@ import de.uniluebeck.itm.wsn.drivers.core.event.AddedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.event.RemovedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.event.StateChangedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationAdapter;
 
 /**
  * Class that implements the queue with the single thread executor from the Java Concurrency Framework. Only one
@@ -93,9 +93,9 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 		operation.setTimeout(timeout);
 
 		// Add listener for removing operation.
-		operation.addListener(new OperationListener<T>() {
+		operation.addListener(new OperationAdapter<T>() {
 			@Override
-			public void onStateChanged(StateChangedEvent<T> event) {
+			public void afterStateChanged(StateChangedEvent<T> event) {
 				ExecutorServiceOperationQueue.this.onStateChanged(event);
 			}
 		});
@@ -171,7 +171,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 		String msg = "Operation state of {} changed";
 		LOG.trace(msg, new Object[]{event.getOperation().getClass().getName()});
 		for (final OperationQueueListener<T> listener : listeners.toArray(new OperationQueueListener[0])) {
-			listener.onStateChanged(event);
+			listener.afterStateChanged(event);
 		}
 	}
 

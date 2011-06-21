@@ -175,11 +175,20 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	 * 
 	 * @param newState The new State of this operation.
 	 */
-	private void setState(final State newState) {
+	private void setState(State newState) {
 		synchronized (state) {
-			final State oldState = state;
+			State oldState = state;
+			fireBeforeStateChangedEvent(new StateChangedEvent<T>(this, oldState, newState));
 			state = newState;
-			fireStateChangedEvent(new StateChangedEvent<T>(this, oldState, newState));
+			fireAfterStateChangedEvent(new StateChangedEvent<T>(this, oldState, newState));
+		}
+	}
+	
+	private void fireBeforeStateChangedEvent(StateChangedEvent<T> event) {
+		String msg = "Operation state of {} changed from {} to {}";
+		LOG.trace(msg, new Object[] {this.getClass().getName(), event.getOldState(), event.getNewState()});
+		for (OperationListener<T> listener : listeners.toArray(new OperationListener[0])) {
+			listener.beforeStateChanged(event);
 		}
 	}
 	
@@ -188,11 +197,11 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	 * 
 	 * @param event The state change event.
 	 */
-	private void fireStateChangedEvent(final StateChangedEvent<T> event) {
+	private void fireAfterStateChangedEvent(StateChangedEvent<T> event) {
 		String msg = "Operation state of {} changed from {} to {}";
 		LOG.trace(msg, new Object[] {this.getClass().getName(), event.getOldState(), event.getNewState()});
 		for (OperationListener<T> listener : listeners.toArray(new OperationListener[0])) {
-			listener.onStateChanged(event);
+			listener.afterStateChanged(event);
 		}
 	}
 
@@ -208,7 +217,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	 * @param timeout The timeout of the operation.
 	 */
 	@Override
-	public void setTimeout(final long timeout) {
+	public void setTimeout(long timeout) {
 		checkArgument(timeout >= 0, "Negativ timeout is not allowed");
 		checkState(!State.RUNNING.equals(state), "Timeout can not be set when operation is in running state");
 		this.timeout = timeout;
@@ -220,13 +229,13 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	}
 	
 	@Override
-	public void addListener(final OperationListener<T> listener) {
+	public void addListener(OperationListener<T> listener) {
 		checkNotNull(listener, "Null listener are not allowed.");
 		listeners.add(listener);
 	}
 	
 	@Override
-	public void removeOperationListener(final OperationListener<T> listener) {
+	public void removeOperationListener(OperationListener<T> listener) {
 		checkNotNull(listener, "Null listener are not allowed");
 		listeners.remove(listener);
 	}

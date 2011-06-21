@@ -173,7 +173,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 
 		queue.addListener(new OperationQueueAdapter<Object>() {
 			@Override
-			public void onStateChanged(final StateChangedEvent<Object> event) {
+			public void afterStateChanged(final StateChangedEvent<Object> event) {
 				deviceInputStreamAvailableForReading = !isOperationRunning();
 			}
 		});
