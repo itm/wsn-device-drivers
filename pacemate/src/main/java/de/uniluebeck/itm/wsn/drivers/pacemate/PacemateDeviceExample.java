@@ -2,21 +2,17 @@ package de.uniluebeck.itm.wsn.drivers.pacemate;
 
 import java.io.InputStream;
 
-import de.uniluebeck.itm.wsn.drivers.core.Device;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
-import de.uniluebeck.itm.wsn.drivers.core.util.GenericDeviceExample;
+import de.uniluebeck.itm.wsn.drivers.core.util.GuiceDeviceExample;
 import de.uniluebeck.itm.wsn.drivers.isense.MessagePacketReceiver;
 
-public class PacemateDeviceExample extends GenericDeviceExample {
+public class PacemateDeviceExample {
 	
 	public static void main(String[] args) {
-		final SerialPortConnection connection = new PacemateSerialPortConnection();
-		final Device<SerialPortConnection> device = new PacemateDevice(connection);
-		final GenericDeviceExample example = new GenericDeviceExample();
+		final GuiceDeviceExample example = new GuiceDeviceExample();
 		example.addByteReceiver(new MessagePacketReceiver());
-		example.setDevice(device);
+		example.setModule(new PacemateModule());
 		
-		final InputStream stream = PacemateDevice.class.getResourceAsStream("/de/uniluebeck/itm/wsn/drivers/pacemate/pacemate.bin");
+		final InputStream stream = PacemateDeviceExample.class.getResourceAsStream("/de/uniluebeck/itm/wsn/drivers/pacemate/pacemate.bin");
 		example.setImageInputStream(stream);
 
 		example.setUri(args[0]);

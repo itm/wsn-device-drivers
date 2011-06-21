@@ -3,8 +3,13 @@ package de.uniluebeck.itm.wsn.drivers.pacemate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
+
 import de.uniluebeck.itm.wsn.drivers.core.exception.InvalidChecksumException;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractProgramOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.wsn.drivers.core.util.BinDataBlock;
 
@@ -15,17 +20,30 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 	 */
 	private static final Logger log = LoggerFactory.getLogger(PacemateProgramOperation.class);
 
-	private final PacemateDevice device;
+	private final PacemateSerialPortConnection connection;
+	
+	private final EnterProgramModeOperation enterProgramModeOperation;
+	
+	private final LeaveProgramModeOperation leaveProgramModeOperation;
+	
+	private final EraseFlashOperation eraseFlashOperation;
 
-	public PacemateProgramOperation(final PacemateDevice device) {
-		this.device = device;
+	@Inject
+	public PacemateProgramOperation(PacemateSerialPortConnection connection,
+			EnterProgramModeOperation enterProgramModeOperation,
+			LeaveProgramModeOperation leaveProgramModeOperation,
+			EraseFlashOperation eraseFlashOperation) {
+		this.connection = connection;
+		this.enterProgramModeOperation = enterProgramModeOperation;
+		this.leaveProgramModeOperation = leaveProgramModeOperation;
+		this.eraseFlashOperation = eraseFlashOperation;
 	}
 	
 	private void program(final ProgressManager progressManager) throws Exception {		
-		device.clearStreamData();
-		device.autobaud();
+		connection.clearStreamData();
+		connection.autobaud();
 
-		device.waitForBootLoader();
+		connection.waitForBootLoader();
 
 		// Return with success if the user has requested to cancel this
 		// operation
@@ -38,7 +56,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 		// Calc CRC and write it to the flash
 		final int flashCRC = binData.calcCRC();
 		log.debug("CRC: " + flashCRC);
-		device.writeCRCtoFlash(flashCRC);
+		connection.writeCRCtoFlash(flashCRC);
 
 		// Write program to flash
 		BinDataBlock block = null;
@@ -50,7 +68,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 			final int address = block.getAddress();
 			
 			try {
-				device.writeToRAM(PacemateDevice.START_ADDRESS_IN_RAM, data.length);
+				connection.writeToRAM(PacemateSerialPortConnection.START_ADDRESS_IN_RAM, data.length);
 			} catch (Exception e) {
 				log.error("Error while write to RAM! Operation will be cancelled!", e);
 				throw e;
@@ -85,7 +103,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 				}
 
 				try {
-					device.sendDataMessage(binData.encode(line, line.length - offset));
+					connection.sendDataMessage(binData.encode(line, line.length - offset));
 				} catch (Exception e) {
 					log.error("Error while writing flash! Operation will be cancelled!", e);
 					throw e;
@@ -94,7 +112,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 				linecounter++;
 				if ((linecounter == 20) || (counter >= data.length)) {
 					try {
-						device.sendChecksum(binData.crc);
+						connection.sendChecksum(binData.crc);
 					} catch (InvalidChecksumException e) {
 						log.debug("Invalid Checksum - resend last part");
 						// so resending the last 20 lines
@@ -112,15 +130,15 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 			try {
 				// if block is completed copy data from RAM to Flash
 				log.debug("Prepare Flash and Copy Ram to Flash " + blockCount + " " + blockNumber + " " + address);
-				device.configureFlash(blockNumber, blockNumber);
+				connection.configureFlash(blockNumber, blockNumber);
 				if (data.length > 1024) {
-					device.copyRAMToFlash(address, PacemateDevice.START_ADDRESS_IN_RAM, 4096);
+					connection.copyRAMToFlash(address, PacemateSerialPortConnection.START_ADDRESS_IN_RAM, 4096);
 				} else if (data.length > 512) {
-					device.copyRAMToFlash(address, PacemateDevice.START_ADDRESS_IN_RAM, 1024);
+					connection.copyRAMToFlash(address, PacemateSerialPortConnection.START_ADDRESS_IN_RAM, 1024);
 				} else if (data.length > 512) {
-					device.copyRAMToFlash(address, PacemateDevice.START_ADDRESS_IN_RAM, 512);
+					connection.copyRAMToFlash(address, PacemateSerialPortConnection.START_ADDRESS_IN_RAM, 512);
 				} else {
-					device.copyRAMToFlash(address, PacemateDevice.START_ADDRESS_IN_RAM, 256);
+					connection.copyRAMToFlash(address, PacemateSerialPortConnection.START_ADDRESS_IN_RAM, 256);
 				}
 			} catch (Exception e) {
 				log.error("Error while copy RAM to Flash! Operation will be cancelled!", e);
@@ -170,14 +188,14 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 	public Void execute(final ProgressManager progressManager) throws Exception {
 		log.debug("Prgramming operation executing...");
 		// Erase the complete flash
-		executeSubOperation(device.createEraseFlashOperation(), progressManager.createSub(0.125f));
+		executeSubOperation(eraseFlashOperation, progressManager.createSub(0.125f));
 		
 		// Now program the device
-		executeSubOperation(device.createEnterProgramModeOperation(), progressManager.createSub(0.0625f));
+		executeSubOperation(enterProgramModeOperation, progressManager.createSub(0.0625f));
 		try {
 			program(progressManager.createSub(0.75f));
 		} finally {
-			executeSubOperation(device.createLeaveProgramModeOperation(), progressManager.createSub(0.0625f));
+			executeSubOperation(leaveProgramModeOperation, progressManager.createSub(0.0625f));
 		}		
 		log.debug("Program operation finsihed");
 		return null;

@@ -1,29 +1,34 @@
 package de.uniluebeck.itm.wsn.drivers.pacemate;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.google.inject.Inject;
 
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractReadFlashOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 
 public class PacemateReadFlashOperation extends AbstractReadFlashOperation {
-
-	/**
-	 * Logger for this class.
-	 */
-	private static final Logger log = LoggerFactory.getLogger(PacemateReadFlashOperation.class);
 	
-	private PacemateDevice device;
+	private final PacemateSerialPortConnection connection;
 	
-	public PacemateReadFlashOperation(PacemateDevice device) {
-		this.device = device;
+	private final EnterProgramModeOperation enterProgramModeOperation;
+	
+	private final LeaveProgramModeOperation leaveProgramModeOperation;
+	
+	@Inject
+	public PacemateReadFlashOperation(PacemateSerialPortConnection connection,
+			EnterProgramModeOperation enterProgramModeOperation,
+			LeaveProgramModeOperation leaveProgramModeOperation) {
+		this.connection = connection;
+		this.enterProgramModeOperation = enterProgramModeOperation;
+		this.leaveProgramModeOperation = leaveProgramModeOperation;
 	}
 	
 	private byte[] readFlash(final ProgressManager progressManager) throws Exception {
-		device.clearStreamData();
-		device.autobaud();
+		connection.clearStreamData();
+		connection.autobaud();
 
-		device.waitForBootLoader();
+		connection.waitForBootLoader();
 
 		// Return with success if the user has requested to cancel this
 		// operation
@@ -32,11 +37,11 @@ public class PacemateReadFlashOperation extends AbstractReadFlashOperation {
 		}
 		
 		// Send flash program request
-		device.sendBootLoaderMessage(Messages.flashReadRequestMessage(getAddress(), getLength()));
+		connection.sendBootLoaderMessage(Messages.flashReadRequestMessage(getAddress(), getLength()));
 		progressManager.worked(0.5f);
 		
 		// Read flash program response
-		byte[] response = device.receiveBootLoaderReplyReadData();
+		byte[] response = connection.receiveBootLoaderReplyReadData();
 		progressManager.done();
 		
 		// Return data
@@ -45,12 +50,12 @@ public class PacemateReadFlashOperation extends AbstractReadFlashOperation {
 	
 	@Override
 	public byte[] execute(final ProgressManager progressManager) throws Exception {
-		executeSubOperation(device.createEnterProgramModeOperation(), progressManager.createSub(0.25f));
+		executeSubOperation(enterProgramModeOperation, progressManager.createSub(0.25f));
 		byte[] result = null;
 		try {
 			result = readFlash(progressManager.createSub(0.5f));
 		} finally {
-			executeSubOperation(device.createLeaveProgramModeOperation(), progressManager.createSub(0.25f));
+			executeSubOperation(leaveProgramModeOperation, progressManager.createSub(0.25f));
 		}
 		return result;
 	}
