@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.google.inject.Inject;
 import com.google.inject.internal.Nullable;
 
 import de.uniluebeck.itm.wsn.drivers.core.State;
@@ -56,6 +57,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	/**
 	 * Constructor.
 	 */
+	@Inject
 	public ExecutorServiceOperationQueue() {
 		this(Executors.newSingleThreadExecutor(
 				new ThreadFactoryBuilder().setNameFormat("OperationQueue-Thread %d").build()

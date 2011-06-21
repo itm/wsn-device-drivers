@@ -3,9 +3,14 @@ package de.uniluebeck.itm.wsn.drivers.jennic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+
 import de.uniluebeck.itm.wsn.drivers.core.exception.FlashEraseFailedException;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 
 public class JennicEraseFlashOperation extends AbstractOperation<Void> implements EraseFlashOperation {
@@ -15,16 +20,25 @@ public class JennicEraseFlashOperation extends AbstractOperation<Void> implement
 	 */
 	private static final Logger log = LoggerFactory.getLogger(JennicEraseFlashOperation.class);
 	
-	private final JennicDevice device;
+	private final JennicSerialPortConnection connection;
 	
-	public JennicEraseFlashOperation(JennicDevice device) {
-		this.device = device;
+	private final Provider<EnterProgramModeOperation> enterProgramModeProvider;
+	
+	private final Provider<LeaveProgramModeOperation> leaveProgramModeProvider;
+	
+	@Inject
+	public JennicEraseFlashOperation(JennicSerialPortConnection connection, 
+			Provider<EnterProgramModeOperation> enterProgramModeProvider, 
+			Provider<LeaveProgramModeOperation> leaveprogramModeProvider) {
+		this.connection = connection;
+		this.enterProgramModeProvider = enterProgramModeProvider;
+		this.leaveProgramModeProvider = leaveprogramModeProvider;
 	}
 	
 	private void eraseFlash(final ProgressManager progressManager) throws Exception {
-		device.sendBootLoaderMessage(Messages.statusRegisterWriteMessage((byte) 0x00));
+		connection.sendBootLoaderMessage(Messages.statusRegisterWriteMessage((byte) 0x00));
 		progressManager.worked(0.25f);
-		byte[] response = device.receiveBootLoaderReply(Messages.WRITE_SR_RESPONSE);
+		byte[] response = connection.receiveBootLoaderReply(Messages.WRITE_SR_RESPONSE);
 
 		if (response[1] != 0x0) {
 			log.error(String.format("Failed to write status register."));
@@ -37,8 +51,8 @@ public class JennicEraseFlashOperation extends AbstractOperation<Void> implement
 		
 		progressManager.worked(0.25f);
 		log.trace("Erasing flash");
-		device.sendBootLoaderMessage(Messages.flashEraseRequestMessage());
-		response = device.receiveBootLoaderReply(Messages.FLASH_ERASE_RESPONSE);
+		connection.sendBootLoaderMessage(Messages.flashEraseRequestMessage());
+		response = connection.receiveBootLoaderReply(Messages.FLASH_ERASE_RESPONSE);
 
 		if (response[1] != 0x0) {
 			throw new FlashEraseFailedException("Failed to erase flash.");
@@ -48,11 +62,11 @@ public class JennicEraseFlashOperation extends AbstractOperation<Void> implement
 	
 	@Override
 	public Void execute(final ProgressManager progressManager) throws Exception {
-		executeSubOperation(device.createEnterProgramModeOperation(), progressManager.createSub(0.25f));
+		executeSubOperation(enterProgramModeProvider.get(), progressManager.createSub(0.25f));
 		try {
 			eraseFlash(progressManager.createSub(0.5f));
 		} finally {
-			executeSubOperation(device.createLeaveProgramModeOperation(), progressManager.createSub(0.25f));
+			executeSubOperation(leaveProgramModeProvider.get(), progressManager.createSub(0.25f));
 		}
 		return null;
 	}

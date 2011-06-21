@@ -3,6 +3,8 @@ package de.uniluebeck.itm.wsn.drivers.core.serialport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
+
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
@@ -31,6 +33,7 @@ public class SerialPortLeaveProgramModeOperation extends AbstractOperation<Void>
 	 * 
 	 * @param connection Connection used for leaving the programming mode.
 	 */
+	@Inject
 	public SerialPortLeaveProgramModeOperation(final SerialPortConnection connection) {
 		this.connection = connection;
 	}

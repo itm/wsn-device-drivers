@@ -3,10 +3,17 @@ package de.uniluebeck.itm.wsn.drivers.jennic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.exception.ProgramChipMismatchException;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractProgramOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
+import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
 import de.uniluebeck.itm.wsn.drivers.core.util.BinDataBlock;
 
 public class JennicProgramOperation extends AbstractProgramOperation {
@@ -16,10 +23,14 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 	 */
 	private static final Logger log = LoggerFactory.getLogger(JennicProgramOperation.class);
 	
-	private final JennicDevice device;
+	private final JennicSerialPortConnection device;
 	
-	public JennicProgramOperation(JennicDevice device) {
-		this.device = device;
+	private final Injector injector;
+	
+	@Inject
+	public JennicProgramOperation(Injector injector) {
+		this.device = injector.getInstance(JennicSerialPortConnection.class);
+		this.injector = injector;
 	}
 	
 	private void program(final ChipType chipType, final JennicBinData binData, final ProgressManager progressManager) throws Exception {
@@ -70,21 +81,21 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 	
 	private void insertFlashHeaderToImage(JennicBinData binData, final ProgressManager progressManager) throws Exception {
 		// insert flash header of device
-		final byte[] flashHeader = executeSubOperation(device.createGetFlashHeaderOperation(), progressManager);
+		final byte[] flashHeader = executeSubOperation(injector.getInstance(GetFlashHeaderOperation.class), progressManager);
 		binData.insertHeader(flashHeader);
 	}
 	
 	public Void execute(final ProgressManager progressManager) throws Exception {
-		final ChipType chipType = executeSubOperation(device.createGetChipTypeOperation(), progressManager.createSub(0.0625f));
+		final ChipType chipType = executeSubOperation(injector.getInstance(GetChipTypeOperation.class), progressManager.createSub(0.0625f));
 		final JennicBinData binData = validateImage(chipType);
 		insertFlashHeaderToImage(binData, progressManager.createSub(0.0625f));
 		
-		executeSubOperation(device.createEnterProgramModeOperation(), progressManager.createSub(0.0625f));
+		executeSubOperation(injector.getInstance(EnterProgramModeOperation.class), progressManager.createSub(0.0625f));
 		try {
 			program(chipType, binData, progressManager.createSub(0.75f));
 		} finally {
-			executeSubOperation(device.createLeaveProgramModeOperation(), progressManager.createSub(0.0125f));
-			executeSubOperation(device.createResetOperation(), progressManager.createSub(0.0500f));
+			executeSubOperation(injector.getInstance(LeaveProgramModeOperation.class), progressManager.createSub(0.0125f));
+			executeSubOperation(injector.getInstance(ResetOperation.class), progressManager.createSub(0.0500f));
 		}
 		return null;
 	}

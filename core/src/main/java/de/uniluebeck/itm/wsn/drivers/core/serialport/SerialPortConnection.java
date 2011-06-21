@@ -53,4 +53,6 @@ public interface SerialPortConnection extends Connection, Flushable {
 	 * @throws IOException when something went wrong with the input stream.
 	 */
 	int waitDataAvailable(int timeout) throws TimeoutException, IOException;
+	
+	int[] getChannels();
 }

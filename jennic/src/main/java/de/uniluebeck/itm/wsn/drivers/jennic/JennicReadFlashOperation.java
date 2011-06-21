@@ -3,8 +3,13 @@ package de.uniluebeck.itm.wsn.drivers.jennic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+
 import de.uniluebeck.itm.tr.util.StringUtils;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractReadFlashOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 
 public class JennicReadFlashOperation extends AbstractReadFlashOperation {
@@ -14,15 +19,17 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 	 */
 	private static final Logger log = LoggerFactory.getLogger(JennicReadFlashOperation.class);
 	
-	private final JennicDevice device;
+	private final Injector injector;
 	
-	public JennicReadFlashOperation(JennicDevice device) {
-		this.device = device;
+	@Inject
+	public JennicReadFlashOperation(Injector injector) {
+		this.injector = injector;
 	}
 	
 	private byte[] readFlash(final ProgressManager progressManager) throws Exception {
 		// Wait for a connection
-		while (!isCanceled() && !device.waitForConnection()) {
+		JennicSerialPortConnection connection = injector.getInstance(JennicSerialPortConnection.class);
+		while (!isCanceled() && !connection.waitForConnection()) {
 			log.debug("Still waiting for a connection");
 		}
 
@@ -45,7 +52,7 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 			final int blockSize = sectorStart + 32 > sectorEnd ? length : 32;
 
 			// Read data block
-			byte[] data = device.readFlash(sectorStart, blockSize);
+			byte[] data = connection.readFlash(sectorStart, blockSize);
 			System.arraycopy(data, 0, flashData, sectorStart - address, data.length);
 			
 			// Notify listeners
@@ -63,11 +70,11 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 	public byte[] execute(final ProgressManager progressManager) throws Exception {
 		byte[] data = null;
 		// Enter programming mode
-		executeSubOperation(device.createEnterProgramModeOperation(), progressManager.createSub(0.125f));
+		executeSubOperation(injector.getInstance(EnterProgramModeOperation.class), progressManager.createSub(0.125f));
 		try {
 			data = readFlash(progressManager.createSub(0.75f));
 		} finally {
-			executeSubOperation(device.createLeaveProgramModeOperation(), progressManager.createSub(0.125f));
+			executeSubOperation(injector.getInstance(LeaveProgramModeOperation.class), progressManager.createSub(0.125f));
 		}
 		return data;
 	}

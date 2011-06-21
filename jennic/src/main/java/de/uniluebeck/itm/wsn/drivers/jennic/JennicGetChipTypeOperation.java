@@ -3,12 +3,17 @@ package de.uniluebeck.itm.wsn.drivers.jennic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+
 import de.uniluebeck.itm.tr.util.StringUtils;
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.exception.RamReadFailedException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.UnexpectedResponseException;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 
 public class JennicGetChipTypeOperation extends AbstractOperation<ChipType>
@@ -17,13 +22,21 @@ public class JennicGetChipTypeOperation extends AbstractOperation<ChipType>
 	/**
 	 * Logger for this class.
 	 */
-	private static final Logger log = LoggerFactory
-			.getLogger(JennicGetChipTypeOperation.class);
+	private static final Logger log = LoggerFactory.getLogger(JennicGetChipTypeOperation.class);
 
-	private final JennicDevice device;
+	private final JennicSerialPortConnection device;
+	
+	private final Provider<EnterProgramModeOperation> enterProgramModeProvider;
+	
+	private final Provider<LeaveProgramModeOperation> leaveProgramModeProvider;
 
-	public JennicGetChipTypeOperation(JennicDevice device) {
+	@Inject
+	public JennicGetChipTypeOperation(JennicSerialPortConnection device, 
+			Provider<EnterProgramModeOperation> enterProgramModeProvider, 
+			Provider<LeaveProgramModeOperation> leaveprogramModeProvider) {
 		this.device = device;
+		this.enterProgramModeProvider = enterProgramModeProvider;
+		this.leaveProgramModeProvider = leaveprogramModeProvider;
 	}
 
 	private ChipType determineChipType(byte s, byte t) {
@@ -101,11 +114,11 @@ public class JennicGetChipTypeOperation extends AbstractOperation<ChipType>
 	@Override
 	public ChipType execute(final ProgressManager progressManager) throws Exception {
 		ChipType chipType = null;
-		executeSubOperation(device.createEnterProgramModeOperation(), progressManager.createSub(0.5f));
+		executeSubOperation(enterProgramModeProvider.get(), progressManager.createSub(0.5f));
 		try {
 			chipType = getChipType(progressManager);
 		} finally {
-			executeSubOperation(device.createLeaveProgramModeOperation(), progressManager.createSub(0.5f));
+			executeSubOperation(leaveProgramModeProvider.get(), progressManager.createSub(0.5f));
 		}
 		return chipType;
 	}

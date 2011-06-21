@@ -6,6 +6,8 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
+
 import java.io.OutputStream;
 
 
@@ -36,6 +38,7 @@ public class SerialPortSendOperation extends AbstractSendOperation {
 	 *
 	 * @param connection <code>SerialPortConnection</code> for sending the message.
 	 */
+	@Inject
 	public SerialPortSendOperation(final SerialPortConnection connection) {
 		this.connection = connection;
 	}
