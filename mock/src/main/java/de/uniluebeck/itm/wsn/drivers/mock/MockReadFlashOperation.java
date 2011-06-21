@@ -1,5 +1,7 @@
 package de.uniluebeck.itm.wsn.drivers.mock;
 
+import com.google.inject.Inject;
+
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
 
 
@@ -30,7 +32,8 @@ public class MockReadFlashOperation extends AbstractMockOperation<byte[]> implem
 	 * 
 	 * @param configuration The <code>MockConfiguration</code> of the <code>MockDevice</code>.
 	 */
-	public MockReadFlashOperation(final MockConfiguration configuration) {
+	@Inject
+	public MockReadFlashOperation(MockConfiguration configuration) {
 		this.configuration = configuration;
 	}
 

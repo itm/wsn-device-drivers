@@ -162,7 +162,7 @@ public class GuiceDeviceExample implements ConnectionListener {
 		System.arraycopy(aMessagePacket, 0, this.messagePacket, 0, aMessagePacket.length);
 	}
 	
-	public void setModules(AbstractModule module) {
+	public void setModule(AbstractModule module) {
 		injector = Guice.createInjector(exampleModule, module);
 	}
 

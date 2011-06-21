@@ -44,4 +44,6 @@ public interface Connection extends HasInputStream, HasOutputStream, Closeable {
 	void addListener(DataAvailableListener listener);
 
 	void removeListener(DataAvailableListener listener);
+	
+	int[] getChannels();
 }

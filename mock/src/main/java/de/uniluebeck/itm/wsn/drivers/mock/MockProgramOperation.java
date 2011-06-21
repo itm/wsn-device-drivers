@@ -1,5 +1,7 @@
 package de.uniluebeck.itm.wsn.drivers.mock;
 
+import com.google.inject.Inject;
+
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
 
 
@@ -25,7 +27,8 @@ public class MockProgramOperation extends AbstractMockOperation<Void> implements
 	 * 
 	 * @param configuration The configuration of the <code>MockDevice</code>.
 	 */
-	public MockProgramOperation(final MockConfiguration configuration) {
+	@Inject
+	public MockProgramOperation(MockConfiguration configuration) {
 		this.configuration = configuration;
 	}
 	

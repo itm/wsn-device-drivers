@@ -1,10 +1,12 @@
 package de.uniluebeck.itm.wsn.drivers.mock;
 
+import com.google.inject.Inject;
+
 import de.uniluebeck.itm.wsn.drivers.core.operation.SendOperation;
 
 
 /**
- * Sending a <code>MessagePacket</code> to the device.
+ * Sending a <code>MessagePacket</code> to the connection.
  * 
  * @author Malte Legenhausen
  */
@@ -18,15 +20,16 @@ public class MockSendOperation extends AbstractMockOperation<Void> implements Se
 	/**
 	 * The <code>MockConnection</code> which is used for sending the message.
 	 */
-	private final MockDevice device;
+	private final MockConnection connection;
 	
 	/**
 	 * Constructor.
 	 * 
-	 * @param device The <code>MockConnection</code> which is used for sending the message.
+	 * @param connection The <code>MockConnection</code> which is used for sending the message.
 	 */
-	public MockSendOperation(final MockDevice device) {
-		this.device = device;
+	@Inject
+	public MockSendOperation(MockConnection connection) {
+		this.connection = connection;
 	}
 
 	@Override
@@ -36,7 +39,7 @@ public class MockSendOperation extends AbstractMockOperation<Void> implements Se
 	
 	@Override
 	public Void returnResult() {
-		device.sendMessage(message);
+		connection.sendMessage(message);
 		return null;
 	}
 }

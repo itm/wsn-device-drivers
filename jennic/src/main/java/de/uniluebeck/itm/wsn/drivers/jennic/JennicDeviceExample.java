@@ -14,7 +14,7 @@ public class JennicDeviceExample {
 	public static void main(String[] args) {
 		final GuiceDeviceExample example = new GuiceDeviceExample();
 		example.addByteReceiver(new MessagePacketReceiver());
-		example.setModules(new JennicModule());
+		example.setModule(new JennicModule());
 		example.setUri(args[0]);
 		
 		InputStream stream = JennicDeviceExample.class.getResourceAsStream("/de/uniluebeck/itm/wsn/drivers/jennic/jennic.bin");

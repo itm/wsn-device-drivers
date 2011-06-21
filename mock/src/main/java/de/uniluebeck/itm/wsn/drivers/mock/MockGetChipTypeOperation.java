@@ -1,5 +1,7 @@
 package de.uniluebeck.itm.wsn.drivers.mock;
 
+import com.google.inject.Inject;
+
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
 
@@ -21,7 +23,8 @@ public class MockGetChipTypeOperation extends AbstractMockOperation<ChipType> im
 	 * 
 	 * @param configuration The <code>MockConfiguration</code> from which the <code>ChipType</code> has to be gotten.
 	 */
-	public MockGetChipTypeOperation(final MockConfiguration configuration) {
+	@Inject
+	public MockGetChipTypeOperation(MockConfiguration configuration) {
 		this.configuration = configuration;
 	}
 
