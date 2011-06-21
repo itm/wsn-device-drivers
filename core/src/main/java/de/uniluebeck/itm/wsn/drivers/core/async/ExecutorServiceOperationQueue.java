@@ -56,7 +56,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	public ExecutorServiceOperationQueue() {
 		this(Executors.newSingleThreadExecutor(
 				new ThreadFactoryBuilder().setNameFormat("OperationQueue-Thread %d").build()
-		)
+			)
 		);
 	}
 
@@ -156,16 +156,6 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	public void removeListener(final OperationQueueListener<?> listener) {
 		checkNotNull(listener, "Null listener is not allowed.");
 		listeners.remove(listener);
-	}
-
-	@Override
-	public List<Operation<?>> shutdown(final boolean force) {
-		if (force) {
-			executor.shutdownNow();
-		} else {
-			executor.shutdown();
-		}
-		return operations;
 	}
 
 	/**

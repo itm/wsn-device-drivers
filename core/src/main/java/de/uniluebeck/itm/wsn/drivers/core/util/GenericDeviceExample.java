@@ -9,8 +9,8 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
-
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
 import de.uniluebeck.itm.tr.util.ExecutorUtils;
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
@@ -26,7 +26,6 @@ import de.uniluebeck.itm.wsn.drivers.core.async.OperationQueue;
 import de.uniluebeck.itm.wsn.drivers.core.async.QueuedDeviceAsync;
 import de.uniluebeck.itm.wsn.drivers.core.io.ByteReceiver;
 import de.uniluebeck.itm.wsn.drivers.core.io.InputStreamReaderService;
-import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -72,9 +71,16 @@ public class GenericDeviceExample implements ConnectionListener {
 	private static final int READ_LENGTH = 32;
 	
 	/**
+	 * Executor Service for the OperationQueue.
+	 */
+	private final ExecutorService queueExecutorService = Executors.newSingleThreadExecutor(
+			new ThreadFactoryBuilder().setNameFormat("OperationQueue-Thread %d").build()
+	);
+	
+	/**
 	 * The queue used for this example.
 	 */
-	private final OperationQueue queue = new ExecutorServiceOperationQueue();
+	private final OperationQueue queue = new ExecutorServiceOperationQueue(queueExecutorService);
 	
 	/**
 	 * Default null device.
@@ -148,7 +154,9 @@ public class GenericDeviceExample implements ConnectionListener {
 	 * Should be called after all parameters has been set.
 	 */
 	private void init() {
-		executorService = Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("GenericDeviceExample-Thread %d").build());
+		executorService = Executors.newCachedThreadPool(
+				new ThreadFactoryBuilder().setNameFormat("GenericDeviceExample-Thread %d").build()
+		);
 		connection = device.getConnection();
 		connection.addListener(this);
 		deviceAsync = new QueuedDeviceAsync(executorService, queue, device);
@@ -430,7 +438,7 @@ public class GenericDeviceExample implements ConnectionListener {
 	 */
 	private void shutdown() {
 		System.out.println("Shutting down queue...");
-		queue.shutdown(false);
+		ExecutorUtils.shutdown(queueExecutorService, 10, TimeUnit.SECONDS);
 		System.out.println("Queue terminated");
 		System.out.println("Closing connection...");
 		Closeables.closeQuietly(connection);

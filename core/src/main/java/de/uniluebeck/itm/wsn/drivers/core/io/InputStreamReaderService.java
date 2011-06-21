@@ -57,7 +57,7 @@ public class InputStreamReaderService extends AbstractExecutionThreadService imp
 	}
 	
 	private void processData() throws IOException {
-		int available = 1;
+		int available = inputStream.available();
 		if (available != 0) {
 			beforeReceive();
 			while (!shutdown && available != 0) {
