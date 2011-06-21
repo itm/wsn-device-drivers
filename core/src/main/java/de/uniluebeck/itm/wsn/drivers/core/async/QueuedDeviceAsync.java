@@ -8,7 +8,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -89,6 +91,8 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	private final Lock deviceInputStreamLock = new ReentrantLock();
 
 	private final Condition deviceInputStreamDataAvailable = deviceInputStreamLock.newCondition();
+
+	private Future<?> deviceInputStreamToPipeCopyWorkerFuture;
 
 	private class DeviceInputStreamToPipeCopyWorker implements Runnable {
 		
@@ -182,7 +186,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 				}
 			}
 		});
-		executorService.execute(deviceInputStreamToPipeCopyWorker);
+		deviceInputStreamToPipeCopyWorkerFuture = executorService.submit(deviceInputStreamToPipeCopyWorker);
 	}
 
 	@Override
@@ -294,6 +298,14 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	@Override
 	public void close() throws IOException {
 		deviceInputStreamToPipeCopyWorker.shutdown();
+		try {
+			// wait until worker has finished execution
+			deviceInputStreamToPipeCopyWorkerFuture.get();
+		} catch (InterruptedException e) {
+			throw new IOException(e);
+		} catch (ExecutionException e) {
+			throw new IOException(e);
+		}
 	}
 
 	private void checkNotNullOperation(Operation<?> operation, String message) {
