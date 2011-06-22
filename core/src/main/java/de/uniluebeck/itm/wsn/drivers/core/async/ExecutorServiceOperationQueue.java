@@ -10,15 +10,18 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.annotation.Nullable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.SimpleTimeLimiter;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.google.common.util.concurrent.TimeLimiter;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.google.inject.internal.Nullable;
 
 import de.uniluebeck.itm.wsn.drivers.core.State;
 import de.uniluebeck.itm.wsn.drivers.core.event.AddedEvent;
@@ -55,6 +58,8 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	 * The single thread executor that runs the <code>OperationContainer</code>.
 	 */
 	private final ExecutorService executor;
+	
+	private final TimeLimiter timeLimiter;
 
 	/**
 	 * Constructor.
@@ -62,7 +67,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	public ExecutorServiceOperationQueue() {
 		this(Executors.newSingleThreadExecutor(
 				new ThreadFactoryBuilder().setNameFormat("OperationQueue-Thread %d").build()
-			)
+			), new SimpleTimeLimiter()
 		);
 	}
 
@@ -72,8 +77,9 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	 * @param executor Set a custom <code>PausableExecutorService</code>.
 	 */
 	@Inject
-	public ExecutorServiceOperationQueue(final ExecutorService executor) {
+	public ExecutorServiceOperationQueue(ExecutorService executor, TimeLimiter timeLimiter) {
 		this.executor = executor;
+		this.timeLimiter = timeLimiter;
 	}
 
 	/**
@@ -95,6 +101,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 
 		operation.setAsyncCallback(callback);
 		operation.setTimeout(timeout);
+		operation.setTimeLimiter(timeLimiter);
 
 		// Add listener for removing operation.
 		operation.addListener(new OperationAdapter<T>() {

@@ -10,11 +10,15 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
+import com.google.common.util.concurrent.SimpleTimeLimiter;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.google.common.util.concurrent.TimeLimiter;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 
 import de.uniluebeck.itm.tr.util.ExecutorUtils;
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
@@ -119,9 +123,15 @@ public class GenericDeviceExample implements ConnectionListener {
 				bind(ExecutorService.class).toInstance(Executors.newSingleThreadExecutor(
 						new ThreadFactoryBuilder().setNameFormat("OperationQueue-Thread %d").build()
 				));
-				bind(ScheduledExecutorService.class).toInstance(Executors.newScheduledThreadPool(2, 
+				bind(ScheduledExecutorService.class).toInstance(Executors.newScheduledThreadPool(3, 
 						new ThreadFactoryBuilder().setNameFormat("GenericDeviceExample-Thread %d").build()
 				));
+			}
+			
+			@Provides
+			@Singleton
+			public TimeLimiter provideTimeLimiter(ScheduledExecutorService executorService) {
+				return new SimpleTimeLimiter(executorService);
 			}
 		};
 	}

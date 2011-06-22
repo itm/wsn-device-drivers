@@ -2,6 +2,8 @@ package de.uniluebeck.itm.wsn.drivers.core.operation;
 
 import java.util.concurrent.Callable;
 
+import com.google.common.util.concurrent.TimeLimiter;
+
 import de.uniluebeck.itm.wsn.drivers.core.State;
 import de.uniluebeck.itm.wsn.drivers.core.async.AsyncCallback;
 
@@ -77,4 +79,6 @@ public interface Operation<T> extends Callable<T> {
 	 * @param listener The <code>OperationListener</code> that has to be removed.
 	 */
 	void removeOperationListener(OperationListener<T> listener);
+	
+	void setTimeLimiter(TimeLimiter timeLimiter);
 }
