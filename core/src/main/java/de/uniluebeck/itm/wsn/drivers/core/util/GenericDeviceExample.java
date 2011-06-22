@@ -15,7 +15,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.Singleton;
 
 import de.uniluebeck.itm.tr.util.ExecutorUtils;
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
@@ -25,9 +24,7 @@ import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import de.uniluebeck.itm.wsn.drivers.core.async.AsyncAdapter;
 import de.uniluebeck.itm.wsn.drivers.core.async.AsyncCallback;
 import de.uniluebeck.itm.wsn.drivers.core.async.DeviceAsync;
-import de.uniluebeck.itm.wsn.drivers.core.async.ExecutorServiceOperationQueue;
 import de.uniluebeck.itm.wsn.drivers.core.async.OperationQueue;
-import de.uniluebeck.itm.wsn.drivers.core.async.QueuedDeviceAsync;
 import de.uniluebeck.itm.wsn.drivers.core.io.ByteReceiver;
 import de.uniluebeck.itm.wsn.drivers.core.io.InputStreamReaderService;
 
