@@ -23,17 +23,14 @@
 
 package de.uniluebeck.itm.wsn.drivers.factories;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Module;
-import com.google.inject.Singleton;
 
 import de.uniluebeck.itm.wsn.drivers.core.async.DeviceAsync;
-import de.uniluebeck.itm.wsn.drivers.core.async.ExecutorServiceOperationQueue;
-import de.uniluebeck.itm.wsn.drivers.core.async.OperationQueue;
-import de.uniluebeck.itm.wsn.drivers.core.async.QueuedDeviceAsync;
 import de.uniluebeck.itm.wsn.drivers.jennic.JennicModule;
 import de.uniluebeck.itm.wsn.drivers.mock.MockModule;
 import de.uniluebeck.itm.wsn.drivers.pacemate.PacemateModule;
@@ -43,22 +40,25 @@ public class DeviceAsyncFactoryImpl implements DeviceAsyncFactory {
 	
 	private class FactoryModule extends AbstractModule {
 		
-		private ScheduledExecutorService executorService;
+		private ScheduledExecutorService scheduleExecutorService;
 		
-		public FactoryModule(ScheduledExecutorService executorService) {
+		private ExecutorService executorService;
+		
+		public FactoryModule(ScheduledExecutorService scheduleExecutorService, ExecutorService executorService) {
+			this.scheduleExecutorService = scheduleExecutorService;
 			this.executorService = executorService;
 		}
 		
 		@Override
 		protected void configure() {
-			bind(ScheduledExecutorService.class).toInstance(executorService);
-			bind(OperationQueue.class).to(ExecutorServiceOperationQueue.class).in(Singleton.class);
-			bind(DeviceAsync.class).to(QueuedDeviceAsync.class).in(Singleton.class);
+			bind(ScheduledExecutorService.class).toInstance(scheduleExecutorService);
+			bind(ExecutorService.class).toInstance(executorService);
 		}
 	}
 	
 	@Override
-	public DeviceAsync create(ScheduledExecutorService executorService, DeviceType deviceType) {
+	public DeviceAsync create(ScheduledExecutorService deviceExecutorService, 
+			ExecutorService queueExecutorService, DeviceType deviceType) {
 		Module deviceModule = null;
 		switch (deviceType) {
 		case ISENSE:
@@ -80,12 +80,14 @@ public class DeviceAsyncFactoryImpl implements DeviceAsyncFactory {
 			);
 		}
 		
-		return Guice.createInjector(new FactoryModule(executorService), deviceModule).getInstance(DeviceAsync.class);
+		Module factoryModule = new FactoryModule(deviceExecutorService, queueExecutorService);
+		return Guice.createInjector(factoryModule, deviceModule).getInstance(DeviceAsync.class);
 	}
 
 	@Override
-	public DeviceAsync create(ScheduledExecutorService executorService, String deviceType) {
-		return create(executorService, DeviceType.fromString(deviceType));
+	public DeviceAsync create(ScheduledExecutorService executorService, 
+			ExecutorService queueExecutorService, String deviceType) {
+		return create(executorService, queueExecutorService, DeviceType.fromString(deviceType));
 	}
 
 }

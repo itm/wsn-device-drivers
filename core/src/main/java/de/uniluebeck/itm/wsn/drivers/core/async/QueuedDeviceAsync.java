@@ -23,6 +23,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Singleton;
 
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
@@ -49,6 +50,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
  * 
  * @author Malte Legenhausen
  */
+@Singleton
 public class QueuedDeviceAsync implements DeviceAsync {
 	/**
 	 * Logger for this class.

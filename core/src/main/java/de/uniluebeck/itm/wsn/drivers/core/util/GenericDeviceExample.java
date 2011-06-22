@@ -125,8 +125,6 @@ public class GenericDeviceExample implements ConnectionListener {
 				bind(ScheduledExecutorService.class).toInstance(Executors.newScheduledThreadPool(2, 
 						new ThreadFactoryBuilder().setNameFormat("GenericDeviceExample-Thread %d").build()
 				));
-				bind(OperationQueue.class).to(ExecutorServiceOperationQueue.class).in(Singleton.class);
-				bind(DeviceAsync.class).to(QueuedDeviceAsync.class).in(Singleton.class);
 			}
 		};
 	}

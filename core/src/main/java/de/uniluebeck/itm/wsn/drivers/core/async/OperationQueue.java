@@ -2,6 +2,8 @@ package de.uniluebeck.itm.wsn.drivers.core.async;
 
 import java.util.List;
 
+import com.google.inject.ImplementedBy;
+
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 
 /**
@@ -9,6 +11,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
  * 
  * @author Malte Legenhausen
  */
+@ImplementedBy(ExecutorServiceOperationQueue.class)
 public interface OperationQueue {
 
 	/**

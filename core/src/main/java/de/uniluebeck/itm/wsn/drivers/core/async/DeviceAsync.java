@@ -1,5 +1,7 @@
 package de.uniluebeck.itm.wsn.drivers.core.async;
 
+import com.google.inject.ImplementedBy;
+
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
@@ -12,6 +14,7 @@ import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
  * 
  * @author Malte Legenhausen
  */
+@ImplementedBy(QueuedDeviceAsync.class)
 public interface DeviceAsync extends Connection {
 	
 	/**
