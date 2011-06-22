@@ -22,26 +22,26 @@ public class PacemateEraseFlashOperation extends AbstractOperation<Void> impleme
 	
 	private static final int END_ADDRESS = 14;
 	
-	private final PacemateSerialPortConnection connection;
+	private final PacemateHelper helper;
 	
 	private final EnterProgramModeOperation enterProgramModeOperation;
 	
 	private final LeaveProgramModeOperation leaveProgramModeOperation;
 	
 	@Inject
-	public PacemateEraseFlashOperation(PacemateSerialPortConnection connection,
+	public PacemateEraseFlashOperation(PacemateHelper helper,
 			EnterProgramModeOperation enterProgramModeOperation,
 			LeaveProgramModeOperation leaveProgramModeOperation) {
-		this.connection = connection;
+		this.helper = helper;
 		this.enterProgramModeOperation = enterProgramModeOperation;
 		this.leaveProgramModeOperation = leaveProgramModeOperation;
 	}
 	
 	private void eraseFlash(final ProgressManager progressManager) throws Exception {
-		connection.clearStreamData();
-		connection.autobaud();
+		helper.clearStreamData();
+		helper.autobaud();
 
-		connection.waitForBootLoader();
+		helper.waitForBootLoader();
 
 		// Return with success if the user has requested to cancel this
 		// operation
@@ -49,9 +49,9 @@ public class PacemateEraseFlashOperation extends AbstractOperation<Void> impleme
 			return;
 		}
 		
-		connection.configureFlash(START_ADDRESS, END_ADDRESS);
+		helper.configureFlash(START_ADDRESS, END_ADDRESS);
 		progressManager.worked(0.25f);
-		connection.eraseFlash(START_ADDRESS, END_ADDRESS);
+		helper.eraseFlash(START_ADDRESS, END_ADDRESS);
 		progressManager.done();
 	}
 	

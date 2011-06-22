@@ -8,36 +8,32 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.io.Flushables;
+import com.google.inject.Inject;
 
 import de.uniluebeck.itm.tr.util.StringUtils;
 import de.uniluebeck.itm.wsn.drivers.core.exception.InvalidChecksumException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.UnexpectedResponseException;
-import de.uniluebeck.itm.wsn.drivers.isense.iSenseSerialPortConnection;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 
-
-/**
- * Helper class for easier finding an apropriate connection for pacemate.
- * 
- * @author Malte Legenhausen
- */
-public class PacemateSerialPortConnection extends iSenseSerialPortConnection {
+public class PacemateHelper {
 
 	/**
 	 * This is the Start Address in the RAM to write data
 	 */
 	public static final long START_ADDRESS_IN_RAM = 1073742336;
 	
-	private static final Logger LOG = LoggerFactory.getLogger(PacemateSerialPortConnection.class);
+	private static final Logger LOG = LoggerFactory.getLogger(PacemateHelper.class);
 	
 	private static final int TIMEOUT = 2000;
 	
 	private boolean echo = true;
 	
-	@Override
-	public int[] getChannels() {
-		return new int[] { 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
-				24, 25, 26 };
+	private final SerialPortConnection connection;
+	
+	@Inject
+	public PacemateHelper(SerialPortConnection connection) {
+		this.connection = connection;
 	}
 	
 	public boolean isEcho() {
@@ -63,14 +59,14 @@ public class PacemateSerialPortConnection extends iSenseSerialPortConnection {
 		data[data.length - 1] = 0x0A; // <LF>
 
 		// Send message
-		final OutputStream outputStream = getOutputStream();
+		final OutputStream outputStream = connection.getOutputStream();
 		outputStream.write(data);
 		outputStream.flush();
 	}
 	
 	public void clearStreamData() throws IOException {
 
-		final InputStream inStream = getInputStream();
+		final InputStream inStream = connection.getInputStream();
 		
 		// Allocate message buffer max 255 bytes to read
 		byte[] message = new byte[255];
@@ -368,10 +364,10 @@ public class PacemateSerialPortConnection extends iSenseSerialPortConnection {
 		int index = 0;
 		int counter = 0;
 		int wait = 5;
-		waitDataAvailable(TIMEOUT);
+		connection.waitDataAvailable(TIMEOUT);
 
 		// Read the message - read CRLFcount lines of response
-		final InputStream inStream = getInputStream();
+		final InputStream inStream = connection.getInputStream();
 		while ((index < 255) && (counter < CRLFcount)) {
 			if (inStream.available() > 0) {
 				message[index] = (byte) inStream.read();
@@ -389,7 +385,7 @@ public class PacemateSerialPortConnection extends iSenseSerialPortConnection {
 				}
 				
 				try {
-					waitDataAvailable(1000);
+					connection.waitDataAvailable(1000);
 				} catch (final TimeoutException e) {
 					// Do nothing
 				}
@@ -442,7 +438,7 @@ public class PacemateSerialPortConnection extends iSenseSerialPortConnection {
 
 		} catch (Exception error) {
 			LOG.warn("Exception while waiting for connection", error);
-			Flushables.flushQuietly(this);
+			Flushables.flushQuietly(connection);
 			throw new IOException(error);
 		}
 
@@ -505,7 +501,7 @@ public class PacemateSerialPortConnection extends iSenseSerialPortConnection {
 		// LOG.debug("Sending data msg: " + Tools.toASCIIString(data));
 
 		// Send message
-		final OutputStream outputStream = getOutputStream();
+		final OutputStream outputStream = connection.getOutputStream();
 		outputStream.write(data);
 		outputStream.flush();
 

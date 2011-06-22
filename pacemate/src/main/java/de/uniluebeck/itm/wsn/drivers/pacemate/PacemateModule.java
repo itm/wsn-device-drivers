@@ -20,6 +20,7 @@ import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortEnterProgramModeO
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortLeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortSendOperation;
 import de.uniluebeck.itm.wsn.drivers.isense.iSenseResetOperation;
+import de.uniluebeck.itm.wsn.drivers.isense.iSenseSerialPortConnection;
 
 public class PacemateModule extends AbstractModule {
 
@@ -37,10 +38,9 @@ public class PacemateModule extends AbstractModule {
 		bind(WriteMacAddressOperation.class).toProvider(Providers.<WriteMacAddressOperation>of(null));
 		bind(WriteFlashOperation.class).toProvider(Providers.<WriteFlashOperation>of(null));
 		
-		PacemateSerialPortConnection connection = new PacemateSerialPortConnection();
-		bind(PacemateSerialPortConnection.class).toInstance(connection);
+		SerialPortConnection connection = new iSenseSerialPortConnection();
 		bind(SerialPortConnection.class).toInstance(connection);
 		bind(Connection.class).toInstance(connection);
+		bind(PacemateHelper.class);
 	}
-
 }

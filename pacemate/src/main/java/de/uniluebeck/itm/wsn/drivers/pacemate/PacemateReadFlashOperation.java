@@ -9,26 +9,26 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 
 public class PacemateReadFlashOperation extends AbstractReadFlashOperation {
 	
-	private final PacemateSerialPortConnection connection;
+	private final PacemateHelper helper;
 	
 	private final EnterProgramModeOperation enterProgramModeOperation;
 	
 	private final LeaveProgramModeOperation leaveProgramModeOperation;
 	
 	@Inject
-	public PacemateReadFlashOperation(PacemateSerialPortConnection connection,
+	public PacemateReadFlashOperation(PacemateHelper helper,
 			EnterProgramModeOperation enterProgramModeOperation,
 			LeaveProgramModeOperation leaveProgramModeOperation) {
-		this.connection = connection;
+		this.helper = helper;
 		this.enterProgramModeOperation = enterProgramModeOperation;
 		this.leaveProgramModeOperation = leaveProgramModeOperation;
 	}
 	
 	private byte[] readFlash(final ProgressManager progressManager) throws Exception {
-		connection.clearStreamData();
-		connection.autobaud();
+		helper.clearStreamData();
+		helper.autobaud();
 
-		connection.waitForBootLoader();
+		helper.waitForBootLoader();
 
 		// Return with success if the user has requested to cancel this
 		// operation
@@ -37,11 +37,11 @@ public class PacemateReadFlashOperation extends AbstractReadFlashOperation {
 		}
 		
 		// Send flash program request
-		connection.sendBootLoaderMessage(Messages.flashReadRequestMessage(getAddress(), getLength()));
+		helper.sendBootLoaderMessage(Messages.flashReadRequestMessage(getAddress(), getLength()));
 		progressManager.worked(0.5f);
 		
 		// Read flash program response
-		byte[] response = connection.receiveBootLoaderReplyReadData();
+		byte[] response = helper.receiveBootLoaderReplyReadData();
 		progressManager.done();
 		
 		// Return data

@@ -19,26 +19,26 @@ public class PacemateGetChipTypeOperation extends AbstractOperation<ChipType> im
 	 */
 	private static final Logger log = LoggerFactory.getLogger(PacemateGetChipTypeOperation.class);
 	
-	private final PacemateSerialPortConnection connection;
+	private final PacemateHelper helper;
 	
 	private final EnterProgramModeOperation enterProgramModeOperation;
 	
 	private final LeaveProgramModeOperation leaveProgramModeOperation;
 	
 	@Inject
-	public PacemateGetChipTypeOperation(PacemateSerialPortConnection connection,
+	public PacemateGetChipTypeOperation(PacemateHelper helper,
 			EnterProgramModeOperation enterProgramModeOperation,
 			LeaveProgramModeOperation leaveProgramModeOperation) {
-		this.connection = connection;
+		this.helper = helper;
 		this.enterProgramModeOperation = enterProgramModeOperation;
 		this.leaveProgramModeOperation = leaveProgramModeOperation;
 	}
 	
 	private ChipType getChipType(final ProgressManager progressManager) throws Exception {
-		connection.clearStreamData();
-		connection.autobaud();
+		helper.clearStreamData();
+		helper.autobaud();
 
-		connection.waitForBootLoader();
+		helper.waitForBootLoader();
 
 		// Return with success if the user has requested to cancel this
 		// operation
@@ -47,10 +47,10 @@ public class PacemateGetChipTypeOperation extends AbstractOperation<ChipType> im
 		}
 		
 		// Send chip type read request
-		connection.sendBootLoaderMessage(Messages.ReadPartIDRequestMessage());
+		helper.sendBootLoaderMessage(Messages.ReadPartIDRequestMessage());
 
 		// Read chip type read response
-		final String response = connection.receiveBootLoaderReplySuccess(Messages.CMD_SUCCESS);
+		final String response = helper.receiveBootLoaderReplySuccess(Messages.CMD_SUCCESS);
 		final ChipType chipType = ChipType.LPC2136;
 
 		if (response.compareTo("196387") != 0) {

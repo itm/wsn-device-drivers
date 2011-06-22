@@ -20,7 +20,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 	 */
 	private static final Logger log = LoggerFactory.getLogger(PacemateProgramOperation.class);
 
-	private final PacemateSerialPortConnection connection;
+	private final PacemateHelper helper;
 	
 	private final EnterProgramModeOperation enterProgramModeOperation;
 	
@@ -29,21 +29,21 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 	private final EraseFlashOperation eraseFlashOperation;
 
 	@Inject
-	public PacemateProgramOperation(PacemateSerialPortConnection connection,
+	public PacemateProgramOperation(PacemateHelper helper,
 			EnterProgramModeOperation enterProgramModeOperation,
 			LeaveProgramModeOperation leaveProgramModeOperation,
 			EraseFlashOperation eraseFlashOperation) {
-		this.connection = connection;
+		this.helper = helper;
 		this.enterProgramModeOperation = enterProgramModeOperation;
 		this.leaveProgramModeOperation = leaveProgramModeOperation;
 		this.eraseFlashOperation = eraseFlashOperation;
 	}
 	
 	private void program(final ProgressManager progressManager) throws Exception {		
-		connection.clearStreamData();
-		connection.autobaud();
+		helper.clearStreamData();
+		helper.autobaud();
 
-		connection.waitForBootLoader();
+		helper.waitForBootLoader();
 
 		// Return with success if the user has requested to cancel this
 		// operation
@@ -56,7 +56,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 		// Calc CRC and write it to the flash
 		final int flashCRC = binData.calcCRC();
 		log.debug("CRC: " + flashCRC);
-		connection.writeCRCtoFlash(flashCRC);
+		helper.writeCRCtoFlash(flashCRC);
 
 		// Write program to flash
 		BinDataBlock block = null;
@@ -68,7 +68,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 			final int address = block.getAddress();
 			
 			try {
-				connection.writeToRAM(PacemateSerialPortConnection.START_ADDRESS_IN_RAM, data.length);
+				helper.writeToRAM(PacemateHelper.START_ADDRESS_IN_RAM, data.length);
 			} catch (Exception e) {
 				log.error("Error while write to RAM! Operation will be cancelled!", e);
 				throw e;
@@ -103,7 +103,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 				}
 
 				try {
-					connection.sendDataMessage(binData.encode(line, line.length - offset));
+					helper.sendDataMessage(binData.encode(line, line.length - offset));
 				} catch (Exception e) {
 					log.error("Error while writing flash! Operation will be cancelled!", e);
 					throw e;
@@ -112,7 +112,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 				linecounter++;
 				if ((linecounter == 20) || (counter >= data.length)) {
 					try {
-						connection.sendChecksum(binData.crc);
+						helper.sendChecksum(binData.crc);
 					} catch (InvalidChecksumException e) {
 						log.debug("Invalid Checksum - resend last part");
 						// so resending the last 20 lines
@@ -130,15 +130,15 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 			try {
 				// if block is completed copy data from RAM to Flash
 				log.debug("Prepare Flash and Copy Ram to Flash " + blockCount + " " + blockNumber + " " + address);
-				connection.configureFlash(blockNumber, blockNumber);
+				helper.configureFlash(blockNumber, blockNumber);
 				if (data.length > 1024) {
-					connection.copyRAMToFlash(address, PacemateSerialPortConnection.START_ADDRESS_IN_RAM, 4096);
+					helper.copyRAMToFlash(address, PacemateHelper.START_ADDRESS_IN_RAM, 4096);
 				} else if (data.length > 512) {
-					connection.copyRAMToFlash(address, PacemateSerialPortConnection.START_ADDRESS_IN_RAM, 1024);
+					helper.copyRAMToFlash(address, PacemateHelper.START_ADDRESS_IN_RAM, 1024);
 				} else if (data.length > 512) {
-					connection.copyRAMToFlash(address, PacemateSerialPortConnection.START_ADDRESS_IN_RAM, 512);
+					helper.copyRAMToFlash(address, PacemateHelper.START_ADDRESS_IN_RAM, 512);
 				} else {
-					connection.copyRAMToFlash(address, PacemateSerialPortConnection.START_ADDRESS_IN_RAM, 256);
+					helper.copyRAMToFlash(address, PacemateHelper.START_ADDRESS_IN_RAM, 256);
 				}
 			} catch (Exception e) {
 				log.error("Error while copy RAM to Flash! Operation will be cancelled!", e);
