@@ -46,6 +46,10 @@ public class SimpleSerialPortConnection extends AbstractConnection
 	 * Logger for this class.
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(SimpleSerialPortConnection.class);
+	
+	private static final int[] DEFAULT_CHANNELS = new int[] { 
+		11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26 
+	};
 
 	/**
 	 * The timeout that will be waited for available data.
@@ -273,7 +277,7 @@ public class SimpleSerialPortConnection extends AbstractConnection
 	
 	@Override
 	public int[] getChannels() {
-		return new int[] { 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26 };
+		return DEFAULT_CHANNELS;
 	}
 	
 	public int getNormalBaudrate() {
