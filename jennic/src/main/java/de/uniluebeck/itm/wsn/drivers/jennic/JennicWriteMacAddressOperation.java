@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 
 import de.uniluebeck.itm.tr.util.StringUtils;
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
@@ -24,23 +23,32 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 	
 	private static final int BLOCKSIZE = 128;
 	
-	private final Injector injector;
+	private final JennicHelper helper;
 	
-	private final JennicSerialPortConnection connection;
+	private final GetChipTypeOperation getChipTypeOperation;
+	
+	private final EnterProgramModeOperation enterProgramModeOperation;
+	
+	private final LeaveProgramModeOperation leaveProgramModeOperation;
 	
 	@Inject
-	public JennicWriteMacAddressOperation(Injector injector) {
-		this.injector = injector;
-		this.connection = injector.getInstance(JennicSerialPortConnection.class);
+	public JennicWriteMacAddressOperation(JennicHelper helper,
+			GetChipTypeOperation getChipTypeOperation,
+			EnterProgramModeOperation enterProgramModeOperation,
+			LeaveProgramModeOperation leaveProgramModeOperation) {
+		this.helper = helper;
+		this.getChipTypeOperation = getChipTypeOperation;
+		this.enterProgramModeOperation = enterProgramModeOperation;
+		this.leaveProgramModeOperation = leaveProgramModeOperation;
 	}
 	
 	private void writeMacAddress(final ChipType chipType, final ProgressManager progressManager) throws Exception {
 		final MacAddress macAddress = getMacAddress();
 		
 		
-		// Wait for a connection
-		while (!isCanceled() && !connection.waitForConnection()) {
-			log.debug("Still waiting for a connection");
+		// Wait for a helper
+		while (!isCanceled() && !helper.waitForConnection()) {
+			log.debug("Still waiting for a helper");
 		}
 
 		// Return with success if the user has requested to cancel this
@@ -66,10 +74,10 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 		System.arraycopy(macAddress.toByteArray(), 0, sector[0], chipType.getHeaderStart(), macAddress.toByteArray().length);
 
 		// Configure flash
-		connection.configureFlash(chipType);
+		helper.configureFlash(chipType);
 
 		// Erase flash sector 0
-		connection.eraseFlash(Sector.FIRST);
+		helper.eraseFlash(Sector.FIRST);
 
 		// Write sector 0 with the new MAC
 		writeSector(progressManager.createSub(0.125f), Sector.FIRST, sector);
@@ -78,16 +86,16 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 	@Override
 	public Void execute(final ProgressManager progressManager) throws Exception {
 		log.trace("Writing mac address...");
-		final ChipType chipType = executeSubOperation(injector.getInstance(GetChipTypeOperation.class), progressManager.createSub(0.0625f));
+		final ChipType chipType = executeSubOperation(getChipTypeOperation, progressManager.createSub(0.0625f));
 		// Check if the user has cancelled the operation
 		if (isCanceled()) {
 			return null;
 		}
-		executeSubOperation(injector.getInstance(EnterProgramModeOperation.class), progressManager.createSub(0.0625f));
+		executeSubOperation(enterProgramModeOperation, progressManager.createSub(0.0625f));
 		try {
 			writeMacAddress(chipType, progressManager.createSub(0.8125f));
 		} finally {
-			executeSubOperation(injector.getInstance(LeaveProgramModeOperation.class), progressManager.createSub(0.0625f));
+			executeSubOperation(leaveProgramModeOperation, progressManager.createSub(0.0625f));
 		}
 		log.trace("Done, written MAC Address: " + getMacAddress());
 		return null;
@@ -110,7 +118,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 		final float worked = 1.0f / totalBlocks;
 		int address = start;
 		for (int readBlocks = 0; readBlocks < totalBlocks; readBlocks++) {
-			sector[readBlocks] = connection.readFlash(address, BLOCKSIZE);
+			sector[readBlocks] = helper.readFlash(address, BLOCKSIZE);
 			address += BLOCKSIZE;
 
 			progressManager.worked(worked);
@@ -124,7 +132,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 
 		// Read residue
 		if (residue > 0) {
-			sector[sector.length - 1] = connection.readFlash(address, residue);
+			sector[sector.length - 1] = helper.readFlash(address, residue);
 		}
 		return sector;
 	}
@@ -135,7 +143,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 		for (int i = 0; i < sector.length; ++i) {
 			log.trace("Writing sector " + index + ", block " + i + ": " + StringUtils.toHexString(sector[i]));
 			
-			connection.writeFlash(address, sector[i]);
+			helper.writeFlash(address, sector[i]);
 			
 			address += sector[i].length;
 			progressManager.worked(worked);

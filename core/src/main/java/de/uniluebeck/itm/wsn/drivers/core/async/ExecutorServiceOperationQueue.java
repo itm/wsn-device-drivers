@@ -57,7 +57,6 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	/**
 	 * Constructor.
 	 */
-	@Inject
 	public ExecutorServiceOperationQueue() {
 		this(Executors.newSingleThreadExecutor(
 				new ThreadFactoryBuilder().setNameFormat("OperationQueue-Thread %d").build()
@@ -70,6 +69,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	 *
 	 * @param executor Set a custom <code>PausableExecutorService</code>.
 	 */
+	@Inject
 	public ExecutorServiceOperationQueue(final ExecutorService executor) {
 		this.executor = executor;
 	}

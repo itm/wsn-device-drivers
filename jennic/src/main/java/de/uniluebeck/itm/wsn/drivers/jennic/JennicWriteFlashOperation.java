@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractWriteFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
@@ -18,21 +17,29 @@ public class JennicWriteFlashOperation extends AbstractWriteFlashOperation {
 	 */
 	private static final Logger log = LoggerFactory.getLogger(JennicWriteFlashOperation.class);
 	
-	private final Injector injector;
+	private final JennicHelper helper;
+	
+	private final EnterProgramModeOperation enterProgramModeOperation;
+	
+	private final LeaveProgramModeOperation leaveProgramModeOperation;
 	
 	@Inject
-	public JennicWriteFlashOperation(Injector injector) {
-		this.injector = injector;
+	public JennicWriteFlashOperation(JennicHelper helper,
+			EnterProgramModeOperation enterProgramModeOperation,
+			LeaveProgramModeOperation leaveProgramModeOperation) {
+		this.helper = helper;
+		this.enterProgramModeOperation = enterProgramModeOperation;
+		this.leaveProgramModeOperation = leaveProgramModeOperation;
 	}
 	
 	@Override
 	public Void execute(final ProgressManager monitor) throws Exception {
 		log.trace("Writing to flash...");
-		executeSubOperation(injector.getInstance(EnterProgramModeOperation.class), monitor.createSub(0.5f));
+		executeSubOperation(enterProgramModeOperation, monitor.createSub(0.5f));
 		try {
-			injector.getInstance(JennicSerialPortConnection.class).writeFlash(getAddress(), getData());
+			helper.writeFlash(getAddress(), getData());
 		} finally {
-			executeSubOperation(injector.getInstance(LeaveProgramModeOperation.class), monitor.createSub(0.5f));
+			executeSubOperation(leaveProgramModeOperation, monitor.createSub(0.5f));
 		}
 		log.trace("Flash written");
 		return null;

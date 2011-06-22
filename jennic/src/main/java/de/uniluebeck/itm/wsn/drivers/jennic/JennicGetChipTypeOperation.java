@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 import de.uniluebeck.itm.tr.util.StringUtils;
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
@@ -24,19 +23,19 @@ public class JennicGetChipTypeOperation extends AbstractOperation<ChipType>
 	 */
 	private static final Logger log = LoggerFactory.getLogger(JennicGetChipTypeOperation.class);
 
-	private final JennicSerialPortConnection device;
+	private final JennicHelper helper;
 	
-	private final Provider<EnterProgramModeOperation> enterProgramModeProvider;
+	private final EnterProgramModeOperation enterProgramModeOperation;
 	
-	private final Provider<LeaveProgramModeOperation> leaveProgramModeProvider;
+	private final LeaveProgramModeOperation leaveProgramModeOperation;
 
 	@Inject
-	public JennicGetChipTypeOperation(JennicSerialPortConnection device, 
-			Provider<EnterProgramModeOperation> enterProgramModeProvider, 
-			Provider<LeaveProgramModeOperation> leaveprogramModeProvider) {
-		this.device = device;
-		this.enterProgramModeProvider = enterProgramModeProvider;
-		this.leaveProgramModeProvider = leaveprogramModeProvider;
+	public JennicGetChipTypeOperation(JennicHelper helper, 
+			EnterProgramModeOperation enterProgramModeProvider, 
+			LeaveProgramModeOperation leaveprogramModeProvider) {
+		this.helper = helper;
+		this.enterProgramModeOperation = enterProgramModeProvider;
+		this.leaveProgramModeOperation = leaveprogramModeProvider;
 	}
 
 	private ChipType determineChipType(byte s, byte t) {
@@ -60,11 +59,11 @@ public class JennicGetChipTypeOperation extends AbstractOperation<ChipType>
 
 		ChipType chipType = ChipType.UNKNOWN;
 		
-		device.sendBootLoaderMessage(Messages.chipIdMessage());
+		helper.sendBootLoaderMessage(Messages.chipIdMessage());
 
 		try {
 			// Read chip type read response
-			byte[] res = device.receiveBootLoaderReply(Messages.CHIP_ID_RESPONSE);
+			byte[] res = helper.receiveBootLoaderReply(Messages.CHIP_ID_RESPONSE);
 			String S = "received: (len=" + res.length + ") ";
 			for (int i = 0; i < res.length; i++) {
 				S = S + "res[" + i + "]=" + StringUtils.toHexString(res[i]) + " ";
@@ -88,11 +87,11 @@ public class JennicGetChipTypeOperation extends AbstractOperation<ChipType>
 		} catch (UnexpectedResponseException e) {
 
 			// Send chip type read request
-			device.sendBootLoaderMessage(Messages.ramReadRequestMessage(
+			helper.sendBootLoaderMessage(Messages.ramReadRequestMessage(
 					0x100000FC, 0x0004));
 
 			// Read chip type read response
-			final byte[] response = device
+			final byte[] response = helper
 					.receiveBootLoaderReply(Messages.RAM_READ_RESPONSE);
 
 			// Throw error if reading failed
@@ -114,11 +113,11 @@ public class JennicGetChipTypeOperation extends AbstractOperation<ChipType>
 	@Override
 	public ChipType execute(final ProgressManager progressManager) throws Exception {
 		ChipType chipType = null;
-		executeSubOperation(enterProgramModeProvider.get(), progressManager.createSub(0.5f));
+		executeSubOperation(enterProgramModeOperation, progressManager.createSub(0.5f));
 		try {
 			chipType = getChipType(progressManager);
 		} finally {
-			executeSubOperation(leaveProgramModeProvider.get(), progressManager.createSub(0.5f));
+			executeSubOperation(leaveProgramModeOperation, progressManager.createSub(0.5f));
 		}
 		return chipType;
 	}

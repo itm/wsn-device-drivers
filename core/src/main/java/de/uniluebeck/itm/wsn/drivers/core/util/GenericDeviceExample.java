@@ -80,18 +80,6 @@ public class GenericDeviceExample implements ConnectionListener {
 	private static final int EXECUTOR_TIMEOUT = 10;
 	
 	/**
-	 * Executor Service for the OperationQueue.
-	 */
-	private final ExecutorService queueExecutorService = Executors.newSingleThreadExecutor(
-			new ThreadFactoryBuilder().setNameFormat("OperationQueue-Thread %d").build()
-	);
-	
-	/**
-	 * The queue used for this example.
-	 */
-	private final OperationQueue queue = new ExecutorServiceOperationQueue(queueExecutorService);
-	
-	/**
 	 * The device async reference for this example.
 	 */
 	private DeviceAsync deviceAsync;
@@ -131,6 +119,9 @@ public class GenericDeviceExample implements ConnectionListener {
 		exampleModule = new AbstractModule() {
 			@Override
 			protected void configure() {
+				bind(ExecutorService.class).toInstance(Executors.newSingleThreadExecutor(
+						new ThreadFactoryBuilder().setNameFormat("OperationQueue-Thread %d").build()
+				));
 				bind(ScheduledExecutorService.class).toInstance(Executors.newScheduledThreadPool(2, 
 						new ThreadFactoryBuilder().setNameFormat("GenericDeviceExample-Thread %d").build()
 				));
@@ -416,6 +407,7 @@ public class GenericDeviceExample implements ConnectionListener {
 	 */
 	private void waitForOperationsToFinish() {
 		// Wait until the queue is empty.
+		OperationQueue queue = injector.getInstance(OperationQueue.class);
 		while (!queue.getOperations().isEmpty()) {
 			try {
 				Thread.sleep(DEFAULT_SLEEP);
@@ -452,7 +444,7 @@ public class GenericDeviceExample implements ConnectionListener {
 		Closeables.closeQuietly(outputStream);
 		System.out.println("OutputStream closed");
 		System.out.println("Shutting down queue...");
-		ExecutorUtils.shutdown(queueExecutorService, EXECUTOR_TIMEOUT, TimeUnit.SECONDS);
+		ExecutorUtils.shutdown(injector.getInstance(ExecutorService.class), EXECUTOR_TIMEOUT, TimeUnit.SECONDS);
 		System.out.println("Queue terminated");
 		System.out.println("Shutting down executor...");
 		ExecutorUtils.shutdown(injector.getInstance(ScheduledExecutorService.class), EXECUTOR_TIMEOUT, TimeUnit.SECONDS);

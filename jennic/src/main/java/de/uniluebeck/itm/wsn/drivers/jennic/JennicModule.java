@@ -19,6 +19,7 @@ import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortEnterProgramModeO
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortLeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortSendOperation;
 import de.uniluebeck.itm.wsn.drivers.isense.iSenseResetOperation;
+import de.uniluebeck.itm.wsn.drivers.isense.iSenseSerialPortConnection;
 
 public class JennicModule extends AbstractModule {
 
@@ -37,10 +38,10 @@ public class JennicModule extends AbstractModule {
 		bind(WriteMacAddressOperation.class).to(JennicWriteMacAddressOperation.class);
 		bind(WriteFlashOperation.class).to(JennicWriteFlashOperation.class);
 		
-		JennicSerialPortConnection connection = new JennicSerialPortConnection();
-		bind(JennicSerialPortConnection.class).toInstance(connection);
+		SerialPortConnection connection = new iSenseSerialPortConnection();
 		bind(SerialPortConnection.class).toInstance(connection);
 		bind(Connection.class).toInstance(connection);
+		bind(JennicHelper.class);
 	}
 
 }

@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import org.apache.log4j.Logger;
 
 import com.google.common.io.Flushables;
+import com.google.inject.Inject;
 
 import de.uniluebeck.itm.tr.util.StringUtils;
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
@@ -16,21 +17,22 @@ import de.uniluebeck.itm.wsn.drivers.core.exception.FlashProgramFailedException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.InvalidChecksumException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.UnexpectedResponseException;
-import de.uniluebeck.itm.wsn.drivers.isense.iSenseSerialPortConnection;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 import de.uniluebeck.itm.wsn.drivers.isense.exception.FlashTypeReadFailedException;
 import de.uniluebeck.itm.wsn.drivers.jennic.exception.SectorEraseException;
 
-
-/**
- * Helper class for easier finding an apropriate connection for jennic.
- * 
- * @author Malte Legenhausen
- */
-public class JennicSerialPortConnection extends iSenseSerialPortConnection {
-
-	private static final Logger LOG = Logger.getLogger(JennicSerialPortConnection.class);
+public class JennicHelper {
+	
+	private static final Logger LOG = Logger.getLogger(JennicHelper.class);
 	
 	private static final int TIMEOUT = 2500;
+	
+	private final SerialPortConnection connection;
+	
+	@Inject
+	public JennicHelper(SerialPortConnection connection) {
+		this.connection = connection;
+	}
 	
 	public FlashType getFlashType() throws Exception {
 		// Send flash type read request
@@ -135,7 +137,7 @@ public class JennicSerialPortConnection extends iSenseSerialPortConnection {
 		data[data.length - 1] = Messages.calculateChecksum(data, 0, data.length - 1);
 
 		// Send message
-		final OutputStream outStream = getOutputStream();
+		final OutputStream outStream = connection.getOutputStream();
 		outStream.write(data);
 		outStream.flush();
 	}
@@ -145,9 +147,9 @@ public class JennicSerialPortConnection extends iSenseSerialPortConnection {
 	 */
 	public byte[] receiveBootLoaderReply(int type) throws TimeoutException, UnexpectedResponseException, InvalidChecksumException, IOException, NullPointerException {
 		LOG.trace("Receiving Boot Loader Reply...");
-		final InputStream inputStream = getInputStream();
+		final InputStream inputStream = connection.getInputStream();
 		
-		waitDataAvailable(TIMEOUT);
+		connection.waitDataAvailable(TIMEOUT);
 		// Read message length
 		int length = (int) inputStream.read();
 		LOG.trace("receiveBootLoaderReply length: " + length);
@@ -157,13 +159,13 @@ public class JennicSerialPortConnection extends iSenseSerialPortConnection {
 
 		// Read rest of the message (except the checksum
 		for (int i = 0; i < message.length; ++i) {
-			waitDataAvailable(TIMEOUT);
+			connection.waitDataAvailable(TIMEOUT);
 			message[i] = (byte) inputStream.read();
 		}
 		LOG.trace("Received boot loader msg: " + StringUtils.toHexString(message));
 
 		// Read checksum
-		waitDataAvailable(TIMEOUT);
+		connection.waitDataAvailable(TIMEOUT);
 		byte recvChecksum = (byte) inputStream.read();
 		LOG.trace("Received Checksum: " + StringUtils.toHexString(recvChecksum));
 
@@ -203,7 +205,7 @@ public class JennicSerialPortConnection extends iSenseSerialPortConnection {
 			LOG.error("Exception while waiting for connection", e);
 		}
 
-		Flushables.flushQuietly(this);
+		Flushables.flushQuietly(connection);
 		return false;
 	}
 	
