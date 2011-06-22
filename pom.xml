@@ -193,7 +193,6 @@
 		<module>telosb</module>
 		<module>factories</module>
 		<module>mock</module>
-		<module>null</module>
 	</modules>
 
 	<distributionManagement>
