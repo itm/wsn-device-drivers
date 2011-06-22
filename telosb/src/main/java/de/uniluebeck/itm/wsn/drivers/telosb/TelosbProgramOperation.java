@@ -5,9 +5,14 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
+
 import de.uniluebeck.itm.wsn.drivers.core.exception.FlashProgramFailedException;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractProgramOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
+import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
 import de.uniluebeck.itm.wsn.drivers.core.util.BinDataBlock;
 
 public class TelosbProgramOperation extends AbstractProgramOperation {
@@ -17,10 +22,23 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 	 */
 	private static final Logger log = LoggerFactory.getLogger(TelosbProgramOperation.class);
 	
-	private final TelosbDevice device;
+	private final EnterProgramModeOperation enterProgramModeOperation;
 	
-	public TelosbProgramOperation(TelosbDevice device) {
-		this.device = device;
+	private final LeaveProgramModeOperation leaveProgramModeOperation;
+	
+	private final ResetOperation resetOperation;
+	
+	private final BSLTelosb bsl;
+	
+	@Inject
+	public TelosbProgramOperation(EnterProgramModeOperation enterProgramModeOperation,
+			LeaveProgramModeOperation leaveProgramModeOperation,
+			ResetOperation resetOperation,
+			BSLTelosb bsl) {
+		this.enterProgramModeOperation = enterProgramModeOperation;
+		this.leaveProgramModeOperation = leaveProgramModeOperation;
+		this.resetOperation = resetOperation;
+		this.bsl = bsl;
 	}
 	
 	private void program(final ProgressManager progressManager) throws Exception {
@@ -38,7 +56,7 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 			
 			// write single block
 			try {
-				device.writeFlash(address, data, data.length);
+				bsl.writeFlash(address, data, data.length);
 			} catch (FlashProgramFailedException e) {
 				log.error(String.format("Error writing %d bytes into flash " +
 						"at address 0x%02x: " + e + ". Programmed " + bytesProgrammed + " bytes so far. "+
@@ -66,13 +84,13 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 	
 	@Override
 	public Void execute(final ProgressManager progressManager) throws Exception {
-		executeSubOperation(device.createEnterProgramModeOperation(), progressManager.createSub(0.125f));
+		executeSubOperation(enterProgramModeOperation, progressManager.createSub(0.125f));
 		try {
 			program(progressManager.createSub(0.75f));
 		} finally {
-			executeSubOperation(device.createLeaveProgramModeOperation(), progressManager.createSub(0.0625f));
+			executeSubOperation(leaveProgramModeOperation, progressManager.createSub(0.0625f));
 		}
-		executeSubOperation(device.createResetOperation(), progressManager.createSub(0.0625f));
+		executeSubOperation(resetOperation, progressManager.createSub(0.0625f));
 		return null;
 	}
 

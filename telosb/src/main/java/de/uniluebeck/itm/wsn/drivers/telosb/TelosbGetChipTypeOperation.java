@@ -6,7 +6,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 
 public class TelosbGetChipTypeOperation extends AbstractOperation<ChipType> implements GetChipTypeOperation {
-
+	
 	@Override
 	public ChipType execute(ProgressManager progressManager) throws Exception {
 		return ChipType.TelosB;

@@ -2,9 +2,7 @@ package de.uniluebeck.itm.wsn.drivers.telosb;
 
 import java.io.InputStream;
 
-import de.uniluebeck.itm.wsn.drivers.core.Device;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
-import de.uniluebeck.itm.wsn.drivers.core.util.GenericDeviceExample;
+import de.uniluebeck.itm.wsn.drivers.core.util.GuiceDeviceExample;
 import de.uniluebeck.itm.wsn.drivers.isense.MessagePacketReceiver;
 
 public class TelosbDeviceExample {
@@ -13,11 +11,9 @@ public class TelosbDeviceExample {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		final SerialPortConnection connection = new TelosbSerialPortConnection();		
-		final Device<SerialPortConnection> device = new TelosbDevice(connection);
-		final GenericDeviceExample example = new GenericDeviceExample();
+		final GuiceDeviceExample example = new GuiceDeviceExample();
 		example.addByteReceiver(new MessagePacketReceiver());
-		example.setDevice(device);
+		example.setModule(new TelosbModule());
 		example.setUri(args[0]);
 		InputStream stream = TelosbDeviceExample.class.getResourceAsStream("/de/uniluebeck/itm/wsn/drivers/telosb/telosb.ihex");
 		example.setImageInputStream(stream);
