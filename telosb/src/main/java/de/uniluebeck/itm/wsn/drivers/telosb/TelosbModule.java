@@ -19,7 +19,6 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortLeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortSendOperation;
-import de.uniluebeck.itm.wsn.drivers.isense.iSenseResetOperation;
 
 public class TelosbModule extends AbstractModule {
 
@@ -32,14 +31,13 @@ public class TelosbModule extends AbstractModule {
 		bind(ProgramOperation.class).to(TelosbProgramOperation.class);
 		bind(ReadFlashOperation.class).toProvider(Providers.<ReadFlashOperation>of(null));
 		bind(ReadMacAddressOperation.class).toProvider(Providers.<ReadMacAddressOperation>of(null));
-		bind(ResetOperation.class).to(iSenseResetOperation.class);
+		bind(ResetOperation.class).to(TelosbResetOperation.class);
 		bind(SendOperation.class).to(SerialPortSendOperation.class);
 		bind(WriteMacAddressOperation.class).toProvider(Providers.<WriteMacAddressOperation>of(null));
 		bind(WriteFlashOperation.class).to(TelosbWriteFlashOperation.class);
 		bind(BSLTelosb.class).in(Singleton.class);
 		
-		TelosbSerialPortConnection connection = new TelosbSerialPortConnection();
-		bind(TelosbSerialPortConnection.class).toInstance(connection);
+		SerialPortConnection connection = new TelosbSerialPortConnection();
 		bind(SerialPortConnection.class).toInstance(connection);
 		bind(Connection.class).toInstance(connection);
 	}
