@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
+import com.google.common.util.concurrent.SimpleTimeLimiter;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import de.uniluebeck.itm.tr.util.ExecutorUtils;
@@ -86,7 +87,7 @@ public class GenericDeviceExample implements ConnectionListener {
 	/**
 	 * The queue used for this example.
 	 */
-	private final OperationQueue queue = new ExecutorServiceOperationQueue(queueExecutorService);
+	private OperationQueue queue;
 	
 	/**
 	 * Default null device.
@@ -162,9 +163,10 @@ public class GenericDeviceExample implements ConnectionListener {
 	 * Should be called after all parameters has been set.
 	 */
 	private void init() {
-		deviceExecutorService = Executors.newScheduledThreadPool(2, 
+		deviceExecutorService = Executors.newScheduledThreadPool(3, 
 				new ThreadFactoryBuilder().setNameFormat("GenericDeviceExample-Thread %d").build()
 		);
+		queue = new ExecutorServiceOperationQueue(queueExecutorService, new SimpleTimeLimiter(deviceExecutorService));
 		connection = device.getConnection();
 		connection.addListener(this);
 		deviceAsync = new QueuedDeviceAsync(deviceExecutorService, queue, device);
