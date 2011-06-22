@@ -1,11 +1,8 @@
 package de.uniluebeck.itm.wsn.drivers.core.async;
 
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
+import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
-import de.uniluebeck.itm.wsn.drivers.core.io.HasInputStream;
-import de.uniluebeck.itm.wsn.drivers.core.io.HasOutputStream;
-
-import java.io.Closeable;
 
 
 /**
@@ -15,7 +12,7 @@ import java.io.Closeable;
  * 
  * @author Malte Legenhausen
  */
-public interface DeviceAsync extends HasInputStream, HasOutputStream, Closeable {
+public interface DeviceAsync extends Connection {
 	
 	/**
 	 * Returns the chip type of this device.

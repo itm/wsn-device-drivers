@@ -19,7 +19,6 @@ import com.google.inject.Singleton;
 
 import de.uniluebeck.itm.tr.util.ExecutorUtils;
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
-import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.ConnectionEvent;
 import de.uniluebeck.itm.wsn.drivers.core.ConnectionListener;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
@@ -27,12 +26,18 @@ import de.uniluebeck.itm.wsn.drivers.core.async.AsyncAdapter;
 import de.uniluebeck.itm.wsn.drivers.core.async.AsyncCallback;
 import de.uniluebeck.itm.wsn.drivers.core.async.DeviceAsync;
 import de.uniluebeck.itm.wsn.drivers.core.async.ExecutorServiceOperationQueue;
-import de.uniluebeck.itm.wsn.drivers.core.async.GuiceDeviceAsync;
 import de.uniluebeck.itm.wsn.drivers.core.async.OperationQueue;
+import de.uniluebeck.itm.wsn.drivers.core.async.QueuedDeviceAsync;
 import de.uniluebeck.itm.wsn.drivers.core.io.ByteReceiver;
 import de.uniluebeck.itm.wsn.drivers.core.io.InputStreamReaderService;
 
-public class GuiceDeviceExample implements ConnectionListener {
+
+/**
+ * This class can be used for testing on physical devices. Simple set all parameters and execute the run method.
+ * 
+ * @author Malte Legenhausen
+ */
+public class GenericDeviceExample implements ConnectionListener {
 	
 	/**
 	 * Default sleep for the thread.
@@ -87,11 +92,6 @@ public class GuiceDeviceExample implements ConnectionListener {
 	private final OperationQueue queue = new ExecutorServiceOperationQueue(queueExecutorService);
 	
 	/**
-	 * Default null connection.
-	 */
-	private Connection connection = null;
-	
-	/**
 	 * The device async reference for this example.
 	 */
 	private DeviceAsync deviceAsync;
@@ -120,8 +120,6 @@ public class GuiceDeviceExample implements ConnectionListener {
 	 * The example message packet that is send to the device.
 	 */
 	private byte[] messagePacket;
-
-	private ScheduledExecutorService deviceExecutorService;
 	
 	private OutputStream outputStream;
 	
@@ -129,7 +127,7 @@ public class GuiceDeviceExample implements ConnectionListener {
 	
 	private final Module exampleModule;
 	
-	public GuiceDeviceExample() {
+	public GenericDeviceExample() {
 		exampleModule = new AbstractModule() {
 			@Override
 			protected void configure() {
@@ -137,6 +135,7 @@ public class GuiceDeviceExample implements ConnectionListener {
 						new ThreadFactoryBuilder().setNameFormat("GenericDeviceExample-Thread %d").build()
 				));
 				bind(OperationQueue.class).to(ExecutorServiceOperationQueue.class).in(Singleton.class);
+				bind(DeviceAsync.class).to(QueuedDeviceAsync.class).in(Singleton.class);
 			}
 		};
 	}
@@ -162,7 +161,7 @@ public class GuiceDeviceExample implements ConnectionListener {
 		System.arraycopy(aMessagePacket, 0, this.messagePacket, 0, aMessagePacket.length);
 	}
 	
-	public void setModule(AbstractModule module) {
+	public void setModule(Module module) {
 		injector = Guice.createInjector(exampleModule, module);
 	}
 
@@ -171,10 +170,8 @@ public class GuiceDeviceExample implements ConnectionListener {
 	 * Should be called after all parameters has been set.
 	 */
 	private void init() {
-		deviceExecutorService = injector.getInstance(ScheduledExecutorService.class);
-		connection = injector.getInstance(Connection.class);
-		connection.addListener(this);
-		deviceAsync = new GuiceDeviceAsync(injector);
+		deviceAsync = injector.getInstance(DeviceAsync.class);
+		deviceAsync.addListener(this);
 		outputStream = deviceAsync.getOutputStream();
 	}
 	
@@ -183,7 +180,7 @@ public class GuiceDeviceExample implements ConnectionListener {
 	 */
 	private void connect() {
 		System.out.println("Connecting to: " + uri);
-		connection.connect(uri);
+		deviceAsync.connect(uri);
 	}
 	
 	/**
@@ -458,10 +455,10 @@ public class GuiceDeviceExample implements ConnectionListener {
 		ExecutorUtils.shutdown(queueExecutorService, EXECUTOR_TIMEOUT, TimeUnit.SECONDS);
 		System.out.println("Queue terminated");
 		System.out.println("Shutting down executor...");
-		ExecutorUtils.shutdown(deviceExecutorService, EXECUTOR_TIMEOUT, TimeUnit.SECONDS);
+		ExecutorUtils.shutdown(injector.getInstance(ScheduledExecutorService.class), EXECUTOR_TIMEOUT, TimeUnit.SECONDS);
 		System.out.println("Executor shut down");
 		System.out.println("Closing connection...");
-		Closeables.closeQuietly(connection);
+		Closeables.closeQuietly(deviceAsync);
 		System.out.println("Connection closed");
 		
 	}

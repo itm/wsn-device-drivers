@@ -26,6 +26,7 @@ import com.google.inject.Injector;
 
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
+import de.uniluebeck.itm.wsn.drivers.core.ConnectionListener;
 import de.uniluebeck.itm.wsn.drivers.core.DataAvailableListener;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import de.uniluebeck.itm.wsn.drivers.core.State;
@@ -48,11 +49,11 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
  * 
  * @author Malte Legenhausen
  */
-public class GuiceDeviceAsync implements DeviceAsync {
+public class QueuedDeviceAsync implements DeviceAsync {
 	/**
 	 * Logger for this class.
 	 */
-	private static final Logger LOG = LoggerFactory.getLogger(GuiceDeviceAsync.class);
+	private static final Logger LOG = LoggerFactory.getLogger(QueuedDeviceAsync.class);
 
 	/**
 	 * Message for the exception that is thrown when a negative timeout was given.
@@ -150,12 +151,12 @@ public class GuiceDeviceAsync implements DeviceAsync {
 	 * @param device The <code>Device</code> that provides all operations that can be executed.
 	 */
 	@Inject
-	public GuiceDeviceAsync(Injector injector) {
+	public QueuedDeviceAsync(OperationQueue queue, Connection connection, ScheduledExecutorService executorService, 
+			Injector injector) {
 		this.injector = injector;
-		connection = injector.getInstance(Connection.class);
-		executorService = injector.getInstance(ScheduledExecutorService.class);
-
-		this.queue = injector.getInstance(OperationQueue.class);
+		this.connection = connection;
+		this.executorService = executorService;
+		this.queue = queue;
 
 		try {
 			this.inputStreamPipedInputStream.connect(inputStreamPipedOutputStream);
@@ -302,6 +303,42 @@ public class GuiceDeviceAsync implements DeviceAsync {
 		} catch (ExecutionException e) {
 			throw new IOException(e);
 		}
+		connection.close();
+	}
+	
+	@Override
+	public void addListener(ConnectionListener listener) {
+		connection.addListener(listener);
+	}
+	
+	@Override
+	public void removeListener(ConnectionListener listener) {
+		connection.removeListener(listener);
+	}
+	
+	@Override
+	public void connect(String uri) {
+		connection.connect(uri);
+	}
+
+	@Override
+	public boolean isConnected() {
+		return connection.isConnected();
+	}
+
+	@Override
+	public void addListener(DataAvailableListener listener) {
+		connection.addListener(listener);
+	}
+
+	@Override
+	public void removeListener(DataAvailableListener listener) {
+		connection.removeListener(listener);
+	}
+
+	@Override
+	public int[] getChannels() {
+		return connection.getChannels();
 	}
 
 	private void checkNotNullOperation(Operation<?> operation, String message) {

@@ -1,7 +1,7 @@
 package de.uniluebeck.itm.wsn.drivers.mock;
 
 import de.uniluebeck.itm.wsn.drivers.core.io.BufferedByteReceiver;
-import de.uniluebeck.itm.wsn.drivers.core.util.GuiceDeviceExample;
+import de.uniluebeck.itm.wsn.drivers.core.util.GenericDeviceExample;
 
 
 /**
@@ -17,7 +17,7 @@ public class MockDeviceExample {
 	 * @param args Program parameters.
 	 */
 	public static void main(final String[] args) {
-		final GuiceDeviceExample example = new GuiceDeviceExample();
+		final GenericDeviceExample example = new GenericDeviceExample();
 		example.addByteReceiver(new BufferedByteReceiver());
 		example.setModule(new MockModule());
 		example.setMessage("This is a test message".getBytes());
