@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.util.concurrent.ListenableFutureTask;
 import com.google.common.util.concurrent.SimpleTimeLimiter;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.common.util.concurrent.TimeLimiter;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -87,10 +86,8 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	 * Constructor.
 	 */
 	public ExecutorServiceOperationQueue() {
-		this(Executors.newSingleThreadExecutor(
-				new ThreadFactoryBuilder().setNameFormat("OperationQueue-Thread %d").build()
-			), new SimpleTimeLimiter()
-		);
+		executorService = Executors.newFixedThreadPool(2);
+		timeLimiter = new SimpleTimeLimiter(executorService);
 	}
 
 	/**
@@ -124,8 +121,6 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 		operation.setAsyncCallback(callback);
 		operation.setTimeout(timeout);
 		operation.setTimeLimiter(timeLimiter);
-
-		// Add listener for removing operation.
 		operation.addListener(new OperationAdapter<T>() {
 			@Override
 			public void afterStateChanged(StateChangedEvent<T> event) {
