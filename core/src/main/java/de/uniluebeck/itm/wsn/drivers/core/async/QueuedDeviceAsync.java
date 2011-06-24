@@ -6,21 +6,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterators;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
@@ -30,8 +20,6 @@ import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.ConnectionListener;
 import de.uniluebeck.itm.wsn.drivers.core.DataAvailableListener;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
-import de.uniluebeck.itm.wsn.drivers.core.State;
-import de.uniluebeck.itm.wsn.drivers.core.event.StateChangedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.io.SendOutputStreamWrapper;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
@@ -76,75 +64,12 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	 * Queue that schedules all <code>Operation</code> instances.
 	 */
 	private final OperationQueue queue;
-
-	private PipedInputStream inputStreamPipedInputStream = new PipedInputStream();
-
-	private PipedOutputStream inputStreamPipedOutputStream = new PipedOutputStream();
-
-	private volatile boolean deviceInputStreamAvailableForReading = true;
-
-	private final Lock deviceInputStreamLock = new ReentrantLock();
-
-	private final Condition deviceInputStreamDataAvailable = deviceInputStreamLock.newCondition();
-
-	private Future<?> deviceInputStreamToPipeCopyWorkerFuture;
 	
 	private final Injector injector;
 	
 	private final Connection connection;
 	
 	private final ScheduledExecutorService executorService;
-
-	private class DeviceInputStreamToPipeCopyWorker implements Runnable {
-		
-		private static final int DATA_AVAILABLE_TIMEOUT = 50;
-		
-		private volatile boolean shutdown = false;
-
-		@Override
-		public void run() {
-			try {
-				final InputStream inputStream = connection.getInputStream();
-				while (!shutdown) {
-					deviceInputStreamLock.lock();
-					try {
-						deviceInputStreamDataAvailable.await(DATA_AVAILABLE_TIMEOUT, TimeUnit.MILLISECONDS);
-					} catch (InterruptedException e) {
-						LOG.error("" + e, e);
-					} finally {
-						deviceInputStreamLock.unlock();
-					}
-
-					if (connection.isConnected() && deviceInputStreamAvailableForReading) {
-						copyAvailableBytes(inputStream, inputStreamPipedOutputStream);
-					}
-				}
-			} catch (IOException e) {
-				LOG.error("IOException while reading from device InputStream: " + e, e);
-			}
-		}
-
-		private void copyAvailableBytes(final InputStream inputStream, final OutputStream outputStream)
-				throws IOException {
-
-			final int bytesAvailable = inputStream.available();
-
-			if (bytesAvailable > 0) {
-
-				byte[] buffer = new byte[bytesAvailable];
-				final int read = inputStream.read(buffer);
-
-				outputStream.write(buffer, 0, read);
-			}
-		}
-		
-		public void shutdown() {
-			shutdown = true;
-		}
-	}
-	
-	private final DeviceInputStreamToPipeCopyWorker deviceInputStreamToPipeCopyWorker =
-			new DeviceInputStreamToPipeCopyWorker();
 
 	/**
 	 * Constructor.
@@ -159,33 +84,6 @@ public class QueuedDeviceAsync implements DeviceAsync {
 		this.connection = connection;
 		this.executorService = executorService;
 		this.queue = queue;
-
-		try {
-			this.inputStreamPipedInputStream.connect(inputStreamPipedOutputStream);
-		} catch (IOException e) {
-			LOG.error("" + e, e);
-			throw new RuntimeException(e);
-		}
-
-		queue.addListener(new OperationQueueAdapter<Object>() {
-			@Override
-			public void afterStateChanged(final StateChangedEvent<Object> event) {
-				deviceInputStreamAvailableForReading = !isOperationRunning();
-			}
-		});
-
-		connection.addListener(new DataAvailableListener() {
-			@Override
-			public void dataAvailable(final Connection connection) {
-				deviceInputStreamLock.lock();
-				try {
-					deviceInputStreamDataAvailable.signal();
-				} finally {
-					deviceInputStreamLock.unlock();
-				}
-			}
-		});
-		deviceInputStreamToPipeCopyWorkerFuture = executorService.submit(deviceInputStreamToPipeCopyWorker);
 	}
 
 	@Override
@@ -286,7 +184,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 
 	@Override
 	public InputStream getInputStream() {
-		return inputStreamPipedInputStream;
+		return injector.getInstance(InputStream.class);
 	}
 
 	@Override
@@ -296,15 +194,6 @@ public class QueuedDeviceAsync implements DeviceAsync {
 
 	@Override
 	public void close() throws IOException {
-		deviceInputStreamToPipeCopyWorker.shutdown();
-		try {
-			// wait until worker has finished execution
-			deviceInputStreamToPipeCopyWorkerFuture.get();
-		} catch (InterruptedException e) {
-			throw new IOException(e);
-		} catch (ExecutionException e) {
-			throw new IOException(e);
-		}
 		connection.close();
 	}
 	
@@ -347,14 +236,5 @@ public class QueuedDeviceAsync implements DeviceAsync {
 		if (operation == null) {
 			throw new UnsupportedOperationException(message);
 		}
-	}
-
-	private boolean isOperationRunning() {
-		return Iterators.any(queue.getOperations().iterator(), new Predicate<Operation<?>>() {
-			@Override
-			public boolean apply(Operation<?> input) {
-				return State.RUNNING.equals(input.getState());
-			}
-		});
 	}
 }

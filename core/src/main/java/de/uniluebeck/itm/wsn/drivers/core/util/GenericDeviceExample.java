@@ -3,6 +3,8 @@ package de.uniluebeck.itm.wsn.drivers.core.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -26,6 +28,8 @@ import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import de.uniluebeck.itm.wsn.drivers.core.async.AsyncAdapter;
 import de.uniluebeck.itm.wsn.drivers.core.async.AsyncCallback;
 import de.uniluebeck.itm.wsn.drivers.core.async.DeviceAsync;
+import de.uniluebeck.itm.wsn.drivers.core.async.Idle;
+import de.uniluebeck.itm.wsn.drivers.core.async.InputStreamCopyRunnable;
 import de.uniluebeck.itm.wsn.drivers.core.async.OperationQueue;
 import de.uniluebeck.itm.wsn.drivers.core.io.ByteReceiver;
 import de.uniluebeck.itm.wsn.drivers.core.io.InputStreamReaderService;
@@ -121,10 +125,20 @@ public class GenericDeviceExample implements ConnectionListener {
 				ScheduledExecutorService executor = Executors.newScheduledThreadPool(4, 
 						new ThreadFactoryBuilder().setNameFormat("GenericDeviceExample-Thread %d").build()
 				);
+				PipedInputStream inputStream = new PipedInputStream();
+				PipedOutputStream outputStream = new PipedOutputStream();
+				try {
+					inputStream.connect(outputStream);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 				TimeLimiter timeLimiter = new SimpleTimeLimiter(executor);
 				bind(ExecutorService.class).toInstance(executor);
 				bind(ScheduledExecutorService.class).toInstance(executor);
 				bind(TimeLimiter.class).toInstance(timeLimiter);
+				bind(Runnable.class).annotatedWith(Idle.class).to(InputStreamCopyRunnable.class);
+				bind(InputStream.class).toInstance(inputStream);
+				bind(OutputStream.class).toInstance(outputStream);
 			}
 		};
 	}

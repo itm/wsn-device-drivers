@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 
 import javax.annotation.Nullable;
 
@@ -22,6 +23,7 @@ import com.google.common.util.concurrent.SimpleTimeLimiter;
 import com.google.common.util.concurrent.TimeLimiter;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 
 import de.uniluebeck.itm.wsn.drivers.core.event.AddedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.event.RemovedEvent;
@@ -81,6 +83,10 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	 * The TimeLimiter used for all operations to limit the execution time.
 	 */
 	private final TimeLimiter timeLimiter;
+	
+	private final Runnable idleRunnable;
+	
+	private FutureTask<Void> idleFuture = null;
 
 	/**
 	 * Constructor.
@@ -88,6 +94,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	public ExecutorServiceOperationQueue() {
 		executorService = Executors.newFixedThreadPool(2);
 		timeLimiter = new SimpleTimeLimiter(executorService);
+		idleRunnable = null;
 	}
 
 	/**
@@ -96,9 +103,12 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	 * @param executorService Set a custom <code>PausableExecutorService</code>.
 	 */
 	@Inject
-	public ExecutorServiceOperationQueue(ExecutorService executorService, TimeLimiter timeLimiter) {
+	public ExecutorServiceOperationQueue(ExecutorService executorService, TimeLimiter timeLimiter, 
+			@Nullable @Idle Runnable idleRunnable) {
 		this.executorService = executorService;
 		this.timeLimiter = timeLimiter;
+		this.idleRunnable = idleRunnable;
+		startIdleThread();
 	}
 
 	/**
@@ -118,6 +128,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 		checkNotNull(operation, "Null Operation is not allowed.");
 		checkArgument(timeout >= 0, "Negative timeout is not allowed.");
 
+		// Init operation.
 		operation.setAsyncCallback(callback);
 		operation.setTimeout(timeout);
 		operation.setTimeLimiter(timeLimiter);
@@ -128,6 +139,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 			}
 		});
 
+		// Add to queue
 		ListenableFutureTask<T> future = new ListenableFutureTask<T>(operation);
 		future.addListener(new OperationFinishedRunnable(operation), executorService);
 		synchronized (operations) {
@@ -154,10 +166,13 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	 */
 	private void executeNext() {
 		if (!operations.isEmpty()) {
+			stopIdleThread();
 			Operation<?> operation = operations.get(0);
 			Runnable runnable = runnables.get(operation);
 			LOG.trace("Submit {} to executorService.", operation.getClass().getName());
 			executorService.execute(runnable);
+		} else {
+			startIdleThread();
 		}
 	}
 
@@ -185,6 +200,29 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 		runnables.remove(operation);
 		LOG.trace("{} removed from internal operation list", operation.getClass().getName());
 		fireRemovedEvent(new RemovedEvent<T>(this, operation));
+	}
+	
+	/**
+	 * Stop the idle thread.
+	 */
+	private void stopIdleThread() {
+		if (idleFuture != null) {
+			LOG.trace("Stopping idle thread...");
+			idleFuture.cancel(true);
+			LOG.trace("Idle thread stopped.");
+		}
+	}
+	
+	/**
+	 * Start the idle thread.
+	 */
+	private void startIdleThread() {
+		if (idleRunnable != null) {
+			LOG.trace("Starting idle thread...");
+			idleFuture = new FutureTask<Void>(idleRunnable, null);
+			executorService.execute(idleFuture);
+			LOG.trace("Stopping idle thread.");
+		}
 	}
 
 	@Override
