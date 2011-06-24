@@ -28,7 +28,7 @@ import de.uniluebeck.itm.wsn.drivers.core.event.AddedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.event.RemovedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.event.StateChangedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.OperationAdapter;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
 
 /**
  * Class that implements the queue with the single thread executorService from the Java Concurrency Framework. Only one
@@ -47,7 +47,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	/**
 	 * List that contains all listeners.
 	 */
-	private final List<OperationQueueListener<?>> listeners = newArrayList();
+	private final List<OperationQueueListener> listeners = newArrayList();
 
 	/**
 	 * Queue for all <code>OperationContainer</code> that are in progress.
@@ -126,10 +126,15 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 		operation.setTimeLimiter(timeLimiter);
 		operation.setTimeout(timeout);
 		operation.setAsyncCallback(callback);
-		operation.addListener(new OperationAdapter<T>() {
+		operation.addListener(new OperationListener<T>() {
+			@Override
+			public void beforeStateChanged(StateChangedEvent<T> event) {
+				fireBeforeStateChangedEvent(event);
+			}
+			
 			@Override
 			public void afterStateChanged(StateChangedEvent<T> event) {
-				fireStateChangedEvent(event);
+				fireAfterStateChangedEvent(event);
 			}
 		});
 	}
@@ -205,13 +210,13 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	}
 
 	@Override
-	public void addListener(final OperationQueueListener<?> listener) {
+	public void addListener(final OperationQueueListener listener) {
 		checkNotNull(listener, "Null listener is not allowed.");
 		listeners.add(listener);
 	}
 
 	@Override
-	public void removeListener(final OperationQueueListener<?> listener) {
+	public void removeListener(final OperationQueueListener listener) {
 		checkNotNull(listener, "Null listener is not allowed.");
 		listeners.remove(listener);
 	}
@@ -222,10 +227,24 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	 * @param <T>   The type of the operation.
 	 * @param event The event that will notify about the state change.
 	 */
-	private <T> void fireStateChangedEvent(final StateChangedEvent<T> event) {
+	private <T> void fireBeforeStateChangedEvent(final StateChangedEvent<T> event) {
 		String msg = "Operation state of {} changed";
 		LOG.trace(msg, new Object[] {event.getOperation().getClass().getName()});
-		for (final OperationQueueListener<T> listener : listeners.toArray(new OperationQueueListener[0])) {
+		for (final OperationQueueListener listener : listeners.toArray(new OperationQueueListener[0])) {
+			listener.beforeStateChanged(event);
+		}
+	}
+	
+	/**
+	 * Notify all listeners that the state of a operation has changed.
+	 *
+	 * @param <T>   The type of the operation.
+	 * @param event The event that will notify about the state change.
+	 */
+	private <T> void fireAfterStateChangedEvent(final StateChangedEvent<T> event) {
+		String msg = "Operation state of {} changed";
+		LOG.trace(msg, new Object[] {event.getOperation().getClass().getName()});
+		for (final OperationQueueListener listener : listeners.toArray(new OperationQueueListener[0])) {
 			listener.afterStateChanged(event);
 		}
 	}
@@ -236,8 +255,8 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	 * @param <T>   The type of the operation.
 	 * @param event The event that will notify about the add of an operation.
 	 */
-	private <T> void fireAddedEvent(final AddedEvent<T> event) {
-		for (final OperationQueueListener<T> listener : listeners.toArray(new OperationQueueListener[0])) {
+	private void fireAddedEvent(final AddedEvent<?> event) {
+		for (final OperationQueueListener listener : listeners.toArray(new OperationQueueListener[0])) {
 			listener.onAdded(event);
 		}
 	}
@@ -248,8 +267,8 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	 * @param <T>   The type of the operation.
 	 * @param event The event that will notify about the remove of an operation.
 	 */
-	private <T> void fireRemovedEvent(final RemovedEvent<T> event) {
-		for (final OperationQueueListener<T> listener : listeners.toArray(new OperationQueueListener[0])) {
+	private void fireRemovedEvent(final RemovedEvent<?> event) {
+		for (final OperationQueueListener listener : listeners.toArray(new OperationQueueListener[0])) {
 			listener.onRemoved(event);
 		}
 	}

@@ -3,8 +3,8 @@ package de.uniluebeck.itm.wsn.drivers.core.operation;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.collect.Lists.newArrayList;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
@@ -53,7 +53,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	/**
 	 * Listeners for <code>OperationContainer</code> changed.
 	 */
-	private final List<OperationListener<T>> listeners = new ArrayList<OperationListener<T>>();
+	private final List<OperationListener<T>> listeners = newArrayList();
 	
 	/**
 	 * Limiter for the execution time of an operation.
@@ -78,7 +78,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	/**
 	 * Boolean thats stores if the operatio has to be canceled.
 	 */
-	private boolean canceled;
+	private boolean canceled = false;
 	
 	/**
 	 * Constructor.
@@ -183,7 +183,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	private void fireBeforeStateChangedEvent(StateChangedEvent<T> event) {
 		String msg = "Operation state of {} changed from {} to {}";
 		LOG.trace(msg, new Object[] {this.getClass().getName(), event.getOldState(), event.getNewState()});
-		for (OperationListener<T> listener : listeners.toArray(new OperationListener[0])) {
+		for (OperationListener<T> listener : newArrayList(listeners)) {
 			listener.beforeStateChanged(event);
 		}
 	}
@@ -196,7 +196,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	private void fireAfterStateChangedEvent(StateChangedEvent<T> event) {
 		String msg = "Operation state of {} changed from {} to {}";
 		LOG.trace(msg, new Object[] {this.getClass().getName(), event.getOldState(), event.getNewState()});
-		for (OperationListener<T> listener : listeners.toArray(new OperationListener[0])) {
+		for (OperationListener<T> listener : newArrayList(listeners)) {
 			listener.afterStateChanged(event);
 		}
 	}
