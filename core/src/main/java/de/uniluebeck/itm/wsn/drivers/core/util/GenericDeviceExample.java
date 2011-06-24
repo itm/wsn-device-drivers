@@ -17,8 +17,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
 
 import de.uniluebeck.itm.tr.util.ExecutorUtils;
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
@@ -120,18 +118,13 @@ public class GenericDeviceExample implements ConnectionListener {
 		exampleModule = new AbstractModule() {
 			@Override
 			protected void configure() {
-				bind(ExecutorService.class).toInstance(Executors.newSingleThreadExecutor(
-						new ThreadFactoryBuilder().setNameFormat("OperationQueue-Thread %d").build()
-				));
-				bind(ScheduledExecutorService.class).toInstance(Executors.newScheduledThreadPool(3, 
+				ScheduledExecutorService executor = Executors.newScheduledThreadPool(4, 
 						new ThreadFactoryBuilder().setNameFormat("GenericDeviceExample-Thread %d").build()
-				));
-			}
-			
-			@Provides
-			@Singleton
-			public TimeLimiter provideTimeLimiter(ScheduledExecutorService executorService) {
-				return new SimpleTimeLimiter(executorService);
+				);
+				TimeLimiter timeLimiter = new SimpleTimeLimiter(executor);
+				bind(ExecutorService.class).toInstance(executor);
+				bind(ScheduledExecutorService.class).toInstance(executor);
+				bind(TimeLimiter.class).toInstance(timeLimiter);
 			}
 		};
 	}
@@ -448,9 +441,6 @@ public class GenericDeviceExample implements ConnectionListener {
 		System.out.println("Closing OutputStream...");
 		Closeables.closeQuietly(outputStream);
 		System.out.println("OutputStream closed");
-		System.out.println("Shutting down queue...");
-		ExecutorUtils.shutdown(injector.getInstance(ExecutorService.class), EXECUTOR_TIMEOUT, TimeUnit.SECONDS);
-		System.out.println("Queue terminated");
 		System.out.println("Shutting down executor...");
 		ExecutorUtils.shutdown(injector.getInstance(ScheduledExecutorService.class), EXECUTOR_TIMEOUT, TimeUnit.SECONDS);
 		System.out.println("Executor shut down");
