@@ -134,11 +134,11 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 		});
 
 		ListenableFutureTask<T> future = new ListenableFutureTask<T>(operation);
+		future.addListener(new OperationFinishedRunnable(operation), executorService);
 		synchronized (operations) {
 			addOperation(operation, future);
 			executeNext();
 		}
-		future.addListener(new OperationFinishedRunnable(operation), executorService);
 		return new SimpleOperationFuture<T>(future, operation);
 	}
 	

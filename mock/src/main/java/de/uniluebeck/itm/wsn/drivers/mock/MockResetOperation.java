@@ -36,7 +36,7 @@ public class MockResetOperation extends AbstractOperation<Void> implements Reset
 	 * @param connection The <code>MockConnection</code> that is used for the reset.
 	 */
 	@Inject
-	public MockResetOperation(final MockConnection connection) {
+	public MockResetOperation(MockConnection connection) {
 		this.connection = connection;
 	}
 	

@@ -11,11 +11,12 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
+import de.uniluebeck.itm.tr.util.ExecutorUtils;
 import de.uniluebeck.itm.wsn.drivers.core.AbstractConnection;
-import de.uniluebeck.itm.wsn.drivers.core.ConnectionEvent;
-import de.uniluebeck.itm.wsn.drivers.core.ConnectionListener;
 
 
 /**
@@ -23,17 +24,8 @@ import de.uniluebeck.itm.wsn.drivers.core.ConnectionListener;
  * 
  * @author Malte Legenhausen
  */
-public class MockConnection extends AbstractConnection implements ConnectionListener {
-	
-	/**
-	 * The <code>PipedOutputStream</code>.
-	 */
-	private PipedOutputStream outputStream;
-	
-	/**
-	 * The <code>PipedInputStream</code>.
-	 */
-	private PipedInputStream inputStream;
+@Singleton
+public class MockConnection extends AbstractConnection {
 	
 	/**
 	 * Internal runnable that send continuesly messages.
@@ -56,35 +48,39 @@ public class MockConnection extends AbstractConnection implements ConnectionList
 		 * Start time of this runnable.
 		 */
 		private final Long started = Calendar.getInstance().getTimeInMillis();
-		
-		/**
-		 * The mock device for sending the device.
-		 */
-		private final MockConnection device;
-		
-		/**
-		 * Constructor.
-		 * 
-		 * @param device A MockDevice instance.
-		 */
-		public AliveRunnable(final MockConnection device) {
-			this.device = device;
-		}
 
 		@Override
 		public void run() {
 			final Long diff = (Calendar.getInstance().getTimeInMillis() - started) / MILL;
 			final String message = "MockDevice alive since " + diff + " seconds (update #" + (++i) + ")";
-			device.sendMessage(message);
+			sendMessage(message);
 		}
 	}
 	
+	/**
+	 * The timeout for the executor 
+	 */
+	private static final int EXECUTOR_TIMEOUT = 10;
+	
+	/**
+	 * The <code>PipedOutputStream</code>.
+	 */
+	private PipedOutputStream outputStream = new PipedOutputStream();
+	
+	/**
+	 * The <code>PipedInputStream</code>.
+	 */
+	private PipedInputStream inputStream = new PipedInputStream();
+	
+	/**
+	 * Configuration for this device.
+	 */
 	private final MockConfiguration configuration;
 	
 	/**
 	 * Executor for periodically execute a given runnable.
 	 */
-	private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);
+	private final ScheduledExecutorService executorService;
 	
 	/**
 	 * Future of the executed runnable.
@@ -104,7 +100,9 @@ public class MockConnection extends AbstractConnection implements ConnectionList
 	@Inject
 	public MockConnection(MockConfiguration configuration) {
 		this.configuration = configuration;
-		addListener(this);
+		this.executorService = Executors.newScheduledThreadPool(1, 
+				new ThreadFactoryBuilder().setNameFormat("MockConnection-Thread %d").build()
+		);
 	}
 	
 	/**
@@ -112,7 +110,7 @@ public class MockConnection extends AbstractConnection implements ConnectionList
 	 */
 	public void scheduleAliveRunnable() {
 		aliveRunnableFuture = executorService.scheduleWithFixedDelay(
-			new AliveRunnable(this), 
+			new AliveRunnable(), 
 			new Random().nextInt((int) aliveTimeout), 
 			aliveTimeout,
 			aliveTimeUnit
@@ -151,33 +149,25 @@ public class MockConnection extends AbstractConnection implements ConnectionList
 			
 		}
 	}
-
-	@Override
-	public void onConnectionChange(ConnectionEvent event) {
-		if (event.isConnected()) {
-			scheduleAliveRunnable();
-		} else {
-			scheduleAliveRunnable();
-			executorService.shutdown();
-		}
-	}
 	
 	@Override
 	public void connect(final String uri) {
-		outputStream = new PipedOutputStream();
 		try {
-			inputStream = new PipedInputStream(outputStream);
+			inputStream.connect(outputStream);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 		setOutputStream(outputStream);
 		setInputStream(inputStream);
+		scheduleAliveRunnable();
 		setConnected(true);
 	}
 	
 	@Override
 	public void close() throws IOException {
 		super.close();
+		stopAliveRunnable();
+		ExecutorUtils.shutdown(executorService, EXECUTOR_TIMEOUT, TimeUnit.SECONDS);
 		setConnected(false);
 	}
 	

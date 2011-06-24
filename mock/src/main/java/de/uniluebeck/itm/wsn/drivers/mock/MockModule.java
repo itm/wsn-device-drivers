@@ -27,7 +27,7 @@ public class MockModule extends AbstractModule {
 		bind(SendOperation.class).to(MockSendOperation.class);
 		bind(WriteMacAddressOperation.class).to(MockWriteMacAddressOperation.class);
 		bind(WriteFlashOperation.class).to(MockWriteFlashOperation.class);
-		bind(Connection.class).to(MockConnection.class).in(Singleton.class);
+		bind(Connection.class).to(MockConnection.class);
 		bind(MockConfiguration.class).in(Singleton.class);
 	}
 
