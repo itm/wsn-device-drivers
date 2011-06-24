@@ -3,19 +3,11 @@ package de.uniluebeck.itm.wsn.drivers.core.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
-import com.google.common.util.concurrent.SimpleTimeLimiter;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.google.common.util.concurrent.TimeLimiter;
-import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -24,12 +16,11 @@ import de.uniluebeck.itm.tr.util.ExecutorUtils;
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.ConnectionEvent;
 import de.uniluebeck.itm.wsn.drivers.core.ConnectionListener;
+import de.uniluebeck.itm.wsn.drivers.core.DeviceModule;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import de.uniluebeck.itm.wsn.drivers.core.async.AsyncAdapter;
 import de.uniluebeck.itm.wsn.drivers.core.async.AsyncCallback;
 import de.uniluebeck.itm.wsn.drivers.core.async.DeviceAsync;
-import de.uniluebeck.itm.wsn.drivers.core.async.Idle;
-import de.uniluebeck.itm.wsn.drivers.core.async.InputStreamCopyRunnable;
 import de.uniluebeck.itm.wsn.drivers.core.async.OperationQueue;
 import de.uniluebeck.itm.wsn.drivers.core.io.ByteReceiver;
 import de.uniluebeck.itm.wsn.drivers.core.io.InputStreamReaderService;
@@ -116,31 +107,8 @@ public class GenericDeviceExample implements ConnectionListener {
 	
 	private Injector injector;
 	
-	private final Module exampleModule;
-	
 	public GenericDeviceExample() {
-		exampleModule = new AbstractModule() {
-			@Override
-			protected void configure() {
-				ScheduledExecutorService executor = Executors.newScheduledThreadPool(4, 
-						new ThreadFactoryBuilder().setNameFormat("GenericDeviceExample-Thread %d").build()
-				);
-				PipedInputStream inputStream = new PipedInputStream();
-				PipedOutputStream outputStream = new PipedOutputStream();
-				try {
-					inputStream.connect(outputStream);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				TimeLimiter timeLimiter = new SimpleTimeLimiter(executor);
-				bind(ExecutorService.class).toInstance(executor);
-				bind(ScheduledExecutorService.class).toInstance(executor);
-				bind(TimeLimiter.class).toInstance(timeLimiter);
-				bind(Runnable.class).annotatedWith(Idle.class).to(InputStreamCopyRunnable.class);
-				bind(InputStream.class).toInstance(inputStream);
-				bind(OutputStream.class).toInstance(outputStream);
-			}
-		};
+		
 	}
 
 	public void addByteReceiver(ByteReceiver receiver) {
@@ -165,7 +133,7 @@ public class GenericDeviceExample implements ConnectionListener {
 	}
 	
 	public void setModule(Module module) {
-		injector = Guice.createInjector(exampleModule, module);
+		injector = Guice.createInjector(new DeviceModule(), module);
 	}
 
 	/**
