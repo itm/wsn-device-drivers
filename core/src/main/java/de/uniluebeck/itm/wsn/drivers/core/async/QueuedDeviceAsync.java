@@ -6,7 +6,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.concurrent.ScheduledExecutorService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +19,6 @@ import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.ConnectionListener;
 import de.uniluebeck.itm.wsn.drivers.core.DataAvailableListener;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
-import de.uniluebeck.itm.wsn.drivers.core.io.SendOutputStreamWrapper;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
@@ -68,8 +66,6 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	private final Injector injector;
 	
 	private final Connection connection;
-	
-	private final ScheduledExecutorService executorService;
 
 	/**
 	 * Constructor.
@@ -78,11 +74,9 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	 * @param device The <code>Device</code> that provides all operations that can be executed.
 	 */
 	@Inject
-	public QueuedDeviceAsync(OperationQueue queue, Connection connection, ScheduledExecutorService executorService, 
-			Injector injector) {
+	public QueuedDeviceAsync(OperationQueue queue, Connection connection, Injector injector) {
 		this.injector = injector;
 		this.connection = connection;
-		this.executorService = executorService;
 		this.queue = queue;
 	}
 
@@ -189,7 +183,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 
 	@Override
 	public OutputStream getOutputStream() {
-		return new SendOutputStreamWrapper(this, executorService);
+		return injector.getInstance(OutputStream.class);
 	}
 
 	@Override

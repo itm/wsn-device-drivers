@@ -30,7 +30,7 @@ public class InputStreamCopyRunnable implements Runnable, DataAvailableListener 
 	private final OutputStream outputStream;
 	
 	@Inject
-	public InputStreamCopyRunnable(Connection connection, OutputStream outputStream) {
+	public InputStreamCopyRunnable(Connection connection, @Idle OutputStream outputStream) {
 		this.connection = connection;
 		this.outputStream = outputStream;
 		connection.addListener(this);
