@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.Future;
 
 import javax.annotation.Nullable;
 
@@ -23,7 +23,6 @@ import com.google.common.util.concurrent.SimpleTimeLimiter;
 import com.google.common.util.concurrent.TimeLimiter;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 
 import de.uniluebeck.itm.wsn.drivers.core.event.AddedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.event.RemovedEvent;
@@ -39,20 +38,6 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.OperationAdapter;
  */
 @Singleton
 public class ExecutorServiceOperationQueue implements OperationQueue {
-
-	private class OperationFinishedRunnable implements Runnable {
-		
-		private final Operation<?> operation;
-		
-		public OperationFinishedRunnable(Operation<?> operation) {
-			this.operation = operation;
-		}
-		
-		@Override
-		public void run() {
-			operationFinished(operation);
-		}
-	}
 	
 	/**
 	 * Logger for this class.
@@ -84,9 +69,15 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	 */
 	private final TimeLimiter timeLimiter;
 	
+	/**
+	 * The idle runnable.
+	 */
 	private final Runnable idleRunnable;
 	
-	private FutureTask<Void> idleFuture = null;
+	/**
+	 * The task 
+	 */
+	private Future<Object> idleFuture = null;
 
 	/**
 	 * Constructor.
@@ -121,50 +112,52 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	}
 
 	@Override
-	public <T> OperationFuture<T> addOperation(Operation<T> operation, 
-											   long timeout, 
-											   @Nullable AsyncCallback<T> callback) {
+	public <T> OperationFuture<T> addOperation(Operation<T> operation, long timeout,  
+			@Nullable AsyncCallback<T> callback) {
 		
 		checkNotNull(operation, "Null Operation is not allowed.");
 		checkArgument(timeout >= 0, "Negative timeout is not allowed.");
 
-		// Init operation.
-		operation.setAsyncCallback(callback);
-		operation.setTimeout(timeout);
+		prepareOperation(operation, timeout, callback);
+		return addOperationAndExecuteNext(operation);
+	}
+	
+	private <T> void prepareOperation(Operation<T> operation, long timeout, AsyncCallback<T> callback) {
 		operation.setTimeLimiter(timeLimiter);
+		operation.setTimeout(timeout);
+		operation.setAsyncCallback(callback);
 		operation.addListener(new OperationAdapter<T>() {
 			@Override
 			public void afterStateChanged(StateChangedEvent<T> event) {
 				fireStateChangedEvent(event);
 			}
 		});
-
-		// Add to queue
+	}
+	
+	private <T> OperationFuture<T> addOperationAndExecuteNext(final Operation<T> operation) {
 		ListenableFutureTask<T> future = new ListenableFutureTask<T>(operation);
-		future.addListener(new OperationFinishedRunnable(operation), executorService);
+		Runnable afterFinishRunnable = new Runnable() {
+			@Override
+			public void run() {
+				removeOperationAndExecuteNext(operation);
+			}
+		};
+		future.addListener(afterFinishRunnable, executorService);
 		synchronized (operations) {
 			addOperation(operation, future);
-			executeNext();
+			executeNextOrStartIdleThread();
 		}
 		return new SimpleOperationFuture<T>(future, operation);
 	}
 	
-	/**
-	 * Operation should be called when an operation has finished to execute the next one.
-	 * 
-	 * @param operation The operation that has finished.
-	 */
-	private void operationFinished(Operation<?> operation) {
+	private void removeOperationAndExecuteNext(Operation<?> operation) {
 		synchronized (operations) {
 			removeOperation(operation);
-			executeNext();
+			executeNextOrStartIdleThread();
 		}
 	}
 	
-	/**
-	 * Executes the next operation in the queue when available.
-	 */
-	private void executeNext() {
+	private void executeNextOrStartIdleThread() {
 		if (!operations.isEmpty()) {
 			stopIdleThread();
 			Operation<?> operation = operations.get(0);
@@ -176,12 +169,6 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 		}
 	}
 
-	/**
-	 * Add the operation to the internal operation list.
-	 *
-	 * @param <T>       The return type of the operation.
-	 * @param operation The operation that has to be added to the internal operation list.
-	 */
 	private <T> void addOperation(Operation<T> operation, Runnable runnable) {
 		operations.add(operation);
 		runnables.put(operation, runnable);
@@ -189,12 +176,6 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 		fireAddedEvent(new AddedEvent<T>(this, operation));
 	}
 
-	/**
-	 * Remove the operation from the queue.
-	 *
-	 * @param <T>       Return type of the operation.
-	 * @param operation The operation that has to be removed.
-	 */
 	private <T> void removeOperation(Operation<T> operation) {
 		operations.remove(operation);
 		runnables.remove(operation);
@@ -202,9 +183,6 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 		fireRemovedEvent(new RemovedEvent<T>(this, operation));
 	}
 	
-	/**
-	 * Stop the idle thread.
-	 */
 	private void stopIdleThread() {
 		if (idleFuture != null) {
 			LOG.trace("Stopping idle thread...");
@@ -213,14 +191,10 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 		}
 	}
 	
-	/**
-	 * Start the idle thread.
-	 */
 	private void startIdleThread() {
 		if (idleRunnable != null) {
 			LOG.trace("Starting idle thread...");
-			idleFuture = new FutureTask<Void>(idleRunnable, null);
-			executorService.execute(idleFuture);
+			idleFuture = executorService.submit(idleRunnable, null);
 			LOG.trace("Stopping idle thread.");
 		}
 	}
@@ -250,7 +224,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	 */
 	private <T> void fireStateChangedEvent(final StateChangedEvent<T> event) {
 		String msg = "Operation state of {} changed";
-		LOG.trace(msg, new Object[]{event.getOperation().getClass().getName()});
+		LOG.trace(msg, new Object[] {event.getOperation().getClass().getName()});
 		for (final OperationQueueListener<T> listener : listeners.toArray(new OperationQueueListener[0])) {
 			listener.afterStateChanged(event);
 		}
