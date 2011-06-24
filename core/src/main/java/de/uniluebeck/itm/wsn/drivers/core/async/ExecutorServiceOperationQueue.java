@@ -31,7 +31,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationAdapter;
 
 /**
- * Class that implements the queue with the single thread executor from the Java Concurrency Framework. Only one
+ * Class that implements the queue with the single thread executorService from the Java Concurrency Framework. Only one
  * <code>Operation</code> is executed at once.
  *
  * @author Malte Legenhausen
@@ -68,13 +68,19 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	 */
 	private final List<Operation<?>> operations = Collections.synchronizedList(new LinkedList<Operation<?>>());
 	
+	/**
+	 * Maps the operation to the next runnable.
+	 */
 	private final Map<Operation<?>, Runnable> runnables = newHashMap();
 
 	/**
-	 * The single thread executor that runs the <code>OperationContainer</code>.
+	 * The single thread executorService that runs the <code>OperationContainer</code>.
 	 */
-	private final ExecutorService executor;
+	private final ExecutorService executorService;
 	
+	/**
+	 * The TimeLimiter used for all operations to limit the execution time.
+	 */
 	private final TimeLimiter timeLimiter;
 
 	/**
@@ -90,25 +96,25 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	/**
 	 * Constructor.
 	 *
-	 * @param executor Set a custom <code>PausableExecutorService</code>.
+	 * @param executorService Set a custom <code>PausableExecutorService</code>.
 	 */
 	@Inject
-	public ExecutorServiceOperationQueue(ExecutorService executor, TimeLimiter timeLimiter) {
-		this.executor = executor;
+	public ExecutorServiceOperationQueue(ExecutorService executorService, TimeLimiter timeLimiter) {
+		this.executorService = executorService;
 		this.timeLimiter = timeLimiter;
 	}
 
 	/**
-	 * Returns the executor used by this queue.
+	 * Returns the executorService used by this queue.
 	 *
-	 * @return The executor for this queue.
+	 * @return The executorService for this queue.
 	 */
 	public ExecutorService getExecutorService() {
-		return executor;
+		return executorService;
 	}
 
 	@Override
-	public <T> OperationFuture<T> addOperation(final Operation<T> operation, 
+	public <T> OperationFuture<T> addOperation(Operation<T> operation, 
 											   long timeout, 
 											   @Nullable AsyncCallback<T> callback) {
 		
@@ -127,15 +133,20 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 			}
 		});
 
-		final ListenableFutureTask<T> future = new ListenableFutureTask<T>(operation);
+		ListenableFutureTask<T> future = new ListenableFutureTask<T>(operation);
 		synchronized (operations) {
 			addOperation(operation, future);
 			executeNext();
 		}
-		future.addListener(new OperationFinishedRunnable(operation), executor);
+		future.addListener(new OperationFinishedRunnable(operation), executorService);
 		return new SimpleOperationFuture<T>(future, operation);
 	}
 	
+	/**
+	 * Operation should be called when an operation has finished to execute the next one.
+	 * 
+	 * @param operation The operation that has finished.
+	 */
 	private void operationFinished(Operation<?> operation) {
 		synchronized (operations) {
 			removeOperation(operation);
@@ -143,12 +154,15 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 		}
 	}
 	
+	/**
+	 * Executes the next operation in the queue when available.
+	 */
 	private void executeNext() {
 		if (!operations.isEmpty()) {
 			Operation<?> operation = operations.get(0);
 			Runnable runnable = runnables.get(operation);
-			LOG.trace("Submit {} to executor.", operation.getClass().getName());
-			executor.execute(runnable);
+			LOG.trace("Submit {} to executorService.", operation.getClass().getName());
+			executorService.execute(runnable);
 		}
 	}
 
