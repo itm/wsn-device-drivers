@@ -71,28 +71,20 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	
 	private final Provider<SendOperation> sendProvider;
 	
-	@Inject(optional = true)
 	private Provider<GetChipTypeOperation> getChipTypeProvider;
 	
-	@Inject(optional = true)
 	private Provider<EraseFlashOperation> eraseFlashProvider;
 	
-	@Inject(optional = true)
 	private Provider<ProgramOperation> programProvider;
 	
-	@Inject(optional = true)
 	private Provider<ReadFlashOperation> readFlashProvider;
 	
-	@Inject(optional = true)
 	private Provider<ReadMacAddressOperation> readMacAddressProvider;
 	
-	@Inject(optional = true)
 	private Provider<ResetOperation> resetProvider;
 	
-	@Inject(optional = true)
 	private Provider<WriteFlashOperation> writeFlashProvider;
 	
-	@Inject(optional = true)
 	private Provider<WriteMacAddressOperation> writeMacAddressProvider;
 
 	/**
@@ -255,5 +247,46 @@ public class QueuedDeviceAsync implements DeviceAsync {
 			throw new UnsupportedOperationException(message);
 		}
 		return operation;
+	}
+
+	@Inject(optional = true)
+	public void setGetChipTypeProvider(Provider<GetChipTypeOperation> getChipTypeProvider) {
+		this.getChipTypeProvider = getChipTypeProvider;
+	}
+
+	@Inject(optional = true)
+	public void setEraseFlashProvider(
+			Provider<EraseFlashOperation> eraseFlashProvider) {
+		this.eraseFlashProvider = eraseFlashProvider;
+	}
+
+	@Inject(optional = true)
+	public void setProgramProvider(Provider<ProgramOperation> programProvider) {
+		this.programProvider = programProvider;
+	}
+
+	@Inject(optional = true)
+	public void setReadFlashProvider(Provider<ReadFlashOperation> readFlashProvider) {
+		this.readFlashProvider = readFlashProvider;
+	}
+
+	@Inject(optional = true)
+	public void setReadMacAddressProvider(Provider<ReadMacAddressOperation> readMacAddressProvider) {
+		this.readMacAddressProvider = readMacAddressProvider;
+	}
+
+	@Inject(optional = true)
+	public void setResetProvider(Provider<ResetOperation> resetProvider) {
+		this.resetProvider = resetProvider;
+	}
+
+	@Inject(optional = true)
+	public void setWriteFlashProvider(Provider<WriteFlashOperation> writeFlashProvider) {
+		this.writeFlashProvider = writeFlashProvider;
+	}
+
+	@Inject(optional = true)
+	public void setWriteMacAddressProvider(Provider<WriteMacAddressOperation> writeMacAddressProvider) {
+		this.writeMacAddressProvider = writeMacAddressProvider;
 	}
 }
