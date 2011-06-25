@@ -19,12 +19,20 @@ import de.uniluebeck.itm.wsn.drivers.core.async.Idle;
 import de.uniluebeck.itm.wsn.drivers.core.async.InputStreamCopyRunnable;
 import de.uniluebeck.itm.wsn.drivers.core.io.SendOutputStreamWrapper;
 
+
+/**
+ * Basic setup for a single Device.
+ * 
+ * @author Malte Legenhausen
+ */
 public class DeviceModule extends AbstractModule {
+	
+	private static final int DEFAULT_POOL_SIZE = 3;
 
 	private final ScheduledExecutorService executorService;
 	
 	public DeviceModule() {
-		executorService = Executors.newScheduledThreadPool(3, 
+		executorService = Executors.newScheduledThreadPool(DEFAULT_POOL_SIZE, 
 				new ThreadFactoryBuilder().setNameFormat("GenericDeviceExample-Thread %d").build()
 		);
 	}

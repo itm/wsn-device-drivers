@@ -68,6 +68,12 @@ public abstract class AbstractConnection implements Connection {
 		}
 	}
 	
+	protected void fireDataAvailableListeners(ConnectionEvent event) {
+		for (DataAvailableListener dataAvailableListener : dataAvailableListeners) {
+			dataAvailableListener.dataAvailable(event);
+		}
+	}
+	
 	/**
 	 * Setter for the input stream.
 	 * 
@@ -93,6 +99,10 @@ public abstract class AbstractConnection implements Connection {
 	 */
 	protected void setUri(final String uri) {
 		this.uri = uri;
+	}
+	
+	public String getUri() {
+		return uri;
 	}
 	
 	@Override
@@ -137,11 +147,5 @@ public abstract class AbstractConnection implements Connection {
 		
 		Closeables.close(outputStream, true);
 		outputStream.setOutputStream(null);
-	}
-
-	protected void notifyDataAvailableListeners() {
-		for (DataAvailableListener dataAvailableListener : dataAvailableListeners) {
-			dataAvailableListener.dataAvailable(this);
-		}
 	}
 }

@@ -9,8 +9,6 @@ import de.uniluebeck.itm.wsn.drivers.core.event.StateChangedEvent;
  * Listener for observing <code>OperationQueue</code> changes.
  * 
  * @author Malte Legenhausen
- * 
- * @param <T> The type of the operation.
  */
 public interface OperationQueueListener {
 	

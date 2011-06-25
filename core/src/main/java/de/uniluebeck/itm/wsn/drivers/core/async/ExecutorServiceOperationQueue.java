@@ -75,7 +75,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	private final Runnable idleRunnable;
 	
 	/**
-	 * The task 
+	 * The future for the idle task.
 	 */
 	private Future<Object> idleFuture = null;
 

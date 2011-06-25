@@ -13,8 +13,15 @@ import org.apache.log4j.Logger;
 import com.google.inject.Inject;
 
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
+import de.uniluebeck.itm.wsn.drivers.core.ConnectionEvent;
 import de.uniluebeck.itm.wsn.drivers.core.DataAvailableListener;
 
+
+/**
+ * Task that copy data from the connection InputStream to a given OutputStream.
+ * 
+ * @author Malte Legenhausen
+ */
 public class InputStreamCopyRunnable implements Runnable, DataAvailableListener {
 	
 	private static final Logger LOG = Logger.getLogger(InputStreamCopyRunnable.class);
@@ -61,7 +68,7 @@ public class InputStreamCopyRunnable implements Runnable, DataAvailableListener 
 	}
 	
 	@Override
-	public void dataAvailable(Connection connection) {
+	public void dataAvailable(ConnectionEvent event) {
 		deviceInputStreamLock.lock();
 		try {
 			deviceInputStreamDataAvailable.signal();

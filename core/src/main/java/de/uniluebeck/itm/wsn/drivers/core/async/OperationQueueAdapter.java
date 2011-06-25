@@ -9,8 +9,6 @@ import de.uniluebeck.itm.wsn.drivers.core.event.StateChangedEvent;
  * Default implementation for the OperationQueueListener.
  * 
  * @author Malte Legenhausen
- *
- * @param <T> The return type of the operation.
  */
 public class OperationQueueAdapter implements OperationQueueListener {
 

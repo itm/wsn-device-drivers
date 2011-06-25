@@ -424,7 +424,8 @@ public class GenericDeviceExample implements ConnectionListener {
 		Closeables.closeQuietly(outputStream);
 		System.out.println("OutputStream closed");
 		System.out.println("Shutting down executor...");
-		ExecutorUtils.shutdown(injector.getInstance(ScheduledExecutorService.class), EXECUTOR_TIMEOUT, TimeUnit.SECONDS);
+		ExecutorUtils.shutdown(injector.getInstance(ScheduledExecutorService.class), 
+				EXECUTOR_TIMEOUT, TimeUnit.SECONDS);
 		System.out.println("Executor shut down");
 		System.out.println("Closing connection...");
 		Closeables.closeQuietly(deviceAsync);

@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
-import com.google.inject.Injector;
+import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
@@ -63,9 +63,29 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	 */
 	private final OperationQueue queue;
 	
-	private final Injector injector;
-	
 	private final Connection connection;
+	
+	private final InputStream inputStream;
+	
+	private final Provider<OutputStream> outputStreamProvider;
+	
+	private final Provider<GetChipTypeOperation> getChipTypeProvider;
+	
+	private final Provider<EraseFlashOperation> eraseFlashProvider;
+	
+	private final Provider<ProgramOperation> programProvider;
+	
+	private final Provider<ReadFlashOperation> readFlashProvider;
+	
+	private final Provider<ReadMacAddressOperation> readMacAddressProvider;
+	
+	private final Provider<ResetOperation> resetProvider;
+	
+	private final Provider<SendOperation> sendProvider;
+	
+	private final Provider<WriteFlashOperation> writeFlashProvider;
+	
+	private final Provider<WriteMacAddressOperation> writeMacAddressProvider;
 
 	/**
 	 * Constructor.
@@ -74,17 +94,37 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	 * @param device The <code>Device</code> that provides all operations that can be executed.
 	 */
 	@Inject
-	public QueuedDeviceAsync(OperationQueue queue, Connection connection, Injector injector) {
-		this.injector = injector;
+	public QueuedDeviceAsync(OperationQueue queue, Connection connection, InputStream inputStream,
+			Provider<OutputStream> outputStreamProvider,
+			Provider<GetChipTypeOperation> getChipTypeProvider,
+			Provider<EraseFlashOperation> eraseFlashProvider,
+			Provider<ProgramOperation> programProvider,
+			Provider<ReadFlashOperation> readFlashProvider,
+			Provider<ReadMacAddressOperation> readMacAddressProvider,
+			Provider<ResetOperation> resetProvider,
+			Provider<SendOperation> sendProvider,
+			Provider<WriteFlashOperation> writeFlashProvider,
+			Provider<WriteMacAddressOperation> writeMacAddressProvider) {
 		this.connection = connection;
 		this.queue = queue;
+		this.inputStream = inputStream;
+		this.outputStreamProvider = outputStreamProvider;
+		this.getChipTypeProvider = getChipTypeProvider;
+		this.eraseFlashProvider = eraseFlashProvider;
+		this.programProvider = programProvider;
+		this.readFlashProvider = readFlashProvider;
+		this.readMacAddressProvider = readMacAddressProvider;
+		this.resetProvider = resetProvider;
+		this.sendProvider = sendProvider;
+		this.writeFlashProvider = writeFlashProvider;
+		this.writeMacAddressProvider = writeMacAddressProvider;
 	}
 
 	@Override
 	public OperationFuture<ChipType> getChipType(long timeout, AsyncCallback<ChipType> callback) {
 		LOG.trace("Reading Chip Type (Timeout: " + timeout + "ms)");
 		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
-		GetChipTypeOperation operation = injector.getInstance(GetChipTypeOperation.class);
+		GetChipTypeOperation operation = getChipTypeProvider.get();
 		checkNotNullOperation(operation, "The Operation getChipType is not available");
 		return queue.addOperation(operation, timeout, callback);
 	}
@@ -93,7 +133,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	public OperationFuture<Void> eraseFlash(long timeout, AsyncCallback<Void> callback) {
 		LOG.trace("Erase flash (Timeout: " + timeout + "ms)");
 		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
-		EraseFlashOperation operation = injector.getInstance(EraseFlashOperation.class);
+		EraseFlashOperation operation = eraseFlashProvider.get();
 		checkNotNullOperation(operation, "The Operation eraseFlash is not avialable");
 		return queue.addOperation(operation, timeout, callback);
 	}
@@ -102,7 +142,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	public OperationFuture<Void> program(byte[] data, long timeout, AsyncCallback<Void> callback) {
 		LOG.trace("Program device (timeout: " + timeout + "ms)");
 		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
-		ProgramOperation operation = injector.getInstance(ProgramOperation.class);
+		ProgramOperation operation = programProvider.get();
 		checkNotNullOperation(operation, "The Operation program is not available");
 		operation.setBinaryImage(data);
 		return queue.addOperation(operation, timeout, callback);
@@ -114,7 +154,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 		checkArgument(address >= 0, NEGATIVE_LENGTH_MESSAGE);
 		checkArgument(length >= 0, NEGATIVE_ADDRESS_MESSAGE);
 		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
-		ReadFlashOperation operation = injector.getInstance(ReadFlashOperation.class);
+		ReadFlashOperation operation = readFlashProvider.get();
 		checkNotNullOperation(operation, "The Operation readFlash is not available");
 		operation.setAddress(address, length);
 		return queue.addOperation(operation, timeout, callback);
@@ -124,7 +164,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	public OperationFuture<MacAddress> readMac(long timeout, AsyncCallback<MacAddress> callback) {
 		LOG.trace("Read mac (timeout: " + timeout + "ms)");
 		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
-		ReadMacAddressOperation operation = injector.getInstance(ReadMacAddressOperation.class);
+		ReadMacAddressOperation operation = readMacAddressProvider.get();
 		checkNotNullOperation(operation, "The Operation readMac is not available");
 		return queue.addOperation(operation, timeout, callback);
 	}
@@ -133,7 +173,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	public OperationFuture<Void> reset(long timeout, AsyncCallback<Void> callback) {
 		LOG.trace("Reset device (timeout: " + timeout + "ms)");
 		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
-		ResetOperation operation = injector.getInstance(ResetOperation.class);
+		ResetOperation operation = resetProvider.get();
 		checkNotNullOperation(operation, "The Operation reset is not available");
 		return queue.addOperation(operation, timeout, callback);
 	}
@@ -142,7 +182,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	public OperationFuture<Void> send(byte[] message, long timeout, AsyncCallback<Void> callback) {
 		LOG.trace("Send packet to device (timeout: " + timeout + "ms)");
 		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
-		SendOperation operation = injector.getInstance(SendOperation.class);
+		SendOperation operation = sendProvider.get();
 		checkNotNullOperation(operation, "The Operation send is not available");
 		operation.setMessage(message);
 		return queue.addOperation(operation, timeout, callback);
@@ -159,7 +199,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 		checkNotNull(data, "Null data is not allowed.");
 		checkArgument(length >= 0, NEGATIVE_ADDRESS_MESSAGE);
 		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
-		WriteFlashOperation operation = injector.getInstance(WriteFlashOperation.class);
+		WriteFlashOperation operation = writeFlashProvider.get();
 		checkNotNullOperation(operation, "The Operation writeFlash is not available");
 		operation.setData(address, data, length);
 		return queue.addOperation(operation, timeout, callback);
@@ -170,7 +210,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 		LOG.trace("Write mac (mac address: " + macAddress + ", timeout: " + timeout + "ms)");
 		checkNotNull(macAddress, "Null macAdress is not allowed.");
 		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
-		WriteMacAddressOperation operation = injector.getInstance(WriteMacAddressOperation.class);
+		WriteMacAddressOperation operation = writeMacAddressProvider.get();
 		checkNotNullOperation(operation, "The Operation writeMac is not available");
 		operation.setMacAddress(macAddress);
 		return queue.addOperation(operation, timeout, callback);
@@ -178,12 +218,12 @@ public class QueuedDeviceAsync implements DeviceAsync {
 
 	@Override
 	public InputStream getInputStream() {
-		return injector.getInstance(InputStream.class);
+		return inputStream;
 	}
 
 	@Override
 	public OutputStream getOutputStream() {
-		return injector.getInstance(OutputStream.class);
+		return outputStreamProvider.get();
 	}
 
 	@Override
