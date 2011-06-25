@@ -19,8 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.util.concurrent.ListenableFutureTask;
-import com.google.common.util.concurrent.SimpleTimeLimiter;
-import com.google.common.util.concurrent.TimeLimiter;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -65,11 +63,6 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	private final ExecutorService executorService;
 	
 	/**
-	 * The TimeLimiter used for all operations to limit the execution time.
-	 */
-	private final TimeLimiter timeLimiter;
-	
-	/**
 	 * The idle runnable.
 	 */
 	private final Runnable idleRunnable;
@@ -84,7 +77,6 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	 */
 	public ExecutorServiceOperationQueue() {
 		executorService = Executors.newFixedThreadPool(2);
-		timeLimiter = new SimpleTimeLimiter(executorService);
 		idleRunnable = null;
 	}
 
@@ -94,10 +86,8 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	 * @param executorService Set a custom <code>PausableExecutorService</code>.
 	 */
 	@Inject
-	public ExecutorServiceOperationQueue(ExecutorService executorService, TimeLimiter timeLimiter, 
-			@Nullable @Idle Runnable idleRunnable) {
+	public ExecutorServiceOperationQueue(ExecutorService executorService, @Nullable @Idle Runnable idleRunnable) {
 		this.executorService = executorService;
-		this.timeLimiter = timeLimiter;
 		this.idleRunnable = idleRunnable;
 		startIdleThread();
 	}
@@ -123,7 +113,6 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	}
 	
 	private <T> void prepareOperation(Operation<T> operation, long timeout, AsyncCallback<T> callback) {
-		operation.setTimeLimiter(timeLimiter);
 		operation.setTimeout(timeout);
 		operation.setAsyncCallback(callback);
 		operation.addListener(new OperationListener<T>() {

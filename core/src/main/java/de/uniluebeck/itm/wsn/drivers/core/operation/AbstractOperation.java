@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Objects;
 import com.google.common.util.concurrent.TimeLimiter;
 import com.google.common.util.concurrent.UncheckedTimeoutException;
+import com.google.inject.Inject;
 
 import de.uniluebeck.itm.wsn.drivers.core.State;
 import de.uniluebeck.itm.wsn.drivers.core.async.AsyncAdapter;
@@ -92,9 +93,9 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 		callback = Objects.firstNonNull(aCallback, new AsyncAdapter<T>());
 	}
 	
+	@Inject
 	@Override
 	public void setTimeLimiter(TimeLimiter timeLimiter) {
-		checkNotNull(timeLimiter, "Null TimeLimiter is not allowed.");
 		this.timeLimiter = timeLimiter;
 	}
 	
