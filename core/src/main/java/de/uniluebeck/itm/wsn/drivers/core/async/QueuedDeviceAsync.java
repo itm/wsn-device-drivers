@@ -173,11 +173,8 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	}
 
 	@Override
-	public OperationFuture<Void> writeFlash(int address,
-											byte[] data,
-											int length,
-											long timeout,
-											AsyncCallback<Void> callback) {
+	public OperationFuture<Void> writeFlash(int address, byte[] data, int length, long timeout, 
+			AsyncCallback<Void> callback) {
 		LOG.trace("Write flash (address: " + address + ", length: " + length + ", timeout: " + timeout + "ms)");
 		checkArgument(address >= 0, NEGATIVE_LENGTH_MESSAGE);
 		checkNotNull(data, "Null data is not allowed.");
