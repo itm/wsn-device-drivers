@@ -11,11 +11,9 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.SendOperation;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortEnterProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortLeaveProgramModeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortSendOperation;
 import de.uniluebeck.itm.wsn.drivers.isense.iSenseResetOperation;
 import de.uniluebeck.itm.wsn.drivers.isense.iSenseSerialPortConnection;
 
@@ -31,7 +29,6 @@ public class PacemateModule extends AbstractModule {
 		bind(ReadFlashOperation.class).to(PacemateReadFlashOperation.class);
 		bind(ReadMacAddressOperation.class).to(PacemateReadMacAddressOperation.class);
 		bind(ResetOperation.class).to(iSenseResetOperation.class);
-		bind(SendOperation.class).to(SerialPortSendOperation.class);
 		
 		SerialPortConnection connection = new iSenseSerialPortConnection();
 		bind(SerialPortConnection.class).toInstance(connection);

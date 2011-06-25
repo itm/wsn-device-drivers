@@ -11,13 +11,11 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.SendOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.WriteFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortEnterProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortLeaveProgramModeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortSendOperation;
 import de.uniluebeck.itm.wsn.drivers.isense.iSenseResetOperation;
 import de.uniluebeck.itm.wsn.drivers.isense.iSenseSerialPortConnection;
 
@@ -34,7 +32,6 @@ public class JennicModule extends AbstractModule {
 		bind(ReadFlashOperation.class).to(JennicReadFlashOperation.class);
 		bind(ReadMacAddressOperation.class).to(JennicReadMacAddressOperation.class);
 		bind(ResetOperation.class).to(iSenseResetOperation.class);
-		bind(SendOperation.class).to(SerialPortSendOperation.class);
 		bind(WriteMacAddressOperation.class).to(JennicWriteMacAddressOperation.class);
 		bind(WriteFlashOperation.class).to(JennicWriteFlashOperation.class);
 		

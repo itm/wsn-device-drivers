@@ -10,11 +10,9 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.SendOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.WriteFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortLeaveProgramModeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortSendOperation;
 
 public class TelosbModule extends AbstractModule {
 
@@ -26,7 +24,6 @@ public class TelosbModule extends AbstractModule {
 		bind(GetChipTypeOperation.class).to(TelosbGetChipTypeOperation.class);
 		bind(ProgramOperation.class).to(TelosbProgramOperation.class);
 		bind(ResetOperation.class).to(TelosbResetOperation.class);
-		bind(SendOperation.class).to(SerialPortSendOperation.class);
 		bind(WriteFlashOperation.class).to(TelosbWriteFlashOperation.class);
 		bind(BSLTelosb.class).in(Singleton.class);
 		

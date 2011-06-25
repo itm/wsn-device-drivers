@@ -69,6 +69,8 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	
 	private final Provider<OutputStream> outputStreamProvider;
 	
+	private final Provider<SendOperation> sendProvider;
+	
 	@Inject(optional = true)
 	private Provider<GetChipTypeOperation> getChipTypeProvider;
 	
@@ -88,9 +90,6 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	private Provider<ResetOperation> resetProvider;
 	
 	@Inject(optional = true)
-	private Provider<SendOperation> sendProvider;
-	
-	@Inject(optional = true)
 	private Provider<WriteFlashOperation> writeFlashProvider;
 	
 	@Inject(optional = true)
@@ -104,11 +103,13 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	 */
 	@Inject
 	public QueuedDeviceAsync(OperationQueue queue, Connection connection, InputStream inputStream,
-			Provider<OutputStream> outputStreamProvider) {
+			Provider<OutputStream> outputStreamProvider,
+			Provider<SendOperation> sendProvider) {
 		this.connection = connection;
 		this.queue = queue;
 		this.inputStream = inputStream;
 		this.outputStreamProvider = outputStreamProvider;
+		this.sendProvider = sendProvider;
 	}
 
 	@Override
