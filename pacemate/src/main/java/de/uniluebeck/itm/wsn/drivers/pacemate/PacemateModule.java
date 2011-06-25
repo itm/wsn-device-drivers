@@ -1,7 +1,6 @@
 package de.uniluebeck.itm.wsn.drivers.pacemate;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.util.Providers;
 
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
@@ -13,8 +12,6 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.SendOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.WriteFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortEnterProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortLeaveProgramModeOperation;
@@ -35,8 +32,6 @@ public class PacemateModule extends AbstractModule {
 		bind(ReadMacAddressOperation.class).to(PacemateReadMacAddressOperation.class);
 		bind(ResetOperation.class).to(iSenseResetOperation.class);
 		bind(SendOperation.class).to(SerialPortSendOperation.class);
-		bind(WriteMacAddressOperation.class).toProvider(Providers.<WriteMacAddressOperation>of(null));
-		bind(WriteFlashOperation.class).toProvider(Providers.<WriteFlashOperation>of(null));
 		
 		SerialPortConnection connection = new iSenseSerialPortConnection();
 		bind(SerialPortConnection.class).toInstance(connection);

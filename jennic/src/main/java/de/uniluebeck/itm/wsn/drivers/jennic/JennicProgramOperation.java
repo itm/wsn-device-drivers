@@ -68,7 +68,6 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 		
 		// Write program to flash
 		BinDataBlock block = null;
-		int blockCount = 0;
 		while ((block = binData.getNextBlock()) != null) {
 			helper.writeFlash(block.getAddress(), block.getData());
 			
@@ -80,8 +79,6 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 			if (isCanceled()) {
 				return;
 			}
-			
-			blockCount++;
 		}	
 	}
 	

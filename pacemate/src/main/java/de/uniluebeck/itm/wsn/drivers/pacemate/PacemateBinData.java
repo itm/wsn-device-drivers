@@ -117,16 +117,13 @@ public class PacemateBinData {
 	 */
 	public int calcCRC() {
 		int crc = 0;
-		int counter = 0;
-
+		
 		for (int i = 0; i < bytes.length; i++) {
 			crc = SYS_Crc(crc, bytes[i]);
-			counter++;
 		}
 
 		for (int i = bytes.length; i < (0x3FFFE - 0x3000); i++) {
 			crc = SYS_Crc(crc, (byte) 0xFF);
-			counter++;
 		}
 
 		return crc;
