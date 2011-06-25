@@ -23,13 +23,12 @@
 
 package de.uniluebeck.itm.wsn.drivers.factories;
 
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Module;
 
+import de.uniluebeck.itm.wsn.drivers.core.DeviceModule;
 import de.uniluebeck.itm.wsn.drivers.core.async.DeviceAsync;
 import de.uniluebeck.itm.wsn.drivers.jennic.JennicModule;
 import de.uniluebeck.itm.wsn.drivers.mock.MockModule;
@@ -38,27 +37,8 @@ import de.uniluebeck.itm.wsn.drivers.telosb.TelosbModule;
 
 public class DeviceAsyncFactoryImpl implements DeviceAsyncFactory {
 	
-	private class FactoryModule extends AbstractModule {
-		
-		private ScheduledExecutorService scheduleExecutorService;
-		
-		private ExecutorService executorService;
-		
-		public FactoryModule(ScheduledExecutorService scheduleExecutorService, ExecutorService executorService) {
-			this.scheduleExecutorService = scheduleExecutorService;
-			this.executorService = executorService;
-		}
-		
-		@Override
-		protected void configure() {
-			bind(ScheduledExecutorService.class).toInstance(scheduleExecutorService);
-			bind(ExecutorService.class).toInstance(executorService);
-		}
-	}
-	
 	@Override
-	public DeviceAsync create(ScheduledExecutorService deviceExecutorService, 
-			ExecutorService queueExecutorService, DeviceType deviceType) {
+	public DeviceAsync create(ScheduledExecutorService executorService, DeviceType deviceType) {
 		Module deviceModule = null;
 		switch (deviceType) {
 		case ISENSE:
@@ -79,15 +59,12 @@ public class DeviceAsyncFactoryImpl implements DeviceAsyncFactory {
 					+ "?"
 			);
 		}
-		
-		Module factoryModule = new FactoryModule(deviceExecutorService, queueExecutorService);
-		return Guice.createInjector(factoryModule, deviceModule).getInstance(DeviceAsync.class);
+		return Guice.createInjector(new DeviceModule(executorService), deviceModule).getInstance(DeviceAsync.class);
 	}
 
 	@Override
-	public DeviceAsync create(ScheduledExecutorService executorService, 
-			ExecutorService queueExecutorService, String deviceType) {
-		return create(executorService, queueExecutorService, DeviceType.fromString(deviceType));
+	public DeviceAsync create(ScheduledExecutorService executorService, String deviceType) {
+		return create(executorService, DeviceType.fromString(deviceType));
 	}
 
 }
