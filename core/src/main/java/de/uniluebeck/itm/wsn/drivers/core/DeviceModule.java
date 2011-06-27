@@ -49,7 +49,7 @@ public class DeviceModule extends AbstractModule {
 		try {
 			inputStream.connect(outputStream);
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 		TimeLimiter timeLimiter = new SimpleTimeLimiter(executorService);
 		bind(ExecutorService.class).toInstance(executorService);
