@@ -33,7 +33,7 @@ public class DeviceModule extends AbstractModule {
 	
 	public DeviceModule() {
 		executorService = Executors.newScheduledThreadPool(DEFAULT_POOL_SIZE, 
-				new ThreadFactoryBuilder().setNameFormat("GenericDeviceExample-Thread %d").build()
+				new ThreadFactoryBuilder().setNameFormat("DeviceModule-Thread %d").build()
 		);
 	}
 	
