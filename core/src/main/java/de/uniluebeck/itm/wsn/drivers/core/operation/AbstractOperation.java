@@ -204,7 +204,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	 */
 	@Override
 	public void setTimeout(final long timeout) {
-		checkArgument(timeout >= 0, "Negativ timeout is not allowed");
+		checkArgument(timeout >= 0, "Negative timeout is not allowed");
 		checkState(!State.RUNNING.equals(state), "Timeout can not be set when operation is in running state");
 		this.timeout = timeout;
 	}

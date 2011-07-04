@@ -1,7 +1,9 @@
 package de.uniluebeck.itm.wsn.drivers.mock;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.util.Calendar;
 import java.util.Random;
 import java.util.concurrent.Executors;
@@ -30,7 +32,11 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
  * @author Malte Legenhausen
  */
 public class MockDevice implements Device<Connection>, ConnectionListener {
-	
+
+	private static final byte DLE = 0x10;
+	private static final byte STX = 0x02;
+	private static final byte ETX = 0x03;
+
 	/**
 	 * Internal runnable that send continuesly messages.
 	 * 
@@ -209,7 +215,22 @@ public class MockDevice implements Device<Connection>, ConnectionListener {
 	 * @param message The message as string.
 	 */
 	public void sendMessage(final String message) {
-		sendMessage(message.getBytes());		
+		sendMessage(encapsulateWithDleStxEtx(message.getBytes()));
+	}
+
+	private byte[] encapsulateWithDleStxEtx(byte[] src) {
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(src.length + 4);
+		outputStream.write(DLE);
+		outputStream.write(STX);
+		for (byte b : src) {
+			if (b == DLE) {
+				outputStream.write(DLE);
+			}
+			outputStream.write(b);
+		}
+		outputStream.write(DLE);
+		outputStream.write(ETX);
+		return outputStream.toByteArray();
 	}
 	
 	/**
