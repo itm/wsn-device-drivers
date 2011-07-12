@@ -217,8 +217,6 @@ public class SimpleSerialPortConnection extends AbstractConnection
 			serialPort.close();
 			serialPort = null;
 		}
-		
-		setConnected(false);
 	}
 
 	/**

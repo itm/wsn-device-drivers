@@ -38,7 +38,6 @@ public class JennicModule extends AbstractModule {
 		SerialPortConnection connection = new iSenseSerialPortConnection();
 		bind(SerialPortConnection.class).toInstance(connection);
 		bind(Connection.class).toInstance(connection);
-		bind(JennicHelper.class);
 	}
 
 }

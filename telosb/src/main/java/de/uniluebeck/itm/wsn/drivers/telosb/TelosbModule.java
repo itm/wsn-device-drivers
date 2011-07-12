@@ -1,7 +1,6 @@
 package de.uniluebeck.itm.wsn.drivers.telosb;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Singleton;
 
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
@@ -25,7 +24,6 @@ public class TelosbModule extends AbstractModule {
 		bind(ProgramOperation.class).to(TelosbProgramOperation.class);
 		bind(ResetOperation.class).to(TelosbResetOperation.class);
 		bind(WriteFlashOperation.class).to(TelosbWriteFlashOperation.class);
-		bind(BSLTelosb.class).in(Singleton.class);
 		
 		SerialPortConnection connection = new TelosbSerialPortConnection();
 		bind(SerialPortConnection.class).toInstance(connection);

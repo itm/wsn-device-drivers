@@ -165,10 +165,9 @@ public class MockConnection extends AbstractConnection {
 	
 	@Override
 	public void close() throws IOException {
-		super.close();
 		stopAliveRunnable();
 		ExecutorUtils.shutdown(executorService, EXECUTOR_TIMEOUT, TimeUnit.SECONDS);
-		setConnected(false);
+		super.close();
 	}
 	
 	@Override

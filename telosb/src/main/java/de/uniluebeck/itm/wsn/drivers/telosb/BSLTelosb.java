@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import de.uniluebeck.itm.tr.util.TimeDiff;
 import de.uniluebeck.itm.wsn.drivers.core.exception.FlashProgramFailedException;
@@ -20,6 +21,7 @@ import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.UnexpectedResponseException;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 
+@Singleton
 public class BSLTelosb {
 	private static final Logger log = LoggerFactory.getLogger(BSLTelosb.class);
 	
