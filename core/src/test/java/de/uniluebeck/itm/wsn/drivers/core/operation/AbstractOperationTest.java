@@ -1,5 +1,8 @@
 package de.uniluebeck.itm.wsn.drivers.core.operation;
 
+import com.google.common.util.concurrent.FakeTimeLimiter;
+import com.google.common.util.concurrent.SimpleTimeLimiter;
+import de.uniluebeck.itm.tr.util.ExecutorUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,6 +13,10 @@ import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class AbstractOperationTest {
 
@@ -28,6 +35,7 @@ public class AbstractOperationTest {
 	
 	@Test
 	public void testCallSuccess() {
+		operation.setTimeLimiter(new FakeTimeLimiter());
 		operation.setAsyncCallback(new AsyncAdapter<Object>() {
 			@Override
 			public void onFailure(Throwable throwable) {
@@ -77,20 +85,27 @@ public class AbstractOperationTest {
 	
 	@Test(expected=TimeoutException.class)
 	public void testCallTimeout() throws Exception {
-		// Test timeout
-		Operation<Void> operation = new AbstractOperation<Void>() {
-			@Override
-			public Void execute(ProgressManager progressManager) throws Exception {
-				Thread.sleep(200);
-				return null;
-			}
-		};
-		operation.setTimeout(100);
+		final ExecutorService executor = Executors.newSingleThreadExecutor();
+		final SimpleTimeLimiter timeLimiter = new SimpleTimeLimiter(executor);
 		try {
-			operation.call();
-		} catch(Exception e) {
-			Assert.assertEquals(State.TIMEDOUT, operation.getState());
-			throw e;
+			// Test timeout
+			Operation<Void> operationUnderTest = new AbstractOperation<Void>() {
+				@Override
+				public Void execute(ProgressManager progressManager) throws Exception {
+					Thread.sleep(200);
+					return null;
+				}
+			};
+			operationUnderTest.setTimeout(100);
+			operationUnderTest.setTimeLimiter(timeLimiter);
+			try {
+				operationUnderTest.call();
+			} catch(Exception e) {
+				Assert.assertEquals(State.TIMEDOUT, operationUnderTest.getState());
+				throw e;
+			}
+		} finally {
+			ExecutorUtils.shutdown(executor, 0, TimeUnit.SECONDS);
 		}
 	}
 

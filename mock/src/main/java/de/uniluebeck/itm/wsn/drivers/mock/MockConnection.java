@@ -1,5 +1,6 @@
 package de.uniluebeck.itm.wsn.drivers.mock;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
@@ -56,6 +57,10 @@ public class MockConnection extends AbstractConnection {
 			sendMessage(message);
 		}
 	}
+	
+	private static final byte DLE = 0x10;
+	private static final byte STX = 0x02;
+	private static final byte ETX = 0x03;
 	
 	/**
 	 * The timeout for the executor 
@@ -132,7 +137,22 @@ public class MockConnection extends AbstractConnection {
 	 * @param message The message as string.
 	 */
 	public void sendMessage(final String message) {
-		sendMessage(message.getBytes());		
+		sendMessage(encapsulateWithDleStxEtx(message.getBytes()));
+	}
+
+	private byte[] encapsulateWithDleStxEtx(byte[] src) {
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(src.length + 4);
+		outputStream.write(DLE);
+		outputStream.write(STX);
+		for (byte b : src) {
+			if (b == DLE) {
+				outputStream.write(DLE);
+			}
+			outputStream.write(b);
+		}
+		outputStream.write(DLE);
+		outputStream.write(ETX);
+		return outputStream.toByteArray();
 	}
 	
 	/**
