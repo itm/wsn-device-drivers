@@ -214,7 +214,7 @@
 	</properties>
 
 	<scm>
-		<connection>scm:git:https://itm@github.com/itm/wsn-device-drivers.git</connection>
+		<connection>scm:git:git@github.com:itm/wsn-device-drivers.git</connection>
 	</scm>
 
 </project>
