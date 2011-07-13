@@ -10,13 +10,18 @@ import java.io.OutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import de.uniluebeck.itm.tr.util.TimeDiff;
+import de.uniluebeck.itm.wsn.drivers.core.exception.FlashProgramFailedException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.InvalidChecksumException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.ReceivedIncorrectDataException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.UnexpectedResponseException;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 
+@Singleton
 public class BSLTelosb {
 	private static final Logger log = LoggerFactory.getLogger(BSLTelosb.class);
 	
@@ -91,15 +96,6 @@ public class BSLTelosb {
 	/* current baudrate used for communicating with the bsl */
 	private BaudRate currentBaudRate = BaudRate.Baud9600;
 	
-	private SerialPort serialPort = null;
-	
-	private InputStream inputStream = null;
-	
-	private OutputStream outputStream = null;
-	
-	/* for i2c communication with the msp430 */
-	private TelosI2CCom i2cCom = null;
-	
 	/**
 	 * 
 	 */
@@ -109,21 +105,16 @@ public class BSLTelosb {
 	
 	boolean bslBaudrateSet = false;
 	
+	private final SerialPortConnection connection;
+	
 	/**
 	 * Constructor.
 	 * @param serialPort used for communication with the bsl
 	 * @throws IOException
 	 */
-	public BSLTelosb(SerialPortConnection serialPort) {
-		if (serialPort == null) {
-			throw new NullPointerException("Can not initialize BSL if SerialPort is null.");
-		}
-		
-		this.serialPort = serialPort.getSerialPort();
-		inputStream = serialPort.getInputStream();
-		outputStream = serialPort.getOutputStream();
-		
-		i2cCom = new TelosI2CCom(this.serialPort);
+	@Inject
+	public BSLTelosb(SerialPortConnection connection) {
+		this.connection = connection;
 	}
 	
 	/**
@@ -133,10 +124,7 @@ public class BSLTelosb {
 	 */
 	public boolean invokeBSL() {
 		
-		
-		if (i2cCom == null) {
-			return false;
-		}
+		TelosI2CCom i2cCom = new TelosI2CCom(connection.getSerialPort());
 		
 		log.debug("invokeBSL()");
 		
@@ -164,9 +152,7 @@ public class BSLTelosb {
 	 * @return true if resetted successfully
 	 */
 	public boolean reset() {
-		if (i2cCom == null) {
-			return false;
-		}
+		TelosI2CCom i2cCom = new TelosI2CCom(connection.getSerialPort());
 		
 		log.debug("reset()");
 		
@@ -208,10 +194,6 @@ public class BSLTelosb {
 		int numDataBytes;
 		@SuppressWarnings("unused")
 		String frameString = "";
-		
-		if (outputStream == null) {
-			throw new NullPointerException("Outputstream for BSL is null.");
-		}
 		
 		if (data == null) {
 			numDataBytes = 0;
@@ -260,6 +242,7 @@ public class BSLTelosb {
 		}
 
 		// send frame
+		OutputStream outputStream = connection.getOutputStream();
 		for (int i=0; i < dataFrame.length; i++) {
 			outputStream.write(dataFrame[i]);	
 		}
@@ -298,10 +281,7 @@ public class BSLTelosb {
 		byte[] dataFrame;
 		String frameString = "";
 		
-		if (inputStream == null) {
-			throw new NullPointerException("Inputstream for BSL is null.");
-		}
-		
+		InputStream inputStream = connection.getInputStream();
 		waitDataAvailable(inputStream, DEFAULT_REPLYTIMEOUTMS);
 		reply = inputStream.read();
 		
@@ -652,6 +632,7 @@ public class BSLTelosb {
 		}
 		
 		// set new baudrate for serial port
+		SerialPort serialPort = connection.getSerialPort();
 		try {
 			serialPort.setSerialPortParams(newBaudRate.toInt(),
 					serialPort.getDataBits(),
@@ -675,6 +656,7 @@ public class BSLTelosb {
 	 */
 	public boolean changeComPort(int newBaud, int newParity) throws IOException {
 		// set new baudrate for serial port
+		SerialPort serialPort = connection.getSerialPort();
 		try {
 			serialPort.setSerialPortParams(newBaud,
 					serialPort.getDataBits(),
@@ -695,10 +677,6 @@ public class BSLTelosb {
 	private boolean bslSyncronize(boolean wait) throws TimeoutException, IOException {
 		int answer;
 		int maxTries = 10;
-		
-		if (outputStream == null || inputStream == null) {
-			throw new NullPointerException("I/O streams for BSL are null.");
-		}
 
 		//TODO: check for right baudrate
 		
@@ -709,8 +687,8 @@ public class BSLTelosb {
 			maxTries--;
 			
 			// send sync byte and read answer
-			outputStream.write(BSL_SYNC);
-			answer = inputStream.read();
+			connection.getOutputStream().write(BSL_SYNC);
+			answer = connection.getInputStream().read();
 			
 			if (answer == SYNC_ACK) {
 				// ack received
@@ -792,6 +770,7 @@ public class BSLTelosb {
 		//log.debug("flushInputStream()");
 
 		try {
+			InputStream inputStream = connection.getInputStream();
 			while ((i = inputStream.available()) > 0) {
 				inputStream.skip(i);
 			}
@@ -809,6 +788,7 @@ public class BSLTelosb {
 		if (bslBaudrateSet) {
 			return;
 		}
+		SerialPort serialPort = connection.getSerialPort();
 		oldBaudRate = serialPort.getBaudRate();
 		try {
 			serialPort.setSerialPortParams(currentBaudRate.toInt(), 
@@ -832,6 +812,7 @@ public class BSLTelosb {
 		if (!bslBaudrateSet) {
 			return;
 		}
+		SerialPort serialPort = connection.getSerialPort();
 		try {
 			serialPort.setSerialPortParams(oldBaudRate, 
 											serialPort.getDataBits(), 
@@ -842,5 +823,13 @@ public class BSLTelosb {
 			throw new IOException(e.getMessage());
 		}
 		bslBaudrateSet = false;
+	}
+	
+	public void writeFlash(int address, byte[] bytes, int len) throws IOException, FlashProgramFailedException, TimeoutException, InvalidChecksumException, ReceivedIncorrectDataException, UnexpectedResponseException {
+		sendBSLCommand(BSLTelosb.CMD_TXDATABLOCK, address, len, bytes, false);
+		final byte[] reply = receiveBSLReply();
+		if ((reply[0] & 0xFF) != BSLTelosb.DATA_ACK) {
+			throw new FlashProgramFailedException("Failed to program flash: received no ACK");
+		}
 	}
 }

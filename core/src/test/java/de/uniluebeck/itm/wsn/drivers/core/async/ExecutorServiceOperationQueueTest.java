@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.wsn.drivers.core.async.thread;
+package de.uniluebeck.itm.wsn.drivers.core.async;
 
 import static org.junit.Assert.fail;
 
@@ -8,17 +8,19 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.util.concurrent.FakeTimeLimiter;
+
 import de.uniluebeck.itm.wsn.drivers.core.async.AsyncAdapter;
 import de.uniluebeck.itm.wsn.drivers.core.async.AsyncCallback;
+import de.uniluebeck.itm.wsn.drivers.core.async.ExecutorServiceOperationQueue;
 import de.uniluebeck.itm.wsn.drivers.core.async.OperationFuture;
 import de.uniluebeck.itm.wsn.drivers.core.async.OperationQueue;
-import de.uniluebeck.itm.wsn.drivers.core.async.ExecutorServiceOperationQueue;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 
-public class PausableExecutorOperationQueueTest {
-
+public class ExecutorServiceOperationQueueTest {
+	
 	private OperationQueue queue;
 	
 	@Before
@@ -34,6 +36,7 @@ public class PausableExecutorOperationQueueTest {
 				return true;
 			}
 		};
+		operation.setTimeLimiter(new FakeTimeLimiter());
 		AsyncCallback<Boolean> callback = new AsyncAdapter<Boolean>() {
 
 			@Override
@@ -43,6 +46,7 @@ public class PausableExecutorOperationQueueTest {
 
 			@Override
 			public void onFailure(Throwable throwable) {
+				throwable.printStackTrace();
 				fail("No failure was expected");
 			}
 		};

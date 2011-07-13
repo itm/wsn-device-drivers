@@ -9,9 +9,6 @@ import java.util.List;
 
 import com.google.common.io.Closeables;
 
-import de.uniluebeck.itm.wsn.drivers.core.io.InputStreamBridge;
-import de.uniluebeck.itm.wsn.drivers.core.io.OutputStreamBridge;
-
 
 /**
  * Class that implement the common functionality of a connection class.
@@ -35,12 +32,12 @@ public abstract class AbstractConnection implements Connection {
 	/**
 	 * Input stream of the connection.
 	 */
-	private InputStreamBridge inputStream = new InputStreamBridge();
+	private InputStream inputStream;
 	
 	/**
 	 * Output stream of the connection.
 	 */
-	private OutputStreamBridge outputStream = new OutputStreamBridge();
+	private OutputStream outputStream;
 	
 	/**
 	 * The uri of the connected resource.
@@ -68,13 +65,19 @@ public abstract class AbstractConnection implements Connection {
 		}
 	}
 	
+	protected void fireDataAvailableListeners(ConnectionEvent event) {
+		for (DataAvailableListener dataAvailableListener : dataAvailableListeners) {
+			dataAvailableListener.dataAvailable(event);
+		}
+	}
+	
 	/**
 	 * Setter for the input stream.
 	 * 
 	 * @param inputStream The input stream object.
 	 */
 	protected void setInputStream(final InputStream inputStream) {
-		this.inputStream.setInputStream(inputStream);
+		this.inputStream = inputStream;
 	}
 	
 	/**
@@ -83,7 +86,7 @@ public abstract class AbstractConnection implements Connection {
 	 * @param outputStream The output stream object.
 	 */
 	protected void setOutputStream(final OutputStream outputStream) {
-		this.outputStream.setOutputStream(outputStream);
+		this.outputStream = outputStream;
 	}
 	
 	/**
@@ -93,6 +96,10 @@ public abstract class AbstractConnection implements Connection {
 	 */
 	protected void setUri(final String uri) {
 		this.uri = uri;
+	}
+	
+	public String getUri() {
+		return uri;
 	}
 	
 	@Override
@@ -132,16 +139,10 @@ public abstract class AbstractConnection implements Connection {
 	
 	@Override
 	public void close() throws IOException {
+		setConnected(false);
 		Closeables.close(inputStream, true);
-		inputStream.setInputStream(null);
-		
+		inputStream = null;
 		Closeables.close(outputStream, true);
-		outputStream.setOutputStream(null);
-	}
-
-	protected void notifyDataAvailableListeners() {
-		for (DataAvailableListener dataAvailableListener : dataAvailableListeners) {
-			dataAvailableListener.dataAvailable(this);
-		}
+		outputStream = null;
 	}
 }

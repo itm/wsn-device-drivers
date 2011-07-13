@@ -4,115 +4,34 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 import com.google.common.io.Flushables;
+import com.google.inject.Inject;
 
 import de.uniluebeck.itm.tr.util.StringUtils;
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
-import de.uniluebeck.itm.wsn.drivers.core.Programable;
 import de.uniluebeck.itm.wsn.drivers.core.exception.FlashConfigurationFailedException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.FlashEraseFailedException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.FlashProgramFailedException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.InvalidChecksumException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.UnexpectedResponseException;
-import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.SendOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.WriteFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.AbstractSerialPortDevice;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortEnterProgramModeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortLeaveProgramModeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortSendOperation;
-import de.uniluebeck.itm.wsn.drivers.isense.iSenseResetOperation;
 import de.uniluebeck.itm.wsn.drivers.isense.exception.FlashTypeReadFailedException;
 import de.uniluebeck.itm.wsn.drivers.jennic.exception.SectorEraseException;
 
-public class JennicDevice extends AbstractSerialPortDevice implements Programable {
-
-	/**
-	 * Logger for this class.
-	 */
-	private static final Logger LOG = LoggerFactory.getLogger(JennicDevice.class);
+public class JennicHelper {
+	
+	private static final Logger LOG = Logger.getLogger(JennicHelper.class);
 	
 	private static final int TIMEOUT = 2500;
 	
-	public JennicDevice(SerialPortConnection connection) {
-		super(connection);
-	}
+	private final SerialPortConnection connection;
 	
-	@Override
-	public EnterProgramModeOperation createEnterProgramModeOperation() {
-		return new SerialPortEnterProgramModeOperation(getConnection());
-	}
-	
-	@Override
-	public LeaveProgramModeOperation createLeaveProgramModeOperation() {
-		return new SerialPortLeaveProgramModeOperation(getConnection());
-	}
-	
-	@Override
-	public EraseFlashOperation createEraseFlashOperation() {
-		return new JennicEraseFlashOperation(this);
-	}
-
-	@Override
-	public GetChipTypeOperation createGetChipTypeOperation() {
-		return new JennicGetChipTypeOperation(this);
-	}
-	
-	public GetFlashHeaderOperation createGetFlashHeaderOperation() {
-		return new JennicGetFlashHeaderOperation(this);
-	}
-
-	@Override
-	public ProgramOperation createProgramOperation() {
-		return new JennicProgramOperation(this);
-	}
-
-	@Override
-	public ReadFlashOperation createReadFlashOperation() {
-		return new JennicReadFlashOperation(this);
-	}
-
-	@Override
-	public ReadMacAddressOperation createReadMacAddressOperation() {
-		return new JennicReadMacAddressOperation(this);
-	}
-
-	@Override
-	public ResetOperation createResetOperation() {
-		return new iSenseResetOperation(getConnection());
-	}
-
-	@Override
-	public SendOperation createSendOperation() {
-		return new SerialPortSendOperation(getConnection());
-	}
-
-	@Override
-	public WriteFlashOperation createWriteFlashOperation() {
-		return new JennicWriteFlashOperation(this);
-	}
-
-	@Override
-	public WriteMacAddressOperation createWriteMacAddressOperation() {
-		return new JennicWriteMacAddressOperation(this);
-	}
-
-	@Override
-	public int[] getChannels() {
-		return new int[] { 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26 };
+	@Inject
+	public JennicHelper(SerialPortConnection connection) {
+		this.connection = connection;
 	}
 	
 	public FlashType getFlashType() throws Exception {
@@ -218,7 +137,7 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 		data[data.length - 1] = Messages.calculateChecksum(data, 0, data.length - 1);
 
 		// Send message
-		final OutputStream outStream = getConnection().getOutputStream();
+		final OutputStream outStream = connection.getOutputStream();
 		outStream.write(data);
 		outStream.flush();
 	}
@@ -228,7 +147,6 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 	 */
 	public byte[] receiveBootLoaderReply(int type) throws TimeoutException, UnexpectedResponseException, InvalidChecksumException, IOException, NullPointerException {
 		LOG.trace("Receiving Boot Loader Reply...");
-		final SerialPortConnection connection = getConnection();
 		final InputStream inputStream = connection.getInputStream();
 		
 		connection.waitDataAvailable(TIMEOUT);
@@ -287,7 +205,7 @@ public class JennicDevice extends AbstractSerialPortDevice implements Programabl
 			LOG.error("Exception while waiting for connection", e);
 		}
 
-		Flushables.flushQuietly(getConnection());
+		Flushables.flushQuietly(connection);
 		return false;
 	}
 	

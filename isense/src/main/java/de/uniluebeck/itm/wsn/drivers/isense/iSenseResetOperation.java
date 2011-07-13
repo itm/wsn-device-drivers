@@ -5,6 +5,8 @@ import gnu.io.SerialPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
+
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
@@ -18,6 +20,7 @@ public class iSenseResetOperation extends AbstractOperation<Void> implements Res
 	
 	private final SerialPortConnection connection;
 
+	@Inject
 	public iSenseResetOperation(final SerialPortConnection connection) {
 		this.connection = connection;
 	}

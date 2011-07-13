@@ -1,5 +1,7 @@
 package de.uniluebeck.itm.wsn.drivers.core.serialport;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import gnu.io.CommPortIdentifier;
 import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
@@ -21,13 +23,13 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import com.google.common.io.ByteStreams;
 
 import de.uniluebeck.itm.tr.util.TimeDiff;
 import de.uniluebeck.itm.wsn.drivers.core.AbstractConnection;
+import de.uniluebeck.itm.wsn.drivers.core.ConnectionEvent;
 import de.uniluebeck.itm.wsn.drivers.core.exception.PortNotFoundException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 import de.uniluebeck.itm.wsn.drivers.core.util.JarUtil;
@@ -46,6 +48,10 @@ public class SimpleSerialPortConnection extends AbstractConnection
 	 * Logger for this class.
 	 */
 	private static final Logger LOG = LoggerFactory.getLogger(SimpleSerialPortConnection.class);
+	
+	private static final int[] DEFAULT_CHANNELS = new int[] { 
+		11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26 
+	};
 
 	/**
 	 * The timeout that will be waited for available data.
@@ -124,8 +130,8 @@ public class SimpleSerialPortConnection extends AbstractConnection
 
 	@Override
 	public void connect(final String port) {
-		Preconditions.checkNotNull(port, "The given port can not be null.");
-		Preconditions.checkState(serialPort == null, "Serial port is already set. Disconnect first before retry.");
+		checkNotNull(port, "The given port can not be null.");
+		checkState(serialPort == null, "Serial port is already set. Disconnect first before retry.");
 
 		try {
 			connectSerialPort(port);
@@ -152,7 +158,7 @@ public class SimpleSerialPortConnection extends AbstractConnection
 	 *
 	 * @throws Exception
 	 */
-	protected void connectSerialPort(final String port)
+	protected void connectSerialPort(final String port) 
 			throws PortInUseException, TooManyListenersException, IOException {
 
 		SysOutUtil.mute();
@@ -211,8 +217,6 @@ public class SimpleSerialPortConnection extends AbstractConnection
 			serialPort.close();
 			serialPort = null;
 		}
-		
-		setConnected(false);
 	}
 
 	/**
@@ -235,7 +239,7 @@ public class SimpleSerialPortConnection extends AbstractConnection
 				} finally {
 					dataAvailableLock.unlock();
 				}
-				notifyDataAvailableListeners();
+				fireDataAvailableListeners(new ConnectionEvent(this, getUri(), isConnected()));
 				break;
 			default:
 				LOG.debug("Serial event (other than data available): " + event);
@@ -270,6 +274,12 @@ public class SimpleSerialPortConnection extends AbstractConnection
 		return available;
 	}
 
+	
+	@Override
+	public int[] getChannels() {
+		return DEFAULT_CHANNELS;
+	}
+	
 	public int getNormalBaudrate() {
 		return normalBaudrate;
 	}

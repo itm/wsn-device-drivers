@@ -9,24 +9,26 @@ import de.uniluebeck.itm.wsn.drivers.core.event.StateChangedEvent;
  * Default implementation for the OperationQueueListener.
  * 
  * @author Malte Legenhausen
- *
- * @param <T> The return type of the operation.
  */
-public class OperationQueueAdapter<T> implements OperationQueueListener<T> {
+public class OperationQueueAdapter implements OperationQueueListener {
 
 	@Override
-	public void onStateChanged(StateChangedEvent<T> event) {
+	public void beforeStateChanged(StateChangedEvent<?> event) {
 		
 	}
 
 	@Override
-	public void onAdded(AddedEvent<T> event) {
+	public void afterStateChanged(StateChangedEvent<?> event) {
 		
 	}
 
 	@Override
-	public void onRemoved(RemovedEvent<T> event) {
+	public void onAdded(AddedEvent<?> event) {
 		
 	}
 
+	@Override
+	public void onRemoved(RemovedEvent<?> event) {
+		
+	}
 }

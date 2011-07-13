@@ -1,5 +1,7 @@
 package de.uniluebeck.itm.wsn.drivers.mock;
 
+import com.google.inject.Inject;
+
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;
 
@@ -21,7 +23,8 @@ public class MockReadMacAddress extends AbstractMockOperation<MacAddress> implem
 	 * 
 	 * @param configuration The <code>MockConfiguration</code> of the <code>MockDevice</code>.
 	 */
-	public MockReadMacAddress(final MockConfiguration configuration) {
+	@Inject
+	public MockReadMacAddress(MockConfiguration configuration) {
 		this.configuration = configuration;
 	}
 	

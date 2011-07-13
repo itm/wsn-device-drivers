@@ -3,8 +3,12 @@ package de.uniluebeck.itm.wsn.drivers.jennic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
+
 import de.uniluebeck.itm.tr.util.StringUtils;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractReadFlashOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 
 public class JennicReadFlashOperation extends AbstractReadFlashOperation {
@@ -14,15 +18,24 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 	 */
 	private static final Logger log = LoggerFactory.getLogger(JennicReadFlashOperation.class);
 	
-	private final JennicDevice device;
+	private final JennicHelper helper;
 	
-	public JennicReadFlashOperation(JennicDevice device) {
-		this.device = device;
+	private final EnterProgramModeOperation enterProgramModeOperation;
+	
+	private final LeaveProgramModeOperation leaveProgramModeOperation;
+	
+	@Inject
+	public JennicReadFlashOperation(JennicHelper helper,
+			EnterProgramModeOperation enterProgramModeOperation,
+			LeaveProgramModeOperation leaveProgramModeOperation) {
+		this.helper = helper;
+		this.enterProgramModeOperation = enterProgramModeOperation;
+		this.leaveProgramModeOperation = leaveProgramModeOperation;
 	}
 	
 	private byte[] readFlash(final ProgressManager progressManager) throws Exception {
 		// Wait for a connection
-		while (!isCanceled() && !device.waitForConnection()) {
+		while (!isCanceled() && !helper.waitForConnection()) {
 			log.debug("Still waiting for a connection");
 		}
 
@@ -45,7 +58,7 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 			final int blockSize = sectorStart + 32 > sectorEnd ? length : 32;
 
 			// Read data block
-			byte[] data = device.readFlash(sectorStart, blockSize);
+			byte[] data = helper.readFlash(sectorStart, blockSize);
 			System.arraycopy(data, 0, flashData, sectorStart - address, data.length);
 			
 			// Notify listeners
@@ -63,11 +76,11 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 	public byte[] execute(final ProgressManager progressManager) throws Exception {
 		byte[] data = null;
 		// Enter programming mode
-		executeSubOperation(device.createEnterProgramModeOperation(), progressManager.createSub(0.125f));
+		executeSubOperation(enterProgramModeOperation, progressManager.createSub(0.125f));
 		try {
 			data = readFlash(progressManager.createSub(0.75f));
 		} finally {
-			executeSubOperation(device.createLeaveProgramModeOperation(), progressManager.createSub(0.125f));
+			executeSubOperation(leaveProgramModeOperation, progressManager.createSub(0.125f));
 		}
 		return data;
 	}

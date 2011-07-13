@@ -3,29 +3,25 @@ package de.uniluebeck.itm.wsn.drivers.core.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
-import com.google.common.util.concurrent.SimpleTimeLimiter;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
 
 import de.uniluebeck.itm.tr.util.ExecutorUtils;
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
-import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.ConnectionEvent;
 import de.uniluebeck.itm.wsn.drivers.core.ConnectionListener;
-import de.uniluebeck.itm.wsn.drivers.core.Device;
+import de.uniluebeck.itm.wsn.drivers.core.DeviceModule;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import de.uniluebeck.itm.wsn.drivers.core.async.AsyncAdapter;
 import de.uniluebeck.itm.wsn.drivers.core.async.AsyncCallback;
 import de.uniluebeck.itm.wsn.drivers.core.async.DeviceAsync;
-import de.uniluebeck.itm.wsn.drivers.core.async.ExecutorServiceOperationQueue;
 import de.uniluebeck.itm.wsn.drivers.core.async.OperationQueue;
-import de.uniluebeck.itm.wsn.drivers.core.async.QueuedDeviceAsync;
 import de.uniluebeck.itm.wsn.drivers.core.io.ByteReceiver;
 import de.uniluebeck.itm.wsn.drivers.core.io.InputStreamReaderService;
 
@@ -78,28 +74,6 @@ public class GenericDeviceExample implements ConnectionListener {
 	private static final int EXECUTOR_TIMEOUT = 10;
 	
 	/**
-	 * Executor Service for the OperationQueue.
-	 */
-	private final ExecutorService queueExecutorService = Executors.newSingleThreadExecutor(
-			new ThreadFactoryBuilder().setNameFormat("OperationQueue-Thread %d").build()
-	);
-	
-	/**
-	 * The queue used for this example.
-	 */
-	private OperationQueue queue;
-	
-	/**
-	 * Default null device.
-	 */
-	private Device<?> device = null;
-	
-	/**
-	 * Default null connection.
-	 */
-	private Connection connection = null;
-	
-	/**
 	 * The device async reference for this example.
 	 */
 	private DeviceAsync deviceAsync;
@@ -128,10 +102,14 @@ public class GenericDeviceExample implements ConnectionListener {
 	 * The example message packet that is send to the device.
 	 */
 	private byte[] messagePacket;
-
-	private ScheduledExecutorService deviceExecutorService;
 	
 	private OutputStream outputStream;
+	
+	private Injector injector;
+	
+	public GenericDeviceExample() {
+		
+	}
 
 	public void addByteReceiver(ByteReceiver receiver) {
 		service.addByteReceiver(receiver);
@@ -139,10 +117,6 @@ public class GenericDeviceExample implements ConnectionListener {
 	
 	public void removeByteReceiver(ByteReceiver receiver) {
 		service.removeByteReceiver(receiver);
-	}
-
-	public void setDevice(final Device<?> device) {
-		this.device = device;
 	}
 
 	public void setImageInputStream(final InputStream anImage) {
@@ -157,19 +131,18 @@ public class GenericDeviceExample implements ConnectionListener {
 		this.messagePacket = new byte[aMessagePacket.length];
 		System.arraycopy(aMessagePacket, 0, this.messagePacket, 0, aMessagePacket.length);
 	}
+	
+	public void setModule(Module module) {
+		injector = Guice.createInjector(new DeviceModule(), module);
+	}
 
 	/**
 	 * Initialize the example.
 	 * Should be called after all parameters has been set.
 	 */
 	private void init() {
-		deviceExecutorService = Executors.newScheduledThreadPool(3, 
-				new ThreadFactoryBuilder().setNameFormat("GenericDeviceExample-Thread %d").build()
-		);
-		queue = new ExecutorServiceOperationQueue(queueExecutorService, new SimpleTimeLimiter(deviceExecutorService));
-		connection = device.getConnection();
-		connection.addListener(this);
-		deviceAsync = new QueuedDeviceAsync(deviceExecutorService, queue, device);
+		deviceAsync = injector.getInstance(DeviceAsync.class);
+		deviceAsync.addListener(this);
 		outputStream = deviceAsync.getOutputStream();
 	}
 	
@@ -178,7 +151,7 @@ public class GenericDeviceExample implements ConnectionListener {
 	 */
 	private void connect() {
 		System.out.println("Connecting to: " + uri);
-		connection.connect(uri);
+		deviceAsync.connect(uri);
 	}
 	
 	/**
@@ -414,6 +387,7 @@ public class GenericDeviceExample implements ConnectionListener {
 	 */
 	private void waitForOperationsToFinish() {
 		// Wait until the queue is empty.
+		OperationQueue queue = injector.getInstance(OperationQueue.class);
 		while (!queue.getOperations().isEmpty()) {
 			try {
 				Thread.sleep(DEFAULT_SLEEP);
@@ -449,14 +423,12 @@ public class GenericDeviceExample implements ConnectionListener {
 		System.out.println("Closing OutputStream...");
 		Closeables.closeQuietly(outputStream);
 		System.out.println("OutputStream closed");
-		System.out.println("Shutting down queue...");
-		ExecutorUtils.shutdown(queueExecutorService, EXECUTOR_TIMEOUT, TimeUnit.SECONDS);
-		System.out.println("Queue terminated");
 		System.out.println("Shutting down executor...");
-		ExecutorUtils.shutdown(deviceExecutorService, EXECUTOR_TIMEOUT, TimeUnit.SECONDS);
+		ExecutorUtils.shutdown(injector.getInstance(ScheduledExecutorService.class), 
+				EXECUTOR_TIMEOUT, TimeUnit.SECONDS);
 		System.out.println("Executor shut down");
 		System.out.println("Closing connection...");
-		Closeables.closeQuietly(connection);
+		Closeables.closeQuietly(deviceAsync);
 		System.out.println("Connection closed");
 		
 	}

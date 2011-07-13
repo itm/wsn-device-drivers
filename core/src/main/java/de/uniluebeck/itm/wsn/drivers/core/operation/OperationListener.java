@@ -13,10 +13,12 @@ import de.uniluebeck.itm.wsn.drivers.core.event.StateChangedEvent;
  */
 public interface OperationListener<T> {
 	
+	void beforeStateChanged(StateChangedEvent<T> event);
+	
 	/**
 	 * Method is called when an operation state change occurs.
 	 * 
 	 * @param event The <code>StateChangedEvent</code> that occurs.
 	 */
-	void onStateChanged(StateChangedEvent<T> event);
+	void afterStateChanged(StateChangedEvent<T> event);
 }

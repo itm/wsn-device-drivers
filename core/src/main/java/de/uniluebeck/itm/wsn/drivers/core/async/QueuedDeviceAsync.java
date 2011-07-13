@@ -6,34 +6,21 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterators;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.Singleton;
 
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
+import de.uniluebeck.itm.wsn.drivers.core.ConnectionListener;
 import de.uniluebeck.itm.wsn.drivers.core.DataAvailableListener;
-import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
-import de.uniluebeck.itm.wsn.drivers.core.State;
-import de.uniluebeck.itm.wsn.drivers.core.event.StateChangedEvent;
-import de.uniluebeck.itm.wsn.drivers.core.io.SendOutputStreamWrapper;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;
@@ -42,14 +29,15 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.SendOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.WriteFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
 
+
 /**
- * Class that implements the <code>DeviceAsync</code> interface as a queue. For using this implementation an
- * <code>OperationQueue</code> is needed.
- *
+ * Facade for calling operation async on the device.
+ * 
  * @author Malte Legenhausen
  */
+@Singleton
 public class QueuedDeviceAsync implements DeviceAsync {
-
+	
 	/**
 	 * Logger for this class.
 	 */
@@ -74,76 +62,30 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	 * Queue that schedules all <code>Operation</code> instances.
 	 */
 	private final OperationQueue queue;
-
-	/**
-	 * The <code>Device</code> that has to be executed async.
-	 */
-	private final Device<? extends Connection> device;
 	
-	private final ScheduledExecutorService executorService;
-
-	private PipedInputStream inputStreamPipedInputStream = new PipedInputStream();
-
-	private PipedOutputStream inputStreamPipedOutputStream = new PipedOutputStream();
-
-	private volatile boolean deviceInputStreamAvailableForReading = true;
-
-	private final Lock deviceInputStreamLock = new ReentrantLock();
-
-	private final Condition deviceInputStreamDataAvailable = deviceInputStreamLock.newCondition();
-
-	private Future<?> deviceInputStreamToPipeCopyWorkerFuture;
-
-	private class DeviceInputStreamToPipeCopyWorker implements Runnable {
-		
-		private static final int DATA_AVAILABLE_TIMEOUT = 50;
-		
-		private volatile boolean shutdown = false;
-
-		@Override
-		public void run() {
-			try {
-				final InputStream inputStream = device.getConnection().getInputStream();
-				while (!shutdown) {
-					deviceInputStreamLock.lock();
-					try {
-						deviceInputStreamDataAvailable.await(DATA_AVAILABLE_TIMEOUT, TimeUnit.MILLISECONDS);
-					} catch (InterruptedException e) {
-						LOG.error("" + e, e);
-					} finally {
-						deviceInputStreamLock.unlock();
-					}
-
-					if (device.getConnection().isConnected() && deviceInputStreamAvailableForReading) {
-						copyAvailableBytes(inputStream, inputStreamPipedOutputStream);
-					}
-				}
-			} catch (IOException e) {
-				LOG.error("IOException while reading from device InputStream: " + e, e);
-			}
-		}
-
-		private void copyAvailableBytes(final InputStream inputStream, final OutputStream outputStream)
-				throws IOException {
-
-			final int bytesAvailable = inputStream.available();
-
-			if (bytesAvailable > 0) {
-
-				byte[] buffer = new byte[bytesAvailable];
-				final int read = inputStream.read(buffer);
-
-				outputStream.write(buffer, 0, read);
-			}
-		}
-		
-		public void shutdown() {
-			shutdown = true;
-		}
-	}
+	private final Connection connection;
 	
-	private final DeviceInputStreamToPipeCopyWorker deviceInputStreamToPipeCopyWorker =
-			new DeviceInputStreamToPipeCopyWorker();
+	private final InputStream inputStream;
+	
+	private final Provider<OutputStream> outputStreamProvider;
+	
+	private final Provider<SendOperation> sendProvider;
+	
+	private Provider<GetChipTypeOperation> getChipTypeProvider;
+	
+	private Provider<EraseFlashOperation> eraseFlashProvider;
+	
+	private Provider<ProgramOperation> programProvider;
+	
+	private Provider<ReadFlashOperation> readFlashProvider;
+	
+	private Provider<ReadMacAddressOperation> readMacAddressProvider;
+	
+	private Provider<ResetOperation> resetProvider;
+	
+	private Provider<WriteFlashOperation> writeFlashProvider;
+	
+	private Provider<WriteMacAddressOperation> writeMacAddressProvider;
 
 	/**
 	 * Constructor.
@@ -152,52 +94,21 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	 * @param device The <code>Device</code> that provides all operations that can be executed.
 	 */
 	@Inject
-	public QueuedDeviceAsync(final ScheduledExecutorService executorService, final OperationQueue queue,
-							 final Device<? extends Connection> device) {
-
-		checkNotNull(executorService);
-		checkNotNull(queue);
-		checkNotNull(device);
-		checkNotNull(device.getConnection());
-
+	public QueuedDeviceAsync(OperationQueue queue, Connection connection, InputStream inputStream,
+			Provider<OutputStream> outputStreamProvider,
+			Provider<SendOperation> sendProvider) {
+		this.connection = connection;
 		this.queue = queue;
-		this.device = device;
-		this.executorService = executorService;
-
-		try {
-			this.inputStreamPipedInputStream.connect(inputStreamPipedOutputStream);
-		} catch (IOException e) {
-			LOG.error("" + e, e);
-			throw new RuntimeException(e);
-		}
-
-		queue.addListener(new OperationQueueAdapter<Object>() {
-			@Override
-			public void onStateChanged(final StateChangedEvent<Object> event) {
-				deviceInputStreamAvailableForReading = !isOperationRunning();
-			}
-		});
-
-		device.getConnection().addListener(new DataAvailableListener() {
-			@Override
-			public void dataAvailable(final Connection connection) {
-				deviceInputStreamLock.lock();
-				try {
-					deviceInputStreamDataAvailable.signal();
-				} finally {
-					deviceInputStreamLock.unlock();
-				}
-			}
-		});
-		deviceInputStreamToPipeCopyWorkerFuture = executorService.submit(deviceInputStreamToPipeCopyWorker);
+		this.inputStream = inputStream;
+		this.outputStreamProvider = outputStreamProvider;
+		this.sendProvider = sendProvider;
 	}
 
 	@Override
 	public OperationFuture<ChipType> getChipType(long timeout, AsyncCallback<ChipType> callback) {
 		LOG.trace("Reading Chip Type (Timeout: " + timeout + "ms)");
 		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
-		GetChipTypeOperation operation = device.createGetChipTypeOperation();
-		checkNotNullOperation(operation, "The Operation getChipType is not available");
+		GetChipTypeOperation operation = checkProvider(getChipTypeProvider, "getChipType is not available");
 		return queue.addOperation(operation, timeout, callback);
 	}
 
@@ -205,8 +116,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	public OperationFuture<Void> eraseFlash(long timeout, AsyncCallback<Void> callback) {
 		LOG.trace("Erase flash (Timeout: " + timeout + "ms)");
 		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
-		EraseFlashOperation operation = device.createEraseFlashOperation();
-		checkNotNullOperation(operation, "The Operation eraseFlash is not avialable");
+		EraseFlashOperation operation = checkProvider(eraseFlashProvider, "eraseFlash is not avialable");
 		return queue.addOperation(operation, timeout, callback);
 	}
 
@@ -214,8 +124,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	public OperationFuture<Void> program(byte[] data, long timeout, AsyncCallback<Void> callback) {
 		LOG.trace("Program device (timeout: " + timeout + "ms)");
 		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
-		ProgramOperation operation = device.createProgramOperation();
-		checkNotNullOperation(operation, "The Operation program is not available");
+		ProgramOperation operation = checkProvider(programProvider, "program is not available");
 		operation.setBinaryImage(data);
 		return queue.addOperation(operation, timeout, callback);
 	}
@@ -226,8 +135,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 		checkArgument(address >= 0, NEGATIVE_LENGTH_MESSAGE);
 		checkArgument(length >= 0, NEGATIVE_ADDRESS_MESSAGE);
 		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
-		ReadFlashOperation operation = device.createReadFlashOperation();
-		checkNotNullOperation(operation, "The Operation readFlash is not available");
+		ReadFlashOperation operation = checkProvider(readFlashProvider, "readFlash is not available");
 		operation.setAddress(address, length);
 		return queue.addOperation(operation, timeout, callback);
 	}
@@ -236,8 +144,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	public OperationFuture<MacAddress> readMac(long timeout, AsyncCallback<MacAddress> callback) {
 		LOG.trace("Read mac (timeout: " + timeout + "ms)");
 		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
-		ReadMacAddressOperation operation = device.createReadMacAddressOperation();
-		checkNotNullOperation(operation, "The Operation readMac is not available");
+		ReadMacAddressOperation operation = checkProvider(readMacAddressProvider, "readMac is not available");
 		return queue.addOperation(operation, timeout, callback);
 	}
 
@@ -245,8 +152,7 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	public OperationFuture<Void> reset(long timeout, AsyncCallback<Void> callback) {
 		LOG.trace("Reset device (timeout: " + timeout + "ms)");
 		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
-		ResetOperation operation = device.createResetOperation();
-		checkNotNullOperation(operation, "The Operation reset is not available");
+		ResetOperation operation = checkProvider(resetProvider, "reset is not available");
 		return queue.addOperation(operation, timeout, callback);
 	}
 
@@ -254,25 +160,20 @@ public class QueuedDeviceAsync implements DeviceAsync {
 	public OperationFuture<Void> send(byte[] message, long timeout, AsyncCallback<Void> callback) {
 		LOG.trace("Send packet to device (timeout: " + timeout + "ms)");
 		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
-		SendOperation operation = device.createSendOperation();
-		checkNotNullOperation(operation, "The Operation send is not available");
+		SendOperation operation = checkProvider(sendProvider, "send is not available");
 		operation.setMessage(message);
 		return queue.addOperation(operation, timeout, callback);
 	}
 
 	@Override
-	public OperationFuture<Void> writeFlash(int address,
-											byte[] data,
-											int length,
-											long timeout,
-											AsyncCallback<Void> callback) {
+	public OperationFuture<Void> writeFlash(int address, byte[] data, int length, long timeout, 
+			AsyncCallback<Void> callback) {
 		LOG.trace("Write flash (address: " + address + ", length: " + length + ", timeout: " + timeout + "ms)");
 		checkArgument(address >= 0, NEGATIVE_LENGTH_MESSAGE);
 		checkNotNull(data, "Null data is not allowed.");
 		checkArgument(length >= 0, NEGATIVE_ADDRESS_MESSAGE);
 		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
-		WriteFlashOperation operation = device.createWriteFlashOperation();
-		checkNotNullOperation(operation, "The Operation writeFlash is not available");
+		WriteFlashOperation operation = checkProvider(writeFlashProvider, "The Operation writeFlash is not available");
 		operation.setData(address, data, length);
 		return queue.addOperation(operation, timeout, callback);
 	}
@@ -282,47 +183,110 @@ public class QueuedDeviceAsync implements DeviceAsync {
 		LOG.trace("Write mac (mac address: " + macAddress + ", timeout: " + timeout + "ms)");
 		checkNotNull(macAddress, "Null macAdress is not allowed.");
 		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
-		WriteMacAddressOperation operation = device.createWriteMacAddressOperation();
-		checkNotNullOperation(operation, "The Operation writeMac is not available");
+		WriteMacAddressOperation operation = checkProvider(writeMacAddressProvider, "writeMac is not available");
 		operation.setMacAddress(macAddress);
 		return queue.addOperation(operation, timeout, callback);
 	}
 
 	@Override
 	public InputStream getInputStream() {
-		return inputStreamPipedInputStream;
+		return inputStream;
 	}
 
 	@Override
 	public OutputStream getOutputStream() {
-		return new SendOutputStreamWrapper(this, executorService);
+		return outputStreamProvider.get();
 	}
 
 	@Override
 	public void close() throws IOException {
-		deviceInputStreamToPipeCopyWorker.shutdown();
-		try {
-			// wait until worker has finished execution
-			deviceInputStreamToPipeCopyWorkerFuture.get();
-		} catch (InterruptedException e) {
-			throw new IOException(e);
-		} catch (ExecutionException e) {
-			throw new IOException(e);
-		}
+		connection.close();
+	}
+	
+	@Override
+	public void addListener(ConnectionListener listener) {
+		connection.addListener(listener);
+	}
+	
+	@Override
+	public void removeListener(ConnectionListener listener) {
+		connection.removeListener(listener);
+	}
+	
+	@Override
+	public void connect(String uri) {
+		connection.connect(uri);
 	}
 
-	private void checkNotNullOperation(Operation<?> operation, String message) {
+	@Override
+	public boolean isConnected() {
+		return connection.isConnected();
+	}
+
+	@Override
+	public void addListener(DataAvailableListener listener) {
+		connection.addListener(listener);
+	}
+
+	@Override
+	public void removeListener(DataAvailableListener listener) {
+		connection.removeListener(listener);
+	}
+
+	@Override
+	public int[] getChannels() {
+		return connection.getChannels();
+	}
+
+	private <T> T checkProvider(Provider<T> provider, String message) {
+		if (provider == null) {
+			throw new UnsupportedOperationException(message);
+		}
+		T operation = provider.get();
 		if (operation == null) {
 			throw new UnsupportedOperationException(message);
 		}
+		return operation;
 	}
 
-	private boolean isOperationRunning() {
-		return Iterators.any(queue.getOperations().iterator(), new Predicate<Operation<?>>() {
-			@Override
-			public boolean apply(Operation<?> input) {
-				return State.RUNNING.equals(input.getState());
-			}
-		});
+	@Inject(optional = true)
+	public void setGetChipTypeProvider(Provider<GetChipTypeOperation> getChipTypeProvider) {
+		this.getChipTypeProvider = getChipTypeProvider;
+	}
+
+	@Inject(optional = true)
+	public void setEraseFlashProvider(
+			Provider<EraseFlashOperation> eraseFlashProvider) {
+		this.eraseFlashProvider = eraseFlashProvider;
+	}
+
+	@Inject(optional = true)
+	public void setProgramProvider(Provider<ProgramOperation> programProvider) {
+		this.programProvider = programProvider;
+	}
+
+	@Inject(optional = true)
+	public void setReadFlashProvider(Provider<ReadFlashOperation> readFlashProvider) {
+		this.readFlashProvider = readFlashProvider;
+	}
+
+	@Inject(optional = true)
+	public void setReadMacAddressProvider(Provider<ReadMacAddressOperation> readMacAddressProvider) {
+		this.readMacAddressProvider = readMacAddressProvider;
+	}
+
+	@Inject(optional = true)
+	public void setResetProvider(Provider<ResetOperation> resetProvider) {
+		this.resetProvider = resetProvider;
+	}
+
+	@Inject(optional = true)
+	public void setWriteFlashProvider(Provider<WriteFlashOperation> writeFlashProvider) {
+		this.writeFlashProvider = writeFlashProvider;
+	}
+
+	@Inject(optional = true)
+	public void setWriteMacAddressProvider(Provider<WriteMacAddressOperation> writeMacAddressProvider) {
+		this.writeMacAddressProvider = writeMacAddressProvider;
 	}
 }

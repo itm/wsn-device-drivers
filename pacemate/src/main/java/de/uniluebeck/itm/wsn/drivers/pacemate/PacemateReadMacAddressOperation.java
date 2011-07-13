@@ -3,6 +3,8 @@ package de.uniluebeck.itm.wsn.drivers.pacemate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
+
 import de.uniluebeck.itm.tr.util.StringUtils;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
@@ -21,16 +23,16 @@ public class PacemateReadMacAddressOperation extends AbstractOperation<MacAddres
 	
 	private static final int MAC_LENGTH = 8;
 	
-	private final PacemateDevice device;
+	private final ReadFlashOperation readFlashOperation;
 	
-	public PacemateReadMacAddressOperation(PacemateDevice device) {
-		this.device = device;
+	@Inject
+	public PacemateReadMacAddressOperation(ReadFlashOperation readFlashOperation) {
+		this.readFlashOperation = readFlashOperation;
+		this.readFlashOperation.setAddress(MAC_START, MAC_LENGTH);
 	}
 	
 	@Override
 	public MacAddress execute(final ProgressManager progressManager) throws Exception {
-		final ReadFlashOperation readFlashOperation = device.createReadFlashOperation();
-		readFlashOperation.setAddress(MAC_START, MAC_LENGTH);
 		byte[] header = executeSubOperation(readFlashOperation, progressManager);
 		
 		byte[] macUUcode = new byte[4];

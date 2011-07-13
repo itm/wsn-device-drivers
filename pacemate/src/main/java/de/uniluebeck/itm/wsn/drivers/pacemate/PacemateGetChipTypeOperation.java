@@ -3,9 +3,13 @@ package de.uniluebeck.itm.wsn.drivers.pacemate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
+
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 
 public class PacemateGetChipTypeOperation extends AbstractOperation<ChipType> implements GetChipTypeOperation {
@@ -15,17 +19,26 @@ public class PacemateGetChipTypeOperation extends AbstractOperation<ChipType> im
 	 */
 	private static final Logger log = LoggerFactory.getLogger(PacemateGetChipTypeOperation.class);
 	
-	private final PacemateDevice device;
+	private final PacemateHelper helper;
 	
-	public PacemateGetChipTypeOperation(PacemateDevice device) {
-		this.device = device;
+	private final EnterProgramModeOperation enterProgramModeOperation;
+	
+	private final LeaveProgramModeOperation leaveProgramModeOperation;
+	
+	@Inject
+	public PacemateGetChipTypeOperation(PacemateHelper helper,
+			EnterProgramModeOperation enterProgramModeOperation,
+			LeaveProgramModeOperation leaveProgramModeOperation) {
+		this.helper = helper;
+		this.enterProgramModeOperation = enterProgramModeOperation;
+		this.leaveProgramModeOperation = leaveProgramModeOperation;
 	}
 	
 	private ChipType getChipType(final ProgressManager progressManager) throws Exception {
-		device.clearStreamData();
-		device.autobaud();
+		helper.clearStreamData();
+		helper.autobaud();
 
-		device.waitForBootLoader();
+		helper.waitForBootLoader();
 
 		// Return with success if the user has requested to cancel this
 		// operation
@@ -34,10 +47,10 @@ public class PacemateGetChipTypeOperation extends AbstractOperation<ChipType> im
 		}
 		
 		// Send chip type read request
-		device.sendBootLoaderMessage(Messages.ReadPartIDRequestMessage());
+		helper.sendBootLoaderMessage(Messages.ReadPartIDRequestMessage());
 
 		// Read chip type read response
-		final String response = device.receiveBootLoaderReplySuccess(Messages.CMD_SUCCESS);
+		final String response = helper.receiveBootLoaderReplySuccess(Messages.CMD_SUCCESS);
 		final ChipType chipType = ChipType.LPC2136;
 
 		if (response.compareTo("196387") != 0) {
@@ -51,12 +64,12 @@ public class PacemateGetChipTypeOperation extends AbstractOperation<ChipType> im
 	
 	@Override
 	public ChipType execute(final ProgressManager progressManager) throws Exception {
-		executeSubOperation(device.createEnterProgramModeOperation(), progressManager.createSub(0.25f));
+		executeSubOperation(enterProgramModeOperation, progressManager.createSub(0.25f));
 		ChipType chipType = ChipType.UNKNOWN;
 		try {
 			chipType = getChipType(progressManager.createSub(0.25f));
 		} finally {
-			executeSubOperation(device.createLeaveProgramModeOperation(), progressManager.createSub(0.5f));
+			executeSubOperation(leaveProgramModeOperation, progressManager.createSub(0.5f));
 		}
 		return chipType;
 	}

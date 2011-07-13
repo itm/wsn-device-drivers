@@ -5,6 +5,8 @@ import gnu.io.SerialPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
+
 import de.uniluebeck.itm.wsn.drivers.core.exception.EnterProgramModeException;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
@@ -39,6 +41,7 @@ public class SerialPortEnterProgramModeOperation extends AbstractOperation<Void>
 	 * 
 	 * @param connection The SerialPortConnection used for entering the programming mode.
 	 */
+	@Inject
 	public SerialPortEnterProgramModeOperation(final SerialPortConnection connection) {
 		this.connection = connection;
 	}

@@ -25,40 +25,46 @@ package de.uniluebeck.itm.wsn.drivers.factories;
 
 import java.util.concurrent.ScheduledExecutorService;
 
-import com.google.inject.Inject;
+import com.google.inject.Guice;
+import com.google.inject.Module;
 
-import de.uniluebeck.itm.wsn.drivers.core.Connection;
-import de.uniluebeck.itm.wsn.drivers.core.Device;
+import de.uniluebeck.itm.wsn.drivers.core.DeviceModule;
 import de.uniluebeck.itm.wsn.drivers.core.async.DeviceAsync;
-import de.uniluebeck.itm.wsn.drivers.core.async.OperationQueue;
-import de.uniluebeck.itm.wsn.drivers.core.async.QueuedDeviceAsync;
+import de.uniluebeck.itm.wsn.drivers.jennic.JennicModule;
+import de.uniluebeck.itm.wsn.drivers.mock.MockModule;
+import de.uniluebeck.itm.wsn.drivers.pacemate.PacemateModule;
+import de.uniluebeck.itm.wsn.drivers.telosb.TelosbModule;
 
 public class DeviceAsyncFactoryImpl implements DeviceAsyncFactory {
-
-	private DeviceFactory deviceFactory;
-
-	@Inject
-	public DeviceAsyncFactoryImpl(final DeviceFactory deviceFactory) {
-		this.deviceFactory = deviceFactory;
+	
+	@Override
+	public DeviceAsync create(ScheduledExecutorService executorService, DeviceType deviceType) {
+		Module deviceModule = null;
+		switch (deviceType) {
+		case ISENSE:
+			deviceModule = new JennicModule();
+			break;
+		case PACEMATE:
+			deviceModule = new PacemateModule();
+			break;
+		case TELOSB:
+			deviceModule = new TelosbModule();
+			break;
+		case MOCK:
+			deviceModule = new MockModule();
+			break;
+		default:
+			throw new RuntimeException("Unhandled device type \"" + deviceType
+					+ "\". Maybe someone forgot to add this (new) device type to " + DeviceAsyncFactoryImpl.class.getName()
+					+ "?"
+			);
+		}
+		return Guice.createInjector(new DeviceModule(executorService), deviceModule).getInstance(DeviceAsync.class);
 	}
 
 	@Override
-	public DeviceAsync create(final ScheduledExecutorService executorService, 
-							  final DeviceType deviceType,
-							  final Connection connection,
-							  final OperationQueue operationQueue) {
-
-		Device<? extends Connection> device = deviceFactory.create(deviceType, connection);
-		return new QueuedDeviceAsync(executorService, operationQueue, device);
-	}
-
-	@Override
-	public DeviceAsync create(final ScheduledExecutorService executorService, 
-							  final String deviceType, 
-							  final Connection connection,
-							  final OperationQueue operationQueue) {
-
-		return create(executorService, DeviceType.fromString(deviceType), connection, operationQueue);
+	public DeviceAsync create(ScheduledExecutorService executorService, String deviceType) {
+		return create(executorService, DeviceType.fromString(deviceType));
 	}
 
 }

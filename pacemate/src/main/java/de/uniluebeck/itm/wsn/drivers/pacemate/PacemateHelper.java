@@ -8,106 +8,32 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.io.Flushables;
+import com.google.inject.Inject;
 
 import de.uniluebeck.itm.tr.util.StringUtils;
-import de.uniluebeck.itm.wsn.drivers.core.Programable;
 import de.uniluebeck.itm.wsn.drivers.core.exception.InvalidChecksumException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.UnexpectedResponseException;
-import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.SendOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.WriteFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.AbstractSerialPortDevice;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortEnterProgramModeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortLeaveProgramModeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortSendOperation;
-import de.uniluebeck.itm.wsn.drivers.isense.iSenseResetOperation;
 
-public class PacemateDevice extends AbstractSerialPortDevice implements Programable {
+public class PacemateHelper {
 
 	/**
 	 * This is the Start Address in the RAM to write data
 	 */
 	public static final long START_ADDRESS_IN_RAM = 1073742336;
 	
-	private static final Logger LOG = LoggerFactory.getLogger(PacemateDevice.class);
+	private static final Logger LOG = LoggerFactory.getLogger(PacemateHelper.class);
 	
 	private static final int TIMEOUT = 2000;
 	
 	private boolean echo = true;
-
-	public PacemateDevice(SerialPortConnection connection) {
-		super(connection);
-	}
 	
-	@Override
-	public int[] getChannels() {
-		return new int[] { 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
-				24, 25, 26 };
-	}
+	private final SerialPortConnection connection;
 	
-	@Override
-	public EnterProgramModeOperation createEnterProgramModeOperation() {
-		return new SerialPortEnterProgramModeOperation(getConnection());
-	}
-	
-	@Override
-	public LeaveProgramModeOperation createLeaveProgramModeOperation() {
-		return new SerialPortLeaveProgramModeOperation(getConnection());
-	}
-
-	@Override
-	public GetChipTypeOperation createGetChipTypeOperation() {
-		return new PacemateGetChipTypeOperation(this);
-	}
-
-	@Override
-	public ProgramOperation createProgramOperation() {
-		return new PacemateProgramOperation(this);
-	}
-
-	@Override
-	public EraseFlashOperation createEraseFlashOperation() {
-		return new PacemateEraseFlashOperation(this);
-	}
-
-	@Override
-	public WriteFlashOperation createWriteFlashOperation() {
-		return null;
-	}
-
-	@Override
-	public ReadFlashOperation createReadFlashOperation() {
-		return new PacemateReadFlashOperation(this);
-	}
-
-	@Override
-	public ReadMacAddressOperation createReadMacAddressOperation() {
-		return new PacemateReadMacAddressOperation(this);
-	}
-
-	@Override
-	public WriteMacAddressOperation createWriteMacAddressOperation() {
-		return null;
-	}
-
-	@Override
-	public ResetOperation createResetOperation() {
-		return new iSenseResetOperation(getConnection());
-	}
-
-	@Override
-	public SendOperation createSendOperation() {
-		return new SerialPortSendOperation(getConnection());
+	@Inject
+	public PacemateHelper(SerialPortConnection connection) {
+		this.connection = connection;
 	}
 	
 	public boolean isEcho() {
@@ -133,14 +59,14 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 		data[data.length - 1] = 0x0A; // <LF>
 
 		// Send message
-		final OutputStream outputStream = getConnection().getOutputStream();
+		final OutputStream outputStream = connection.getOutputStream();
 		outputStream.write(data);
 		outputStream.flush();
 	}
 	
 	public void clearStreamData() throws IOException {
 
-		final InputStream inStream = getConnection().getInputStream();
+		final InputStream inStream = connection.getInputStream();
 		
 		// Allocate message buffer max 255 bytes to read
 		byte[] message = new byte[255];
@@ -433,7 +359,6 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 	 * @throws IOException
 	 */
 	private byte[] readInputStream(int CRLFcount) throws TimeoutException, IOException {
-		final SerialPortConnection connection = getConnection();
 		final byte[] message = new byte[255];
 
 		int index = 0;
@@ -442,7 +367,7 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 		connection.waitDataAvailable(TIMEOUT);
 
 		// Read the message - read CRLFcount lines of response
-		final InputStream inStream = getConnection().getInputStream();
+		final InputStream inStream = connection.getInputStream();
 		while ((index < 255) && (counter < CRLFcount)) {
 			if (inStream.available() > 0) {
 				message[index] = (byte) inStream.read();
@@ -513,7 +438,7 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 
 		} catch (Exception error) {
 			LOG.warn("Exception while waiting for connection", error);
-			Flushables.flushQuietly(getConnection());
+			Flushables.flushQuietly(connection);
 			throw new IOException(error);
 		}
 
@@ -576,7 +501,7 @@ public class PacemateDevice extends AbstractSerialPortDevice implements Programa
 		// LOG.debug("Sending data msg: " + Tools.toASCIIString(data));
 
 		// Send message
-		final OutputStream outputStream = getConnection().getOutputStream();
+		final OutputStream outputStream = connection.getOutputStream();
 		outputStream.write(data);
 		outputStream.flush();
 

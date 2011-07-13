@@ -3,6 +3,8 @@ package de.uniluebeck.itm.wsn.drivers.mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
+
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
 
@@ -34,7 +36,8 @@ public class MockWriteMacAddressOperation extends AbstractMockOperation<Void> im
 	 * 
 	 * @param configuration The configuration of the <code>MockDevice</code>.
 	 */
-	public MockWriteMacAddressOperation(final MockConfiguration configuration) {
+	@Inject
+	public MockWriteMacAddressOperation(MockConfiguration configuration) {
 		this.configuration = configuration;
 	}
 	
@@ -46,7 +49,7 @@ public class MockWriteMacAddressOperation extends AbstractMockOperation<Void> im
 	}
 
 	@Override
-	public void setMacAddress(final MacAddress macAddress) {
+	public void setMacAddress(MacAddress macAddress) {
 		this.macAddress = macAddress;
 	}
 

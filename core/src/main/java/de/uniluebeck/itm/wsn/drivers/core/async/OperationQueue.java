@@ -2,6 +2,8 @@ package de.uniluebeck.itm.wsn.drivers.core.async;
 
 import java.util.List;
 
+import com.google.inject.ImplementedBy;
+
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 
 /**
@@ -9,6 +11,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
  * 
  * @author Malte Legenhausen
  */
+@ImplementedBy(ExecutorServiceOperationQueue.class)
 public interface OperationQueue {
 
 	/**
@@ -34,12 +37,12 @@ public interface OperationQueue {
 	 * 
 	 * @param listener A listener that handle queue events.
 	 */
-	void addListener(OperationQueueListener<?> listener);
+	void addListener(OperationQueueListener listener);
 	
 	/**
 	 * Remove a listener from the queue.
 	 * 
 	 * @param listener The listener that has to be removed.
 	 */
-	void removeListener(OperationQueueListener<?> listener);
+	void removeListener(OperationQueueListener listener);
 }

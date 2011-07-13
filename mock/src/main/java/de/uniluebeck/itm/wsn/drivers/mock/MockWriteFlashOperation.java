@@ -1,5 +1,7 @@
 package de.uniluebeck.itm.wsn.drivers.mock;
 
+import com.google.inject.Inject;
+
 import de.uniluebeck.itm.wsn.drivers.core.operation.WriteFlashOperation;
 
 
@@ -40,7 +42,8 @@ public class MockWriteFlashOperation extends AbstractMockOperation<Void> impleme
 	 * 
 	 * @param configuration The <code>MockConfiguration</code> of the <code>MockDevice</code>.
 	 */
-	public MockWriteFlashOperation(final MockConfiguration configuration) {
+	@Inject
+	public MockWriteFlashOperation(MockConfiguration configuration) {
 		super(SLEEP, DEFAULT_STEPS);
 		this.configuration = configuration;
 	}
@@ -52,7 +55,7 @@ public class MockWriteFlashOperation extends AbstractMockOperation<Void> impleme
 	}
 
 	@Override
-	public void setData(final int address, final byte[] data, final int length) {
+	public void setData(int address, byte[] data, int length) {
 		this.address = address;
 		this.data = data;
 		this.length = length;

@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 
 import com.google.common.io.Flushables;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.google.inject.Inject;
 
 import de.uniluebeck.itm.wsn.drivers.core.async.AsyncAdapter;
 import de.uniluebeck.itm.wsn.drivers.core.async.DeviceAsync;
@@ -90,6 +91,7 @@ public class SendOutputStreamWrapper extends OutputStream implements Runnable {
 	 * @param deviceAsync The async deviceAsync.
 	 * @param executor The executor that is used for flushing the internal buffer automatically.
 	 */
+	@Inject
 	public SendOutputStreamWrapper(DeviceAsync device, ScheduledExecutorService executor) {
 		this.deviceAsync = device;
 		this.executor = executor;

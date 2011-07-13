@@ -3,6 +3,8 @@ package de.uniluebeck.itm.wsn.drivers.telosb;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
+
 import de.uniluebeck.itm.wsn.drivers.core.exception.FlashEraseFailedException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.FlashProgramFailedException;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
@@ -22,6 +24,7 @@ public class TelosbEnterProgramModeOperation extends AbstractOperation<Void> imp
 	
 	private final SerialPortConnection connection;
 	
+	@Inject
 	public TelosbEnterProgramModeOperation(final SerialPortConnection connection, final BSLTelosb bsl) {
 		this.connection = connection;
 		this.bsl = bsl;

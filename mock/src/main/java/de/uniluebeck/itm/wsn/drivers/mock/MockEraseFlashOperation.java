@@ -1,5 +1,7 @@
 package de.uniluebeck.itm.wsn.drivers.mock;
 
+import com.google.inject.Inject;
+
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
@@ -27,12 +29,13 @@ public class MockEraseFlashOperation extends AbstractOperation<Void> implements 
 	 * 
 	 * @param configuration The configuration that contains the flash rom that has to be erased.
 	 */
-	public MockEraseFlashOperation(final MockConfiguration configuration) {
+	@Inject
+	public MockEraseFlashOperation(MockConfiguration configuration) {
 		this.configuration = configuration;
 	}
 	
 	@Override
-	public Void execute(final ProgressManager progressManager) throws Exception {
+	public Void execute(ProgressManager progressManager) throws Exception {
 		final byte[] flashRom = configuration.getFlashRom();
 		final float worked = 1.0f / flashRom.length;
 		for (int i = 0; i < flashRom.length; ++i) {

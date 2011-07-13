@@ -3,6 +3,8 @@ package de.uniluebeck.itm.wsn.drivers.telosb;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
+
 import de.uniluebeck.itm.wsn.drivers.core.exception.FlashEraseFailedException;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
@@ -17,6 +19,7 @@ public class TelosbEraseFlashOperation extends AbstractOperation<Void> implement
 
 	private final BSLTelosb bsl;
 	
+	@Inject
 	public TelosbEraseFlashOperation(BSLTelosb bsl) {
 		this.bsl = bsl;
 	}

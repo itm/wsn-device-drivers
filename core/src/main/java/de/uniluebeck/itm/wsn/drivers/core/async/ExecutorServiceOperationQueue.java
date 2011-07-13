@@ -3,24 +3,25 @@ package de.uniluebeck.itm.wsn.drivers.core.async;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.SimpleTimeLimiter;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.google.common.util.concurrent.TimeLimiter;
-import com.google.inject.internal.Nullable;
+import com.google.common.util.concurrent.ListenableFutureTask;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
-import de.uniluebeck.itm.wsn.drivers.core.State;
 import de.uniluebeck.itm.wsn.drivers.core.event.AddedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.event.RemovedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.event.StateChangedEvent;
@@ -28,13 +29,14 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
 
 /**
- * Class that implements the queue with the single thread executor from the Java Concurrency Framework. Only one
+ * Class that implements the queue with the single thread executorService from the Java Concurrency Framework. Only one
  * <code>Operation</code> is executed at once.
  *
  * @author Malte Legenhausen
  */
+@Singleton
 public class ExecutorServiceOperationQueue implements OperationQueue {
-
+	
 	/**
 	 * Logger for this class.
 	 */
@@ -43,111 +45,152 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	/**
 	 * List that contains all listeners.
 	 */
-	private final List<OperationQueueListener<?>> listeners = newArrayList();
+	private final List<OperationQueueListener> listeners = newArrayList();
 
 	/**
 	 * Queue for all <code>OperationContainer</code> that are in progress.
 	 */
 	private final List<Operation<?>> operations = Collections.synchronizedList(new LinkedList<Operation<?>>());
+	
+	/**
+	 * Maps the operation to the next runnable.
+	 */
+	private final Map<Operation<?>, Runnable> runnables = newHashMap();
 
 	/**
-	 * The single thread executor that runs the <code>OperationContainer</code>.
+	 * The single thread executorService that runs the <code>OperationContainer</code>.
 	 */
-	private final ExecutorService executor;
+	private final ExecutorService executorService;
 	
-	private final TimeLimiter timeLimiter;
+	/**
+	 * The idle runnable.
+	 */
+	private final Runnable idleRunnable;
+	
+	/**
+	 * The future for the idle task.
+	 */
+	private Future<Object> idleFuture = null;
 
 	/**
 	 * Constructor.
 	 */
 	public ExecutorServiceOperationQueue() {
-		this(Executors.newSingleThreadExecutor(
-				new ThreadFactoryBuilder().setNameFormat("OperationQueue-Thread %d").build()
-			), new SimpleTimeLimiter()
-		);
+		executorService = Executors.newFixedThreadPool(2);
+		idleRunnable = null;
 	}
 
 	/**
 	 * Constructor.
 	 *
-	 * @param executor Set a custom <code>PausableExecutorService</code>.
+	 * @param executorService Set a custom <code>PausableExecutorService</code>.
 	 */
-	public ExecutorServiceOperationQueue(ExecutorService executor, TimeLimiter timeLimiter) {
-		this.executor = executor;
-		this.timeLimiter = timeLimiter;
+	@Inject
+	public ExecutorServiceOperationQueue(ExecutorService executorService, @Nullable @Idle Runnable idleRunnable) {
+		this.executorService = executorService;
+		this.idleRunnable = idleRunnable;
+		startIdleThread();
 	}
 
 	/**
-	 * Returns the executor used by this queue.
+	 * Returns the executorService used by this queue.
 	 *
-	 * @return The executor for this queue.
+	 * @return The executorService for this queue.
 	 */
 	public ExecutorService getExecutorService() {
-		return executor;
+		return executorService;
 	}
 
 	@Override
-	public <T> OperationFuture<T> addOperation(Operation<T> operation, 
-											   long timeout, 
-											   @Nullable AsyncCallback<T> callback) {
+	public <T> OperationFuture<T> addOperation(Operation<T> operation, long timeout,  
+			@Nullable AsyncCallback<T> callback) {
 		
 		checkNotNull(operation, "Null Operation is not allowed.");
 		checkArgument(timeout >= 0, "Negative timeout is not allowed.");
 
-		operation.setAsyncCallback(callback);
+		prepareOperation(operation, timeout, callback);
+		return addOperationAndExecuteNext(operation);
+	}
+	
+	private <T> void prepareOperation(Operation<T> operation, long timeout, AsyncCallback<T> callback) {
 		operation.setTimeout(timeout);
-		operation.setTimeLimiter(timeLimiter);
-
-		// Add listener for removing operation.
+		operation.setAsyncCallback(callback);
 		operation.addListener(new OperationListener<T>() {
 			@Override
-			public void onStateChanged(StateChangedEvent<T> event) {
-				ExecutorServiceOperationQueue.this.onStateChanged(event);
+			public void beforeStateChanged(StateChangedEvent<T> event) {
+				fireBeforeStateChangedEvent(event);
+			}
+			
+			@Override
+			public void afterStateChanged(StateChangedEvent<T> event) {
+				fireAfterStateChangedEvent(event);
 			}
 		});
-		addOperation(operation);
-
-		// Submit the operation to the executor.
-		LOG.trace("Submit {} to executor.", operation.getClass().getName());
-		ListenableFuture<T> future = Futures.makeListenable(executor.submit(operation));
+	}
+	
+	private <T> OperationFuture<T> addOperationAndExecuteNext(final Operation<T> operation) {
+		ListenableFutureTask<T> future = new ListenableFutureTask<T>(operation);
+		Runnable afterFinishRunnable = new Runnable() {
+			@Override
+			public void run() {
+				removeOperationAndExecuteNext(operation);
+			}
+		};
+		future.addListener(afterFinishRunnable, executorService);
+		synchronized (operations) {
+			addOperation(operation, future);
+			executeNextOrStartIdleThread();
+		}
 		return new SimpleOperationFuture<T>(future, operation);
 	}
-
-	/**
-	 * Remove the operation from the internal list and fire the state change.
-	 *
-	 * @param event
-	 */
-	private void onStateChanged(StateChangedEvent<?> event) {
-		Operation<?> operation = event.getOperation();
-		if (State.isFinishState(event.getNewState())) {
+	
+	private void removeOperationAndExecuteNext(Operation<?> operation) {
+		synchronized (operations) {
 			removeOperation(operation);
+			executeNextOrStartIdleThread();
 		}
-		fireStateChangedEvent(event);
+	}
+	
+	private void executeNextOrStartIdleThread() {
+		if (!operations.isEmpty()) {
+			stopIdleThread();
+			Operation<?> operation = operations.get(0);
+			Runnable runnable = runnables.get(operation);
+			LOG.trace("Submit {} to executorService.", operation.getClass().getName());
+			executorService.execute(runnable);
+		} else {
+			startIdleThread();
+		}
 	}
 
-	/**
-	 * Add the operation to the internal operation list.
-	 *
-	 * @param <T>       The return type of the operation.
-	 * @param operation The operation that has to be added to the internal operation list.
-	 */
-	private <T> void addOperation(final Operation<T> operation) {
-		operations.add(operation);	
+	private <T> void addOperation(Operation<T> operation, Runnable runnable) {
+		operations.add(operation);
+		runnables.put(operation, runnable);
 		LOG.trace("{} added to internal operation list", operation.getClass().getName());
 		fireAddedEvent(new AddedEvent<T>(this, operation));
 	}
 
-	/**
-	 * Remove the operation from the queue.
-	 *
-	 * @param <T>       Return type of the operation.
-	 * @param operation The operation that has to be removed.
-	 */
-	private <T> void removeOperation(final Operation<T> operation) {
+	private <T> void removeOperation(Operation<T> operation) {
 		operations.remove(operation);
+		runnables.remove(operation);
 		LOG.trace("{} removed from internal operation list", operation.getClass().getName());
 		fireRemovedEvent(new RemovedEvent<T>(this, operation));
+	}
+	
+	private void stopIdleThread() {
+		if (idleFuture != null) {
+			LOG.trace("Stopping idle thread...");
+			idleFuture.cancel(true);
+			LOG.trace("Idle thread stopped.");
+		}
+	}
+	
+	private void startIdleThread() {
+		if (idleRunnable != null) {
+			LOG.trace("Starting idle thread...");
+			idleFuture = executorService.submit(idleRunnable, null);
+			LOG.trace("Stopping idle thread.");
+		}
 	}
 
 	@Override
@@ -156,13 +199,13 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	}
 
 	@Override
-	public void addListener(final OperationQueueListener<?> listener) {
+	public void addListener(final OperationQueueListener listener) {
 		checkNotNull(listener, "Null listener is not allowed.");
 		listeners.add(listener);
 	}
 
 	@Override
-	public void removeListener(final OperationQueueListener<?> listener) {
+	public void removeListener(final OperationQueueListener listener) {
 		checkNotNull(listener, "Null listener is not allowed.");
 		listeners.remove(listener);
 	}
@@ -173,11 +216,25 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	 * @param <T>   The type of the operation.
 	 * @param event The event that will notify about the state change.
 	 */
-	private <T> void fireStateChangedEvent(final StateChangedEvent<T> event) {
+	private <T> void fireBeforeStateChangedEvent(final StateChangedEvent<T> event) {
 		String msg = "Operation state of {} changed";
-		LOG.trace(msg, new Object[]{event.getOperation().getClass().getName()});
-		for (final OperationQueueListener<T> listener : listeners.toArray(new OperationQueueListener[0])) {
-			listener.onStateChanged(event);
+		LOG.trace(msg, new Object[] {event.getOperation().getClass().getName()});
+		for (final OperationQueueListener listener : listeners.toArray(new OperationQueueListener[0])) {
+			listener.beforeStateChanged(event);
+		}
+	}
+	
+	/**
+	 * Notify all listeners that the state of a operation has changed.
+	 *
+	 * @param <T>   The type of the operation.
+	 * @param event The event that will notify about the state change.
+	 */
+	private <T> void fireAfterStateChangedEvent(final StateChangedEvent<T> event) {
+		String msg = "Operation state of {} changed";
+		LOG.trace(msg, new Object[] {event.getOperation().getClass().getName()});
+		for (final OperationQueueListener listener : listeners.toArray(new OperationQueueListener[0])) {
+			listener.afterStateChanged(event);
 		}
 	}
 
@@ -187,8 +244,8 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	 * @param <T>   The type of the operation.
 	 * @param event The event that will notify about the add of an operation.
 	 */
-	private <T> void fireAddedEvent(final AddedEvent<T> event) {
-		for (final OperationQueueListener<T> listener : listeners.toArray(new OperationQueueListener[0])) {
+	private void fireAddedEvent(final AddedEvent<?> event) {
+		for (final OperationQueueListener listener : listeners.toArray(new OperationQueueListener[0])) {
 			listener.onAdded(event);
 		}
 	}
@@ -199,8 +256,8 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	 * @param <T>   The type of the operation.
 	 * @param event The event that will notify about the remove of an operation.
 	 */
-	private <T> void fireRemovedEvent(final RemovedEvent<T> event) {
-		for (final OperationQueueListener<T> listener : listeners.toArray(new OperationQueueListener[0])) {
+	private void fireRemovedEvent(final RemovedEvent<?> event) {
+		for (final OperationQueueListener listener : listeners.toArray(new OperationQueueListener[0])) {
 			listener.onRemoved(event);
 		}
 	}

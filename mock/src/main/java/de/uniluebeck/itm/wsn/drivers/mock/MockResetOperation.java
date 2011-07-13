@@ -1,12 +1,14 @@
 package de.uniluebeck.itm.wsn.drivers.mock;
 
+import com.google.inject.Inject;
+
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
 
 
 /**
- * Mock operation for reseting the device.
+ * Mock operation for reseting the connection.
  * Internal the periodically send of messages is reseted.
  * 
  * @author Malte Legenhausen
@@ -26,25 +28,26 @@ public class MockResetOperation extends AbstractOperation<Void> implements Reset
 	/**
 	 * The <code>MockConnection</code> that is used for the reset.
 	 */
-	private final MockDevice device;
+	private final MockConnection connection;
 	
 	/**
 	 * Constructor.
 	 * 
 	 * @param connection The <code>MockConnection</code> that is used for the reset.
 	 */
-	public MockResetOperation(final MockDevice device) {
-		this.device = device;
+	@Inject
+	public MockResetOperation(MockConnection connection) {
+		this.connection = connection;
 	}
 	
 	@Override
 	public Void execute(final ProgressManager progressManager) throws Exception {
 		Thread.sleep(SLEEP_TIME);
-		device.stopAliveRunnable();
+		connection.stopAliveRunnable();
 		Thread.sleep(RESET_TIME);
-		device.sendMessage("Booting MockDevice...");
+		connection.sendMessage("Booting MockDevice...");
 		Thread.sleep(SLEEP_TIME);
-		device.scheduleAliveRunnable();
+		connection.scheduleAliveRunnable();
 		return null;
 	}
 }

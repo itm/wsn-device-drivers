@@ -3,11 +3,13 @@ package de.uniluebeck.itm.wsn.drivers.core.operation;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.collect.Lists.newArrayList;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Objects;
 import com.google.common.util.concurrent.TimeLimiter;
 import com.google.common.util.concurrent.UncheckedTimeoutException;
-import com.google.inject.internal.Nullable;
+import com.google.inject.Inject;
 
 import de.uniluebeck.itm.wsn.drivers.core.State;
 import de.uniluebeck.itm.wsn.drivers.core.async.AsyncAdapter;
@@ -52,7 +54,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	/**
 	 * Listeners for <code>OperationContainer</code> changed.
 	 */
-	private final List<OperationListener<T>> listeners = new ArrayList<OperationListener<T>>();
+	private final List<OperationListener<T>> listeners = newArrayList();
 	
 	/**
 	 * Limiter for the execution time of an operation.
@@ -77,7 +79,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	/**
 	 * Boolean thats stores if the operatio has to be canceled.
 	 */
-	private boolean canceled;
+	private boolean canceled = false;
 	
 	/**
 	 * Constructor.
@@ -91,9 +93,9 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 		callback = Objects.firstNonNull(aCallback, new AsyncAdapter<T>());
 	}
 	
+	@Inject
 	@Override
 	public void setTimeLimiter(TimeLimiter timeLimiter) {
-		checkNotNull(timeLimiter, "Null TimeLimiter is not allowed.");
 		this.timeLimiter = timeLimiter;
 	}
 	
@@ -170,11 +172,20 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	 * 
 	 * @param newState The new State of this operation.
 	 */
-	private void setState(final State newState) {
+	private void setState(State newState) {
 		synchronized (state) {
-			final State oldState = state;
+			State oldState = state;
+			fireBeforeStateChangedEvent(new StateChangedEvent<T>(this, oldState, newState));
 			state = newState;
-			fireStateChangedEvent(new StateChangedEvent<T>(this, oldState, newState));
+			fireAfterStateChangedEvent(new StateChangedEvent<T>(this, oldState, newState));
+		}
+	}
+	
+	private void fireBeforeStateChangedEvent(StateChangedEvent<T> event) {
+		String msg = "Operation state of {} changed from {} to {}";
+		LOG.trace(msg, new Object[] {this.getClass().getName(), event.getOldState(), event.getNewState()});
+		for (OperationListener<T> listener : newArrayList(listeners)) {
+			listener.beforeStateChanged(event);
 		}
 	}
 	
@@ -183,11 +194,11 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	 * 
 	 * @param event The state change event.
 	 */
-	private void fireStateChangedEvent(final StateChangedEvent<T> event) {
+	private void fireAfterStateChangedEvent(StateChangedEvent<T> event) {
 		String msg = "Operation state of {} changed from {} to {}";
 		LOG.trace(msg, new Object[] {this.getClass().getName(), event.getOldState(), event.getNewState()});
-		for (OperationListener<T> listener : listeners.toArray(new OperationListener[0])) {
-			listener.onStateChanged(event);
+		for (OperationListener<T> listener : newArrayList(listeners)) {
+			listener.afterStateChanged(event);
 		}
 	}
 
@@ -203,7 +214,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	 * @param timeout The timeout of the operation.
 	 */
 	@Override
-	public void setTimeout(final long timeout) {
+	public void setTimeout(long timeout) {
 		checkArgument(timeout >= 0, "Negative timeout is not allowed");
 		checkState(!State.RUNNING.equals(state), "Timeout can not be set when operation is in running state");
 		this.timeout = timeout;
@@ -215,13 +226,13 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	}
 	
 	@Override
-	public void addListener(final OperationListener<T> listener) {
+	public void addListener(OperationListener<T> listener) {
 		checkNotNull(listener, "Null listener are not allowed.");
 		listeners.add(listener);
 	}
 	
 	@Override
-	public void removeOperationListener(final OperationListener<T> listener) {
+	public void removeOperationListener(OperationListener<T> listener) {
 		checkNotNull(listener, "Null listener are not allowed");
 		listeners.remove(listener);
 	}
