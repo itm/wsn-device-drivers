@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.wsn.drivers.core.event;
+package de.uniluebeck.itm.wsn.drivers.core;
 
 import java.util.EventObject;
 

@@ -21,7 +21,6 @@ import com.google.inject.Inject;
 
 import de.uniluebeck.itm.wsn.drivers.core.OperationAdapter;
 import de.uniluebeck.itm.wsn.drivers.core.OperationCallback;
-import de.uniluebeck.itm.wsn.drivers.core.event.StateChangedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 
 /**

@@ -23,11 +23,9 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import de.uniluebeck.itm.wsn.drivers.core.OperationCallback;
-import de.uniluebeck.itm.wsn.drivers.core.event.AddedEvent;
-import de.uniluebeck.itm.wsn.drivers.core.event.RemovedEvent;
-import de.uniluebeck.itm.wsn.drivers.core.event.StateChangedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
+import de.uniluebeck.itm.wsn.drivers.core.operation.StateChangedEvent;
 
 /**
  * Class that implements the queue with the single thread executorService from the Java Concurrency Framework. Only one
