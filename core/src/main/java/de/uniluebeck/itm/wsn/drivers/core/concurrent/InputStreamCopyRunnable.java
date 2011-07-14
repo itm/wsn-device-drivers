@@ -46,7 +46,6 @@ public class InputStreamCopyRunnable implements Runnable, DataAvailableListener 
 	@Override
 	public void run() {
 		try {
-			InputStream inputStream = connection.getInputStream();
 			while (true) {
 				deviceInputStreamLock.lock();
 				try {
@@ -57,8 +56,9 @@ public class InputStreamCopyRunnable implements Runnable, DataAvailableListener 
 				} finally {
 					deviceInputStreamLock.unlock();
 				}
-
-				if (connection.isConnected()) {
+				
+				InputStream inputStream = connection.getInputStream();
+				if (connection.isConnected() && inputStream != null) {
 					copyAvailableBytes(inputStream);
 				}
 			}
