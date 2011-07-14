@@ -7,8 +7,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.uniluebeck.itm.wsn.drivers.core.State;
-import de.uniluebeck.itm.wsn.drivers.core.async.AsyncAdapter;
+import de.uniluebeck.itm.wsn.drivers.core.OperationAdapter;
 import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
@@ -36,7 +35,7 @@ public class AbstractOperationTest {
 	@Test
 	public void testCallSuccess() {
 		operation.setTimeLimiter(new FakeTimeLimiter());
-		operation.setAsyncCallback(new AsyncAdapter<Object>() {
+		operation.setAsyncCallback(new OperationAdapter<Object>() {
 			@Override
 			public void onFailure(Throwable throwable) {
 				throwable.printStackTrace();

@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.wsn.drivers.core.async;
+package de.uniluebeck.itm.wsn.drivers.core.concurrent;
 
 import com.google.common.util.concurrent.ListenableFuture;
 

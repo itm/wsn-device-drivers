@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.wsn.drivers.core.async;
+package de.uniluebeck.itm.wsn.drivers.core.concurrent;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -22,11 +22,10 @@ import com.google.common.util.concurrent.ListenableFutureTask;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import de.uniluebeck.itm.wsn.drivers.core.event.AddedEvent;
-import de.uniluebeck.itm.wsn.drivers.core.event.RemovedEvent;
-import de.uniluebeck.itm.wsn.drivers.core.event.StateChangedEvent;
+import de.uniluebeck.itm.wsn.drivers.core.OperationCallback;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
+import de.uniluebeck.itm.wsn.drivers.core.operation.StateChangedEvent;
 
 /**
  * Class that implements the queue with the single thread executorService from the Java Concurrency Framework. Only one
@@ -86,7 +85,8 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	 * @param executorService Set a custom <code>PausableExecutorService</code>.
 	 */
 	@Inject
-	public ExecutorServiceOperationQueue(ExecutorService executorService, @Nullable @Idle Runnable idleRunnable) {
+	public ExecutorServiceOperationQueue(ExecutorService executorService, 
+			@Nullable @IdleRunnable Runnable idleRunnable) {
 		this.executorService = executorService;
 		this.idleRunnable = idleRunnable;
 		startIdleThread();
@@ -103,7 +103,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 
 	@Override
 	public <T> OperationFuture<T> addOperation(Operation<T> operation, long timeout,  
-			@Nullable AsyncCallback<T> callback) {
+			@Nullable OperationCallback<T> callback) {
 		
 		checkNotNull(operation, "Null Operation is not allowed.");
 		checkArgument(timeout >= 0, "Negative timeout is not allowed.");
@@ -112,7 +112,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 		return addOperationAndExecuteNext(operation);
 	}
 	
-	private <T> void prepareOperation(Operation<T> operation, long timeout, AsyncCallback<T> callback) {
+	private <T> void prepareOperation(Operation<T> operation, long timeout, OperationCallback<T> callback) {
 		operation.setTimeout(timeout);
 		operation.setAsyncCallback(callback);
 		operation.addListener(new OperationListener<T>() {
@@ -181,7 +181,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 		if (idleFuture != null) {
 			LOG.trace("Stopping idle thread...");
 			idleFuture.cancel(true);
-			LOG.trace("Idle thread stopped.");
+			LOG.trace("IdleRunnable thread stopped.");
 		}
 	}
 	

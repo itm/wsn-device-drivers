@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.wsn.drivers.core.async;
+package de.uniluebeck.itm.wsn.drivers.core.concurrent;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -17,6 +17,6 @@ import static java.lang.annotation.ElementType.METHOD;
 @BindingAnnotation 
 @Target({ FIELD, PARAMETER, METHOD }) 
 @Retention(RUNTIME)
-public @interface Idle {
+public @interface IdleRunnable {
 
 }

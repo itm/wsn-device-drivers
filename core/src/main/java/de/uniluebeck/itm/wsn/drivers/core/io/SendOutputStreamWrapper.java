@@ -13,8 +13,8 @@ import com.google.common.io.Flushables;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.inject.Inject;
 
-import de.uniluebeck.itm.wsn.drivers.core.async.AsyncAdapter;
-import de.uniluebeck.itm.wsn.drivers.core.async.DeviceAsync;
+import de.uniluebeck.itm.wsn.drivers.core.OperationAdapter;
+import de.uniluebeck.itm.wsn.drivers.core.Device;
 
 
 /**
@@ -46,7 +46,7 @@ public class SendOutputStreamWrapper extends OutputStream implements Runnable {
 	/**
 	 * The deviceAsync that is used for sending data to the deviceAsync.
 	 */
-	private final DeviceAsync deviceAsync;
+	private final Device deviceAsync;
 	
 	/**
 	 * The executor that scheduled the flush of the buffer.
@@ -78,7 +78,7 @@ public class SendOutputStreamWrapper extends OutputStream implements Runnable {
 	 * 
 	 * @param device The device that is used for the send.
 	 */
-	public SendOutputStreamWrapper(DeviceAsync device) {
+	public SendOutputStreamWrapper(Device device) {
 		this(device, Executors.newScheduledThreadPool(
 				1, new ThreadFactoryBuilder().setNameFormat("SendOutputStreamWrapper-Thread %d").build()
 			)
@@ -92,7 +92,7 @@ public class SendOutputStreamWrapper extends OutputStream implements Runnable {
 	 * @param executor The executor that is used for flushing the internal buffer automatically.
 	 */
 	@Inject
-	public SendOutputStreamWrapper(DeviceAsync device, ScheduledExecutorService executor) {
+	public SendOutputStreamWrapper(Device device, ScheduledExecutorService executor) {
 		this.deviceAsync = device;
 		this.executor = executor;
 		this.future = this.executor.scheduleAtFixedRate(this, DELAY, DELAY, TimeUnit.MICROSECONDS);
@@ -105,7 +105,7 @@ public class SendOutputStreamWrapper extends OutputStream implements Runnable {
 	public void flush() throws IOException {
 		synchronized (buffer) {
 			try {
-				deviceAsync.send(buffer, SEND_TIMEOUT, new AsyncAdapter<Void>());
+				deviceAsync.send(buffer, SEND_TIMEOUT, new OperationAdapter<Void>());
 			} catch (RuntimeException e) {
 				throw new IOException(e);
 			}

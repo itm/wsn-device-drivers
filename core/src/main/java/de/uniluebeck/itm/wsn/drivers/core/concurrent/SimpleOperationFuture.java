@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.wsn.drivers.core.async;
+package de.uniluebeck.itm.wsn.drivers.core.concurrent;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
@@ -72,8 +72,7 @@ public class SimpleOperationFuture<T> implements OperationFuture<T> {
 	}
 
 	@Override
-	public T get(long timeout, TimeUnit unit) 
-			throws InterruptedException, ExecutionException, TimeoutException {
+	public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
 		return future.get(timeout, unit);
 	}
 }

@@ -4,8 +4,7 @@ import java.util.concurrent.Callable;
 
 import com.google.common.util.concurrent.TimeLimiter;
 
-import de.uniluebeck.itm.wsn.drivers.core.State;
-import de.uniluebeck.itm.wsn.drivers.core.async.AsyncCallback;
+import de.uniluebeck.itm.wsn.drivers.core.OperationCallback;
 
 
 /**
@@ -18,11 +17,11 @@ import de.uniluebeck.itm.wsn.drivers.core.async.AsyncCallback;
 public interface Operation<T> extends Callable<T> {
 
 	/**
-	 * Set method for the <code>AsyncCallback</code>.
+	 * Set method for the <code>OperationCallback</code>.
 	 * 
 	 * @param callback The callback that is called when the method has finished or raised an exception.
 	 */
-	void setAsyncCallback(AsyncCallback<T> callback);
+	void setAsyncCallback(OperationCallback<T> callback);
 	
 	/**
 	 * Method that is called when the operation has to be executed.

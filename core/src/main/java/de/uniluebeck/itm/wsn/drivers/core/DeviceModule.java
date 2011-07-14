@@ -15,8 +15,8 @@ import com.google.common.util.concurrent.TimeLimiter;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 
-import de.uniluebeck.itm.wsn.drivers.core.async.Idle;
-import de.uniluebeck.itm.wsn.drivers.core.async.InputStreamCopyRunnable;
+import de.uniluebeck.itm.wsn.drivers.core.concurrent.IdleRunnable;
+import de.uniluebeck.itm.wsn.drivers.core.concurrent.InputStreamCopyRunnable;
 import de.uniluebeck.itm.wsn.drivers.core.io.SendOutputStreamWrapper;
 
 
@@ -55,9 +55,9 @@ public class DeviceModule extends AbstractModule {
 		bind(ExecutorService.class).toInstance(executorService);
 		bind(ScheduledExecutorService.class).toInstance(executorService);
 		bind(TimeLimiter.class).toInstance(timeLimiter);
-		bind(Runnable.class).annotatedWith(Idle.class).to(InputStreamCopyRunnable.class);
+		bind(Runnable.class).annotatedWith(IdleRunnable.class).to(InputStreamCopyRunnable.class);
 		bind(InputStream.class).toInstance(inputStream);
-		bind(OutputStream.class).annotatedWith(Idle.class).toInstance(outputStream);
+		bind(OutputStream.class).annotatedWith(IdleRunnable.class).toInstance(outputStream);
 		bind(OutputStream.class).to(SendOutputStreamWrapper.class);
 	}
 

@@ -1,21 +1,19 @@
-package de.uniluebeck.itm.wsn.drivers.core.async;
+package de.uniluebeck.itm.wsn.drivers.core;
 
 import com.google.inject.ImplementedBy;
 
-import de.uniluebeck.itm.wsn.drivers.core.ChipType;
-import de.uniluebeck.itm.wsn.drivers.core.Connection;
-import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
+import de.uniluebeck.itm.wsn.drivers.core.concurrent.OperationFuture;
 
 
 /**
  * Async definition of the <code>Device</code> interface.
- * The monitoring of an operation is moved in the <code>AsyncCallback</code>.
+ * The monitoring of an operation is moved in the <code>OperationCallback</code>.
  * Note that an operation timeout will cause a <code>TimeoutException</code>.
  * 
  * @author Malte Legenhausen
  */
-@ImplementedBy(QueuedDeviceAsync.class)
-public interface DeviceAsync extends Connection {
+@ImplementedBy(SimpleDevice.class)
+public interface Device extends Connection {
 	
 	/**
 	 * Returns the chip type of this device.
@@ -24,7 +22,7 @@ public interface DeviceAsync extends Connection {
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationFuture</code> for controlling the async operation.
 	 */
-	OperationFuture<ChipType> getChipType(long timeout, AsyncCallback<ChipType> callback);
+	OperationFuture<ChipType> getChipType(long timeout, OperationCallback<ChipType> callback);
 	
 	/**
 	 * Programms a iSense device with the given binaryImage without removing the current MAC address.
@@ -34,7 +32,7 @@ public interface DeviceAsync extends Connection {
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationFuture</code> for controlling the async operation.
 	 */
-	OperationFuture<Void> program(byte[] data, long timeout, AsyncCallback<Void> callback);
+	OperationFuture<Void> program(byte[] data, long timeout, OperationCallback<Void> callback);
 	
 	/**
 	 * Remove all data from the flash memory.
@@ -43,7 +41,7 @@ public interface DeviceAsync extends Connection {
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationFuture</code> for controlling the async operation.
 	 */
-	OperationFuture<Void> eraseFlash(long timeout, AsyncCallback<Void> callback);
+	OperationFuture<Void> eraseFlash(long timeout, OperationCallback<Void> callback);
 	
 	/**
 	 * Write a given amount of bytes to the given address in the flash memory.
@@ -55,7 +53,8 @@ public interface DeviceAsync extends Connection {
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationFuture</code> for controlling the async operation.
 	 */
-	OperationFuture<Void> writeFlash(int address, byte[] data, int length, long timeout, AsyncCallback<Void> callback);
+	OperationFuture<Void> writeFlash(int address, byte[] data, int length, long timeout, 
+			OperationCallback<Void> callback);
 	
 	/**
 	 * Reads a given amount of bytes from the given address.
@@ -66,7 +65,7 @@ public interface DeviceAsync extends Connection {
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationFuture</code> for controlling the async operation.
 	 */
-	OperationFuture<byte[]> readFlash(int address, int length, long timeout, AsyncCallback<byte[]> callback);
+	OperationFuture<byte[]> readFlash(int address, int length, long timeout, OperationCallback<byte[]> callback);
 	
 	/**
 	 * Read the MAC address from the connected iSense device.
@@ -75,7 +74,7 @@ public interface DeviceAsync extends Connection {
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationFuture</code> for controlling the async operation.
 	 */
-	OperationFuture<MacAddress> readMac(long timeout, AsyncCallback<MacAddress> callback);
+	OperationFuture<MacAddress> readMac(long timeout, OperationCallback<MacAddress> callback);
 	
 	/**
 	 * Writes the MAC address to the connected iSense device.
@@ -85,7 +84,7 @@ public interface DeviceAsync extends Connection {
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationFuture</code> for controlling the async operation.
 	 */
-	OperationFuture<Void> writeMac(MacAddress macAddress, long timeout, AsyncCallback<Void> callback);
+	OperationFuture<Void> writeMac(MacAddress macAddress, long timeout, OperationCallback<Void> callback);
 	
 	/**
 	 * Restart the connected iSense device.
@@ -94,7 +93,7 @@ public interface DeviceAsync extends Connection {
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationFuture</code> for controlling the async operation.
 	 */
-	OperationFuture<Void> reset(long timeout, AsyncCallback<Void> callback);
+	OperationFuture<Void> reset(long timeout, OperationCallback<Void> callback);
 	
 	/**
 	 * Sends the <code>MessagePacket</code> to the connected iSense device.
@@ -104,5 +103,5 @@ public interface DeviceAsync extends Connection {
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationFuture</code> for controlling the async operation.
 	 */
-	OperationFuture<Void> send(byte[] message, long timeout, AsyncCallback<Void> callback);
+	OperationFuture<Void> send(byte[] message, long timeout, OperationCallback<Void> callback);
 }

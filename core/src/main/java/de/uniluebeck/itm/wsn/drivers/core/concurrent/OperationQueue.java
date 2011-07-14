@@ -1,9 +1,10 @@
-package de.uniluebeck.itm.wsn.drivers.core.async;
+package de.uniluebeck.itm.wsn.drivers.core.concurrent;
 
 import java.util.List;
 
 import com.google.inject.ImplementedBy;
 
+import de.uniluebeck.itm.wsn.drivers.core.OperationCallback;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 
 /**
@@ -23,7 +24,7 @@ public interface OperationQueue {
 	 * @param callback The callback that is called during the operation execution.
 	 * @return A <code>OperationFuture</code> for controlling the operation.
 	 */
-	<T> OperationFuture<T> addOperation(Operation<T> operation, long timeout, AsyncCallback<T> callback);
+	<T> OperationFuture<T> addOperation(Operation<T> operation, long timeout, OperationCallback<T> callback);
 	
 	/**
 	 * Returns all operations that are in the queue.

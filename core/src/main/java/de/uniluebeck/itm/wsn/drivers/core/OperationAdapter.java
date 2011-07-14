@@ -1,14 +1,14 @@
-package de.uniluebeck.itm.wsn.drivers.core.async;
+package de.uniluebeck.itm.wsn.drivers.core;
 
 
 /**
- * Adapter class that provides a null implementation for an <code>AsyncCallback</code>.
+ * Adapter class that provides a null implementation for an <code>OperationCallback</code>.
  * 
  * @author Malte Legenhausen
  *
  * @param <T> The return type of onSuccess.
  */
-public class AsyncAdapter<T> implements AsyncCallback<T> {
+public class OperationAdapter<T> implements OperationCallback<T> {
 
 	@Override
 	public void onExecute() {
