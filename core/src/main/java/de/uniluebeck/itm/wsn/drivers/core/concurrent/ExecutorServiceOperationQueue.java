@@ -87,7 +87,8 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	 * @param executorService Set a custom <code>PausableExecutorService</code>.
 	 */
 	@Inject
-	public ExecutorServiceOperationQueue(ExecutorService executorService, @Nullable @Idle Runnable idleRunnable) {
+	public ExecutorServiceOperationQueue(ExecutorService executorService, 
+			@Nullable @IdleRunnable Runnable idleRunnable) {
 		this.executorService = executorService;
 		this.idleRunnable = idleRunnable;
 		startIdleThread();
@@ -182,7 +183,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 		if (idleFuture != null) {
 			LOG.trace("Stopping idle thread...");
 			idleFuture.cancel(true);
-			LOG.trace("Idle thread stopped.");
+			LOG.trace("IdleRunnable thread stopped.");
 		}
 	}
 	

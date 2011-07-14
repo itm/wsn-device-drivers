@@ -8,7 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.uniluebeck.itm.wsn.drivers.core.OperationAdapter;
-import de.uniluebeck.itm.wsn.drivers.core.State;
 import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;

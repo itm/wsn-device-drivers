@@ -5,7 +5,6 @@ import java.util.concurrent.Callable;
 import com.google.common.util.concurrent.TimeLimiter;
 
 import de.uniluebeck.itm.wsn.drivers.core.OperationCallback;
-import de.uniluebeck.itm.wsn.drivers.core.State;
 
 
 /**
