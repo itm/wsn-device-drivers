@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.wsn.drivers.core.async;
+package de.uniluebeck.itm.wsn.drivers.core.concurrent;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -22,6 +22,7 @@ import com.google.common.util.concurrent.ListenableFutureTask;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import de.uniluebeck.itm.wsn.drivers.core.OperationCallback;
 import de.uniluebeck.itm.wsn.drivers.core.event.AddedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.event.RemovedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.event.StateChangedEvent;
@@ -103,7 +104,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 
 	@Override
 	public <T> OperationFuture<T> addOperation(Operation<T> operation, long timeout,  
-			@Nullable AsyncCallback<T> callback) {
+			@Nullable OperationCallback<T> callback) {
 		
 		checkNotNull(operation, "Null Operation is not allowed.");
 		checkArgument(timeout >= 0, "Negative timeout is not allowed.");
@@ -112,7 +113,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 		return addOperationAndExecuteNext(operation);
 	}
 	
-	private <T> void prepareOperation(Operation<T> operation, long timeout, AsyncCallback<T> callback) {
+	private <T> void prepareOperation(Operation<T> operation, long timeout, OperationCallback<T> callback) {
 		operation.setTimeout(timeout);
 		operation.setAsyncCallback(callback);
 		operation.addListener(new OperationListener<T>() {

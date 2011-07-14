@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.wsn.drivers.core.io;
+package de.uniluebeck.itm.wsn.drivers.core.util;
 
 /**
  * Interface for processing incoming bytes from an serial port connection.

@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.wsn.drivers.core.async;
+package de.uniluebeck.itm.wsn.drivers.core.concurrent;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;

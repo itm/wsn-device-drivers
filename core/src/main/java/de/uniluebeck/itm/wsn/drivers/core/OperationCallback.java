@@ -1,6 +1,5 @@
-package de.uniluebeck.itm.wsn.drivers.core.async;
+package de.uniluebeck.itm.wsn.drivers.core;
 
-import de.uniluebeck.itm.wsn.drivers.core.Monitor;
 
 /**
  * Callback method for async operations.
@@ -9,7 +8,7 @@ import de.uniluebeck.itm.wsn.drivers.core.Monitor;
  *
  * @param <T> The return type of the value that is returned when the operation is done.
  */
-public interface AsyncCallback<T> extends Monitor {
+public interface OperationCallback<T> extends Monitor {
 	
 	/**
 	 * Method is called when the operation will now be executed.

@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.wsn.drivers.core.async;
+package de.uniluebeck.itm.wsn.drivers.core.concurrent;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.wsn.drivers.core.io;
+package de.uniluebeck.itm.wsn.drivers.core.util;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;

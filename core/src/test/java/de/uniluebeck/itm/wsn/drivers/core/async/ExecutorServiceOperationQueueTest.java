@@ -10,11 +10,11 @@ import org.junit.Test;
 
 import com.google.common.util.concurrent.FakeTimeLimiter;
 
-import de.uniluebeck.itm.wsn.drivers.core.async.AsyncAdapter;
-import de.uniluebeck.itm.wsn.drivers.core.async.AsyncCallback;
-import de.uniluebeck.itm.wsn.drivers.core.async.ExecutorServiceOperationQueue;
-import de.uniluebeck.itm.wsn.drivers.core.async.OperationFuture;
-import de.uniluebeck.itm.wsn.drivers.core.async.OperationQueue;
+import de.uniluebeck.itm.wsn.drivers.core.OperationAdapter;
+import de.uniluebeck.itm.wsn.drivers.core.OperationCallback;
+import de.uniluebeck.itm.wsn.drivers.core.concurrent.ExecutorServiceOperationQueue;
+import de.uniluebeck.itm.wsn.drivers.core.concurrent.OperationFuture;
+import de.uniluebeck.itm.wsn.drivers.core.concurrent.OperationQueue;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
@@ -37,7 +37,7 @@ public class ExecutorServiceOperationQueueTest {
 			}
 		};
 		operation.setTimeLimiter(new FakeTimeLimiter());
-		AsyncCallback<Boolean> callback = new AsyncAdapter<Boolean>() {
+		OperationCallback<Boolean> callback = new OperationAdapter<Boolean>() {
 
 			@Override
 			public void onCancel() {
@@ -65,7 +65,7 @@ public class ExecutorServiceOperationQueueTest {
 				return true;
 			}
 		};
-		queue.addOperation(operation, 1000, new AsyncAdapter<Boolean>());
+		queue.addOperation(operation, 1000, new OperationAdapter<Boolean>());
 		Assert.assertTrue(!queue.getOperations().isEmpty());
 		try {
 			Thread.sleep(200);
@@ -84,7 +84,7 @@ public class ExecutorServiceOperationQueueTest {
 				throw new NullPointerException();
 			}
 		};
-		final OperationFuture<Boolean> handle = queue.addOperation(operation, 1000, new AsyncAdapter<Boolean>());
+		final OperationFuture<Boolean> handle = queue.addOperation(operation, 1000, new OperationAdapter<Boolean>());
 		handle.get();
 	}
 }

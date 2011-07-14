@@ -15,8 +15,8 @@ import com.google.common.util.concurrent.TimeLimiter;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 
-import de.uniluebeck.itm.wsn.drivers.core.async.Idle;
-import de.uniluebeck.itm.wsn.drivers.core.async.InputStreamCopyRunnable;
+import de.uniluebeck.itm.wsn.drivers.core.concurrent.Idle;
+import de.uniluebeck.itm.wsn.drivers.core.concurrent.InputStreamCopyRunnable;
 import de.uniluebeck.itm.wsn.drivers.core.io.SendOutputStreamWrapper;
 
 

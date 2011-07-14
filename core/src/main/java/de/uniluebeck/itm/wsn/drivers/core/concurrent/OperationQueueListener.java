@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.wsn.drivers.core.async;
+package de.uniluebeck.itm.wsn.drivers.core.concurrent;
 
 import de.uniluebeck.itm.wsn.drivers.core.event.AddedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.event.RemovedEvent;

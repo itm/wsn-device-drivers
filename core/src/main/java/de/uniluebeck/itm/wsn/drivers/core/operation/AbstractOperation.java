@@ -19,9 +19,9 @@ import com.google.common.util.concurrent.TimeLimiter;
 import com.google.common.util.concurrent.UncheckedTimeoutException;
 import com.google.inject.Inject;
 
+import de.uniluebeck.itm.wsn.drivers.core.OperationAdapter;
+import de.uniluebeck.itm.wsn.drivers.core.OperationCallback;
 import de.uniluebeck.itm.wsn.drivers.core.State;
-import de.uniluebeck.itm.wsn.drivers.core.async.AsyncAdapter;
-import de.uniluebeck.itm.wsn.drivers.core.async.AsyncCallback;
 import de.uniluebeck.itm.wsn.drivers.core.event.StateChangedEvent;
 import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 
@@ -69,7 +69,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	/**
 	 * The callback that is called when the operation has finished, canceled or when an exception occured.
 	 */
-	private AsyncCallback<T> callback = new AsyncAdapter<T>();
+	private OperationCallback<T> callback = new OperationAdapter<T>();
 	
 	/**
 	 * The current state of the <code>Operation</code>.
@@ -89,8 +89,8 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	}
 	
 	@Override
-	public void setAsyncCallback(@Nullable AsyncCallback<T> aCallback) {
-		callback = Objects.firstNonNull(aCallback, new AsyncAdapter<T>());
+	public void setAsyncCallback(@Nullable OperationCallback<T> aCallback) {
+		callback = Objects.firstNonNull(aCallback, new OperationAdapter<T>());
 	}
 	
 	@Inject

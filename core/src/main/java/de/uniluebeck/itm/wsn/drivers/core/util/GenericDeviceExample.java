@@ -13,17 +13,15 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 
 import de.uniluebeck.itm.tr.util.ExecutorUtils;
+import de.uniluebeck.itm.wsn.drivers.core.OperationAdapter;
+import de.uniluebeck.itm.wsn.drivers.core.OperationCallback;
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.ConnectionEvent;
 import de.uniluebeck.itm.wsn.drivers.core.ConnectionListener;
+import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.DeviceModule;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
-import de.uniluebeck.itm.wsn.drivers.core.async.AsyncAdapter;
-import de.uniluebeck.itm.wsn.drivers.core.async.AsyncCallback;
-import de.uniluebeck.itm.wsn.drivers.core.async.DeviceAsync;
-import de.uniluebeck.itm.wsn.drivers.core.async.OperationQueue;
-import de.uniluebeck.itm.wsn.drivers.core.io.ByteReceiver;
-import de.uniluebeck.itm.wsn.drivers.core.io.InputStreamReaderService;
+import de.uniluebeck.itm.wsn.drivers.core.concurrent.OperationQueue;
 
 
 /**
@@ -76,7 +74,7 @@ public class GenericDeviceExample implements ConnectionListener {
 	/**
 	 * The device async reference for this example.
 	 */
-	private DeviceAsync deviceAsync;
+	private Device deviceAsync;
 	
 	/**
 	 * Reader for the input stream.
@@ -141,7 +139,7 @@ public class GenericDeviceExample implements ConnectionListener {
 	 * Should be called after all parameters has been set.
 	 */
 	private void init() {
-		deviceAsync = injector.getInstance(DeviceAsync.class);
+		deviceAsync = injector.getInstance(Device.class);
 		deviceAsync.addListener(this);
 		outputStream = deviceAsync.getOutputStream();
 	}
@@ -165,7 +163,7 @@ public class GenericDeviceExample implements ConnectionListener {
 			return;
 		}
 		
-		final AsyncCallback<Void> callback = new AsyncAdapter<Void>() {
+		final OperationCallback<Void> callback = new OperationAdapter<Void>() {
 			@Override
 			public void onExecute() {
 				System.out.println("Flashing image...");
@@ -201,7 +199,7 @@ public class GenericDeviceExample implements ConnectionListener {
 	 * Reset the device.
 	 */
 	private void resetOperation() {
-		final AsyncCallback<Void> callback = new AsyncAdapter<Void>() {
+		final OperationCallback<Void> callback = new OperationAdapter<Void>() {
 			public void onExecute() {
 				System.out.println("Resetting device...");
 			}
@@ -229,7 +227,7 @@ public class GenericDeviceExample implements ConnectionListener {
 	 * Read the new <code>MacAddress</code>.
 	 */
 	private void macAddressOperations() {		
-		final AsyncCallback<MacAddress> callback = new AsyncAdapter<MacAddress>() {
+		final OperationCallback<MacAddress> callback = new OperationAdapter<MacAddress>() {
 			
 			@Override
 			public void onExecute() {
@@ -259,7 +257,7 @@ public class GenericDeviceExample implements ConnectionListener {
 		}
 		
 		// Write a new mac address.
-		AsyncCallback<Void> writeMacCallback = new AsyncAdapter<Void>() {
+		OperationCallback<Void> writeMacCallback = new OperationAdapter<Void>() {
 
 			@Override
 			public void onExecute() {
@@ -298,7 +296,7 @@ public class GenericDeviceExample implements ConnectionListener {
 	 * Read a random value from the flash.
 	 */
 	public void readFlashOperation() {
-		final AsyncCallback<byte[]> callback = new AsyncAdapter<byte[]>() {
+		final OperationCallback<byte[]> callback = new OperationAdapter<byte[]>() {
 			
 			@Override
 			public void onExecute() {
@@ -337,7 +335,7 @@ public class GenericDeviceExample implements ConnectionListener {
 	 * Read the chip type from the device.
 	 */
 	public void chipTypeOperation() {
-		AsyncCallback<ChipType> callback = new AsyncAdapter<ChipType>() {
+		OperationCallback<ChipType> callback = new OperationAdapter<ChipType>() {
 
 			@Override
 			public void onExecute() {

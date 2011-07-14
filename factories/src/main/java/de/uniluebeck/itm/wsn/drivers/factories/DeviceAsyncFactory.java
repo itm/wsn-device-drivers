@@ -25,11 +25,11 @@ package de.uniluebeck.itm.wsn.drivers.factories;
 
 import java.util.concurrent.ScheduledExecutorService;
 
-import de.uniluebeck.itm.wsn.drivers.core.async.DeviceAsync;
+import de.uniluebeck.itm.wsn.drivers.core.Device;
 
 public interface DeviceAsyncFactory {
 
-	DeviceAsync create(ScheduledExecutorService deviceExecutorService, DeviceType deviceType);
+	Device create(ScheduledExecutorService deviceExecutorService, DeviceType deviceType);
 
-	DeviceAsync create(ScheduledExecutorService executorService, String deviceType);
+	Device create(ScheduledExecutorService executorService, String deviceType);
 }

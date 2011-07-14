@@ -28,8 +28,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import com.google.inject.Guice;
 import com.google.inject.Module;
 
+import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.DeviceModule;
-import de.uniluebeck.itm.wsn.drivers.core.async.DeviceAsync;
 import de.uniluebeck.itm.wsn.drivers.jennic.JennicModule;
 import de.uniluebeck.itm.wsn.drivers.mock.MockModule;
 import de.uniluebeck.itm.wsn.drivers.pacemate.PacemateModule;
@@ -38,7 +38,7 @@ import de.uniluebeck.itm.wsn.drivers.telosb.TelosbModule;
 public class DeviceAsyncFactoryImpl implements DeviceAsyncFactory {
 	
 	@Override
-	public DeviceAsync create(ScheduledExecutorService executorService, DeviceType deviceType) {
+	public Device create(ScheduledExecutorService executorService, DeviceType deviceType) {
 		Module deviceModule = null;
 		switch (deviceType) {
 		case ISENSE:
@@ -59,11 +59,11 @@ public class DeviceAsyncFactoryImpl implements DeviceAsyncFactory {
 					+ "?"
 			);
 		}
-		return Guice.createInjector(new DeviceModule(executorService), deviceModule).getInstance(DeviceAsync.class);
+		return Guice.createInjector(new DeviceModule(executorService), deviceModule).getInstance(Device.class);
 	}
 
 	@Override
-	public DeviceAsync create(ScheduledExecutorService executorService, String deviceType) {
+	public Device create(ScheduledExecutorService executorService, String deviceType) {
 		return create(executorService, DeviceType.fromString(deviceType));
 	}
 
