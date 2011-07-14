@@ -1,5 +1,7 @@
 package de.uniluebeck.itm.wsn.drivers.core.exception;
 
+import java.io.IOException;
+
 
 /**
  * Exception is thrown when no port is available.
@@ -7,7 +9,7 @@ package de.uniluebeck.itm.wsn.drivers.core.exception;
  * @author Malte Legenhausen
  * @author Daniel Bimschas
  */
-public class PortNotFoundException extends RuntimeException {
+public class PortNotFoundException extends IOException {
 
 	/**
 	 * Serial UID.

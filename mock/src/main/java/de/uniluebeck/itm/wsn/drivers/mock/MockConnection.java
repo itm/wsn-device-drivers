@@ -171,7 +171,8 @@ public class MockConnection extends AbstractConnection {
 	}
 	
 	@Override
-	public void connect(final String uri) {
+	public void connect(final String uri) throws IOException {
+		super.connect(uri);
 		try {
 			inputStream.connect(outputStream);
 		} catch (IOException e) {
@@ -180,7 +181,7 @@ public class MockConnection extends AbstractConnection {
 		setOutputStream(outputStream);
 		setInputStream(inputStream);
 		scheduleAliveRunnable();
-		setConnected(true);
+		setConnected();
 	}
 	
 	@Override

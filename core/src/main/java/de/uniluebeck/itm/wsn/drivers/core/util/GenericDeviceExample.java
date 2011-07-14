@@ -13,14 +13,12 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 
 import de.uniluebeck.itm.tr.util.ExecutorUtils;
-import de.uniluebeck.itm.wsn.drivers.core.OperationAdapter;
-import de.uniluebeck.itm.wsn.drivers.core.OperationCallback;
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
-import de.uniluebeck.itm.wsn.drivers.core.ConnectionEvent;
-import de.uniluebeck.itm.wsn.drivers.core.ConnectionListener;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.DeviceModule;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
+import de.uniluebeck.itm.wsn.drivers.core.OperationAdapter;
+import de.uniluebeck.itm.wsn.drivers.core.OperationCallback;
 import de.uniluebeck.itm.wsn.drivers.core.concurrent.OperationQueue;
 
 
@@ -29,7 +27,7 @@ import de.uniluebeck.itm.wsn.drivers.core.concurrent.OperationQueue;
  * 
  * @author Malte Legenhausen
  */
-public class GenericDeviceExample implements ConnectionListener {
+public class GenericDeviceExample {
 	
 	/**
 	 * Default sleep for the thread.
@@ -74,7 +72,7 @@ public class GenericDeviceExample implements ConnectionListener {
 	/**
 	 * The device async reference for this example.
 	 */
-	private Device deviceAsync;
+	private Device device;
 	
 	/**
 	 * Reader for the input stream.
@@ -139,9 +137,8 @@ public class GenericDeviceExample implements ConnectionListener {
 	 * Should be called after all parameters has been set.
 	 */
 	private void init() {
-		deviceAsync = injector.getInstance(Device.class);
-		deviceAsync.addListener(this);
-		outputStream = deviceAsync.getOutputStream();
+		device = injector.getInstance(Device.class);
+		outputStream = device.getOutputStream();
 	}
 	
 	/**
@@ -149,7 +146,13 @@ public class GenericDeviceExample implements ConnectionListener {
 	 */
 	private void connect() {
 		System.out.println("Connecting to: " + uri);
-		deviceAsync.connect(uri);
+		try {
+			device.connect(uri);
+			service.setInputStream(device.getInputStream());
+			service.start();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -189,7 +192,7 @@ public class GenericDeviceExample implements ConnectionListener {
 		final byte[] bytes = ByteStreams.toByteArray(image);
 		System.out.println("Image length: " + bytes.length);
 		try {
-			deviceAsync.program(bytes, PROGRAM_TIMEOUT, callback);
+			device.program(bytes, PROGRAM_TIMEOUT, callback);
 		} catch (UnsupportedOperationException e) {
 			System.err.println(e.getMessage());
 		}
@@ -215,7 +218,7 @@ public class GenericDeviceExample implements ConnectionListener {
 			}
 		};
 		try {
-			deviceAsync.reset(RESET_TIMEOUT, callback);
+			device.reset(RESET_TIMEOUT, callback);
 		} catch (UnsupportedOperationException e) {
 			System.err.println(e.getMessage());
 		}
@@ -251,7 +254,7 @@ public class GenericDeviceExample implements ConnectionListener {
 			}
 		};
 		try {
-			deviceAsync.readMac(READ_MAC_ADDRESS_TIMEOUT, callback);
+			device.readMac(READ_MAC_ADDRESS_TIMEOUT, callback);
 		} catch (UnsupportedOperationException e) {
 			System.err.println(e.getMessage());
 		}
@@ -281,12 +284,12 @@ public class GenericDeviceExample implements ConnectionListener {
 			}
 		};
 		try {
-			deviceAsync.writeMac(macAddress, WRITE_MAC_ADDRESS_TIMEOUT, writeMacCallback);
+			device.writeMac(macAddress, WRITE_MAC_ADDRESS_TIMEOUT, writeMacCallback);
 		} catch (UnsupportedOperationException e) {
 			System.err.println(e.getMessage());
 		}
 		try {
-			deviceAsync.readMac(READ_MAC_ADDRESS_TIMEOUT, callback);
+			device.readMac(READ_MAC_ADDRESS_TIMEOUT, callback);
 		} catch (UnsupportedOperationException e) {
 			System.err.println(e.getMessage());
 		}
@@ -324,7 +327,7 @@ public class GenericDeviceExample implements ConnectionListener {
 			}
 		};
 		try {
-			deviceAsync.readFlash(0, READ_LENGTH, RESET_TIMEOUT, callback);
+			device.readFlash(0, READ_LENGTH, RESET_TIMEOUT, callback);
 		} catch (UnsupportedOperationException e) {
 			System.err.println(e.getMessage());
 		}
@@ -363,7 +366,7 @@ public class GenericDeviceExample implements ConnectionListener {
 			}
 		};
 		try {
-			deviceAsync.getChipType(READ_MAC_ADDRESS_TIMEOUT, callback);
+			device.getChipType(READ_MAC_ADDRESS_TIMEOUT, callback);
 		} catch (UnsupportedOperationException e) {
 			System.err.println(e.getMessage());
 		}
@@ -418,6 +421,9 @@ public class GenericDeviceExample implements ConnectionListener {
 	 * Shutdown the queue and the connection.
 	 */
 	private void shutdown() {
+		System.out.println("Stopping InputStreamReaderService...");
+		service.stopAndWait();
+		System.out.println("InputStreamReaderService stopped");
 		System.out.println("Closing OutputStream...");
 		Closeables.closeQuietly(outputStream);
 		System.out.println("OutputStream closed");
@@ -426,7 +432,7 @@ public class GenericDeviceExample implements ConnectionListener {
 				EXECUTOR_TIMEOUT, TimeUnit.SECONDS);
 		System.out.println("Executor shut down");
 		System.out.println("Closing connection...");
-		Closeables.closeQuietly(deviceAsync);
+		Closeables.closeQuietly(device);
 		System.out.println("Connection closed");
 		
 	}
@@ -450,17 +456,6 @@ public class GenericDeviceExample implements ConnectionListener {
 		waitForOperationsToFinish();
 		waitForMessagePackets();
 		shutdown();
-	}
-	
-	@Override
-	public void onConnectionChange(final ConnectionEvent event) {
-		System.out.println("Connected with port: " + event.getUri());
-		if (event.isConnected()) {
-			service.setInputStream(deviceAsync.getInputStream());
-			service.start();
-		} else {
-			service.stopAndWait();
-		}
 	}
 
 	public void setMacAddress(final MacAddress macAddress) {

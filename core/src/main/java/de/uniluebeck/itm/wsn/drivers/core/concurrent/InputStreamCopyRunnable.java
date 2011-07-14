@@ -14,7 +14,7 @@ import com.google.inject.Inject;
 
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.ConnectionEvent;
-import de.uniluebeck.itm.wsn.drivers.core.DataAvailableListener;
+import de.uniluebeck.itm.wsn.drivers.core.ConnectionListener;
 
 
 /**
@@ -22,7 +22,7 @@ import de.uniluebeck.itm.wsn.drivers.core.DataAvailableListener;
  * 
  * @author Malte Legenhausen
  */
-public class InputStreamCopyRunnable implements Runnable, DataAvailableListener {
+public class InputStreamCopyRunnable implements Runnable, ConnectionListener {
 	
 	private static final Logger LOG = Logger.getLogger(InputStreamCopyRunnable.class);
 
@@ -68,7 +68,7 @@ public class InputStreamCopyRunnable implements Runnable, DataAvailableListener 
 	}
 	
 	@Override
-	public void dataAvailable(ConnectionEvent event) {
+	public void onDataAvailable(ConnectionEvent event) {
 		deviceInputStreamLock.lock();
 		try {
 			deviceInputStreamDataAvailable.signal();

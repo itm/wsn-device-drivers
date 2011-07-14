@@ -21,6 +21,7 @@ public class MockDeviceExample {
 		example.addByteReceiver(new BufferedByteReceiver());
 		example.setModule(new MockModule());
 		example.setMessage("This is a test message".getBytes());
+		example.setUri("MockPort");
 		example.run();
 	}
 

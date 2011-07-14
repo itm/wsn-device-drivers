@@ -202,17 +202,7 @@ public class SimpleDevice implements Device {
 	}
 	
 	@Override
-	public void addListener(ConnectionListener listener) {
-		connection.addListener(listener);
-	}
-	
-	@Override
-	public void removeListener(ConnectionListener listener) {
-		connection.removeListener(listener);
-	}
-	
-	@Override
-	public void connect(String uri) {
+	public void connect(String uri) throws IOException {
 		connection.connect(uri);
 	}
 
@@ -220,14 +210,19 @@ public class SimpleDevice implements Device {
 	public boolean isConnected() {
 		return connection.isConnected();
 	}
+	
+	@Override
+	public boolean isClosed() {
+		return connection.isClosed();
+	}
 
 	@Override
-	public void addListener(DataAvailableListener listener) {
+	public void addListener(ConnectionListener listener) {
 		connection.addListener(listener);
 	}
 
 	@Override
-	public void removeListener(DataAvailableListener listener) {
+	public void removeListener(ConnectionListener listener) {
 		connection.removeListener(listener);
 	}
 

@@ -2,16 +2,12 @@ package de.uniluebeck.itm.wsn.drivers.core;
 
 
 /**
- * Listener for observating the state of a <code>Connection</code>.
+ * Listener that is called when data is available for a certain <code>Connection</code>.
  * 
  * @author Malte Legenhausen
+ * @author Daniel Bimschas
  */
 public interface ConnectionListener {
-	
-	/**
-	 * This method is called when a connection state occured.
-	 * 
-	 * @param event The event object.
-	 */
-	void onConnectionChange(ConnectionEvent event);
+
+	void onDataAvailable(ConnectionEvent event);
 }

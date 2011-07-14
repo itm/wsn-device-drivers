@@ -6,7 +6,6 @@ import gnu.io.UnsupportedCommOperationException;
 
 import java.io.IOException;
 import java.util.NoSuchElementException;
-import java.util.TooManyListenersException;
 
 import com.google.inject.Inject;
 
@@ -38,20 +37,15 @@ public class TelosbSerialPortConnection extends SimpleSerialPortConnection {
 	}
 
 	@Override
-	protected void connectSerialPort(String port) throws NoSuchElementException, PortInUseException,
-			TooManyListenersException, IOException {
-
+	protected void connectSerialPort(String port) throws NoSuchElementException, PortInUseException, IOException {
 		super.connectSerialPort(port);
-
 		try {
-
 			getSerialPort().setSerialPortParams(
 					NORMAL_BAUDRATE,
 					SerialPort.DATABITS_8,
 					SerialPort.STOPBITS_1,
 					SerialPort.PARITY_EVEN
 			);
-
 		} catch (UnsupportedCommOperationException e) {
 			throw new IOException(e);
 		}

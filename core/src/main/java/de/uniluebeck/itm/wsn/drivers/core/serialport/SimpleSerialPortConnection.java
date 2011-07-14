@@ -1,6 +1,5 @@
 package de.uniluebeck.itm.wsn.drivers.core.serialport;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import gnu.io.CommPortIdentifier;
 import gnu.io.PortInUseException;
@@ -129,25 +128,22 @@ public class SimpleSerialPortConnection extends AbstractConnection
 	}
 
 	@Override
-	public void connect(final String port) {
-		checkNotNull(port, "The given port can not be null.");
+	public void connect(final String port) throws IOException {
+		super.connect(port);
 		checkState(serialPort == null, "Serial port is already set. Disconnect first before retry.");
 
 		try {
 			connectSerialPort(port);
-			setConnected(true);
+			setConnected();
 		} catch (final NoSuchElementException e) {
 			LOG.warn("Port {} not found.", port);
 			throw new PortNotFoundException(e);
 		} catch (final PortInUseException e) {
 			LOG.error("Port {} already in use.", port);
-			throw new RuntimeException(e);
+			throw new IOException(e);
 		} catch (final ClassCastException e) {
 			LOG.error("Port {} is not a serial port.", port);
-			throw new RuntimeException(e);
-		} catch (final Exception e) {
-			LOG.error("Exception while connecting to port {}: {}", port, e);
-			throw new RuntimeException(e);
+			throw new IOException(e);
 		}
 	}
 
@@ -158,8 +154,7 @@ public class SimpleSerialPortConnection extends AbstractConnection
 	 *
 	 * @throws Exception
 	 */
-	protected void connectSerialPort(final String port) 
-			throws PortInUseException, TooManyListenersException, IOException {
+	protected void connectSerialPort(final String port) throws PortInUseException, IOException {
 
 		SysOutUtil.mute();
 		Enumeration<?> identifiers;
@@ -181,7 +176,11 @@ public class SimpleSerialPortConnection extends AbstractConnection
 
 		serialPort = (SerialPort) commPortIdentifier.open(getClass().getName(), MAX_CONNECTION_TIMEOUT);
 		serialPort.notifyOnDataAvailable(true);
-		serialPort.addEventListener(this);
+		try {
+			serialPort.addEventListener(this);
+		} catch (TooManyListenersException e) {
+			LOG.error("Listener already added.", e);
+		}
 
 		setUri(port);
 		setOutputStream(serialPort.getOutputStream());

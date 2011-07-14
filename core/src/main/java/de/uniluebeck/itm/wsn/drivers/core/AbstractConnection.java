@@ -1,5 +1,6 @@
 package de.uniluebeck.itm.wsn.drivers.core;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
 
 import java.io.IOException;
@@ -18,16 +19,19 @@ import com.google.common.io.Closeables;
 public abstract class AbstractConnection implements Connection {
 	
 	/**
-	 * List for connectionListeners that want to be notified on connection state changes.
+	 * List for connectionListeners that want to be notified when data is available.
 	 */
-	private final List<ConnectionListener> connectionListeners = newArrayList();
-
-	private final List<DataAvailableListener> dataAvailableListeners = newArrayList();
+	private final List<ConnectionListener> listeners = newArrayList();
 	
 	/**
 	 * Current connection state.
 	 */
 	private boolean connected = false;
+	
+	/**
+	 * Current closed state.
+	 */
+	private boolean closed = false;
 	
 	/**
 	 * Input stream of the connection.
@@ -44,30 +48,34 @@ public abstract class AbstractConnection implements Connection {
 	 */
 	private String uri;
 	
+	@Override
+	public void connect(String aUri) throws IOException {
+		checkNotNull(aUri, "Null argument is not allowed.");
+		if (isConnected()) {
+			throw new IOException("Already connected.");
+		}
+		if (isClosed()) {
+			throw new IOException("Connection is closed.");
+		}
+	}
+	
 	/**
 	 * Setter for the connection that will fire a connection change event.
 	 * 
 	 * @param connected True when connected else false.
 	 */
-	protected void setConnected(final boolean connected) {
-		this.connected = connected;
-		fireConnectionChange(new ConnectionEvent(this, uri, connected));
+	protected void setConnected() {
+		connected = true;
 	}
 	
 	/**
 	 * Fire a connection change event to all registered connectionListeners.
 	 * 
 	 * @param event The event you want to fire.
-	 */
-	protected void fireConnectionChange(ConnectionEvent event) {
-		for (final ConnectionListener listener : connectionListeners.toArray(new ConnectionListener[0])) {
-			listener.onConnectionChange(event);
-		}
-	}
-	
+	 */	
 	protected void fireDataAvailableListeners(ConnectionEvent event) {
-		for (DataAvailableListener dataAvailableListener : dataAvailableListeners) {
-			dataAvailableListener.dataAvailable(event);
+		for (ConnectionListener dataAvailableListener : listeners) {
+			dataAvailableListener.onDataAvailable(event);
 		}
 	}
 	
@@ -116,33 +124,28 @@ public abstract class AbstractConnection implements Connection {
 	public boolean isConnected() {
 		return connected;
 	}
+	
+	@Override
+	public boolean isClosed() {
+		return closed;
+	}
 
 	@Override
 	public void addListener(final ConnectionListener listener) {
-		connectionListeners.add(listener);
+		listeners.add(listener);
 	}
 
 	@Override
 	public void removeListener(final ConnectionListener listener) {
-		connectionListeners.remove(listener);
-	}
-
-	@Override
-	public void addListener(final DataAvailableListener listener) {
-		dataAvailableListeners.add(listener);
-	}
-
-	@Override
-	public void removeListener(final DataAvailableListener listener) {
-		dataAvailableListeners.remove(listener);
+		listeners.remove(listener);
 	}
 	
 	@Override
 	public void close() throws IOException {
-		setConnected(false);
-		Closeables.close(inputStream, true);
-		inputStream = null;
-		Closeables.close(outputStream, true);
-		outputStream = null;
+		if (!isClosed()) {
+			Closeables.close(inputStream, true);
+			Closeables.close(outputStream, true);
+			closed = true;
+		}
 	}
 }
