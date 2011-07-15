@@ -23,14 +23,50 @@
 
 package de.uniluebeck.itm.wsn.drivers.factories;
 
-import com.google.inject.Binder;
-import com.google.inject.Module;
+import java.util.concurrent.ScheduledExecutorService;
 
-public class FactoriesModule implements Module {
+import com.google.inject.Guice;
+import com.google.inject.Module;
+import com.google.inject.Singleton;
+
+import de.uniluebeck.itm.wsn.drivers.core.Device;
+import de.uniluebeck.itm.wsn.drivers.core.DeviceModule;
+import de.uniluebeck.itm.wsn.drivers.jennic.JennicModule;
+import de.uniluebeck.itm.wsn.drivers.mock.MockModule;
+import de.uniluebeck.itm.wsn.drivers.pacemate.PacemateModule;
+import de.uniluebeck.itm.wsn.drivers.telosb.TelosbModule;
+
+@Singleton
+public class DeviceFactoryImpl implements DeviceFactory {
+	
+	@Override
+	public Device create(ScheduledExecutorService executorService, DeviceType deviceType) {
+		Module deviceModule = null;
+		switch (deviceType) {
+		case ISENSE:
+			deviceModule = new JennicModule();
+			break;
+		case PACEMATE:
+			deviceModule = new PacemateModule();
+			break;
+		case TELOSB:
+			deviceModule = new TelosbModule();
+			break;
+		case MOCK:
+			deviceModule = new MockModule();
+			break;
+		default:
+			throw new RuntimeException("Unhandled device type \"" + deviceType
+					+ "\". Maybe someone forgot to add this (new) device type to " + DeviceFactoryImpl.class.getName()
+					+ "?"
+			);
+		}
+		return Guice.createInjector(new DeviceModule(executorService), deviceModule).getInstance(Device.class);
+	}
 
 	@Override
-	public void configure(final Binder binder) {
-		binder.bind(DeviceAsyncFactory.class).to(DeviceAsyncFactoryImpl.class);
+	public Device create(ScheduledExecutorService executorService, String deviceType) {
+		return create(executorService, DeviceType.fromString(deviceType));
 	}
 
 }
