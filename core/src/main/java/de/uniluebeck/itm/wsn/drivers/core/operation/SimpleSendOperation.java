@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 import de.uniluebeck.itm.tr.util.StringUtils;
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
@@ -50,7 +49,7 @@ public class SimpleSendOperation extends AbstractSendOperation {
 	}
 	
 	@Inject(optional = true)
-	public void setMaxLength(@Named("Max message length") int maxLength) {
+	public void setMaxLength(@MaxMessageLength int maxLength) {
 		this.maxLength = maxLength;
 	}
 

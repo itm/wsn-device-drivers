@@ -15,6 +15,7 @@ import com.google.inject.Inject;
 
 import de.uniluebeck.itm.wsn.drivers.core.OperationAdapter;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
+import de.uniluebeck.itm.wsn.drivers.core.operation.MaxMessageLength;
 
 
 /**
@@ -36,7 +37,7 @@ public class SendOutputStreamWrapper extends OutputStream implements Runnable {
 	/**
 	 * The internal buffer size.
 	 */
-	private static final int BUFFER_SIZE = 150;
+	private static final int DEFAULT_MAX_LENGTH = 150;
 	
 	/**
 	 * The maximum timeout for the send operation.
@@ -58,10 +59,12 @@ public class SendOutputStreamWrapper extends OutputStream implements Runnable {
 	 */
 	private final ScheduledFuture<?> future; 
 	
+	private int maxLength = DEFAULT_MAX_LENGTH;
+	
 	/**
 	 * Internal buffer.
 	 */
-	private byte[] buffer = new byte[BUFFER_SIZE];
+	private byte[] buffer = new byte[maxLength];
 	
 	/**
 	 * The current buffer position.
@@ -99,6 +102,17 @@ public class SendOutputStreamWrapper extends OutputStream implements Runnable {
 	}
 	
 	/**
+	 * Apply new maximum length after a flush.
+	 * 
+	 * @param maxLength The new max length of a message send at the same moment.
+	 */
+	@Inject(optional = true)
+	public void setMaxLength(@MaxMessageLength int maxLength) {
+		this.maxLength = maxLength;
+		Flushables.flushQuietly(this);
+	}
+	
+	/**
 	 * Use this method to send all written data to the deviceAsync and reset the stream.
 	 */
 	@Override
@@ -110,7 +124,7 @@ public class SendOutputStreamWrapper extends OutputStream implements Runnable {
 				throw new IOException(e);
 			}
 			index = 0;
-			buffer = new byte[BUFFER_SIZE];
+			buffer = new byte[maxLength];
 		}
 	}
 
