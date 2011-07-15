@@ -13,7 +13,6 @@ import com.google.common.io.Flushables;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.inject.Inject;
 
-import de.uniluebeck.itm.wsn.drivers.core.OperationAdapter;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.operation.MaxMessageLength;
 
@@ -119,7 +118,7 @@ public class SendOutputStreamWrapper extends OutputStream implements Runnable {
 	public void flush() throws IOException {
 		synchronized (buffer) {
 			try {
-				deviceAsync.send(buffer, SEND_TIMEOUT, new OperationAdapter<Void>());
+				deviceAsync.send(buffer, SEND_TIMEOUT, null);
 			} catch (RuntimeException e) {
 				throw new IOException(e);
 			}
