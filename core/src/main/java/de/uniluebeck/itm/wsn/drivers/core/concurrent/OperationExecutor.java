@@ -8,15 +8,16 @@ import de.uniluebeck.itm.wsn.drivers.core.OperationCallback;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 
 /**
- * Interface that defines a queue thats manages the execution of <code>Operation</code>s.
+ * Interface that defines a executor thats manages the execution of <code>Operation</code>s.
  * 
  * @author Malte Legenhausen
  */
-@ImplementedBy(ExecutorServiceOperationQueue.class)
-public interface OperationQueue {
+@ImplementedBy(ExecutorServiceOperationExecutor.class)
+public interface OperationExecutor {
 
 	/**
-	 * Add a operation to the queue and execute it.
+	 * Submit an operation and execute it as long the timeout is not reached.
+	 * The <code>OperationCallback</code> is used for receiving asynchronious events.
 	 * 
 	 * @param <T> The return type of the operation.
 	 * @param operation The operation that has to be added to the queue.
@@ -24,7 +25,7 @@ public interface OperationQueue {
 	 * @param callback The callback that is called during the operation execution.
 	 * @return A <code>OperationFuture</code> for controlling the operation.
 	 */
-	<T> OperationFuture<T> addOperation(Operation<T> operation, long timeout, OperationCallback<T> callback);
+	<T> OperationFuture<T> submitOperation(Operation<T> operation, long timeout, OperationCallback<T> callback);
 	
 	/**
 	 * Returns all operations that are in the queue.
@@ -38,12 +39,12 @@ public interface OperationQueue {
 	 * 
 	 * @param listener A listener that handle queue events.
 	 */
-	void addListener(OperationQueueListener listener);
+	void addListener(OperationExecutorListener listener);
 	
 	/**
 	 * Remove a listener from the queue.
 	 * 
 	 * @param listener The listener that has to be removed.
 	 */
-	void removeListener(OperationQueueListener listener);
+	void removeListener(OperationExecutorListener listener);
 }

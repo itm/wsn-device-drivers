@@ -15,7 +15,7 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
 import de.uniluebeck.itm.wsn.drivers.core.concurrent.OperationFuture;
-import de.uniluebeck.itm.wsn.drivers.core.concurrent.OperationQueue;
+import de.uniluebeck.itm.wsn.drivers.core.concurrent.OperationExecutor;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
@@ -58,7 +58,7 @@ public class SimpleDevice implements Device {
 	/**
 	 * Queue that schedules all <code>Operation</code> instances.
 	 */
-	private final OperationQueue queue;
+	private final OperationExecutor queue;
 	
 	private final Connection connection;
 	
@@ -87,11 +87,11 @@ public class SimpleDevice implements Device {
 	/**
 	 * Constructor.
 	 *
-	 * @param queue  The <code>OperationQueue</code> that schedules all operations.
+	 * @param queue  The <code>OperationExecutor</code> that schedules all operations.
 	 * @param device The <code>Device</code> that provides all operations that can be executed.
 	 */
 	@Inject
-	public SimpleDevice(OperationQueue queue, Connection connection, InputStream inputStream,
+	public SimpleDevice(OperationExecutor queue, Connection connection, InputStream inputStream,
 			Provider<OutputStream> outputStreamProvider,
 			Provider<SendOperation> sendProvider) {
 		this.connection = connection;
@@ -106,7 +106,7 @@ public class SimpleDevice implements Device {
 		LOG.trace("Reading Chip Type (Timeout: " + timeout + "ms)");
 		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
 		GetChipTypeOperation operation = checkProvider(getChipTypeProvider, "getChipType is not available");
-		return queue.addOperation(operation, timeout, callback);
+		return queue.submitOperation(operation, timeout, callback);
 	}
 
 	@Override
@@ -114,7 +114,7 @@ public class SimpleDevice implements Device {
 		LOG.trace("Erase flash (Timeout: " + timeout + "ms)");
 		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
 		EraseFlashOperation operation = checkProvider(eraseFlashProvider, "eraseFlash is not avialable");
-		return queue.addOperation(operation, timeout, callback);
+		return queue.submitOperation(operation, timeout, callback);
 	}
 
 	@Override
@@ -123,7 +123,7 @@ public class SimpleDevice implements Device {
 		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
 		ProgramOperation operation = checkProvider(programProvider, "program is not available");
 		operation.setBinaryImage(data);
-		return queue.addOperation(operation, timeout, callback);
+		return queue.submitOperation(operation, timeout, callback);
 	}
 
 	@Override
@@ -135,7 +135,7 @@ public class SimpleDevice implements Device {
 		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
 		ReadFlashOperation operation = checkProvider(readFlashProvider, "readFlash is not available");
 		operation.setAddress(address, length);
-		return queue.addOperation(operation, timeout, callback);
+		return queue.submitOperation(operation, timeout, callback);
 	}
 
 	@Override
@@ -143,7 +143,7 @@ public class SimpleDevice implements Device {
 		LOG.trace("Read mac (timeout: " + timeout + "ms)");
 		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
 		ReadMacAddressOperation operation = checkProvider(readMacAddressProvider, "readMac is not available");
-		return queue.addOperation(operation, timeout, callback);
+		return queue.submitOperation(operation, timeout, callback);
 	}
 
 	@Override
@@ -151,7 +151,7 @@ public class SimpleDevice implements Device {
 		LOG.trace("Reset device (timeout: " + timeout + "ms)");
 		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
 		ResetOperation operation = checkProvider(resetProvider, "reset is not available");
-		return queue.addOperation(operation, timeout, callback);
+		return queue.submitOperation(operation, timeout, callback);
 	}
 
 	@Override
@@ -160,7 +160,7 @@ public class SimpleDevice implements Device {
 		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
 		SendOperation operation = checkProvider(sendProvider, "send is not available");
 		operation.setMessage(message);
-		return queue.addOperation(operation, timeout, callback);
+		return queue.submitOperation(operation, timeout, callback);
 	}
 
 	@Override
@@ -173,7 +173,7 @@ public class SimpleDevice implements Device {
 		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
 		WriteFlashOperation operation = checkProvider(writeFlashProvider, "The Operation writeFlash is not available");
 		operation.setData(address, data, length);
-		return queue.addOperation(operation, timeout, callback);
+		return queue.submitOperation(operation, timeout, callback);
 	}
 
 	@Override
@@ -183,7 +183,7 @@ public class SimpleDevice implements Device {
 		checkArgument(timeout >= 0, NEGATIVE_TIMEOUT_MESSAGE);
 		WriteMacAddressOperation operation = checkProvider(writeMacAddressProvider, "writeMac is not available");
 		operation.setMacAddress(macAddress);
-		return queue.addOperation(operation, timeout, callback);
+		return queue.submitOperation(operation, timeout, callback);
 	}
 
 	@Override

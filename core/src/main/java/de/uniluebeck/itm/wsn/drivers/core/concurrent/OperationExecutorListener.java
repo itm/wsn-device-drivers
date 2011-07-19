@@ -4,11 +4,11 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.StateChangedEvent;
 
 
 /**
- * Listener for observing <code>OperationQueue</code> changes.
+ * Listener for observing <code>OperationExecutor</code> changes.
  * 
  * @author Malte Legenhausen
  */
-public interface OperationQueueListener {
+public interface OperationExecutorListener {
 	
 	void beforeStateChanged(StateChangedEvent<?> event);
 	

@@ -34,17 +34,17 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.StateChangedEvent;
  * @author Malte Legenhausen
  */
 @Singleton
-public class ExecutorServiceOperationQueue implements OperationQueue {
+public class ExecutorServiceOperationExecutor implements OperationExecutor {
 	
 	/**
 	 * Logger for this class.
 	 */
-	private static final Logger LOG = LoggerFactory.getLogger(ExecutorServiceOperationQueue.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ExecutorServiceOperationExecutor.class);
 
 	/**
 	 * List that contains all listeners.
 	 */
-	private final List<OperationQueueListener> listeners = newArrayList();
+	private final List<OperationExecutorListener> listeners = newArrayList();
 
 	/**
 	 * Queue for all <code>OperationContainer</code> that are in progress.
@@ -74,7 +74,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	/**
 	 * Constructor.
 	 */
-	public ExecutorServiceOperationQueue() {
+	public ExecutorServiceOperationExecutor() {
 		executorService = Executors.newFixedThreadPool(2);
 		idleRunnable = null;
 	}
@@ -85,7 +85,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	 * @param executorService Set a custom <code>PausableExecutorService</code>.
 	 */
 	@Inject
-	public ExecutorServiceOperationQueue(ExecutorService executorService, 
+	public ExecutorServiceOperationExecutor(ExecutorService executorService, 
 			@Nullable @IdleRunnable Runnable idleRunnable) {
 		this.executorService = executorService;
 		this.idleRunnable = idleRunnable;
@@ -102,7 +102,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	}
 
 	@Override
-	public <T> OperationFuture<T> addOperation(Operation<T> operation, long timeout,  
+	public <T> OperationFuture<T> submitOperation(Operation<T> operation, long timeout,  
 			@Nullable OperationCallback<T> callback) {
 		
 		checkNotNull(operation, "Null Operation is not allowed.");
@@ -199,13 +199,13 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	}
 
 	@Override
-	public void addListener(final OperationQueueListener listener) {
+	public void addListener(final OperationExecutorListener listener) {
 		checkNotNull(listener, "Null listener is not allowed.");
 		listeners.add(listener);
 	}
 
 	@Override
-	public void removeListener(final OperationQueueListener listener) {
+	public void removeListener(final OperationExecutorListener listener) {
 		checkNotNull(listener, "Null listener is not allowed.");
 		listeners.remove(listener);
 	}
@@ -219,7 +219,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	private <T> void fireBeforeStateChangedEvent(final StateChangedEvent<T> event) {
 		String msg = "Operation state of {} changed";
 		LOG.trace(msg, new Object[] {event.getOperation().getClass().getName()});
-		for (final OperationQueueListener listener : listeners.toArray(new OperationQueueListener[0])) {
+		for (final OperationExecutorListener listener : listeners.toArray(new OperationExecutorListener[0])) {
 			listener.beforeStateChanged(event);
 		}
 	}
@@ -233,7 +233,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	private <T> void fireAfterStateChangedEvent(final StateChangedEvent<T> event) {
 		String msg = "Operation state of {} changed";
 		LOG.trace(msg, new Object[] {event.getOperation().getClass().getName()});
-		for (final OperationQueueListener listener : listeners.toArray(new OperationQueueListener[0])) {
+		for (final OperationExecutorListener listener : listeners.toArray(new OperationExecutorListener[0])) {
 			listener.afterStateChanged(event);
 		}
 	}
@@ -245,7 +245,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	 * @param event The event that will notify about the add of an operation.
 	 */
 	private void fireAddedEvent(final AddedEvent<?> event) {
-		for (final OperationQueueListener listener : listeners.toArray(new OperationQueueListener[0])) {
+		for (final OperationExecutorListener listener : listeners.toArray(new OperationExecutorListener[0])) {
 			listener.onAdded(event);
 		}
 	}
@@ -257,7 +257,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	 * @param event The event that will notify about the remove of an operation.
 	 */
 	private void fireRemovedEvent(final RemovedEvent<?> event) {
-		for (final OperationQueueListener listener : listeners.toArray(new OperationQueueListener[0])) {
+		for (final OperationExecutorListener listener : listeners.toArray(new OperationExecutorListener[0])) {
 			listener.onRemoved(event);
 		}
 	}

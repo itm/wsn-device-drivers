@@ -4,11 +4,11 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.StateChangedEvent;
 
 
 /**
- * Default implementation for the OperationQueueListener.
+ * Default implementation for the OperationExecutorListener.
  * 
  * @author Malte Legenhausen
  */
-public class OperationQueueAdapter implements OperationQueueListener {
+public class OperationExecutorAdapter implements OperationExecutorListener {
 
 	@Override
 	public void beforeStateChanged(StateChangedEvent<?> event) {

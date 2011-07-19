@@ -12,20 +12,20 @@ import com.google.common.util.concurrent.FakeTimeLimiter;
 
 import de.uniluebeck.itm.wsn.drivers.core.OperationAdapter;
 import de.uniluebeck.itm.wsn.drivers.core.OperationCallback;
-import de.uniluebeck.itm.wsn.drivers.core.concurrent.ExecutorServiceOperationQueue;
+import de.uniluebeck.itm.wsn.drivers.core.concurrent.ExecutorServiceOperationExecutor;
 import de.uniluebeck.itm.wsn.drivers.core.concurrent.OperationFuture;
-import de.uniluebeck.itm.wsn.drivers.core.concurrent.OperationQueue;
+import de.uniluebeck.itm.wsn.drivers.core.concurrent.OperationExecutor;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 
-public class ExecutorServiceOperationQueueTest {
+public class ExecutorServiceOperationExecutorTest {
 	
-	private OperationQueue queue;
+	private OperationExecutor queue;
 	
 	@Before
 	public void setUp() {
-		queue = new ExecutorServiceOperationQueue();
+		queue = new ExecutorServiceOperationExecutor();
 	}
 	
 	@Test
@@ -50,7 +50,7 @@ public class ExecutorServiceOperationQueueTest {
 				fail("No failure was expected");
 			}
 		};
-		OperationFuture<Boolean> handle = queue.addOperation(operation, 1000, callback);
+		OperationFuture<Boolean> handle = queue.submitOperation(operation, 1000, callback);
 		if (!handle.get()) {
 			fail("Execution failed");
 		}
@@ -65,7 +65,7 @@ public class ExecutorServiceOperationQueueTest {
 				return true;
 			}
 		};
-		queue.addOperation(operation, 1000, new OperationAdapter<Boolean>());
+		queue.submitOperation(operation, 1000, new OperationAdapter<Boolean>());
 		Assert.assertTrue(!queue.getOperations().isEmpty());
 		try {
 			Thread.sleep(200);
@@ -84,7 +84,7 @@ public class ExecutorServiceOperationQueueTest {
 				throw new NullPointerException();
 			}
 		};
-		final OperationFuture<Boolean> handle = queue.addOperation(operation, 1000, new OperationAdapter<Boolean>());
+		final OperationFuture<Boolean> handle = queue.submitOperation(operation, 1000, new OperationAdapter<Boolean>());
 		handle.get();
 	}
 }

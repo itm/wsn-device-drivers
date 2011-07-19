@@ -19,7 +19,7 @@ import de.uniluebeck.itm.wsn.drivers.core.DeviceModule;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import de.uniluebeck.itm.wsn.drivers.core.OperationAdapter;
 import de.uniluebeck.itm.wsn.drivers.core.OperationCallback;
-import de.uniluebeck.itm.wsn.drivers.core.concurrent.OperationQueue;
+import de.uniluebeck.itm.wsn.drivers.core.concurrent.OperationExecutor;
 
 
 /**
@@ -388,7 +388,7 @@ public class GenericDeviceExample {
 	 */
 	private void waitForOperationsToFinish() {
 		// Wait until the queue is empty.
-		OperationQueue queue = injector.getInstance(OperationQueue.class);
+		OperationExecutor queue = injector.getInstance(OperationExecutor.class);
 		while (!queue.getOperations().isEmpty()) {
 			try {
 				Thread.sleep(DEFAULT_SLEEP);
