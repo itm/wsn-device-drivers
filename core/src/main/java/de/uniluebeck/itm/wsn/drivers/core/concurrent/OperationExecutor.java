@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.google.inject.ImplementedBy;
 
-import de.uniluebeck.itm.wsn.drivers.core.OperationCallback;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 
 /**
@@ -21,11 +20,9 @@ public interface OperationExecutor {
 	 * 
 	 * @param <T> The return type of the operation.
 	 * @param operation The operation that has to be added to the queue.
-	 * @param timeout The timeout of the operation execution.
-	 * @param callback The callback that is called during the operation execution.
 	 * @return A <code>OperationFuture</code> for controlling the operation.
 	 */
-	<T> OperationFuture<T> submitOperation(Operation<T> operation, long timeout, OperationCallback<T> callback);
+	<T> OperationFuture<T> submitOperation(Operation<T> operation);
 	
 	/**
 	 * Returns all operations that are in the queue.

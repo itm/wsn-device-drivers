@@ -12,9 +12,6 @@ import com.google.common.util.concurrent.FakeTimeLimiter;
 
 import de.uniluebeck.itm.wsn.drivers.core.OperationAdapter;
 import de.uniluebeck.itm.wsn.drivers.core.OperationCallback;
-import de.uniluebeck.itm.wsn.drivers.core.concurrent.ExecutorServiceOperationExecutor;
-import de.uniluebeck.itm.wsn.drivers.core.concurrent.OperationFuture;
-import de.uniluebeck.itm.wsn.drivers.core.concurrent.OperationExecutor;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
@@ -30,13 +27,7 @@ public class ExecutorServiceOperationExecutorTest {
 	
 	@Test
 	public void testAddOperation() throws InterruptedException, ExecutionException {
-		Operation<Boolean> operation = new AbstractOperation<Boolean>() {
-			@Override
-			public Boolean execute(ProgressManager progressManager) throws Exception {
-				return true;
-			}
-		};
-		operation.setTimeLimiter(new FakeTimeLimiter());
+		
 		OperationCallback<Boolean> callback = new OperationAdapter<Boolean>() {
 
 			@Override
@@ -50,7 +41,16 @@ public class ExecutorServiceOperationExecutorTest {
 				fail("No failure was expected");
 			}
 		};
-		OperationFuture<Boolean> handle = queue.submitOperation(operation, 1000, callback);
+		Operation<Boolean> operation = new AbstractOperation<Boolean>() {
+			@Override
+			public Boolean execute(ProgressManager progressManager) throws Exception {
+				return true;
+			}
+		};
+		operation.setTimeLimiter(new FakeTimeLimiter());
+		operation.setTimeout(1000);
+		operation.setAsyncCallback(callback);
+		OperationFuture<Boolean> handle = queue.submitOperation(operation);
 		if (!handle.get()) {
 			fail("Execution failed");
 		}
@@ -65,7 +65,8 @@ public class ExecutorServiceOperationExecutorTest {
 				return true;
 			}
 		};
-		queue.submitOperation(operation, 1000, new OperationAdapter<Boolean>());
+		operation.setTimeout(1000);
+		queue.submitOperation(operation);
 		Assert.assertTrue(!queue.getOperations().isEmpty());
 		try {
 			Thread.sleep(200);
@@ -84,7 +85,8 @@ public class ExecutorServiceOperationExecutorTest {
 				throw new NullPointerException();
 			}
 		};
-		final OperationFuture<Boolean> handle = queue.submitOperation(operation, 1000, new OperationAdapter<Boolean>());
+		operation.setTimeout(1000);
+		final OperationFuture<Boolean> handle = queue.submitOperation(operation);
 		handle.get();
 	}
 }
