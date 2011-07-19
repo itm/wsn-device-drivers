@@ -237,7 +237,7 @@ public class SimpleDevice implements Device {
 		}
 		checkArgument(timeout >= 0, "Negative timeout is not allowed.");
 		operation.setTimeout(timeout);
-		operation.setAsyncCallback(callback);
+		operation.setCallback(callback);
 		return operation;
 	}
 	

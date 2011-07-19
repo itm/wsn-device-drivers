@@ -21,7 +21,7 @@ public interface Operation<T> extends Callable<T> {
 	 * 
 	 * @param callback The callback that is called when the method has finished or raised an exception.
 	 */
-	void setAsyncCallback(OperationCallback<T> callback);
+	void setCallback(OperationCallback<T> callback);
 	
 	/**
 	 * Method that is called when the operation has to be executed.
@@ -77,7 +77,12 @@ public interface Operation<T> extends Callable<T> {
 	 * 
 	 * @param listener The <code>OperationListener</code> that has to be removed.
 	 */
-	void removeOperationListener(OperationListener<T> listener);
+	void removeListener(OperationListener<T> listener);
 	
+	/**
+	 * Setter for the TimeLimiter that is responsible for the limitation of the execution time of an operation.
+	 * 
+	 * @param timeLimiter The TimeLimiter.
+	 */
 	void setTimeLimiter(TimeLimiter timeLimiter);
 }

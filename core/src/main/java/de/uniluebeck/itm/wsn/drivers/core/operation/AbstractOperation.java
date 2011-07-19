@@ -87,7 +87,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	}
 	
 	@Override
-	public void setAsyncCallback(@Nullable OperationCallback<T> aCallback) {
+	public void setCallback(@Nullable OperationCallback<T> aCallback) {
 		callback = Objects.firstNonNull(aCallback, new OperationAdapter<T>());
 	}
 	
@@ -230,7 +230,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	}
 	
 	@Override
-	public void removeOperationListener(OperationListener<T> listener) {
+	public void removeListener(OperationListener<T> listener) {
 		checkNotNull(listener, "Null listener are not allowed");
 		listeners.remove(listener);
 	}

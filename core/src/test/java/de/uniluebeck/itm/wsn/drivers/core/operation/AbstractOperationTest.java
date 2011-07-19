@@ -35,7 +35,7 @@ public class AbstractOperationTest {
 	@Test
 	public void testCallSuccess() {
 		operation.setTimeLimiter(new FakeTimeLimiter());
-		operation.setAsyncCallback(new OperationAdapter<Object>() {
+		operation.setCallback(new OperationAdapter<Object>() {
 			@Override
 			public void onFailure(Throwable throwable) {
 				throwable.printStackTrace();

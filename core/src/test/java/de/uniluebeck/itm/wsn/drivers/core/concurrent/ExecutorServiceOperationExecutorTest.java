@@ -49,7 +49,7 @@ public class ExecutorServiceOperationExecutorTest {
 		};
 		operation.setTimeLimiter(new FakeTimeLimiter());
 		operation.setTimeout(1000);
-		operation.setAsyncCallback(callback);
+		operation.setCallback(callback);
 		OperationFuture<Boolean> handle = queue.submitOperation(operation);
 		if (!handle.get()) {
 			fail("Execution failed");
