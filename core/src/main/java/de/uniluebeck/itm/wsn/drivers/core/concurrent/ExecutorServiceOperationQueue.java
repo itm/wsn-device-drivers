@@ -3,12 +3,12 @@ package de.uniluebeck.itm.wsn.drivers.core.concurrent;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
 
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -49,7 +49,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	/**
 	 * Queue for all <code>OperationContainer</code> that are in progress.
 	 */
-	private final List<Operation<?>> operations = Collections.synchronizedList(new LinkedList<Operation<?>>());
+	private final Queue<Operation<?>> operations = newLinkedList();
 	
 	/**
 	 * Maps the operation to the next runnable.
@@ -154,7 +154,7 @@ public class ExecutorServiceOperationQueue implements OperationQueue {
 	private void executeNextOrStartIdleThread() {
 		if (!operations.isEmpty()) {
 			stopIdleThread();
-			Operation<?> operation = operations.get(0);
+			Operation<?> operation = operations.peek();
 			Runnable runnable = runnables.get(operation);
 			LOG.trace("Submit {} to executorService.", operation.getClass().getName());
 			executorService.execute(runnable);
