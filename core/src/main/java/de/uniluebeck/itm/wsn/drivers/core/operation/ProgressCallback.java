@@ -1,11 +1,11 @@
-package de.uniluebeck.itm.wsn.drivers.core;
+package de.uniluebeck.itm.wsn.drivers.core.operation;
 
 /**
- * Monitor interface that is used populating the progress of a operation.
+ * ProgressCallback interface that is used populating the progress of a operation.
  * 
  * @author Malte Legenhausen
  */
-public interface Monitor {
+public interface ProgressCallback {
 	
 	/**
 	 * Method is called on a progress change.

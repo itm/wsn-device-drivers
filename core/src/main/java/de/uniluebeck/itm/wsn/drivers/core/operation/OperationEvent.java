@@ -1,8 +1,7 @@
-package de.uniluebeck.itm.wsn.drivers.core;
+package de.uniluebeck.itm.wsn.drivers.core.operation;
 
 import java.util.EventObject;
 
-import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 
 
 /**

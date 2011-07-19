@@ -10,10 +10,10 @@ import org.junit.Test;
 
 import com.google.common.util.concurrent.FakeTimeLimiter;
 
-import de.uniluebeck.itm.wsn.drivers.core.OperationAdapter;
-import de.uniluebeck.itm.wsn.drivers.core.OperationCallback;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationCallback;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationCallbackAdapter;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 
 public class ExecutorServiceOperationExecutorTest {
@@ -28,7 +28,7 @@ public class ExecutorServiceOperationExecutorTest {
 	@Test
 	public void testAddOperation() throws InterruptedException, ExecutionException {
 		
-		OperationCallback<Boolean> callback = new OperationAdapter<Boolean>() {
+		OperationCallback<Boolean> callback = new OperationCallbackAdapter<Boolean>() {
 
 			@Override
 			public void onCancel() {

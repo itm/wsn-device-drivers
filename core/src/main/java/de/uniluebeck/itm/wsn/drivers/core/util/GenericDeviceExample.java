@@ -17,9 +17,9 @@ import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.DeviceModule;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
-import de.uniluebeck.itm.wsn.drivers.core.OperationAdapter;
-import de.uniluebeck.itm.wsn.drivers.core.OperationCallback;
 import de.uniluebeck.itm.wsn.drivers.core.concurrent.OperationExecutor;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationCallback;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationCallbackAdapter;
 
 
 /**
@@ -166,7 +166,7 @@ public class GenericDeviceExample {
 			return;
 		}
 		
-		final OperationCallback<Void> callback = new OperationAdapter<Void>() {
+		final OperationCallback<Void> callback = new OperationCallbackAdapter<Void>() {
 			@Override
 			public void onExecute() {
 				System.out.println("Flashing image...");
@@ -202,7 +202,7 @@ public class GenericDeviceExample {
 	 * Reset the device.
 	 */
 	private void resetOperation() {
-		final OperationCallback<Void> callback = new OperationAdapter<Void>() {
+		final OperationCallback<Void> callback = new OperationCallbackAdapter<Void>() {
 			public void onExecute() {
 				System.out.println("Resetting device...");
 			}
@@ -230,7 +230,7 @@ public class GenericDeviceExample {
 	 * Read the new <code>MacAddress</code>.
 	 */
 	private void macAddressOperations() {		
-		final OperationCallback<MacAddress> callback = new OperationAdapter<MacAddress>() {
+		final OperationCallback<MacAddress> callback = new OperationCallbackAdapter<MacAddress>() {
 			
 			@Override
 			public void onExecute() {
@@ -260,7 +260,7 @@ public class GenericDeviceExample {
 		}
 		
 		// Write a new mac address.
-		OperationCallback<Void> writeMacCallback = new OperationAdapter<Void>() {
+		OperationCallback<Void> writeMacCallback = new OperationCallbackAdapter<Void>() {
 
 			@Override
 			public void onExecute() {
@@ -299,7 +299,7 @@ public class GenericDeviceExample {
 	 * Read a random value from the flash.
 	 */
 	public void readFlashOperation() {
-		final OperationCallback<byte[]> callback = new OperationAdapter<byte[]>() {
+		final OperationCallback<byte[]> callback = new OperationCallbackAdapter<byte[]>() {
 			
 			@Override
 			public void onExecute() {
@@ -338,7 +338,7 @@ public class GenericDeviceExample {
 	 * Read the chip type from the device.
 	 */
 	public void chipTypeOperation() {
-		OperationCallback<ChipType> callback = new OperationAdapter<ChipType>() {
+		OperationCallback<ChipType> callback = new OperationCallbackAdapter<ChipType>() {
 
 			@Override
 			public void onExecute() {

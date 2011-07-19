@@ -1,7 +1,7 @@
 package de.uniluebeck.itm.wsn.drivers.core.concurrent;
 
-import de.uniluebeck.itm.wsn.drivers.core.OperationEvent;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationEvent;
 
 
 /**

@@ -3,6 +3,7 @@ package de.uniluebeck.itm.wsn.drivers.core;
 import com.google.inject.ImplementedBy;
 
 import de.uniluebeck.itm.wsn.drivers.core.concurrent.OperationFuture;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationCallback;
 
 
 /**

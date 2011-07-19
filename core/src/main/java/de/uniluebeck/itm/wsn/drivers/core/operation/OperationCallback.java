@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.wsn.drivers.core;
+package de.uniluebeck.itm.wsn.drivers.core.operation;
 
 
 /**
@@ -8,7 +8,7 @@ package de.uniluebeck.itm.wsn.drivers.core;
  *
  * @param <T> The return type of the value that is returned when the operation is done.
  */
-public interface OperationCallback<T> extends Monitor {
+public interface OperationCallback<T> extends ProgressCallback {
 	
 	/**
 	 * Method is called when the operation will now be executed.

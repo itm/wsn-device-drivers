@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.wsn.drivers.core;
+package de.uniluebeck.itm.wsn.drivers.core.operation;
 
 
 /**
@@ -8,7 +8,7 @@ package de.uniluebeck.itm.wsn.drivers.core;
  *
  * @param <T> The return type of onSuccess.
  */
-public class OperationAdapter<T> implements OperationCallback<T> {
+public class OperationCallbackAdapter<T> implements OperationCallback<T> {
 
 	@Override
 	public void onExecute() {

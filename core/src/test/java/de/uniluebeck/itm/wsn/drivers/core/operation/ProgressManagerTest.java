@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.uniluebeck.itm.wsn.drivers.core.Monitor;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ChildProgressManager;
 import de.uniluebeck.itm.wsn.drivers.core.operation.RootProgressManager;
 
@@ -27,7 +26,7 @@ public class ProgressManagerTest {
 	private RootProgressManager manager;
 	
 	/**
-	 * The fraction that is returned by the Monitor callback.
+	 * The fraction that is returned by the ProgressCallback callback.
 	 */
 	private float fraction = 0.0f;
 	
@@ -36,7 +35,7 @@ public class ProgressManagerTest {
 	 */
 	@Before
 	public void setUp() {
-		manager = new RootProgressManager(new Monitor() {
+		manager = new RootProgressManager(new ProgressCallback() {
 			@Override
 			public void onProgressChange(final float fraction) {
 				ProgressManagerTest.this.fraction = fraction;

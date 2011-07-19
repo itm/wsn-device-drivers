@@ -1,6 +1,5 @@
 package de.uniluebeck.itm.wsn.drivers.core.operation;
 
-import de.uniluebeck.itm.wsn.drivers.core.OperationEvent;
 
 
 /**

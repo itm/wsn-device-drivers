@@ -21,6 +21,7 @@ import de.uniluebeck.itm.wsn.drivers.core.concurrent.OperationFuture;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationCallback;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;

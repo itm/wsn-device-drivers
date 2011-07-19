@@ -1,6 +1,5 @@
 package de.uniluebeck.itm.wsn.drivers.core.operation;
 
-import de.uniluebeck.itm.wsn.drivers.core.Monitor;
 
 
 /**
@@ -13,14 +12,14 @@ public class RootProgressManager extends AbstractProgressManager {
 	/**
 	 * The monitor instance that is used for response.
 	 */
-	private final Monitor monitor;
+	private final ProgressCallback monitor;
 	
 	/**
 	 * Constructor.
 	 * 
-	 * @param monitor Monitor instance.
+	 * @param monitor ProgressCallback instance.
 	 */
-	public RootProgressManager(final Monitor monitor) {
+	public RootProgressManager(final ProgressCallback monitor) {
 		this.monitor = monitor;
 	}
 	
