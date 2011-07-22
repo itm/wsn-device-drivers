@@ -6,9 +6,9 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.zip.Adler32;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.SystemUtils;
-import org.apache.commons.lang.reflect.FieldUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.SystemUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 
 import com.google.common.base.Joiner;
 import com.google.common.io.Files;
