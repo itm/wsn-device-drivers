@@ -62,7 +62,7 @@ public class SimpleDevice implements Device {
 	/**
 	 * Queue that schedules all <code>Operation</code> instances.
 	 */
-	private final OperationExecutor queue;
+	private final OperationExecutor executor;
 	
 	private final Connection connection;
 	
@@ -91,15 +91,15 @@ public class SimpleDevice implements Device {
 	/**
 	 * Constructor.
 	 *
-	 * @param queue  The <code>OperationExecutor</code> that schedules all operations.
+	 * @param executor  The <code>OperationExecutor</code> that schedules all operations.
 	 * @param device The <code>Device</code> that provides all operations that can be executed.
 	 */
 	@Inject
-	public SimpleDevice(OperationExecutor queue, Connection connection, InputStream inputStream,
+	public SimpleDevice(OperationExecutor executor, Connection connection, InputStream inputStream,
 			Provider<OutputStream> outputStreamProvider,
 			Provider<SendOperation> sendProvider) {
 		this.connection = connection;
-		this.queue = queue;
+		this.executor = executor;
 		this.inputStream = inputStream;
 		this.outputStreamProvider = outputStreamProvider;
 		this.sendProvider = sendProvider;
@@ -109,14 +109,14 @@ public class SimpleDevice implements Device {
 	public OperationFuture<ChipType> getChipType(long timeout, @Nullable OperationCallback<ChipType> callback) {
 		LOG.trace("Reading Chip Type (Timeout: " + timeout + "ms)");
 		GetChipTypeOperation operation = createOperation(getChipTypeProvider, timeout, callback, "getChipType");
-		return queue.submitOperation(operation);
+		return executor.submitOperation(operation);
 	}
 
 	@Override
 	public OperationFuture<Void> eraseFlash(long timeout, @Nullable OperationCallback<Void> callback) {
 		LOG.trace("Erase flash (Timeout: " + timeout + "ms)");
 		EraseFlashOperation operation = createOperation(eraseFlashProvider, timeout, callback, "eraseFlash");
-		return queue.submitOperation(operation);
+		return executor.submitOperation(operation);
 	}
 
 	@Override
@@ -124,7 +124,7 @@ public class SimpleDevice implements Device {
 		LOG.trace("Program device (timeout: " + timeout + "ms)");
 		ProgramOperation operation = createOperation(programProvider, timeout, callback, "program is not available");
 		operation.setBinaryImage(data);
-		return queue.submitOperation(operation);
+		return executor.submitOperation(operation);
 	}
 
 	@Override
@@ -135,21 +135,21 @@ public class SimpleDevice implements Device {
 		checkArgument(address >= 0, NEGATIVE_LENGTH_MESSAGE);
 		checkArgument(length >= 0, NEGATIVE_ADDRESS_MESSAGE);
 		operation.setAddress(address, length);
-		return queue.submitOperation(operation);
+		return executor.submitOperation(operation);
 	}
 
 	@Override
 	public OperationFuture<MacAddress> readMac(long timeout, @Nullable OperationCallback<MacAddress> callback) {
 		LOG.trace("Read mac (timeout: " + timeout + "ms)");
 		ReadMacAddressOperation operation = createOperation(readMacAddressProvider, timeout, callback, "readMac");
-		return queue.submitOperation(operation);
+		return executor.submitOperation(operation);
 	}
 
 	@Override
 	public OperationFuture<Void> reset(long timeout, @Nullable OperationCallback<Void> callback) {
 		LOG.trace("Reset device (timeout: " + timeout + "ms)");
 		ResetOperation operation = createOperation(resetProvider, timeout, callback, "reset is not available");
-		return queue.submitOperation(operation);
+		return executor.submitOperation(operation);
 	}
 
 	@Override
@@ -157,7 +157,7 @@ public class SimpleDevice implements Device {
 		LOG.trace("Send packet to device (timeout: " + timeout + "ms)");
 		SendOperation operation = createOperation(sendProvider, timeout, callback, "send is not available");
 		operation.setMessage(message);
-		return queue.submitOperation(operation);
+		return executor.submitOperation(operation);
 	}
 
 	@Override
@@ -169,7 +169,7 @@ public class SimpleDevice implements Device {
 		checkNotNull(data, "Null data is not allowed.");
 		checkArgument(length >= 0, NEGATIVE_ADDRESS_MESSAGE);
 		operation.setData(address, data, length);
-		return queue.submitOperation(operation);
+		return executor.submitOperation(operation);
 	}
 
 	@Override
@@ -179,7 +179,7 @@ public class SimpleDevice implements Device {
 		WriteMacAddressOperation operation = createOperation(writeMacAddressProvider, timeout, callback, "writeMac");
 		checkNotNull(macAddress, "Null macAdress is not allowed.");
 		operation.setMacAddress(macAddress);
-		return queue.submitOperation(operation);
+		return executor.submitOperation(operation);
 	}
 
 	@Override
