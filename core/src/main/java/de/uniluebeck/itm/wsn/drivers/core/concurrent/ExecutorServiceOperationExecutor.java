@@ -14,6 +14,7 @@ import java.util.concurrent.Future;
 
 import javax.annotation.Nullable;
 
+import org.apache.commons.lang3.event.EventListenerSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +42,8 @@ public class ExecutorServiceOperationExecutor implements OperationExecutor {
 	/**
 	 * List that contains all listeners.
 	 */
-	private final List<OperationExecutorListener> listeners = newArrayList();
+	private final EventListenerSupport<OperationExecutorListener> listeners = 
+			EventListenerSupport.create(OperationExecutorListener.class);
 
 	/**
 	 * Queue for all <code>OperationContainer</code> that are in progress.
@@ -109,12 +111,12 @@ public class ExecutorServiceOperationExecutor implements OperationExecutor {
 		operation.addListener(new OperationListener<T>() {
 			@Override
 			public void beforeStateChanged(StateChangedEvent<T> event) {
-				fireBeforeStateChangedEvent(event);
+				listeners.fire().beforeStateChanged(event);
 			}
 			
 			@Override
 			public void afterStateChanged(StateChangedEvent<T> event) {
-				fireAfterStateChangedEvent(event);
+				listeners.fire().afterStateChanged(event);
 			}
 		});
 	}
@@ -158,14 +160,14 @@ public class ExecutorServiceOperationExecutor implements OperationExecutor {
 		operations.add(operation);
 		runnables.put(operation, runnable);
 		LOG.trace("{} added to internal operation list", operation.getClass().getName());
-		fireAddedEvent(new AddedEvent<T>(this, operation));
+		listeners.fire().onAdded(new AddedEvent<T>(this, operation));
 	}
 
 	private <T> void removeOperation(Operation<T> operation) {
 		operations.remove(operation);
 		runnables.remove(operation);
 		LOG.trace("{} removed from internal operation list", operation.getClass().getName());
-		fireRemovedEvent(new RemovedEvent<T>(this, operation));
+		listeners.fire().onRemoved(new RemovedEvent<T>(this, operation));
 	}
 	
 	private void stopIdleThread() {
@@ -192,64 +194,12 @@ public class ExecutorServiceOperationExecutor implements OperationExecutor {
 	@Override
 	public void addListener(final OperationExecutorListener listener) {
 		checkNotNull(listener, "Null listener is not allowed.");
-		listeners.add(listener);
+		listeners.addListener(listener);
 	}
 
 	@Override
 	public void removeListener(final OperationExecutorListener listener) {
 		checkNotNull(listener, "Null listener is not allowed.");
-		listeners.remove(listener);
-	}
-
-	/**
-	 * Notify all listeners that the state of a operation has changed.
-	 *
-	 * @param <T>   The type of the operation.
-	 * @param event The event that will notify about the state change.
-	 */
-	private <T> void fireBeforeStateChangedEvent(final StateChangedEvent<T> event) {
-		String msg = "Operation state of {} changed";
-		LOG.trace(msg, new Object[] {event.getOperation().getClass().getName()});
-		for (final OperationExecutorListener listener : listeners.toArray(new OperationExecutorListener[0])) {
-			listener.beforeStateChanged(event);
-		}
-	}
-	
-	/**
-	 * Notify all listeners that the state of a operation has changed.
-	 *
-	 * @param <T>   The type of the operation.
-	 * @param event The event that will notify about the state change.
-	 */
-	private <T> void fireAfterStateChangedEvent(final StateChangedEvent<T> event) {
-		String msg = "Operation state of {} changed";
-		LOG.trace(msg, new Object[] {event.getOperation().getClass().getName()});
-		for (final OperationExecutorListener listener : listeners.toArray(new OperationExecutorListener[0])) {
-			listener.afterStateChanged(event);
-		}
-	}
-
-	/**
-	 * Notify all listeners that a operation was added to the queue.
-	 *
-	 * @param <T>   The type of the operation.
-	 * @param event The event that will notify about the add of an operation.
-	 */
-	private void fireAddedEvent(final AddedEvent<?> event) {
-		for (final OperationExecutorListener listener : listeners.toArray(new OperationExecutorListener[0])) {
-			listener.onAdded(event);
-		}
-	}
-
-	/**
-	 * Notify all listeners that a operation was removed from the queue.
-	 *
-	 * @param <T>   The type of the operation.
-	 * @param event The event that will notify about the remove of an operation.
-	 */
-	private void fireRemovedEvent(final RemovedEvent<?> event) {
-		for (final OperationExecutorListener listener : listeners.toArray(new OperationExecutorListener[0])) {
-			listener.onRemoved(event);
-		}
+		listeners.removeListener(listener);
 	}
 }

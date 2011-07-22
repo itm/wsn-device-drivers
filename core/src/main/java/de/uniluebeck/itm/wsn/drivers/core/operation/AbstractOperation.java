@@ -3,14 +3,13 @@ package de.uniluebeck.itm.wsn.drivers.core.operation;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.collect.Lists.newArrayList;
 
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
+import org.apache.commons.lang3.event.EventListenerSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +19,7 @@ import com.google.common.util.concurrent.UncheckedTimeoutException;
 import com.google.inject.Inject;
 
 import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
+import de.uniluebeck.itm.wsn.drivers.core.util.ClassUtil;
 
 /**
  * An abstract operation.
@@ -48,9 +48,10 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	private Operation<?> subOperation;
 	
 	/**
-	 * Listeners for <code>OperationContainer</code> changed.
+	 * Listeners for <code>Operation</code> changes.
 	 */
-	private final List<OperationListener<T>> listeners = newArrayList();
+	private final EventListenerSupport<OperationListener<T>> listeners = 
+			EventListenerSupport.create(ClassUtil.<OperationListener<T>>castClass(OperationListener.class));
 	
 	/**
 	 * Limiter for the execution time of an operation.
@@ -178,11 +179,9 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	}
 	
 	private void fireBeforeStateChangedEvent(StateChangedEvent<T> event) {
-		String msg = "Operation state of {} changed from {} to {}";
+		String msg = "Operation state of {} is about to change from {} to {}";
 		LOG.trace(msg, new Object[] {this.getClass().getName(), event.getOldState(), event.getNewState()});
-		for (OperationListener<T> listener : newArrayList(listeners)) {
-			listener.beforeStateChanged(event);
-		}
+		listeners.fire().beforeStateChanged(event);
 	}
 	
 	/**
@@ -193,9 +192,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	private void fireAfterStateChangedEvent(StateChangedEvent<T> event) {
 		String msg = "Operation state of {} changed from {} to {}";
 		LOG.trace(msg, new Object[] {this.getClass().getName(), event.getOldState(), event.getNewState()});
-		for (OperationListener<T> listener : newArrayList(listeners)) {
-			listener.afterStateChanged(event);
-		}
+		listeners.fire().afterStateChanged(event);
 	}
 
 	@Override
@@ -223,14 +220,12 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	
 	@Override
 	public void addListener(OperationListener<T> listener) {
-		checkNotNull(listener, "Null listener are not allowed.");
-		listeners.add(listener);
+		listeners.addListener(listener);
 	}
 	
 	@Override
 	public void removeListener(OperationListener<T> listener) {
-		checkNotNull(listener, "Null listener are not allowed");
-		listeners.remove(listener);
+		listeners.removeListener(listener);
 	}
 
 	@Override

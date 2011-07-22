@@ -1,12 +1,12 @@
 package de.uniluebeck.itm.wsn.drivers.core;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Lists.newArrayList;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
+
+import org.apache.commons.lang3.event.EventListenerSupport;
 
 import com.google.common.io.Closeables;
 
@@ -21,7 +21,8 @@ public abstract class AbstractConnection implements Connection {
 	/**
 	 * List for connectionListeners that want to be notified when data is available.
 	 */
-	private final List<ConnectionListener> listeners = newArrayList();
+	private final EventListenerSupport<ConnectionListener> listeners = 
+			EventListenerSupport.create(ConnectionListener.class);
 	
 	/**
 	 * Current connection state.
@@ -74,9 +75,7 @@ public abstract class AbstractConnection implements Connection {
 	 * @param event The event you want to fire.
 	 */	
 	protected void fireDataAvailableListeners(ConnectionEvent event) {
-		for (ConnectionListener dataAvailableListener : listeners) {
-			dataAvailableListener.onDataAvailable(event);
-		}
+		listeners.fire().onDataAvailable(event);
 	}
 	
 	/**
@@ -132,12 +131,12 @@ public abstract class AbstractConnection implements Connection {
 
 	@Override
 	public void addListener(final ConnectionListener listener) {
-		listeners.add(listener);
+		listeners.addListener(listener);
 	}
 
 	@Override
 	public void removeListener(final ConnectionListener listener) {
-		listeners.remove(listener);
+		listeners.removeListener(listener);
 	}
 	
 	@Override
