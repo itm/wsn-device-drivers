@@ -17,7 +17,6 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.util.concurrent.ListenableFutureTask;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -121,7 +120,7 @@ public class ExecutorServiceOperationExecutor implements OperationExecutor {
 	}
 	
 	private <T> OperationFuture<T> addOperationAndExecuteNext(final Operation<T> operation) {
-		ListenableFutureTask<T> future = new ListenableFutureTask<T>(operation);
+		OperationFuture<T> future = new OperationFutureTask<T>(operation);
 		Runnable afterFinishRunnable = new Runnable() {
 			@Override
 			public void run() {
@@ -133,7 +132,7 @@ public class ExecutorServiceOperationExecutor implements OperationExecutor {
 			addOperation(operation, future);
 			executeNextOrStartIdleThread();
 		}
-		return new SimpleOperationFuture<T>(future, operation);
+		return future;
 	}
 	
 	private void removeOperationAndExecuteNext(Operation<?> operation) {

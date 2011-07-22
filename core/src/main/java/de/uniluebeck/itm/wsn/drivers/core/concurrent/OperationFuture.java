@@ -11,7 +11,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
  * 
  * @param <T> The type of the operation result.
  */
-public interface OperationFuture<T> extends ListenableFuture<T> {
+public interface OperationFuture<T> extends ListenableFuture<T>, Runnable {
 	
 	/**
 	 * Returns managed operation behind this future.
