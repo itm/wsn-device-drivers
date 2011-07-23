@@ -7,14 +7,13 @@ import java.io.OutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.io.Flushables;
 import com.google.inject.Inject;
 
 import de.uniluebeck.itm.tr.util.StringUtils;
+import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.exception.InvalidChecksumException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.UnexpectedResponseException;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 
 public class PacemateHelper {
 
@@ -29,10 +28,10 @@ public class PacemateHelper {
 	
 	private boolean echo = true;
 	
-	private final SerialPortConnection connection;
+	private final Connection connection;
 	
 	@Inject
-	public PacemateHelper(SerialPortConnection connection) {
+	public PacemateHelper(Connection connection) {
 		this.connection = connection;
 	}
 	
@@ -438,7 +437,7 @@ public class PacemateHelper {
 
 		} catch (Exception error) {
 			LOG.warn("Exception while waiting for connection", error);
-			Flushables.flushQuietly(connection);
+			connection.clear();
 			throw new IOException(error);
 		}
 

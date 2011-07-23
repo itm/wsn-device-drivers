@@ -6,18 +6,17 @@ import java.io.OutputStream;
 
 import org.apache.log4j.Logger;
 
-import com.google.common.io.Flushables;
 import com.google.inject.Inject;
 
 import de.uniluebeck.itm.tr.util.StringUtils;
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
+import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.exception.FlashConfigurationFailedException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.FlashEraseFailedException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.FlashProgramFailedException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.InvalidChecksumException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.UnexpectedResponseException;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 import de.uniluebeck.itm.wsn.drivers.isense.exception.FlashTypeReadFailedException;
 import de.uniluebeck.itm.wsn.drivers.jennic.exception.SectorEraseException;
 
@@ -27,10 +26,10 @@ public class JennicHelper {
 	
 	private static final int TIMEOUT = 2500;
 	
-	private final SerialPortConnection connection;
+	private final Connection connection;
 	
 	@Inject
-	public JennicHelper(SerialPortConnection connection) {
+	public JennicHelper(Connection connection) {
 		this.connection = connection;
 	}
 	
@@ -205,7 +204,11 @@ public class JennicHelper {
 			LOG.error("Exception while waiting for connection", e);
 		}
 
-		Flushables.flushQuietly(connection);
+		try {
+			connection.clear();
+		} catch (IOException e) {
+			LOG.error("Exception while cleaning the stream.", e);
+		}
 		return false;
 	}
 	

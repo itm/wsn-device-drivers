@@ -18,6 +18,7 @@ import com.google.inject.Singleton;
 
 import de.uniluebeck.itm.wsn.drivers.core.concurrent.OperationExecutor;
 import de.uniluebeck.itm.wsn.drivers.core.concurrent.OperationFuture;
+import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
@@ -225,6 +226,16 @@ public class SimpleDevice implements Device {
 	@Override
 	public int[] getChannels() {
 		return connection.getChannels();
+	}
+	
+	@Override
+	public int waitDataAvailable(int timeout) throws TimeoutException, IOException {
+		return connection.waitDataAvailable(timeout);
+	}
+	
+	@Override
+	public void clear() throws IOException {
+		connection.clear();
 	}
 
 	private static <T, O extends Operation<T>> O createOperation(Provider<O> provider, long timeout, 

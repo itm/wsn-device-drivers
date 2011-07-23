@@ -5,10 +5,20 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.lang3.event.EventListenerSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
+
+import de.uniluebeck.itm.tr.util.TimeDiff;
+import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 
 
 /**
@@ -17,6 +27,16 @@ import com.google.common.io.Closeables;
  * @author Malte Legenhausen
  */
 public abstract class AbstractConnection implements Connection {
+	
+	/**
+	 * Logger for this class.
+	 */
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractConnection.class);
+	
+	/**
+	 * The timeout that will be waited for available data.
+	 */
+	private static final int DATA_AVAILABLE_TIMEOUT = 50;
 	
 	/**
 	 * List for connectionListeners that want to be notified when data is available.
@@ -49,6 +69,16 @@ public abstract class AbstractConnection implements Connection {
 	 */
 	private String uri;
 	
+	/**
+	 * Data available lock.
+	 */
+	private final Lock dataAvailableLock = new ReentrantLock();
+
+	/**
+	 * Condition that indicates when data is available.
+	 */
+	private final Condition isDataAvailable = dataAvailableLock.newCondition();
+	
 	@Override
 	public void connect(String aUri) throws IOException {
 		checkNotNull(aUri, "Null argument is not allowed.");
@@ -60,6 +90,42 @@ public abstract class AbstractConnection implements Connection {
 		}
 	}
 	
+	@Override
+	public int waitDataAvailable(final int timeout) throws TimeoutException, IOException {
+		LOG.trace("Waiting for data...");
+		
+		final TimeDiff timeDiff = new TimeDiff();
+		int available = inputStream.available();
+
+		while (available == 0) {
+			if (timeout > 0 && timeDiff.ms() >= timeout) {
+				LOG.warn("Timeout waiting for data (waited: " + timeDiff.ms() + ", timeoutMs:" + timeout + ")");
+				throw new TimeoutException();
+			}
+
+			dataAvailableLock.lock();
+			try {
+				isDataAvailable.await(DATA_AVAILABLE_TIMEOUT, TimeUnit.MILLISECONDS);
+			} catch (final InterruptedException e) {
+				LOG.error("Interrupted: " + e, e);
+			} finally {
+				dataAvailableLock.unlock();
+			}
+			available = inputStream.available();
+		}
+		return available;
+	}
+	
+	protected void signalDataAvailable() {
+		dataAvailableLock.lock();
+		try {
+			isDataAvailable.signal();
+		} finally {
+			dataAvailableLock.unlock();
+		}
+		listeners.fire().onDataAvailable(new ConnectionEvent(this, uri, connected));
+	}
+	
 	/**
 	 * Setter for the connection that will fire a connection change event.
 	 * 
@@ -67,15 +133,6 @@ public abstract class AbstractConnection implements Connection {
 	 */
 	protected void setConnected() {
 		connected = true;
-	}
-	
-	/**
-	 * Fire a connection change event to all registered connectionListeners.
-	 * 
-	 * @param event The event you want to fire.
-	 */	
-	protected void fireDataAvailableListeners(ConnectionEvent event) {
-		listeners.fire().onDataAvailable(event);
 	}
 	
 	/**
@@ -146,5 +203,11 @@ public abstract class AbstractConnection implements Connection {
 			Closeables.close(outputStream, true);
 			closed = true;
 		}
+	}
+	
+	@Override
+	public void clear() throws IOException {
+		LOG.trace("Cleaning input stream.");
+		ByteStreams.skipFully(inputStream, inputStream.available());
 	}
 }

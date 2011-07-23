@@ -9,28 +9,19 @@ import gnu.io.SerialPortEventListener;
 import gnu.io.UnsupportedCommOperationException;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.TooManyListenersException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
-import com.google.common.io.ByteStreams;
 
-import de.uniluebeck.itm.tr.util.TimeDiff;
 import de.uniluebeck.itm.wsn.drivers.core.AbstractConnection;
-import de.uniluebeck.itm.wsn.drivers.core.ConnectionEvent;
 import de.uniluebeck.itm.wsn.drivers.core.exception.PortNotFoundException;
-import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 import de.uniluebeck.itm.wsn.drivers.core.util.JarUtil;
 import de.uniluebeck.itm.wsn.drivers.core.util.SysOutUtil;
 
@@ -51,11 +42,6 @@ public class SimpleSerialPortConnection extends AbstractConnection
 	private static final int[] DEFAULT_CHANNELS = new int[] { 
 		11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26 
 	};
-
-	/**
-	 * The timeout that will be waited for available data.
-	 */
-	private static final int DATA_AVAILABLE_TIMEOUT = 50;
 
 	/**
 	 * The default baudrate.
@@ -107,16 +93,6 @@ public class SimpleSerialPortConnection extends AbstractConnection
 	 */
 	private SerialPort serialPort;
 
-	/**
-	 * Data available lock.
-	 */
-	private final Lock dataAvailableLock = new ReentrantLock();
-
-	/**
-	 * Condition that indicates when data is available.
-	 */
-	private final Condition isDataAvailable = dataAvailableLock.newCondition();
-
 	static {
 		LOG.trace("Loading rxtxSerial from jar file");
 		JarUtil.loadLibrary("rxtxSerial");
@@ -155,7 +131,6 @@ public class SimpleSerialPortConnection extends AbstractConnection
 	 * @throws Exception
 	 */
 	protected void connectSerialPort(final String port) throws PortInUseException, IOException {
-
 		SysOutUtil.mute();
 		Enumeration<?> identifiers;
 		try {
@@ -214,65 +189,20 @@ public class SimpleSerialPortConnection extends AbstractConnection
 		if (serialPort != null) {
 			serialPort.removeEventListener();
 			serialPort.close();
-			serialPort = null;
 		}
-	}
-
-	/**
-	 *
-	 */
-	@Override
-	public void flush() throws IOException {
-		LOG.trace("Flushing serial rx buffer");
-		final InputStream inputStream = getInputStream();
-		ByteStreams.skipFully(inputStream, inputStream.available());
 	}
 
 	@Override
 	public void serialEvent(final SerialPortEvent event) {
 		switch (event.getEventType()) {
 			case SerialPortEvent.DATA_AVAILABLE:
-				dataAvailableLock.lock();
-				try {
-					isDataAvailable.signal();
-				} finally {
-					dataAvailableLock.unlock();
-				}
-				fireDataAvailableListeners(new ConnectionEvent(this, getUri(), isConnected()));
+				signalDataAvailable();
 				break;
 			default:
 				LOG.debug("Serial event (other than data available): " + event);
 				break;
 		}
 	}
-
-	@Override
-	public int waitDataAvailable(final int timeout) throws TimeoutException, IOException {
-		LOG.trace("Waiting for data...");
-
-		final InputStream inputStream = getInputStream();
-		final TimeDiff timeDiff = new TimeDiff();
-		int available = inputStream.available();
-
-		while (available == 0) {
-			if (timeout > 0 && timeDiff.ms() >= timeout) {
-				LOG.warn("Timeout waiting for data (waited: " + timeDiff.ms() + ", timeoutMs:" + timeout + ")");
-				throw new TimeoutException();
-			}
-
-			dataAvailableLock.lock();
-			try {
-				isDataAvailable.await(DATA_AVAILABLE_TIMEOUT, TimeUnit.MILLISECONDS);
-			} catch (final InterruptedException e) {
-				LOG.error("Interrupted: " + e, e);
-			} finally {
-				dataAvailableLock.unlock();
-			}
-			available = inputStream.available();
-		}
-		return available;
-	}
-
 	
 	@Override
 	public int[] getChannels() {

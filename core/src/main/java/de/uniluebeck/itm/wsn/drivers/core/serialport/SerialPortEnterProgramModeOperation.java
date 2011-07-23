@@ -48,7 +48,7 @@ public class SerialPortEnterProgramModeOperation extends AbstractOperation<Void>
 	
 	@Override
 	public Void execute(final ProgressManager progressManager) throws Exception {
-		LOG.debug("Entering program mode");
+		LOG.trace("Entering program mode");
 		connection.setSerialPortMode(SerialPortMode.PROGRAM);
 		
 		final SerialPort serialPort = connection.getSerialPort();
@@ -67,8 +67,8 @@ public class SerialPortEnterProgramModeOperation extends AbstractOperation<Void>
 			LOG.error("Unable to enter program mode.", e);
 			throw new EnterProgramModeException("Unable to enter program mode.");
 		}
-		connection.flush();
-		LOG.debug("Program mode entered");
+		connection.clear();
+		LOG.trace("Program mode entered");
 		return null;
 	}
 
