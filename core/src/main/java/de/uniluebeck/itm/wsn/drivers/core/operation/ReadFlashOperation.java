@@ -5,7 +5,7 @@ package de.uniluebeck.itm.wsn.drivers.core.operation;
  * 
  * @author Malte Legenhausen
  */
-public interface ReadFlashOperation extends Operation<byte[]> {
+public interface ReadFlashOperation extends OperationRunnable<byte[]> {
 
 	/**
 	 * Sets a address and length for the data that has to be red from the memory.

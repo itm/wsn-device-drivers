@@ -9,7 +9,7 @@ import com.google.common.base.Preconditions;
  * 
  * @author Malte Legenhausen
  */
-public abstract class AbstractSendOperation extends AbstractOperation<Void> implements SendOperation {
+public abstract class AbstractSendOperation implements SendOperation {
 	
 	/**
 	 * The message packet that has to be send.

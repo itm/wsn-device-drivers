@@ -1,6 +1,7 @@
 package de.uniluebeck.itm.wsn.drivers.mock;
 
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationRunnable;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 
 
@@ -11,7 +12,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
  *
  * @param <T> The return type of the operation.
  */
-public abstract class AbstractMockOperation<T> extends AbstractOperation<T> {
+public abstract class AbstractMockOperationRunnable<T> implements OperationRunnable<T> {
 
 	/**
 	 * Default amout of sleep time between each iteration.
@@ -42,7 +43,7 @@ public abstract class AbstractMockOperation<T> extends AbstractOperation<T> {
 	 * Constructor.
 	 * Sets sleep = 100 and steps = 10 as default.
 	 */
-	public AbstractMockOperation() {
+	public AbstractMockOperationRunnable() {
 		this(DEFAULT_SLEEP, DEFAULT_STEPS);
 	}
 	
@@ -52,16 +53,16 @@ public abstract class AbstractMockOperation<T> extends AbstractOperation<T> {
 	 * @param sleep The amount of sleep time between each iteration.
 	 * @param steps The amount of iterations.
 	 */
-	public AbstractMockOperation(final int sleep, final int steps) {
+	public AbstractMockOperationRunnable(final int sleep, final int steps) {
 		this.sleep = sleep;
 		this.steps = steps;
 		this.stepSize = 1.0f / steps;
 	}
 	
 	@Override
-	public T execute(final ProgressManager progressManager) throws Exception {
+	public T run(final ProgressManager progressManager, OperationContext context) throws Exception {
 		prepare();
-		for(int i = 1; i <= steps && !isCanceled(); ++i) {
+		for(int i = 1; i <= steps && !context.isCanceled(); ++i) {
 			Thread.sleep(sleep);
 			iteration(i);
 			progressManager.worked(stepSize);

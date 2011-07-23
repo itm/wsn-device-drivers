@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractReadFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 
 public class PacemateReadFlashOperation extends AbstractReadFlashOperation {
@@ -24,7 +25,7 @@ public class PacemateReadFlashOperation extends AbstractReadFlashOperation {
 		this.leaveProgramModeOperation = leaveProgramModeOperation;
 	}
 	
-	private byte[] readFlash(final ProgressManager progressManager) throws Exception {
+	private byte[] readFlash(ProgressManager progressManager, OperationContext context) throws Exception {
 		helper.clearStreamData();
 		helper.autobaud();
 
@@ -32,7 +33,7 @@ public class PacemateReadFlashOperation extends AbstractReadFlashOperation {
 
 		// Return with success if the user has requested to cancel this
 		// operation
-		if (isCanceled()) {
+		if (context.isCanceled()) {
 			return null;
 		}
 		
@@ -49,13 +50,13 @@ public class PacemateReadFlashOperation extends AbstractReadFlashOperation {
 	}
 	
 	@Override
-	public byte[] execute(final ProgressManager progressManager) throws Exception {
-		executeSubOperation(enterProgramModeOperation, progressManager.createSub(0.25f));
+	public byte[] run(ProgressManager progressManager, OperationContext context) throws Exception {
+		context.execute(enterProgramModeOperation, progressManager.createSub(0.25f));
 		byte[] result = null;
 		try {
-			result = readFlash(progressManager.createSub(0.5f));
+			result = readFlash(progressManager.createSub(0.5f), context);
 		} finally {
-			executeSubOperation(leaveProgramModeOperation, progressManager.createSub(0.25f));
+			context.execute(leaveProgramModeOperation, progressManager.createSub(0.25f));
 		}
 		return result;
 	}

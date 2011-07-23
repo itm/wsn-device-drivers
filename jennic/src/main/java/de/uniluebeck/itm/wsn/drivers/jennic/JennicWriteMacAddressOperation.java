@@ -12,6 +12,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractWriteMacAddressOpera
 import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 
 public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOperation {
@@ -42,26 +43,26 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 		this.leaveProgramModeOperation = leaveProgramModeOperation;
 	}
 	
-	private void writeMacAddress(final ChipType chipType, final ProgressManager progressManager) throws Exception {
+	private void writeMacAddress(ChipType chipType, ProgressManager progressManager, OperationContext context) throws Exception {
 		final MacAddress macAddress = getMacAddress();
 		
 		
 		// Wait for a helper
-		while (!isCanceled() && !helper.waitForConnection()) {
+		while (!context.isCanceled() && !helper.waitForConnection()) {
 			log.debug("Still waiting for a helper");
 		}
 
 		// Return with success if the user has requested to cancel this
 		// operation
-		if (isCanceled()) {
+		if (context.isCanceled()) {
 			return;
 		}
 		
 		// Read the first sector
-		byte[][] sector = readSector(progressManager.createSub(0.875f), Sector.FIRST);
+		byte[][] sector = readSector(progressManager.createSub(0.875f), context, Sector.FIRST);
 
 		// Check if this operation has been cancelled
-		if (isCanceled()) {
+		if (context.isCanceled()) {
 			return;
 		}
 
@@ -84,24 +85,24 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 	}
 	
 	@Override
-	public Void execute(final ProgressManager progressManager) throws Exception {
+	public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
 		log.trace("Writing mac address...");
-		final ChipType chipType = executeSubOperation(getChipTypeOperation, progressManager.createSub(0.0625f));
+		final ChipType chipType = context.execute(getChipTypeOperation, progressManager, 0.0625f);
 		// Check if the user has cancelled the operation
-		if (isCanceled()) {
+		if (context.isCanceled()) {
 			return null;
 		}
-		executeSubOperation(enterProgramModeOperation, progressManager.createSub(0.0625f));
+		context.execute(enterProgramModeOperation, progressManager, 0.0625f);
 		try {
-			writeMacAddress(chipType, progressManager.createSub(0.8125f));
+			writeMacAddress(chipType, progressManager.createSub(0.8125f), context);
 		} finally {
-			executeSubOperation(leaveProgramModeOperation, progressManager.createSub(0.0625f));
+			context.execute(leaveProgramModeOperation, progressManager, 0.0625f);
 		}
 		log.trace("Done, written MAC Address: " + getMacAddress());
 		return null;
 	}
 	
-	protected byte[][] readSector(final ProgressManager progressManager, final Sector index) throws Exception {
+	protected byte[][] readSector(final ProgressManager progressManager, OperationContext context, final Sector index) throws Exception {
 		final int start = index.getStart();
 		final int length = index.getEnd() - start;
 
@@ -124,7 +125,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 			progressManager.worked(worked);
 
 			// Check if the user has cancelled the operation
-			if (isCanceled()) {
+			if (context.isCanceled()) {
 				log.debug("Sector read has been cancelled");
 				return null;
 			}

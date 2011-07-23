@@ -10,6 +10,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractProgramOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.wsn.drivers.core.util.BinDataBlock;
 
@@ -39,7 +40,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 		this.eraseFlashOperation = eraseFlashOperation;
 	}
 	
-	private void program(final ProgressManager progressManager) throws Exception {		
+	private void program(ProgressManager progressManager, OperationContext context) throws Exception {		
 		helper.clearStreamData();
 		helper.autobaud();
 
@@ -47,7 +48,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 
 		// Return with success if the user has requested to cancel this
 		// operation
-		if (isCanceled()) {
+		if (context.isCanceled()) {
 			return;
 		}
 
@@ -70,7 +71,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 			try {
 				helper.writeToRAM(PacemateHelper.START_ADDRESS_IN_RAM, data.length);
 			} catch (Exception e) {
-				log.error("Error while write to RAM! Operation will be cancelled!", e);
+				log.error("Error while write to RAM! OperationRunnable will be cancelled!", e);
 				throw e;
 			}
 
@@ -105,7 +106,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 				try {
 					helper.sendDataMessage(binData.encode(line, line.length - offset));
 				} catch (Exception e) {
-					log.error("Error while writing flash! Operation will be cancelled!", e);
+					log.error("Error while writing flash! OperationRunnable will be cancelled!", e);
 					throw e;
 				}
 
@@ -118,7 +119,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 						// so resending the last 20 lines
 						counter = counter - bytesNotYetProoved;
 					} catch (Exception e) {
-						log.debug("Error while writing flash! Operation will be cancelled!", e);
+						log.debug("Error while writing flash! OperationRunnable will be cancelled!", e);
 						throw e;
 					}
 					linecounter = 0;
@@ -141,7 +142,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 					helper.copyRAMToFlash(address, PacemateHelper.START_ADDRESS_IN_RAM, 256);
 				}
 			} catch (Exception e) {
-				log.error("Error while copy RAM to Flash! Operation will be cancelled!", e);
+				log.error("Error while copy RAM to Flash! OperationRunnable will be cancelled!", e);
 				throw e;
 			}
 
@@ -150,7 +151,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 
 			// Return with success if the user has requested to cancel this
 			// operation
-			if (isCanceled()) {
+			if (context.isCanceled()) {
 				return;
 			}
 
@@ -185,17 +186,17 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 	}
 
 	@Override
-	public Void execute(final ProgressManager progressManager) throws Exception {
+	public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
 		log.debug("Prgramming operation executing...");
 		// Erase the complete flash
-		executeSubOperation(eraseFlashOperation, progressManager.createSub(0.125f));
+		context.execute(eraseFlashOperation, progressManager.createSub(0.125f));
 		
 		// Now program the device
-		executeSubOperation(enterProgramModeOperation, progressManager.createSub(0.0625f));
+		context.execute(enterProgramModeOperation, progressManager.createSub(0.0625f));
 		try {
-			program(progressManager.createSub(0.75f));
+			program(progressManager.createSub(0.75f), context);
 		} finally {
-			executeSubOperation(leaveProgramModeOperation, progressManager.createSub(0.0625f));
+			context.execute(leaveProgramModeOperation, progressManager.createSub(0.0625f));
 		}		
 		log.debug("Program operation finsihed");
 		return null;

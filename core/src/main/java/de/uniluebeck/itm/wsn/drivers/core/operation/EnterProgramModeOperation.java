@@ -6,6 +6,6 @@ package de.uniluebeck.itm.wsn.drivers.core.operation;
  * 
  * @author Malte Legenhausen
  */
-public interface EnterProgramModeOperation extends Operation<Void> {
+public interface EnterProgramModeOperation extends OperationRunnable<Void> {
 
 }

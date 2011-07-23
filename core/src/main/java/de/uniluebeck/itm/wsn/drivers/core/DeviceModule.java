@@ -43,7 +43,7 @@ public class DeviceModule extends AbstractModule {
 	}
 	
 	@Override
-	protected void configure() {
+	protected void configure() {		
 		PipedInputStream inputStream = new PipedInputStream();
 		PipedOutputStream outputStream = new PipedOutputStream();
 		try {

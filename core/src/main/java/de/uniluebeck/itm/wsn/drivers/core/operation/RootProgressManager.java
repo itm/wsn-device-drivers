@@ -10,17 +10,17 @@ package de.uniluebeck.itm.wsn.drivers.core.operation;
 public class RootProgressManager extends AbstractProgressManager {
 	
 	/**
-	 * The monitor instance that is used for response.
+	 * The callback instance that is used for response.
 	 */
-	private final ProgressCallback monitor;
+	private final ProgressCallback callback;
 	
 	/**
 	 * Constructor.
 	 * 
-	 * @param monitor ProgressCallback instance.
+	 * @param callback ProgressCallback instance.
 	 */
-	public RootProgressManager(final ProgressCallback monitor) {
-		this.monitor = monitor;
+	public RootProgressManager(final ProgressCallback callback) {
+		this.callback = callback;
 	}
 	
 	@Override
@@ -30,6 +30,6 @@ public class RootProgressManager extends AbstractProgressManager {
 	
 	@Override
 	protected void onWorked(final float progress, final float worked) {
-		monitor.onProgressChange(progress);
+		callback.onProgressChange(progress);
 	}
 }

@@ -11,6 +11,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractProgramOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
 import de.uniluebeck.itm.wsn.drivers.core.util.BinDataBlock;
@@ -49,15 +50,15 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 		this.resetOperation = resetOperation;
 	}
 	
-	private void program(final ChipType chipType, final JennicBinData binData, final ProgressManager progressManager) throws Exception {
+	private void program(ChipType chipType, JennicBinData binData, ProgressManager progressManager, OperationContext context) throws Exception {
 		// Wait for a connection
-		while (!isCanceled() && !helper.waitForConnection()) {
+		while (!context.isCanceled() && !helper.waitForConnection()) {
 			log.debug("Still waiting for a connection");
 		}
 
 		// Return with success if the user has requested to cancel this
 		// operation
-		if (isCanceled()) {
+		if (context.isCanceled()) {
 			return;
 		}		
 		
@@ -76,7 +77,7 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 			
 			// Return with success if the user has requested to cancel this
 			// operation
-			if (isCanceled()) {
+			if (context.isCanceled()) {
 				return;
 			}
 		}	
@@ -92,23 +93,23 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 		return binData;
 	}
 	
-	private void insertFlashHeaderToImage(JennicBinData binData, final ProgressManager progressManager) throws Exception {
+	private void insertFlashHeaderToImage(JennicBinData binData, final ProgressManager progressManager, OperationContext context) throws Exception {
 		// insert flash header of helper
-		final byte[] flashHeader = executeSubOperation(getFlashHeaderOperation, progressManager);
+		final byte[] flashHeader = context.execute(getFlashHeaderOperation, progressManager);
 		binData.insertHeader(flashHeader);
 	}
 	
-	public Void execute(final ProgressManager progressManager) throws Exception {
-		final ChipType chipType = executeSubOperation(getChipTypeOperation, progressManager.createSub(0.0625f));
+	public Void run(final ProgressManager progressManager, OperationContext context) throws Exception {
+		final ChipType chipType = context.execute(getChipTypeOperation, progressManager, 0.0625f);
 		final JennicBinData binData = validateImage(chipType);
-		insertFlashHeaderToImage(binData, progressManager.createSub(0.0625f));
+		insertFlashHeaderToImage(binData, progressManager.createSub(0.0625f), context);
 		
-		executeSubOperation(enterProgramModeOperation, progressManager.createSub(0.0625f));
+		context.execute(enterProgramModeOperation, progressManager, 0.0625f);
 		try {
-			program(chipType, binData, progressManager.createSub(0.75f));
+			program(chipType, binData, progressManager.createSub(0.75f), context);
 		} finally {
-			executeSubOperation(leaveProgramModeOperation, progressManager.createSub(0.0125f));
-			executeSubOperation(resetOperation, progressManager.createSub(0.0500f));
+			context.execute(leaveProgramModeOperation, progressManager, 0.0125f);
+			context.execute(resetOperation, progressManager, 0.05f);
 		}
 		return null;
 	}

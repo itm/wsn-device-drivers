@@ -16,7 +16,7 @@ public interface OperationFuture<T> extends ListenableFuture<T>, Runnable {
 	/**
 	 * Returns managed operation behind this future.
 	 * 
-	 * @return The <code>Operation</code> that is executed and referenced by this future.
+	 * @return The <code>OperationRunnable</code> that is executed and referenced by this future.
 	 */
 	Operation<T> getOperation();
 }

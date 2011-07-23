@@ -8,8 +8,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.SimpleOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationRunnable;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 
 import java.util.concurrent.ExecutorService;
@@ -18,13 +18,13 @@ import java.util.concurrent.TimeUnit;
 
 public class AbstractOperationTest {
 
-	private Operation<Object> operation;
+	private OperationRunnable<Object> operation;
 	
 	@Before
 	public void setUp() {
-		operation = new AbstractOperation<Object>() {
+		operation = new SimpleOperation<Object>() {
 			@Override
-			public Void execute(ProgressManager progressManager) throws Exception {
+			public Void run(ProgressManager progressManager) throws Exception {
 				return null;
 			}
 		};
@@ -66,9 +66,9 @@ public class AbstractOperationTest {
 	@Test(expected=Exception.class)
 	public void testCallException() throws Exception {
 		// Test exception
-		Operation<Void> operation = new AbstractOperation<Void>() {
+		OperationRunnable<Void> operation = new SimpleOperation<Void>() {
 			@Override
-			public Void execute(ProgressManager progressManager) throws Exception {
+			public Void run(ProgressManager progressManager) throws Exception {
 				throw new Exception("Some exception");
 			}
 		};
@@ -87,9 +87,9 @@ public class AbstractOperationTest {
 		final SimpleTimeLimiter timeLimiter = new SimpleTimeLimiter(executor);
 		try {
 			// Test timeout
-			Operation<Void> operationUnderTest = new AbstractOperation<Void>() {
+			OperationRunnable<Void> operationUnderTest = new SimpleOperation<Void>() {
 				@Override
-				public Void execute(ProgressManager progressManager) throws Exception {
+				public Void run(ProgressManager progressManager) throws Exception {
 					Thread.sleep(200);
 					return null;
 				}
@@ -110,7 +110,7 @@ public class AbstractOperationTest {
 	@Test
 	public void testExecuteSubOperation() {
 		try {
-			Assert.assertNull(operation.execute(null));
+			Assert.assertNull(operation.run(null));
 		} catch (Exception e) {
 			Assert.fail(e.getMessage());
 		}
@@ -129,9 +129,9 @@ public class AbstractOperationTest {
 
 	@Test
 	public void testGetTimeout() {
-		Operation<Void> operation = new AbstractOperation<Void>() {
+		OperationRunnable<Void> operation = new SimpleOperation<Void>() {
 			@Override
-			public Void execute(ProgressManager progressManager) throws Exception {
+			public Void run(ProgressManager progressManager) throws Exception {
 				return null;
 			}
 		};

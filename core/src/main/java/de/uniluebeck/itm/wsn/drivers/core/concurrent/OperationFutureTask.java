@@ -10,19 +10,19 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
  * 
  * @author Malte Legenhausen
  *
- * @param <T> The return type for of the associated <code>Operation</code>.
+ * @param <T> The return type for of the associated <code>OperationRunnable</code>.
  */
 public class OperationFutureTask<T> extends ListenableFutureTask<T> implements OperationFuture<T> {
 	
 	/**
-	 * The <code>Operation</code> associated with this handle.
+	 * The <code>OperationRunnable</code> associated with this handle.
 	 */
 	private final Operation<T> operation;
 	
 	/**
 	 * Constructor.
 	 * 
-	 * @param operation The <code>Operation</code> associated with this handle.
+	 * @param operation The <code>OperationRunnable</code> associated with this handle.
 	 */
 	public OperationFutureTask(final Operation<T> operation) {
 		super(operation);

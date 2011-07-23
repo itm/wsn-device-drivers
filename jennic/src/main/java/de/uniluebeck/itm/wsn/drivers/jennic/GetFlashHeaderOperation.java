@@ -1,7 +1,7 @@
 package de.uniluebeck.itm.wsn.drivers.jennic;
 
-import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationRunnable;
 
-public interface GetFlashHeaderOperation extends Operation<byte[]> {
+public interface GetFlashHeaderOperation extends OperationRunnable<byte[]> {
 
 }

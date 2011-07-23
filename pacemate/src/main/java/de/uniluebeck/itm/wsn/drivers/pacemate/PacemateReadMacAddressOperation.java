@@ -7,12 +7,12 @@ import com.google.inject.Inject;
 
 import de.uniluebeck.itm.tr.util.StringUtils;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;
 
-public class PacemateReadMacAddressOperation extends AbstractOperation<MacAddress> implements ReadMacAddressOperation {
+public class PacemateReadMacAddressOperation implements ReadMacAddressOperation {
 
 	/**
 	 * Logger for this class.
@@ -32,8 +32,8 @@ public class PacemateReadMacAddressOperation extends AbstractOperation<MacAddres
 	}
 	
 	@Override
-	public MacAddress execute(final ProgressManager progressManager) throws Exception {
-		byte[] header = executeSubOperation(readFlashOperation, progressManager);
+	public MacAddress run(final ProgressManager progressManager, OperationContext context) throws Exception {
+		byte[] header = context.execute(readFlashOperation, progressManager);
 		
 		byte[] macUUcode = new byte[4];
 		byte[] mac = new byte[8];

@@ -5,7 +5,7 @@ import java.util.EventObject;
 
 
 /**
- * An abstract exvent class that contains an <code>Operation</code>.
+ * An abstract exvent class that contains an <code>OperationRunnable</code>.
  * 
  * @author Malte Legenhausen
  *

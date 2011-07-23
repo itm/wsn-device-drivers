@@ -3,39 +3,39 @@ package de.uniluebeck.itm.wsn.drivers.core.operation;
 import java.util.Arrays;
 
 /**
- * Enum for all states of an <code>Operation</code>.
+ * Enum for all states of an <code>OperationRunnable</code>.
  * 
  * @author Malte Legenhausen
  */
 public enum State {
 	
 	/**
-	 * The <code>Operation</code> is waiting in the execution queue.
+	 * The <code>OperationRunnable</code> is waiting in the execution queue.
 	 */
 	WAITING("Waiting"),
 	
 	/**
-	 * The <code>Operation</code> is currently running.
+	 * The <code>OperationRunnable</code> is currently running.
 	 */
 	RUNNING("Running"),
 	
 	/**
-	 * The <code>Operation</code> has been canceled.
+	 * The <code>OperationRunnable</code> has been canceled.
 	 */
 	CANCELED("Canceled"),
 	
 	/**
-	 * The <code>Operation</code> finsihed with an exception.
+	 * The <code>OperationRunnable</code> finsihed with an exception.
 	 */
 	EXCEPTED("Excepted"),
 	
 	/**
-	 * The <code>Operation</code> reached the timeout.
+	 * The <code>OperationRunnable</code> reached the timeout.
 	 */
 	TIMEDOUT("Timedout"),
 	
 	/**
-	 * The <code>Operation</code> is done.
+	 * The <code>OperationRunnable</code> is done.
 	 */
 	DONE("Done");
 	

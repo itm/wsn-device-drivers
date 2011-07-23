@@ -9,8 +9,7 @@ import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
  * 
  * @author Malte Legenhausen
  */
-public abstract class AbstractWriteMacAddressOperation extends AbstractOperation<Void> 
-	implements WriteMacAddressOperation {
+public abstract class AbstractWriteMacAddressOperation implements WriteMacAddressOperation {
 
 	/**
 	 * The <code>MacAddress</code> that will be written to the device.

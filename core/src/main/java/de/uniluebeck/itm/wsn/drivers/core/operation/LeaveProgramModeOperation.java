@@ -6,6 +6,6 @@ package de.uniluebeck.itm.wsn.drivers.core.operation;
  * 
  * @author Malte Legenhausen
  */
-public interface LeaveProgramModeOperation extends Operation<Void> {
+public interface LeaveProgramModeOperation extends OperationRunnable<Void> {
 
 }

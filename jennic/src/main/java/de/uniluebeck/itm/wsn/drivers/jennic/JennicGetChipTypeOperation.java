@@ -9,14 +9,13 @@ import de.uniluebeck.itm.tr.util.StringUtils;
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.exception.RamReadFailedException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.UnexpectedResponseException;
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 
-public class JennicGetChipTypeOperation extends AbstractOperation<ChipType>
-		implements GetChipTypeOperation {
+public class JennicGetChipTypeOperation	implements GetChipTypeOperation {
 
 	/**
 	 * Logger for this class.
@@ -54,7 +53,7 @@ public class JennicGetChipTypeOperation extends AbstractOperation<ChipType>
 		return chipType;
 	}
 
-	private ChipType getChipType(final ProgressManager monitor) throws Exception {
+	private ChipType getChipType() throws Exception {
 		log.trace("Getting ChipType...");
 
 		ChipType chipType = ChipType.UNKNOWN;
@@ -111,13 +110,13 @@ public class JennicGetChipTypeOperation extends AbstractOperation<ChipType>
 	}
 
 	@Override
-	public ChipType execute(final ProgressManager progressManager) throws Exception {
+	public ChipType run(final ProgressManager progressManager, OperationContext context) throws Exception {
 		ChipType chipType = null;
-		executeSubOperation(enterProgramModeOperation, progressManager.createSub(0.5f));
+		context.execute(enterProgramModeOperation, progressManager, 0.5f);
 		try {
-			chipType = getChipType(progressManager);
+			chipType = getChipType();
 		} finally {
-			executeSubOperation(leaveProgramModeOperation, progressManager.createSub(0.5f));
+			context.execute(leaveProgramModeOperation, progressManager, 0.5f);
 		}
 		return chipType;
 	}

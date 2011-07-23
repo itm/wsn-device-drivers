@@ -7,12 +7,12 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 
-public class iSenseResetOperation extends AbstractOperation<Void> implements ResetOperation {
+public class iSenseResetOperation implements ResetOperation {
 	/**
 	 * Logger for this class.
 	 */
@@ -26,7 +26,7 @@ public class iSenseResetOperation extends AbstractOperation<Void> implements Res
 	}
 
 	@Override
-	public Void execute(ProgressManager progressManager) throws Exception {
+	public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
 		log.debug("Resetting device...");
 		SerialPort serialPort = connection.getSerialPort();
 		serialPort.setDTR(true);

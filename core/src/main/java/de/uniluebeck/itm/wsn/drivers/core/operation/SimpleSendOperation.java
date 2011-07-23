@@ -12,7 +12,7 @@ import de.uniluebeck.itm.wsn.drivers.core.Connection;
 
 
 /**
- * Operation for sending a <code>MessagePacket</code>.
+ * OperationRunnable for sending a <code>MessagePacket</code>.
  *
  * @author Malte Legenhausen
  */
@@ -54,7 +54,7 @@ public class SimpleSendOperation extends AbstractSendOperation {
 	}
 
 	@Override
-	public Void execute(final ProgressManager progressManager) throws Exception {
+	public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
 		LOG.debug("Executing send operation");
 
 		byte content[] = getMessage();

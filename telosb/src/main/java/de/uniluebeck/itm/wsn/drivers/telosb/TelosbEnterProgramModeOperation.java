@@ -7,13 +7,13 @@ import com.google.inject.Inject;
 
 import de.uniluebeck.itm.wsn.drivers.core.exception.FlashEraseFailedException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.FlashProgramFailedException;
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection.SerialPortMode;
 
-public class TelosbEnterProgramModeOperation extends AbstractOperation<Void> implements EnterProgramModeOperation {
+public class TelosbEnterProgramModeOperation implements EnterProgramModeOperation {
 
 	/**
 	 * Logger for this class.
@@ -74,7 +74,7 @@ public class TelosbEnterProgramModeOperation extends AbstractOperation<Void> imp
 	}
 	
 	@Override
-	public Void execute(ProgressManager progressManager) throws Exception {
+	public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
 		connection.setSerialPortMode(SerialPortMode.PROGRAM);
 		progressManager.worked(0.2f);
 

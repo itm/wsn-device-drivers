@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection.SerialPortMode;
 
@@ -16,7 +16,7 @@ import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection.Serial
  * 
  * @author Malte Legenhausen
  */
-public class SerialPortLeaveProgramModeOperation extends AbstractOperation<Void> implements LeaveProgramModeOperation {
+public class SerialPortLeaveProgramModeOperation implements LeaveProgramModeOperation {
 	
 	/**
 	 * Logger for this class.
@@ -39,7 +39,7 @@ public class SerialPortLeaveProgramModeOperation extends AbstractOperation<Void>
 	}
 	
 	@Override
-	public Void execute(final ProgressManager progressManager) throws Exception {
+	public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
 		LOG.trace("Leaving programming mode...");
 		connection.clear();
 		progressManager.worked(ProgressManager.WORKED_HALF);

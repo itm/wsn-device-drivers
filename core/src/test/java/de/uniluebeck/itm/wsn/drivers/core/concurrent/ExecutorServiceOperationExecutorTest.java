@@ -10,8 +10,8 @@ import org.junit.Test;
 
 import com.google.common.util.concurrent.FakeTimeLimiter;
 
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.SimpleOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationRunnable;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationCallback;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationCallbackAdapter;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
@@ -41,9 +41,9 @@ public class ExecutorServiceOperationExecutorTest {
 				fail("No failure was expected");
 			}
 		};
-		Operation<Boolean> operation = new AbstractOperation<Boolean>() {
+		OperationRunnable<Boolean> operation = new SimpleOperation<Boolean>() {
 			@Override
-			public Boolean execute(ProgressManager progressManager) throws Exception {
+			public Boolean run(ProgressManager progressManager) throws Exception {
 				return true;
 			}
 		};
@@ -58,9 +58,9 @@ public class ExecutorServiceOperationExecutorTest {
 
 	@Test
 	public void testGetOperations() {
-		Operation<Boolean> operation = new AbstractOperation<Boolean>() {
+		OperationRunnable<Boolean> operation = new SimpleOperation<Boolean>() {
 			@Override
-			public Boolean execute(ProgressManager progressManager) throws Exception {
+			public Boolean run(ProgressManager progressManager) throws Exception {
 				Thread.sleep(100);
 				return true;
 			}
@@ -78,9 +78,9 @@ public class ExecutorServiceOperationExecutorTest {
 	
 	@Test(expected=ExecutionException.class)
 	public void testOperationHandleException() throws ExecutionException, InterruptedException {
-		Operation<Boolean> operation = new AbstractOperation<Boolean>() {
+		OperationRunnable<Boolean> operation = new SimpleOperation<Boolean>() {
 			@Override
-			public Boolean execute(ProgressManager progressManager) throws Exception {
+			public Boolean run(ProgressManager progressManager) throws Exception {
 				Thread.sleep(500);
 				throw new NullPointerException();
 			}

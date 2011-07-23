@@ -1,10 +1,10 @@
 package de.uniluebeck.itm.wsn.drivers.core.operation;
 
 /**
- * Interface that defines a <code>Operation</code> for reseting the device.
+ * Interface that defines a <code>OperationRunnable</code> for reseting the device.
  * 
  * @author Malte Legenhausen
  */
-public interface ResetOperation extends Operation<Void> {
+public interface ResetOperation extends OperationRunnable<Void> {
 
 }

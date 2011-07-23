@@ -6,11 +6,11 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Inject;
 
 import de.uniluebeck.itm.wsn.drivers.core.exception.FlashEraseFailedException;
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 
-public class TelosbEraseFlashOperation extends AbstractOperation<Void> implements EraseFlashOperation {
+public class TelosbEraseFlashOperation implements EraseFlashOperation {
 
 	/**
 	 * Logger for this class.
@@ -25,7 +25,7 @@ public class TelosbEraseFlashOperation extends AbstractOperation<Void> implement
 	}
 	
 	@Override
-	public Void execute(ProgressManager progressManager) throws Exception {
+	public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
 		byte[] reply = null;
 
 		if (bsl == null) {

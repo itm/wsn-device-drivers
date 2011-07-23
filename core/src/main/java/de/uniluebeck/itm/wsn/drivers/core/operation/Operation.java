@@ -2,35 +2,15 @@ package de.uniluebeck.itm.wsn.drivers.core.operation;
 
 import java.util.concurrent.Callable;
 
-import com.google.common.util.concurrent.TimeLimiter;
-
-
-
 /**
- * A device operation.
+ * Container interface for a <code>OperationRunnable</code>.
  * 
  * @author Malte Legenhausen
- *
- * @param <T> The return type of the operation.
+ * 
+ * @param <T>
  */
 public interface Operation<T> extends Callable<T> {
 
-	/**
-	 * Set method for the <code>OperationCallback</code>.
-	 * 
-	 * @param callback The callback that is called when the method has finished or raised an exception.
-	 */
-	void setCallback(OperationCallback<T> callback);
-	
-	/**
-	 * Method that is called when the operation has to be executed.
-	 * 
-	 * @param progressManager The progress manager for this operation.
-	 * @return The result of the <code>Operation</code> execution.
-	 * @throws Exception Any exception that can occur during an operation execution.
-	 */
-	T execute(ProgressManager progressManager) throws Exception;
-	
 	/**
 	 * Cancel the operation.
 	 */
@@ -49,13 +29,6 @@ public interface Operation<T> extends Callable<T> {
 	 * @return The operation state.
 	 */
 	State getState();
-	
-	/**
-	 * Set the execution time limit for this operation.
-	 * 
-	 * @param timeout The limit in milliseconds.
-	 */
-	void setTimeout(long timeout);
 	
 	/**
 	 * Returns the timeout for this operation.
@@ -77,11 +50,4 @@ public interface Operation<T> extends Callable<T> {
 	 * @param listener The <code>OperationListener</code> that has to be removed.
 	 */
 	void removeListener(OperationListener<T> listener);
-	
-	/**
-	 * Setter for the TimeLimiter that is responsible for the limitation of the execution time of an operation.
-	 * 
-	 * @param timeLimiter The TimeLimiter.
-	 */
-	void setTimeLimiter(TimeLimiter timeLimiter);
 }

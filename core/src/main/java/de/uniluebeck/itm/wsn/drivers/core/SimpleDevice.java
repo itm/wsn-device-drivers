@@ -23,6 +23,8 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationCallback;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationFactory;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationRunnable;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;
@@ -61,13 +63,15 @@ public class SimpleDevice implements Device {
 	private static final String NEGATIVE_LENGTH_MESSAGE = "Negative length is not allowed.";
 	
 	/**
-	 * Queue that schedules all <code>Operation</code> instances.
+	 * Queue that schedules all <code>OperationRunnable</code> instances.
 	 */
 	private final OperationExecutor executor;
 	
 	private final Connection connection;
 	
 	private final InputStream inputStream;
+	
+	private final OperationFactory factory;
 	
 	private final Provider<OutputStream> outputStreamProvider;
 	
@@ -96,91 +100,92 @@ public class SimpleDevice implements Device {
 	 * @param device The <code>Device</code> that provides all operations that can be executed.
 	 */
 	@Inject
-	public SimpleDevice(OperationExecutor executor, Connection connection, InputStream inputStream,
-			Provider<OutputStream> outputStreamProvider,
+	public SimpleDevice(OperationExecutor executor, Connection connection, OperationFactory factory, 
+			InputStream inputStream, Provider<OutputStream> outputStreamProvider, 
 			Provider<SendOperation> sendProvider) {
 		this.connection = connection;
 		this.executor = executor;
 		this.inputStream = inputStream;
+		this.factory = factory;
 		this.outputStreamProvider = outputStreamProvider;
 		this.sendProvider = sendProvider;
 	}
 
 	@Override
 	public OperationFuture<ChipType> getChipType(long timeout, @Nullable OperationCallback<ChipType> callback) {
-		LOG.trace("Reading Chip Type (Timeout: " + timeout + "ms)");
-		GetChipTypeOperation operation = createOperation(getChipTypeProvider, timeout, callback, "getChipType");
-		return executor.submitOperation(operation);
+		LOG.trace("Reading Chip Type (timeout: " + timeout + "ms)");
+		GetChipTypeOperation runnable = createOperationRunnable(getChipTypeProvider, "getChipType");
+		return submitOperation(runnable, timeout, callback);
 	}
 
 	@Override
 	public OperationFuture<Void> eraseFlash(long timeout, @Nullable OperationCallback<Void> callback) {
-		LOG.trace("Erase flash (Timeout: " + timeout + "ms)");
-		EraseFlashOperation operation = createOperation(eraseFlashProvider, timeout, callback, "eraseFlash");
-		return executor.submitOperation(operation);
+		LOG.trace("Erase flash (timeout: " + timeout + "ms)");
+		EraseFlashOperation runnable = createOperationRunnable(eraseFlashProvider, "eraseFlash");
+		return submitOperation(runnable, timeout, callback);
 	}
 
 	@Override
 	public OperationFuture<Void> program(byte[] data, long timeout, @Nullable OperationCallback<Void> callback) {
 		LOG.trace("Program device (timeout: " + timeout + "ms)");
-		ProgramOperation operation = createOperation(programProvider, timeout, callback, "program is not available");
-		operation.setBinaryImage(data);
-		return executor.submitOperation(operation);
+		ProgramOperation runnable = createOperationRunnable(programProvider, "program");
+		runnable.setBinaryImage(data);
+		return submitOperation(runnable, timeout, callback);
 	}
 
 	@Override
 	public OperationFuture<byte[]> readFlash(int address, int length, long timeout, 
 			@Nullable OperationCallback<byte[]> callback) {
 		LOG.trace("Read flash (address: " + address + ", length: " + length + ", timeout: " + timeout + "ms)");
-		ReadFlashOperation operation = createOperation(readFlashProvider, timeout, callback, "readFlash");
+		ReadFlashOperation runnable = createOperationRunnable(readFlashProvider, "readFlash");
 		checkArgument(address >= 0, NEGATIVE_LENGTH_MESSAGE);
 		checkArgument(length >= 0, NEGATIVE_ADDRESS_MESSAGE);
-		operation.setAddress(address, length);
-		return executor.submitOperation(operation);
+		runnable.setAddress(address, length);
+		return submitOperation(runnable, timeout, callback);
 	}
 
 	@Override
 	public OperationFuture<MacAddress> readMac(long timeout, @Nullable OperationCallback<MacAddress> callback) {
 		LOG.trace("Read mac (timeout: " + timeout + "ms)");
-		ReadMacAddressOperation operation = createOperation(readMacAddressProvider, timeout, callback, "readMac");
-		return executor.submitOperation(operation);
+		ReadMacAddressOperation runnable = createOperationRunnable(readMacAddressProvider, "readMac");
+		return submitOperation(runnable, timeout, callback);
 	}
 
 	@Override
 	public OperationFuture<Void> reset(long timeout, @Nullable OperationCallback<Void> callback) {
 		LOG.trace("Reset device (timeout: " + timeout + "ms)");
-		ResetOperation operation = createOperation(resetProvider, timeout, callback, "reset is not available");
-		return executor.submitOperation(operation);
+		ResetOperation runnable = createOperationRunnable(resetProvider, "reset is not available");
+		return submitOperation(runnable, timeout, callback);
 	}
 
 	@Override
 	public OperationFuture<Void> send(byte[] message, long timeout, @Nullable OperationCallback<Void> callback) {
 		LOG.trace("Send packet to device (timeout: " + timeout + "ms)");
-		SendOperation operation = createOperation(sendProvider, timeout, callback, "send is not available");
-		operation.setMessage(message);
-		return executor.submitOperation(operation);
+		SendOperation runnable = createOperationRunnable(sendProvider, "send is not available");
+		runnable.setMessage(message);
+		return submitOperation(runnable, timeout, callback);
 	}
 
 	@Override
 	public OperationFuture<Void> writeFlash(int address, byte[] data, int length, long timeout, 
 			@Nullable OperationCallback<Void> callback) {
 		LOG.trace("Write flash (address: " + address + ", length: " + length + ", timeout: " + timeout + "ms)");
-		WriteFlashOperation operation = createOperation(writeFlashProvider, timeout, callback, "writeFlash");
+		WriteFlashOperation runnable = createOperationRunnable(writeFlashProvider, "writeFlash");
 		checkArgument(address >= 0, NEGATIVE_LENGTH_MESSAGE);
 		checkNotNull(data, "Null data is not allowed.");
 		checkArgument(length >= 0, NEGATIVE_ADDRESS_MESSAGE);
-		operation.setData(address, data, length);
-		return executor.submitOperation(operation);
+		runnable.setData(address, data, length);
+		return submitOperation(runnable, timeout, callback);
 	}
 
 	@Override
 	public OperationFuture<Void> writeMac(MacAddress macAddress, long timeout, 
 			@Nullable OperationCallback<Void> callback) {
 		LOG.trace("Write mac (mac address: " + macAddress + ", timeout: " + timeout + "ms)");
-		WriteMacAddressOperation operation = createOperation(writeMacAddressProvider, timeout, callback, "writeMac");
+		WriteMacAddressOperation runnable = createOperationRunnable(writeMacAddressProvider, "writeMac");
 		checkNotNull(macAddress, "Null macAdress is not allowed.");
-		operation.setMacAddress(macAddress);
-		return executor.submitOperation(operation);
+		runnable.setMacAddress(macAddress);
+		return submitOperation(runnable, timeout, callback);
 	}
 
 	@Override
@@ -238,19 +243,23 @@ public class SimpleDevice implements Device {
 		connection.clear();
 	}
 
-	private static <T, O extends Operation<T>> O createOperation(Provider<O> provider, long timeout, 
-			OperationCallback<T> callback, String operationName) {
+	private static <T, O extends OperationRunnable<T>> O createOperationRunnable(Provider<O> provider, 
+			String operationName) {
 		if (provider == null) {
 			throwUnsupportedOperationException(operationName);
 		}
-		O operation = provider.get();
-		if (operation == null) {
+		O runnable = provider.get();
+		if (runnable == null) {
 			throwUnsupportedOperationException(operationName);
 		}
+		return runnable;
+	}
+	
+	private <T> OperationFuture<T> submitOperation(OperationRunnable<T> runnable, long timeout, 
+			OperationCallback<T> callback) {
 		checkArgument(timeout >= 0, "Negative timeout is not allowed.");
-		operation.setTimeout(timeout);
-		operation.setCallback(callback);
-		return operation;
+		Operation<T> operation = factory.create(runnable, timeout, callback);
+		return executor.submitOperation(operation);
 	}
 	
 	private static void throwUnsupportedOperationException(String operationName) {

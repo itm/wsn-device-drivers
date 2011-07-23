@@ -9,6 +9,7 @@ import de.uniluebeck.itm.tr.util.StringUtils;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractReadFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 
 public class JennicReadFlashOperation extends AbstractReadFlashOperation {
@@ -33,15 +34,15 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 		this.leaveProgramModeOperation = leaveProgramModeOperation;
 	}
 	
-	private byte[] readFlash(final ProgressManager progressManager) throws Exception {
+	private byte[] readFlash(ProgressManager progressManager, OperationContext context) throws Exception {
 		// Wait for a connection
-		while (!isCanceled() && !helper.waitForConnection()) {
+		while (!context.isCanceled() && !helper.waitForConnection()) {
 			log.debug("Still waiting for a connection");
 		}
 
 		// Return with success if the user has requested to cancel this
 		// operation
-		if (isCanceled()) {
+		if (context.isCanceled()) {
 			return null;
 		}
 
@@ -73,14 +74,14 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 	}
 	
 	@Override
-	public byte[] execute(final ProgressManager progressManager) throws Exception {
+	public byte[] run(ProgressManager progressManager, OperationContext context) throws Exception {
 		byte[] data = null;
 		// Enter programming mode
-		executeSubOperation(enterProgramModeOperation, progressManager.createSub(0.125f));
+		context.execute(enterProgramModeOperation, progressManager, 0.125f);
 		try {
-			data = readFlash(progressManager.createSub(0.75f));
+			data = readFlash(progressManager.createSub(0.75f), context);
 		} finally {
-			executeSubOperation(leaveProgramModeOperation, progressManager.createSub(0.125f));
+			context.execute(leaveProgramModeOperation, progressManager, 0.125f);
 		}
 		return data;
 	}

@@ -2,7 +2,7 @@ package de.uniluebeck.itm.wsn.drivers.mock;
 
 import com.google.inject.Inject;
 
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
 
@@ -13,7 +13,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
  * 
  * @author Malte Legenhausen
  */
-public class MockResetOperation extends AbstractOperation<Void> implements ResetOperation {
+public class MockResetOperation implements ResetOperation {
 
 	/**
 	 * A default sleep time before and after the reset.
@@ -41,7 +41,7 @@ public class MockResetOperation extends AbstractOperation<Void> implements Reset
 	}
 	
 	@Override
-	public Void execute(final ProgressManager progressManager) throws Exception {
+	public Void run(final ProgressManager progressManager, OperationContext context) throws Exception {
 		Thread.sleep(SLEEP_TIME);
 		connection.stopAliveRunnable();
 		Thread.sleep(RESET_TIME);

@@ -6,13 +6,13 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Inject;
 
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 
-public class PacemateGetChipTypeOperation extends AbstractOperation<ChipType> implements GetChipTypeOperation {
+public class PacemateGetChipTypeOperation implements GetChipTypeOperation {
 
 	/**
 	 * Logger for this class.
@@ -34,7 +34,7 @@ public class PacemateGetChipTypeOperation extends AbstractOperation<ChipType> im
 		this.leaveProgramModeOperation = leaveProgramModeOperation;
 	}
 	
-	private ChipType getChipType(final ProgressManager progressManager) throws Exception {
+	private ChipType getChipType(final ProgressManager progressManager, OperationContext context) throws Exception {
 		helper.clearStreamData();
 		helper.autobaud();
 
@@ -42,7 +42,7 @@ public class PacemateGetChipTypeOperation extends AbstractOperation<ChipType> im
 
 		// Return with success if the user has requested to cancel this
 		// operation
-		if (isCanceled()) {
+		if (context.isCanceled()) {
 			return null;
 		}
 		
@@ -63,13 +63,13 @@ public class PacemateGetChipTypeOperation extends AbstractOperation<ChipType> im
 	}
 	
 	@Override
-	public ChipType execute(final ProgressManager progressManager) throws Exception {
-		executeSubOperation(enterProgramModeOperation, progressManager.createSub(0.25f));
+	public ChipType run(ProgressManager progressManager, OperationContext context) throws Exception {
+		context.execute(enterProgramModeOperation, progressManager.createSub(0.25f));
 		ChipType chipType = ChipType.UNKNOWN;
 		try {
-			chipType = getChipType(progressManager.createSub(0.25f));
+			chipType = getChipType(progressManager.createSub(0.25f), context);
 		} finally {
-			executeSubOperation(leaveProgramModeOperation, progressManager.createSub(0.5f));
+			context.execute(leaveProgramModeOperation, progressManager.createSub(0.5f));
 		}
 		return chipType;
 	}

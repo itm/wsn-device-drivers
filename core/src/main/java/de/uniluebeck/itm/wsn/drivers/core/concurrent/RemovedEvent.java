@@ -5,7 +5,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.OperationEvent;
 
 
 /**
- * Event that is used when an <code>Operation</code> was removed from the queue.
+ * Event that is used when an <code>OperationRunnable</code> was removed from the queue.
  * 
  * @author Malte Legenhausen
  *

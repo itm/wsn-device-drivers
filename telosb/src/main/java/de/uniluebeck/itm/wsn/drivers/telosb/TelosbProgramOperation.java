@@ -11,6 +11,7 @@ import de.uniluebeck.itm.wsn.drivers.core.exception.FlashProgramFailedException;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractProgramOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
 import de.uniluebeck.itm.wsn.drivers.core.util.BinDataBlock;
@@ -41,7 +42,7 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 		this.bsl = bsl;
 	}
 	
-	private void program(final ProgressManager progressManager) throws Exception {
+	private void program(final ProgressManager progressManager, OperationContext context) throws Exception {
 		final TelosbBinData binData = new TelosbBinData(getBinaryImage());
 		// Write program to flash
 		log.trace("Starting to write program into flash memory...");
@@ -59,7 +60,7 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 			} catch (FlashProgramFailedException e) {
 				log.error(String.format("Error writing %d bytes into flash " +
 						"at address 0x%02x: " + e + ". Programmed " + bytesProgrammed + " bytes so far. "+
-						". Operation will be canceled.", data.length, address), e);
+						". OperationRunnable will be canceled.", data.length, address), e);
 				throw e;
 			} catch (final IOException e) {
 				log.error("I/O error while writing flash. Programmed " + bytesProgrammed + " bytes so far.", e);
@@ -72,7 +73,7 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 			progressManager.worked(worked);
 			
 			// Return if the user has requested to cancel this operation
-			if (isCanceled()) {
+			if (context.isCanceled()) {
 				return;
 			}
 		}		
@@ -80,14 +81,14 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 	}
 	
 	@Override
-	public Void execute(final ProgressManager progressManager) throws Exception {
-		executeSubOperation(enterProgramModeOperation, progressManager.createSub(0.125f));
+	public Void run(final ProgressManager progressManager, OperationContext context) throws Exception {
+		context.execute(enterProgramModeOperation, progressManager.createSub(0.125f));
 		try {
-			program(progressManager.createSub(0.75f));
+			program(progressManager.createSub(0.75f), context);
 		} finally {
-			executeSubOperation(leaveProgramModeOperation, progressManager.createSub(0.0625f));
+			context.execute(leaveProgramModeOperation, progressManager.createSub(0.0625f));
 		}
-		executeSubOperation(resetOperation, progressManager.createSub(0.0625f));
+		context.execute(resetOperation, progressManager.createSub(0.0625f));
 		return null;
 	}
 

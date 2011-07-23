@@ -7,11 +7,11 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;
 
 
 /**
- * Operation for getting the <code>MacAddress</code> of the given <code>MockConfiguration</code>.
+ * OperationRunnable for getting the <code>MacAddress</code> of the given <code>MockConfiguration</code>.
  * 
  * @author Malte Legenhausen
  */
-public class MockReadMacAddress extends AbstractMockOperation<MacAddress> implements ReadMacAddressOperation {
+public class MockReadMacAddress extends AbstractMockOperationRunnable<MacAddress> implements ReadMacAddressOperation {
 	
 	/**
 	 * The <code>MockConfiguration</code> of the <code>MockDevice</code>.
