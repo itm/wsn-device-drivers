@@ -33,7 +33,7 @@ public class PacemateReadMacAddressOperation implements ReadMacAddressOperation 
 	
 	@Override
 	public MacAddress run(final ProgressManager progressManager, OperationContext context) throws Exception {
-		byte[] header = context.execute(readFlashOperation, progressManager);
+		byte[] header = context.run(readFlashOperation, progressManager);
 		
 		byte[] macUUcode = new byte[4];
 		byte[] mac = new byte[8];

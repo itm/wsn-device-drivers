@@ -27,11 +27,11 @@ public class TelosbWriteFlashOperation extends AbstractWriteFlashOperation {
 	
 	@Override
 	public Void run(final ProgressManager progressManager, OperationContext context) throws Exception {
-		context.execute(enterProgramModeOperation, progressManager.createSub(0.5f));
+		context.run(enterProgramModeOperation, progressManager.createSub(0.5f));
 		try {
 			bsl.writeFlash(getAddress(), getData(), getData().length);
 		} finally {
-			context.execute(leaveProgramModeOperation, progressManager.createSub(0.5f));
+			context.run(leaveProgramModeOperation, progressManager.createSub(0.5f));
 		}
 		return null;
 	}

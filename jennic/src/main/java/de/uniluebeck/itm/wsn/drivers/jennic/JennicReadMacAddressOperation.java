@@ -36,14 +36,14 @@ public class JennicReadMacAddressOperation implements ReadMacAddressOperation {
 	public MacAddress run(ProgressManager progressManager, OperationContext context) throws Exception {
 		log.trace("Reading MAC Adress");
 		// Connection established, determine chip type
-		final ChipType chipType = context.execute(getChipTypeProvider.get(), progressManager, 0.8f);
+		final ChipType chipType = context.run(getChipTypeProvider.get(), progressManager, 0.8f);
 		log.trace("Chip type is " + chipType);
 
 		// Connection established, read flash header
 		final int address = chipType.getMacInFlashStart();
 		final ReadFlashOperation readFlashOperation = readFlashProvider.get();
 		readFlashOperation.setAddress(address, 8);
-		final byte[] header = context.execute(readFlashOperation, progressManager, 0.2f);
+		final byte[] header = context.run(readFlashOperation, progressManager, 0.2f);
 
 		final MacAddress macAddress = new MacAddress(header);
 		log.trace("Done, result is: " + macAddress);

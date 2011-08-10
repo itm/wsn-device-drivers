@@ -58,11 +58,11 @@ public class PacemateEraseFlashOperation implements EraseFlashOperation {
 	@Override
 	public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
 		log.debug("Erasing whole flash...");
-		context.execute(enterProgramModeOperation, progressManager.createSub(0.25f));
+		context.run(enterProgramModeOperation, progressManager.createSub(0.25f));
 		try {
 			eraseFlash(progressManager.createSub(0.5f), context);
 		} finally {
-			context.execute(leaveProgramModeOperation, progressManager.createSub(0.25f));
+			context.run(leaveProgramModeOperation, progressManager.createSub(0.25f));
 		}
 		log.debug("Flash completly erased");
 		return null;

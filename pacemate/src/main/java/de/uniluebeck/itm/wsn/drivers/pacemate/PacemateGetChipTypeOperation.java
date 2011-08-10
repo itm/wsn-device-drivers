@@ -64,12 +64,12 @@ public class PacemateGetChipTypeOperation implements GetChipTypeOperation {
 	
 	@Override
 	public ChipType run(ProgressManager progressManager, OperationContext context) throws Exception {
-		context.execute(enterProgramModeOperation, progressManager.createSub(0.25f));
+		context.run(enterProgramModeOperation, progressManager.createSub(0.25f));
 		ChipType chipType = ChipType.UNKNOWN;
 		try {
 			chipType = getChipType(progressManager.createSub(0.25f), context);
 		} finally {
-			context.execute(leaveProgramModeOperation, progressManager.createSub(0.5f));
+			context.run(leaveProgramModeOperation, progressManager.createSub(0.5f));
 		}
 		return chipType;
 	}

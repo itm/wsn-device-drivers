@@ -24,14 +24,14 @@ public class JennicGetFlashHeaderOperation implements GetFlashHeaderOperation {
 	
 	@Override
 	public byte[] run(final ProgressManager progressManager, OperationContext context) throws Exception {
-		final ChipType chipType = context.execute(getChipTypeProvider.get(), progressManager, 0.5f);
+		final ChipType chipType = context.run(getChipTypeProvider.get(), progressManager, 0.5f);
 		
 		final int address = chipType.getHeaderStart();
 		final int length = chipType.getHeaderLength();
 		
 		final ReadFlashOperation readFlashOperation = readFlashProvider.get();
 		readFlashOperation.setAddress(address, length);
-		return context.execute(readFlashOperation, progressManager, 0.5f);
+		return context.run(readFlashOperation, progressManager, 0.5f);
 	}
 
 }

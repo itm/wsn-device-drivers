@@ -20,8 +20,8 @@ public interface OperationContext {
 	 * @return The result of the sub <code>OperationRunnable</code>.
 	 * @throws Exception Any exception throws be the runnable.
 	 */
-	<T> T execute(OperationRunnable<T> subRunnable, ProgressManager progressManager) throws Exception;
+	<T> T run(OperationRunnable<T> subRunnable, ProgressManager progressManager) throws Exception;
 	
-	<T> T execute(OperationRunnable<T> subRunnable, ProgressManager progressManager, float subFraction) 
+	<T> T run(OperationRunnable<T> subRunnable, ProgressManager progressManager, float subFraction) 
 			throws Exception;
 }

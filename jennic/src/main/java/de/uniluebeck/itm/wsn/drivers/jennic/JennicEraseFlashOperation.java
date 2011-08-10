@@ -62,11 +62,11 @@ public class JennicEraseFlashOperation implements EraseFlashOperation {
 	
 	@Override
 	public Void run(final ProgressManager progressManager, OperationContext context) throws Exception {
-		context.execute(enterProgramModeProvider.get(), progressManager, 0.25f);
+		context.run(enterProgramModeProvider.get(), progressManager, 0.25f);
 		try {
 			eraseFlash(progressManager.createSub(0.5f), context);
 		} finally {
-			context.execute(leaveProgramModeProvider.get(), progressManager, 0.25f);
+			context.run(leaveProgramModeProvider.get(), progressManager, 0.25f);
 		}
 		return null;
 	}

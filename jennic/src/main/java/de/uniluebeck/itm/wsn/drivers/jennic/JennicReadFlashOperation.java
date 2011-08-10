@@ -77,11 +77,11 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 	public byte[] run(ProgressManager progressManager, OperationContext context) throws Exception {
 		byte[] data = null;
 		// Enter programming mode
-		context.execute(enterProgramModeOperation, progressManager, 0.125f);
+		context.run(enterProgramModeOperation, progressManager, 0.125f);
 		try {
 			data = readFlash(progressManager.createSub(0.75f), context);
 		} finally {
-			context.execute(leaveProgramModeOperation, progressManager, 0.125f);
+			context.run(leaveProgramModeOperation, progressManager, 0.125f);
 		}
 		return data;
 	}

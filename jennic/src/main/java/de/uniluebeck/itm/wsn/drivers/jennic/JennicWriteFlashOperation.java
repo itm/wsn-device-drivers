@@ -36,11 +36,11 @@ public class JennicWriteFlashOperation extends AbstractWriteFlashOperation {
 	@Override
 	public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
 		log.trace("Writing to flash...");
-		context.execute(enterProgramModeOperation, progressManager, 0.5f);
+		context.run(enterProgramModeOperation, progressManager, 0.5f);
 		try {
 			helper.writeFlash(getAddress(), getData());
 		} finally {
-			context.execute(leaveProgramModeOperation, progressManager, 0.5f);
+			context.run(leaveProgramModeOperation, progressManager, 0.5f);
 		}
 		log.trace("Flash written");
 		return null;

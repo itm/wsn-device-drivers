@@ -51,12 +51,12 @@ public class PacemateReadFlashOperation extends AbstractReadFlashOperation {
 	
 	@Override
 	public byte[] run(ProgressManager progressManager, OperationContext context) throws Exception {
-		context.execute(enterProgramModeOperation, progressManager.createSub(0.25f));
+		context.run(enterProgramModeOperation, progressManager.createSub(0.25f));
 		byte[] result = null;
 		try {
 			result = readFlash(progressManager.createSub(0.5f), context);
 		} finally {
-			context.execute(leaveProgramModeOperation, progressManager.createSub(0.25f));
+			context.run(leaveProgramModeOperation, progressManager.createSub(0.25f));
 		}
 		return result;
 	}

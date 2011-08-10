@@ -112,11 +112,11 @@ public class JennicGetChipTypeOperation	implements GetChipTypeOperation {
 	@Override
 	public ChipType run(final ProgressManager progressManager, OperationContext context) throws Exception {
 		ChipType chipType = null;
-		context.execute(enterProgramModeOperation, progressManager, 0.5f);
+		context.run(enterProgramModeOperation, progressManager, 0.5f);
 		try {
 			chipType = getChipType();
 		} finally {
-			context.execute(leaveProgramModeOperation, progressManager, 0.5f);
+			context.run(leaveProgramModeOperation, progressManager, 0.5f);
 		}
 		return chipType;
 	}

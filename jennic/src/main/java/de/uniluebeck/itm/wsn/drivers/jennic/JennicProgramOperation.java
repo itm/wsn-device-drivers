@@ -95,21 +95,21 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 	
 	private void insertFlashHeaderToImage(JennicBinData binData, final ProgressManager progressManager, OperationContext context) throws Exception {
 		// insert flash header of helper
-		final byte[] flashHeader = context.execute(getFlashHeaderOperation, progressManager);
+		final byte[] flashHeader = context.run(getFlashHeaderOperation, progressManager);
 		binData.insertHeader(flashHeader);
 	}
 	
 	public Void run(final ProgressManager progressManager, OperationContext context) throws Exception {
-		final ChipType chipType = context.execute(getChipTypeOperation, progressManager, 0.0625f);
+		final ChipType chipType = context.run(getChipTypeOperation, progressManager, 0.0625f);
 		final JennicBinData binData = validateImage(chipType);
 		insertFlashHeaderToImage(binData, progressManager.createSub(0.0625f), context);
 		
-		context.execute(enterProgramModeOperation, progressManager, 0.0625f);
+		context.run(enterProgramModeOperation, progressManager, 0.0625f);
 		try {
 			program(chipType, binData, progressManager.createSub(0.75f), context);
 		} finally {
-			context.execute(leaveProgramModeOperation, progressManager, 0.0125f);
-			context.execute(resetOperation, progressManager, 0.05f);
+			context.run(leaveProgramModeOperation, progressManager, 0.0125f);
+			context.run(resetOperation, progressManager, 0.05f);
 		}
 		return null;
 	}

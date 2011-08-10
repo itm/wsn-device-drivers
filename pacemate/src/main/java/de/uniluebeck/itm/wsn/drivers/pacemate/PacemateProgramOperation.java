@@ -189,14 +189,14 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 	public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
 		log.debug("Prgramming operation executing...");
 		// Erase the complete flash
-		context.execute(eraseFlashOperation, progressManager.createSub(0.125f));
+		context.run(eraseFlashOperation, progressManager.createSub(0.125f));
 		
 		// Now program the device
-		context.execute(enterProgramModeOperation, progressManager.createSub(0.0625f));
+		context.run(enterProgramModeOperation, progressManager.createSub(0.0625f));
 		try {
 			program(progressManager.createSub(0.75f), context);
 		} finally {
-			context.execute(leaveProgramModeOperation, progressManager.createSub(0.0625f));
+			context.run(leaveProgramModeOperation, progressManager.createSub(0.0625f));
 		}		
 		log.debug("Program operation finsihed");
 		return null;

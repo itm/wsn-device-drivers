@@ -82,13 +82,13 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 	
 	@Override
 	public Void run(final ProgressManager progressManager, OperationContext context) throws Exception {
-		context.execute(enterProgramModeOperation, progressManager.createSub(0.125f));
+		context.run(enterProgramModeOperation, progressManager.createSub(0.125f));
 		try {
 			program(progressManager.createSub(0.75f), context);
 		} finally {
-			context.execute(leaveProgramModeOperation, progressManager.createSub(0.0625f));
+			context.run(leaveProgramModeOperation, progressManager.createSub(0.0625f));
 		}
-		context.execute(resetOperation, progressManager.createSub(0.0625f));
+		context.run(resetOperation, progressManager.createSub(0.0625f));
 		return null;
 	}
 

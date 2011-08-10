@@ -1,5 +1,6 @@
 package de.uniluebeck.itm.wsn.drivers.core.operation;
 
+import static com.google.common.base.Objects.firstNonNull;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.concurrent.Callable;
@@ -11,7 +12,6 @@ import org.apache.commons.lang3.event.EventListenerSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Objects;
 import com.google.common.util.concurrent.TimeLimiter;
 import com.google.common.util.concurrent.UncheckedTimeoutException;
 import com.google.inject.Inject;
@@ -63,6 +63,9 @@ public class SimpleOperation<T> implements Operation<T>, OperationContext {
 	 */
 	private final OperationCallback<T> callback;
 	
+	/**
+	 * ProgressManager used for tracking the progress of the <code>OperationRunnable</code>.
+	 */
 	private final ProgressManager progressManager;
 	
 	/**
@@ -75,19 +78,17 @@ public class SimpleOperation<T> implements Operation<T>, OperationContext {
 	 */
 	private boolean canceled = false;
 	
-	
-	
 	/**
 	 * Constructor.
 	 */
 	@Inject
-	public SimpleOperation(TimeLimiter timeLimiter, OperationRunnable<T> runnable, long timeout, 
-			@Nullable OperationCallback<T> callback) {
-		this.runnable = runnable;
+	public SimpleOperation(TimeLimiter timeLimiter, ProgressManager progressManager, OperationRunnable<T> runnable, 
+			long timeout, @Nullable OperationCallback<T> callback) {
 		this.timeLimiter = timeLimiter;
+		this.progressManager = progressManager;
+		this.runnable = runnable;
 		this.timeout = timeout;
-		this.callback = Objects.firstNonNull(callback, new OperationCallbackAdapter<T>());
-		progressManager = new RootProgressManager(this.callback);
+		this.callback = firstNonNull(callback, new OperationCallbackAdapter<T>());
 	}
 	
 	@Override
@@ -103,13 +104,13 @@ public class SimpleOperation<T> implements Operation<T>, OperationContext {
 			}
 		} catch (UncheckedTimeoutException e) {
 			setState(State.TIMEDOUT);
-			LOG.error("Timeout reached during runnable execution", e);
+			LOG.error("Timeout reached during operation execution", e);
 			TimeoutException timeoutException = new TimeoutException("Operation timeout " + timeout + "ms reached.");
 			callback.onFailure(timeoutException);
 			throw timeoutException;
 		} catch (Exception e) {
 			setState(State.EXCEPTED);
-			LOG.error("Exception during runnable execution", e);
+			LOG.error("Exception during operation execution", e);
 			callback.onFailure(e);
 			throw e;
 		}	
@@ -139,7 +140,7 @@ public class SimpleOperation<T> implements Operation<T>, OperationContext {
 	}
 	
 	@Override
-	public <R> R execute(OperationRunnable<R> subRunnable, ProgressManager aProgressManager) throws Exception {
+	public <R> R run(OperationRunnable<R> subRunnable, ProgressManager aProgressManager) throws Exception {
 		checkNotNull(subRunnable, "Null operations are not allowed");
 		checkNotNull(aProgressManager, "Null ProgressManager is not allowed.");
 		final R result = subRunnable.run(aProgressManager, this);
@@ -148,7 +149,7 @@ public class SimpleOperation<T> implements Operation<T>, OperationContext {
 	}
 	
 	@Override
-	public <R> R execute(OperationRunnable<R> subRunnable, ProgressManager aProgressManager, float subFraction) 
+	public <R> R run(OperationRunnable<R> subRunnable, ProgressManager aProgressManager, float subFraction) 
 			throws Exception {
 		checkNotNull(subRunnable, "Null operations are not allowed");
 		checkNotNull(aProgressManager, "Null ProgressManager is not allowed.");
