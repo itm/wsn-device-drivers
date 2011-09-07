@@ -67,7 +67,7 @@ public class GenericDeviceExample {
 	/**
 	 * Timeout that is used for waiting for the executors to shutdown.
 	 */
-	private static final int EXECUTOR_TIMEOUT = 10;
+	private static final int EXECUTOR_TIMEOUT = 1;
 	
 	/**
 	 * The device async reference for this example.
