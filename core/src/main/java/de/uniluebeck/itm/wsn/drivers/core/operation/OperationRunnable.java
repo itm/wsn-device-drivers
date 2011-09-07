@@ -1,8 +1,5 @@
 package de.uniluebeck.itm.wsn.drivers.core.operation;
 
-
-
-
 /**
  * A device operation.
  * 

@@ -128,7 +128,7 @@ public class SimpleOperation<T> implements Operation<T>, OperationContext {
 	
 	private T executeOperation() throws Exception {
 		progressManager.worked(0.0f);
-		Callable<T> callable = new Callable<T>() {
+		final Callable<T> callable = new Callable<T>() {
 			@Override
 			public T call() throws Exception {
 				return runnable.run(progressManager, SimpleOperation.this);

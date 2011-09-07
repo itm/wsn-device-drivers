@@ -30,5 +30,4 @@ public class SimpleOperationFactory implements OperationFactory {
 		ProgressManager progressManager = progressManagerFactory.create(callback);
 		return new SimpleOperation<T>(timeLimiterProvider.get(), progressManager, runnable, timeout, callback);
 	}
-
 }

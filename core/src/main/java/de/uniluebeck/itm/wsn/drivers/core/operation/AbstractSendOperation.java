@@ -1,6 +1,6 @@
 package de.uniluebeck.itm.wsn.drivers.core.operation;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
 
 
 
@@ -18,7 +18,7 @@ public abstract class AbstractSendOperation implements SendOperation {
 	
 	@Override
 	public void setMessage(final byte[] message) {
-		Preconditions.checkArgument(message != null, "A null message is not allowed.");
+		checkArgument(message != null, "A null message is not allowed.");
 		this.message = new byte[message.length];
 		System.arraycopy(message, 0, this.message, 0, message.length);
 	}

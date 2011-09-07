@@ -51,10 +51,10 @@ public class DeviceModule extends AbstractModule {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		TimeLimiter timeLimiter = new SimpleTimeLimiter(executorService);
+
 		bind(ExecutorService.class).toInstance(executorService);
 		bind(ScheduledExecutorService.class).toInstance(executorService);
-		bind(TimeLimiter.class).toInstance(timeLimiter);
+		bind(TimeLimiter.class).toInstance(new SimpleTimeLimiter(executorService));
 		bind(Runnable.class).annotatedWith(IdleRunnable.class).to(InputStreamCopyRunnable.class);
 		bind(InputStream.class).toInstance(inputStream);
 		bind(OutputStream.class).annotatedWith(IdleRunnable.class).toInstance(outputStream);
