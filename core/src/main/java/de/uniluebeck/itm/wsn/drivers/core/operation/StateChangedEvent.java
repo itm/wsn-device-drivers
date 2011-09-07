@@ -3,7 +3,7 @@ package de.uniluebeck.itm.wsn.drivers.core.operation;
 
 
 /**
- * Event that is used when the state of an <code>Operation</code> has changed.
+ * Event that is used when the state of an <code>OperationRunnable</code> has changed.
  * 
  * @author Malte Legenhausen
  *

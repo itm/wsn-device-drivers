@@ -6,7 +6,7 @@ package de.uniluebeck.itm.wsn.drivers.core.operation;
  * 
  * @author Malte Legenhausen
  */
-public interface ProgramOperation extends Operation<Void> {
+public interface ProgramOperation extends OperationRunnable<Void> {
 
 	/**
 	 * Setter for the binary image that has to be programed.

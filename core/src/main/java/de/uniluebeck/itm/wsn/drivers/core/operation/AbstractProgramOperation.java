@@ -7,7 +7,7 @@ package de.uniluebeck.itm.wsn.drivers.core.operation;
  * 
  * @author Malte Legenhausen
  */
-public abstract class AbstractProgramOperation extends AbstractOperation<Void> implements ProgramOperation {
+public abstract class AbstractProgramOperation implements ProgramOperation {
 
 	/**
 	 * The image that has to be flashed.

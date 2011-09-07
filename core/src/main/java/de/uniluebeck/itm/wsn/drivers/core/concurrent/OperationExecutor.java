@@ -7,7 +7,7 @@ import com.google.inject.ImplementedBy;
 import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 
 /**
- * Interface that defines a executor thats manages the execution of <code>Operation</code>s.
+ * Interface that defines a executor thats manages the execution of <code>OperationRunnable</code>s.
  * 
  * @author Malte Legenhausen
  */

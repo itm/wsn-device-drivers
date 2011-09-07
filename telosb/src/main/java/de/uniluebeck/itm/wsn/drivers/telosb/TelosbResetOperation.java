@@ -2,11 +2,11 @@ package de.uniluebeck.itm.wsn.drivers.telosb;
 
 import com.google.inject.Inject;
 
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
 
-public class TelosbResetOperation extends AbstractOperation<Void> implements ResetOperation {
+public class TelosbResetOperation implements ResetOperation {
 
 	private final BSLTelosb bsl;
 	
@@ -16,7 +16,7 @@ public class TelosbResetOperation extends AbstractOperation<Void> implements Res
 	}
 	
 	@Override
-	public Void execute(ProgressManager progressManager) throws Exception {
+	public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
 		bsl.reset();
 		return null;
 	}

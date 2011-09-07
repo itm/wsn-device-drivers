@@ -2,8 +2,8 @@ package de.uniluebeck.itm.wsn.drivers.mock;
 
 import com.google.inject.Inject;
 
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 
 
@@ -12,7 +12,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
  * 
  * @author Malte Legenhausen
  */
-public class MockEraseFlashOperation extends AbstractOperation<Void> implements EraseFlashOperation {
+public class MockEraseFlashOperation implements EraseFlashOperation {
 
 	/**
 	 * Sleeping time between each iteration.
@@ -35,7 +35,7 @@ public class MockEraseFlashOperation extends AbstractOperation<Void> implements 
 	}
 	
 	@Override
-	public Void execute(ProgressManager progressManager) throws Exception {
+	public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
 		final byte[] flashRom = configuration.getFlashRom();
 		final float worked = 1.0f / flashRom.length;
 		for (int i = 0; i < flashRom.length; ++i) {

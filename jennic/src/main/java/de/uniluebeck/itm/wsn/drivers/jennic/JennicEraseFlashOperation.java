@@ -7,13 +7,13 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import de.uniluebeck.itm.wsn.drivers.core.exception.FlashEraseFailedException;
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 
-public class JennicEraseFlashOperation extends AbstractOperation<Void> implements EraseFlashOperation {
+public class JennicEraseFlashOperation implements EraseFlashOperation {
 
 	/**
 	 * Logger for this class.
@@ -35,7 +35,7 @@ public class JennicEraseFlashOperation extends AbstractOperation<Void> implement
 		this.leaveProgramModeProvider = leaveprogramModeProvider;
 	}
 	
-	private void eraseFlash(final ProgressManager progressManager) throws Exception {
+	private void eraseFlash(final ProgressManager progressManager, OperationContext context) throws Exception {
 		helper.sendBootLoaderMessage(Messages.statusRegisterWriteMessage((byte) 0x00));
 		progressManager.worked(0.25f);
 		byte[] response = helper.receiveBootLoaderReply(Messages.WRITE_SR_RESPONSE);
@@ -45,7 +45,7 @@ public class JennicEraseFlashOperation extends AbstractOperation<Void> implement
 			throw new FlashEraseFailedException();
 		}
 		
-		if (isCanceled()) {
+		if (context.isCanceled()) {
 			return;
 		}
 		
@@ -61,12 +61,12 @@ public class JennicEraseFlashOperation extends AbstractOperation<Void> implement
 	}
 	
 	@Override
-	public Void execute(final ProgressManager progressManager) throws Exception {
-		executeSubOperation(enterProgramModeProvider.get(), progressManager.createSub(0.25f));
+	public Void run(final ProgressManager progressManager, OperationContext context) throws Exception {
+		context.run(enterProgramModeProvider.get(), progressManager, 0.25f);
 		try {
-			eraseFlash(progressManager.createSub(0.5f));
+			eraseFlash(progressManager.createSub(0.5f), context);
 		} finally {
-			executeSubOperation(leaveProgramModeProvider.get(), progressManager.createSub(0.25f));
+			context.run(leaveProgramModeProvider.get(), progressManager, 0.25f);
 		}
 		return null;
 	}

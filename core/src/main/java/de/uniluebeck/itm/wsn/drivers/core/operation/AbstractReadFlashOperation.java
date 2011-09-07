@@ -6,7 +6,7 @@ package de.uniluebeck.itm.wsn.drivers.core.operation;
  * 
  * @author Malte Legenhausen
  */
-public abstract class AbstractReadFlashOperation extends AbstractOperation<byte[]> implements ReadFlashOperation {
+public abstract class AbstractReadFlashOperation implements ReadFlashOperation {
 
 	/**
 	 * The start address.

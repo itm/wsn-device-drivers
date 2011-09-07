@@ -8,6 +8,6 @@ import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
  * 
  * @author Malte Legenhausen
  */
-public interface ReadMacAddressOperation extends Operation<MacAddress> {
+public interface ReadMacAddressOperation extends OperationRunnable<MacAddress> {
 
 }

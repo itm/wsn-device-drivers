@@ -8,6 +8,7 @@ import com.google.inject.Inject;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractWriteFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 
 public class JennicWriteFlashOperation extends AbstractWriteFlashOperation {
@@ -33,13 +34,13 @@ public class JennicWriteFlashOperation extends AbstractWriteFlashOperation {
 	}
 	
 	@Override
-	public Void execute(final ProgressManager monitor) throws Exception {
+	public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
 		log.trace("Writing to flash...");
-		executeSubOperation(enterProgramModeOperation, monitor.createSub(0.5f));
+		context.run(enterProgramModeOperation, progressManager, 0.5f);
 		try {
 			helper.writeFlash(getAddress(), getData());
 		} finally {
-			executeSubOperation(leaveProgramModeOperation, monitor.createSub(0.5f));
+			context.run(leaveProgramModeOperation, progressManager, 0.5f);
 		}
 		log.trace("Flash written");
 		return null;

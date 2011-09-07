@@ -10,7 +10,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.WriteFlashOperation;
  * 
  * @author Malte Legenhausen
  */
-public class MockWriteFlashOperation extends AbstractMockOperation<Void> implements WriteFlashOperation {
+public class MockWriteFlashOperation extends AbstractMockOperationRunnable<Void> implements WriteFlashOperation {
 	
 	/**
 	 * The sleep time for a write operation.

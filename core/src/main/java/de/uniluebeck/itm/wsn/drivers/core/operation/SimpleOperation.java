@@ -1,8 +1,7 @@
 package de.uniluebeck.itm.wsn.drivers.core.operation;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Objects.firstNonNull;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
@@ -13,7 +12,6 @@ import org.apache.commons.lang3.event.EventListenerSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Objects;
 import com.google.common.util.concurrent.TimeLimiter;
 import com.google.common.util.concurrent.UncheckedTimeoutException;
 import com.google.inject.Inject;
@@ -22,15 +20,15 @@ import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 import de.uniluebeck.itm.wsn.drivers.core.util.ClassUtil;
 
 /**
- * An abstract operation.
- * If no other timeout is set the operation will be canceled automatically after the <code>DEFAULT_TIMEOUT</code>.
- * The result of a timed out operation is null also when the operation completed at the same time.
+ * An abstract runnable.
+ * If no other timeout is set the runnable will be canceled automatically after the <code>DEFAULT_TIMEOUT</code>.
+ * The result of a timed out runnable is null also when the runnable completed at the same time.
  * 
  * @author Malte Legenhausen
  *
- * @param <T> The return type of the operation.
+ * @param <T> The return type of the runnable.
  */
-public abstract class AbstractOperation<T> implements Operation<T> {
+public class SimpleOperation<T> implements Operation<T>, OperationContext {
 	
 	/**
 	 * Default timeout is set to 5 minutes.
@@ -40,36 +38,38 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	/**
 	 * Logger for this class.
 	 */
-	private static final Logger LOG = LoggerFactory.getLogger(Operation.class);
+	private static final Logger LOG = LoggerFactory.getLogger(OperationRunnable.class);
 	
 	/**
-	 * Sub <code>Operation</code> that is currently running.
-	 */
-	private Operation<?> subOperation;
-	
-	/**
-	 * Listeners for <code>Operation</code> changes.
+	 * Listeners for <code>OperationRunnable</code> changes.
 	 */
 	private final EventListenerSupport<OperationListener<T>> listeners = 
 			EventListenerSupport.create(ClassUtil.<OperationListener<T>>castClass(OperationListener.class));
 	
+	private final OperationRunnable<T> runnable;
+	
 	/**
-	 * Limiter for the execution time of an operation.
+	 * Limiter for the execution time of an runnable.
 	 */
-	private TimeLimiter timeLimiter;
+	private final TimeLimiter timeLimiter;
 	
 	/**
 	 * The timeout after which the application will be canceled.
 	 */
-	private long timeout = DEFAULT_TIMEOUT;
+	private final long timeout;
 	
 	/**
-	 * The callback that is called when the operation has finished, canceled or when an exception occured.
+	 * The callback that is called when the runnable has finished, canceled or when an exception occured.
 	 */
-	private OperationCallback<T> callback = new OperationCallbackAdapter<T>();
+	private final OperationCallback<T> callback;
 	
 	/**
-	 * The current state of the <code>Operation</code>.
+	 * ProgressManager used for tracking the progress of the <code>OperationRunnable</code>.
+	 */
+	private final ProgressManager progressManager;
+	
+	/**
+	 * The current state of the <code>OperationRunnable</code>.
 	 */
 	private State state = State.WAITING;
 	
@@ -81,19 +81,14 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	/**
 	 * Constructor.
 	 */
-	public AbstractOperation() {
-		
-	}
-	
-	@Override
-	public void setCallback(@Nullable OperationCallback<T> aCallback) {
-		callback = Objects.firstNonNull(aCallback, new OperationCallbackAdapter<T>());
-	}
-	
 	@Inject
-	@Override
-	public void setTimeLimiter(TimeLimiter timeLimiter) {
+	public SimpleOperation(TimeLimiter timeLimiter, ProgressManager progressManager, OperationRunnable<T> runnable, 
+			long timeout, @Nullable OperationCallback<T> callback) {
 		this.timeLimiter = timeLimiter;
+		this.progressManager = progressManager;
+		this.runnable = runnable;
+		this.timeout = timeout;
+		this.callback = firstNonNull(callback, new OperationCallbackAdapter<T>());
 	}
 	
 	@Override
@@ -103,7 +98,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 		callback.onExecute();
 		T result = null;
 		try {
-			// Cancel execution if operation was canceled before operation changed to running.
+			// Cancel execution if runnable was canceled before runnable changed to running.
 			if (!canceled) {
 				result = executeOperation();
 			}
@@ -132,12 +127,11 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	}
 	
 	private T executeOperation() throws Exception {
-		final ProgressManager progressManager = new RootProgressManager(callback);
 		progressManager.worked(0.0f);
-		Callable<T> callable = new Callable<T>() {
+		final Callable<T> callable = new Callable<T>() {
 			@Override
 			public T call() throws Exception {
-				return execute(progressManager);
+				return runnable.run(progressManager, SimpleOperation.this);
 			}
 		};
 		T result = timeLimiter.callWithTimeout(callable, timeout, TimeUnit.MILLISECONDS, false);
@@ -145,29 +139,30 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 		return result;
 	}
 	
-	/**
-	 * Call this method when another <code>Operation</code> has to be executed while this <code>Operation</code>.
-	 * 
-	 * @param <R> The return type of the sub <code>Operation</code>.
-	 * @param operation The sub <code>Operation</code> that has to be executed.
-	 * @param progressManager The progress manager for observing the progress.
-	 * @return The result of the sub <code>Operation</code>.
-	 * @throws Exception Any exception throws be the operation.
-	 */
-	protected <R> R executeSubOperation(Operation<R> operation, ProgressManager progressManager) throws Exception {
-		checkNotNull(operation, "Null operations are not allowed");
-		checkNotNull(progressManager, "Null ProgressManager is not allowed.");
-		subOperation = operation;
-		final R result = operation.execute(progressManager);
-		progressManager.done();
-		subOperation = null;
+	@Override
+	public <R> R run(OperationRunnable<R> subRunnable, ProgressManager aProgressManager) throws Exception {
+		checkNotNull(subRunnable, "Null operations are not allowed");
+		checkNotNull(aProgressManager, "Null ProgressManager is not allowed.");
+		final R result = subRunnable.run(aProgressManager, this);
+		aProgressManager.done();
+		return result;
+	}
+	
+	@Override
+	public <R> R run(OperationRunnable<R> subRunnable, ProgressManager aProgressManager, float subFraction) 
+			throws Exception {
+		checkNotNull(subRunnable, "Null operations are not allowed");
+		checkNotNull(aProgressManager, "Null ProgressManager is not allowed.");
+		ProgressManager subProgressManager = aProgressManager.createSub(subFraction);
+		final R result = subRunnable.run(subProgressManager, this);
+		subProgressManager.done();
 		return result;
 	}
 	
 	/**
 	 * Thread safe state change function.
 	 * 
-	 * @param newState The new State of this operation.
+	 * @param newState The new State of this runnable.
 	 */
 	private void setState(State newState) {
 		synchronized (state) {
@@ -179,7 +174,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	}
 	
 	private void fireBeforeStateChangedEvent(StateChangedEvent<T> event) {
-		String msg = "Operation state of {} is about to change from {} to {}";
+		String msg = "OperationRunnable state of {} is about to change from {} to {}";
 		LOG.trace(msg, new Object[] {this.getClass().getName(), event.getOldState(), event.getNewState()});
 		listeners.fire().beforeStateChanged(event);
 	}
@@ -190,7 +185,7 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	 * @param event The state change event.
 	 */
 	private void fireAfterStateChangedEvent(StateChangedEvent<T> event) {
-		String msg = "Operation state of {} changed from {} to {}";
+		String msg = "OperationRunnable state of {} changed from {} to {}";
 		LOG.trace(msg, new Object[] {this.getClass().getName(), event.getOldState(), event.getNewState()});
 		listeners.fire().afterStateChanged(event);
 	}
@@ -198,19 +193,6 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 	@Override
 	public State getState() {
 		return state;
-	}
-	
-	/**
-	 * Method will throw an <code>IllegalStateException</code> when 
-	 * trying to change the timeout when the operation is in running state.
-	 * 
-	 * @param timeout The timeout of the operation.
-	 */
-	@Override
-	public void setTimeout(long timeout) {
-		checkArgument(timeout >= 0, "Negative timeout is not allowed");
-		checkState(!State.RUNNING.equals(state), "Timeout can not be set when operation is in running state");
-		this.timeout = timeout;
 	}
 
 	@Override
@@ -230,9 +212,6 @@ public abstract class AbstractOperation<T> implements Operation<T> {
 
 	@Override
 	public void cancel() {
-		if (subOperation != null) {
-			subOperation.cancel();
-		}
 		canceled = true;
 	}
 	

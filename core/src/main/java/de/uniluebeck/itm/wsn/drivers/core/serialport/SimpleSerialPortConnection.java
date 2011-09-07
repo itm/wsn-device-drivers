@@ -146,8 +146,7 @@ public class SimpleSerialPortConnection extends AbstractConnection
 				final CommPortIdentifier commPortIdentifier = (CommPortIdentifier) input;
 				return commPortIdentifier.getName().equals(port);
 			}
-		}
-		);
+		});
 
 		serialPort = (SerialPort) commPortIdentifier.open(getClass().getName(), MAX_CONNECTION_TIMEOUT);
 		serialPort.notifyOnDataAvailable(true);

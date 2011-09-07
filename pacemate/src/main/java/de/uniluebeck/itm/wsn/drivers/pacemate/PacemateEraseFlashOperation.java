@@ -5,13 +5,13 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 
-public class PacemateEraseFlashOperation extends AbstractOperation<Void> implements EraseFlashOperation {
+public class PacemateEraseFlashOperation implements EraseFlashOperation {
 
 	/**
 	 * Logger for this class.
@@ -37,7 +37,7 @@ public class PacemateEraseFlashOperation extends AbstractOperation<Void> impleme
 		this.leaveProgramModeOperation = leaveProgramModeOperation;
 	}
 	
-	private void eraseFlash(final ProgressManager progressManager) throws Exception {
+	private void eraseFlash(ProgressManager progressManager, OperationContext context) throws Exception {
 		helper.clearStreamData();
 		helper.autobaud();
 
@@ -45,7 +45,7 @@ public class PacemateEraseFlashOperation extends AbstractOperation<Void> impleme
 
 		// Return with success if the user has requested to cancel this
 		// operation
-		if (isCanceled()) {
+		if (context.isCanceled()) {
 			return;
 		}
 		
@@ -56,13 +56,13 @@ public class PacemateEraseFlashOperation extends AbstractOperation<Void> impleme
 	}
 	
 	@Override
-	public Void execute(final ProgressManager progressManager) throws Exception {
+	public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
 		log.debug("Erasing whole flash...");
-		executeSubOperation(enterProgramModeOperation, progressManager.createSub(0.25f));
+		context.run(enterProgramModeOperation, progressManager.createSub(0.25f));
 		try {
-			eraseFlash(progressManager.createSub(0.5f));
+			eraseFlash(progressManager.createSub(0.5f), context);
 		} finally {
-			executeSubOperation(leaveProgramModeOperation, progressManager.createSub(0.25f));
+			context.run(leaveProgramModeOperation, progressManager.createSub(0.25f));
 		}
 		log.debug("Flash completly erased");
 		return null;

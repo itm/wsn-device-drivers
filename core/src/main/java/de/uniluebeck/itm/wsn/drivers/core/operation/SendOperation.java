@@ -4,12 +4,12 @@ import com.google.inject.ImplementedBy;
 
 
 /**
- * Interface that defines an <code>Operation</code> that sends a <code>MessagePacket</code> to a device.
+ * Interface that defines an <code>OperationRunnable</code> that sends a <code>MessagePacket</code> to a device.
  * 
  * @author Malte Legenhausen
  */
 @ImplementedBy(SimpleSendOperation.class)
-public interface SendOperation extends Operation<Void> {
+public interface SendOperation extends OperationRunnable<Void> {
 
 	/**
 	 * The <code>MessagePacket</code> that has to be send to the device.

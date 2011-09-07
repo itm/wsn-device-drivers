@@ -8,7 +8,7 @@ package de.uniluebeck.itm.wsn.drivers.core.operation;
  * 
  * @author Malte Legenhausen
  */
-public abstract class AbstractWriteFlashOperation extends AbstractOperation<Void> implements WriteFlashOperation {
+public abstract class AbstractWriteFlashOperation implements WriteFlashOperation {
 
 	/**
 	 * The start address in the flash where the given data will be written.

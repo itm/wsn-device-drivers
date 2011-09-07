@@ -5,7 +5,7 @@ package de.uniluebeck.itm.wsn.drivers.core.operation;
  * 
  * @author Malte Legenhausen
  */
-public interface WriteFlashOperation extends Operation<Void> {
+public interface WriteFlashOperation extends OperationRunnable<Void> {
 
 	/**
 	 * Method for defining the data that has to be written to the flash memory.

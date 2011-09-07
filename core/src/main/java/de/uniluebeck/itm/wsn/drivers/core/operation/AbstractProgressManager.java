@@ -1,6 +1,6 @@
 package de.uniluebeck.itm.wsn.drivers.core.operation;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
 
 
 /**
@@ -22,7 +22,7 @@ public abstract class AbstractProgressManager implements ProgressManager {
 	
 	@Override
 	public void worked(float amount) {
-		Preconditions.checkArgument(amount >= 0.0f, "Amount can not be negative");
+		checkArgument(amount >= 0.0f, "Amount can not be negative");
 		float result = amount;
 		if (progress + amount > 1.0f) {
 			result = 1.0f - progress;
