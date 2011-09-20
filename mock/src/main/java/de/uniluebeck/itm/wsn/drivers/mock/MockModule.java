@@ -22,7 +22,7 @@ public class MockModule extends AbstractModule {
 		bind(GetChipTypeOperation.class).to(MockGetChipTypeOperation.class);
 		bind(ProgramOperation.class).to(MockProgramOperation.class);
 		bind(ReadFlashOperation.class).to(MockReadFlashOperation.class);
-		bind(ReadMacAddressOperation.class).to(MockReadMacAddress.class);
+		bind(ReadMacAddressOperation.class).to(MockReadMacAddressOperation.class);
 		bind(ResetOperation.class).to(MockResetOperation.class);
 		bind(SendOperation.class).to(MockSendOperation.class);
 		bind(WriteMacAddressOperation.class).to(MockWriteMacAddressOperation.class);

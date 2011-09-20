@@ -10,7 +10,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
  * 
  * @author Malte Legenhausen
  */
-public class MockReadFlashOperation extends AbstractMockOperationRunnable<byte[]> implements ReadFlashOperation {
+public class MockReadFlashOperation extends AbstractMockOperation<byte[]> implements ReadFlashOperation {
 	
 	/**
 	 * The start address of the read operation.

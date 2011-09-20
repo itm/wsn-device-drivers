@@ -12,7 +12,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
  *
  * @param <T> The return type of the operation.
  */
-public abstract class AbstractMockOperationRunnable<T> implements OperationRunnable<T> {
+public abstract class AbstractMockOperation<T> implements OperationRunnable<T> {
 
 	/**
 	 * Default amout of sleep time between each iteration.
@@ -43,7 +43,7 @@ public abstract class AbstractMockOperationRunnable<T> implements OperationRunna
 	 * Constructor.
 	 * Sets sleep = 100 and steps = 10 as default.
 	 */
-	public AbstractMockOperationRunnable() {
+	public AbstractMockOperation() {
 		this(DEFAULT_SLEEP, DEFAULT_STEPS);
 	}
 	
@@ -53,7 +53,7 @@ public abstract class AbstractMockOperationRunnable<T> implements OperationRunna
 	 * @param sleep The amount of sleep time between each iteration.
 	 * @param steps The amount of iterations.
 	 */
-	public AbstractMockOperationRunnable(final int sleep, final int steps) {
+	public AbstractMockOperation(final int sleep, final int steps) {
 		this.sleep = sleep;
 		this.steps = steps;
 		this.stepSize = 1.0f / steps;

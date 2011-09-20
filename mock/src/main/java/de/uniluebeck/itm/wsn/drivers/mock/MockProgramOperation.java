@@ -10,7 +10,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
  * 
  * @author Malte Legenhausen
  */
-public class MockProgramOperation extends AbstractMockOperationRunnable<Void> implements ProgramOperation {
+public class MockProgramOperation extends AbstractMockOperation<Void> implements ProgramOperation {
 	
 	/**
 	 * The binarry image that has to be written to the device.

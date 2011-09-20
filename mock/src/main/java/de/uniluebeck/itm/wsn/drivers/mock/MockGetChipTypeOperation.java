@@ -11,7 +11,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
  * 
  * @author Malte Legenhausen
  */
-public class MockGetChipTypeOperation extends AbstractMockOperationRunnable<ChipType> implements GetChipTypeOperation {
+public class MockGetChipTypeOperation extends AbstractMockOperation<ChipType> implements GetChipTypeOperation {
 	
 	/**
 	 * The <code>MockConfiguration</code> from which the <code>ChipType</code> has to be received.

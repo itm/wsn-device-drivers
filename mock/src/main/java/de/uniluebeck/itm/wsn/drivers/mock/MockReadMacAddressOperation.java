@@ -11,7 +11,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;
  * 
  * @author Malte Legenhausen
  */
-public class MockReadMacAddress extends AbstractMockOperationRunnable<MacAddress> implements ReadMacAddressOperation {
+public class MockReadMacAddressOperation extends AbstractMockOperation<MacAddress> implements ReadMacAddressOperation {
 	
 	/**
 	 * The <code>MockConfiguration</code> of the <code>MockDevice</code>.
@@ -24,7 +24,7 @@ public class MockReadMacAddress extends AbstractMockOperationRunnable<MacAddress
 	 * @param configuration The <code>MockConfiguration</code> of the <code>MockDevice</code>.
 	 */
 	@Inject
-	public MockReadMacAddress(MockConfiguration configuration) {
+	public MockReadMacAddressOperation(MockConfiguration configuration) {
 		this.configuration = configuration;
 	}
 	

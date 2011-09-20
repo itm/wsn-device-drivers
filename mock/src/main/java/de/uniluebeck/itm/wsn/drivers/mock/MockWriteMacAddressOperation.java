@@ -14,7 +14,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
  * 
  * @author Malte Legenhausen
  */
-public class MockWriteMacAddressOperation extends AbstractMockOperationRunnable<Void> implements WriteMacAddressOperation {
+public class MockWriteMacAddressOperation extends AbstractMockOperation<Void> implements WriteMacAddressOperation {
 	
 	/**
 	 * Logger for this class.

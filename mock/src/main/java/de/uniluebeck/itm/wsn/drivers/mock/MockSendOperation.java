@@ -10,7 +10,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.SendOperation;
  * 
  * @author Malte Legenhausen
  */
-public class MockSendOperation extends AbstractMockOperationRunnable<Void> implements SendOperation {
+public class MockSendOperation extends AbstractMockOperation<Void> implements SendOperation {
 	
 	/**
 	 * The <code>MessagePacket</code> that has to be send.
