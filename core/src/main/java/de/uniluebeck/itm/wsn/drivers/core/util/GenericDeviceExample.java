@@ -20,6 +20,8 @@ import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import de.uniluebeck.itm.wsn.drivers.core.concurrent.OperationExecutor;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationCallback;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationCallbackAdapter;
+import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManagerFactory;
+import de.uniluebeck.itm.wsn.drivers.core.operation.RoundedProgressManagerFactory;
 
 
 /**
@@ -47,7 +49,7 @@ public class GenericDeviceExample {
 	/**
 	 * Timeout for the read mac address operation.
 	 */
-	private static final int READ_MAC_ADDRESS_TIMEOUT = 100000;
+	private static final int READ_MAC_ADDRESS_TIMEOUT = 10000;
 	
 	/**
 	 * Timeout for writing the mac address.
@@ -129,7 +131,13 @@ public class GenericDeviceExample {
 	}
 	
 	public void setModule(Module module) {
-		injector = Guice.createInjector(new DeviceModule(), module);
+		injector = Guice.createInjector(new DeviceModule() {
+			@Override
+			protected void configure() {
+				super.configure();
+				bind(ProgressManagerFactory.class).to(RoundedProgressManagerFactory.class);
+			}
+		}, module);
 	}
 
 	/**

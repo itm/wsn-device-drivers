@@ -24,7 +24,7 @@ public interface ProgressManager {
 	 * @param amount The amount of progress the manager is allowed to handle.
 	 * @return The child progress manager for the given amount of progress.
 	 */
-	ProgressManager createSub(final float amount);
+	ProgressManager createSub(float amount);
 	
 	/**
 	 * Use this method to raise the amount of work that was already done.
@@ -32,7 +32,7 @@ public interface ProgressManager {
 	 * 
 	 * @param amount The worked amount.
 	 */
-	void worked(final float amount);
+	void worked(float amount);
 	
 	/**
 	 * Set the worked amount of 1.0f.
