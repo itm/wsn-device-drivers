@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.wsn.drivers.core.util;
+package de.uniluebeck.itm.wsn.drivers.test;
 
 import java.io.IOException;
 import java.io.InputStream;

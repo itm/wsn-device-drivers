@@ -2,7 +2,6 @@ package de.uniluebeck.itm.wsn.drivers.test;
 
 import java.io.InputStream;
 
-import de.uniluebeck.itm.wsn.drivers.core.util.GenericDeviceExample;
 import de.uniluebeck.itm.wsn.drivers.pacemate.PacemateModule;
 
 public class PacemateDeviceExample {
