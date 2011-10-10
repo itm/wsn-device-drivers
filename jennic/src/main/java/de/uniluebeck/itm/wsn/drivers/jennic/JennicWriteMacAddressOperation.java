@@ -60,7 +60,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 		
 		// Read the first sector
 		byte[][] sector = readSector(progressManager.createSub(0.875f), context, Sector.FIRST);
-
+		
 		// Check if this operation has been cancelled
 		if (context.isCanceled()) {
 			return;
