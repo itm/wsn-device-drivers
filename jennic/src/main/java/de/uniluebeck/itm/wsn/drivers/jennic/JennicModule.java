@@ -27,7 +27,6 @@ public class JennicModule extends AbstractModule {
 		bind(LeaveProgramModeOperation.class).to(SerialPortLeaveProgramModeOperation.class);
 		bind(EraseFlashOperation.class).to(JennicEraseFlashOperation.class);
 		bind(GetChipTypeOperation.class).to(JennicGetChipTypeOperation.class);
-		bind(GetFlashHeaderOperation.class).to(JennicGetFlashHeaderOperation.class);
 		bind(ProgramOperation.class).to(JennicProgramOperation.class);
 		bind(ReadFlashOperation.class).to(JennicReadFlashOperation.class);
 		bind(ReadMacAddressOperation.class).to(JennicReadMacAddressOperation.class);

@@ -13,6 +13,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
+import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
 import de.uniluebeck.itm.wsn.drivers.core.util.BinDataBlock;
 
@@ -25,9 +26,9 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 	
 	private final JennicHelper helper;
 	
-	private final GetFlashHeaderOperation getFlashHeaderOperation;
-	
 	private final GetChipTypeOperation getChipTypeOperation;
+	
+	private final ReadFlashOperation readFlashOperation;
 	
 	private final EnterProgramModeOperation enterProgramModeOperation;
 	
@@ -37,16 +38,16 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 	
 	@Inject
 	public JennicProgramOperation(JennicHelper helper, 
-			GetFlashHeaderOperation getFlashHeaderOperation,
 			GetChipTypeOperation getChipTypeOperation,
 			EnterProgramModeOperation enterProgramModeOperation,
 			LeaveProgramModeOperation leaveProgramModeOperation,
+			ReadFlashOperation readFlashOperation,
 			ResetOperation resetOperation) {
 		this.helper = helper;
-		this.getFlashHeaderOperation = getFlashHeaderOperation;
 		this.getChipTypeOperation = getChipTypeOperation;
 		this.enterProgramModeOperation = enterProgramModeOperation;
 		this.leaveProgramModeOperation = leaveProgramModeOperation;
+		this.readFlashOperation = readFlashOperation;
 		this.resetOperation = resetOperation;
 	}
 	
@@ -93,16 +94,18 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 		return binData;
 	}
 	
-	private void insertFlashHeaderToImage(JennicBinData binData, final ProgressManager progressManager, OperationContext context) throws Exception {
-		// insert flash header of helper
-		final byte[] flashHeader = context.run(getFlashHeaderOperation, progressManager);
+	private void insertFlashHeaderToImage(ChipType chipType, JennicBinData binData, ProgressManager progressManager, OperationContext context) throws Exception {
+		final int address = chipType.getHeaderStart();
+		final int length = chipType.getHeaderLength();
+		readFlashOperation.setAddress(address, length);
+		final byte[] flashHeader = context.run(readFlashOperation, progressManager);
 		binData.insertHeader(flashHeader);
 	}
 	
 	public Void run(final ProgressManager progressManager, OperationContext context) throws Exception {
 		final ChipType chipType = context.run(getChipTypeOperation, progressManager, 0.0625f);
 		final JennicBinData binData = validateImage(chipType);
-		insertFlashHeaderToImage(binData, progressManager.createSub(0.0625f), context);
+		insertFlashHeaderToImage(chipType, binData, progressManager.createSub(0.0625f), context);
 		
 		context.run(enterProgramModeOperation, progressManager, 0.0625f);
 		try {
