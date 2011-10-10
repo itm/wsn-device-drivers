@@ -1,4 +1,4 @@
-/**********************************************************************************************************************
+package de.uniluebeck.itm.wsn.drivers.test; /**********************************************************************************************************************
  * Copyright (c) 2010, coalesenses GmbH                                                                               *
  * All rights reserved.                                                                                               *
  *                                                                                                                    *
@@ -20,8 +20,6 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY   *
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                                *
  **********************************************************************************************************************/
-
-package de.uniluebeck.itm.wsn.drivers.isense;
 
 import de.uniluebeck.itm.tr.util.StringUtils;
 
@@ -99,7 +97,7 @@ public class MessagePacket {
 	}
 
 	/**
-	 * Parse a given byte stream to a <code>MessagePacket</code>.
+	 * Parse a given byte stream to a <code>de.uniluebeck.itm.wsn.drivers.test.MessagePacket</code>.
 	 * 
 	 * @param buffer The byte stream.
 	 * @param offset The start of the message packet in the buffer.

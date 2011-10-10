@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.wsn.drivers.isense;
+package de.uniluebeck.itm.wsn.drivers.test;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +24,7 @@ public class MessagePacketReceiver implements ByteReceiver {
 	private static final int ADDIONAL_LENGTH = 100;
 
 	/**
-	 * Data buffer for <code>MessagePacket</code> objects.
+	 * Data buffer for <code>de.uniluebeck.itm.wsn.drivers.test.MessagePacket</code> objects.
 	 */
 	private byte[] packet = new byte[LENGTH];
 
@@ -114,7 +114,7 @@ public class MessagePacketReceiver implements ByteReceiver {
 	}
 	
 	/**
-	 * Override this method for processing a received <code>MessagePacket</code>.
+	 * Override this method for processing a received <code>de.uniluebeck.itm.wsn.drivers.test.MessagePacket</code>.
 	 * 
 	 * @param packet The received message packet.
 	 */

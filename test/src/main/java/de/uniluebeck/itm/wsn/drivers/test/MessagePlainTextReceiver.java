@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.wsn.drivers.isense;
+package de.uniluebeck.itm.wsn.drivers.test;
 
 import java.util.Arrays;
 
