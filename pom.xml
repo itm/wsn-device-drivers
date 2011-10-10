@@ -46,7 +46,7 @@
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>wsn-device-drivers-nulldevice</artifactId>
+				<artifactId>wsn-device-drivers-test</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
