@@ -18,6 +18,7 @@ import org.apache.commons.lang3.event.EventListenerSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.util.concurrent.ListenableFutureTask;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -122,19 +123,19 @@ public class ExecutorServiceOperationExecutor implements OperationExecutor {
 	}
 	
 	private <T> OperationFuture<T> addOperationAndExecuteNext(final Operation<T> operation) {
-		OperationFuture<T> future = new OperationFutureTask<T>(operation);
+		ListenableFutureTask<T> task = ListenableFutureTask.create(operation);
 		Runnable afterFinishRunnable = new Runnable() {
 			@Override
 			public void run() {
 				removeOperationAndExecuteNext(operation);
 			}
 		};
-		future.addListener(afterFinishRunnable, executorService);
+		task.addListener(afterFinishRunnable, executorService);
 		synchronized (operations) {
-			addOperation(operation, future);
+			addOperation(operation, task);
 			executeNextOrStartIdleThread();
 		}
-		return future;
+		return new OperationFutureTask<T>(task, operation);
 	}
 	
 	private void removeOperationAndExecuteNext(Operation<?> operation) {
