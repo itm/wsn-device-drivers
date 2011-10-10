@@ -21,7 +21,7 @@
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>wsn-device-drivers-isense</artifactId>
+				<artifactId>wsn-device-drivers-common</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -46,7 +46,7 @@
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>wsn-device-drivers-nulldevice</artifactId>
+				<artifactId>wsn-device-drivers-test</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
@@ -199,12 +199,13 @@
 
 	<modules>
 		<module>core</module>
-		<module>isense</module>
+		<module>common</module>
 		<module>jennic</module>
 		<module>pacemate</module>
 		<module>telosb</module>
 		<module>factories</module>
 		<module>mock</module>
+		<module>test</module>
 	</modules>
 
 	<distributionManagement>

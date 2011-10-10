@@ -18,10 +18,6 @@
 			<groupId>de.uniluebeck.itm</groupId>
 			<artifactId>wsn-device-drivers-core</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>de.uniluebeck.itm</groupId>
-			<artifactId>wsn-device-drivers-isense</artifactId>
-		</dependency>
 
 	</dependencies>
 

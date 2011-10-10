@@ -20,7 +20,7 @@
 		</dependency>
 		<dependency>
 			<groupId>de.uniluebeck.itm</groupId>
-			<artifactId>wsn-device-drivers-isense</artifactId>
+			<artifactId>wsn-device-drivers-common</artifactId>
 		</dependency>
 
 	</dependencies>
