@@ -27,6 +27,8 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 	 */
 	private static final Logger log = LoggerFactory.getLogger(JennicProgramOperation.class);
 	
+	private static final int MAX_RETRIES = 3;
+	
 	private final JennicHelper helper;
 	
 	private final GetChipTypeOperation getChipTypeOperation;
@@ -100,22 +102,18 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 	private void insertFlashHeaderToImage(ChipType chipType, JennicBinData binData, ProgressManager progressManager, OperationContext context) throws Exception {
 		final int address = chipType.getHeaderStart();
 		final int length = chipType.getHeaderLength();
-		byte[] flashHeader = null;
-		int i = 0;
-		for ( ; i < 3; ++i) {
+		for (int i = 0; i < MAX_RETRIES; ++i) {
 			ReadFlashOperation operation = readFlashOperationProvider.get();
 			operation.setAddress(address, length);
-			flashHeader = context.run(operation, progressManager);
-			if (!validateFlashHeader(flashHeader)) {
-				Thread.sleep(1000);
-			} else {
-				break;
+			byte[] flashHeader = context.run(operation, progressManager, 0.33f);
+			if (validateFlashHeader(flashHeader)) {
+				binData.insertHeader(flashHeader);
+				progressManager.done();
+				return;
 			}
+			Thread.sleep(1000);
 		}
-		if (i == 3) {
-			throw new FlashProgramFailedException("Unable to save mac address before flashing");
-		}
-		binData.insertHeader(flashHeader);
+		throw new FlashProgramFailedException("Unable to save mac address before flashing");
 	}
 	
 	/**
