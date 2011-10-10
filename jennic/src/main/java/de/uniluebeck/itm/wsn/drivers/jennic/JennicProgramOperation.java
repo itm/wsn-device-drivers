@@ -4,8 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
+import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
+import de.uniluebeck.itm.wsn.drivers.core.exception.FlashProgramFailedException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.ProgramChipMismatchException;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractProgramOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
@@ -24,11 +27,13 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 	 */
 	private static final Logger log = LoggerFactory.getLogger(JennicProgramOperation.class);
 	
+	private static final int MAX_RETRIES = 3;
+	
 	private final JennicHelper helper;
 	
 	private final GetChipTypeOperation getChipTypeOperation;
 	
-	private final ReadFlashOperation readFlashOperation;
+	private final Provider<ReadFlashOperation> readFlashOperationProvider;
 	
 	private final EnterProgramModeOperation enterProgramModeOperation;
 	
@@ -41,13 +46,13 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 			GetChipTypeOperation getChipTypeOperation,
 			EnterProgramModeOperation enterProgramModeOperation,
 			LeaveProgramModeOperation leaveProgramModeOperation,
-			ReadFlashOperation readFlashOperation,
+			Provider<ReadFlashOperation> readFlashOperationProvider,
 			ResetOperation resetOperation) {
 		this.helper = helper;
 		this.getChipTypeOperation = getChipTypeOperation;
 		this.enterProgramModeOperation = enterProgramModeOperation;
 		this.leaveProgramModeOperation = leaveProgramModeOperation;
-		this.readFlashOperation = readFlashOperation;
+		this.readFlashOperationProvider = readFlashOperationProvider;
 		this.resetOperation = resetOperation;
 	}
 	
@@ -97,9 +102,29 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 	private void insertFlashHeaderToImage(ChipType chipType, JennicBinData binData, ProgressManager progressManager, OperationContext context) throws Exception {
 		final int address = chipType.getHeaderStart();
 		final int length = chipType.getHeaderLength();
-		readFlashOperation.setAddress(address, length);
-		final byte[] flashHeader = context.run(readFlashOperation, progressManager);
-		binData.insertHeader(flashHeader);
+		for (int i = 0; i < MAX_RETRIES; ++i) {
+			ReadFlashOperation operation = readFlashOperationProvider.get();
+			operation.setAddress(address, length);
+			byte[] flashHeader = context.run(operation, progressManager, 0.33f);
+			if (validateFlashHeader(flashHeader)) {
+				binData.insertHeader(flashHeader);
+				progressManager.done();
+				return;
+			}
+			Thread.sleep(1000);
+		}
+		throw new FlashProgramFailedException("Unable to save mac address before flashing");
+	}
+	
+	/**
+	 * Checks if the mac address is not 0xFF...FF
+	 * 
+	 * @param header The flash header.
+	 * @return true if not else false
+	 */
+	private boolean validateFlashHeader(byte[] header) {
+		MacAddress macAddress = new MacAddress(header);
+		return MacAddress.HIGHEST_MAC_ADDRESS.equals(macAddress) == false;
 	}
 	
 	public Void run(final ProgressManager progressManager, OperationContext context) throws Exception {
