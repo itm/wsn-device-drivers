@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.wsn.drivers.test; /**********************************************************************************************************************
+package de.uniluebeck.itm.wsn.drivers.test.isense; /**********************************************************************************************************************
  * Copyright (c) 2010, coalesenses GmbH                                                                               *
  * All rights reserved.                                                                                               *
  *                                                                                                                    *
@@ -21,29 +21,122 @@ package de.uniluebeck.itm.wsn.drivers.test; /***********************************
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                                *
  **********************************************************************************************************************/
 
+import de.uniluebeck.itm.tr.util.StringUtils;
+
 /**
- * Class that represents the message in plain text.
+ * A message packet returned by a isense device.
  * 
  * @author Malte Legenhausen
  */
-public class MessagePlainText {
+public class MessagePacket {
 
-	/** 
-	 * The content of the message.
+	/** Special character */
+	public static final byte STX = 0x02;
+
+	/** Special character */
+	public static final byte ETX = 0x03;
+
+	/** Special character */
+	public static final byte DLE = 0x10;
+
+	/**
+	 * 
 	 */
-	private final byte[] content;
+	public static final byte CR = 0x0D;
+
+	/**
+	 * 
+	 */
+	public static final byte LF = 0x0A;
+
+	/** */
+	private static long nextIdCounter = 0;
+
+	/**
+	 * Byte mask for extracting the type.
+	 */
+	private static final int TYPE_MASK = 0xFF;
+
+	/** */
+	private byte[] content;
+
+	/** */
+	private int type = -1;
+
+	/** */
+	private long id = nextId();
+
+	/**
+	 * 
+	 */
+	protected MessagePacket() {
+	}
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param content The content of the message.
+	 * @param type The message type.
+	 * @param content The content as byte array.
 	 */
-	public MessagePlainText(final byte[] content) {
+	public MessagePacket(final int type, final byte[] content) {
+		this.type = type;
 		this.content = new byte[content.length];
 		System.arraycopy(content, 0, this.content, 0, content.length);
 	}
-	
+
+	/**
+	 * Generates the next unique id.
+	 * 
+	 * @return A unique long id.
+	 */
+	private synchronized static long nextId() {
+		if (nextIdCounter >= Long.MAX_VALUE - 1)
+			nextIdCounter = 0;
+
+		return ++nextIdCounter;
+	}
+
+	/**
+	 * Parse a given byte stream to a <code>de.uniluebeck.itm.wsn.drivers.test.MessagePacket</code>.
+	 * 
+	 * @param buffer The byte stream.
+	 * @param offset The start of the message packet in the buffer.
+	 * @param length The length of the message.
+	 * @return The parsed <code>MessagePacker</code>.
+	 */
+	public static MessagePacket parse(final byte[] buffer, final int offset, final int length) {
+		final int type = TYPE_MASK & ((int) buffer[offset]);
+		// Extract message content
+		final byte[] content = new byte[length - 1];
+		System.arraycopy(buffer, offset + 1, content, 0, length - 1);		
+		return new MessagePacket(type, content);
+	}
+
+	@Override
+	public String toString() {
+		return "Packet ID[" + id + "]: Type: [" + type + "], content: hex[" + StringUtils.toHexString(content) + "], string[" + new String(content) + "]";
+	}
+
 	public byte[] getContent() {
 		return content;
 	}
+
+	/**
+	 * Returns the current type
+	 * 
+	 * @return The type of the message.
+	 */
+	public int getType() {
+		return type;
+	}
+
+	/**
+	 * Returns the id
+	 * 
+	 * @return The unique id of this message.
+	 */
+	public long getId() {
+		return id;
+	}
+
 }

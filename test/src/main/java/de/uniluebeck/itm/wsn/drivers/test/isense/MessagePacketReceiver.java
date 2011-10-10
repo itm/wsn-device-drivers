@@ -1,9 +1,10 @@
-package de.uniluebeck.itm.wsn.drivers.test;
+package de.uniluebeck.itm.wsn.drivers.test.isense;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.tr.util.StringUtils;
+import de.uniluebeck.itm.wsn.drivers.test.ByteReceiver;
 
 public class MessagePacketReceiver implements ByteReceiver {
 

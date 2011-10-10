@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.wsn.drivers.test; /**********************************************************************************************************************
+/**********************************************************************************************************************
  * Copyright (c) 2010, coalesenses GmbH                                                                               *
  * All rights reserved.                                                                                               *
  *                                                                                                                    *
@@ -21,122 +21,139 @@ package de.uniluebeck.itm.wsn.drivers.test; /***********************************
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                                *
  **********************************************************************************************************************/
 
-import de.uniluebeck.itm.tr.util.StringUtils;
+package de.uniluebeck.itm.wsn.drivers.test.isense;
 
 /**
- * A message packet returned by a isense device.
- * 
- * @author Malte Legenhausen
+ * Contains constants to identify the packet types ({@link de.uniluebeck.itm.wsn.drivers.test.isense.devicedrivers.generic.MessagePacket#getType()}.
  */
-public class MessagePacket {
+public enum PacketType {
+	
+	ISENSE_ISHELL_INTERPRETER(0),
+	
+	RESET(1),
+	
+	SERAERIAL(2),
+	
+	TIMERESPONSE(3),
+	
+	CAMERA_APPLICATION(4),
+	
+	FUNCTIONTEST(4),
+	
+	AMR_APPLICATION(5),
+	
+	ACC_APPLICATION(6),
+	
+	OUT_VIRTUAL_RADIO(7),
+	
+	OUT_RESERVED_2(8),
+	
+	OUT_RESERVED_3(9),
+	
+	CUSTOM_OUT_1(10),
+	
+	CUSTOM_OUT_2(11),
+	
+	CUSTOM_OUT_3(12),
+	
+	HIBERNATION(5),
+	
+	OTAP(6),
+	
+	DATA_EXCHANGER(25),
+	
+	LOG(104),
+	
+	PLOT(105),
+	
+	FLASH_DUMP(106),
+	
+	PLOTX(107),
+	
+	JPEG(108),
 
-	/** Special character */
-	public static final byte STX = 0x02;
-
-	/** Special character */
-	public static final byte ETX = 0x03;
-
-	/** Special character */
-	public static final byte DLE = 0x10;
+	TIMEREQUEST(109),
+	
+	AUDIO(110),
+	
+	/**
+	 * UART Message Type for incoming SpyGlass Packets
+	 */
+	SPYGLASS(111),
+	
+	FLOATBUFFER(112),
+	
+	ISENSE_ISI_PACKET_TYPE_ISENSE_ID(113),
 
 	/**
-	 * 
+	 * UART Message Type for incoming virtual radio communication from the node
 	 */
-	public static final byte CR = 0x0D;
+	IN_VIRTUAL_RADIO(114),
+	
+	TOS_AMTYPE_PRINTF(100);
+	
+	private final int value;
+	
+	private PacketType(final int value) {
+		this.value = value;
+	}
 
-	/**
-	 * 
-	 */
-	public static final byte LF = 0x0A;
-
-	/** */
-	private static long nextIdCounter = 0;
-
-	/**
-	 * Byte mask for extracting the type.
-	 */
-	private static final int TYPE_MASK = 0xFF;
-
-	/** */
-	private byte[] content;
-
-	/** */
-	private int type = -1;
-
-	/** */
-	private long id = nextId();
-
-	/**
-	 * 
-	 */
-	protected MessagePacket() {
+	public int getValue() {
+		return value;
 	}
 
 	/**
-	 * Constructor.
-	 * 
-	 * @param type The message type.
-	 * @param content The content as byte array.
+	 * Corresponds to the first byte of the {@link de.uniluebeck.itm.wsn.drivers.test.isense.devicedrivers.generic.MessagePacket#getContent()}
 	 */
-	public MessagePacket(final int type, final byte[] content) {
-		this.type = type;
-		this.content = new byte[content.length];
-		System.arraycopy(content, 0, this.content, 0, content.length);
+	public enum LogType {
+
+		DEBUG(0),
+
+		FATAL(1);
+		
+		private final int value;
+		
+		private LogType(final int value) {
+			this.value = value;
+		}
+		
+		public int getValue() {
+			return value;
+		}
 	}
 
-	/**
-	 * Generates the next unique id.
-	 * 
-	 * @return A unique long id.
-	 */
-	private synchronized static long nextId() {
-		if (nextIdCounter >= Long.MAX_VALUE - 1)
-			nextIdCounter = 0;
+	public enum ISenseCommands {
 
-		return ++nextIdCounter;
+		ISENSE_ISI_COMMAND_SET_CHANNEL(2),
+
+		ISENSE_ISI_COMMAND_SEND_ID_TO_ISHELL(3),
+
+		ISENSE_ISI_COMMAND_ISHELL_TO_ROUTING(4);
+		
+		
+		private final int value;
+		
+		private ISenseCommands(final int value) {
+			this.value = value;
+		}
+
+		public int getValue() {
+			return value;
+		}
 	}
 
-	/**
-	 * Parse a given byte stream to a <code>de.uniluebeck.itm.wsn.drivers.test.MessagePacket</code>.
-	 * 
-	 * @param buffer The byte stream.
-	 * @param offset The start of the message packet in the buffer.
-	 * @param length The length of the message.
-	 * @return The parsed <code>MessagePacker</code>.
-	 */
-	public static MessagePacket parse(final byte[] buffer, final int offset, final int length) {
-		final int type = TYPE_MASK & ((int) buffer[offset]);
-		// Extract message content
-		final byte[] content = new byte[length - 1];
-		System.arraycopy(buffer, offset + 1, content, 0, length - 1);		
-		return new MessagePacket(type, content);
-	}
+	public enum ISenseRoutings {
 
-	@Override
-	public String toString() {
-		return "Packet ID[" + id + "]: Type: [" + type + "], content: hex[" + StringUtils.toHexString(content) + "], string[" + new String(content) + "]";
+		ISENSE_ISI_ROUTING_TREE_ROUTING(7);
+		
+		private final int value;
+		
+		private ISenseRoutings(final int value) {
+			this.value = value;
+		}
+		
+		public int getValue() {
+			return value;
+		}
 	}
-
-	public byte[] getContent() {
-		return content;
-	}
-
-	/**
-	 * Returns the current type
-	 * 
-	 * @return The type of the message.
-	 */
-	public int getType() {
-		return type;
-	}
-
-	/**
-	 * Returns the id
-	 * 
-	 * @return The unique id of this message.
-	 */
-	public long getId() {
-		return id;
-	}
-
 }

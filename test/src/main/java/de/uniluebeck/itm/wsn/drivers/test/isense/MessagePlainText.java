@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.wsn.drivers.test; /**********************************************************************************************************************
+package de.uniluebeck.itm.wsn.drivers.test.isense; /**********************************************************************************************************************
  * Copyright (c) 2010, coalesenses GmbH                                                                               *
  * All rights reserved.                                                                                               *
  *                                                                                                                    *
@@ -22,136 +22,28 @@ package de.uniluebeck.itm.wsn.drivers.test; /***********************************
  **********************************************************************************************************************/
 
 /**
- * Contains constants to identify the packet types ({@link de.uniluebeck.itm.wsn.devicedrivers.generic.MessagePacket#getType()}.
+ * Class that represents the message in plain text.
+ * 
+ * @author Malte Legenhausen
  */
-public enum PacketType {
-	
-	ISENSE_ISHELL_INTERPRETER(0),
-	
-	RESET(1),
-	
-	SERAERIAL(2),
-	
-	TIMERESPONSE(3),
-	
-	CAMERA_APPLICATION(4),
-	
-	FUNCTIONTEST(4),
-	
-	AMR_APPLICATION(5),
-	
-	ACC_APPLICATION(6),
-	
-	OUT_VIRTUAL_RADIO(7),
-	
-	OUT_RESERVED_2(8),
-	
-	OUT_RESERVED_3(9),
-	
-	CUSTOM_OUT_1(10),
-	
-	CUSTOM_OUT_2(11),
-	
-	CUSTOM_OUT_3(12),
-	
-	HIBERNATION(5),
-	
-	OTAP(6),
-	
-	DATA_EXCHANGER(25),
-	
-	LOG(104),
-	
-	PLOT(105),
-	
-	FLASH_DUMP(106),
-	
-	PLOTX(107),
-	
-	JPEG(108),
+public class MessagePlainText {
 
-	TIMEREQUEST(109),
-	
-	AUDIO(110),
-	
-	/**
-	 * UART Message Type for incoming SpyGlass Packets
+	/** 
+	 * The content of the message.
 	 */
-	SPYGLASS(111),
-	
-	FLOATBUFFER(112),
-	
-	ISENSE_ISI_PACKET_TYPE_ISENSE_ID(113),
+	private final byte[] content;
 
 	/**
-	 * UART Message Type for incoming virtual radio communication from the node
+	 * Constructor.
+	 * 
+	 * @param content The content of the message.
 	 */
-	IN_VIRTUAL_RADIO(114),
+	public MessagePlainText(final byte[] content) {
+		this.content = new byte[content.length];
+		System.arraycopy(content, 0, this.content, 0, content.length);
+	}
 	
-	TOS_AMTYPE_PRINTF(100);
-	
-	private final int value;
-	
-	private PacketType(final int value) {
-		this.value = value;
-	}
-
-	public int getValue() {
-		return value;
-	}
-
-	/**
-	 * Corresponds to the first byte of the {@link de.uniluebeck.itm.wsn.devicedrivers.generic.MessagePacket#getContent()}
-	 */
-	public enum LogType {
-
-		DEBUG(0),
-
-		FATAL(1);
-		
-		private final int value;
-		
-		private LogType(final int value) {
-			this.value = value;
-		}
-		
-		public int getValue() {
-			return value;
-		}
-	}
-
-	public enum ISenseCommands {
-
-		ISENSE_ISI_COMMAND_SET_CHANNEL(2),
-
-		ISENSE_ISI_COMMAND_SEND_ID_TO_ISHELL(3),
-
-		ISENSE_ISI_COMMAND_ISHELL_TO_ROUTING(4);
-		
-		
-		private final int value;
-		
-		private ISenseCommands(final int value) {
-			this.value = value;
-		}
-
-		public int getValue() {
-			return value;
-		}
-	}
-
-	public enum ISenseRoutings {
-
-		ISENSE_ISI_ROUTING_TREE_ROUTING(7);
-		
-		private final int value;
-		
-		private ISenseRoutings(final int value) {
-			this.value = value;
-		}
-		
-		public int getValue() {
-			return value;
-		}
+	public byte[] getContent() {
+		return content;
 	}
 }

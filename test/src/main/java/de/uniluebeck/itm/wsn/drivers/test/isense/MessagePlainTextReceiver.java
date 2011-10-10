@@ -1,6 +1,8 @@
-package de.uniluebeck.itm.wsn.drivers.test;
+package de.uniluebeck.itm.wsn.drivers.test.isense;
 
 import java.util.Arrays;
+
+import de.uniluebeck.itm.wsn.drivers.test.BufferedByteReceiver;
 
 
 public class MessagePlainTextReceiver extends BufferedByteReceiver {
