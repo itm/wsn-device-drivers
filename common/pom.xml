@@ -8,7 +8,7 @@
 		<relativePath>../</relativePath>
 	</parent>
 
-	<artifactId>wsn-device-drivers-isense</artifactId>
+	<artifactId>wsn-device-drivers-common</artifactId>
 	<name>WSN Device Drivers iSense</name>
 
 	<dependencies>
