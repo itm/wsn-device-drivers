@@ -30,12 +30,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 		this.eraseFlashOperation = eraseFlashOperation;
 	}
 	
-	private void program(ProgressManager progressManager, OperationContext context) throws Exception {		
-		helper.clearStreamData();
-		helper.autobaud();
-
-		helper.waitForBootLoader();
-
+	private void program(ProgressManager progressManager, OperationContext context) throws Exception {
 		// Return with success if the user has requested to cancel this
 		// operation
 		if (context.isCanceled()) {

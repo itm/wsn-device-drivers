@@ -31,22 +31,11 @@ public class PacemateEraseFlashOperation implements EraseFlashOperation {
 	@Override
 	@Program
 	public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
-		log.debug("Erasing whole flash...");
-		helper.clearStreamData();
-		helper.autobaud();
-
-		helper.waitForBootLoader();
-
-		// Return with success if the user has requested to cancel this
-		// operation
-		if (context.isCanceled()) {
-			return null;
-		}
-		
+		log.trace("Erasing whole flash...");		
 		helper.configureFlash(START_ADDRESS, END_ADDRESS);
 		progressManager.worked(0.25f);
 		helper.eraseFlash(START_ADDRESS, END_ADDRESS);
-		log.debug("Flash completly erased");
+		log.trace("Flash completly erased");
 		return null;
 	}
 }

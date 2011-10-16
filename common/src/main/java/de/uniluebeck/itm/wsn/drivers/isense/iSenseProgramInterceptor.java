@@ -1,13 +1,13 @@
-package de.uniluebeck.itm.wsn.drivers.core.serialport;
+package de.uniluebeck.itm.wsn.drivers.isense;
 
 import gnu.io.SerialPort;
 
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.wsn.drivers.core.exception.EnterProgramModeException;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.AbstractProgramInterceptor;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection.SerialPortMode;
 
 /**
@@ -15,48 +15,23 @@ import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection.Serial
  * 
  * @author Malte Legenhausen
  */
-public class ProgramInterceptor implements MethodInterceptor {
+public class iSenseProgramInterceptor extends AbstractProgramInterceptor {
 
 	/**
 	 * Logger for this class.
 	 */
-	private static final Logger LOG = LoggerFactory.getLogger(ProgramInterceptor.class);
+	private static final Logger LOG = LoggerFactory.getLogger(iSenseProgramInterceptor.class);
 	
 	/**
 	 * Sleep time between setting DTR and RTS.
 	 */
 	private static final int SLEEP = 200;
 	
-	private final SerialPortConnection connection;
-	
-	private boolean programMode = false;
-	
-	public ProgramInterceptor(SerialPortConnection connection) {
-		this.connection = connection;
+	public iSenseProgramInterceptor(SerialPortConnection connection) {
+		super(connection);
 	}
 	
-	@Override
-	public Object invoke(MethodInvocation invocation) throws Throwable {
-		if (programMode) {
-			return invocation.proceed();
-		}
-		
-		Object result = null;		
-		connection.prepare();
-		try {
-			enterProgramMode();
-			try {
-				result = invocation.proceed();
-			} finally {
-				leaveProgramMode();
-			}
-		} finally {
-			connection.release();
-		}
-		return result;
-	}
-	
-	private void enterProgramMode() throws Exception {
+	public void enterProgramMode(SerialPortConnection connection) throws Exception {
 		LOG.trace("Entering program mode...");
 		connection.setSerialPortMode(SerialPortMode.PROGRAM);
 		
@@ -74,15 +49,13 @@ public class ProgramInterceptor implements MethodInterceptor {
 			throw new EnterProgramModeException("Unable to enter program mode.");
 		}
 		connection.clear();
-		programMode = true;
 		LOG.trace("Program mode entered");
 	}
 	
-	private void leaveProgramMode() throws Exception {
+	public void leaveProgramMode(SerialPortConnection connection) throws Exception {
 		LOG.trace("Leaving program mode...");
 		connection.clear();
 		connection.setSerialPortMode(SerialPortMode.NORMAL);
-		programMode = false;
 		LOG.trace("Program mode left");
 	}
 }

@@ -18,27 +18,10 @@ public class PacemateReadFlashOperation extends AbstractReadFlashOperation {
 	
 	@Override
 	@Program
-	public byte[] run(ProgressManager progressManager, OperationContext context) throws Exception {
-		helper.clearStreamData();
-		helper.autobaud();
-
-		helper.waitForBootLoader();
-
-		// Return with success if the user has requested to cancel this
-		// operation
-		if (context.isCanceled()) {
-			return null;
-		}
-		
+	public byte[] run(ProgressManager progressManager, OperationContext context) throws Exception {		
 		// Send flash program request
 		helper.sendBootLoaderMessage(Messages.flashReadRequestMessage(getAddress(), getLength()));
 		progressManager.worked(0.5f);
-		
-		// Read flash program response
-		byte[] response = helper.receiveBootLoaderReplyReadData();
-		progressManager.done();
-		
-		// Return data
-		return response;
+		return helper.receiveBootLoaderReplyReadData();
 	}
 }

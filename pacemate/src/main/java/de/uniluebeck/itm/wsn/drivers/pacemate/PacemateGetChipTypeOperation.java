@@ -27,18 +27,7 @@ public class PacemateGetChipTypeOperation implements GetChipTypeOperation {
 	
 	@Override
 	@Program
-	public ChipType run(ProgressManager progressManager, OperationContext context) throws Exception {
-		helper.clearStreamData();
-		helper.autobaud();
-	
-		helper.waitForBootLoader();
-	
-		// Return with success if the user has requested to cancel this
-		// operation
-		if (context.isCanceled()) {
-			return null;
-		}
-		
+	public ChipType run(ProgressManager progressManager, OperationContext context) throws Exception {		
 		// Send chip type read request
 		helper.sendBootLoaderMessage(Messages.ReadPartIDRequestMessage());
 	
@@ -51,7 +40,6 @@ public class PacemateGetChipTypeOperation implements GetChipTypeOperation {
 		}
 	
 		log.debug("Chip identified as " + chipType + " (received " + response + ")");
-		progressManager.done();
 		return chipType;
 	}
 
