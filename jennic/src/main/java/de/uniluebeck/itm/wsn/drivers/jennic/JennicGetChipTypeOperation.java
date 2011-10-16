@@ -9,11 +9,10 @@ import de.uniluebeck.itm.tr.util.StringUtils;
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.exception.RamReadFailedException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.UnexpectedResponseException;
-import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.Program;
 
 public class JennicGetChipTypeOperation	implements GetChipTypeOperation {
 
@@ -23,18 +22,10 @@ public class JennicGetChipTypeOperation	implements GetChipTypeOperation {
 	private static final Logger log = LoggerFactory.getLogger(JennicGetChipTypeOperation.class);
 
 	private final JennicHelper helper;
-	
-	private final EnterProgramModeOperation enterProgramModeOperation;
-	
-	private final LeaveProgramModeOperation leaveProgramModeOperation;
 
 	@Inject
-	public JennicGetChipTypeOperation(JennicHelper helper, 
-			EnterProgramModeOperation enterProgramModeProvider, 
-			LeaveProgramModeOperation leaveprogramModeProvider) {
+	public JennicGetChipTypeOperation(JennicHelper helper) {
 		this.helper = helper;
-		this.enterProgramModeOperation = enterProgramModeProvider;
-		this.leaveProgramModeOperation = leaveprogramModeProvider;
 	}
 
 	private ChipType determineChipType(byte s, byte t) {
@@ -53,7 +44,9 @@ public class JennicGetChipTypeOperation	implements GetChipTypeOperation {
 		return chipType;
 	}
 
-	private ChipType getChipType() throws Exception {
+	@Override
+	@Program
+	public ChipType run(final ProgressManager progressManager, OperationContext context) throws Exception {
 		log.trace("Getting ChipType...");
 
 		ChipType chipType = ChipType.UNKNOWN;
@@ -105,18 +98,6 @@ public class JennicGetChipTypeOperation	implements GetChipTypeOperation {
 			log.trace("Chip identified as " + chipType + " (received "
 					+ StringUtils.toHexString(response[2]) + " "
 					+ StringUtils.toHexString(response[3]) + ")");
-		}
-		return chipType;
-	}
-
-	@Override
-	public ChipType run(final ProgressManager progressManager, OperationContext context) throws Exception {
-		ChipType chipType = null;
-		context.run(enterProgramModeOperation, progressManager, 0.5f);
-		try {
-			chipType = getChipType();
-		} finally {
-			context.run(leaveProgramModeOperation, progressManager, 0.5f);
 		}
 		return chipType;
 	}

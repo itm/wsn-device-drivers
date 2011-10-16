@@ -1,6 +1,7 @@
 package de.uniluebeck.itm.wsn.drivers.jennic;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.matcher.Matchers;
 
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
@@ -13,6 +14,8 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.WriteFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.Program;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.ProgramInterceptor;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortEnterProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortLeaveProgramModeOperation;
@@ -23,6 +26,8 @@ public class JennicModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
+		
+		
 		bind(EnterProgramModeOperation.class).to(SerialPortEnterProgramModeOperation.class);
 		bind(LeaveProgramModeOperation.class).to(SerialPortLeaveProgramModeOperation.class);
 		bind(EraseFlashOperation.class).to(JennicEraseFlashOperation.class);
@@ -35,6 +40,7 @@ public class JennicModule extends AbstractModule {
 		bind(WriteFlashOperation.class).to(JennicWriteFlashOperation.class);
 		
 		SerialPortConnection connection = new iSenseSerialPortConnection();
+		bindInterceptor(Matchers.any(), Matchers.annotatedWith(Program.class), new ProgramInterceptor(connection));
 		bind(SerialPortConnection.class).toInstance(connection);
 		bind(Connection.class).toInstance(connection);
 	}

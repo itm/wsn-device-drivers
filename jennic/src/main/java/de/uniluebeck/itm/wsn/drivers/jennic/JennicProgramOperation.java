@@ -11,13 +11,12 @@ import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import de.uniluebeck.itm.wsn.drivers.core.exception.FlashProgramFailedException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.ProgramChipMismatchException;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractProgramOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.Program;
 import de.uniluebeck.itm.wsn.drivers.core.util.BinDataBlock;
 
 public class JennicProgramOperation extends AbstractProgramOperation {
@@ -35,28 +34,25 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 	
 	private final Provider<ReadFlashOperation> readFlashOperationProvider;
 	
-	private final EnterProgramModeOperation enterProgramModeOperation;
-	
-	private final LeaveProgramModeOperation leaveProgramModeOperation;
-	
 	private final ResetOperation resetOperation;
 	
 	@Inject
 	public JennicProgramOperation(JennicHelper helper, 
 			GetChipTypeOperation getChipTypeOperation,
-			EnterProgramModeOperation enterProgramModeOperation,
-			LeaveProgramModeOperation leaveProgramModeOperation,
 			Provider<ReadFlashOperation> readFlashOperationProvider,
 			ResetOperation resetOperation) {
 		this.helper = helper;
 		this.getChipTypeOperation = getChipTypeOperation;
-		this.enterProgramModeOperation = enterProgramModeOperation;
-		this.leaveProgramModeOperation = leaveProgramModeOperation;
 		this.readFlashOperationProvider = readFlashOperationProvider;
 		this.resetOperation = resetOperation;
 	}
 	
-	private void program(ChipType chipType, JennicBinData binData, ProgressManager progressManager, OperationContext context) throws Exception {
+	@Program
+	void program(ProgressManager progressManager, OperationContext context) throws Exception {
+		ChipType chipType = context.run(getChipTypeOperation, progressManager, 0.0625f);
+		JennicBinData binData = validateImage(chipType);
+		insertFlashHeaderToImage(chipType, binData, progressManager.createSub(0.0625f), context);
+		
 		// Wait for a connection
 		while (!context.isCanceled() && !helper.waitForConnection()) {
 			log.debug("Still waiting for a connection");
@@ -127,18 +123,9 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 		return MacAddress.HIGHEST_MAC_ADDRESS.equals(macAddress) == false;
 	}
 	
-	public Void run(final ProgressManager progressManager, OperationContext context) throws Exception {
-		final ChipType chipType = context.run(getChipTypeOperation, progressManager, 0.0625f);
-		final JennicBinData binData = validateImage(chipType);
-		insertFlashHeaderToImage(chipType, binData, progressManager.createSub(0.0625f), context);
-		
-		context.run(enterProgramModeOperation, progressManager, 0.0625f);
-		try {
-			program(chipType, binData, progressManager.createSub(0.75f), context);
-		} finally {
-			context.run(leaveProgramModeOperation, progressManager, 0.0125f);
-			context.run(resetOperation, progressManager, 0.05f);
-		}
+	public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
+		program(progressManager.createSub(0.95f), context);
+		context.run(resetOperation, progressManager, 0.05f);
 		return null;
 	}
 }

@@ -6,10 +6,9 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Inject;
 
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractWriteFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.Program;
 
 public class JennicWriteFlashOperation extends AbstractWriteFlashOperation {
 
@@ -20,28 +19,16 @@ public class JennicWriteFlashOperation extends AbstractWriteFlashOperation {
 	
 	private final JennicHelper helper;
 	
-	private final EnterProgramModeOperation enterProgramModeOperation;
-	
-	private final LeaveProgramModeOperation leaveProgramModeOperation;
-	
 	@Inject
-	public JennicWriteFlashOperation(JennicHelper helper,
-			EnterProgramModeOperation enterProgramModeOperation,
-			LeaveProgramModeOperation leaveProgramModeOperation) {
+	public JennicWriteFlashOperation(JennicHelper helper) {
 		this.helper = helper;
-		this.enterProgramModeOperation = enterProgramModeOperation;
-		this.leaveProgramModeOperation = leaveProgramModeOperation;
 	}
 	
 	@Override
+	@Program
 	public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
 		log.trace("Writing to flash...");
-		context.run(enterProgramModeOperation, progressManager, 0.5f);
-		try {
-			helper.writeFlash(getAddress(), getData());
-		} finally {
-			context.run(leaveProgramModeOperation, progressManager, 0.5f);
-		}
+		helper.writeFlash(getAddress(), getData());
 		log.trace("Flash written");
 		return null;
 	}

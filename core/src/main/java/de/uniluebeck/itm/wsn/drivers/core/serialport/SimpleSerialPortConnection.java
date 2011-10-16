@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
+import com.google.common.util.concurrent.Monitor;
 
 import de.uniluebeck.itm.wsn.drivers.core.AbstractConnection;
 import de.uniluebeck.itm.wsn.drivers.core.exception.PortNotFoundException;
@@ -92,6 +93,8 @@ public class SimpleSerialPortConnection extends AbstractConnection
 	 * The serial port instance.
 	 */
 	private SerialPort serialPort;
+	
+	private Monitor monitor = new Monitor();
 
 	static {
 		LOG.trace("Loading rxtxSerial from jar file");
@@ -254,5 +257,15 @@ public class SimpleSerialPortConnection extends AbstractConnection
 
 	public void setProgramParitiyBit(final int programParitiyBit) {
 		this.programParitiyBit = programParitiyBit;
+	}
+
+	@Override
+	public void prepare() {
+		monitor.enter();
+	}
+
+	@Override
+	public void release() {
+		monitor.leave();
 	}
 }

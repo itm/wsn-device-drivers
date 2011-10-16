@@ -7,10 +7,10 @@ import com.google.inject.Inject;
 
 import de.uniluebeck.itm.tr.util.StringUtils;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractReadFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.Program;
+
 
 public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 
@@ -21,17 +21,9 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 	
 	private final JennicHelper helper;
 	
-	private final EnterProgramModeOperation enterProgramModeOperation;
-	
-	private final LeaveProgramModeOperation leaveProgramModeOperation;
-	
 	@Inject
-	public JennicReadFlashOperation(JennicHelper helper,
-			EnterProgramModeOperation enterProgramModeOperation,
-			LeaveProgramModeOperation leaveProgramModeOperation) {
+	public JennicReadFlashOperation(JennicHelper helper) {
 		this.helper = helper;
-		this.enterProgramModeOperation = enterProgramModeOperation;
-		this.leaveProgramModeOperation = leaveProgramModeOperation;
 	}
 	
 	private byte[] readFlash(ProgressManager progressManager, OperationContext context) throws Exception {
@@ -74,18 +66,8 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 	}
 	
 	@Override
+	@Program
 	public byte[] run(ProgressManager progressManager, OperationContext context) throws Exception {
-		byte[] data = null;
-		// Enter programming mode
-		context.run(enterProgramModeOperation, progressManager, 0.125f);
-		try {
-			data = readFlash(progressManager.createSub(0.75f), context);
-		} finally {
-			context.run(leaveProgramModeOperation, progressManager, 0.125f);
-		}
-		return data;
+		return readFlash(progressManager, context);
 	}
-	
-
-
 }
