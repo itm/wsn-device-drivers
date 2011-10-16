@@ -7,11 +7,10 @@ import com.google.inject.Inject;
 
 import de.uniluebeck.itm.wsn.drivers.core.exception.InvalidChecksumException;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractProgramOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.Program;
 import de.uniluebeck.itm.wsn.drivers.core.util.BinDataBlock;
 
 public class PacemateProgramOperation extends AbstractProgramOperation {
@@ -23,20 +22,11 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 
 	private final PacemateHelper helper;
 	
-	private final EnterProgramModeOperation enterProgramModeOperation;
-	
-	private final LeaveProgramModeOperation leaveProgramModeOperation;
-	
 	private final EraseFlashOperation eraseFlashOperation;
 
 	@Inject
-	public PacemateProgramOperation(PacemateHelper helper,
-			EnterProgramModeOperation enterProgramModeOperation,
-			LeaveProgramModeOperation leaveProgramModeOperation,
-			EraseFlashOperation eraseFlashOperation) {
+	public PacemateProgramOperation(PacemateHelper helper, EraseFlashOperation eraseFlashOperation) {
 		this.helper = helper;
-		this.enterProgramModeOperation = enterProgramModeOperation;
-		this.leaveProgramModeOperation = leaveProgramModeOperation;
 		this.eraseFlashOperation = eraseFlashOperation;
 	}
 	
@@ -186,19 +176,14 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 	}
 
 	@Override
+	@Program
 	public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
-		log.debug("Prgramming operation executing...");
+		log.trace("Prgramming operation executing...");
 		// Erase the complete flash
 		context.run(eraseFlashOperation, progressManager.createSub(0.125f));
-		
 		// Now program the device
-		context.run(enterProgramModeOperation, progressManager.createSub(0.0625f));
-		try {
-			program(progressManager.createSub(0.75f), context);
-		} finally {
-			context.run(leaveProgramModeOperation, progressManager.createSub(0.0625f));
-		}		
-		log.debug("Program operation finsihed");
+		program(progressManager.createSub(0.875f), context);	
+		log.trace("Program operation finsihed");
 		return null;
 	}
 
