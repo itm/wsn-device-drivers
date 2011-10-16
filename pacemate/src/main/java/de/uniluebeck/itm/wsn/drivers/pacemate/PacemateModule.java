@@ -27,7 +27,8 @@ public class PacemateModule extends AbstractModule {
 		bind(ResetOperation.class).to(iSenseResetOperation.class);
 		
 		SerialPortConnection connection = new iSenseSerialPortConnection();
-		bindInterceptor(Matchers.any(), Matchers.annotatedWith(Program.class), new PacemateProgramInterceptor(connection, getProvider(PacemateHelper.class)));
+		bindInterceptor(Matchers.any(), Matchers.annotatedWith(Program.class), 
+				new PacemateProgramInterceptor(connection, getProvider(PacemateHelper.class)));
 		bind(SerialPortConnection.class).toInstance(connection);
 		bind(Connection.class).toInstance(connection);
 	}
