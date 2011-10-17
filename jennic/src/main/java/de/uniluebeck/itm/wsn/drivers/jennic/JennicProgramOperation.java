@@ -49,9 +49,9 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 	
 	@Program
 	void program(ProgressManager progressManager, OperationContext context) throws Exception {
-		ChipType chipType = context.run(getChipTypeOperation, progressManager, 0.0625f);
+		ChipType chipType = context.run(getChipTypeOperation, progressManager, 0.025f);
 		JennicBinData binData = validateImage(chipType);
-		insertFlashHeaderToImage(chipType, binData, progressManager.createSub(0.0625f), context);
+		insertFlashHeaderToImage(chipType, binData, progressManager.createSub(0.025f), context);
 		
 		// Wait for a connection
 		while (!context.isCanceled() && !helper.waitForConnection()) {

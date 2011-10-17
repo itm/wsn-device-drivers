@@ -126,8 +126,8 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 	@Program
 	public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
 		log.trace("Writing mac address...");
-		ChipType chipType = context.run(getChipTypeOperation, progressManager, 0.0625f);
-		writeMacAddress(chipType, progressManager.createSub(0.8125f), context);
+		ChipType chipType = context.run(getChipTypeOperation, progressManager, 0.1f);
+		writeMacAddress(chipType, progressManager.createSub(0.9f), context);
 		log.trace("Done, written MAC Address: " + getMacAddress());
 		return null;
 	}

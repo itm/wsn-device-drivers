@@ -26,7 +26,9 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 		this.helper = helper;
 	}
 	
-	private byte[] readFlash(ProgressManager progressManager, OperationContext context) throws Exception {
+	@Override
+	@Program
+	public byte[] run(ProgressManager progressManager, OperationContext context) throws Exception {
 		// Wait for a connection
 		while (!context.isCanceled() && !helper.waitForConnection()) {
 			log.debug("Still waiting for a connection");
@@ -63,11 +65,5 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 		}
 		log.trace("Done, result is: " + StringUtils.toHexString(flashData));
 		return flashData;
-	}
-	
-	@Override
-	@Program
-	public byte[] run(ProgressManager progressManager, OperationContext context) throws Exception {
-		return readFlash(progressManager, context);
 	}
 }
