@@ -1,4 +1,4 @@
-package de.uniluebeck.itm.wsn.drivers.isense;
+package de.uniluebeck.itm.wsn.drivers.core.serialport;
 
 import gnu.io.SerialPort;
 
@@ -6,8 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniluebeck.itm.wsn.drivers.core.exception.EnterProgramModeException;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.AbstractProgramInterceptor;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection.SerialPortMode;
 
 /**
@@ -15,19 +13,19 @@ import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection.Serial
  * 
  * @author Malte Legenhausen
  */
-public class iSenseProgramInterceptor extends AbstractProgramInterceptor {
+public class SerialPortProgramInterceptor extends AbstractProgramInterceptor {
 
 	/**
 	 * Logger for this class.
 	 */
-	private static final Logger LOG = LoggerFactory.getLogger(iSenseProgramInterceptor.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SerialPortProgramInterceptor.class);
 	
 	/**
 	 * Sleep time between setting DTR and RTS.
 	 */
 	private static final int SLEEP = 200;
 	
-	public iSenseProgramInterceptor(SerialPortConnection connection) {
+	public SerialPortProgramInterceptor(SerialPortConnection connection) {
 		super(connection);
 	}
 	

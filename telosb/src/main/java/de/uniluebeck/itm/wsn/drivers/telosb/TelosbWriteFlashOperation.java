@@ -3,36 +3,23 @@ package de.uniluebeck.itm.wsn.drivers.telosb;
 import com.google.inject.Inject;
 
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractWriteFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.Program;
 
 public class TelosbWriteFlashOperation extends AbstractWriteFlashOperation {
-	
-	private final EnterProgramModeOperation enterProgramModeOperation;
-	
-	private final LeaveProgramModeOperation leaveProgramModeOperation;
 	
 	private final BSLTelosb bsl;
 	
 	@Inject
-	public TelosbWriteFlashOperation(EnterProgramModeOperation enterProgramModeOperation,
-			LeaveProgramModeOperation leaveProgramModeOperation,
-			BSLTelosb bsl) {
-		this.enterProgramModeOperation = enterProgramModeOperation;
-		this.leaveProgramModeOperation = leaveProgramModeOperation;
+	public TelosbWriteFlashOperation(BSLTelosb bsl) {
 		this.bsl = bsl;
 	}
 	
 	@Override
+	@Program
 	public Void run(final ProgressManager progressManager, OperationContext context) throws Exception {
-		context.run(enterProgramModeOperation, progressManager.createSub(0.5f));
-		try {
-			bsl.writeFlash(getAddress(), getData(), getData().length);
-		} finally {
-			context.run(leaveProgramModeOperation, progressManager.createSub(0.5f));
-		}
+		bsl.writeFlash(getAddress(), getData(), getData().length);
 		return null;
 	}
 

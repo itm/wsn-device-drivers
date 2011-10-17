@@ -3,9 +3,9 @@ package de.uniluebeck.itm.wsn.drivers.pacemate;
 import com.google.inject.Provider;
 
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
-import de.uniluebeck.itm.wsn.drivers.isense.iSenseProgramInterceptor;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgramInterceptor;
 
-public class PacemateProgramInterceptor extends iSenseProgramInterceptor {
+public class PacemateProgramInterceptor extends SerialPortProgramInterceptor {
 	
 	private final Provider<PacemateHelper> helperProvider;
 
