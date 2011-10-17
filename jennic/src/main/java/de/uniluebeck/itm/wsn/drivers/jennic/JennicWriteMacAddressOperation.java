@@ -9,11 +9,10 @@ import de.uniluebeck.itm.tr.util.StringUtils;
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractWriteMacAddressOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.Program;
 
 public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOperation {
 
@@ -28,24 +27,14 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 	
 	private final GetChipTypeOperation getChipTypeOperation;
 	
-	private final EnterProgramModeOperation enterProgramModeOperation;
-	
-	private final LeaveProgramModeOperation leaveProgramModeOperation;
-	
 	@Inject
-	public JennicWriteMacAddressOperation(JennicHelper helper,
-			GetChipTypeOperation getChipTypeOperation,
-			EnterProgramModeOperation enterProgramModeOperation,
-			LeaveProgramModeOperation leaveProgramModeOperation) {
+	public JennicWriteMacAddressOperation(JennicHelper helper, GetChipTypeOperation getChipTypeOperation) {
 		this.helper = helper;
 		this.getChipTypeOperation = getChipTypeOperation;
-		this.enterProgramModeOperation = enterProgramModeOperation;
-		this.leaveProgramModeOperation = leaveProgramModeOperation;
 	}
 	
 	private void writeMacAddress(ChipType chipType, ProgressManager progressManager, OperationContext context) throws Exception {
 		final MacAddress macAddress = getMacAddress();
-		
 		
 		// Wait for a helper
 		while (!context.isCanceled() && !helper.waitForConnection()) {
@@ -82,24 +71,6 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 
 		// Write sector 0 with the new MAC
 		writeSector(progressManager.createSub(0.125f), Sector.FIRST, sector);
-	}
-	
-	@Override
-	public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
-		log.trace("Writing mac address...");
-		final ChipType chipType = context.run(getChipTypeOperation, progressManager, 0.0625f);
-		// Check if the user has cancelled the operation
-		if (context.isCanceled()) {
-			return null;
-		}
-		context.run(enterProgramModeOperation, progressManager, 0.0625f);
-		try {
-			writeMacAddress(chipType, progressManager.createSub(0.8125f), context);
-		} finally {
-			context.run(leaveProgramModeOperation, progressManager, 0.0625f);
-		}
-		log.trace("Done, written MAC Address: " + getMacAddress());
-		return null;
 	}
 	
 	protected byte[][] readSector(final ProgressManager progressManager, OperationContext context, final Sector index) throws Exception {
@@ -149,5 +120,15 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 			address += sector[i].length;
 			progressManager.worked(worked);
 		}
+	}
+	
+	@Override
+	@Program
+	public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
+		log.trace("Writing mac address...");
+		ChipType chipType = context.run(getChipTypeOperation, progressManager, 0.1f);
+		writeMacAddress(chipType, progressManager.createSub(0.9f), context);
+		log.trace("Done, written MAC Address: " + getMacAddress());
+		return null;
 	}
 }

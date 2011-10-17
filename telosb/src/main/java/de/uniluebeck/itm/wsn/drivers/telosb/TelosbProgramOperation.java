@@ -9,11 +9,10 @@ import com.google.inject.Inject;
 
 import de.uniluebeck.itm.wsn.drivers.core.exception.FlashProgramFailedException;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractProgramOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.Program;
 import de.uniluebeck.itm.wsn.drivers.core.util.BinDataBlock;
 
 public class TelosbProgramOperation extends AbstractProgramOperation {
@@ -23,26 +22,18 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 	 */
 	private static final Logger log = LoggerFactory.getLogger(TelosbProgramOperation.class);
 	
-	private final EnterProgramModeOperation enterProgramModeOperation;
-	
-	private final LeaveProgramModeOperation leaveProgramModeOperation;
-	
 	private final ResetOperation resetOperation;
 	
 	private final BSLTelosb bsl;
 	
 	@Inject
-	public TelosbProgramOperation(EnterProgramModeOperation enterProgramModeOperation,
-			LeaveProgramModeOperation leaveProgramModeOperation,
-			ResetOperation resetOperation,
-			BSLTelosb bsl) {
-		this.enterProgramModeOperation = enterProgramModeOperation;
-		this.leaveProgramModeOperation = leaveProgramModeOperation;
+	public TelosbProgramOperation(ResetOperation resetOperation, BSLTelosb bsl) {
 		this.resetOperation = resetOperation;
 		this.bsl = bsl;
 	}
 	
-	private void program(final ProgressManager progressManager, OperationContext context) throws Exception {
+	@Program
+	void program(final ProgressManager progressManager, OperationContext context) throws Exception {
 		final TelosbBinData binData = new TelosbBinData(getBinaryImage());
 		// Write program to flash
 		log.trace("Starting to write program into flash memory...");
@@ -82,13 +73,8 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 	
 	@Override
 	public Void run(final ProgressManager progressManager, OperationContext context) throws Exception {
-		context.run(enterProgramModeOperation, progressManager.createSub(0.125f));
-		try {
-			program(progressManager.createSub(0.75f), context);
-		} finally {
-			context.run(leaveProgramModeOperation, progressManager.createSub(0.0625f));
-		}
-		context.run(resetOperation, progressManager.createSub(0.0625f));
+		program(progressManager.createSub(0.95f), context);
+		context.run(resetOperation, progressManager.createSub(0.05f));
 		return null;
 	}
 
