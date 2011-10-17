@@ -94,6 +94,9 @@ public class SimpleSerialPortConnection extends AbstractConnection
 	 */
 	private SerialPort serialPort;
 	
+	/**
+	 * Lock for the connection resource.
+	 */
 	private Monitor monitor = new Monitor();
 
 	static {
