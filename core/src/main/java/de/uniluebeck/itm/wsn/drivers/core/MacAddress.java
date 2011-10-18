@@ -23,7 +23,10 @@
 
 package de.uniluebeck.itm.wsn.drivers.core;
 
+import java.nio.ByteBuffer;
 import java.util.Arrays;
+
+import de.uniluebeck.itm.tr.util.StringUtils;
 
 /**
  * <code>MacAddress</code> object representation.
@@ -109,8 +112,8 @@ public class MacAddress {
 	 */
 	public long toLong() {
 		long result = 0L;
-		for (int i = 0; i < array.length; i++) {
-			result |= (array[LENGTH - 1 - i] & FULL_BYTE_MASK) << (i * FULL_BYTE_SHIFT);
+		for (int i = 0; i < array.length; ++i) {
+			result = (result << FULL_BYTE_SHIFT) + (array[i] & FULL_BYTE_MASK);
 		}
 		return result;
 	}

@@ -451,18 +451,18 @@ public class GenericDeviceExample {
 	public void run() {
 		init();
 		connect();
-		try {
-			programImage();
-		} catch (final IOException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			programImage();
+//		} catch (final IOException e) {
+//			e.printStackTrace();
+//		}
 		macAddressOperations();
-		readFlashOperation();
-		chipTypeOperation();
-		sendOperation();
-		resetOperation();
+//		readFlashOperation();
+//		chipTypeOperation();
+//		sendOperation();
+//		resetOperation();
 		waitForOperationsToFinish();
-		waitForMessagePackets();
+//		waitForMessagePackets();
 		shutdown();
 	}
 
