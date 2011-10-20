@@ -23,25 +23,36 @@
 
 package de.uniluebeck.itm.wsn.drivers.factories;
 
-import java.util.concurrent.ScheduledExecutorService;
-
 import com.google.inject.Guice;
 import com.google.inject.Module;
 import com.google.inject.Singleton;
-
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.DeviceModule;
 import de.uniluebeck.itm.wsn.drivers.jennic.JennicModule;
 import de.uniluebeck.itm.wsn.drivers.mock.MockModule;
 import de.uniluebeck.itm.wsn.drivers.pacemate.PacemateModule;
+import de.uniluebeck.itm.wsn.drivers.sunspot.SunspotModule;
 import de.uniluebeck.itm.wsn.drivers.telosb.TelosbModule;
+
+import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
 
 @Singleton
 public class DeviceFactoryImpl implements DeviceFactory {
 	
 	@Override
 	public Device create(ScheduledExecutorService executorService, DeviceType deviceType) {
-		Module deviceModule = null;
+        return create(executorService, deviceType, null);
+	}
+
+	@Override
+	public Device create(ScheduledExecutorService executorService, String deviceType) {
+		return create(executorService, DeviceType.fromString(deviceType), null);
+	}
+
+    @Override
+    public Device create(ScheduledExecutorService executorService, DeviceType deviceType, Map<String, String> configuration) {
+        Module deviceModule = null;
 		switch (deviceType) {
 		case ISENSE:
 			deviceModule = new JennicModule();
@@ -52,6 +63,9 @@ public class DeviceFactoryImpl implements DeviceFactory {
 		case TELOSB:
 			deviceModule = new TelosbModule();
 			break;
+        case SUNSPOT:
+            deviceModule = new SunspotModule(configuration);
+            break;
 		case MOCK:
 			deviceModule = new MockModule();
 			break;
@@ -62,11 +76,11 @@ public class DeviceFactoryImpl implements DeviceFactory {
 			);
 		}
 		return Guice.createInjector(new DeviceModule(executorService), deviceModule).getInstance(Device.class);
-	}
+    }
 
-	@Override
-	public Device create(ScheduledExecutorService executorService, String deviceType) {
-		return create(executorService, DeviceType.fromString(deviceType));
-	}
+    @Override
+    public Device create(ScheduledExecutorService executorService, String deviceType, Map<String, String> configuration) {
+        return create(executorService, DeviceType.fromString(deviceType), configuration);
+    }
 
 }

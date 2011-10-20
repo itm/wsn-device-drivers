@@ -1,17 +1,10 @@
 package de.uniluebeck.itm.wsn.drivers.core.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-
 import de.uniluebeck.itm.tr.util.ExecutorUtils;
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
@@ -22,6 +15,12 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.OperationCallback;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationCallbackAdapter;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManagerFactory;
 import de.uniluebeck.itm.wsn.drivers.core.operation.RoundedProgressManagerFactory;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -377,8 +376,10 @@ public class GenericDeviceExample {
 			device.getChipType(READ_MAC_ADDRESS_TIMEOUT, callback);
 		} catch (UnsupportedOperationException e) {
 			System.err.println(e.getMessage());
-		}
-	}
+		} catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
 	
 	/**
 	 * Send a message to the device.

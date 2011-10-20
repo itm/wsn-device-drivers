@@ -1,24 +1,18 @@
 package de.uniluebeck.itm.wsn.drivers.sunspot;
 
+import de.uniluebeck.itm.wsn.drivers.core.ChipType;
+import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
 
-public class SunspotgetChipTypeOperationRunnable implements ResetOperation {
+public class SunspotgetChipTypeOperationRunnable implements GetChipTypeOperation {
 
-    private String macAddress;
 
-    private ant_project p;
-
-    public SunspotgetChipTypeOperationRunnable(String macAddress, String SunspotSDKPath) {
-        this.macAddress = macAddress;
-        p = new ant_project(SunspotSDKPath);
+    public SunspotgetChipTypeOperationRunnable() {
     }
 
     @Override
-    public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
-        System.out.println("SUNSPOT node reset node>>>>" + "  " + this.macAddress);
-        p.resetNode(macAddress);
-        return null;
+    public ChipType run(ProgressManager progressManager, OperationContext context) throws Exception {
+        return ChipType.SUNSPOT;
     }
 }

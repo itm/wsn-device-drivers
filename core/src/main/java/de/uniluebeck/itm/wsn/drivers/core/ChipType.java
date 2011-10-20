@@ -61,6 +61,12 @@ public enum ChipType {
 	/**
 	 * Mode for unknown platform.
 	 */
+    SUNSPOT("SUNSPOT", 7),
+
+    /**
+	 * Mode for unknown platform.
+	 */
+
 	UNKNOWN("Unknown", -1);
 
 	/**
