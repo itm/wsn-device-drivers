@@ -8,7 +8,7 @@ import com.google.inject.Inject;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractWriteFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.Program;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.ProgrammingMode;
 
 public class JennicWriteFlashOperation extends AbstractWriteFlashOperation {
 
@@ -25,7 +25,7 @@ public class JennicWriteFlashOperation extends AbstractWriteFlashOperation {
 	}
 	
 	@Override
-	@Program
+	@ProgrammingMode
 	public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
 		log.trace("Writing to flash...");
 		helper.writeFlash(getAddress(), getData());

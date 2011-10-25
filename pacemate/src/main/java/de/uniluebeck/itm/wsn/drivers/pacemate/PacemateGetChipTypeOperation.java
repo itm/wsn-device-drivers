@@ -9,7 +9,7 @@ import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.Program;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.ProgrammingMode;
 
 public class PacemateGetChipTypeOperation implements GetChipTypeOperation {
 
@@ -26,7 +26,7 @@ public class PacemateGetChipTypeOperation implements GetChipTypeOperation {
 	}
 	
 	@Override
-	@Program
+	@ProgrammingMode
 	public ChipType run(ProgressManager progressManager, OperationContext context) throws Exception {		
 		// Send chip type read request
 		helper.sendBootLoaderMessage(Messages.ReadPartIDRequestMessage());

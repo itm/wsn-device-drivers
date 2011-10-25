@@ -12,7 +12,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractWriteMacAddressOpera
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.Program;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.ProgrammingMode;
 
 public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOperation {
 
@@ -123,7 +123,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 	}
 	
 	@Override
-	@Program
+	@ProgrammingMode
 	public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
 		log.trace("Writing mac address...");
 		ChipType chipType = context.run(getChipTypeOperation, progressManager, 0.1f);

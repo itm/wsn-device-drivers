@@ -12,7 +12,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.Program;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.ProgrammingMode;
 
 public class JennicReadMacAddressOperation implements ReadMacAddressOperation {
 
@@ -33,7 +33,7 @@ public class JennicReadMacAddressOperation implements ReadMacAddressOperation {
 	}
 	
 	@Override
-	@Program
+	@ProgrammingMode
 	public MacAddress run(ProgressManager progressManager, OperationContext context) throws Exception {
 		log.trace("Reading MAC Adress");
 		// Connection established, determine chip type

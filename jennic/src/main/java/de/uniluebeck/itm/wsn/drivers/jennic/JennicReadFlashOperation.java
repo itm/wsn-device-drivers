@@ -9,7 +9,7 @@ import de.uniluebeck.itm.tr.util.StringUtils;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractReadFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.Program;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.ProgrammingMode;
 
 
 public class JennicReadFlashOperation extends AbstractReadFlashOperation {
@@ -27,7 +27,7 @@ public class JennicReadFlashOperation extends AbstractReadFlashOperation {
 	}
 	
 	@Override
-	@Program
+	@ProgrammingMode
 	public byte[] run(ProgressManager progressManager, OperationContext context) throws Exception {
 		// Wait for a connection
 		while (!context.isCanceled() && !helper.waitForConnection()) {

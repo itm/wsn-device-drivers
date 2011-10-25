@@ -5,7 +5,7 @@ import com.google.inject.Inject;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractReadFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.Program;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.ProgrammingMode;
 
 public class PacemateReadFlashOperation extends AbstractReadFlashOperation {
 	
@@ -17,7 +17,7 @@ public class PacemateReadFlashOperation extends AbstractReadFlashOperation {
 	}
 	
 	@Override
-	@Program
+	@ProgrammingMode
 	public byte[] run(ProgressManager progressManager, OperationContext context) throws Exception {		
 		// Send flash program request
 		helper.sendBootLoaderMessage(Messages.flashReadRequestMessage(getAddress(), getLength()));

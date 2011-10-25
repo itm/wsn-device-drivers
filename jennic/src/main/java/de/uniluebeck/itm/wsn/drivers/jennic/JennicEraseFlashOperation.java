@@ -9,7 +9,7 @@ import de.uniluebeck.itm.wsn.drivers.core.exception.FlashEraseFailedException;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.Program;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.ProgrammingMode;
 
 public class JennicEraseFlashOperation implements EraseFlashOperation {
 
@@ -26,7 +26,7 @@ public class JennicEraseFlashOperation implements EraseFlashOperation {
 	}
 	
 	@Override
-	@Program
+	@ProgrammingMode
 	public Void run(final ProgressManager progressManager, OperationContext context) throws Exception {
 		helper.sendBootLoaderMessage(Messages.statusRegisterWriteMessage((byte) 0x00));
 		progressManager.worked(0.25f);
