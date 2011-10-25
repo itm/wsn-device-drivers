@@ -7,7 +7,9 @@ import java.lang.annotation.Target;
 
 
 /**
- * Program annotation.
+ * Annotation to which a method in programming mode.
+ * When the method is entered the programming mode can be entered via the <code>AbstractProgramInterceptor</code>
+ * When the method is finished the programming mode will be automatically left.
  * 
  * @author Malte Legenhausen
  */
