@@ -189,7 +189,9 @@ public class ExecutorServiceOperationExecutor implements OperationExecutor {
 
 	@Override
 	public List<Operation<?>> getOperations() {
-		return newArrayList(operations);
+		synchronized (operations) {
+			return newArrayList(operations);
+		}
 	}
 
 	@Override
