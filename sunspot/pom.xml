@@ -14,14 +14,25 @@
     <name>WSN Device Drivers Sunspot</name>
 
     <dependencies>
-
         <dependency>
             <groupId>de.uniluebeck.itm</groupId>
             <artifactId>wsn-device-drivers-core</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.rxtx</groupId>
+                    <artifactId>rxtx</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>de.uniluebeck.itm</groupId>
             <artifactId>wsn-device-drivers-common</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.rxtx</groupId>
+                    <artifactId>rxtx</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.ant</groupId>
@@ -35,7 +46,58 @@
             <groupId>de.uniluebeck.itm.netty.handlerstack</groupId>
             <artifactId>dlestxetx</artifactId>
         </dependency>
+        <dependency>
+            <groupId>de.uniluebeck.itm.netty.handlerstack</groupId>
+            <artifactId>dlestxetx</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sunspot</groupId>
+            <artifactId>multihop_common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sunspot</groupId>
+            <artifactId>spotlib_host</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sunspot</groupId>
+            <artifactId>spotlib_common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sunspot</groupId>
+            <artifactId>squawk_common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sunspot</groupId>
+            <artifactId>spotclient_host</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sunspot</groupId>
+            <artifactId>signing_host</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sunspot</groupId>
+            <artifactId>RXTXcomm</artifactId>
+            <version>1.0</version>
 
+        </dependency>
     </dependencies>
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.java</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.dll</include>
+                    <include>**/*.so</include>
+                    <include>**/*.jnilib</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
 
 </project>

@@ -60,12 +60,12 @@
                 <artifactId>itmutils</artifactId>
                 <version>0.3.1</version>
             </dependency>
-
             <dependency>
                 <groupId>org.rxtx</groupId>
                 <artifactId>rxtx</artifactId>
                 <version>2.1.7</version>
             </dependency>
+
             <dependency>
                 <groupId>com.google.inject</groupId>
                 <artifactId>guice</artifactId>
@@ -117,10 +117,38 @@
                 <artifactId>dlestxetx</artifactId>
                 <version>1.1</version>
             </dependency>
-
+            <dependency>
+                <groupId>com.sunspot</groupId>
+                <artifactId>multihop_common</artifactId>
+                <version>1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sunspot</groupId>
+                <artifactId>spotlib_host</artifactId>
+                <version>1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sunspot</groupId>
+                <artifactId>spotlib_common</artifactId>
+                <version>1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sunspot</groupId>
+                <artifactId>squawk_common</artifactId>
+                <version>1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sunspot</groupId>
+                <artifactId>spotclient_host</artifactId>
+                <version>1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sunspot</groupId>
+                <artifactId>signing_host</artifactId>
+                <version>1.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
-
     <build>
         <plugins>
             <plugin>
@@ -199,6 +227,14 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
+        </repository>
+        <repository>
+            <id>repository.ru1</id>
+            <url>http://ru1.cti.gr/maven</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <layout>default</layout>
         </repository>
     </repositories>
 

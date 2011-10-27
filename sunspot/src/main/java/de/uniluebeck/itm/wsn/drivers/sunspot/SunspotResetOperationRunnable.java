@@ -10,9 +10,9 @@ public class SunspotResetOperationRunnable implements ResetOperation {
 
     private ant_project p;
 
-    public SunspotResetOperationRunnable(String macAddress, String SunspotSDKPath) {
+    public SunspotResetOperationRunnable(String macAddress, String SunspotSDKPath, String commandPort, String tempDir) {
         this.macAddress = macAddress;
-        p = new ant_project(SunspotSDKPath);
+        p = new ant_project(SunspotSDKPath,commandPort, tempDir);
     }
 
     @Override

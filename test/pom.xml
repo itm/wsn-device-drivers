@@ -38,10 +38,5 @@
             <groupId>de.uniluebeck.itm</groupId>
             <artifactId>wsn-device-drivers-common</artifactId>
         </dependency>
-        <dependency>
-            <groupId>de.uniluebeck.itm</groupId>
-            <artifactId>wsn-device-drivers-sunspot</artifactId>
-            <version>0.4-SNAPSHOT</version>
-        </dependency>
     </dependencies>
 </project>

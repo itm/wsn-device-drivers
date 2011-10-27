@@ -52,6 +52,11 @@ public class SunspotDevice implements Device, SunspotBaseStationListener {
     public OperationFuture<Void> program(byte[] data, long timeout, OperationCallback<Void> callback) {
         checkState(connected, "Device not connected.");
         baseStation.start();
+        try {
+            baseStation.program(this.macAddress,data,timeout,callback);
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

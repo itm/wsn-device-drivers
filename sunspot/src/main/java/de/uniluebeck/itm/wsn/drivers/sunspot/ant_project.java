@@ -24,13 +24,13 @@ public class ant_project {
     private ProjectHelper helper;
     private String out_msg;
     private static final Logger log = LoggerFactory.getLogger(ant_project.class);
+    private String sunspotPort;
+    private String tempDirectory;
+    boolean inspecOutput = true;
 
-    /**
-     * Constructor
-     *
-     * @param bpath Path of the Sunspot buil.xml  C:\\Sun\\SunSPOT\\sdk\\build.xml
-     */
-    public ant_project(String bpath) {
+    public ant_project(String bpath, String port, String tmpDirectory) {
+        this.sunspotPort=port;
+        this.tempDirectory=tmpDirectory;
         buildFile = new File(bpath);
         p = new Project();
         p.setUserProperty("ant.file", buildFile.getAbsolutePath());
@@ -47,15 +47,6 @@ public class ant_project {
     }
 
 
-// Private Methods -----------------------------------------------------------
-
-    /**
-     * Builds a target
-     *
-     * @param target Target of ant build script
-     * @return Output string
-     * @throws BuildException Exception
-     */
     final public String call_target(String target) {
         this.ant_project_reset();
         try {
@@ -64,7 +55,7 @@ public class ant_project {
             helper = ProjectHelper.getProjectHelper();
             p.addReference("ant.projectHelper", helper);
             helper.parse(p, buildFile);
-            p.setUserProperty("port", "ttyACM0");                                                                                 //" -Dport=ttyACM0"
+            p.setUserProperty("port", this.sunspotPort);                                                                                 //" -Dport=ttyACM0"
             p.executeTarget(target);
             p.fireBuildFinished(null);
         } catch (BuildException e) {
@@ -78,15 +69,6 @@ public class ant_project {
         return out_msg;
     }
 
-    /**
-     * Builds a target and setting a propery
-     *
-     * @param target   Target of ant build script
-     * @param property Property to set
-     * @param value    Value of property
-     * @return Output string
-     * @throws BuildException Exception
-     */
     private String call_target(String target, String property, String value) throws BuildException {
         this.ant_project_reset();
         try {
@@ -96,7 +78,7 @@ public class ant_project {
             p.addReference("ant.projectHelper", helper);
             helper.parse(p, buildFile);
             p.setUserProperty(property, value.substring(0, value.length()));
-            p.setUserProperty("port", "/dev/ttyACM0");
+            p.setUserProperty("port", this.sunspotPort);
             p.executeTarget(target);
             p.fireBuildFinished(null);
         } catch (BuildException e) {
@@ -110,12 +92,6 @@ public class ant_project {
     }
 
 
-    /**
-     * Gets the nodes listening(hello)
-     *
-     * @return Array of Node Names
-     * @throws BuildException Exception
-     */
     final public String[] hello() {
         String msg;
         try {
@@ -146,13 +122,6 @@ public class ant_project {
 
 
 
-    /**
-     * Reset Input Node
-     *
-     * @param node Input node as string
-     * @return Output boolean table, true/false for each node
-     * @throws BuildException Exception
-     */
     final public boolean resetNode(String node) {
         try {
             System.out.println("SUNSPOT in ant reset node>>>>" + "  " + node);
@@ -163,16 +132,7 @@ public class ant_project {
         }
     }
 
-
-    /**
-     * Getting property infos from Nodes
-     *
-     * @param node Input node
-     * @return Output string containing info
-     * @throws BuildException Exception
-     */
     final public String info(String node) {
-
         String output = "";
 
         try {
@@ -187,20 +147,12 @@ public class ant_project {
         return output;
     }
 
-    /**
-     * deploy a midlet to a node in a specific slot
-     *
-     * @param node  input node
-     * @param flash if true deploy in parent isolate(starts with next reboot)
-     * @return Output outcome
-     * @throws BuildException Exception, IOEXception
-     */
     final public boolean flash_node(String node, byte[] jarFI, boolean flash) throws BuildException, IOException, Exception {
 
         //ant jar-deploy -DremoteID 0014.4F01.0000.6534
         //file preparing
         this.ant_project_reset();
-        String working_dir = "." + File.separatorChar;
+        String working_dir = this.tempDirectory + File.separatorChar;
         String new_dir = working_dir + UUID.randomUUID() + java.io.File.separator;
         String man_dir = new_dir + "resources" + java.io.File.separator + "MANIFEST" + java.io.File.separator;
         boolean dir1 = (new File(new_dir)).mkdirs();
@@ -220,7 +172,7 @@ public class ant_project {
             p.addReference("ant.projectHelper", helper);
             helper.parse(p, buildFile);
             p.setUserProperty("remoteId", node);
-            p.setUserProperty("port", "/dev/ttyACM0");//-Dport="
+            p.setUserProperty("port", this.sunspotPort);//-Dport="
             p.setUserProperty("from.jar.file", jar_fpath); //new_dir+jarFI.getName()
             p.executeTarget("jar-deploy");
             p.fireBuildFinished(null);
@@ -236,8 +188,6 @@ public class ant_project {
 
     }
 
-    ;
-
     public static boolean deleteFile(String sFilePath) {
         File oFile = new File(sFilePath);
         if (oFile.isDirectory()) {
@@ -250,9 +200,6 @@ public class ant_project {
     }
 
 
-    /**
-     * Reseting Constructor
-     */
     public void ant_project_reset() {
         p = new Project();
         p.setUserProperty("ant.file", buildFile.getAbsolutePath());
@@ -284,30 +231,26 @@ public class ant_project {
                 helper = ProjectHelper.getProjectHelper();
                 p.addReference("ant.projectHelper", helper);
                 helper.parse(p, buildFile);
-                p.setUserProperty("port", "/dev/ttyACM1");
+                p.setUserProperty("port", sunspotPort);
                 p.executeTarget("host-run");
                 p.fireBuildFinished(null);
-
             } catch (BuildException e) {
-                log.debug("SUNSPOT>>>>" + e.getMessage());
+                log.debug("SUNSPOT HOST APPLICATION>>>>" + e.getMessage());
+                inspecOutput = false;
                 p.fireBuildFinished(e);
             }
         }
     };
 
-
-    public ant_project() {
-        super();    //To change body of overridden methods use File | Settings | File Templates.
-    }
-
     public void call_host(Multimap<String, SunspotBaseStationListener> listeners) throws IOException {
 
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1, new ThreadFactoryBuilder().setNameFormat("SchedulerService-Thread %d").build());
         scheduler.execute(host);
-        boolean inspecOutput = true;
+
         String msg = "";
         while (inspecOutput) {
             out_msg = out.toString();
+            //log.debug(out_msg);
             msg = out.toString();
             List<String> msgs = null;
             try {
@@ -326,7 +269,7 @@ public class ant_project {
                 if (sd == null) continue;
             }
             try {
-                Thread.sleep(2000);
+                Thread.sleep(5000);
             } catch (InterruptedException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }

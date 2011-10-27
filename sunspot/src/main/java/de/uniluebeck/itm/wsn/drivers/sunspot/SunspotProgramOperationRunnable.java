@@ -10,10 +10,10 @@ public class SunspotProgramOperationRunnable implements ProgramOperation {
     private byte[] image;
     private ant_project p;
 
-    public SunspotProgramOperationRunnable(String macAddress, String SunspotSDKPath, byte[] jar) {
+    public SunspotProgramOperationRunnable(String macAddress,String SunspotSDKPath, String commandPort, String tempDir,  byte[] jar) {
         this.macAddress = macAddress;
         this.image = jar;
-        p = new ant_project(SunspotSDKPath);
+        p = new ant_project(SunspotSDKPath,commandPort,tempDir);
     }
 
     @Override
