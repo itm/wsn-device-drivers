@@ -8,7 +8,7 @@ import com.google.inject.Inject;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.Program;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.ProgrammingMode;
 
 public class PacemateEraseFlashOperation implements EraseFlashOperation {
 
@@ -29,7 +29,7 @@ public class PacemateEraseFlashOperation implements EraseFlashOperation {
 	}
 
 	@Override
-	@Program
+	@ProgrammingMode
 	public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
 		log.trace("Erasing whole flash...");		
 		helper.configureFlash(START_ADDRESS, END_ADDRESS);

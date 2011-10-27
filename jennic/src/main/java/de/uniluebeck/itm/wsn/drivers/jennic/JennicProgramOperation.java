@@ -16,7 +16,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.Program;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.ProgrammingMode;
 import de.uniluebeck.itm.wsn.drivers.core.util.BinDataBlock;
 
 public class JennicProgramOperation extends AbstractProgramOperation {
@@ -47,7 +47,7 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 		this.resetOperation = resetOperation;
 	}
 	
-	@Program
+	@ProgrammingMode
 	void program(ProgressManager progressManager, OperationContext context) throws Exception {
 		ChipType chipType = context.run(getChipTypeOperation, progressManager, 0.025f);
 		JennicBinData binData = validateImage(chipType);

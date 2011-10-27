@@ -12,7 +12,7 @@ import de.uniluebeck.itm.wsn.drivers.core.exception.UnexpectedResponseException;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.Program;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.ProgrammingMode;
 
 public class JennicGetChipTypeOperation	implements GetChipTypeOperation {
 
@@ -45,7 +45,7 @@ public class JennicGetChipTypeOperation	implements GetChipTypeOperation {
 	}
 
 	@Override
-	@Program
+	@ProgrammingMode
 	public ChipType run(final ProgressManager progressManager, OperationContext context) throws Exception {
 		log.trace("Getting ChipType...");
 

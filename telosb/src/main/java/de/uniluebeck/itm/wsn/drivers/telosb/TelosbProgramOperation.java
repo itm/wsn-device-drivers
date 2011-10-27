@@ -12,7 +12,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractProgramOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.Program;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.ProgrammingMode;
 import de.uniluebeck.itm.wsn.drivers.core.util.BinDataBlock;
 
 public class TelosbProgramOperation extends AbstractProgramOperation {
@@ -32,7 +32,7 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 		this.bsl = bsl;
 	}
 	
-	@Program
+	@ProgrammingMode
 	void program(final ProgressManager progressManager, OperationContext context) throws Exception {
 		final TelosbBinData binData = new TelosbBinData(getBinaryImage());
 		// Write program to flash

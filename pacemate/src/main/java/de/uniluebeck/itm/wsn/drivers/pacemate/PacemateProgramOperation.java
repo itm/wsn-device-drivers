@@ -10,7 +10,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractProgramOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.Program;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.ProgrammingMode;
 import de.uniluebeck.itm.wsn.drivers.core.util.BinDataBlock;
 
 public class PacemateProgramOperation extends AbstractProgramOperation {
@@ -171,7 +171,7 @@ public class PacemateProgramOperation extends AbstractProgramOperation {
 	}
 
 	@Override
-	@Program
+	@ProgrammingMode
 	public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
 		log.trace("Prgramming operation executing...");
 		// Erase the complete flash

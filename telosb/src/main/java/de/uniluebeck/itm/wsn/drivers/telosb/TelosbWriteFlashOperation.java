@@ -5,7 +5,7 @@ import com.google.inject.Inject;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractWriteFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.Program;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.ProgrammingMode;
 
 public class TelosbWriteFlashOperation extends AbstractWriteFlashOperation {
 	
@@ -17,7 +17,7 @@ public class TelosbWriteFlashOperation extends AbstractWriteFlashOperation {
 	}
 	
 	@Override
-	@Program
+	@ProgrammingMode
 	public Void run(final ProgressManager progressManager, OperationContext context) throws Exception {
 		bsl.writeFlash(getAddress(), getData(), getData().length);
 		return null;
