@@ -6,7 +6,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.WriteFlashOperation;
 
 
 /**
- * Mock operation for writing data in the imulated flash rom.
+ * Mock operation for writing data in the simulated flash rom.
  * 
  * @author Malte Legenhausen
  */

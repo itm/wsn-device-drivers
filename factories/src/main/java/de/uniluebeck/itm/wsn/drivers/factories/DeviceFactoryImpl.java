@@ -23,12 +23,9 @@
 
 package de.uniluebeck.itm.wsn.drivers.factories;
 
-import java.util.concurrent.ScheduledExecutorService;
-
 import com.google.inject.Guice;
 import com.google.inject.Module;
 import com.google.inject.Singleton;
-
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.DeviceModule;
 import de.uniluebeck.itm.wsn.drivers.jennic.JennicModule;
@@ -36,37 +33,56 @@ import de.uniluebeck.itm.wsn.drivers.mock.MockModule;
 import de.uniluebeck.itm.wsn.drivers.pacemate.PacemateModule;
 import de.uniluebeck.itm.wsn.drivers.telosb.TelosbModule;
 
+import javax.annotation.Nullable;
+import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+
 @Singleton
 public class DeviceFactoryImpl implements DeviceFactory {
-	
+
 	@Override
 	public Device create(ScheduledExecutorService executorService, DeviceType deviceType) {
-		Module deviceModule = null;
-		switch (deviceType) {
-		case ISENSE:
-			deviceModule = new JennicModule();
-			break;
-		case PACEMATE:
-			deviceModule = new PacemateModule();
-			break;
-		case TELOSB:
-			deviceModule = new TelosbModule();
-			break;
-		case MOCK:
-			deviceModule = new MockModule();
-			break;
-		default:
-			throw new RuntimeException("Unhandled device type \"" + deviceType
-					+ "\". Maybe someone forgot to add this (new) device type to " + DeviceFactoryImpl.class.getName()
-					+ "?"
-			);
-		}
-		return Guice.createInjector(new DeviceModule(executorService), deviceModule).getInstance(Device.class);
+		return create(executorService, deviceType, null);
 	}
 
 	@Override
 	public Device create(ScheduledExecutorService executorService, String deviceType) {
 		return create(executorService, DeviceType.fromString(deviceType));
+	}
+
+	@Override
+	public Device create(final ScheduledExecutorService executorService, final DeviceType deviceType,
+						 @Nullable final Map<String, String> configuration) {
+
+		Module deviceModule;
+
+		switch (deviceType) {
+			case ISENSE:
+				deviceModule = new JennicModule(configuration);
+				break;
+			case PACEMATE:
+				deviceModule = new PacemateModule(configuration);
+				break;
+			case TELOSB:
+				deviceModule = new TelosbModule(configuration);
+				break;
+			case MOCK:
+				deviceModule = new MockModule(configuration);
+				break;
+			default:
+				throw new RuntimeException("Unknown device type \"" + deviceType + "\". Maybe someone forgot to add"
+						+ "this (new) device type to " + DeviceFactoryImpl.class.getName() + "?"
+				);
+		}
+
+		return Guice.createInjector(new DeviceModule(executorService), deviceModule).getInstance(Device.class);
+	}
+
+	@Override
+	public Device create(final ScheduledExecutorService executorService, final String deviceType,
+						 final Map<String, String> configuration) {
+
+		return create(executorService, DeviceType.fromString(deviceType), null);
 	}
 
 }
