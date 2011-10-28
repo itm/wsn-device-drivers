@@ -21,13 +21,18 @@ import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgramIntercepto
 import de.uniluebeck.itm.wsn.drivers.isense.iSenseResetOperation;
 import de.uniluebeck.itm.wsn.drivers.isense.iSenseSerialPortConnection;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 
 public class JennicModule extends AbstractModule {
 
 	private final Map<String, String> configuration;
 
-	public JennicModule(final Map<String, String> configuration) {
+	public JennicModule() {
+		this(null);
+	}
+
+	public JennicModule(@Nullable final Map<String, String> configuration) {
 		this.configuration = configuration;
 	}
 

@@ -12,13 +12,18 @@ import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 import de.uniluebeck.itm.wsn.drivers.isense.iSenseResetOperation;
 import de.uniluebeck.itm.wsn.drivers.isense.iSenseSerialPortConnection;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 
 public class PacemateModule extends AbstractModule {
 
 	private final Map<String, String> configuration;
 
-	public PacemateModule(final Map<String, String> configuration) {
+	public PacemateModule() {
+		this(null);
+	}
+
+	public PacemateModule(@Nullable final Map<String, String> configuration) {
 		this.configuration = configuration;
 	}
 

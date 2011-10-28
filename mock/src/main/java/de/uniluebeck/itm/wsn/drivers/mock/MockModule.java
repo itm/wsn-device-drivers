@@ -8,13 +8,18 @@ import com.google.inject.name.Names;
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.operation.*;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 
 public class MockModule extends AbstractModule {
 
 	private final Map<String, String> configuration;
 
-	public MockModule(final Map<String, String> configuration) {
+	public MockModule() {
+		this(null);
+	}
+
+	public MockModule(@Nullable final Map<String, String> configuration) {
 		this.configuration = configuration;
 	}
 

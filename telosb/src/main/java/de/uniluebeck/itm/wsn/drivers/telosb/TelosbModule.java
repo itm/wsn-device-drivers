@@ -15,13 +15,18 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.WriteFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.ProgrammingMode;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 
 public class TelosbModule extends AbstractModule {
 
 	private final Map<String, String> configuration;
 
-	public TelosbModule(final Map<String, String> configuration) {
+	public TelosbModule() {
+		this(null);
+	}
+
+	public TelosbModule(@Nullable final Map<String, String> configuration) {
 		this.configuration = configuration;
 	}
 
