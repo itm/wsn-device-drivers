@@ -30,6 +30,8 @@ import com.google.inject.ImplementedBy;
 
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 
+import javax.annotation.Nullable;
+
 @ImplementedBy(DeviceFactoryImpl.class)
 @SuppressWarnings("unused")
 public interface DeviceFactory {
@@ -38,7 +40,7 @@ public interface DeviceFactory {
 
 	Device create(ScheduledExecutorService executorService, String deviceType);
 
-	Device create(ScheduledExecutorService executorService, DeviceType deviceType, Map<String, String> configuration);
+	Device create(ScheduledExecutorService executorService, DeviceType deviceType, @Nullable Map<String, String> configuration);
 
-	Device create(ScheduledExecutorService executorService, String deviceType, Map<String, String> configuration);
+	Device create(ScheduledExecutorService executorService, String deviceType, @Nullable Map<String, String> configuration);
 }

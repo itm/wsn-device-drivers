@@ -47,7 +47,7 @@ public class DeviceFactoryImpl implements DeviceFactory {
 
 	@Override
 	public Device create(ScheduledExecutorService executorService, String deviceType) {
-		return create(executorService, DeviceType.fromString(deviceType));
+		return create(executorService, DeviceType.fromString(deviceType), null);
 	}
 
 	@Override
@@ -80,9 +80,9 @@ public class DeviceFactoryImpl implements DeviceFactory {
 
 	@Override
 	public Device create(final ScheduledExecutorService executorService, final String deviceType,
-						 final Map<String, String> configuration) {
+						 @Nullable final Map<String, String> configuration) {
 
-		return create(executorService, DeviceType.fromString(deviceType), null);
+		return create(executorService, DeviceType.fromString(deviceType), configuration);
 	}
 
 }
