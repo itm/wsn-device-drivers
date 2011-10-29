@@ -8,12 +8,14 @@ import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 import gnu.io.UnsupportedCommOperationException;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.TooManyListenersException;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,6 +104,16 @@ public class SimpleSerialPortConnection extends AbstractConnection
 	static {
 		LOG.trace("Loading rxtxSerial from jar file");
 		JarUtil.loadLibrary("rxtxSerial");
+		
+		if (SystemUtils.IS_OS_MAC || SystemUtils.IS_OS_MAC_OSX) {
+			File lockDir = new File("/var/lock");
+			if (!lockDir.exists() || !lockDir.isDirectory()) {
+				LOG.warn("No /var/lock directory found. Needed for RXTX Library. Try mkdir /var/lock.");
+			}
+			if(!lockDir.canRead() || !lockDir.canWrite()) {
+				LOG.warn("/var/lock directory is not read and writable. Try chmod 777 /var/lock.");
+			}
+		}
 	}
 
 	@Override
