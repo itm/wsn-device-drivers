@@ -1,23 +1,35 @@
 package de.uniluebeck.itm.wsn.drivers.mock;
 
+import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
-
+import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
-import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.SendOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.WriteFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.*;
+
+import javax.annotation.Nullable;
+import java.util.Map;
 
 public class MockModule extends AbstractModule {
 
+	private final Map<String, String> configuration;
+
+	public MockModule() {
+		this(null);
+	}
+
+	public MockModule(@Nullable final Map<String, String> configuration) {
+		this.configuration = configuration;
+	}
+
 	@Override
 	protected void configure() {
+
+		bind(new TypeLiteral<Map<String, String>>() {})
+			.annotatedWith(Names.named("configuration"))
+			.toInstance(configuration != null ? configuration : Maps.<String,String>newHashMap());
+
 		bind(EraseFlashOperation.class).to(MockEraseFlashOperation.class);
 		bind(GetChipTypeOperation.class).to(MockGetChipTypeOperation.class);
 		bind(ProgramOperation.class).to(MockProgramOperation.class);

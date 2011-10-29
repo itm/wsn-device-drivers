@@ -53,7 +53,7 @@
 			<dependency>
 				<groupId>de.uniluebeck.itm.itmutils</groupId>
 				<artifactId>itmutils</artifactId>
-				<version>0.2</version>
+				<version>0.3.2</version>
 			</dependency>
 
 			<dependency>
@@ -85,11 +85,6 @@
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
 				<version>1.5.8</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.shiro</groupId>
-				<artifactId>shiro-core</artifactId>
-				<version>1.1.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.guava</groupId>

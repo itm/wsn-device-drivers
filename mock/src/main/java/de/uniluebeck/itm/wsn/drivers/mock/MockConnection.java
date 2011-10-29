@@ -29,7 +29,7 @@ import de.uniluebeck.itm.wsn.drivers.core.AbstractConnection;
 public class MockConnection extends AbstractConnection {
 	
 	/**
-	 * Internal runnable that send continuesly messages.
+	 * Internal runnable that send continuously messages.
 	 * 
 	 * @author Malte Legenhausen
 	 */
