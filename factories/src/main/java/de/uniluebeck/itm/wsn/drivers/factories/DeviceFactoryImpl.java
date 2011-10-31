@@ -58,6 +58,8 @@ public class DeviceFactoryImpl implements DeviceFactory {
 
 		switch (deviceType) {
 			case ISENSE:
+			case ISENSE39:
+			case ISENSE48:
 				deviceModule = new JennicModule(configuration);
 				break;
 			case PACEMATE:
