@@ -26,6 +26,8 @@ package de.uniluebeck.itm.wsn.drivers.factories;
 public enum DeviceType {
 
 	ISENSE,
+	ISENSE39,
+	ISENSE48,
 	TELOSB,
 	PACEMATE,
 	MOCK,
