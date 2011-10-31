@@ -3,6 +3,8 @@ package de.uniluebeck.itm.wsn.drivers.core;
 import com.google.inject.ImplementedBy;
 
 import de.uniluebeck.itm.wsn.drivers.core.concurrent.OperationFuture;
+import de.uniluebeck.itm.wsn.drivers.core.io.HasInputStream;
+import de.uniluebeck.itm.wsn.drivers.core.io.HasOutputStream;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationCallback;
 
 
@@ -14,7 +16,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.OperationCallback;
  * @author Malte Legenhausen
  */
 @ImplementedBy(SimpleDevice.class)
-public interface Device extends Connection {
+public interface Device extends HasInputStream, HasOutputStream, Connectable {
 	
 	/**
 	 * Returns the chip type of this device.

@@ -23,10 +23,7 @@
 
 package de.uniluebeck.itm.wsn.drivers.core;
 
-import java.nio.ByteBuffer;
 import java.util.Arrays;
-
-import de.uniluebeck.itm.tr.util.StringUtils;
 
 /**
  * <code>MacAddress</code> object representation.
