@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 import de.uniluebeck.itm.tr.util.StringUtils;
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
@@ -39,7 +40,8 @@ public class PacemateHelper {
 		return echo;
 	}
 
-	public void setEcho(boolean echo) {
+	@Inject(optional=true)
+	public void setEcho(@Named("pacemate.echo") boolean echo) {
 		this.echo = echo;
 	}
 
