@@ -1,12 +1,9 @@
 package de.uniluebeck.itm.wsn.drivers.core.operation;
 
-import static com.google.common.base.Objects.firstNonNull;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
-
-import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.event.EventListenerSupport;
 import org.slf4j.Logger;
@@ -83,12 +80,12 @@ public class SimpleOperation<T> implements Operation<T>, OperationContext {
 	 */
 	@Inject
 	public SimpleOperation(TimeLimiter timeLimiter, ProgressManager progressManager, OperationRunnable<T> runnable, 
-			long timeout, @Nullable OperationCallback<T> callback) {
+			long timeout, OperationCallback<T> callback) {
 		this.timeLimiter = timeLimiter;
 		this.progressManager = progressManager;
 		this.runnable = runnable;
 		this.timeout = timeout;
-		this.callback = firstNonNull(callback, new OperationCallbackAdapter<T>());
+		this.callback = callback;
 	}
 	
 	@Override

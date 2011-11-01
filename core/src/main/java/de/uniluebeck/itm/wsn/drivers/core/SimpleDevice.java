@@ -230,7 +230,7 @@ public class SimpleDevice implements Device {
 	}
 	
 	private <T> OperationFuture<T> submitOperation(OperationRunnable<T> runnable, long timeout, 
-			OperationCallback<T> callback) {
+			@Nullable OperationCallback<T> callback) {
 		checkArgument(timeout >= 0, "Negative timeout is not allowed.");
 		Operation<T> operation = factory.create(runnable, timeout, callback);
 		return executor.submitOperation(operation);

@@ -1,5 +1,9 @@
 package de.uniluebeck.itm.wsn.drivers.core.operation;
 
+import static com.google.common.base.Objects.firstNonNull;
+
+import javax.annotation.Nullable;
+
 import com.google.common.util.concurrent.TimeLimiter;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -26,7 +30,9 @@ public class SimpleOperationFactory implements OperationFactory {
 	}
 	
 	@Override
-	public <T> Operation<T> create(OperationRunnable<T> runnable, long timeout, OperationCallback<T> callback) {
+	public <T> Operation<T> create(OperationRunnable<T> runnable, long timeout, 
+			@Nullable OperationCallback<T> callback) {
+		callback = firstNonNull(callback, new OperationCallbackAdapter<T>());
 		ProgressManager progressManager = progressManagerFactory.create(callback);
 		return new SimpleOperation<T>(timeLimiterProvider.get(), progressManager, runnable, timeout, callback);
 	}
