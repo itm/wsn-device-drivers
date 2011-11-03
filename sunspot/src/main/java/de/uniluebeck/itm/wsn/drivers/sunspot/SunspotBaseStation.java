@@ -124,7 +124,7 @@ public class SunspotBaseStation {
 
 
     public OperationFutureTask<Void> resetNode(String macAddress, long timeout, OperationCallback<Void> callback) {
-        SunspotResetOperationRunnable operationRunnable = new SunspotResetOperationRunnable(macAddress, this.sysBinPath, this.libFilePath, this.keyStrorePath, this.port, this.iport, this.rebootCommandPath);
+        SunspotResetOperationRunnable operationRunnable = new SunspotResetOperationRunnable(macAddress, this.sysBinPath, this.libFilePath, this.keyStrorePath, this.port, this.iport);
         Operation<Void> operationContainer = factory.create(operationRunnable, timeout, callback);
         OperationFutureTask<Void> future = new OperationFutureTask<Void>(operationContainer);
         this.operationQueue.add(new OperationQueueEntry(operationRunnable, future, callback));
@@ -132,7 +132,7 @@ public class SunspotBaseStation {
     }
 
     public OperationFutureTask<Void> isNodeAlive(String macAddress, long timeout, OperationCallback<Void> callback) {
-        SunspotIsAliveOperationRunnable operationRunnable = new SunspotIsAliveOperationRunnable(macAddress, this.SunspotBuildPath, this.basestationPort, this.tempDirectory);
+        SunspotIsAliveOperationRunnable operationRunnable = new SunspotIsAliveOperationRunnable(macAddress, this.sysBinPath, this.libFilePath, this.keyStrorePath, this.port, this.iport);
         Operation<Void> operationContainer = factory.create(operationRunnable, timeout, callback);
         OperationFutureTask<Void> future = new OperationFutureTask<Void>(operationContainer);
         this.operationQueue.add(new OperationQueueEntry(operationRunnable, future, callback));

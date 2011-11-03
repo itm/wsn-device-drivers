@@ -17,15 +17,13 @@ public class SunspotDeviceExample {
         Logging.setDebugLoggingDefaults();
 
         HashMap<String, String> baseStationConfiguration = new HashMap<String, String>();
-        baseStationConfiguration.put("SunspotBuildPath", "/home/evangelos/programs/SunSPOT/sdk/build.xml");
+        baseStationConfiguration.put("SunspotBuildPath", "/home/evangelos/programs/SunSPOT/sdk-red-090706/build.xml");
         baseStationConfiguration.put("receivingBasestationAppPath", "/home/evangelos/programs/SunSPOT/host/build.xml");
-        baseStationConfiguration.put("tempDirectory", "/home/evangelos/programs/SunSPOT/temp");
+        baseStationConfiguration.put("tempDirectory", "/home/evangelos/programs/SunSPOT/sdk-red-090706/temp");
         baseStationConfiguration.put("BasestationPort", "/dev/ttyACM0");
-        baseStationConfiguration.put("sysBinPath", "-sysBin/home/evangelos/programs/SunSPOT/sdk/arm");
-        baseStationConfiguration.put("libFilePath", "-libFile/home/evangelos/programs/SunSPOT/sdk/transducerlib");
+        baseStationConfiguration.put("sysBinPath", "-sysBin/home/evangelos/programs/SunSPOT/sdk-red-090706/arm");
+        baseStationConfiguration.put("libFilePath", "-libFile/home/evangelos/programs/SunSPOT/sdk-red-090706/arm/transducerlib");
         baseStationConfiguration.put("keyStrorePath", "-keyStorePath/home/evangelos/sunspotkeystore");
-        baseStationConfiguration.put("rebootCommandPath", "-f/home/evangelos/programs/SunSPOT/temp/reboot");
-
 
         PipedInputStream inputStream = new PipedInputStream();
         SunspotModule sb = new SunspotModule(baseStationConfiguration);
@@ -69,7 +67,35 @@ public class SunspotDeviceExample {
             }
         });
 
-        Thread.sleep(10000);
+        System.out.println("0-------------------------------------------------------");
+
+        sd1.isConnected(100000, new OperationCallback<Void>() {
+            @Override
+            public void onExecute() {
+
+            }
+
+            @Override
+            public void onSuccess(Void result) {
+                System.out.println("IsNoDEALive DONE");
+
+            }
+
+            @Override
+            public void onCancel() {
+                throw (new UnsupportedOperationException());
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                throw (new UnsupportedOperationException());
+            }
+
+            @Override
+            public void onProgressChange(float fraction) {
+                throw (new UnsupportedOperationException());
+            }
+        });
 
         System.out.println("1-------------------------------------------------------");
 

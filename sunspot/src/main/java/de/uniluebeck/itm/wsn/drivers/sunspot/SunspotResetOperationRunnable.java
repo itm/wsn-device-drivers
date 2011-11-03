@@ -15,40 +15,37 @@ public class SunspotResetOperationRunnable implements ResetOperation {
     private String keyStrorePath;
     private String port;
     private String iport;
-    private String rebootCommandPath;
 
 
-    public SunspotResetOperationRunnable(String macAddress, String sysBinPath, String libFilePath, String keyStrorePath, String port, String iport, String rebootCommandPath) {
+    public SunspotResetOperationRunnable(String macAddress, String sysBinPath, String libFilePath, String keyStrorePath, String port, String iport) {
         this.macAddress = macAddress;
         this.sysBinPath = sysBinPath;
         this.libFilePath = libFilePath;
         this.keyStrorePath = keyStrorePath;
         this.port = port;
         this.iport = iport;
-        this.rebootCommandPath = rebootCommandPath;
     }
 
     @Override
     public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
-        System.out.println("SUNSPOT node reset node>>>>" + "  " + this.macAddress);
+        log.debug("SUNSPOT node reset node>>>>" + "  " + this.macAddress);
         final SunspotCommandUI ss = new SunspotCommandUI();
         try {
-            log.debug("RESET NODE:"+this.macAddress);
-            String[] args = new String[8];
+            log.debug("RESET NODE:" + this.macAddress);
+            String[] args = new String[7];
             args[0] = this.sysBinPath;
             args[1] = this.libFilePath;
             args[2] = this.keyStrorePath;
             args[3] = this.port;
             args[4] = this.iport;
-            args[5] = this.rebootCommandPath;
-            args[6] = "-remote.address=" + this.macAddress;
-            args[7] = "-scriptString=reboot:quit";
+            args[5] = "-remote.address=" + this.macAddress;
+            args[6] = "-scriptString=reboot:quit";
             ss.initialize(args);
         } catch (Exception e) {
-            log.error("RESET ERROR:"+this.macAddress+ ": " + e.getMessage());
+            log.error("RESET ERROR:" + this.macAddress + ": " + e.getMessage());
             throw new Exception(e.getMessage());
         }
-        log.debug("RESET OK:"+this.macAddress);
+        log.debug("RESET OK:" + this.macAddress);
 
         return null;
     }

@@ -140,7 +140,13 @@ public class SunspotDevice implements Device, SunspotBaseStationListener {
 
     @Override
     public boolean isConnected() {
-        return connected;
+        throw (new UnsupportedOperationException());
+    }
+
+
+    public OperationFuture<Void> isConnected(long timeout, OperationCallback<Void> callback) {
+        baseStation.start();
+        return baseStation.isNodeAlive(this.macAddress, timeout, callback);
     }
 
     @Override
