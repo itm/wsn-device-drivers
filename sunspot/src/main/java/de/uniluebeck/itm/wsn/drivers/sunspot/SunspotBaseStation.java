@@ -12,8 +12,10 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationCallback;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationFactory;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationRunnable;
+import de.uniluebeck.itm.wsn.drivers.core.util.JarUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -33,15 +35,24 @@ public class SunspotBaseStation {
 
     private String receivingBasestationAppPath;
 
-    private String commandBasestationPort;
+    private String basestationPort;
 
-    private String receivingBasestationPort;
     private String tempDirectory;
 
     private Runnable baseStationOutputListener;
 
     private String SunspotBuildPath;
     private boolean ftime = true;
+    private Thread opExecutor;
+    private Thread msgBasestation;
+
+    private String sysBinPath;
+    private String libFilePath;
+    private String keyStrorePath;
+    private String port;
+    private String iport;
+    private String rebootCommandPath;
+    private static final Logger log = LoggerFactory.getLogger(SunspotBaseStation.class);
 
     private static class OperationQueueEntry {
         public OperationRunnable operationRunnable;
@@ -62,7 +73,6 @@ public class SunspotBaseStation {
         public void run() {
             while (true) {
                 try {
-
                     OperationQueueEntry entry = operationQueue.take();
                     entry.callback.onExecute();
                     try {
@@ -72,7 +82,7 @@ public class SunspotBaseStation {
                         entry.callback.onFailure(new Throwable("Operation Failed"));
                     }
                 } catch (InterruptedException e) {
-                    // stop working
+                    log.error(e.getMessage());
                 }
             }
         }
@@ -87,34 +97,34 @@ public class SunspotBaseStation {
         if (this.ftime) {
             this.SunspotBuildPath = this.configuration.get("SunspotBuildPath");
             this.receivingBasestationAppPath = this.configuration.get("receivingBasestationAppPath");
-            this.commandBasestationPort = this.configuration.get("commandBasestationPort");
-            this.receivingBasestationPort = this.configuration.get("receivingBasestationPort");
+            this.basestationPort = this.configuration.get("BasestationPort");
             this.tempDirectory = this.configuration.get("tempDirectory");
+            this.sysBinPath = this.configuration.get("sysBinPath");
+            this.libFilePath = this.configuration.get("libFilePath");
+            this.keyStrorePath = this.configuration.get("keyStrorePath");
+            this.port = "-p" + this.basestationPort;
+            this.iport = "-i" + this.basestationPort;
+            this.rebootCommandPath = this.configuration.get("rebootCommandPath");
+            JarUtil.loadLibrary("rxtxSerial");
+            System.setProperty("SERIAL_PORT", this.basestationPort);
+            opExecutor = new Thread(operationExecutor);
+            opExecutor.start();
 
-            new Thread(operationExecutor).start();
-
-
-            this.baseStationOutputListener = new Runnable() {
-                @Override
-                public void run() {
-                    ant_project p = new ant_project(receivingBasestationAppPath, receivingBasestationPort, tempDirectory);
-                    try {
-                        p.call_host(listeners);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            };
-
-
-            new Thread(baseStationOutputListener).start();
+            msgBasestation = new Thread(new SunspotMessageBasestation(100, this.basestationPort, this.listeners));
+            msgBasestation.start();
             this.ftime = false;
         }
     }
 
+    public void stop() {
+        opExecutor.stop();
+        msgBasestation.stop();
+
+    }
+
 
     public OperationFutureTask<Void> resetNode(String macAddress, long timeout, OperationCallback<Void> callback) {
-        SunspotResetOperationRunnable operationRunnable = new SunspotResetOperationRunnable(macAddress, this.SunspotBuildPath, this.commandBasestationPort,this.tempDirectory);
+        SunspotResetOperationRunnable operationRunnable = new SunspotResetOperationRunnable(macAddress, this.sysBinPath, this.libFilePath, this.keyStrorePath, this.port, this.iport, this.rebootCommandPath);
         Operation<Void> operationContainer = factory.create(operationRunnable, timeout, callback);
         OperationFutureTask<Void> future = new OperationFutureTask<Void>(operationContainer);
         this.operationQueue.add(new OperationQueueEntry(operationRunnable, future, callback));
@@ -122,7 +132,7 @@ public class SunspotBaseStation {
     }
 
     public OperationFutureTask<Void> isNodeAlive(String macAddress, long timeout, OperationCallback<Void> callback) {
-        SunspotIsAliveOperationRunnable operationRunnable = new SunspotIsAliveOperationRunnable(macAddress, this.SunspotBuildPath, this.commandBasestationPort,this.tempDirectory);
+        SunspotIsAliveOperationRunnable operationRunnable = new SunspotIsAliveOperationRunnable(macAddress, this.SunspotBuildPath, this.basestationPort, this.tempDirectory);
         Operation<Void> operationContainer = factory.create(operationRunnable, timeout, callback);
         OperationFutureTask<Void> future = new OperationFutureTask<Void>(operationContainer);
         this.operationQueue.add(new OperationQueueEntry(operationRunnable, future, callback));
@@ -130,7 +140,7 @@ public class SunspotBaseStation {
     }
 
     public OperationFutureTask<Void> program(String macAddress, byte[] jar, long timeout, OperationCallback<Void> callback) throws Exception {
-        SunspotProgramOperationRunnable operationRunnable = new SunspotProgramOperationRunnable(macAddress, this.SunspotBuildPath, this.commandBasestationPort,this.tempDirectory, jar);
+        SunspotProgramOperationRunnable operationRunnable = new SunspotProgramOperationRunnable(macAddress, this.SunspotBuildPath, this.basestationPort, this.tempDirectory, jar);
         Operation<Void> operationContainer = factory.create(operationRunnable, timeout, callback);
         OperationFutureTask<Void> future = new OperationFutureTask<Void>(operationContainer);
         this.operationQueue.add(new OperationQueueEntry(operationRunnable, future, callback));

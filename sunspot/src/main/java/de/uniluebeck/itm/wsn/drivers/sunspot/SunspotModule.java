@@ -6,15 +6,18 @@ import com.google.inject.name.Names;
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 
+import java.io.PipedInputStream;
 import java.util.Map;
 
 
 public class SunspotModule extends AbstractModule {
 
     private Map<String, String> baseStationConfiguration;
+    private PipedInputStream outgoingInputStream;
 
     public SunspotModule(Map<String, String> baseStationConfiguration) {
         this.baseStationConfiguration = baseStationConfiguration;
+        this.outgoingInputStream=outgoingInputStream;
     }
 
     @Override

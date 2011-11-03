@@ -2,6 +2,7 @@ package de.uniluebeck.itm.wsn.drivers.sunspot;
 
 
 import com.sun.spot.io.j2me.radiogram.RadiogramConnection;
+import de.uniluebeck.itm.wsn.drivers.core.util.JarUtil;
 
 import javax.microedition.io.Connector;
 import javax.microedition.io.Datagram;
@@ -44,6 +45,8 @@ public class hostruntest {
 
 
     public static void main(String[] args) throws Exception {
+        System.out.println("Loading rxtxSerial from jar file");
+		JarUtil.loadLibrary("rxtxSerial");
         System.setProperty("SERIAL_PORT", "/dev/ttyACM0");
         Runnable a = new Runnable() {
             @Override

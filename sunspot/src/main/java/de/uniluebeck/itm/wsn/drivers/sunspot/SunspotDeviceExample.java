@@ -6,16 +6,13 @@ import de.uniluebeck.itm.tr.util.Logging;
 import de.uniluebeck.itm.wsn.drivers.core.DeviceModule;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationCallback;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.HashMap;
 
 public class SunspotDeviceExample {
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
 
         Logging.setDebugLoggingDefaults();
 
@@ -23,21 +20,27 @@ public class SunspotDeviceExample {
         baseStationConfiguration.put("SunspotBuildPath", "/home/evangelos/programs/SunSPOT/sdk/build.xml");
         baseStationConfiguration.put("receivingBasestationAppPath", "/home/evangelos/programs/SunSPOT/host/build.xml");
         baseStationConfiguration.put("tempDirectory", "/home/evangelos/programs/SunSPOT/temp");
+        baseStationConfiguration.put("BasestationPort", "/dev/ttyACM0");
+        baseStationConfiguration.put("sysBinPath", "-sysBin/home/evangelos/programs/SunSPOT/sdk/arm");
+        baseStationConfiguration.put("libFilePath", "-libFile/home/evangelos/programs/SunSPOT/sdk/transducerlib");
+        baseStationConfiguration.put("keyStrorePath", "-keyStorePath/home/evangelos/sunspotkeystore");
+        baseStationConfiguration.put("rebootCommandPath", "-f/home/evangelos/programs/SunSPOT/temp/reboot");
 
-        baseStationConfiguration.put("commandBasestationPort", "/dev/ttyACM0");
-        baseStationConfiguration.put("receivingBasestationPort", "/dev/ttyACM1");
 
-
+        PipedInputStream inputStream = new PipedInputStream();
         SunspotModule sb = new SunspotModule(baseStationConfiguration);
         Injector injector = Guice.createInjector(sb, new DeviceModule());
+
         SunspotBaseStation sbs = injector.getInstance(SunspotBaseStation.class);
 
         HashMap<String, String> deviceConfiguration = new HashMap<String, String>();
         deviceConfiguration.put("macAddress", "0014.4F01.0000." + "5EF4");
-
         SunspotDevice sd1 = injector.getInstance(SunspotDevice.class);
         sd1.setConfiguration(deviceConfiguration);
+        System.out.println("CONNECT");
+
         sd1.connect(null);
+
         sd1.reset(100000, new OperationCallback<Void>() {
             @Override
             public void onExecute() {
@@ -47,6 +50,7 @@ public class SunspotDeviceExample {
             @Override
             public void onSuccess(Void result) {
                 System.out.println("RESETed");
+
             }
 
             @Override
@@ -65,12 +69,11 @@ public class SunspotDeviceExample {
             }
         });
 
-      /*  String jar = "/home/evangelos/programs/SunSPOT/broadcast.jar";
-        File file = new File(jar);
+        Thread.sleep(10000);
 
-        byte[] b = getBytesFromFile(file);
+        System.out.println("1-------------------------------------------------------");
 
-        sd1.program(b, 40000, new OperationCallback<Void>() {
+        sd1.reset(100000, new OperationCallback<Void>() {
             @Override
             public void onExecute() {
 
@@ -78,7 +81,8 @@ public class SunspotDeviceExample {
 
             @Override
             public void onSuccess(Void result) {
-                System.out.println("Flashed");
+                System.out.println("RESETed");
+
             }
 
             @Override
@@ -96,7 +100,12 @@ public class SunspotDeviceExample {
                 throw (new UnsupportedOperationException());
             }
         });
-        */
+
+        Thread.sleep(30000);
+
+        sbs.stop();
+        System.exit(1);
+
     }
 
     public static byte[] getBytesFromFile(File file) throws IOException {
@@ -115,5 +124,12 @@ public class SunspotDeviceExample {
         return bytes;
     }
 
-
+    public static void printInputStream(InputStream inputStream) throws IOException {
+        System.out.println("Final -----------------------");
+        long length = inputStream.available();
+        byte[] bytes = new byte[(int) length];
+        inputStream.read(bytes);
+        System.out.println("Final >>" + new String(bytes));
+        System.out.println("Final -----------------------");
+    }
 }

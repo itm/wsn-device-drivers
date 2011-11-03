@@ -15,9 +15,7 @@ import org.jboss.netty.handler.codec.embedder.EncoderEmbedder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.HashMap;
 
 import static com.google.common.base.Preconditions.checkState;
@@ -32,20 +30,26 @@ public class SunspotDevice implements Device, SunspotBaseStationListener {
 
     private volatile boolean connected;
 
-    private OutputStream outgoingOutputStream;
+    private PipedOutputStream outgoingOutputStream;
 
     private InputStream incomingInputStream;
 
-    private InputStream outgoingInputStream;
+    private PipedInputStream outgoingInputStream;
 
     private OutputStream incomingOutputStream;
 
     private HashMap<String, String> deviceConfiguration;
 
     @Inject
-    public SunspotDevice(SunspotBaseStation baseStation, String nodeID) {
+    public SunspotDevice(SunspotBaseStation baseStation, String nodeID, PipedInputStream outgoingStream) {
         this.macAddress = nodeID;
         this.baseStation = baseStation;
+        this.outgoingInputStream = outgoingStream;
+        try {
+            this.outgoingOutputStream = new PipedOutputStream(this.outgoingInputStream);
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
     }
 
     @Override
@@ -53,7 +57,7 @@ public class SunspotDevice implements Device, SunspotBaseStationListener {
         checkState(connected, "Device not connected.");
         baseStation.start();
         try {
-            baseStation.program(this.macAddress,data,timeout,callback);
+            baseStation.program(this.macAddress, data, timeout, callback);
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
@@ -131,6 +135,7 @@ public class SunspotDevice implements Device, SunspotBaseStationListener {
     public void connect(String uri) throws IOException {
         baseStation.addListener(this);
         connected = true;
+        baseStation.start();
     }
 
     @Override
@@ -177,14 +182,28 @@ public class SunspotDevice implements Device, SunspotBaseStationListener {
         encoder.offer(unencodedBuffer);
         ChannelBuffer encodedBuffer = encoder.poll();
         try {
-            encodedBuffer.writeBytes(outgoingInputStream, encodedBuffer.readableBytes());
+
+            this.outgoingOutputStream.write(encodedBuffer.readableBytes());
+            this.outgoingOutputStream.flush();
+            //System.out.println(encodedBuffer.readableBytes());
+           // printInputStream(this.outgoingInputStream);
         } catch (IOException e) {
-            log.warn("IOException while writing to outgoingInputStream: {}", e);
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
     }
 
     public void setConfiguration(HashMap<String, String> deviceConfiguration) {
         this.deviceConfiguration = deviceConfiguration;
         this.macAddress = this.deviceConfiguration.get("macAddress");
+    }
+
+    public static void printInputStream(InputStream inputStream) throws IOException {
+
+        long length = inputStream.available();
+        byte[] bytes = new byte[(int) length];
+        System.out.println("inputstream :"+length);
+        inputStream.read(bytes);
+        System.out.println("inputstrem >>" + new String(bytes));
+        System.out.println("Final -----------------------");
     }
 }
