@@ -51,7 +51,8 @@ public class SunspotBaseStation {
     private String keyStrorePath;
     private String port;
     private String iport;
-    private String rebootCommandPath;
+    private String workingDirectory;
+
     private static final Logger log = LoggerFactory.getLogger(SunspotBaseStation.class);
 
     private static class OperationQueueEntry {
@@ -79,6 +80,7 @@ public class SunspotBaseStation {
                         entry.operationRunnable.run(null, null);
                         entry.callback.onSuccess(null);
                     } catch (Exception ex) {
+                        log.error(ex.getMessage());
                         entry.callback.onFailure(new Throwable("Operation Failed"));
                     }
                 } catch (InterruptedException e) {
@@ -102,11 +104,14 @@ public class SunspotBaseStation {
             this.sysBinPath = this.configuration.get("sysBinPath");
             this.libFilePath = this.configuration.get("libFilePath");
             this.keyStrorePath = this.configuration.get("keyStrorePath");
+            this.workingDirectory = this.configuration.get("workingDirectory");
             this.port = "-p" + this.basestationPort;
             this.iport = "-i" + this.basestationPort;
-            this.rebootCommandPath = this.configuration.get("rebootCommandPath");
             JarUtil.loadLibrary("rxtxSerial");
             System.setProperty("SERIAL_PORT", this.basestationPort);
+            System.setProperty("executable.path", "/home/evangelos/programs/SunSPOT/sdk-red-090706/arm/vm-spot.bin");
+            System.setProperty("squawk.startup.arguments", "-Xboot:268763136 -Xmxnvm:0 -isolateinit:com.sun.spot.peripheral.Spot -dma:1024");
+
             opExecutor = new Thread(operationExecutor);
             opExecutor.start();
 
@@ -140,7 +145,7 @@ public class SunspotBaseStation {
     }
 
     public OperationFutureTask<Void> program(String macAddress, byte[] jar, long timeout, OperationCallback<Void> callback) throws Exception {
-        SunspotProgramOperationRunnable operationRunnable = new SunspotProgramOperationRunnable(macAddress, this.SunspotBuildPath, this.basestationPort, this.tempDirectory, jar);
+        SunspotProgramOperationRunnable operationRunnable = new SunspotProgramOperationRunnable(macAddress, this.sysBinPath, this.libFilePath, this.keyStrorePath, this.port, this.iport, jar,this.workingDirectory);
         Operation<Void> operationContainer = factory.create(operationRunnable, timeout, callback);
         OperationFutureTask<Void> future = new OperationFutureTask<Void>(operationContainer);
         this.operationQueue.add(new OperationQueueEntry(operationRunnable, future, callback));

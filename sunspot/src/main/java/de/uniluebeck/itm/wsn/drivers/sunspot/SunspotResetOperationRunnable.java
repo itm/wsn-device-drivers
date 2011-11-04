@@ -28,7 +28,6 @@ public class SunspotResetOperationRunnable implements ResetOperation {
 
     @Override
     public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
-        log.debug("SUNSPOT node reset node>>>>" + "  " + this.macAddress);
         final SunspotCommandUI ss = new SunspotCommandUI();
         try {
             log.debug("RESET NODE:" + this.macAddress);

@@ -24,6 +24,8 @@ public class SunspotDeviceExample {
         baseStationConfiguration.put("sysBinPath", "-sysBin/home/evangelos/programs/SunSPOT/sdk-red-090706/arm");
         baseStationConfiguration.put("libFilePath", "-libFile/home/evangelos/programs/SunSPOT/sdk-red-090706/arm/transducerlib");
         baseStationConfiguration.put("keyStrorePath", "-keyStorePath/home/evangelos/sunspotkeystore");
+        baseStationConfiguration.put("workingDirectory", "/home/evangelos/temp");
+
 
         PipedInputStream inputStream = new PipedInputStream();
         SunspotModule sb = new SunspotModule(baseStationConfiguration);
@@ -38,8 +40,7 @@ public class SunspotDeviceExample {
         System.out.println("CONNECT");
 
         sd1.connect(null);
-
-        sd1.reset(100000, new OperationCallback<Void>() {
+         sd1.reset(100000, new OperationCallback<Void>() {
             @Override
             public void onExecute() {
 
@@ -69,7 +70,7 @@ public class SunspotDeviceExample {
 
         System.out.println("0-------------------------------------------------------");
 
-        sd1.isConnected(100000, new OperationCallback<Void>() {
+        /*sd1.isConnected(100000, new OperationCallback<Void>() {
             @Override
             public void onExecute() {
 
@@ -95,42 +96,48 @@ public class SunspotDeviceExample {
             public void onProgressChange(float fraction) {
                 throw (new UnsupportedOperationException());
             }
-        });
+        });*/
 
         System.out.println("1-------------------------------------------------------");
 
-        sd1.reset(100000, new OperationCallback<Void>() {
-            @Override
-            public void onExecute() {
 
-            }
 
-            @Override
-            public void onSuccess(Void result) {
-                System.out.println("RESETed");
+        byte[] sunspotImage = getBytesFromFile(new File("/home/evangelos/programs/SunSPOT/broadcast.jar"));
 
-            }
 
-            @Override
-            public void onCancel() {
-                throw (new UnsupportedOperationException());
-            }
+        for (int i = 0; i < 10; i++) {
+            sd1.program(sunspotImage, 100000, new OperationCallback<Void>() {
+                @Override
+                public void onExecute() {
 
-            @Override
-            public void onFailure(Throwable throwable) {
-                throw (new UnsupportedOperationException());
-            }
+                }
 
-            @Override
-            public void onProgressChange(float fraction) {
-                throw (new UnsupportedOperationException());
-            }
-        });
+                @Override
+                public void onSuccess(Void result) {
+                    System.out.println("Deploy APP DONE");
 
-        Thread.sleep(30000);
+                }
 
-        sbs.stop();
-        System.exit(1);
+                @Override
+                public void onCancel() {
+                    throw (new UnsupportedOperationException());
+                }
+
+                @Override
+                public void onFailure(Throwable throwable) {
+                    throw (new UnsupportedOperationException());
+                }
+
+                @Override
+                public void onProgressChange(float fraction) {
+                    throw (new UnsupportedOperationException());
+                }
+            });
+        }
+
+
+        //  sbs.stop();
+        //  System.exit(1);
 
     }
 

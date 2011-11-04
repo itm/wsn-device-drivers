@@ -52,6 +52,7 @@ public class SunspotMessageBasestation implements Runnable {
                 byte[] msg = dg.getData();
                 long now = System.currentTimeMillis();
                 log.debug("SunspotHostMsg:" + String.valueOf(now) + ":" + mac + ":" + msg.toString() + ":\n");
+                log.debug("SunspotHostMsg:" + payloadAsInteger(msg));
                 Collection<SunspotBaseStationListener> sd = listeners.get(mac);
                 for (SunspotBaseStationListener list : sd) {
                     list.messageReceived(msg);
@@ -61,5 +62,19 @@ public class SunspotMessageBasestation implements Runnable {
                 throw e;
             }
         }
+    }
+
+
+    long payloadAsInteger(byte[] b) {
+        long l = 0;
+        l |= b[0] & 0xFF;
+        l <<= 8;
+        l |= b[1] & 0xFF;
+        l <<= 8;
+        l |= b[2] & 0xFF;
+        l <<= 8;
+        l |= b[3] & 0xFF;
+        return l;
+
     }
 }
