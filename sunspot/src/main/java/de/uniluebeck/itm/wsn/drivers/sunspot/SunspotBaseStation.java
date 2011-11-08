@@ -52,6 +52,8 @@ public class SunspotBaseStation {
     private String port;
     private String iport;
     private String workingDirectory;
+    private int ControlRadiogramPort;
+    private int ReceivingRadiogramPort;
 
     private static final Logger log = LoggerFactory.getLogger(SunspotBaseStation.class);
 
@@ -68,6 +70,8 @@ public class SunspotBaseStation {
     }
 
     private BlockingQueue<OperationQueueEntry> operationQueue = new LinkedBlockingDeque<OperationQueueEntry>();
+    private BlockingQueue<SunspotMessage> sendMessageQueue = new LinkedBlockingDeque<SunspotMessage>();
+
 
     private Runnable operationExecutor = new Runnable() {
         @Override
@@ -107,6 +111,9 @@ public class SunspotBaseStation {
             this.workingDirectory = this.configuration.get("workingDirectory");
             this.port = "-p" + this.basestationPort;
             this.iport = "-i" + this.basestationPort;
+            this.ControlRadiogramPort = Integer.parseInt(this.configuration.get("ControlRadiogramPort"));
+            this.ReceivingRadiogramPort = Integer.parseInt(this.configuration.get("ReceivingRadiogramPort"));
+
             JarUtil.loadLibrary("rxtxSerial");
             System.setProperty("SERIAL_PORT", this.basestationPort);
             System.setProperty("executable.path", "/home/evangelos/programs/SunSPOT/sdk-red-090706/arm/vm-spot.bin");
@@ -115,7 +122,7 @@ public class SunspotBaseStation {
             opExecutor = new Thread(operationExecutor);
             opExecutor.start();
 
-            msgBasestation = new Thread(new SunspotMessageBasestation(100, this.basestationPort, this.listeners));
+            msgBasestation = new Thread(new SunspotMessageBasestation(this.ReceivingRadiogramPort, this.ControlRadiogramPort, this.listeners, sendMessageQueue));
             msgBasestation.start();
             this.ftime = false;
         }
@@ -145,7 +152,7 @@ public class SunspotBaseStation {
     }
 
     public OperationFutureTask<Void> program(String macAddress, byte[] jar, long timeout, OperationCallback<Void> callback) throws Exception {
-        SunspotProgramOperationRunnable operationRunnable = new SunspotProgramOperationRunnable(macAddress, this.sysBinPath, this.libFilePath, this.keyStrorePath, this.port, this.iport, jar,this.workingDirectory);
+        SunspotProgramOperationRunnable operationRunnable = new SunspotProgramOperationRunnable(macAddress, this.sysBinPath, this.libFilePath, this.keyStrorePath, this.port, this.iport, jar, this.workingDirectory);
         Operation<Void> operationContainer = factory.create(operationRunnable, timeout, callback);
         OperationFutureTask<Void> future = new OperationFutureTask<Void>(operationContainer);
         this.operationQueue.add(new OperationQueueEntry(operationRunnable, future, callback));
@@ -160,6 +167,13 @@ public class SunspotBaseStation {
         return future;
     }
 
+    public OperationFutureTask<Void> send(String macAddress, byte[] message, long timeout, OperationCallback<Void> callback)   {
+        SunspotSendOperationRunnable operationRunnable = new SunspotSendOperationRunnable(macAddress, message,this.ControlRadiogramPort);
+        Operation<Void> operationContainer = factory.create(operationRunnable, timeout, callback);
+        OperationFutureTask<Void> future = new OperationFutureTask<Void>(operationContainer);
+        this.operationQueue.add(new OperationQueueEntry(operationRunnable, future, callback));
+        return future;
+    }
 
     public void addListener(SunspotBaseStationListener sunspotDevice) {
         synchronized (listeners) {

@@ -128,7 +128,8 @@ public class SunspotDevice implements Device, SunspotBaseStationListener {
     @Override
     public OperationFuture<Void> send(byte[] message, long timeout, OperationCallback<Void> callback) {
         checkState(connected, "Device not connected.");
-        throw (new UnsupportedOperationException());
+        baseStation.start();
+        return baseStation.send(this.macAddress,message,timeout, callback);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package de.uniluebeck.itm.wsn.drivers.sunspot;
 
 
-public class SunspotMessages {
+public class SunspotMessage {
     public String getMacAddress() {
         return macAddress;
     }
@@ -31,7 +31,7 @@ public class SunspotMessages {
     private long timestamp;
 
 
-    public SunspotMessages(String macAddress, byte[] payload, long timestamp) {
+    public SunspotMessage(String macAddress, byte[] payload, long timestamp) {
         this.macAddress = macAddress;
         this.payload = payload;
         this.timestamp = timestamp;

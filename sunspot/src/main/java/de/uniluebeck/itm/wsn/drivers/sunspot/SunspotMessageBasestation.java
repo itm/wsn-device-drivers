@@ -9,17 +9,23 @@ import javax.microedition.io.Connector;
 import javax.microedition.io.Datagram;
 import java.text.DateFormat;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.concurrent.BlockingQueue;
 
 public class SunspotMessageBasestation implements Runnable {
     // Broadcast port on which we listen for sensor samples
 
-    private int HOST_PORT = 100;
+    private int HOST_PORT=100;
+    private int sendMessagePort=101;
     private Multimap<String, SunspotBaseStationListener> listeners;
     private static final Logger log = LoggerFactory.getLogger(SunspotMessageBasestation.class);
+    private BlockingQueue<SunspotMessage> sendMessageQueue;
 
-    public SunspotMessageBasestation(int WSNPort, String devicePort, Multimap<String, SunspotBaseStationListener> listeners) {
+    public SunspotMessageBasestation(int WSNPort,int SendMessagePort,  Multimap<String, SunspotBaseStationListener> listeners, BlockingQueue<SunspotMessage> sendMessageQueue) {
         this.HOST_PORT = WSNPort;
         this.listeners = listeners;
+        this.sendMessagePort=SendMessagePort;
+        this.sendMessageQueue=sendMessageQueue;
     }
 
     @Override
@@ -43,6 +49,10 @@ public class SunspotMessageBasestation implements Runnable {
             throw e;
         }
 
+        HashMap<String, Long> logValues = new HashMap<String, Long>();
+
+        int counter=0;
+        int missed=0;
         // Main data collection loop
         while (true) {
             try {
@@ -52,7 +62,22 @@ public class SunspotMessageBasestation implements Runnable {
                 byte[] msg = dg.getData();
                 long now = System.currentTimeMillis();
                 log.debug("SunspotHostMsg:" + String.valueOf(now) + ":" + mac + ":" + msg.toString() + ":\n");
-                log.debug("SunspotHostMsg:" + payloadAsInteger(msg));
+                long val = payloadAsInteger(msg);
+                log.debug("SunspotHostMsg:" + val);
+
+                if (logValues.containsKey(mac) == false) {
+                    logValues.put(mac, val);
+                    counter++;
+                } else {
+                    counter++;
+                    if (val - (long) logValues.get(mac) > 1) {
+                        missed++;
+                        log.info("MISSED VALUE from " + mac + " Last Val:"+(long) logValues.get(mac) +" Value:"+val);
+                        log.info("MISSED :" +(double) missed/counter);
+                    }
+                    logValues.put(mac, val);
+                }
+
                 Collection<SunspotBaseStationListener> sd = listeners.get(mac);
                 for (SunspotBaseStationListener list : sd) {
                     list.messageReceived(msg);

@@ -25,6 +25,8 @@ public class SunspotDeviceExample {
         baseStationConfiguration.put("libFilePath", "-libFile/home/evangelos/programs/SunSPOT/sdk-red-090706/arm/transducerlib");
         baseStationConfiguration.put("keyStrorePath", "-keyStorePath/home/evangelos/sunspotkeystore");
         baseStationConfiguration.put("workingDirectory", "/home/evangelos/temp");
+        baseStationConfiguration.put("ControlRadiogramPort", "101");
+        baseStationConfiguration.put("ReceivingRadiogramPort", "100");
 
 
         PipedInputStream inputStream = new PipedInputStream();
@@ -34,43 +36,16 @@ public class SunspotDeviceExample {
         SunspotBaseStation sbs = injector.getInstance(SunspotBaseStation.class);
 
         HashMap<String, String> deviceConfiguration = new HashMap<String, String>();
-        deviceConfiguration.put("macAddress", "0014.4F01.0000." + "5EF4");
+        deviceConfiguration.put("macAddress", "0014.4F01.0000." + "4C98");
         SunspotDevice sd1 = injector.getInstance(SunspotDevice.class);
         sd1.setConfiguration(deviceConfiguration);
         System.out.println("CONNECT");
 
         sd1.connect(null);
-         sd1.reset(100000, new OperationCallback<Void>() {
-            @Override
-            public void onExecute() {
-
-            }
-
-            @Override
-            public void onSuccess(Void result) {
-                System.out.println("RESETed");
-
-            }
-
-            @Override
-            public void onCancel() {
-                throw (new UnsupportedOperationException());
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                throw (new UnsupportedOperationException());
-            }
-
-            @Override
-            public void onProgressChange(float fraction) {
-                throw (new UnsupportedOperationException());
-            }
-        });
 
         System.out.println("0-------------------------------------------------------");
 
-        /*sd1.isConnected(100000, new OperationCallback<Void>() {
+        sd1.isConnected(100000, new OperationCallback<Void>() {
             @Override
             public void onExecute() {
 
@@ -96,26 +71,52 @@ public class SunspotDeviceExample {
             public void onProgressChange(float fraction) {
                 throw (new UnsupportedOperationException());
             }
-        });*/
-
-        System.out.println("1-------------------------------------------------------");
+        });
 
 
 
-        byte[] sunspotImage = getBytesFromFile(new File("/home/evangelos/programs/SunSPOT/broadcast.jar"));
 
+        sd1.send(intToByte(1821), 100000, new OperationCallback<Void>() {
+            @Override
+            public void onExecute() {
+
+            }
+
+            @Override
+            public void onSuccess(Void result) {
+                System.out.println("IsNoDEALive DONE");
+
+            }
+
+            @Override
+            public void onCancel() {
+                throw (new UnsupportedOperationException());
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                throw (new UnsupportedOperationException());
+            }
+
+            @Override
+            public void onProgressChange(float fraction) {
+                throw (new UnsupportedOperationException());
+            }
+        });
+
+
+           byte[] sunspotImage = getBytesFromFile(new File("/home/evangelos/programs/SunSPOT/broadcast2.jar"));
 
         for (int i = 0; i < 10; i++) {
+            System.out.println("1-------------------------------------------------------");
             sd1.program(sunspotImage, 100000, new OperationCallback<Void>() {
                 @Override
                 public void onExecute() {
-
                 }
 
                 @Override
                 public void onSuccess(Void result) {
                     System.out.println("Deploy APP DONE");
-
                 }
 
                 @Override
@@ -133,12 +134,82 @@ public class SunspotDeviceExample {
                     throw (new UnsupportedOperationException());
                 }
             });
+
+            System.out.println("2-------------------------------------------------------");
+            sd1.reset(100000, new OperationCallback<Void>() {
+                @Override
+                public void onExecute() {
+                }
+
+                @Override
+                public void onSuccess(Void result) {
+                    System.out.println("RESETed");
+                }
+
+                @Override
+                public void onCancel() {
+                    throw (new UnsupportedOperationException());
+                }
+
+                @Override
+                public void onFailure(Throwable throwable) {
+                    throw (new UnsupportedOperationException());
+                }
+
+                @Override
+                public void onProgressChange(float fraction) {
+                    throw (new UnsupportedOperationException());
+                }
+            });
+
+
         }
 
+        sd1.send(intToByte(0), 100000, new OperationCallback<Void>() {
+            @Override
+            public void onExecute() {
 
-        //  sbs.stop();
-        //  System.exit(1);
+            }
 
+            @Override
+            public void onSuccess(Void result) {
+                System.out.println("IsNoDEALive DONE");
+
+            }
+
+            @Override
+            public void onCancel() {
+                throw (new UnsupportedOperationException());
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                throw (new UnsupportedOperationException());
+            }
+
+            @Override
+            public void onProgressChange(float fraction) {
+                throw (new UnsupportedOperationException());
+            }
+        });
+
+
+        Thread.sleep(1000 * 60 * 3);
+        sbs.stop();
+        System.exit(1);
+
+    }
+
+    public static byte[] intToByte(int input) {
+        byte[] conv = new byte[4];
+        conv[3] = (byte) (input & 0xff);
+        input >>= 8;
+        conv[2] = (byte) (input & 0xff);
+        input >>= 8;
+        conv[1] = (byte) (input & 0xff);
+        input >>= 8;
+        conv[0] = (byte) input;
+        return conv;
     }
 
     public static byte[] getBytesFromFile(File file) throws IOException {
