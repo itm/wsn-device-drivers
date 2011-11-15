@@ -39,6 +39,11 @@
 				<artifactId>wsn-device-drivers-telosb</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+            <dependency>
+				<groupId>eu.smartsantander</groupId>
+				<artifactId>wsn-device-drivers-waspmote</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>wsn-device-drivers-mock</artifactId>
@@ -53,7 +58,7 @@
 			<dependency>
 				<groupId>de.uniluebeck.itm.itmutils</groupId>
 				<artifactId>itmutils</artifactId>
-				<version>0.3.3-SNAPSHOT</version>
+				<version>0.3.2</version>
 			</dependency>
 
 			<dependency>
@@ -198,10 +203,11 @@
 		<module>jennic</module>
 		<module>pacemate</module>
 		<module>telosb</module>
-		<module>factories</module>
-		<module>mock</module>
-		<module>test</module>
-	</modules>
+        <module>waspmote</module>
+        <module>factories</module>
+        <module>mock</module>
+        <module>test</module>
+    </modules>
 
 	<distributionManagement>
 		<repository>

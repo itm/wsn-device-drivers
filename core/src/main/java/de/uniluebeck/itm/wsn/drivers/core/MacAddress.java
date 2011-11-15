@@ -23,6 +23,9 @@
 
 package de.uniluebeck.itm.wsn.drivers.core;
 
+import com.google.common.base.Preconditions;
+import de.uniluebeck.itm.wsn.drivers.core.util.HexUtils;
+
 import java.util.Arrays;
 
 /**
@@ -30,138 +33,132 @@ import java.util.Arrays;
  *
  * @author Malte Legenhausen
  * @author Daniel Bimschas
+ * @author TLMAT UC
  */
 public class MacAddress {
-	
-	public static final MacAddress HIGHEST_MAC_ADDRESS = new MacAddress(Long.MAX_VALUE);
-	
-	public static final MacAddress LOWEST_MAC_ADDRESS = new MacAddress(0);
-	
-	/**
-	 * The length of a mac address.
-	 */
-	private static final int LENGTH = 8;
 
-	private static final int FULL_BYTE_MASK = 0xff;
+    public static final MacAddress HIGHEST_MAC_ADDRESS = new MacAddress(Long.MAX_VALUE);
 
-	private static final int FULL_BYTE_SHIFT = 8;
+    public static final MacAddress LOWEST_MAC_ADDRESS = new MacAddress(0);
 
-	private static final int DEC_BASE = 10;
+    /**
+     * The length of a mac address.
+     */
+    private static final int LENGTH = 8;
 
-	private static final int HEX_BASE = 16;
+    private static final int FULL_BYTE_MASK = 0xff;
 
-	/**
-	 * Suppose the MAC address is: 00:15:8D:00:00:04:7D:50. Then 0x00 will be stored at address[0] 
-	 * and 0x50 at address[7].
-	 * The least significant value isx50. 0x00 0x15 0x8D 0x00 0x00 0x04 0x7D 0x50
-	 */
-	private final byte[] array = new byte[LENGTH];
+    private static final int FULL_BYTE_SHIFT = 8;
 
-	/**
-	 * Constructor.
-	 *
-	 * @param macAddress Address as long value.
-	 */
-	public MacAddress(final long macAddress) {
-		setArray(macAddress);
-	}
+    /**
+     * Suppose the MAC address is: 00:15:8D:00:00:04:7D:50. Then 0x00 will be stored at address[0]
+     * and 0x50 at address[7].
+     * The least significant value isx50. 0x00 0x15 0x8D 0x00 0x00 0x04 0x7D 0x50
+     */
+    private final byte[] array = new byte[LENGTH];
 
-	/**
-	 * Constructor.
-	 *
-	 * @param macAddress Address as byte array.
-	 */
-	public MacAddress(final byte[] macAddress) {
-		System.arraycopy(macAddress, 0, array, 0, LENGTH);
-	}
+    /**
+     * Constructor.
+     *
+     * @param macAddress Address as long value.
+     */
+    public MacAddress(final long macAddress) {
+        for (int i = 0; i < array.length; i++) {
+            array[LENGTH - 1 - i] = (byte) (macAddress >>> (FULL_BYTE_SHIFT * i));
+        }
+    }
 
-	/**
-	 * Constructs an instance from a String value. The value may either be specified as decimal ("1234"), hexadecimal
-	 * ("0x4d2") or binary ("0b10011010010").
-	 *
-	 * @param macAddress Address as String value
-	 */
-	public MacAddress(final String macAddress) {
-		if (macAddress.startsWith("0x")) {
-			setArray(Long.parseLong(macAddress.substring(2), HEX_BASE));
-		} else if (macAddress.startsWith("0b")) {
-			setArray(Long.parseLong(macAddress.substring(2), 2));
-		} else {
-			setArray(Long.parseLong(macAddress, DEC_BASE));
-		}
-	}
+    /**
+     * Constructor.
+     *
+     * @param macAddress Address as byte array.
+     */
+    public MacAddress(final byte[] macAddress) {
+        System.arraycopy(macAddress, 0, array, 0, LENGTH);
+    }
 
-	/**
-	 * Returns the mac address as byte array.
-	 *
-	 * @return The mac address as byte array.
-	 */
-	public byte[] toByteArray() {
-		final byte[] tmp = new byte[LENGTH];
-		System.arraycopy(array, 0, tmp, 0, LENGTH);
-		return tmp;
-	}
+    /**
+     * Constructor.
+     *
+     * @param byteArray Byte array including macAddress.
+     * @param offset    Offset to apply until macAddress.
+     */
+    public MacAddress(final byte[] byteArray, int offset) {
+        System.arraycopy(byteArray, offset, array, 0, LENGTH);
+    }
 
-	/**
-	 * Returns the MAC address as long value.
-	 *
-	 * @return the MAC address as long value
-	 */
-	public long toLong() {
-		long result = 0L;
-		for (int i = 0; i < array.length; ++i) {
-			result = (result << FULL_BYTE_SHIFT) + (array[i] & FULL_BYTE_MASK);
-		}
-		return result;
-	}
+    /**
+     * Constructs an instance from a String value.
+     *
+     * @param macAddress Address as String value
+     */
+    public MacAddress(final String macAddress) {
+        byte[] byteArray = HexUtils.hexString2ByteArray(macAddress);
+        Preconditions.checkArgument(byteArray.length == 8);
+        System.arraycopy(byteArray, 0, array, 0, LENGTH);
+    }
 
-	@Override
-	public String toString() {
-		return toHexString();
-	}
+    /**
+     * Returns the mac address as byte array.
+     *
+     * @return The mac address as byte array.
+     */
+    public byte[] toByteArray() {
+        final byte[] tmp = new byte[LENGTH];
+        System.arraycopy(array, 0, tmp, 0, LENGTH);
+        return tmp;
+    }
 
-	public String toHexString() {
-		return "0x" + Long.toString(toLong(), HEX_BASE);
-	}
+    /**
+     * Returns the MAC address as long value.
+     *
+     * @return the MAC address as long value
+     */
+    public long toLong() {
+        long result = 0L;
+        for (int i = 0; i < array.length; ++i) {
+            result = (result << FULL_BYTE_SHIFT) + (array[i] & FULL_BYTE_MASK);
+        }
+        return result;
+    }
 
-	public String toDecString() {
-		return Long.toString(toLong(), DEC_BASE);
-	}
+    @Override
+    public String toString() {
+        return toMacFormatString();
+    }
 
-	public String toBinString() {
-		return "0b" + Long.toString(toLong(), 2);
-	}
+    public String toString(Character sep) {
+        return HexUtils.byteArray2HexString(array, sep);
+    }
 
-	public MacAddress to16BitMacAddress() {
-		byte[] result = new byte[LENGTH];
-		int offset = LENGTH - 2;
-		System.arraycopy(array, offset, result, offset, 2);
-		return new MacAddress(result);
-	}
+    public String toMacFormatString() {
+        return toString(':');
+    }
 
-	private void setArray(final long value) {
-		for (int i = 0; i < array.length; i++) {
-			array[LENGTH - 1 - i] = (byte) (value >>> (FULL_BYTE_SHIFT * i));
-		}
-	}
+    public MacAddress to16BitMacAddress() {
+        byte[] result = new byte[LENGTH];
+        int offset = LENGTH - 2;
+        System.arraycopy(array, offset, result, offset, 2);
+        return new MacAddress(result);
+    }
 
-	@Override
-	public boolean equals(final Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
-		final MacAddress that = (MacAddress) o;
+        final MacAddress that = (MacAddress) o;
 
-		return Arrays.equals(array, that.array);
+        return Arrays.equals(array, that.array);
 
-	}
+    }
 
-	@Override
-	public int hashCode() {
-		return Arrays.hashCode(array);
-	}
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(array);
+    }
 }

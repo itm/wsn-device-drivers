@@ -32,6 +32,7 @@ import de.uniluebeck.itm.wsn.drivers.jennic.JennicModule;
 import de.uniluebeck.itm.wsn.drivers.mock.MockModule;
 import de.uniluebeck.itm.wsn.drivers.pacemate.PacemateModule;
 import de.uniluebeck.itm.wsn.drivers.telosb.TelosbModule;
+import eu.smartsantander.wsn.drivers.waspmote.WaspmoteModule;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -68,6 +69,9 @@ public class DeviceFactoryImpl implements DeviceFactory {
 			case TELOSB:
 				deviceModule = new TelosbModule(configuration);
 				break;
+            case WASPMOTE:
+                deviceModule = new WaspmoteModule(configuration);
+                break;
 			case MOCK:
 				deviceModule = new MockModule(configuration);
 				break;

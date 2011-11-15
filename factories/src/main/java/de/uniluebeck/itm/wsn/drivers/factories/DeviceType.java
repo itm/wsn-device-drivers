@@ -30,6 +30,7 @@ public enum DeviceType {
 	ISENSE48,
 	TELOSB,
 	PACEMATE,
+    WASPMOTE,
 	MOCK;
 
 	public static DeviceType fromString(String deviceTypeString) {
