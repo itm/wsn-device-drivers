@@ -5,8 +5,6 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.SendOperation;
 import eu.smartsantander.util.guice.CustomScopes;
 import eu.smartsantander.util.guice.JvmSingleton;
@@ -14,8 +12,6 @@ import eu.smartsantander.wsn.drivers.waspmote.multiplexer.NodeAddressingHelper;
 import eu.smartsantander.wsn.drivers.waspmote.multiplexer.NodeAddressingHelperMemoryImpl;
 import eu.smartsantander.wsn.drivers.waspmote.multiplexer.NodeConnectionInfo;
 import eu.smartsantander.wsn.drivers.waspmote.operation.Waspmote802154SendOperation;
-import eu.smartsantander.wsn.drivers.waspmote.operation.WaspmoteFlashNodeOperation;
-import eu.smartsantander.wsn.drivers.waspmote.operation.WaspmoteReadDigiMacAddressOperation;
 
 import java.util.Map;
 
