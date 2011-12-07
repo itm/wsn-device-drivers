@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>wsn-device-drivers-waspmote</artifactId>
+        <groupId>eu.smartsantander</groupId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>eu.smartsantander</groupId>
+    <artifactId>wsn-device-drivers-waspmote-core</artifactId>
+    <name>WSN Device Drivers Waspmote Core</name>
+    <organization>
+        <name>SmartSantander Fire Project</name>
+        <url>http://www.smartsantander.eu/</url>
+    </organization>
+
+    <dependencies>
+       <dependency>
+            <groupId>de.uniluebeck.itm</groupId>
+            <artifactId>wsn-device-drivers-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>

@@ -8,7 +8,6 @@ import com.google.common.io.Closeables;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import de.uniluebeck.itm.wsn.drivers.core.AbstractConnection;
-import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeAbstractRequest;
 import eu.smartsantander.wsn.drivers.waspmote.multiplexer.*;
 

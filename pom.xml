@@ -41,8 +41,8 @@
 			</dependency>
             <dependency>
 				<groupId>eu.smartsantander</groupId>
-				<artifactId>wsn-device-drivers-waspmote</artifactId>
-				<version>${project.version}</version>
+				<artifactId>wsn-device-drivers-waspmote-core</artifactId>
+                <version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
@@ -104,6 +104,24 @@
 
 		</dependencies>
 	</dependencyManagement>
+
+    <profiles>
+        <profile>
+            <id>smartsantander</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>eu.smartsantander</groupId>
+                        <artifactId>wsn-device-drivers-waspmote-smartsantander</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+        </profile>
+    </profiles>
 
 	<build>
 		<plugins>

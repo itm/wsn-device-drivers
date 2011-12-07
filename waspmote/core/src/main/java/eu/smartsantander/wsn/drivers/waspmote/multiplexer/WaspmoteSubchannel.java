@@ -1,6 +1,5 @@
 package eu.smartsantander.wsn.drivers.waspmote.multiplexer;
 
-import com.google.common.collect.HashMultimap;
 import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeAbstractStatusResponse;
 import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeFrame;
 

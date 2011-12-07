@@ -1,13 +1,11 @@
 package eu.smartsantander.wsn.drivers.waspmote.multiplexer;
 
 import com.google.common.base.Preconditions;
-import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeFrame;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author TLMAT UC

@@ -6,35 +6,59 @@
         <artifactId>wsn-device-drivers</artifactId>
         <groupId>de.uniluebeck.itm</groupId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>eu.smartsantander</groupId>
     <artifactId>wsn-device-drivers-waspmote</artifactId>
     <name>WSN Device Drivers Waspmote</name>
-	<organization>
-		<name>SmartSantander Fire Project</name>
-		<url>http://www.smartsantander.eu/</url>
-	</organization>
-    <dependencies>
-        <dependency>
-			<groupId>de.uniluebeck.itm</groupId>
-			<artifactId>wsn-device-drivers-core</artifactId>
-		</dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-exec</artifactId>
-            <version>1.1</version>
-        </dependency>
+    <organization>
+        <name>SmartSantander Fire Project</name>
+        <url>http://www.smartsantander.eu/</url>
+    </organization>
 
-        <dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
+    <packaging>pom</packaging>
 
-    </dependencies>
+    <modules>
+        <module>core</module>
+    </modules>
 
+    <profiles>
+        <profile>
+            <id>smartsantander</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <modules>
+                <module>smartsantander</module>
+            </modules>
+        </profile>
+    </profiles>
+
+    <repositories>
+        <repository>
+            <id>smartsantander-repository-releases</id>
+            <url>http://agostini.tlmat.unican.es/nexus/content/repositories/smartsantander-releases</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>smartsantander-repository-releases</id>
+            <name>SmartSantander Maven releases repository</name>
+            <url>http://agostini.tlmat.unican.es/nexus/content/repositories/smartsantander-releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>smartsantander-repository-snapshots</id>
+            <name>SmartSantander Maven snapshots repository</name>
+            <url>http://agostini.tlmat.unican.es/nexus/content/repositories/smartsantander-snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 
 </project>
