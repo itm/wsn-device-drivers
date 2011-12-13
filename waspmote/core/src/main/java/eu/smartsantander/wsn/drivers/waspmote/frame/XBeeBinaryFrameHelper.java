@@ -5,9 +5,9 @@ import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import de.uniluebeck.itm.wsn.drivers.core.util.DoubleByte;
 import de.uniluebeck.itm.wsn.drivers.core.util.HexUtils;
 import eu.smartsantander.util.guice.JvmSingleton;
-import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeAbstractRequest;
-import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeAbstractResponse;
-import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeAbstractStatusResponse;
+import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.AbstractXBeeRequest;
+import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.AbstractXBeeResponse;
+import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.AbstractXBeeStatusResponse;
 import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeFrameType;
 import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.xbee802154.request.XBee802154Request;
 import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.xbee802154.response.XBee802154Response;
@@ -38,7 +38,7 @@ public class XBeeBinaryFrameHelper {
     }
 
 
-    public byte[] createBinaryFrame(XBeeAbstractRequest xbeeRequest, boolean generateLocalAck) {
+    public byte[] createBinaryFrame(AbstractXBeeRequest xbeeRequest, boolean generateLocalAck) {
         MacAddress destinationAddress;
         DoubleByte nodeID = xbeeRequest.getNodeID();
         if (nodeID.getLsb() == (byte) 0x00FF) {
@@ -176,7 +176,7 @@ public class XBeeBinaryFrameHelper {
         return cs;
     }
 
-    public XBeeAbstractResponse createXBeeResponse(byte[] binaryFrame) {
+    public AbstractXBeeResponse createXBeeResponse(byte[] binaryFrame) {
         switch (XBeeFrameType.getXbeeFrameType(binaryFrame[3])) {
             case RECEIVE_PACKET_DIGIMESH:
                 return this.createXBeeDigiResponse(binaryFrame);
@@ -195,8 +195,7 @@ public class XBeeBinaryFrameHelper {
         if (nodeID == null) {
             return null;
         }
-        byte[] payload = new byte[binaryFrame.length - 16];
-        System.arraycopy(binaryFrame, 15, payload, 0, payload.length);
+        byte[] payload = Arrays.copyOfRange(binaryFrame, 15, binaryFrame.length - 1);
         return new XBeeDigiResponse(nodeID.intValue(), binaryFrame[14], payload);
     }
 
@@ -207,12 +206,12 @@ public class XBeeBinaryFrameHelper {
             return null;
         }
         String commandName = String.valueOf(binaryFrame[15]) + String.valueOf(binaryFrame[16]);
-        byte[] commandData = new byte[binaryFrame.length - 19];
-        System.arraycopy(binaryFrame, 18, commandData, 0, commandData.length);
+        byte[] commandData = Arrays.copyOfRange(binaryFrame, 18, binaryFrame.length - 1);
         return new XBeeRemoteATCmdResponse(nodeID.intValue(), commandName, binaryFrame[17], commandData);
     }
 
     private XBee802154Response createXBee802154Response(byte[] binaryFrame) {
+        //TODO Revisar si o si.
 //        MacAddress originAddress = new MacAddress(binaryFrame, 18);
         String mac = new String(Arrays.copyOfRange(binaryFrame, 28, binaryFrame.length - 1));
         MacAddress originAddress = new MacAddress(HexUtils.hexString2ByteArray(mac));
@@ -220,12 +219,12 @@ public class XBeeBinaryFrameHelper {
         if (nodeID == null) {
             return null;
         }
-        byte[] payload = new byte[binaryFrame.length - 15];
-        System.arraycopy(binaryFrame, 14, payload, 0, payload.length);
+        // El 14 es el principio del RF Data
+        byte[] payload = Arrays.copyOfRange(binaryFrame, 14, binaryFrame.length - 1);
         return new XBee802154Response(nodeID, binaryFrame[12], binaryFrame[13], payload);
     }
 
-    public XBeeAbstractStatusResponse createXBeeStatusResponse(int nodeID, byte[] binaryFrame) {
+    public AbstractXBeeStatusResponse createXBeeStatusResponse(int nodeID, byte[] binaryFrame) {
         switch (XBeeFrameType.getXbeeFrameType(binaryFrame[3])) {
             case TRANSMIT_STATUS_DIGIMESH:
                 return new XBeeDigiStatusResponse(nodeID, binaryFrame[7], binaryFrame[8], binaryFrame[9]);

@@ -2,12 +2,12 @@ package eu.smartsantander.wsn.drivers.waspmote.frame.xbee.xbeeDigi.response;
 
 import com.google.common.base.Preconditions;
 import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeFrameType;
-import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeAbstractResponse;
+import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.AbstractXBeeResponse;
 
 /**
  * @author TLMAT UC
  */
-public class XBeeDigiResponse extends XBeeAbstractResponse {
+public class XBeeDigiResponse extends AbstractXBeeResponse {
 
 	private final ReceiveOptions receiveOptions;
 

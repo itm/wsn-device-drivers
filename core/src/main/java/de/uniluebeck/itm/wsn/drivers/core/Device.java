@@ -69,26 +69,35 @@ public interface Device extends HasInputStream, HasOutputStream, Connectable {
 	 * @return Returns a <code>OperationFuture</code> for controlling the async operation.
 	 */
 	OperationFuture<byte[]> readFlash(int address, int length, long timeout, OperationCallback<byte[]> callback);
-	
+
+    /**
+     * Check if the connected device is alive.
+     *
+     * @param timeout Maximum operation time before the method will be canceled in milliseconds.
+     * @param callback Interface that is called on successfully or failed method execution.
+     * @return Returns a <code>OperationFuture</code> for controlling the async operation.
+     */
+    OperationFuture<Boolean> isNodeAlive(long timeout, OperationCallback<Boolean> callback);
+
 	/**
 	 * Read the MAC address from the connected iSense device.
-	 * 
+	 *
 	 * @param timeout Maximum operation time before the method will be canceled in milliseconds.
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationFuture</code> for controlling the async operation.
 	 */
 	OperationFuture<MacAddress> readMac(long timeout, OperationCallback<MacAddress> callback);
-	
+
 	/**
 	 * Writes the MAC address to the connected iSense device.
-	 * 
+	 *
 	 * @param macAddress A <code>MacAddress</code> object representing the new mac address of the device.
 	 * @param timeout Maximum operation time before the method will be canceled in milliseconds.
 	 * @param callback Interface that is called on successfully or failed method execution.
 	 * @return Returns a <code>OperationFuture</code> for controlling the async operation.
 	 */
 	OperationFuture<Void> writeMac(MacAddress macAddress, long timeout, OperationCallback<Void> callback);
-	
+
 	/**
 	 * Restart the connected iSense device.
 	 * 

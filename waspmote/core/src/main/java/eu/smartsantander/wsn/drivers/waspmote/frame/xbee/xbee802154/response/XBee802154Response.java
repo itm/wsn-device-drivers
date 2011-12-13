@@ -1,12 +1,12 @@
 package eu.smartsantander.wsn.drivers.waspmote.frame.xbee.xbee802154.response;
 
 import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeFrameType;
-import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeAbstractResponse;
+import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.AbstractXBeeResponse;
 
 /**
  * @author TLMAT UC
  */
-public class XBee802154Response extends XBeeAbstractResponse {
+public class XBee802154Response extends AbstractXBeeResponse {
 
 	private static final int ADDRESS_BROADCAST = 0x01;
 	private static final int PAN_BROADCAST = 0x02;

@@ -1,13 +1,13 @@
 package eu.smartsantander.wsn.drivers.waspmote.frame.xbee.xbeeDigi.at;
 
 import com.google.common.base.Preconditions;
-import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeAbstractRequest;
+import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.AbstractXBeeRequest;
 import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeFrameType;
 
 /**
  * @author TLMAT UC
  */
-public class XBeeRemoteATCmdRequest extends XBeeAbstractRequest {
+public class XBeeRemoteATCmdRequest extends AbstractXBeeRequest {
 
     private final String commandName;
     private final byte options;

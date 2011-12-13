@@ -8,7 +8,7 @@ import com.google.common.io.Closeables;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import de.uniluebeck.itm.wsn.drivers.core.AbstractConnection;
-import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeAbstractRequest;
+import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.AbstractXBeeRequest;
 import eu.smartsantander.wsn.drivers.waspmote.multiplexer.*;
 
 /**
@@ -48,7 +48,7 @@ public class WaspmoteVirtualSerialPortConnection extends AbstractConnection impl
         this.connectionMultiplexer = connectionMultiplexer;
 	}
 
-    public void write(XBeeAbstractRequest xbeeRequest, boolean generateLocalAck, WaspmoteSubchannel operationSubchannel) {
+    public void write(AbstractXBeeRequest xbeeRequest, boolean generateLocalAck, WaspmoteSubchannel operationSubchannel) {
         try {
             connectionMultiplexer.write(xbeeRequest, generateLocalAck, operationSubchannel);
         } catch (IOException e) {
