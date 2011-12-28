@@ -9,7 +9,7 @@
 	</parent>
 
 	<artifactId>wsn-device-drivers-common</artifactId>
-	<name>WSN Device Drivers iSense</name>
+	<name>WSN Device Drivers Common</name>
 
 	<dependencies>
 

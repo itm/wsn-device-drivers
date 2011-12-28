@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>wsn-device-drivers-telosb</artifactId>
-	<name>WSN Device Drivers Telosb</name>
+	<name>WSN Device Drivers TelosB</name>
 
 	<dependencies>
 
