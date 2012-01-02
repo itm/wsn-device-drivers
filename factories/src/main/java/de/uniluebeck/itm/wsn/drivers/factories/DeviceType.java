@@ -25,18 +25,24 @@ package de.uniluebeck.itm.wsn.drivers.factories;
 
 public enum DeviceType {
 
-	ISENSE,
-	ISENSE39,
-	ISENSE48,
-	TELOSB,
-	PACEMATE,
-    WASPMOTE,
-	MOCK;
+	ISENSE("isense", "isense39", "isense48"),
+	TELOSB("telosb"),
+	PACEMATE("pacemate"),
+	WASPMOTE("waspmote"),
+	MOCK("mock");
+
+	private final String[] synonyms;
+
+	private DeviceType(final String... synonyms) {
+		this.synonyms = synonyms;
+	}
 
 	public static DeviceType fromString(String deviceTypeString) {
 		for (DeviceType deviceType : DeviceType.values()) {
-			if (deviceType.name().equalsIgnoreCase(deviceTypeString)) {
-				return deviceType;
+			for (String synonym : deviceType.synonyms) {
+				if (synonym.equalsIgnoreCase(deviceTypeString)) {
+					return deviceType;
+				}
 			}
 		}
 		throw new RuntimeException("Unknown device type \"" + deviceTypeString + "\"");
