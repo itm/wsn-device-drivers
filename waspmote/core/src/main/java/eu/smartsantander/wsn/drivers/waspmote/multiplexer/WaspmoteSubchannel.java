@@ -1,7 +1,7 @@
 package eu.smartsantander.wsn.drivers.waspmote.multiplexer;
 
-import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeAbstractStatusResponse;
-import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeFrame;
+import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.AbstractXBeeStatusResponse;
+import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.AbstractXBeeFrame;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -12,19 +12,19 @@ import java.util.concurrent.TimeUnit;
  */
 public class WaspmoteSubchannel {
 
-    private final LinkedBlockingQueue<XBeeFrame> incomingXbeeFrames;
-    private final ConcurrentLinkedQueue<XBeeFrame> receivedXbeeFrames;
+    private final LinkedBlockingQueue<AbstractXBeeFrame> incomingXbeeFrames;
+    private final ConcurrentLinkedQueue<AbstractXBeeFrame> receivedXbeeFrames;
 
     protected WaspmoteSubchannel() {
-        this.incomingXbeeFrames = new LinkedBlockingQueue<XBeeFrame>();
-        this.receivedXbeeFrames = new ConcurrentLinkedQueue<XBeeFrame>();
+        this.incomingXbeeFrames = new LinkedBlockingQueue<AbstractXBeeFrame>();
+        this.receivedXbeeFrames = new ConcurrentLinkedQueue<AbstractXBeeFrame>();
     }
 
-   protected synchronized void put(XBeeFrame frame) throws InterruptedException {
+   protected synchronized void put(AbstractXBeeFrame frame) throws InterruptedException {
         incomingXbeeFrames.put(frame);
     }
 
-    public synchronized XBeeFrame getFrame(int timeout, boolean localAck) {
+    public synchronized AbstractXBeeFrame getFrame(int timeout, boolean localAck) {
         try {
             return localAck
                     ? this.pollLocalAck(timeout, TimeUnit.MILLISECONDS)
@@ -35,11 +35,11 @@ public class WaspmoteSubchannel {
         return null;
     }
 
-    private synchronized XBeeFrame pollLocalAck(long timeout, TimeUnit unit) throws InterruptedException {
+    private synchronized AbstractXBeeFrame pollLocalAck(long timeout, TimeUnit unit) throws InterruptedException {
         long nanos = unit.toNanos(timeout);
         long start = System.nanoTime();
-        XBeeFrame top = incomingXbeeFrames.poll(timeout, unit);
-        if (top == null || top instanceof XBeeAbstractStatusResponse) {
+        AbstractXBeeFrame top = incomingXbeeFrames.poll(timeout, unit);
+        if (top == null || top instanceof AbstractXBeeStatusResponse) {
             return top;
         } else {
             receivedXbeeFrames.add(top);
@@ -52,7 +52,7 @@ public class WaspmoteSubchannel {
         }
     }
 
-    private synchronized XBeeFrame poll(long timeout, TimeUnit unit) throws InterruptedException {
+    private synchronized AbstractXBeeFrame poll(long timeout, TimeUnit unit) throws InterruptedException {
         if(!receivedXbeeFrames.isEmpty()) {
             return receivedXbeeFrames.poll();
         } else {

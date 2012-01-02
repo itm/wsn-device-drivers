@@ -5,7 +5,7 @@ import de.uniluebeck.itm.wsn.drivers.core.util.DoubleByte;
 /**
  * @author TLMAT UC
  */
-public abstract class XBeeFrame {
+public abstract class AbstractXBeeFrame {
 
 	private final DoubleByte nodeID;
 	private final XBeeFrameType frameType;
@@ -14,7 +14,7 @@ public abstract class XBeeFrame {
 	 * @param nodeID
 	 * @param frameType
 	 */
-	public XBeeFrame(int nodeID, XBeeFrameType frameType) {
+	public AbstractXBeeFrame(int nodeID, XBeeFrameType frameType) {
 		this.nodeID = new DoubleByte(nodeID);
 		this.frameType = frameType;
 	}
