@@ -26,12 +26,14 @@ package de.uniluebeck.itm.wsn.drivers.factories;
 import com.google.inject.Guice;
 import com.google.inject.Module;
 import com.google.inject.Singleton;
+import com.google.inject.util.Modules;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 import de.uniluebeck.itm.wsn.drivers.core.DeviceModule;
 import de.uniluebeck.itm.wsn.drivers.jennic.JennicModule;
 import de.uniluebeck.itm.wsn.drivers.mock.MockModule;
 import de.uniluebeck.itm.wsn.drivers.pacemate.PacemateModule;
 import de.uniluebeck.itm.wsn.drivers.telosb.TelosbModule;
+import eu.smartsantander.wsn.drivers.waspmote.SmartSantanderWaspmoteModule;
 import eu.smartsantander.wsn.drivers.waspmote.WaspmoteModule;
 
 import javax.annotation.Nullable;
@@ -70,7 +72,9 @@ public class DeviceFactoryImpl implements DeviceFactory {
 				deviceModule = new TelosbModule(configuration);
 				break;
             case WASPMOTE:
-                deviceModule = new WaspmoteModule(configuration);
+                WaspmoteModule m1 = new WaspmoteModule(configuration);
+                SmartSantanderWaspmoteModule m2 = new SmartSantanderWaspmoteModule();
+                deviceModule = Modules.combine(m1, m2);
                 break;
 			case MOCK:
 				deviceModule = new MockModule(configuration);

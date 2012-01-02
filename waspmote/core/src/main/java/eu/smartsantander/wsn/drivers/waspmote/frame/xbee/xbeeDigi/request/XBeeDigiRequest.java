@@ -1,12 +1,12 @@
 package eu.smartsantander.wsn.drivers.waspmote.frame.xbee.xbeeDigi.request;
 
-import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeAbstractRequest;
+import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.AbstractXBeeRequest;
 import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeFrameType;
 
 /**
  * @author TLMAT UC
  */
-public class XBeeDigiRequest extends XBeeAbstractRequest {
+public class XBeeDigiRequest extends AbstractXBeeRequest {
 
 	public static final int DEFAULT_BROADCAST_RADIUS = 0x00;
 

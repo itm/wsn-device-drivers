@@ -1,13 +1,13 @@
 package eu.smartsantander.wsn.drivers.waspmote.frame.xbee.xbeeDigi.statusResponse;
 
 import com.google.common.base.Preconditions;
-import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeAbstractStatusResponse;
+import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.AbstractXBeeStatusResponse;
 import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeFrameType;
 
 /**
  * @author TLMAT UC
  */
-public class XBeeDigiStatusResponse extends XBeeAbstractStatusResponse {
+public class XBeeDigiStatusResponse extends AbstractXBeeStatusResponse {
 
 	private final int retryCount;
 	private final DeliveryStatus deliveryStatus;

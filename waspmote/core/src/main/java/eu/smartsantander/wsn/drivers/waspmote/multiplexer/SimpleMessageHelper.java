@@ -1,6 +1,6 @@
 package eu.smartsantander.wsn.drivers.waspmote.multiplexer;
 
-import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeAbstractResponse;
+import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.AbstractXBeeResponse;
 
 /**
  * @author TLMAT UC
@@ -8,7 +8,7 @@ import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeAbstractResponse;
 public class SimpleMessageHelper implements MessageHelper {
 
     @Override
-    public ResponseChannelType getResponseChannelType(XBeeAbstractResponse xbeeResponse) {
+    public ResponseChannelType getResponseChannelType(AbstractXBeeResponse xbeeResponse) {
         return ResponseChannelType.UPPER_LAYER;
     }
 }

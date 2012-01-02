@@ -6,9 +6,9 @@ import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.util.DoubleByte;
 import eu.smartsantander.util.guice.JvmSingleton;
 import eu.smartsantander.wsn.drivers.waspmote.frame.XBeeBinaryFrameHelper;
-import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeAbstractRequest;
-import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeAbstractResponse;
-import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeAbstractStatusResponse;
+import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.AbstractXBeeRequest;
+import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.AbstractXBeeResponse;
+import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.AbstractXBeeStatusResponse;
 import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeFrameType;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.HashMap;
 
 //import eu.smartsantander.wsn.drivers.waspmote.frame.smartSantander.SmartSantanderFrame;
@@ -95,7 +96,7 @@ public class WaspmoteConnectionMultiplexer implements SerialPortEventListener {
     }
 
 
-    public synchronized void write(XBeeAbstractRequest xbeeRequest, boolean generateLocalAck, WaspmoteSubchannel consumerSubchannel) throws IOException {
+    public synchronized void write(AbstractXBeeRequest xbeeRequest, boolean generateLocalAck, WaspmoteSubchannel consumerSubchannel) throws IOException {
         byte[] xbeeBinaryFrame;
         xbeeBinaryFrame = frameHelper.createBinaryFrame(xbeeRequest, generateLocalAck);
 
@@ -134,14 +135,14 @@ public class WaspmoteConnectionMultiplexer implements SerialPortEventListener {
                 case TRANSMIT_STATUS_802154:
                     OperationAddressInfo oai = localAckLookupTable.remove(response[4]);
                     if (oai != null) {
-                        XBeeAbstractStatusResponse xbeeStatusResponse = frameHelper.createXBeeStatusResponse(oai.getNodeID(), response);
+                        AbstractXBeeStatusResponse xbeeStatusResponse = frameHelper.createXBeeStatusResponse(oai.getNodeID(), response);
                         oai.getSubchannel().put(xbeeStatusResponse);
                     }
                     break;
                 case RECEIVE_PACKET_DIGIMESH:
                 case RECEIVE_PACKET_802154:
                 case REMOTE_AT_CMD_RESPONSE_DIGIMESH:
-                    XBeeAbstractResponse xbeeResponse = frameHelper.createXBeeResponse(response);
+                    AbstractXBeeResponse xbeeResponse = frameHelper.createXBeeResponse(response);
                     if (xbeeResponse == null) {
                         return;
                     }
@@ -180,8 +181,6 @@ public class WaspmoteConnectionMultiplexer implements SerialPortEventListener {
         nbytes += inputStream.read(readBuffer, 1, 2);
         DoubleByte xbeePayloadSize = new DoubleByte(readBuffer[1], readBuffer[2]);
         nbytes += inputStream.read(readBuffer, 3, xbeePayloadSize.get16BitValue() + 1);
-        byte[] xbeeFrame = new byte[nbytes];
-        System.arraycopy(readBuffer, 0, xbeeFrame, 0, xbeeFrame.length);
-        return xbeeFrame;
+        return Arrays.copyOf(readBuffer, nbytes);
     }
 }

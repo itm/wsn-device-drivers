@@ -1,7 +1,7 @@
 package eu.smartsantander.wsn.drivers.waspmote.multiplexer;
 
 import com.google.inject.ImplementedBy;
-import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeAbstractResponse;
+import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.AbstractXBeeResponse;
 
 /**
  * @author TLMAT UC
@@ -10,5 +10,5 @@ import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeAbstractResponse;
 public interface MessageHelper {
     public enum ResponseChannelType { UPPER_LAYER, DRIVER_LAYER; }
 
-    ResponseChannelType getResponseChannelType(XBeeAbstractResponse xbeeResponse);
+    ResponseChannelType getResponseChannelType(AbstractXBeeResponse xbeeResponse);
 }

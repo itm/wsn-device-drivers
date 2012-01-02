@@ -24,6 +24,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.Operation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationCallback;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationFactory;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationRunnable;
+import de.uniluebeck.itm.wsn.drivers.core.operation.IsNodeAliveOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;
@@ -85,6 +86,8 @@ public class SimpleDevice implements Device {
 	private Provider<ReadFlashOperation> readFlashProvider;
 	
 	private Provider<ReadMacAddressOperation> readMacAddressProvider;
+
+    private Provider<IsNodeAliveOperation> isNodeAliveProvider;
 	
 	private Provider<ResetOperation> resetProvider;
 	
@@ -147,6 +150,13 @@ public class SimpleDevice implements Device {
 	public OperationFuture<MacAddress> readMac(long timeout, @Nullable OperationCallback<MacAddress> callback) {
 		LOG.trace("Read mac (timeout: " + timeout + "ms)");
 		ReadMacAddressOperation runnable = createOperationRunnable(readMacAddressProvider, "readMac");
+		return submitOperation(runnable, timeout, callback);
+	}
+
+    @Override
+    public OperationFuture<Boolean> isNodeAlive(long timeout, @Nullable OperationCallback<Boolean> callback) {
+        LOG.trace("Is node alive (timeout: " + timeout + "ms)");
+        IsNodeAliveOperation runnable = createOperationRunnable(isNodeAliveProvider, "isNodeAlive");
 		return submitOperation(runnable, timeout, callback);
 	}
 
@@ -264,6 +274,11 @@ public class SimpleDevice implements Device {
 	@Inject(optional = true)
 	public void setReadMacAddressProvider(Provider<ReadMacAddressOperation> readMacAddressProvider) {
 		this.readMacAddressProvider = readMacAddressProvider;
+	}
+
+    @Inject(optional = true)
+    public void setIsNodeAliveProvider(Provider<IsNodeAliveOperation> isNodeAliveProvider) {
+        this.isNodeAliveProvider = isNodeAliveProvider;
 	}
 
 	@Inject(optional = true)

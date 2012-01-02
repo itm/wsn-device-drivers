@@ -1,12 +1,12 @@
 package eu.smartsantander.wsn.drivers.waspmote.frame.xbee.xbee802154.request;
 
 import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeFrameType;
-import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.XBeeAbstractRequest;
+import eu.smartsantander.wsn.drivers.waspmote.frame.xbee.AbstractXBeeRequest;
 
 /**
  * @author TLMAT UC
  */
-public class XBee802154Request extends XBeeAbstractRequest {
+public class XBee802154Request extends AbstractXBeeRequest {
 
 	public static final int DISABLE_ACK = 0x01;
 	public static final int SEND_WITH_BROADCAST_PAN_ID = 0x04;
