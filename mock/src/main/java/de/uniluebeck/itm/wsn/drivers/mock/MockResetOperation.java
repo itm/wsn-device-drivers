@@ -14,16 +14,6 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
  * @author Malte Legenhausen
  */
 public class MockResetOperation implements ResetOperation {
-
-	/**
-	 * A default sleep time before and after the reset.
-	 */
-	private static final int SLEEP_TIME = 200;
-	
-	/**
-	 * The time that is used for the reset.
-	 */
-	private static final int RESET_TIME = 1000;
 	
 	/**
 	 * The <code>MockConnection</code> that is used for the reset.
@@ -42,12 +32,7 @@ public class MockResetOperation implements ResetOperation {
 	
 	@Override
 	public Void run(final ProgressManager progressManager, OperationContext context) throws Exception {
-		Thread.sleep(SLEEP_TIME);
-		connection.stopAliveRunnable();
-		Thread.sleep(RESET_TIME);
-		connection.sendMessage("Booting MockDevice...");
-		Thread.sleep(SLEEP_TIME);
-		connection.scheduleAliveRunnable();
+		connection.reset();
 		return null;
 	}
 }

@@ -3,7 +3,7 @@ package de.uniluebeck.itm.wsn.drivers.test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.io.ByteStreams;
@@ -436,7 +436,7 @@ public class GenericDeviceExample {
 		Closeables.closeQuietly(outputStream);
 		System.out.println("OutputStream closed");
 		System.out.println("Shutting down executor...");
-		ExecutorUtils.shutdown(injector.getInstance(ScheduledExecutorService.class), 
+		ExecutorUtils.shutdown(injector.getInstance(ExecutorService.class),
 				EXECUTOR_TIMEOUT, TimeUnit.SECONDS);
 		System.out.println("Executor shut down");
 		System.out.println("Closing connection...");

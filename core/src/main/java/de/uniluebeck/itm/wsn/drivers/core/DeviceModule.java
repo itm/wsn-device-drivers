@@ -7,7 +7,6 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 import com.google.common.util.concurrent.SimpleTimeLimiter;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -29,7 +28,7 @@ public class DeviceModule extends AbstractModule {
 	
 	private static final int DEFAULT_POOL_SIZE = 3;
 
-	private final ScheduledExecutorService executorService;
+	private final ExecutorService executorService;
 	
 	public DeviceModule() {
 		executorService = Executors.newScheduledThreadPool(DEFAULT_POOL_SIZE, 
@@ -38,7 +37,7 @@ public class DeviceModule extends AbstractModule {
 	}
 	
 	@Inject
-	public DeviceModule(ScheduledExecutorService executorService) {
+	public DeviceModule(ExecutorService executorService) {
 		this.executorService = executorService;
 	}
 	
@@ -53,7 +52,6 @@ public class DeviceModule extends AbstractModule {
 		}
 
 		bind(ExecutorService.class).toInstance(executorService);
-		bind(ScheduledExecutorService.class).toInstance(executorService);
 		bind(TimeLimiter.class).toInstance(new SimpleTimeLimiter(executorService));
 		bind(Runnable.class).annotatedWith(IdleRunnable.class).to(InputStreamCopyRunnable.class);
 		bind(InputStream.class).toInstance(inputStream);

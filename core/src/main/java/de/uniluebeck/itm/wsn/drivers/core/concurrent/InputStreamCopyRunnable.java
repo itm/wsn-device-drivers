@@ -26,8 +26,6 @@ public class InputStreamCopyRunnable implements Runnable, ConnectionListener {
 	
 	private static final Logger LOG = Logger.getLogger(InputStreamCopyRunnable.class);
 
-	private static final int DATA_AVAILABLE_TIMEOUT = 50;
-	
 	private final Connection connection;
 	
 	private final Lock deviceInputStreamLock = new ReentrantLock();
@@ -49,7 +47,7 @@ public class InputStreamCopyRunnable implements Runnable, ConnectionListener {
 			while (true) {
 				deviceInputStreamLock.lock();
 				try {
-					deviceInputStreamDataAvailable.await(DATA_AVAILABLE_TIMEOUT, TimeUnit.MILLISECONDS);
+					deviceInputStreamDataAvailable.await(1, TimeUnit.SECONDS);
 				} catch (InterruptedException e) {
 					LOG.trace("Interrupted", e);
 					return;

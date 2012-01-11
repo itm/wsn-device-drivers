@@ -1,140 +1,129 @@
 package de.uniluebeck.itm.wsn.drivers.mock;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.util.Calendar;
-import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import de.uniluebeck.itm.tr.util.ExecutorUtils;
+import de.uniluebeck.itm.tr.util.TimeDiff;
 import de.uniluebeck.itm.wsn.drivers.core.AbstractConnection;
+
+import java.io.*;
+import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 
 /**
  * A connection that can be used for testing.
- * 
+ *
  * @author Malte Legenhausen
  */
 @Singleton
 public class MockConnection extends AbstractConnection {
-	
+
 	/**
-	 * Internal runnable that send continuously messages.
-	 * 
+	 * Internal runnable that sends continuously messages.
+	 *
 	 * @author Malte Legenhausen
 	 */
 	private class AliveRunnable implements Runnable {
-		
-		/**
-		 * Constant to convert milliseconds to seconds.
-		 */
-		private static final int MILL = 1000;
-		
-		/**
-		 * Message count.
-		 */
-		private int i = 0;
 
-		/**
-		 * Start time of this runnable.
-		 */
-		private final Long started = Calendar.getInstance().getTimeInMillis();
+		private TimeDiff startTime = new TimeDiff();
+
+		private int messageCount = 0;
+
+		private volatile boolean shutdown = false;
 
 		@Override
 		public void run() {
-			final Long diff = (Calendar.getInstance().getTimeInMillis() - started) / MILL;
-			final String message = "MockDevice alive since " + diff + " seconds (update #" + (++i) + ")";
-			sendMessage(message);
+
+			sleep(new Random().nextInt((int) aliveTimeout));
+
+			while (!shutdown) {
+
+				if (messageCount == 0) {
+					sendMessage("Booting MockDevice...");
+					sleep(1000);
+				}
+
+				final String message = "MockDevice alive since " + startTime.s() + " seconds (update #" + (++messageCount) + ")";
+				sendMessage(message);
+
+				sleep(aliveTimeUnit.toMillis(aliveTimeout));
+			}
+		}
+
+		public void reset() {
+			startTime.touch();
+			messageCount = 0;
 		}
 	}
-	
+
 	private static final byte DLE = 0x10;
+
 	private static final byte STX = 0x02;
+
 	private static final byte ETX = 0x03;
-	
-	/**
-	 * The timeout for the executor 
-	 */
-	private static final int EXECUTOR_TIMEOUT = 10;
-	
+
 	/**
 	 * The <code>PipedOutputStream</code>.
 	 */
 	private PipedOutputStream outputStream = new PipedOutputStream();
-	
+
 	/**
 	 * The <code>PipedInputStream</code>.
 	 */
 	private PipedInputStream inputStream = new PipedInputStream();
-	
+
 	/**
 	 * Configuration for this device.
 	 */
 	private final MockConfiguration configuration;
-	
+
 	/**
 	 * Executor for periodically execute a given runnable.
 	 */
-	private final ScheduledExecutorService executorService;
-	
-	/**
-	 * Future of the executed runnable.
-	 */
-	private Future<?> aliveRunnableFuture;
-	
+	private final ExecutorService executorService;
+
 	/**
 	 * The frequency with which a message has to be send.
 	 */
 	private final long aliveTimeout = 1;
 
 	/**
-	 * The frequency time units. 
+	 * The frequency time units.
 	 */
 	private final TimeUnit aliveTimeUnit = TimeUnit.SECONDS;
-	
+
+	private final AliveRunnable aliveRunnable = new AliveRunnable();
+
 	@Inject
 	public MockConnection(MockConfiguration configuration) {
 		this.configuration = configuration;
-		this.executorService = Executors.newScheduledThreadPool(1, 
+		this.executorService = Executors.newCachedThreadPool(
 				new ThreadFactoryBuilder().setNameFormat("MockConnection-Thread %d").build()
 		);
 	}
-	
-	/**
-	 * Start the process for sending periodically messages.
-	 */
-	public void scheduleAliveRunnable() {
-		aliveRunnableFuture = executorService.scheduleWithFixedDelay(
-			new AliveRunnable(), 
-			new Random().nextInt((int) aliveTimeout), 
-			aliveTimeout,
-			aliveTimeUnit
-		);
+
+	public void reset() {
+		sleep(200);
+		aliveRunnable.reset();
+	}
+
+	private void sleep(final long millis) {
+		try {
+			Thread.sleep(millis);
+		} catch (InterruptedException e) {
+			System.err.println(e);
+		}
 	}
 
 	/**
-	 * Stop the periodically sending of messages.
-	 */
-	public void stopAliveRunnable() {
-		if (aliveRunnableFuture != null && !aliveRunnableFuture.isCancelled()) {
-			aliveRunnableFuture.cancel(true);
-		}
-	}
-	
-	/**
 	 * Writing a message to the output stream.
-	 * 
-	 * @param message The message as string.
+	 *
+	 * @param message
+	 * 		The message as string.
 	 */
 	public void sendMessage(final String message) {
 		sendMessage(encapsulateWithDleStxEtx(message.getBytes()));
@@ -154,11 +143,12 @@ public class MockConnection extends AbstractConnection {
 		outputStream.write(ETX);
 		return outputStream.toByteArray();
 	}
-	
+
 	/**
 	 * Writing a message to the output stream.
-	 * 
-	 * @param message The message as byte array.
+	 *
+	 * @param message
+	 * 		The message as byte array.
 	 */
 	public void sendMessage(final byte[] message) {
 		final OutputStream outputStream = getOutputStream();
@@ -166,10 +156,10 @@ public class MockConnection extends AbstractConnection {
 			outputStream.write(message);
 			outputStream.flush();
 		} catch (IOException e) {
-			
+
 		}
 	}
-	
+
 	@Override
 	public void connect(final String uri) throws IOException {
 		super.connect(uri);
@@ -180,17 +170,17 @@ public class MockConnection extends AbstractConnection {
 		}
 		setOutputStream(outputStream);
 		setInputStream(inputStream);
-		scheduleAliveRunnable();
+		executorService.execute(aliveRunnable);
 		setConnected();
 	}
-	
+
 	@Override
 	public void close() throws IOException {
-		stopAliveRunnable();
-		ExecutorUtils.shutdown(executorService, EXECUTOR_TIMEOUT, TimeUnit.SECONDS);
+		aliveRunnable.shutdown = true;
+		ExecutorUtils.shutdown(executorService, 100, TimeUnit.MILLISECONDS);
 		super.close();
 	}
-	
+
 	@Override
 	public int[] getChannels() {
 		return configuration.getChannels();
