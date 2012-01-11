@@ -57,12 +57,12 @@ public abstract class AbstractConnection implements Connection {
 	/**
 	 * Input stream of the connection.
 	 */
-	private InputStream inputStream;
+	private InputStream rxtxInputStream;
 	
 	/**
 	 * Output stream of the connection.
 	 */
-	private OutputStream outputStream;
+	private OutputStream rxtxOutputStream;
 	
 	/**
 	 * The uri of the connected resource.
@@ -95,7 +95,7 @@ public abstract class AbstractConnection implements Connection {
 		LOG.trace("Waiting for data...");
 		
 		final TimeDiff timeDiff = new TimeDiff();
-		int available = inputStream.available();
+		int available = rxtxInputStream.available();
 
 		while (available == 0) {
 			if (timeout > 0 && timeDiff.ms() >= timeout) {
@@ -111,7 +111,7 @@ public abstract class AbstractConnection implements Connection {
 			} finally {
 				dataAvailableLock.unlock();
 			}
-			available = inputStream.available();
+			available = rxtxInputStream.available();
 		}
 		return available;
 	}
@@ -128,8 +128,6 @@ public abstract class AbstractConnection implements Connection {
 	
 	/**
 	 * Setter for the connection that will fire a connection change event.
-	 * 
-	 * @param connected True when connected else false.
 	 */
 	protected void setConnected() {
 		connected = true;
@@ -141,7 +139,7 @@ public abstract class AbstractConnection implements Connection {
 	 * @param inputStream The input stream object.
 	 */
 	protected void setInputStream(final InputStream inputStream) {
-		this.inputStream = inputStream;
+		this.rxtxInputStream = inputStream;
 	}
 	
 	/**
@@ -150,7 +148,7 @@ public abstract class AbstractConnection implements Connection {
 	 * @param outputStream The output stream object.
 	 */
 	protected void setOutputStream(final OutputStream outputStream) {
-		this.outputStream = outputStream;
+		this.rxtxOutputStream = outputStream;
 	}
 	
 	/**
@@ -168,12 +166,12 @@ public abstract class AbstractConnection implements Connection {
 	
 	@Override
 	public InputStream getInputStream() {
-		return inputStream;
+		return rxtxInputStream;
 	}
 	
 	@Override
 	public OutputStream getOutputStream() {
-		return outputStream;
+		return rxtxOutputStream;
 	}
 	
 	@Override
@@ -199,8 +197,8 @@ public abstract class AbstractConnection implements Connection {
 	@Override
 	public void close() throws IOException {
 		if (!isClosed()) {
-			Closeables.close(inputStream, true);
-			Closeables.close(outputStream, true);
+			Closeables.close(rxtxInputStream, true);
+			Closeables.close(rxtxOutputStream, true);
 			closed = true;
 		}
 	}
@@ -208,6 +206,6 @@ public abstract class AbstractConnection implements Connection {
 	@Override
 	public void clear() throws IOException {
 		LOG.trace("Cleaning input stream.");
-		ByteStreams.skipFully(inputStream, inputStream.available());
+		ByteStreams.skipFully(rxtxInputStream, rxtxInputStream.available());
 	}
 }
