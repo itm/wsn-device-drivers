@@ -35,23 +35,23 @@ import de.uniluebeck.itm.wsn.drivers.telosb.TelosbModule;
 
 import javax.annotation.Nullable;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ExecutorService;
 
 @Singleton
 public class DeviceFactoryImpl implements DeviceFactory {
 
 	@Override
-	public Device create(ScheduledExecutorService executorService, DeviceType deviceType) {
+	public Device create(ExecutorService executorService, DeviceType deviceType) {
 		return create(executorService, deviceType, null);
 	}
 
 	@Override
-	public Device create(ScheduledExecutorService executorService, String deviceType) {
+	public Device create(ExecutorService executorService, String deviceType) {
 		return create(executorService, DeviceType.fromString(deviceType), null);
 	}
 
 	@Override
-	public Device create(final ScheduledExecutorService executorService, final DeviceType deviceType,
+	public Device create(final ExecutorService executorService, final DeviceType deviceType,
 						 @Nullable final Map<String, String> configuration) {
 
 		Module deviceModule;
@@ -79,7 +79,7 @@ public class DeviceFactoryImpl implements DeviceFactory {
 	}
 
 	@Override
-	public Device create(final ScheduledExecutorService executorService, final String deviceType,
+	public Device create(final ExecutorService executorService, final String deviceType,
 						 @Nullable final Map<String, String> configuration) {
 
 		return create(executorService, DeviceType.fromString(deviceType), configuration);
