@@ -47,7 +47,7 @@ public class InputStreamCopyRunnable implements Runnable, ConnectionListener {
 			while (true) {
 				deviceInputStreamLock.lock();
 				try {
-					deviceInputStreamDataAvailable.await(1, TimeUnit.SECONDS);
+					deviceInputStreamDataAvailable.await(10, TimeUnit.MILLISECONDS);
 				} catch (InterruptedException e) {
 					LOG.trace("Interrupted", e);
 					return;
