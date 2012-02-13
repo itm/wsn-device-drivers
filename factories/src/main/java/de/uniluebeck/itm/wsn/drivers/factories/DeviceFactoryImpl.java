@@ -32,6 +32,7 @@ import de.uniluebeck.itm.wsn.drivers.jennic.JennicModule;
 import de.uniluebeck.itm.wsn.drivers.mock.MockModule;
 import de.uniluebeck.itm.wsn.drivers.pacemate.PacemateModule;
 import de.uniluebeck.itm.wsn.drivers.telosb.TelosbModule;
+import de.uniluebeck.itm.wsn.drivers.trisos.TriSOSModule;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -69,6 +70,9 @@ public class DeviceFactoryImpl implements DeviceFactory {
 			case MOCK:
 				deviceModule = new MockModule(configuration);
 				break;
+                        case TRISOS:
+                                deviceModule = new TriSOSModule(configuration);
+                                break;
 			default:
 				throw new RuntimeException("Unknown device type \"" + deviceType + "\". Maybe someone forgot to add"
 						+ "this (new) device type to " + DeviceFactoryImpl.class.getName() + "?"
