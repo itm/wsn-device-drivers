@@ -24,6 +24,7 @@
 package de.uniluebeck.itm.wsn.drivers.factories;
 
 import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Singleton;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
@@ -79,7 +80,10 @@ public class DeviceFactoryImpl implements DeviceFactory {
 				);
 		}
 
-		return Guice.createInjector(new DeviceModule(executorService), deviceModule).getInstance(Device.class);
+                Injector injector = Guice.createInjector(new DeviceModule(executorService), deviceModule);
+                Device device = injector.getInstance(Device.class);
+                return device;
+		//return Guice.createInjector(new DeviceModule(executorService), deviceModule).getInstance(Device.class);
 	}
 
 	@Override

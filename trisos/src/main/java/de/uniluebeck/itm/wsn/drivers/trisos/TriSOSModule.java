@@ -39,8 +39,6 @@ public class TriSOSModule extends AbstractModule {
 		bind(ResetOperation.class).to(TriSOSResetOperation.class);     // Resetting
 		bind(TriSOSConfiguration.class).in(Singleton.class);           // Configuration
 
-                bind(ReadMacAddressOperation.class).to(TriSOSReadMacAddressOperation.class);
-
                 SerialPortConnection connection = new iSenseSerialPortConnection();
 		bindInterceptor(
 				Matchers.any(),

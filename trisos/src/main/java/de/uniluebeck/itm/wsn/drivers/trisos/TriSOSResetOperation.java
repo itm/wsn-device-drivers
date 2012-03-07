@@ -5,6 +5,8 @@ import com.google.inject.Inject;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 
 /**
@@ -14,22 +16,47 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
  * @author Malte Legenhausen
  */
 public class TriSOSResetOperation implements ResetOperation {
-	
 
-	
-	/**
-	 * Constructor.
-	 * 
-	 * @param connection The <code>TriSOSConnection</code> that is used for the reset.
-	 */
-	@Inject
-	public TriSOSResetOperation() {
-		
-	}
-	
-	@Override
-	public Void run(final ProgressManager progressManager, OperationContext context) throws Exception {
-		
-		return null;
-	}
+
+    /**
+     * The configuration
+     */
+    private TriSOSConfiguration configuration;
+
+    /**
+     * Constructor.
+     *
+     * @param configuration
+     */
+    @Inject
+    public TriSOSResetOperation(TriSOSConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    @Override
+    public Void run(final ProgressManager progressManager, OperationContext context) throws Exception {
+
+        progressManager.createSub(1.0f);
+        
+        String resetCommand = configuration.getResetCommandString();
+        System.out.println("Execute: " + resetCommand);
+        Process p = Runtime.getRuntime().exec(resetCommand);
+
+        BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+
+        String line;
+        while ((line = bri.readLine()) != null) {
+            System.out.println(line);
+        }
+        bri.close();
+        while ((line = bre.readLine()) != null) {
+            System.err.println(line);
+        }
+        bre.close();
+        p.waitFor();
+        p.destroy();
+        progressManager.worked(1.0f);
+        return null;
+    }
 }

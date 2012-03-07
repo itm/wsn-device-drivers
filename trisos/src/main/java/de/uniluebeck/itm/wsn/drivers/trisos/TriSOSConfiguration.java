@@ -1,7 +1,10 @@
 package de.uniluebeck.itm.wsn.drivers.trisos;
 
 import com.google.inject.Inject;
+import com.google.inject.TypeLiteral;
+import com.google.inject.name.Named;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 
 /**
@@ -14,127 +17,64 @@ public class TriSOSConfiguration {
         /**
          *
          */
-        Map<String,String> configuration;
+        private final Map<String, String> configuration;
 
         /**
-         * Command line command (programming operation)
+         *
          */
-        private String[] programmerProgramCommand;
-
-        /**
-         * Command line command (reset operation)
-         */
-        private String[] programmerResetCommand;
+        private String programExe;
 
         /**
          * Binary file name
          */
-        private String binFileName;
+        private String binFileCompletePath;
 
+        /**
+         * The device type (MCU type for programmer)
+         */
+        private String device;
+        
 	/**
 	 * Constructor.
          *
-         * @param configuration
+         * @param configuration 
          */
         @Inject
-	public TriSOSConfiguration(Map<String, String> configuration) {
+	public TriSOSConfiguration(@Named("configuration") final Map<String, String> configuration) {
             this.configuration = configuration;
-            assembleProgrammerProgramCommand();
-            assembleProgrammerResetCommand();
-        }
-
-        /**
-         *
-         */
-        private void assembleProgrammerProgramCommand() {
-            // Assembling command line command for programming
-            int numberOfParams = 0;
-            for(; configuration.get("trisos.programmer.program.param." + numberOfParams) != null; ++numberOfParams){;}
-            programmerProgramCommand = new String[numberOfParams + 1];
-            programmerProgramCommand[0] = configuration.get("trisos.programmer.program.command");
-            if( configuration.containsKey(programmerProgramCommand[0]) ) {
-                programmerProgramCommand[0] = configuration.get(programmerProgramCommand[0]);
-            }
-            /* Fetching name of the file to be flashed on the nodes */
-            binFileName = configuration.get("trisos.programmer.program.binfile");
-            /* Assemble command array */
-            for( int i = 0; i < numberOfParams; ++i ) {
-                programmerProgramCommand[i + 1] = configuration.get("trisos.programmer.program.param." + i);
-                if( configuration.containsKey(programmerProgramCommand[i + 1]) ) {
-                    programmerProgramCommand[i + 1] = configuration.get(programmerProgramCommand[i + 1]);
-                }
-                programmerProgramCommand[i + 1] = programmerProgramCommand[i + 1].replace("trisos.programmer.program.binfile", binFileName);
-            }
+            programExe = configuration.get("trisos.programmer.executable");
+            binFileCompletePath = configuration.get("trisos.programmer.program.binfile");
+            device = configuration.get("trisos.programmer.device");
         }
 
         /**
          * 
+         * @return
          */
-        private void assembleProgrammerResetCommand() {
-            // Assembling command line command for resetting
-            int numberOfParams = 0;
-            for(; configuration.get("trisos.programmer.reset.param." + numberOfParams) != null; ++numberOfParams){;}
-            /* Assemble command array */
-            programmerResetCommand = new String[numberOfParams + 1];
-            programmerResetCommand[0] = configuration.get("trisos.programmer.reset.command");
-            if( configuration.containsKey(programmerResetCommand[0]) ) {
-                programmerResetCommand[0] = configuration.get(programmerResetCommand[0]);
-            }
-            /* Assemble command array */
-            for( int i = 0; i < numberOfParams; ++i ) {
-                programmerResetCommand[i + 1] = configuration.get("trisos.programmer.reset.param." + i);
-                if( configuration.containsKey(programmerResetCommand[i + 1]) ) {
-                    programmerResetCommand[i + 1] = configuration.get(programmerResetCommand[i + 1]);
-                }
-            }
+        public String getProgramCommandString() {
+            String programCommand = configuration.get("trisos.programmer.program.command");
+            programCommand = programCommand.replace("trisos.programmer.executable", programExe);
+            programCommand = programCommand.replace("trisos.programmer.program.binfile", binFileCompletePath);
+            programCommand = programCommand.replace("trisos.programmer.device", device);
+            return programCommand;
         }
 
         /**
          *
+         * @return
          */
-        String getBinFileName() {
-            return binFileName;
+        public String getResetCommandString() {
+            String resetCommand = configuration.get("trisos.programmer.reset.command");
+            resetCommand = resetCommand.replace("trisos.programmer.executable", programExe);
+            resetCommand = resetCommand.replace("trisos.programmer.device", device);
+            return resetCommand;
         }
 
         /**
-         * Getter for programming command line command for processing with exec()
-         * @return command for processing with exec()
+         * 
+         * @return
          */
-        String[] getProgrammerProgramCommand() {
-            return programmerProgramCommand;
+        public String getBinFileCompletePath() {
+            return binFileCompletePath;
         }
-
-        /**
-         * Getter for resetting command line command for processing with exec()
-         * @return command for processing with exec()
-         */
-        String[] getProgrammerResetCommand() {
-            return programmerResetCommand;
-        }
-
-        /**
-         * Getter for programming command line command string
-         * @return String for debug purposes
-         */
-        String getProgrammerProgramCommandString() {
-            String ret = new String();
-            for( String str : programmerProgramCommand ) {
-                ret += str;
-            }
-            return ret;
-        }
-
-        /**
-         * Getter for resetting command line command string
-         * @return String for debug purposes
-         */
-        String getProgrammerResetCommandString() {
-            String ret = new String();
-            for( String str : programmerResetCommand ) {
-                ret += str;
-            }
-            return ret;
-        }
-
-        
 }

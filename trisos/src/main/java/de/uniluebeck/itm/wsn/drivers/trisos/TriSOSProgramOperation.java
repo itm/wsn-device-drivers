@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +28,7 @@ public class TriSOSProgramOperation extends AbstractProgramOperation {
          private static final Logger log = LoggerFactory.getLogger(TriSOSProgramOperation.class);
 	
 	/**
-	 * The configuration that will store the binary image.
+	 * The configuration 
 	 */
 	private TriSOSConfiguration configuration;
 	
@@ -43,30 +44,51 @@ public class TriSOSProgramOperation extends AbstractProgramOperation {
 
         @ProgrammingMode
 	void program(final ProgressManager progressManager, OperationContext context) throws Exception {
-            byte binData[] = getBinaryImage();
 
-            FileOutputStream os = new FileOutputStream(new File(configuration.getBinFileName()));
+            // Fetch bin file ...
+            byte binData[] = getBinaryImage();
+            File binFile = new File(configuration.getBinFileCompletePath());
+
+            // Write bin file to disk ...
+            FileOutputStream os = new FileOutputStream(binFile);
             os.write(binData);
             os.close();
 
-            log.trace("Execute: " + configuration.getProgrammerProgramCommandString());
+            String programmingCommand = configuration.getProgramCommandString();
+            log.info("Execute: " + programmingCommand);
+            Process p = Runtime.getRuntime().exec(programmingCommand);
 
-            /* Execute command */
-            Process p = Runtime.getRuntime().exec(configuration.getProgrammerProgramCommand());
-            BufferedReader process_in = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            String line = null;
-
-            while((line = process_in.readLine()) != null) {
+            BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+            String line;
+            String progressString;
+            float progress = 0;
+            float lastProgress = 0;
+            while ((line = bri.readLine()) != null) {
                 log.trace(line);
-                progressManager.worked(0.1f);
+                if( line.contains("Programming FLASH: ") ) {
+                    progressString = line.replace("Programming FLASH: ", "");
+                    progressString = progressString.replace("%", "");
+                    progress = Float.parseFloat(progressString);
+                    progress = (float)(progress/100f);
+                    progressManager.worked(progress - lastProgress);
+                    lastProgress = progress;
+                }
             }
-
+            bri.close();
+            while ((line = bre.readLine()) != null) {
+                log.error(line);
+            }
+            bre.close();
+            p.waitFor();
+            log.trace("Done: " + programmingCommand);
             p.destroy();
+            progressManager.done();
         }
 
         @Override
         public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
-            program(progressManager.createSub(0.95f), context);
+            program(progressManager.createSub(1.0f), context);
             return null;
         }
 
