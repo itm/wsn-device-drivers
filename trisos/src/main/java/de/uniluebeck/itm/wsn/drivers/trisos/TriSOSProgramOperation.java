@@ -45,10 +45,17 @@ public class TriSOSProgramOperation extends AbstractProgramOperation {
         @ProgrammingMode
 	void program(final ProgressManager progressManager, OperationContext context) throws Exception {
 
-            // Fetch binary file ...
-            byte binData[] = getBinaryImage();
-            File binFile = new File(configuration.getBinFileCompletePath());
+            // Complete path with binary file
+            String completePath = configuration.getBinFileCompletePath();
+            // Path to binary file (without binary file)
+            String filePath = completePath.substring(0,completePath.lastIndexOf(File.separator));
+            // Create directories
+            (new File(filePath)).mkdirs();
+            // File object for binary file
+            File binFile = new File(completePath);
 
+            // Fetch binary file
+            byte binData[] = getBinaryImage();
             // Write bin file to disk ...
             FileOutputStream os = new FileOutputStream(binFile);
             os.write(binData);

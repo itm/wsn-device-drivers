@@ -7,18 +7,43 @@ import java.util.Map;
 
 /**
  * Stores the configuration of the TriSOS device driver.
- * 
+ * When configuring testbed runtime add configuration parameter in tr.iwsn-testbed.xml.
+ * A typical configuration may look like this:
+ * <pre>
+ * {@code
+ * ...
+ * <wsn:wsnDevice xmlns:wsn="http://itm.uniluebeck.de/tr/runtime/wsnapp/xml">
+ *      <urn>urn:wisebed:cosa-testbed-fhl1:0x140</urn>
+ *      <type>trisos</type>
+ *      <serialinterface>COM6</serialinterface>
+ *      <!-- Full path to the programmer executable. Currently JTAGICEmkII and AVRDragon are tested and used. -->
+ *      <configuration key="trisos.programmer.executable" value="C:\\Program Files\\Atmel\\AVR Tools\\JTAGICEmkII\\jtagiceii.exe" />
+ *      <!-- Optional baudrate for the serial port. When ommited the baudrate is set to 115200. -->
+ *      <configuration key="trisos.serialport.baudrate" value="38400" />
+ *      <!-- Place where the binary file for the node is saved. The path is created if it does not exist.-->
+ *      <configuration key="trisos.programmer.program.binfile" value="..\\trisos-binfile\\flashMe.elf" />
+ *      <!-- The MCU type. For TriSOS currently ATmega2560 or ATxmega128A1 are used. -->
+ *      <configuration key="trisos.programmer.device" value="ATxmega128A1" />
+ *      <!-- Programming command for the programmer executable. -->
+ *      <configuration key="trisos.programmer.program.command" value="trisos.programmer.executable -d trisos.programmer.device -e -pa -ia trisos.programmer.program.binfile" />
+ *      <!-- Resetting command for the programmer executable. -->
+ *      <configuration key="trisos.programmer.reset.command" value="trisos.programmer.executable -d trisos.programmer.device -R" />
+ * </wsn:wsnDevice>
+ * ...
+ * }
+ * </pre>
+ * NOTICE: When used together with wsn-device-utils the key/value pairs have to be provided in a property file.
  * @author teublert
  */
 public class TriSOSConfiguration {
 
         /**
-         * The configuration data name/value pairs
+         * The configuration data key/value pairs
          */
         private final Map<String, String> configuration;
 
         /**
-         *
+         * Executable for the programming device
          */
         private String programExe;
 
@@ -34,9 +59,7 @@ public class TriSOSConfiguration {
         
 	/**
 	 * Constructor.
-         * Fetches trisos.programmer.executable (Path to the programmer executable (currently jtagicemkii.exe or AVRDragon.exe)),
-         * trisos.programmer.program.binfile (Path to the binary file), and trisos.programmer.device
-         * (currently ATmega2560 or ATxmega128A1) from the configuration.
+         * Fetches the key/value pairs from the configuration.
          * @param configuration injected by Guice
          */
         @Inject
