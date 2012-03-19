@@ -11,6 +11,7 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.*;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.ProgrammingMode;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgramInterceptor;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.SimpleSerialPortConnection;
 import de.uniluebeck.itm.wsn.drivers.isense.iSenseSerialPortConnection;
 
 import javax.annotation.Nullable;
@@ -39,7 +40,13 @@ public class TriSOSModule extends AbstractModule {
 		bind(ResetOperation.class).to(TriSOSResetOperation.class);     // Resetting
 		bind(TriSOSConfiguration.class).in(Singleton.class);           // Configuration
 
-                SerialPortConnection connection = new iSenseSerialPortConnection();
+                // Configuring serial port connection ...
+                String baudrateString = configuration.get("trisos.serialport.baudrate");
+                int baudrate = SimpleSerialPortConnection.DEFAULT_NORMAL_BAUDRATE;
+                if( baudrateString != null ) {
+                    baudrate = Integer.parseInt(baudrateString);
+                }
+                TriSOSSerialPortConnection connection = new TriSOSSerialPortConnection(baudrate);
 		bindInterceptor(
 				Matchers.any(),
 				Matchers.annotatedWith(ProgrammingMode.class),

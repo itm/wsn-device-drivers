@@ -10,20 +10,19 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 /**
- * The operation for programming the <code>MockDevice</code>.
+ * The operation for programming the <code>TriSOSDevice</code>.
  * 
- * @author Malte Legenhausen
+ * @author Torsten Teubler
  */
 public class TriSOSProgramOperation extends AbstractProgramOperation {
 
         /**
-         *
+         * The logger
          */
          private static final Logger log = LoggerFactory.getLogger(TriSOSProgramOperation.class);
 	
@@ -35,7 +34,8 @@ public class TriSOSProgramOperation extends AbstractProgramOperation {
 	/**
 	 * Constructor.
 	 * 
-	 * @param configuration The configuration of the <code>MockDevice</code>.
+	 * @param configuration injected by Guice.
+         * The configuration of the <code>TriSOSDevice</code>.
 	 */
 	@Inject
 	public TriSOSProgramOperation(TriSOSConfiguration configuration) {
@@ -45,7 +45,7 @@ public class TriSOSProgramOperation extends AbstractProgramOperation {
         @ProgrammingMode
 	void program(final ProgressManager progressManager, OperationContext context) throws Exception {
 
-            // Fetch bin file ...
+            // Fetch binary file ...
             byte binData[] = getBinaryImage();
             File binFile = new File(configuration.getBinFileCompletePath());
 
@@ -54,18 +54,25 @@ public class TriSOSProgramOperation extends AbstractProgramOperation {
             os.write(binData);
             os.close();
 
+            // Fetching programming command string ...
             String programmingCommand = configuration.getProgramCommandString();
             log.info("Execute: " + programmingCommand);
+            // Execute programmer device executable ...
             Process p = Runtime.getRuntime().exec(programmingCommand);
 
             BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
             BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
             String line;
             String progressString;
+            // Overall progress
             float progress = 0;
+            // Progress of the last step
             float lastProgress = 0;
+            // Hadle output from programmer device executable
             while ((line = bri.readLine()) != null) {
                 log.trace(line);
+                // Parsing progress output from the programmer device executable
+                // and put it into the progress manager
                 if( line.contains("Programming FLASH: ") ) {
                     progressString = line.replace("Programming FLASH: ", "");
                     progressString = progressString.replace("%", "");
@@ -76,10 +83,12 @@ public class TriSOSProgramOperation extends AbstractProgramOperation {
                 }
             }
             bri.close();
+            // Error output from programmer device executable
             while ((line = bre.readLine()) != null) {
                 log.error(line);
             }
             bre.close();
+            // Wait for process to finish ...
             p.waitFor();
             log.trace("Done: " + programmingCommand);
             p.destroy();

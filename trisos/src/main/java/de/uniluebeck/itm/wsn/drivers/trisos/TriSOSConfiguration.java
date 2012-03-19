@@ -1,10 +1,8 @@
 package de.uniluebeck.itm.wsn.drivers.trisos;
 
 import com.google.inject.Inject;
-import com.google.inject.TypeLiteral;
 import com.google.inject.name.Named;
 import java.util.Map;
-import javax.annotation.Nullable;
 
 
 /**
@@ -15,7 +13,7 @@ import javax.annotation.Nullable;
 public class TriSOSConfiguration {
 
         /**
-         *
+         * The configuration data name/value pairs
          */
         private final Map<String, String> configuration;
 
@@ -36,8 +34,10 @@ public class TriSOSConfiguration {
         
 	/**
 	 * Constructor.
-         *
-         * @param configuration 
+         * Fetches trisos.programmer.executable (Path to the programmer executable (currently jtagicemkii.exe or AVRDragon.exe)),
+         * trisos.programmer.program.binfile (Path to the binary file), and trisos.programmer.device
+         * (currently ATmega2560 or ATxmega128A1) from the configuration.
+         * @param configuration injected by Guice
          */
         @Inject
 	public TriSOSConfiguration(@Named("configuration") final Map<String, String> configuration) {
@@ -48,8 +48,8 @@ public class TriSOSConfiguration {
         }
 
         /**
-         * 
-         * @return
+         * The programming command line command as String
+         * @return String programming command line command
          */
         public String getProgramCommandString() {
             String programCommand = configuration.get("trisos.programmer.program.command");
@@ -60,8 +60,8 @@ public class TriSOSConfiguration {
         }
 
         /**
-         *
-         * @return
+         * The resetting command line command as String
+         * @return String reset command line command
          */
         public String getResetCommandString() {
             String resetCommand = configuration.get("trisos.programmer.reset.command");
@@ -71,7 +71,7 @@ public class TriSOSConfiguration {
         }
 
         /**
-         * 
+         * The complete path to the binary file.
          * @return
          */
         public String getBinFileCompletePath() {

@@ -10,10 +10,9 @@ import java.io.InputStreamReader;
 
 
 /**
- * Mock operation for reseting the connection.
- * Internal the periodically send of messages is reseted.
+ * TriSOS operation for reseting the TriSOS node.
  * 
- * @author Malte Legenhausen
+ * @author Torsten Teubler
  */
 public class TriSOSResetOperation implements ResetOperation {
 
@@ -26,7 +25,7 @@ public class TriSOSResetOperation implements ResetOperation {
     /**
      * Constructor.
      *
-     * @param configuration
+     * @param configuration injected by Guice
      */
     @Inject
     public TriSOSResetOperation(TriSOSConfiguration configuration) {
@@ -37,7 +36,8 @@ public class TriSOSResetOperation implements ResetOperation {
     public Void run(final ProgressManager progressManager, OperationContext context) throws Exception {
 
         progressManager.createSub(1.0f);
-        
+
+        // Fetching resetting command string ...
         String resetCommand = configuration.getResetCommandString();
         System.out.println("Execute: " + resetCommand);
         Process p = Runtime.getRuntime().exec(resetCommand);
@@ -54,9 +54,11 @@ public class TriSOSResetOperation implements ResetOperation {
             System.err.println(line);
         }
         bre.close();
+        // Wait for process to finish ...
         p.waitFor();
         p.destroy();
         progressManager.worked(1.0f);
+        progressManager.done();
         return null;
     }
 }
