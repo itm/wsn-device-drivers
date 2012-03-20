@@ -17,13 +17,16 @@ import de.uniluebeck.itm.wsn.drivers.core.serialport.SimpleSerialPortConnection;
 public class TriSOSSerialPortConnection extends SimpleSerialPortConnection implements SerialPortEventListener {
 
 	private static final int NORMAL_BAUDRATE = 115200;
+        private static final int PROGRAM_BAUDRATE = 19200;
 
 	public TriSOSSerialPortConnection() {
-		setNormalBaudrate(NORMAL_BAUDRATE);
+            setNormalBaudrate(NORMAL_BAUDRATE);
+            setProgramBaudrate(PROGRAM_BAUDRATE);
 	}
 
         public TriSOSSerialPortConnection(final int baudrate) {
             setNormalBaudrate(baudrate);
+            setProgramBaudrate(PROGRAM_BAUDRATE);
         }
 
 	@Override
