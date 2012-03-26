@@ -24,6 +24,7 @@
 package de.uniluebeck.itm.wsn.drivers.factories;
 
 import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Singleton;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
@@ -32,6 +33,7 @@ import de.uniluebeck.itm.wsn.drivers.jennic.JennicModule;
 import de.uniluebeck.itm.wsn.drivers.mock.MockModule;
 import de.uniluebeck.itm.wsn.drivers.pacemate.PacemateModule;
 import de.uniluebeck.itm.wsn.drivers.telosb.TelosbModule;
+import de.uniluebeck.itm.wsn.drivers.trisos.TriSOSModule;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -69,13 +71,19 @@ public class DeviceFactoryImpl implements DeviceFactory {
 			case MOCK:
 				deviceModule = new MockModule(configuration);
 				break;
+                        case TRISOS:
+                                deviceModule = new TriSOSModule(configuration);
+                                break;
 			default:
 				throw new RuntimeException("Unknown device type \"" + deviceType + "\". Maybe someone forgot to add"
 						+ "this (new) device type to " + DeviceFactoryImpl.class.getName() + "?"
 				);
 		}
 
-		return Guice.createInjector(new DeviceModule(executorService), deviceModule).getInstance(Device.class);
+                Injector injector = Guice.createInjector(new DeviceModule(executorService), deviceModule);
+                Device device = injector.getInstance(Device.class);
+                return device;
+		//return Guice.createInjector(new DeviceModule(executorService), deviceModule).getInstance(Device.class);
 	}
 
 	@Override
