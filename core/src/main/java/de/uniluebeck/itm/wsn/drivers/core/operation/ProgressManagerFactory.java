@@ -8,7 +8,7 @@ import com.google.inject.ImplementedBy;
  * 
  * @author Malte Legenhausen
  */
-@ImplementedBy(SimpleProgressManagerFactory.class)
+@ImplementedBy(RootProgressManagerFactory.class)
 public interface ProgressManagerFactory {
 
 	ProgressManager create(ProgressCallback callback);

@@ -73,14 +73,6 @@ public class ExecutorServiceOperationExecutor implements OperationExecutor {
 
 	/**
 	 * Constructor.
-	 */
-	public ExecutorServiceOperationExecutor() {
-		executorService = Executors.newFixedThreadPool(2);
-		idleRunnable = null;
-	}
-
-	/**
-	 * Constructor.
 	 *
 	 * @param executorService Set a custom <code>PausableExecutorService</code>.
 	 */
@@ -103,7 +95,7 @@ public class ExecutorServiceOperationExecutor implements OperationExecutor {
 
 	@Override
 	public <T> OperationFuture<T> submitOperation(Operation<T> operation) {
-		checkNotNull(operation, "Null Operation is not allowed.");
+		checkNotNull(operation, "operation must be non-null");
 		prepareOperation(operation);
 		return addOperationAndExecuteNext(operation);
 	}
@@ -150,7 +142,7 @@ public class ExecutorServiceOperationExecutor implements OperationExecutor {
 			stopIdleThread();
 			Operation<?> operation = operations.peek();
 			Runnable runnable = runnables.get(operation);
-			LOG.trace("Submit {} to executorService.", operation.getClass().getName());
+			LOG.trace("Executing operation: {}", operation.getClass().getName());
 			executorService.execute(runnable);
 		} else {
 			startIdleThread();
@@ -160,14 +152,14 @@ public class ExecutorServiceOperationExecutor implements OperationExecutor {
 	private <T> void addOperation(Operation<T> operation, Runnable runnable) {
 		operations.add(operation);
 		runnables.put(operation, runnable);
-		LOG.trace("{} added to internal operation list", operation.getClass().getName());
+		LOG.trace("Enqueued operation: {}", operation.getClass().getName());
 		listeners.fire().onAdded(new AddedEvent<T>(this, operation));
 	}
 
 	private <T> void removeOperation(Operation<T> operation) {
 		operations.remove(operation);
 		runnables.remove(operation);
-		LOG.trace("{} removed from internal operation list", operation.getClass().getName());
+		LOG.trace("Removed operation from queue: {}", operation.getClass().getName());
 		listeners.fire().onRemoved(new RemovedEvent<T>(this, operation));
 	}
 	
@@ -175,7 +167,7 @@ public class ExecutorServiceOperationExecutor implements OperationExecutor {
 		if (idleFuture != null) {
 			LOG.trace("Stopping idle thread...");
 			idleFuture.cancel(true);
-			LOG.trace("IdleRunnable thread stopped.");
+			LOG.trace("Stopped idle thread");
 		}
 	}
 	
@@ -183,7 +175,7 @@ public class ExecutorServiceOperationExecutor implements OperationExecutor {
 		if (idleRunnable != null) {
 			LOG.trace("Starting idle thread...");
 			idleFuture = executorService.submit(idleRunnable, null);
-			LOG.trace("Stopping idle thread.");
+			LOG.trace("Started idle thread");
 		}
 	}
 
@@ -196,13 +188,13 @@ public class ExecutorServiceOperationExecutor implements OperationExecutor {
 
 	@Override
 	public void addListener(final OperationExecutorListener listener) {
-		checkNotNull(listener, "Null listener is not allowed.");
+		checkNotNull(listener, "listener must be non-null");
 		listeners.addListener(listener);
 	}
 
 	@Override
 	public void removeListener(final OperationExecutorListener listener) {
-		checkNotNull(listener, "Null listener is not allowed.");
+		checkNotNull(listener, "listener must be non-null");
 		listeners.removeListener(listener);
 	}
 }

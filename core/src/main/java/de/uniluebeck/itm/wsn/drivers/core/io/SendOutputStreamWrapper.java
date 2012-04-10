@@ -2,6 +2,8 @@ package de.uniluebeck.itm.wsn.drivers.core.io;
 
 import com.google.inject.Inject;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -16,25 +18,27 @@ import java.io.OutputStream;
  */
 public class SendOutputStreamWrapper extends OutputStream {
 
+	private static final Logger log = LoggerFactory.getLogger(SendOutputStreamWrapper.class);
+
 	/**
 	 * The maximum timeout for the send operation.
 	 */
 	private static final int SEND_TIMEOUT = 30000;
 
 	/**
-	 * The deviceAsync that is used for sending data to the deviceAsync.
+	 * The device that is used for sending data to the device.
 	 */
-	private final Device deviceAsync;
+	private final Device device;
 
 	/**
 	 * Constructor.
 	 *
 	 * @param device
-	 * 		The async deviceAsync.
+	 * 		The async device.
 	 */
 	@Inject
 	public SendOutputStreamWrapper(Device device) {
-		this.deviceAsync = device;
+		this.device = device;
 	}
 
 
@@ -46,7 +50,8 @@ public class SendOutputStreamWrapper extends OutputStream {
 	@Override
 	public void write(final byte[] b) throws IOException {
 		try {
-			deviceAsync.send(b, SEND_TIMEOUT, null);
+			log.trace("Sending {} bytes to the device", b.length);
+			device.send(b, SEND_TIMEOUT, null);
 		} catch (RuntimeException e) {
 			throw new IOException(e);
 		}

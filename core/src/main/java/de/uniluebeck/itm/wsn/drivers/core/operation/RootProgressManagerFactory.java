@@ -8,7 +8,7 @@ import com.google.inject.Singleton;
  * @author Malte Legenhausen
  */
 @Singleton
-public class SimpleProgressManagerFactory implements ProgressManagerFactory {
+public class RootProgressManagerFactory implements ProgressManagerFactory {
 
 	@Override
 	public ProgressManager create(ProgressCallback callback) {

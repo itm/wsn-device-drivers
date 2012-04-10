@@ -8,7 +8,7 @@ import com.google.inject.ImplementedBy;
  * 
  * @author Malte Legenhausen
  */
-@ImplementedBy(SimpleOperationFactory.class)
+@ImplementedBy(TimeLimitedOperationFactory.class)
 public interface OperationFactory {
 
 	<T> Operation<T> create(OperationRunnable<T> runnable, long timeout, OperationCallback<T> callback);

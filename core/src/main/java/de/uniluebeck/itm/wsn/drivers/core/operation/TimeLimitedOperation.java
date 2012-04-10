@@ -25,17 +25,12 @@ import de.uniluebeck.itm.wsn.drivers.core.util.ClassUtil;
  *
  * @param <T> The return type of the runnable.
  */
-public class SimpleOperation<T> implements Operation<T>, OperationContext {
-	
-	/**
-	 * Default timeout is set to 5 minutes.
-	 */
-	public static final long DEFAULT_TIMEOUT = 30000;
+public class TimeLimitedOperation<T> implements Operation<T>, OperationContext {
 	
 	/**
 	 * Logger for this class.
 	 */
-	private static final Logger LOG = LoggerFactory.getLogger(OperationRunnable.class);
+	private static final Logger LOG = LoggerFactory.getLogger(TimeLimitedOperation.class);
 	
 	/**
 	 * Listeners for <code>OperationRunnable</code> changes.
@@ -79,8 +74,8 @@ public class SimpleOperation<T> implements Operation<T>, OperationContext {
 	 * Constructor.
 	 */
 	@Inject
-	public SimpleOperation(TimeLimiter timeLimiter, ProgressManager progressManager, OperationRunnable<T> runnable, 
-			long timeout, OperationCallback<T> callback) {
+	public TimeLimitedOperation(TimeLimiter timeLimiter, ProgressManager progressManager, OperationRunnable<T> runnable,
+								long timeout, OperationCallback<T> callback) {
 		this.timeLimiter = timeLimiter;
 		this.progressManager = progressManager;
 		this.runnable = runnable;
@@ -128,7 +123,7 @@ public class SimpleOperation<T> implements Operation<T>, OperationContext {
 		final Callable<T> callable = new Callable<T>() {
 			@Override
 			public T call() throws Exception {
-				return runnable.run(progressManager, SimpleOperation.this);
+				return runnable.run(progressManager, TimeLimitedOperation.this);
 			}
 		};
 		T result = timeLimiter.callWithTimeout(callable, timeout, TimeUnit.MILLISECONDS, false);
@@ -171,8 +166,8 @@ public class SimpleOperation<T> implements Operation<T>, OperationContext {
 	}
 	
 	private void fireBeforeStateChangedEvent(StateChangedEvent<T> event) {
-		String msg = "OperationRunnable state of {} is about to change from {} to {}";
-		LOG.trace(msg, new Object[] {this.getClass().getName(), event.getOldState(), event.getNewState()});
+		String msg = "{} state changing from {} to {}";
+		LOG.trace(msg, new Object[] {runnable.getClass().getName(), event.getOldState(), event.getNewState()});
 		listeners.fire().beforeStateChanged(event);
 	}
 	
@@ -182,8 +177,8 @@ public class SimpleOperation<T> implements Operation<T>, OperationContext {
 	 * @param event The state change event.
 	 */
 	private void fireAfterStateChangedEvent(StateChangedEvent<T> event) {
-		String msg = "OperationRunnable state of {} changed from {} to {}";
-		LOG.trace(msg, new Object[] {this.getClass().getName(), event.getOldState(), event.getNewState()});
+		String msg = "{} state changed from {} to {}";
+		LOG.trace(msg, new Object[] {runnable.getClass().getName(), event.getOldState(), event.getNewState()});
 		listeners.fire().afterStateChanged(event);
 	}
 

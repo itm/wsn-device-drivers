@@ -55,4 +55,12 @@ public class ConnectionEvent extends EventObject {
 	public String getUri() {
 		return uri;
 	}
+
+	@Override
+	public String toString() {
+		return "ConnectionEvent{" +
+				"connected=" + connected +
+				", uri='" + uri + '\'' +
+				"} " + super.toString();
+	}
 }

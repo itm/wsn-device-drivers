@@ -14,7 +14,7 @@ public interface OperationContext {
 	 * Call this method when another <code>OperationRunnable</code> has to be executed while this 
 	 * <code>OperationRunnable</code>.
 	 * 
-	 * @param <R> The return type of the sub <code>OperationRunnable</code>.
+	 * @param <T> The return type of the sub <code>OperationRunnable</code>.
 	 * @param subRunnable The sub <code>OperationRunnable</code> that has to be executed.
 	 * @param progressManager The progress manager for observing the progress.
 	 * @return The result of the sub <code>OperationRunnable</code>.

@@ -1,39 +1,40 @@
 package de.uniluebeck.itm.wsn.drivers.core.operation;
 
-import static com.google.common.base.Objects.firstNonNull;
-
-import javax.annotation.Nullable;
-
 import com.google.common.util.concurrent.TimeLimiter;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
+import javax.annotation.Nullable;
+
+import static com.google.common.base.Objects.firstNonNull;
+
 
 /**
- * Factory for SimpleOperation instances.
- * 
+ * Factory for TimeLimitedOperation instances.
+ *
  * @author Malte Legenhausen
  */
 @Singleton
-public class SimpleOperationFactory implements OperationFactory {
-	
+public class TimeLimitedOperationFactory implements OperationFactory {
+
 	private final Provider<TimeLimiter> timeLimiterProvider;
-	
+
 	private final ProgressManagerFactory progressManagerFactory;
-	
+
 	@Inject
-	public SimpleOperationFactory(Provider<TimeLimiter> timeLimiterProvider, 
-			ProgressManagerFactory progressManagerFactory) {
+	public TimeLimitedOperationFactory(Provider<TimeLimiter> timeLimiterProvider,
+									   ProgressManagerFactory progressManagerFactory) {
 		this.timeLimiterProvider = timeLimiterProvider;
 		this.progressManagerFactory = progressManagerFactory;
 	}
-	
+
 	@Override
-	public <T> Operation<T> create(OperationRunnable<T> runnable, long timeout, 
-			@Nullable OperationCallback<T> callback) {
+	public <T> Operation<T> create(OperationRunnable<T> runnable, long timeout,
+								   @Nullable OperationCallback<T> callback) {
+
 		callback = firstNonNull(callback, new OperationCallbackAdapter<T>());
 		ProgressManager progressManager = progressManagerFactory.create(callback);
-		return new SimpleOperation<T>(timeLimiterProvider.get(), progressManager, runnable, timeout, callback);
+		return new TimeLimitedOperation<T>(timeLimiterProvider.get(), progressManager, runnable, timeout, callback);
 	}
 }

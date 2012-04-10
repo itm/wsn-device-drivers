@@ -8,7 +8,7 @@ import com.google.inject.ImplementedBy;
  * 
  * @author Malte Legenhausen
  */
-@ImplementedBy(SimpleSendOperation.class)
+@ImplementedBy(CopyToOutputStreamSendOperation.class)
 public interface SendOperation extends OperationRunnable<Void> {
 
 	/**
