@@ -95,13 +95,13 @@ public class TimeLimitedOperation<T> implements Operation<T>, OperationContext {
 				result = executeOperation();
 			}
 		} catch (UncheckedTimeoutException e) {
-			setState(State.TIMEDOUT);
+			setState(State.TIMEOUT);
 			LOG.error("Timeout reached during operation execution", e);
 			TimeoutException timeoutException = new TimeoutException("Operation timeout " + timeout + "ms reached.");
 			callback.onFailure(timeoutException);
 			throw timeoutException;
 		} catch (Exception e) {
-			setState(State.EXCEPTED);
+			setState(State.FAILED);
 			LOG.error("Exception during operation execution", e);
 			callback.onFailure(e);
 			throw e;

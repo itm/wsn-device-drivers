@@ -25,21 +25,21 @@ public enum State {
 	CANCELED("Canceled"),
 	
 	/**
-	 * The <code>OperationRunnable</code> finsihed with an exception.
+	 * The <code>OperationRunnable</code> failed with an exception.
 	 */
-	EXCEPTED("Excepted"),
+	FAILED("Failed"),
 	
 	/**
 	 * The <code>OperationRunnable</code> reached the timeout.
 	 */
-	TIMEDOUT("Timedout"),
+	TIMEOUT("Timeout"),
 	
 	/**
 	 * The <code>OperationRunnable</code> is done.
 	 */
 	DONE("Done");
 	
-	private static final State[] FINISH_STATES = {State.DONE, State.EXCEPTED, State.CANCELED, State.TIMEDOUT};
+	private static final State[] FINISH_STATES = {State.DONE, State.FAILED, State.CANCELED, State.TIMEOUT};
 	
 	/**
 	 * The name of the state.
@@ -65,7 +65,7 @@ public enum State {
 	}
 	
 	/**
-	 * Returns true when this state is equals to DONE, EXCEPTED or CANCELED else false.
+	 * Returns true when this state is equals to DONE, FAILED or CANCELED else false.
 	 * 
 	 * @return A boolean for representing a finished state.
 	 */
