@@ -49,6 +49,11 @@
 				<artifactId>wsn-device-drivers-test</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>de.uniluebeck.itm</groupId>
+				<artifactId>wsn-device-drivers-factories</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 
 			<dependency>
 				<groupId>de.uniluebeck.itm.itmutils</groupId>

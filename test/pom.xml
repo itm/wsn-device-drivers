@@ -12,32 +12,10 @@
 	<name>WSN Device Drivers Test Programs</name>
 
 	<dependencies>
-
 		<dependency>
 			<groupId>de.uniluebeck.itm</groupId>
-			<artifactId>wsn-device-drivers-core</artifactId>
+			<artifactId>wsn-device-drivers-factories</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>de.uniluebeck.itm</groupId>
-			<artifactId>wsn-device-drivers-telosb</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>de.uniluebeck.itm</groupId>
-			<artifactId>wsn-device-drivers-jennic</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>de.uniluebeck.itm</groupId>
-			<artifactId>wsn-device-drivers-pacemate</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>de.uniluebeck.itm</groupId>
-			<artifactId>wsn-device-drivers-mock</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>de.uniluebeck.itm</groupId>
-			<artifactId>wsn-device-drivers-common</artifactId>
-		</dependency>
-
 	</dependencies>
 
 </project>
