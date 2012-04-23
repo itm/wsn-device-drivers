@@ -11,6 +11,7 @@ import de.uniluebeck.itm.wsn.drivers.core.io.HasOutputStream;
  * Interface that defines how to manage a connection to a device.
  * 
  * @author Malte Legenhausen
+ * @author Daniel Bimschas
  */
 public interface Connection extends HasInputStream, HasOutputStream, Connectable {
 
@@ -38,12 +39,12 @@ public interface Connection extends HasInputStream, HasOutputStream, Connectable
 	/**
 	 * Wait at most timeoutMillis for the input stream to become available.
 	 * 
-	 * @param timeout Milliseconds to wait until timeout, 0 for no timeout
+	 * @param timeoutMillis Milliseconds to wait until timeout, 0 for no timeout
 	 * @return The number of characters available
 	 * @throws TimeoutException when no data was available for the timeout duration.
 	 * @throws IOException when something went wrong with the input stream.
 	 */
-	int waitDataAvailable(int timeout) throws TimeoutException, IOException;
+	int waitDataAvailable(int timeoutMillis) throws TimeoutException, IOException;
 	
 	/**
 	 * Skip all bytes left on the input stream.

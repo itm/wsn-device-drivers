@@ -1,56 +1,57 @@
 package de.uniluebeck.itm.wsn.drivers.mock;
 
+import com.google.common.util.concurrent.TimeLimiter;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
+import de.uniluebeck.itm.wsn.drivers.core.operation.TimeLimitedOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.inject.Inject;
-
-import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
-import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
 
 
 /**
  * Mock operation for writing a <code>MacAddress</code> in the given <code>MockConfiguration</code>.
- * 
+ *
  * @author Malte Legenhausen
+ * @author Daniel Bimschas
  */
-public class MockWriteMacAddressOperation extends AbstractMockOperation<Void> implements WriteMacAddressOperation {
-	
-	/**
-	 * Logger for this class.
-	 */
-	private static final Logger LOG = LoggerFactory.getLogger(MockWriteMacAddressOperation.class);
-	
+public class MockWriteMacAddressOperation extends TimeLimitedOperation<Void> implements WriteMacAddressOperation {
+
+	private static final Logger log = LoggerFactory.getLogger(MockWriteMacAddressOperation.class);
+
 	/**
 	 * The <code>MockConfiguration</code> to which the <code>MacAddress</code> has to be assigned.
 	 */
 	private final MockConfiguration configuration;
-	
+
 	/**
 	 * The <code>MacAddress</code> that has to be written to the configuration.
 	 */
-	private MacAddress macAddress;
-	
-	/**
-	 * Constructor.
-	 * 
-	 * @param configuration The configuration of the <code>MockDevice</code>.
-	 */
+	private final MacAddress macAddress;
+
 	@Inject
-	public MockWriteMacAddressOperation(MockConfiguration configuration) {
+	public MockWriteMacAddressOperation(final TimeLimiter timeLimiter,
+										final MockConfiguration configuration,
+										@Assisted final MacAddress macAddress,
+										@Assisted final long timeoutMillis,
+										@Assisted final OperationListener<Void> operationCallback) {
+		super(timeLimiter, timeoutMillis, operationCallback);
+		this.macAddress = macAddress;
 		this.configuration = configuration;
 	}
-	
+
 	@Override
-	protected Void returnResult() {
-		LOG.debug("Writing mac address: " + macAddress);
+	protected Void callInternal() throws Exception {
+
+		for (int i = 1; i <= 10 && !isCanceled(); ++i) {
+			Thread.sleep(100);
+			progress(i * 0.1f);
+		}
+
+		log.debug("Writing mac address: " + macAddress);
 		configuration.setMacAddress(macAddress);
 		return null;
 	}
-
-	@Override
-	public void setMacAddress(MacAddress macAddress) {
-		this.macAddress = macAddress;
-	}
-
 }

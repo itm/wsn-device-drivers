@@ -26,10 +26,11 @@ package de.uniluebeck.itm.wsn.drivers.jennic.exception;
 import de.uniluebeck.itm.wsn.drivers.jennic.Sector;
 
 /**
-*
-*/
+ *
+ */
 @SuppressWarnings("serial")
 public class SectorEraseException extends Exception {
+
 	protected Sector index;
 
 	/**
@@ -41,7 +42,7 @@ public class SectorEraseException extends Exception {
 
 	/**
 	 * Returns the sector index
-	 * 
+	 *
 	 * @return
 	 */
 	public Sector getSectorIndex() {

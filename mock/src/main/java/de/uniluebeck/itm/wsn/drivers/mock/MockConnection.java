@@ -4,13 +4,17 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import de.uniluebeck.itm.tr.util.ExecutorUtils;
+import de.uniluebeck.itm.tr.util.StringUtils;
 import de.uniluebeck.itm.tr.util.TimeDiff;
 import de.uniluebeck.itm.wsn.drivers.core.AbstractConnection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 
@@ -18,6 +22,7 @@ import java.util.concurrent.TimeUnit;
  * A connection that can be used for testing.
  *
  * @author Malte Legenhausen
+ * @author Daniel Bimschas
  */
 @Singleton
 public class MockConnection extends AbstractConnection {
@@ -26,6 +31,7 @@ public class MockConnection extends AbstractConnection {
 	 * Internal runnable that sends continuously messages.
 	 *
 	 * @author Malte Legenhausen
+	 * @author Daniel Bimschas
 	 */
 	private class AliveRunnable implements Runnable {
 
@@ -38,43 +44,49 @@ public class MockConnection extends AbstractConnection {
 		@Override
 		public void run() {
 
-			sleep(new Random().nextInt((int) aliveTimeout));
+			sendMessage("Booting MockDevice...");
+
+			sleep(new Random().nextInt((int) aliveTimeUnit.toMillis(aliveTimeout)));
 
 			while (!shutdown) {
 
-				if (messageCount == 0) {
-					sendMessage("Booting MockDevice...");
-					sleep(1000);
-				}
-
-				final String message = "MockDevice alive since " + startTime.s() + " seconds (update #" + (++messageCount) + ")";
+				final String message =
+						"MockDevice alive since " + startTime.s() + " seconds (update #" + (++messageCount) + ")";
 				sendMessage(message);
 
 				sleep(aliveTimeUnit.toMillis(aliveTimeout));
 			}
-		}
-
-		public void reset() {
-			startTime.touch();
-			messageCount = 0;
 		}
 	}
 
 	private static final byte DLE = 0x10;
 
 	private static final byte STX = 0x02;
-
 	private static final byte ETX = 0x03;
 
-	/**
-	 * The <code>PipedOutputStream</code>.
-	 */
-	private PipedOutputStream outputStream = new PipedOutputStream();
+	private static final Logger log = LoggerFactory.getLogger(MockConnection.class);
 
 	/**
-	 * The <code>PipedInputStream</code>.
+	 * The {@link OutputStream} that is being written to from users of this device.
 	 */
-	private PipedInputStream inputStream = new PipedInputStream();
+	private final PipedOutputStream outputStream = new PipedOutputStream();
+
+	/**
+	 * The {@link InputStream} instance from which the mock device can read data that was written to {@link
+	 * MockConnection#outputStream}.
+	 */
+	private final PipedInputStream outputStreamPipedInputStream = new PipedInputStream();
+
+	/**
+	 * The {@link InputStream} instance from which is being read from users of this device..
+	 */
+	private final PipedInputStream inputStream = new PipedInputStream();
+
+	/**
+	 * The {@link OutputStream} to which the mock device can write data that will then be piped to {@link
+	 * MockConnection#inputStream}.
+	 */
+	private final PipedOutputStream inputStreamPipedOutputStream = new PipedOutputStream();
 
 	/**
 	 * Configuration for this device.
@@ -89,14 +101,46 @@ public class MockConnection extends AbstractConnection {
 	/**
 	 * The frequency with which a message has to be send.
 	 */
-	private final long aliveTimeout = 1;
+	private final long aliveTimeout = 10;
 
 	/**
 	 * The frequency time units.
 	 */
 	private final TimeUnit aliveTimeUnit = TimeUnit.SECONDS;
 
-	private final AliveRunnable aliveRunnable = new AliveRunnable();
+	private AliveRunnable aliveRunnable;
+
+	private final Runnable echoRunnable = new Runnable() {
+		@Override
+		public void run() {
+			try {
+				byte[] b = new byte[1024];
+				int read;
+				synchronized (outputStreamPipedInputStream) {
+
+					while ((read = outputStreamPipedInputStream.read(b)) != -1) {
+
+						log.trace("MockConnection.echoRunnable echoing {} bytes", read);
+
+						synchronized (inputStreamPipedOutputStream) {
+							inputStreamPipedOutputStream.write(b, 0, read);
+							inputStreamPipedOutputStream.flush();
+							signalDataAvailable();
+						}
+					}
+				}
+			} catch (Exception e) {
+				if (e instanceof InterruptedIOException) {
+					// expected when shutting down
+				} else {
+					log.error("Exception in MockConnection.echoRunnable: {}", e);
+					throw new RuntimeException(e);
+				}
+			}
+		}
+	};
+
+	private Future<?> echoRunnableFuture;
 
 	@Inject
 	public MockConnection(MockConfiguration configuration) {
@@ -108,14 +152,16 @@ public class MockConnection extends AbstractConnection {
 
 	public void reset() {
 		sleep(200);
-		aliveRunnable.reset();
+		stopAliveRunnable();
+		startAliveRunnable();
 	}
 
 	private void sleep(final long millis) {
 		try {
 			Thread.sleep(millis);
 		} catch (InterruptedException e) {
-			System.err.println(e);
+			log.error("InterruptedException while sleeping: {}", e);
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -151,32 +197,50 @@ public class MockConnection extends AbstractConnection {
 	 * 		The message as byte array.
 	 */
 	public void sendMessage(final byte[] message) {
-		final OutputStream outputStream = getOutputStream();
-		try {
-			outputStream.write(message);
-			outputStream.flush();
-		} catch (IOException e) {
 
+		if (log.isTraceEnabled()) {
+			log.trace("Sending message {}", StringUtils.toHexString(message));
+		}
+
+		try {
+
+			synchronized (inputStreamPipedOutputStream) {
+				inputStreamPipedOutputStream.write(message);
+				inputStreamPipedOutputStream.flush();
+				signalDataAvailable();
+			}
+
+		} catch (IOException e) {
+			log.error("IOException while writing to MockConnection.inputStreamPipedOutputStream: {}", e);
+			throw new RuntimeException(e);
 		}
 	}
 
 	@Override
 	public void connect(final String uri) throws IOException {
+
 		super.connect(uri);
-		try {
-			inputStream.connect(outputStream);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+
+		synchronized (inputStreamPipedOutputStream) {
+			inputStream.connect(inputStreamPipedOutputStream);
 		}
+
+		synchronized (outputStreamPipedInputStream) {
+			outputStream.connect(outputStreamPipedInputStream);
+		}
+
 		setOutputStream(outputStream);
 		setInputStream(inputStream);
-		executorService.execute(aliveRunnable);
+
+		startAliveRunnable();
+		startEchoRunnable();
+
 		setConnected();
 	}
 
 	@Override
 	public void close() throws IOException {
-		aliveRunnable.shutdown = true;
+		stopAliveRunnable();
 		ExecutorUtils.shutdown(executorService, 100, TimeUnit.MILLISECONDS);
 		super.close();
 	}
@@ -184,5 +248,28 @@ public class MockConnection extends AbstractConnection {
 	@Override
 	public int[] getChannels() {
 		return configuration.getChannels();
+	}
+
+	public void startAliveRunnable() {
+		aliveRunnable = new AliveRunnable();
+		executorService.execute(aliveRunnable);
+	}
+
+	private void startEchoRunnable() {
+		echoRunnableFuture = executorService.submit(echoRunnable);
+	}
+
+	public void stopAliveRunnable() {
+		if (aliveRunnable != null) {
+			aliveRunnable.shutdown = true;
+			aliveRunnable = null;
+		}
+	}
+
+	private void stopEchoRunnable() {
+		if (echoRunnableFuture != null && !(echoRunnableFuture.isDone() || echoRunnableFuture.isCancelled())) {
+			echoRunnableFuture.cancel(true);
+			echoRunnableFuture = null;
+		}
 	}
 }

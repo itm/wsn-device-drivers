@@ -11,6 +11,16 @@
 
 	<packaging>pom</packaging>
 
+	<modules>
+		<module>core</module>
+		<module>common</module>
+		<module>jennic</module>
+		<module>telosb</module>
+		<module>pacemate</module>
+		<module>mock</module>
+		<module>factories</module>
+	</modules>
+
 	<dependencyManagement>
 		<dependencies>
 
@@ -71,6 +81,12 @@
 				<artifactId>guice</artifactId>
 				<version>3.0</version>
 			</dependency>
+			<dependency>
+				<groupId>com.google.inject.extensions</groupId>
+				<artifactId>guice-assistedinject</artifactId>
+				<version>3.0</version>
+			</dependency>
+
 			<dependency>
 	            <groupId>com.google.code.findbugs</groupId>
 	            <artifactId>jsr305</artifactId>
@@ -204,17 +220,6 @@
 			<url>http://www.itm.uni-luebeck.de/projects/maven/releases/</url>
 		</pluginRepository>
 	</pluginRepositories>
-
-	<modules>
-		<module>core</module>
-		<module>common</module>
-		<module>jennic</module>
-		<module>pacemate</module>
-		<module>telosb</module>
-		<module>factories</module>
-		<module>mock</module>
-		<module>test</module>
-	</modules>
 
 	<distributionManagement>
 		<repository>

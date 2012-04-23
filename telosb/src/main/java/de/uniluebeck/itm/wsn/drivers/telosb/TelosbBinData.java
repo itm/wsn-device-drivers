@@ -23,6 +23,10 @@
 
 package de.uniluebeck.itm.wsn.drivers.telosb;
 
+import de.uniluebeck.itm.wsn.drivers.core.util.BinaryImageBlock;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -31,24 +35,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import de.uniluebeck.itm.wsn.drivers.core.ChipType;
-import de.uniluebeck.itm.wsn.drivers.core.util.BinDataBlock;
-
 /**
- * Binary file used to program a Telos B device. The file is assumed to be in
- * intel hex format.
- * 
+ * Binary file used to program a Telos B device. The file is assumed to be in intel hex format.
+ *
  * @author Friedemann Wesner
  * @author Malte Legenhausen
  */
 public class TelosbBinData {
 
-	/**
-	 * 
-	 */
 	private static final Logger log = LoggerFactory.getLogger(TelosbBinData.class);
 
 	private final int maxBlockSize = 240 - 16;
@@ -58,12 +52,12 @@ public class TelosbBinData {
 	private final List<Segment> segments = new ArrayList<Segment>();
 
 	public TelosbBinData(byte[] binaryData) throws IOException {
-		reload(new BufferedReader(new InputStreamReader(
-				new ByteArrayInputStream(binaryData))));
+		reload(new BufferedReader(new InputStreamReader(new ByteArrayInputStream(binaryData))));
 	}
 
 	public int getBlockCount() {
-		int blocksPerSegment = 0;
+
+		int blocksPerSegment;
 		int totalBlocks = 0;
 
 		for (Segment seg : segments) {
@@ -76,11 +70,8 @@ public class TelosbBinData {
 		return totalBlocks;
 	}
 
-	public ChipType getChipType() {
-		return ChipType.TelosB;
-	}
-
 	public int getLength() {
+
 		int totalLength = 0;
 
 		for (Segment seg : segments) {
@@ -90,24 +81,24 @@ public class TelosbBinData {
 		return totalLength;
 	}
 
-	public BinDataBlock getNextBlock() {
-		BinDataBlock dataBlock = null;
+	public BinaryImageBlock getNextBlock() {
+		BinaryImageBlock dataBlock = null;
 		int actualBlockSize = maxBlockSize;
-		byte[] data = null;
-		Segment seg = null;
+		byte[] data;
+		Segment segment;
 
 		if (hasNextBlock()) {
-			seg = segments.get(blockIterator.segmentNo);
-			if (blockIterator.byteNo + actualBlockSize > seg.data.length) {
-				actualBlockSize = seg.data.length - blockIterator.byteNo;
+
+			segment = segments.get(blockIterator.segmentNo);
+
+			if (blockIterator.byteNo + actualBlockSize > segment.data.length) {
+				actualBlockSize = segment.data.length - blockIterator.byteNo;
 			}
 			data = new byte[actualBlockSize];
-			System.arraycopy(seg.data, blockIterator.byteNo, data, 0,
-					actualBlockSize);
-			dataBlock = new BinDataBlock(seg.startAddress
-					+ blockIterator.byteNo, data);
+			System.arraycopy(segment.data, blockIterator.byteNo, data, 0, actualBlockSize);
+			dataBlock = new BinaryImageBlock(segment.startAddress + blockIterator.byteNo, data);
 
-			if (blockIterator.byteNo + maxBlockSize >= seg.data.length) {
+			if (blockIterator.byteNo + maxBlockSize >= segment.data.length) {
 				blockIterator.segmentNo++;
 				blockIterator.byteNo = 0;
 			} else {
@@ -119,9 +110,11 @@ public class TelosbBinData {
 	}
 
 	public boolean hasNextBlock() {
+
 		if (blockIterator.segmentNo >= segments.size()) {
 			return false;
 		}
+
 		if (blockIterator.byteNo >= segments.get(blockIterator.segmentNo).data.length) {
 			return false;
 		}
@@ -129,28 +122,27 @@ public class TelosbBinData {
 		return true;
 	}
 
-	public boolean isCompatible(ChipType deviceType) {
-		return deviceType.equals(getChipType());
-	}
-
 	private void reload(BufferedReader reader) throws IOException {
-		String line = null;
-		StringTokenizer sTokenizer = null;
-		int lineAddress = 0;
+		String line;
+		StringTokenizer sTokenizer;
+		int lineAddress;
 		int currentAddress = 0;
 		int segmentStartAddress = 0;
-		int dataLength = 0;
-		int dataType = 0;
+		int dataLength;
+		int dataType;
 		byte segmentData[] = new byte[0];
 		byte tempData[];
 
 		segments.clear();
+
 		while ((line = reader.readLine()) != null) {
+
 			// check for correct ihex format
 			if (line.charAt(0) != ':') {
 				log.error("File is not in correct intel hex format.");
 				throw new IOException(
-						"File is not in correct intel hex format.");
+						"File is not in correct intel hex format."
+				);
 			}
 
 			// remove spaces
@@ -169,18 +161,18 @@ public class TelosbBinData {
 				if (currentAddress != lineAddress) {
 					if (segmentData.length > 0) {
 						segments.add(new Segment(segmentStartAddress,
-								segmentData));
+								segmentData
+						)
+						);
 					}
 					currentAddress = lineAddress;
 					segmentStartAddress = lineAddress;
 					segmentData = new byte[0];
 				}
 				tempData = new byte[segmentData.length + dataLength];
-				System.arraycopy(segmentData, 0, tempData, 0,
-						segmentData.length);
+				System.arraycopy(segmentData, 0, tempData, 0, segmentData.length);
 				for (int i = 0; i < dataLength; i++) {
-					tempData[segmentData.length + i] = (byte) Integer.parseInt(
-							line.substring(9 + 2 * i, 9 + 2 * i + 2), 16);
+					tempData[segmentData.length + i] = (byte) Integer.parseInt(line.substring(9 + 2 * i, 9 + 2 * i + 2), 16);
 				}
 				segmentData = tempData;
 				currentAddress += tempData.length;

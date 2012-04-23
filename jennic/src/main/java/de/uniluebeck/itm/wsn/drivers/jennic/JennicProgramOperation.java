@@ -1,131 +1,133 @@
 package de.uniluebeck.itm.wsn.drivers.jennic;
 
+import com.google.common.util.concurrent.TimeLimiter;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import de.uniluebeck.itm.wsn.drivers.core.ChipType;
+import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
+import de.uniluebeck.itm.wsn.drivers.core.exception.*;
+import de.uniluebeck.itm.wsn.drivers.core.operation.*;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgrammingMode;
+import de.uniluebeck.itm.wsn.drivers.core.util.BinaryImageBlock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-
-import de.uniluebeck.itm.wsn.drivers.core.ChipType;
-import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
-import de.uniluebeck.itm.wsn.drivers.core.exception.FlashProgramFailedException;
-import de.uniluebeck.itm.wsn.drivers.core.exception.ProgramChipMismatchException;
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractProgramOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.ProgrammingMode;
-import de.uniluebeck.itm.wsn.drivers.core.util.BinDataBlock;
+import javax.annotation.Nullable;
+import java.io.IOException;
 
 public class JennicProgramOperation extends AbstractProgramOperation {
-	
+
 	/**
 	 * Logger for this class.
 	 */
 	private static final Logger log = LoggerFactory.getLogger(JennicProgramOperation.class);
-	
-	private static final int MAX_RETRIES = 3;
-	
+
+	private static final float FRACTION_GET_CHIP_TYPE = 0.01f;
+
+	private static final float FRACTION_READ_MAC_FROM_DEVICE = 0.02f;
+
+	private static final float FRACTION_PROGRAM_WRITE_IMAGE = 0.92f;
+
+	private static final float FRACTION_RESET = 0.05f;
+
 	private final JennicHelper helper;
-	
-	private final GetChipTypeOperation getChipTypeOperation;
-	
-	private final Provider<ReadFlashOperation> readFlashOperationProvider;
-	
-	private final ResetOperation resetOperation;
-	
+
+	private final OperationFactory operationFactory;
+
 	@Inject
-	public JennicProgramOperation(JennicHelper helper, 
-			GetChipTypeOperation getChipTypeOperation,
-			Provider<ReadFlashOperation> readFlashOperationProvider,
-			ResetOperation resetOperation) {
+	public JennicProgramOperation(final TimeLimiter timeLimiter,
+								  final JennicHelper helper,
+								  final OperationFactory operationFactory,
+								  @Assisted byte[] binaryImage,
+								  @Assisted final long timeoutMillis,
+								  @Assisted @Nullable final OperationListener<Void> operationCallback) {
+
+		super(timeLimiter, binaryImage, timeoutMillis, operationCallback);
 		this.helper = helper;
-		this.getChipTypeOperation = getChipTypeOperation;
-		this.readFlashOperationProvider = readFlashOperationProvider;
-		this.resetOperation = resetOperation;
+		this.operationFactory = operationFactory;
 	}
-	
-	@ProgrammingMode
-	void program(ProgressManager progressManager, OperationContext context) throws Exception {
-		ChipType chipType = context.run(getChipTypeOperation, progressManager, 0.025f);
-		JennicBinData binData = validateImage(chipType);
-		insertFlashHeaderToImage(chipType, binData, progressManager.createSub(0.025f), context);
-		
-		// Wait for a connection
-		while (!context.isCanceled() && !helper.waitForConnection()) {
+
+	@Override
+	@SerialPortProgrammingMode
+	protected Void callInternal() throws Exception {
+
+		GetChipTypeOperation getChipTypeOperation = operationFactory.createGetChipTypeOperation(10000, null);
+		ChipType chipType = runSubOperation(getChipTypeOperation, FRACTION_GET_CHIP_TYPE);
+
+		JennicBinaryImage binaryImage = new JennicBinaryImage(getBinaryImage());
+		assertImageCompatible(binaryImage, chipType);
+
+		readMacAddressFromDeviceAndWriteToImage(chipType, binaryImage);
+
+		while (!isCanceled() && !helper.waitForConnection()) {
 			log.debug("Still waiting for a connection");
 		}
 
-		// Return with success if the user has requested to cancel this
-		// operation
-		if (context.isCanceled()) {
-			return;
-		}		
-		
+		if (isCanceled()) {
+			return null;
+		}
+
+		eraseSectors(chipType);
+		writeBinaryImage(binaryImage);
+
+		runSubOperation(operationFactory.createResetOperation(1000, null), FRACTION_RESET);
+
+		return null;
+	}
+
+	private void writeBinaryImage(final JennicBinaryImage binaryImage)
+			throws IOException, TimeoutException, UnexpectedResponseException, InvalidChecksumException,
+			FlashProgramFailedException {
+
+		BinaryImageBlock block;
+
+		int blockNr = 0;
+		int blockCount = binaryImage.getBlockCount();
+
+		while ((block = binaryImage.getNextBlock()) != null) {
+
+			blockNr++;
+
+			if (log.isTraceEnabled()) {
+				log.trace("Writing block {} of {}", blockNr, blockCount);
+			}
+
+			helper.writeFlash(block.getAddress(), block.getData());
+
+			final float progressBefore = FRACTION_GET_CHIP_TYPE + FRACTION_READ_MAC_FROM_DEVICE;
+			progress(progressBefore + (FRACTION_PROGRAM_WRITE_IMAGE * ((float) blockNr / (float) blockCount)));
+		}
+	}
+
+	private void eraseSectors(final ChipType chipType) throws Exception {
 		helper.configureFlash(chipType);
 		helper.eraseFlash(Sector.FIRST);
 		helper.eraseFlash(Sector.SECOND);
 		helper.eraseFlash(Sector.THIRD);
-		
-		// Write program to flash
-		BinDataBlock block = null;
-		while ((block = binData.getNextBlock()) != null) {
-			helper.writeFlash(block.getAddress(), block.getData());
-			
-			// Notify listeners of the new status
-			progressManager.worked(1.0f / binData.getBlockCount());
-			
-			// Return with success if the user has requested to cancel this
-			// operation
-			if (context.isCanceled()) {
-				return;
-			}
-		}	
 	}
-	
-	private JennicBinData validateImage(final ChipType chipType) throws Exception {
-		final JennicBinData binData = new JennicBinData(getBinaryImage());
-		// Check if file and current chip match
-		if (!binData.isCompatible(chipType)) {
-			log.error("Chip type(" + chipType + ") and bin-program type(" + binData.getChipType() + ") do not match");
-			throw new ProgramChipMismatchException(chipType, binData.getChipType());
+
+	private void readMacAddressFromDeviceAndWriteToImage(ChipType chipType, JennicBinaryImage binaryImage)
+			throws Exception {
+
+		byte[] deviceFlashHeader = readDeviceFlashHeader(chipType.getHeaderStart(), chipType.getHeaderLength());
+
+		if (MacAddress.HIGHEST_MAC_ADDRESS.equals(new MacAddress(deviceFlashHeader))) {
+			throw new FlashProgramFailedException("Device MAC address (0xFF...FF) seems broken!");
 		}
-		return binData;
+
+		binaryImage.insertHeader(deviceFlashHeader);
 	}
-	
-	private void insertFlashHeaderToImage(ChipType chipType, JennicBinData binData, ProgressManager progressManager, OperationContext context) throws Exception {
-		final int address = chipType.getHeaderStart();
-		final int length = chipType.getHeaderLength();
-		for (int i = 0; i < MAX_RETRIES; ++i) {
-			ReadFlashOperation operation = readFlashOperationProvider.get();
-			operation.setAddress(address, length);
-			byte[] flashHeader = context.run(operation, progressManager, 0.33f);
-			if (validateFlashHeader(flashHeader)) {
-				binData.insertHeader(flashHeader);
-				progressManager.done();
-				return;
-			}
-			Thread.sleep(1000);
+
+	private byte[] readDeviceFlashHeader(final int address, final int length) throws Exception {
+		ReadFlashOperation subOperation = operationFactory.createReadFlashOperation(address, length, 120000, null);
+		return runSubOperation(subOperation, FRACTION_READ_MAC_FROM_DEVICE);
+	}
+
+	private void assertImageCompatible(final JennicBinaryImage binaryImage, final ChipType chipType) throws Exception {
+
+		if (!binaryImage.isCompatible(chipType)) {
+			log.error("Device chip type ({}) and image chip type ({}) mismatch!" ,chipType, binaryImage.getChipType());
+			throw new ProgramChipMismatchException(chipType, binaryImage.getChipType());
 		}
-		throw new FlashProgramFailedException("Unable to save mac address before flashing");
-	}
-	
-	/**
-	 * Checks if the mac address is not 0xFF...FF
-	 * 
-	 * @param header The flash header.
-	 * @return true if not else false
-	 */
-	private boolean validateFlashHeader(byte[] header) {
-		MacAddress macAddress = new MacAddress(header);
-		return MacAddress.HIGHEST_MAC_ADDRESS.equals(macAddress) == false;
-	}
-	
-	public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
-		program(progressManager.createSub(0.95f), context);
-		context.run(resetOperation, progressManager, 0.05f);
-		return null;
 	}
 }

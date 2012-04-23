@@ -1,224 +1,227 @@
 package de.uniluebeck.itm.wsn.drivers.jennic;
 
+import com.google.inject.Inject;
+import de.uniluebeck.itm.tr.util.StringUtils;
+import de.uniluebeck.itm.wsn.drivers.core.ChipType;
+import de.uniluebeck.itm.wsn.drivers.core.Connection;
+import de.uniluebeck.itm.wsn.drivers.core.exception.*;
+import de.uniluebeck.itm.wsn.drivers.isense.exception.FlashTypeReadFailedException;
+import de.uniluebeck.itm.wsn.drivers.jennic.exception.SectorEraseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.log4j.Logger;
-
-import com.google.inject.Inject;
-
-import de.uniluebeck.itm.tr.util.StringUtils;
-import de.uniluebeck.itm.wsn.drivers.core.ChipType;
-import de.uniluebeck.itm.wsn.drivers.core.Connection;
-import de.uniluebeck.itm.wsn.drivers.core.exception.FlashConfigurationFailedException;
-import de.uniluebeck.itm.wsn.drivers.core.exception.FlashEraseFailedException;
-import de.uniluebeck.itm.wsn.drivers.core.exception.FlashProgramFailedException;
-import de.uniluebeck.itm.wsn.drivers.core.exception.InvalidChecksumException;
-import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
-import de.uniluebeck.itm.wsn.drivers.core.exception.UnexpectedResponseException;
-import de.uniluebeck.itm.wsn.drivers.isense.exception.FlashTypeReadFailedException;
-import de.uniluebeck.itm.wsn.drivers.jennic.exception.SectorEraseException;
+import static de.uniluebeck.itm.tr.util.StringUtils.toHexString;
 
 public class JennicHelper {
-	
-	private static final Logger LOG = Logger.getLogger(JennicHelper.class);
-	
-	private static final int TIMEOUT = 2500;
-	
+
+	private static final Logger log = LoggerFactory.getLogger(JennicHelper.class);
+
+	private static final int TIMEOUT_WAIT_DATA_AVAILABLE_MILLIS = 2500;
+
 	private final Connection connection;
-	
+
 	@Inject
 	public JennicHelper(Connection connection) {
 		this.connection = connection;
 	}
-	
+
 	public FlashType getFlashType() throws Exception {
 		// Send flash type read request
-		sendBootLoaderMessage(Messages.flashTypeReadRequestMessage());
+		sendBootloaderMessage(Messages.flashTypeReadRequestMessage());
 
 		// Read flash type read response
-		byte[] response = receiveBootLoaderReply(Messages.FLASH_TYPE_READ_RESPONSE);
+		byte[] response = receiveBootloaderReply(Messages.FLASH_TYPE_READ_RESPONSE);
 
 		// Throw error if reading failed
 		if (response[1] != 0x00) {
-			LOG.error(String.format("Failed to read flash type: Response should be 0x00, yet it is: 0x%02x",
-					response[1]));
+			log.error(String.format("Failed to read flash type: Response should be 0x00, yet it is: 0x%02x",
+					response[1]
+			)
+			);
 			throw new FlashTypeReadFailedException();
 		}
 
 		// Determine flash type
-		FlashType ft = FlashType.Unknown;
-		if (response[2] == (byte) 0xBF && response[3] == (byte) 0x49)
-			ft = FlashType.SST25VF010A;
-		else if (response[2] == (byte) 0x10 && response[3] == (byte) 0x10)
-			ft = FlashType.STM25P10A;
-		else if (response[2] == (byte) 0x1F && response[3] == (byte) 0x60)
-			ft = FlashType.Atmel25F512;
-		else if (response[2] == (byte) 0x12 && response[3] == (byte) 0x12)
-			ft = FlashType.STM25P40;
-		else 
-			ft = FlashType.Unknown;
-
-		// LOG.debug("Flash is " + ft + " (response[2,3] was: " + Tools.toHexString(response[2]) + " " +
-		// Tools.toHexString(response[3]) + ")");
-		return ft;
+		if (response[2] == (byte) 0xBF && response[3] == (byte) 0x49) {
+			return FlashType.SST25VF010A;
+		} else if (response[2] == (byte) 0x10 && response[3] == (byte) 0x10) {
+			return FlashType.STM25P10A;
+		} else if (response[2] == (byte) 0x1F && response[3] == (byte) 0x60) {
+			return FlashType.Atmel25F512;
+		} else if (response[2] == (byte) 0x12 && response[3] == (byte) 0x12) {
+			return FlashType.STM25P40;
+		} else {
+			return FlashType.Unknown;
+		}
 	}
-	
+
 	void enableFlashErase() throws Exception {
-		// LOG.debug("Setting FLASH status register to zero");
-		sendBootLoaderMessage(Messages.statusRegisterWriteMessage((byte) 0x00)); // see
+		// log.debug("Setting FLASH status register to zero");
+		sendBootloaderMessage(Messages.statusRegisterWriteMessage((byte) 0x00)); // see
 		// AN
 		// -
 		// 1007
 
-		byte[] response = receiveBootLoaderReply(Messages.WRITE_SR_RESPONSE);
+		byte[] response = receiveBootloaderReply(Messages.WRITE_SR_RESPONSE);
 
 		if (response[1] != 0x0) {
-			LOG.error(String.format("Failed to write status register."));
+			log.error(String.format("Failed to write status register."));
 			throw new FlashEraseFailedException();
 		}
 	}
-	
+
 	public void eraseFlash(Sector sector) throws Exception {
 		enableFlashErase();
-		LOG.trace("Erasing sector " + sector);
-		sendBootLoaderMessage(Messages.sectorEraseRequestMessage(sector));
+		log.trace("Erasing sector " + sector);
+		sendBootloaderMessage(Messages.sectorEraseRequestMessage(sector));
 
-		byte[] response = receiveBootLoaderReply(Messages.SECTOR_ERASE_RESPONSE);
+		byte[] response = receiveBootloaderReply(Messages.SECTOR_ERASE_RESPONSE);
 
 		if (response[1] != 0x0) {
-			LOG.error(String.format("Failed to erase flash sector."));
+			log.error(String.format("Failed to erase flash sector."));
 			throw new SectorEraseException(sector);
 		}
 
 	}
-	
-	public void configureFlash(ChipType chipType) throws Exception {
-		LOG.trace("Configuring flash");
 
-		// Only new chips need to be configured
+	public void configureFlash(ChipType chipType) throws Exception {
+
+		log.trace("Configuring flash");
+
+		// only new chips need to be configured
 		if (chipType != ChipType.JN5121) {
-			// Determine flash type
+
+			// determine flash type
 			FlashType flashType = getFlashType();
 
-			// Send flash configure request
-			sendBootLoaderMessage(Messages.flashConfigureRequestMessage(flashType));
+			// send flash configure request
+			sendBootloaderMessage(Messages.flashConfigureRequestMessage(flashType));
 
-			// Read flash configure response
-			byte[] response = receiveBootLoaderReply(Messages.FLASH_CONFIGURE_RESPONSE);
+			// read flash configure response
+			byte[] response = receiveBootloaderReply(Messages.FLASH_CONFIGURE_RESPONSE);
 
-			// Throw error if configuration failed
+			// throw error if configuration failed
 			if (response[1] != 0x00) {
-				LOG.error(String.format("Failed to configure flash ROM: Response should be 0x00, yet it is: 0x%02x",
-						response[1]));
+				if (log.isErrorEnabled()) {
+					log.error("Failed to configure flash ROM: response should be 0x00, yet it is: ",
+							toHexString(response[1])
+					);
+				}
 				throw new FlashConfigurationFailedException();
 			}
 		}
-		LOG.trace("Done. Flash is configured");
+
+		log.trace("Done. Flash is configured.");
 	}
-	
-	/** 
-	 * 
-	 */
-	public void sendBootLoaderMessage(byte[] message) throws IOException {
-		
-		// Allocate buffer for length + message + checksum
+
+	public void sendBootloaderMessage(byte[] message) throws IOException {
+
+		if (log.isTraceEnabled()) {
+			log.trace("Sending bootloader request: {}", StringUtils.toHexString(message));
+		}
+
+		// allocate buffer for length + message + checksum
 		byte[] data = new byte[message.length + 2];
 
-		// Prepend length (of message + checksum)
+		// prepend length (of message + checksum)
 		data[0] = (byte) (message.length + 1);
 
-		// Copy message into the buffer
+		// copy message into the buffer
 		System.arraycopy(message, 0, data, 1, message.length);
 
-		// Calculate and append checksum
+		// calculate and append checksum
 		data[data.length - 1] = Messages.calculateChecksum(data, 0, data.length - 1);
 
-		// Send message
+		// send message
 		final OutputStream outStream = connection.getOutputStream();
 		outStream.write(data);
 		outStream.flush();
 	}
 
-	/** 
-	 * 
-	 */
-	public byte[] receiveBootLoaderReply(int type) throws TimeoutException, UnexpectedResponseException, InvalidChecksumException, IOException, NullPointerException {
-		LOG.trace("Receiving Boot Loader Reply...");
+	public byte[] receiveBootloaderReply(int expectedType)
+			throws TimeoutException, UnexpectedResponseException, InvalidChecksumException, IOException,
+			NullPointerException {
+
 		final InputStream inputStream = connection.getInputStream();
-		
-		connection.waitDataAvailable(TIMEOUT);
-		// Read message length
-		int length = (int) inputStream.read();
-		LOG.trace("receiveBootLoaderReply length: " + length);
 
-		// Allocate message buffer
-		byte[] message = new byte[length - 1];
+		connection.waitDataAvailable(TIMEOUT_WAIT_DATA_AVAILABLE_MILLIS);
 
-		// Read rest of the message (except the checksum
-		for (int i = 0; i < message.length; ++i) {
-			connection.waitDataAvailable(TIMEOUT);
-			message[i] = (byte) inputStream.read();
+		int bootLoaderReplyLength = inputStream.read();
+		byte[] bootLoaderReply = new byte[bootLoaderReplyLength - 1];
+
+		// read rest of the reply (except of the checksum)
+		for (int i = 0; i < (bootLoaderReplyLength - 1); ++i) {
+			connection.waitDataAvailable(TIMEOUT_WAIT_DATA_AVAILABLE_MILLIS);
+			bootLoaderReply[i] = (byte) inputStream.read();
 		}
-		LOG.trace("Received boot loader msg: " + StringUtils.toHexString(message));
 
-		// Read checksum
-		connection.waitDataAvailable(TIMEOUT);
-		byte recvChecksum = (byte) inputStream.read();
-		LOG.trace("Received Checksum: " + StringUtils.toHexString(recvChecksum));
+		if (log.isTraceEnabled()) {
+			log.trace("Received bootloader reply: {}", StringUtils.toHexString(bootLoaderReply));
+		}
 
-		// Concatenate length and message for checksum calculation
-		byte[] fullMessage = new byte[message.length + 1];
-		fullMessage[0] = (byte) length;
-		System.arraycopy(message, 0, fullMessage, 1, message.length);
+		// read checksum
+		connection.waitDataAvailable(TIMEOUT_WAIT_DATA_AVAILABLE_MILLIS);
+		byte checksumReceived = (byte) inputStream.read();
 
-		// Throw exception if checksums diffe
-		byte checksum = Messages.calculateChecksum(fullMessage);
-		if (checksum != recvChecksum) {
-			String msg = "Received: " + StringUtils.toHexString(recvChecksum) + ", Calculated: " + StringUtils.toHexString(checksum);
+		if (log.isTraceEnabled()) {
+			log.trace("Received bootloader reply checksum: {}", toHexString(checksumReceived));
+		}
+
+		// concatenate length field and actual reply for checksum calculation
+		byte[] fullBootLoaderReply = new byte[bootLoaderReply.length + 1];
+		fullBootLoaderReply[0] = (byte) bootLoaderReplyLength;
+		System.arraycopy(bootLoaderReply, 0, fullBootLoaderReply, 1, bootLoaderReply.length);
+
+		// throw exception if checksums differ
+		byte checksumCalculated = Messages.calculateChecksum(fullBootLoaderReply);
+		if (checksumCalculated != checksumReceived) {
+			String msg = "Bootloader reply checksum mismatch (received " + toHexString(checksumReceived) +
+					", calculated" + toHexString(checksumCalculated) + ")";
 			throw new InvalidChecksumException(msg);
 		}
-		// Check if the response type is unexpected
-		if (message[0] != type) {
-			throw new UnexpectedResponseException(type, (int) message[0]);
-		}
-		return message;
-	}
-	
-	/** 
-	 * 
-	 */
-	public boolean waitForConnection() {
-		try {
-			// Send flash read request (in fact, this could be any valid message
-			// to which the
-			// device is supposed to respond)
-			sendBootLoaderMessage(Messages.flashReadRequestMessage(0x24, 0x20));
-			receiveBootLoaderReply(Messages.FLASH_READ_RESPONSE);
-			LOG.trace("Device connection established");
-			return true;
-		} catch (TimeoutException e) {
-			LOG.warn("Still waiting for a connection.");
-		} catch (Exception e) {
-			LOG.error("Exception while waiting for connection", e);
+
+		// check if the response type is unexpected
+		if (bootLoaderReply[0] != expectedType) {
+			throw new UnexpectedResponseException(expectedType, (int) bootLoaderReply[0]);
 		}
 
-		try {
-			connection.clear();
-		} catch (IOException e) {
-			LOG.error("Exception while cleaning the stream.", e);
-		}
-		return false;
+		return bootLoaderReply;
 	}
-	
+
+	public boolean waitForConnection() {
+
+		try {
+
+			// send flash read request (in fact, this could be any message to which the device is supposed to respond)
+			sendBootloaderMessage(Messages.flashReadRequestMessage(0x24, 0x20));
+			receiveBootloaderReply(Messages.FLASH_READ_RESPONSE);
+			log.trace("Device connection established");
+			return true;
+
+		} catch (TimeoutException e) {
+			try {
+				connection.clear();
+			} catch (IOException e1) {
+				log.error("Exception while cleaning the stream.", e1);
+			}
+			log.trace("waitForConnection timed out!");
+			return false;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public byte[] readFlash(int address, int len) throws Exception {
 
 		// Send flash program request
-		sendBootLoaderMessage(Messages.flashReadRequestMessage(address, len));
+		sendBootloaderMessage(Messages.flashReadRequestMessage(address, len));
 
 		// Read flash program response
-		byte[] response = receiveBootLoaderReply(Messages.FLASH_READ_RESPONSE);
+		byte[] response = receiveBootloaderReply(Messages.FLASH_READ_RESPONSE);
 
 		// Remove type and success octet
 		byte[] data = new byte[response.length - 2];
@@ -227,18 +230,22 @@ public class JennicHelper {
 		// Return data
 		return data;
 	}
-	
-	public void writeFlash(int address, byte[] data) throws IOException, NullPointerException, TimeoutException, UnexpectedResponseException, InvalidChecksumException, FlashProgramFailedException {
+
+	public void writeFlash(int address, byte[] data)
+			throws IOException, NullPointerException, TimeoutException, UnexpectedResponseException,
+			InvalidChecksumException, FlashProgramFailedException {
 		// Send flash program request
-		// LOG.debug("Sending program request for address " + address + " with " + data.length + " bytes");
-		sendBootLoaderMessage(Messages.flashProgramRequestMessage(address, data));
+		// log.debug("Sending program request for address " + address + " with " + data.length + " bytes");
+		sendBootloaderMessage(Messages.flashProgramRequestMessage(address, data));
 
 		// Read flash program response
-		byte[] response = receiveBootLoaderReply(Messages.FLASH_PROGRAM_RESPONSE);
+		byte[] response = receiveBootloaderReply(Messages.FLASH_PROGRAM_RESPONSE);
 
 		// Throw error if writing failed
 		if (response[1] != 0x0) {
-			LOG.error(String.format("Failed to write to flash: Response should be 0x00, yet it is: 0x%02x", response[1]));
+			log.error(
+					String.format("Failed to write to flash: Response should be 0x00, yet it is: 0x%02x", response[1])
+			);
 			throw new FlashProgramFailedException();
 		}
 	}

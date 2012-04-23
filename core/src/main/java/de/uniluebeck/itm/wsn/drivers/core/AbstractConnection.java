@@ -25,6 +25,7 @@ import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
  * Class that implement the common functionality of a connection class.
  * 
  * @author Malte Legenhausen
+ * @author Daniel Bimschas
  */
 public abstract class AbstractConnection implements Connection {
 	
@@ -34,7 +35,7 @@ public abstract class AbstractConnection implements Connection {
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractConnection.class);
 	
 	/**
-	 * The timeout that will be waited for available data.
+	 * The timeout in milliseconds that will be waited for available data.
 	 */
 	private static final int DATA_AVAILABLE_TIMEOUT = 50;
 	
@@ -91,38 +92,41 @@ public abstract class AbstractConnection implements Connection {
 	}
 	
 	@Override
-	public int waitDataAvailable(final int timeout) throws TimeoutException, IOException {
-		LOG.trace("Waiting for data...");
-		
-		final TimeDiff timeDiff = new TimeDiff();
-		int available = rxtxInputStream.available();
+	public int waitDataAvailable(final int timeoutMillis) throws TimeoutException, IOException {
 
-		while (available == 0) {
-			if (timeout > 0 && timeDiff.ms() >= timeout) {
-				LOG.warn("Timeout waiting for data (waited: " + timeDiff.ms() + ", timeoutMs:" + timeout + ")");
+		if (rxtxInputStream.available() > 0) {
+			return rxtxInputStream.available();
+		}
+
+		dataAvailableLock.lock();
+		try {
+
+			if (!isDataAvailable.await(timeoutMillis, TimeUnit.MILLISECONDS)) {
 				throw new TimeoutException();
 			}
 
-			dataAvailableLock.lock();
-			try {
-				isDataAvailable.await(DATA_AVAILABLE_TIMEOUT, TimeUnit.MILLISECONDS);
-			} catch (final InterruptedException e) {
-				LOG.error("Interrupted: " + e, e);
-			} finally {
-				dataAvailableLock.unlock();
-			}
-			available = rxtxInputStream.available();
+			return rxtxInputStream.available();
+
+		} catch (final InterruptedException e) {
+
+			LOG.error("Interrupted: " + e, e);
+			throw new RuntimeException(e);
+
+		} finally {
+			dataAvailableLock.unlock();
 		}
-		return available;
 	}
 	
 	protected void signalDataAvailable() {
+
 		dataAvailableLock.lock();
+
 		try {
 			isDataAvailable.signal();
 		} finally {
 			dataAvailableLock.unlock();
 		}
+
 		listeners.fire().onDataAvailable(new ConnectionEvent(this, uri, connected));
 	}
 	

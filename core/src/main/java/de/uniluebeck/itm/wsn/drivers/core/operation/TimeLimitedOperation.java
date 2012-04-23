@@ -1,186 +1,166 @@
 package de.uniluebeck.itm.wsn.drivers.core.operation;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
-
+import com.google.common.util.concurrent.TimeLimiter;
+import com.google.common.util.concurrent.UncheckedTimeoutException;
+import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
+import de.uniluebeck.itm.wsn.drivers.core.util.ClassUtil;
 import org.apache.commons.lang3.event.EventListenerSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.util.concurrent.TimeLimiter;
-import com.google.common.util.concurrent.UncheckedTimeoutException;
-import com.google.inject.Inject;
+import javax.annotation.Nullable;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
-import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
-import de.uniluebeck.itm.wsn.drivers.core.util.ClassUtil;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * An abstract runnable.
- * If no other timeout is set the runnable will be canceled automatically after the <code>DEFAULT_TIMEOUT</code>.
- * The result of a timed out runnable is null also when the runnable completed at the same time.
- * 
- * @author Malte Legenhausen
+ * An abstract base class for {@link Operation} implementations.
  *
- * @param <T> The return type of the runnable.
+ * @param <ResultType>
+ * 		The return type of the operation.
+ *
+ * @author Malte Legenhausen
+ * @author Daniel Bimschas
  */
-public class TimeLimitedOperation<T> implements Operation<T>, OperationContext {
-	
-	/**
-	 * Logger for this class.
-	 */
-	private static final Logger LOG = LoggerFactory.getLogger(TimeLimitedOperation.class);
-	
+public abstract class TimeLimitedOperation<ResultType> implements Operation<ResultType> {
+
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
+
 	/**
 	 * Listeners for <code>OperationRunnable</code> changes.
 	 */
-	private final EventListenerSupport<OperationListener<T>> listeners = 
-			EventListenerSupport.create(ClassUtil.<OperationListener<T>>castClass(OperationListener.class));
-	
-	private final OperationRunnable<T> runnable;
-	
+	protected final EventListenerSupport<OperationListener<ResultType>> listeners =
+			EventListenerSupport.create(ClassUtil.<OperationListener<ResultType>>castClass(OperationListener.class));
+
 	/**
 	 * Limiter for the execution time of an runnable.
 	 */
-	private final TimeLimiter timeLimiter;
-	
+	protected final TimeLimiter timeLimiter;
+
 	/**
 	 * The timeout after which the application will be canceled.
 	 */
-	private final long timeout;
-	
+	protected final long timeoutMillis;
+
 	/**
-	 * The callback that is called when the runnable has finished, canceled or when an exception occured.
+	 * A lock for controlling concurrent access to {@link TimeLimitedOperation#state}.
 	 */
-	private final OperationCallback<T> callback;
-	
-	/**
-	 * ProgressManager used for tracking the progress of the <code>OperationRunnable</code>.
-	 */
-	private final ProgressManager progressManager;
-	
+	protected final Lock stateLock = new ReentrantLock();
+
 	/**
 	 * The current state of the <code>OperationRunnable</code>.
 	 */
-	private State state = State.WAITING;
-	
+	protected State state = State.WAITING;
+
 	/**
-	 * Boolean thats stores if the operatio has to be canceled.
+	 * A condition that becomes true as soon as the operation is done.
 	 */
-	private boolean canceled = false;
-	
+	protected final Condition operationDone = stateLock.newCondition();
+
 	/**
-	 * Constructor.
+	 * Boolean that stores if the operation has to be canceled.
 	 */
-	@Inject
-	public TimeLimitedOperation(TimeLimiter timeLimiter, ProgressManager progressManager, OperationRunnable<T> runnable,
-								long timeout, OperationCallback<T> callback) {
+	protected boolean canceled = false;
+
+	private float progress = 0f;
+
+	public TimeLimitedOperation(final TimeLimiter timeLimiter, final long timeoutMillis,
+								@Nullable final OperationListener<ResultType> listener) {
+
+		checkNotNull(timeLimiter);
+		checkArgument(timeoutMillis > 0, "Timeout must be larger than larger than zero milliseconds!");
+
 		this.timeLimiter = timeLimiter;
-		this.progressManager = progressManager;
-		this.runnable = runnable;
-		this.timeout = timeout;
-		this.callback = callback;
+		this.timeoutMillis = timeoutMillis;
+
+		if (listener != null) {
+			this.listeners.addListener(listener);
+		}
 	}
-	
+
 	@Override
-	public T call() throws Exception {
-		setState(State.RUNNING);
-		
-		callback.onExecute();
-		T result = null;
+	public void cancel() {
+		canceled = true;
+		stateLock.lock();
 		try {
+			operationDone.await();
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		} finally {
+			stateLock.unlock();
+		}
+	}
+
+	@Override
+	public final ResultType call() throws Exception {
+
+		setState(State.RUNNING);
+		listeners.fire().onExecute();
+		ResultType result = null;
+
+		try {
+
 			// Cancel execution if runnable was canceled before runnable changed to running.
 			if (!canceled) {
-				result = executeOperation();
+				progress(0f);
+				log.trace("Running {} operation with {} ms timeout", this.getClass().getSimpleName(), timeoutMillis);
+				result = timeLimiter.callWithTimeout(new Callable<ResultType>() {
+					@Override
+					public ResultType call() throws Exception {
+						return callInternal();
+					}
+				}, timeoutMillis, TimeUnit.MILLISECONDS, false
+				);
+				progress(1f);
 			}
+
 		} catch (UncheckedTimeoutException e) {
+
 			setState(State.TIMEOUT);
-			LOG.error("Timeout reached during operation execution", e);
-			TimeoutException timeoutException = new TimeoutException("Operation timeout " + timeout + "ms reached.");
-			callback.onFailure(timeoutException);
+			log.error("Timeout reached during operation execution", e);
+			TimeoutException timeoutException =
+					new TimeoutException("Operation timed out after " + timeoutMillis + " ms");
+			listeners.fire().onFailure(timeoutException);
 			throw timeoutException;
+
 		} catch (Exception e) {
+
 			setState(State.FAILED);
-			LOG.error("Exception during operation execution", e);
-			callback.onFailure(e);
+			log.error("Exception during operation execution", e);
+			listeners.fire().onFailure(e);
 			throw e;
-		}	
-		
+		}
+
 		if (canceled) {
+
 			setState(State.CANCELED);
-			callback.onCancel();
+			listeners.fire().onCancel();
 			result = null;
+
 		} else {
+
 			setState(State.DONE);
-			callback.onSuccess(result);
+			listeners.fire().onSuccess(result);
 		}
+
 		return result;
 	}
-	
-	private T executeOperation() throws Exception {
-		progressManager.worked(0.0f);
-		final Callable<T> callable = new Callable<T>() {
-			@Override
-			public T call() throws Exception {
-				return runnable.run(progressManager, TimeLimitedOperation.this);
-			}
-		};
-		T result = timeLimiter.callWithTimeout(callable, timeout, TimeUnit.MILLISECONDS, false);
-		progressManager.done();
-		return result;
-	}
-	
-	@Override
-	public <R> R run(OperationRunnable<R> subRunnable, ProgressManager aProgressManager) throws Exception {
-		checkNotNull(subRunnable, "Null operations are not allowed");
-		checkNotNull(aProgressManager, "Null ProgressManager is not allowed.");
-		final R result = subRunnable.run(aProgressManager, this);
-		aProgressManager.done();
-		return result;
-	}
-	
-	@Override
-	public <R> R run(OperationRunnable<R> subRunnable, ProgressManager aProgressManager, float subFraction) 
-			throws Exception {
-		checkNotNull(subRunnable, "Null operations are not allowed");
-		checkNotNull(aProgressManager, "Null ProgressManager is not allowed.");
-		ProgressManager subProgressManager = aProgressManager.createSub(subFraction);
-		final R result = subRunnable.run(subProgressManager, this);
-		subProgressManager.done();
-		return result;
-	}
-	
+
 	/**
-	 * Thread safe state change function.
-	 * 
-	 * @param newState The new State of this runnable.
+	 * All operation execution code goes here. This method is call by {@link de.uniluebeck.itm.wsn.drivers.core.operation.TimeLimitedOperation#call()}
+	 * which manages the operation state and notifies listeners about operation start and end.
+	 *
+	 * @return the result of the operation
+	 *
+	 * @throws Exception
+	 * 		if an arbitrary exception occurs
 	 */
-	private void setState(State newState) {
-		synchronized (state) {
-			State oldState = state;
-			fireBeforeStateChangedEvent(new StateChangedEvent<T>(this, oldState, newState));
-			state = newState;
-			fireAfterStateChangedEvent(new StateChangedEvent<T>(this, oldState, newState));
-		}
-	}
-	
-	private void fireBeforeStateChangedEvent(StateChangedEvent<T> event) {
-		String msg = "{} state changing from {} to {}";
-		LOG.trace(msg, new Object[] {runnable.getClass().getName(), event.getOldState(), event.getNewState()});
-		listeners.fire().beforeStateChanged(event);
-	}
-	
-	/**
-	 * Notify all listeners that the state has changed.
-	 * 
-	 * @param event The state change event.
-	 */
-	private void fireAfterStateChangedEvent(StateChangedEvent<T> event) {
-		String msg = "{} state changed from {} to {}";
-		LOG.trace(msg, new Object[] {runnable.getClass().getName(), event.getOldState(), event.getNewState()});
-		listeners.fire().afterStateChanged(event);
-	}
+	protected abstract ResultType callInternal() throws Exception;
 
 	@Override
 	public State getState() {
@@ -188,27 +168,103 @@ public class TimeLimitedOperation<T> implements Operation<T>, OperationContext {
 	}
 
 	@Override
-	public long getTimeout() {
-		return timeout;
-	}
-	
-	@Override
-	public void addListener(OperationListener<T> listener) {
-		listeners.addListener(listener);
-	}
-	
-	@Override
-	public void removeListener(OperationListener<T> listener) {
-		listeners.removeListener(listener);
+	public long getTimeoutMillis() {
+		return timeoutMillis;
 	}
 
 	@Override
-	public void cancel() {
-		canceled = true;
+	public void addListener(OperationListener<ResultType> listener) {
+		listeners.addListener(listener);
 	}
-	
+
 	@Override
-	public boolean isCanceled() {
+	public void removeListener(OperationListener<ResultType> listener) {
+		listeners.removeListener(listener);
+	}
+
+	protected boolean isCanceled() {
 		return canceled;
+	}
+
+	protected <R> R runSubOperation(final Operation<R> subOperation, final float subFraction) throws Exception {
+		checkNotNull(subOperation, "Null operations are not allowed");
+		subOperation.addListener(new OperationAdapter<R>() {
+
+			private final float initialParentOperationProgress = TimeLimitedOperation.this.progress;
+
+			@Override
+			public void onProgressChange(final float fraction) {
+				log.trace("Operation {}, progress: {}, suboperation {}, suboperation progress: {}",
+						new Object[]{
+								TimeLimitedOperation.this.getClass().getSimpleName(),
+								TimeLimitedOperation.this.progress,
+								subOperation.getClass().getSimpleName(),
+								fraction
+						}
+				);
+				progress(initialParentOperationProgress + subFraction * fraction);
+			}
+		}
+		);
+		return subOperation.call();
+	}
+
+	/**
+	 * Use this method to set the progress of work that was already done.
+	 * The amount of work starts at 0.0f and goes up to 1.0f.
+	 *
+	 * @param progress
+	 * 		The progress amount.
+	 */
+	protected void progress(float progress) {
+
+		checkArgument(progress >= this.progress,
+				"A new progress value (%s) must be larger than the old value (%s). "
+						+ "It wouldn't be a progress otherwise, would it?", progress, this.progress
+		);
+		checkArgument(progress >= 0f && progress <= 1f, "Progress must be between zero and one (is %s).", progress);
+
+		this.progress = progress;
+		log.trace("Progress: {}", this.progress);
+		this.listeners.fire().onProgressChange(progress);
+	}
+
+	/**
+	 * Thread safe state change function.
+	 *
+	 * @param newState
+	 * 		The new State of this runnable.
+	 */
+	private void setState(State newState) {
+		stateLock.lock();
+		try {
+			State oldState = state;
+			fireBeforeStateChangedEvent(new StateChangedEvent<ResultType>(this, oldState, newState));
+			state = newState;
+			if (State.isFinishState(state)) {
+				operationDone.signalAll();
+			}
+			fireAfterStateChangedEvent(new StateChangedEvent<ResultType>(this, oldState, newState));
+		} finally {
+			stateLock.unlock();
+		}
+	}
+
+	private void fireBeforeStateChangedEvent(StateChangedEvent<ResultType> event) {
+		String msg = "{} state changing from {} to {}";
+		log.trace(msg, new Object[]{this.getClass().getSimpleName(), event.getOldState(), event.getNewState()});
+		listeners.fire().beforeStateChanged(event);
+	}
+
+	/**
+	 * Notify all listeners that the state has changed.
+	 *
+	 * @param event
+	 * 		The state change event.
+	 */
+	private void fireAfterStateChangedEvent(StateChangedEvent<ResultType> event) {
+		String msg = "{} state changed from {} to {}";
+		log.trace(msg, new Object[]{this.getClass().getSimpleName(), event.getOldState(), event.getNewState()});
+		listeners.fire().afterStateChanged(event);
 	}
 }

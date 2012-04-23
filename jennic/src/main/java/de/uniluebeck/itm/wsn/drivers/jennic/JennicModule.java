@@ -3,21 +3,16 @@ package de.uniluebeck.itm.wsn.drivers.jennic;
 import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.matcher.Matchers;
-
 import com.google.inject.name.Names;
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
-import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.WriteFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.ProgrammingMode;
+import de.uniluebeck.itm.wsn.drivers.core.Device;
+import de.uniluebeck.itm.wsn.drivers.core.SerialPortDevice;
+import de.uniluebeck.itm.wsn.drivers.core.operation.*;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgramInterceptor;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgrammingMode;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgrammingModeInterceptor;
 import de.uniluebeck.itm.wsn.drivers.isense.iSenseResetOperation;
 import de.uniluebeck.itm.wsn.drivers.isense.iSenseSerialPortConnection;
 
@@ -39,27 +34,35 @@ public class JennicModule extends AbstractModule {
 	@Override
 	protected void configure() {
 
-		bind(new TypeLiteral<Map<String, String>>() {})
-			.annotatedWith(Names.named("configuration"))
-			.toInstance(configuration != null ? configuration : Maps.<String, String>newHashMap());
+		bind(new TypeLiteral<Map<String, String>>() {
+		}
+		)
+				.annotatedWith(Names.named("configuration"))
+				.toInstance(configuration != null ? configuration : Maps.<String, String>newHashMap());
 
-		bind(EraseFlashOperation.class).to(JennicEraseFlashOperation.class);
-		bind(GetChipTypeOperation.class).to(JennicGetChipTypeOperation.class);
-		bind(ProgramOperation.class).to(JennicProgramOperation.class);
-		bind(ReadFlashOperation.class).to(JennicReadFlashOperation.class);
-		bind(ReadMacAddressOperation.class).to(JennicReadMacAddressOperation.class);
-		bind(ResetOperation.class).to(iSenseResetOperation.class);
-		bind(WriteMacAddressOperation.class).to(JennicWriteMacAddressOperation.class);
-		bind(WriteFlashOperation.class).to(JennicWriteFlashOperation.class);
-		
 		SerialPortConnection connection = new iSenseSerialPortConnection();
+		SerialPortProgrammingModeInterceptor programmingModeInterceptor = new SerialPortProgrammingModeInterceptor();
+		requestInjection(programmingModeInterceptor);
 		bindInterceptor(
 				Matchers.any(),
-				Matchers.annotatedWith(ProgrammingMode.class),
-				new SerialPortProgramInterceptor(connection)
+				Matchers.annotatedWith(SerialPortProgrammingMode.class),
+				programmingModeInterceptor
 		);
 
-		bind(SerialPortConnection.class).toInstance(connection);
+		bind(Device.class).to(SerialPortDevice.class);
 		bind(Connection.class).toInstance(connection);
+		bind(SerialPortConnection.class).toInstance(connection);
+
+		install(new FactoryModuleBuilder()
+				.implement(EraseFlashOperation.class, JennicEraseFlashOperation.class)
+				.implement(GetChipTypeOperation.class, JennicGetChipTypeOperation.class)
+				.implement(ProgramOperation.class, JennicProgramOperation.class)
+				.implement(ReadFlashOperation.class, JennicReadFlashOperation.class)
+				.implement(ReadMacAddressOperation.class, JennicReadMacAddressOperation.class)
+				.implement(ResetOperation.class, iSenseResetOperation.class)
+				.implement(WriteFlashOperation.class, JennicWriteFlashOperation.class)
+				.implement(WriteMacAddressOperation.class, JennicWriteMacAddressOperation.class)
+				.build(OperationFactory.class)
+		);
 	}
 }

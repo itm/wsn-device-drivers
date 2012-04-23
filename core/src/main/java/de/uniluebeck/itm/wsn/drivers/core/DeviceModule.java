@@ -14,8 +14,7 @@ import com.google.common.util.concurrent.TimeLimiter;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 
-import de.uniluebeck.itm.wsn.drivers.core.concurrent.IdleRunnable;
-import de.uniluebeck.itm.wsn.drivers.core.concurrent.InputStreamCopyRunnable;
+import com.google.inject.name.Names;
 import de.uniluebeck.itm.wsn.drivers.core.io.SendOutputStreamWrapper;
 
 
@@ -23,6 +22,7 @@ import de.uniluebeck.itm.wsn.drivers.core.io.SendOutputStreamWrapper;
  * Basic setup for a single Device.
  * 
  * @author Malte Legenhausen
+ * @author Daniel Bimschas
  */
 public class DeviceModule extends AbstractModule {
 	
@@ -43,19 +43,33 @@ public class DeviceModule extends AbstractModule {
 	
 	@Override
 	protected void configure() {		
-		PipedInputStream inputStream = new PipedInputStream();
-		PipedOutputStream outputStream = new PipedOutputStream();
+
+		PipedInputStream driverInputStream = new PipedInputStream();
+		PipedOutputStream pipeOutputStreamToDriverInputStream = new PipedOutputStream();
+
+		PipedOutputStream driverOutputStream = new PipedOutputStream();
+		PipedInputStream pipeInputStreamFromDriverOutputStream = new PipedInputStream();
+
 		try {
-			inputStream.connect(outputStream);
+			driverInputStream.connect(pipeOutputStreamToDriverInputStream);
+			driverOutputStream.connect(pipeInputStreamFromDriverOutputStream);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 
+		bind(InputStream.class).annotatedWith(Names.named("driverInputStream")).toInstance(driverInputStream);
+		bind(OutputStream.class).annotatedWith(Names.named("driverOutputStream")).toInstance(driverOutputStream);
+
+		bind(OutputStream.class)
+				.annotatedWith(Names.named("pipeOutputStreamToDriverInputStream"))
+				.toInstance(pipeOutputStreamToDriverInputStream);
+
+		bind(InputStream.class)
+				.annotatedWith(Names.named("pipeInputStreamFromDriverOutputStream"))
+				.toInstance(pipeInputStreamFromDriverOutputStream);
+
 		bind(ExecutorService.class).toInstance(executorService);
 		bind(TimeLimiter.class).toInstance(new SimpleTimeLimiter(executorService));
-		bind(Runnable.class).annotatedWith(IdleRunnable.class).to(InputStreamCopyRunnable.class);
-		bind(InputStream.class).toInstance(inputStream);
-		bind(OutputStream.class).annotatedWith(IdleRunnable.class).toInstance(outputStream);
 		bind(OutputStream.class).to(SendOutputStreamWrapper.class);
 	}
 

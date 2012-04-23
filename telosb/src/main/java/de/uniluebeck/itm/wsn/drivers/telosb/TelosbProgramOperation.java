@@ -1,81 +1,82 @@
 package de.uniluebeck.itm.wsn.drivers.telosb;
 
-import java.io.IOException;
-
+import com.google.common.util.concurrent.TimeLimiter;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import de.uniluebeck.itm.wsn.drivers.core.exception.FlashProgramFailedException;
+import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractProgramOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationFactory;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgrammingMode;
+import de.uniluebeck.itm.wsn.drivers.core.util.BinaryImageBlock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Inject;
-
-import de.uniluebeck.itm.wsn.drivers.core.exception.FlashProgramFailedException;
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractProgramOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.ProgrammingMode;
-import de.uniluebeck.itm.wsn.drivers.core.util.BinDataBlock;
+import javax.annotation.Nullable;
+import java.io.IOException;
 
 public class TelosbProgramOperation extends AbstractProgramOperation {
 
-	/**
-	 * Logger for this class.
-	 */
 	private static final Logger log = LoggerFactory.getLogger(TelosbProgramOperation.class);
-	
-	private final ResetOperation resetOperation;
-	
+
 	private final BSLTelosb bsl;
-	
+
+	private final OperationFactory operationFactory;
+
 	@Inject
-	public TelosbProgramOperation(ResetOperation resetOperation, BSLTelosb bsl) {
-		this.resetOperation = resetOperation;
+	public TelosbProgramOperation(final TimeLimiter timeLimiter,
+								  final BSLTelosb bsl,
+								  final OperationFactory operationFactory,
+								  @Assisted byte[] binaryImage,
+								  @Assisted final long timeoutMillis,
+								  @Assisted @Nullable final OperationListener<Void> operationCallback) {
+		super(timeLimiter, binaryImage, timeoutMillis, operationCallback);
 		this.bsl = bsl;
+		this.operationFactory = operationFactory;
 	}
-	
-	@ProgrammingMode
-	void program(final ProgressManager progressManager, OperationContext context) throws Exception {
+
+	@Override
+	@SerialPortProgrammingMode
+	protected Void callInternal() throws Exception {
+
 		final TelosbBinData binData = new TelosbBinData(getBinaryImage());
-		// Write program to flash
+
 		log.trace("Starting to write program into flash memory...");
-		
-		final float worked = 1.0f / binData.getBlockCount();
+
+		final float workedFraction = 1.0f / binData.getBlockCount();
 		int bytesProgrammed = 0;
-		
-		for (BinDataBlock block = binData.getNextBlock(); block != null; block = binData.getNextBlock()) {
+		int blocksWritten = 0;
+
+		for (BinaryImageBlock block = binData.getNextBlock(); block != null; block = binData.getNextBlock()) {
+
 			final byte[] data = block.getData();
 			final int address = block.getAddress();
-			
+
 			// write single block
 			try {
 				bsl.writeFlash(address, data, data.length);
 			} catch (FlashProgramFailedException e) {
 				log.error(String.format("Error writing %d bytes into flash " +
-						"at address 0x%02x: " + e + ". Programmed " + bytesProgrammed + " bytes so far. "+
-						". OperationRunnable will be canceled.", data.length, address), e);
+						"at address 0x%02x: " + e + ". Programmed " + bytesProgrammed + " bytes so far. " +
+						". OperationRunnable will be canceled.", data.length, address
+				), e
+				);
 				throw e;
 			} catch (final IOException e) {
 				log.error("I/O error while writing flash. Programmed " + bytesProgrammed + " bytes so far.", e);
 				throw e;
 			}
-			
+
 			bytesProgrammed += data.length;
-			
-			// Notify listeners of the new status
-			progressManager.worked(worked);
-			
-			// Return if the user has requested to cancel this operation
-			if (context.isCanceled()) {
-				return;
-			}
-		}		
-		log.trace("Programmed " + bytesProgrammed + " bytes.");
-	}
-	
-	@Override
-	public Void run(final ProgressManager progressManager, OperationContext context) throws Exception {
-		program(progressManager.createSub(0.95f), context);
-		context.run(resetOperation, progressManager.createSub(0.05f));
+			blocksWritten++;
+
+			progress(workedFraction * blocksWritten);
+		}
+
+		log.trace("Programmed {} bytes", bytesProgrammed);
+
+		runSubOperation(operationFactory.createResetOperation(1000, null), 0.05f);
+
 		return null;
 	}
-
 }

@@ -1,46 +1,51 @@
 package de.uniluebeck.itm.wsn.drivers.pacemate;
 
+import com.google.common.util.concurrent.TimeLimiter;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import de.uniluebeck.itm.wsn.drivers.core.ChipType;
+import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
+import de.uniluebeck.itm.wsn.drivers.core.operation.TimeLimitedOperation;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgrammingMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Inject;
+import javax.annotation.Nullable;
 
-import de.uniluebeck.itm.wsn.drivers.core.ChipType;
-import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
-import de.uniluebeck.itm.wsn.drivers.core.serialport.ProgrammingMode;
+public class PacemateGetChipTypeOperation extends TimeLimitedOperation<ChipType> implements GetChipTypeOperation {
 
-public class PacemateGetChipTypeOperation implements GetChipTypeOperation {
-
-	/**
-	 * Logger for this class.
-	 */
 	private static final Logger log = LoggerFactory.getLogger(PacemateGetChipTypeOperation.class);
-	
+
 	private final PacemateHelper helper;
-	
+
 	@Inject
-	public PacemateGetChipTypeOperation(PacemateHelper helper) {
+	public PacemateGetChipTypeOperation(final TimeLimiter timeLimiter,
+										final PacemateHelper helper,
+										@Assisted final long timeoutMillis,
+										@Assisted @Nullable final OperationListener<ChipType> operationCallback) {
+		super(timeLimiter, timeoutMillis, operationCallback);
 		this.helper = helper;
 	}
-	
+
 	@Override
-	@ProgrammingMode
-	public ChipType run(ProgressManager progressManager, OperationContext context) throws Exception {		
+	@SerialPortProgrammingMode
+	protected ChipType callInternal() throws Exception {
+
 		// Send chip type read request
 		helper.sendBootLoaderMessage(Messages.ReadPartIDRequestMessage());
-	
+
 		// Read chip type read response
 		final String response = helper.receiveBootLoaderReplySuccess(Messages.CMD_SUCCESS);
 		final ChipType chipType = ChipType.LPC2136;
-	
+
 		if (response.compareTo("196387") != 0) {
-			log.error("Defaulted to chip type LPC2136 (Pacemate). Identification may be wrong." + response);
+			throw new RuntimeException(
+					"Defaulted to chip type LPC2136 (Pacemate). Identification may be wrong: " + response
+			);
 		}
-	
+
 		log.debug("Chip identified as " + chipType + " (received " + response + ")");
 		return chipType;
 	}
-
 }

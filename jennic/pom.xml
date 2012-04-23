@@ -22,6 +22,11 @@
 			<artifactId>wsn-device-drivers-common</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>com.google.inject.extensions</groupId>
+			<artifactId>guice-assistedinject</artifactId>
+		</dependency>
+
 	</dependencies>
 
 </project>

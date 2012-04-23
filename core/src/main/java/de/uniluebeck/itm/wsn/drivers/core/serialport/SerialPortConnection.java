@@ -39,8 +39,5 @@ public interface SerialPortConnection extends Connection {
 	 * @param mode Set the port to normal or programming mode.
 	 */
 	void setSerialPortMode(SerialPortMode mode);
-	
-	void prepare();
-	
-	void release();
+
 }

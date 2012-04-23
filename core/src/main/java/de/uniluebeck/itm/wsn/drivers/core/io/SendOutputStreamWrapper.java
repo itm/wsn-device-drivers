@@ -23,7 +23,7 @@ public class SendOutputStreamWrapper extends OutputStream {
 	/**
 	 * The maximum timeout for the send operation.
 	 */
-	private static final int SEND_TIMEOUT = 30000;
+	private static final int SEND_TIMEOUT_MILLIS = 30000;
 
 	/**
 	 * The device that is used for sending data to the device.
@@ -51,7 +51,7 @@ public class SendOutputStreamWrapper extends OutputStream {
 	public void write(final byte[] b) throws IOException {
 		try {
 			log.trace("Sending {} bytes to the device", b.length);
-			device.send(b, SEND_TIMEOUT, null);
+			//device.send(b, SEND_TIMEOUT_MILLIS, null);
 		} catch (RuntimeException e) {
 			throw new IOException(e);
 		}

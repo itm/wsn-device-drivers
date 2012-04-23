@@ -1,50 +1,45 @@
 package de.uniluebeck.itm.wsn.drivers.mock;
 
+import com.google.common.util.concurrent.TimeLimiter;
 import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import de.uniluebeck.itm.wsn.drivers.core.operation.*;
 
-import de.uniluebeck.itm.wsn.drivers.core.operation.EraseFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
+import javax.annotation.Nullable;
 
 
 /**
  * This operation fills the byte array of the given configuration with 0x00.
- * 
+ *
  * @author Malte Legenhausen
+ * @author Daniel Bimschas
  */
-public class MockEraseFlashOperation implements EraseFlashOperation {
+public class MockEraseFlashOperation extends TimeLimitedOperation<Void> implements EraseFlashOperation {
 
-	/**
-	 * Sleeping time between each iteration.
-	 */
-	private static final int SLEEP = 100;
-	
 	/**
 	 * The configuration that contains the byte array that has to be erased.
 	 */
 	private final MockConfiguration configuration;
-	
-	/**
-	 * Constructor.
-	 * 
-	 * @param configuration The configuration that contains the flash rom that has to be erased.
-	 */
+
 	@Inject
-	public MockEraseFlashOperation(MockConfiguration configuration) {
+	public MockEraseFlashOperation(final TimeLimiter timeLimiter,
+								   final MockConfiguration configuration,
+								   @Assisted final long timeoutMillis,
+								   @Assisted @Nullable final OperationListener<Void> operationCallback) {
+		super(timeLimiter, timeoutMillis, operationCallback);
 		this.configuration = configuration;
 	}
-	
+
 	@Override
-	public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
+	protected Void callInternal() throws Exception {
 		final byte[] flashRom = configuration.getFlashRom();
 		final float worked = 1.0f / flashRom.length;
 		for (int i = 0; i < flashRom.length; ++i) {
-			Thread.sleep(SLEEP);
+			Thread.sleep(100);
 			flashRom[i] = 0x00;
-			progressManager.worked(worked);
+			progress(worked);
 		}
 		configuration.setFlashRom(flashRom);
 		return null;
 	}
-
 }
