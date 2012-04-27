@@ -229,6 +229,10 @@ public class SerialPortDevice implements Device {
 		stopStreamDataCopy();
 
 		connection.close();
+		pipeInputStreamFromDriverOutputStream.close();
+		pipeOutputStreamToDriverInputStream.close();
+		driverInputStream.close();
+		driverOutputStream.close();
 
 		ExecutorUtils.shutdown(driverToDeviceStreamDataCopyExecutor, 1, TimeUnit.SECONDS);
 		ExecutorUtils.shutdown(operationExecutor, 1, TimeUnit.SECONDS);

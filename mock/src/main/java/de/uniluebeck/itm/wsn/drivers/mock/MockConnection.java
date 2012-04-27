@@ -46,7 +46,13 @@ public class MockConnection extends AbstractConnection {
 
 			sendMessage("Booting MockDevice...");
 
-			sleep(new Random().nextInt((int) aliveTimeUnit.toMillis(aliveTimeout)));
+			try {
+				Thread.sleep(new Random().nextInt((int) aliveTimeUnit.toMillis(aliveTimeout)));
+			} catch (InterruptedException e) {
+				if (!shutdown) {
+					throw new RuntimeException(e);
+				}
+			}
 
 			while (!shutdown) {
 
@@ -54,7 +60,14 @@ public class MockConnection extends AbstractConnection {
 						"MockDevice alive since " + startTime.s() + " seconds (update #" + (++messageCount) + ")";
 				sendMessage(message);
 
-				sleep(aliveTimeUnit.toMillis(aliveTimeout));
+				try {
+					Thread.sleep(aliveTimeUnit.toMillis(aliveTimeout));
+				} catch (InterruptedException e) {
+					//noinspection ConstantConditions
+					if (!shutdown) {
+						throw new RuntimeException(e);
+					}
+				}
 			}
 		}
 	}
@@ -160,7 +173,6 @@ public class MockConnection extends AbstractConnection {
 		try {
 			Thread.sleep(millis);
 		} catch (InterruptedException e) {
-			log.error("InterruptedException while sleeping: {}", e);
 			throw new RuntimeException(e);
 		}
 	}
@@ -219,6 +231,8 @@ public class MockConnection extends AbstractConnection {
 	@Override
 	public void connect(final String uri) throws IOException {
 
+		log.trace("Connecting to MockDevice");
+
 		super.connect(uri);
 
 		synchronized (inputStreamPipedOutputStream) {
@@ -240,8 +254,18 @@ public class MockConnection extends AbstractConnection {
 
 	@Override
 	public void close() throws IOException {
+
+		log.trace("Closing MockDevice");
+
 		stopAliveRunnable();
+
+		outputStreamPipedInputStream.close();
+		inputStreamPipedOutputStream.close();
+		inputStream.close();
+		outputStream.close();
+
 		ExecutorUtils.shutdown(executorService, 100, TimeUnit.MILLISECONDS);
+
 		super.close();
 	}
 
