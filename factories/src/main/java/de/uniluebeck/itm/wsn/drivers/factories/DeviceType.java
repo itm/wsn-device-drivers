@@ -28,7 +28,8 @@ public enum DeviceType {
 	ISENSE("isense", "isense39", "isense48"),
 	TELOSB("telosb"),
 	PACEMATE("pacemate"),
-	MOCK("mock");
+	MOCK("mock"),
+        TRISOS("trisos");
 
 	private final String[] synonyms;
 

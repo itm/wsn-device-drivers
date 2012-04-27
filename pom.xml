@@ -19,6 +19,7 @@
 		<module>pacemate</module>
 		<module>mock</module>
 		<module>factories</module>
+		<module>trisos</module>
 	</modules>
 
 	<dependencyManagement>
@@ -52,6 +53,11 @@
 			<dependency>
 				<groupId>de.uniluebeck.itm</groupId>
 				<artifactId>wsn-device-drivers-mock</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>de.uniluebeck.itm</groupId>
+				<artifactId>wsn-device-drivers-trisos</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
