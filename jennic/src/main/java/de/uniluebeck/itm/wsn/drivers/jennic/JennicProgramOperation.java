@@ -70,7 +70,19 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 		eraseSectors(chipType);
 		writeBinaryImage(binaryImage);
 
+		boolean brokenMac = false;
+		final byte[] deviceFlashHeader = readDeviceFlashHeader(chipType.getHeaderStart(), chipType.getHeaderLength());
+		if (MacAddress.HIGHEST_MAC_ADDRESS.equals(new MacAddress(deviceFlashHeader))) {
+			brokenMac = true;
+		}
+
 		runSubOperation(operationFactory.createResetOperation(1000, null), FRACTION_RESET);
+
+		if (brokenMac) {
+			throw new FlashProgramFailedException(
+					"After flashing the MAC address seems to be 0xFF...FF which may result in unexpected behavior!"
+			);
+		}
 
 		return null;
 	}
@@ -126,7 +138,7 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 	private void assertImageCompatible(final JennicBinaryImage binaryImage, final ChipType chipType) throws Exception {
 
 		if (!binaryImage.isCompatible(chipType)) {
-			log.error("Device chip type ({}) and image chip type ({}) mismatch!" ,chipType, binaryImage.getChipType());
+			log.error("Device chip type ({}) and image chip type ({}) mismatch!", chipType, binaryImage.getChipType());
 			throw new ProgramChipMismatchException(chipType, binaryImage.getChipType());
 		}
 	}
