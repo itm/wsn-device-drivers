@@ -218,6 +218,10 @@ public abstract class TimeLimitedOperation<ResultType> implements Operation<Resu
 	 */
 	protected void progress(float progress) {
 
+		log.trace("{} progress (old={}, new={})",
+				new Object[]{this.getClass().getSimpleName(), this.progress, progress}
+		);
+
 		checkArgument(progress >= this.progress,
 				"A new progress value (%s) must be larger than the old value (%s). "
 						+ "It wouldn't be a progress otherwise, would it?", progress, this.progress
@@ -225,7 +229,6 @@ public abstract class TimeLimitedOperation<ResultType> implements Operation<Resu
 		checkArgument(progress >= 0f && progress <= 1f, "Progress must be between zero and one (is %s).", progress);
 
 		this.progress = progress;
-		log.trace("Progress: {}", this.progress);
 		this.listeners.fire().onProgressChange(progress);
 	}
 
