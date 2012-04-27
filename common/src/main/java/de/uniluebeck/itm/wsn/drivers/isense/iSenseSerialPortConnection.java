@@ -1,12 +1,11 @@
 package de.uniluebeck.itm.wsn.drivers.isense;
 
+import de.uniluebeck.itm.wsn.drivers.core.serialport.AbstractSerialPortConnection;
 import gnu.io.PortInUseException;
 import gnu.io.SerialPortEventListener;
 
 import java.io.IOException;
 import java.util.NoSuchElementException;
-
-import de.uniluebeck.itm.wsn.drivers.core.serialport.SimpleSerialPortConnection;
 
 
 /**
@@ -14,15 +13,15 @@ import de.uniluebeck.itm.wsn.drivers.core.serialport.SimpleSerialPortConnection;
  * 
  * @author Malte Legenhausen
  */
-public class iSenseSerialPortConnection extends SimpleSerialPortConnection implements SerialPortEventListener {
+public class iSenseSerialPortConnection extends AbstractSerialPortConnection implements SerialPortEventListener {
 	
-	private static final int NORMAL_BAUDRATE = 115200;
+	private static final int NORMAL_BAUD_RATE = 115200;
 
-	private static final int PROGRAM_BAUDRATE = 38400;
+	private static final int PROGRAM_BAUD_RATE = 38400;
 	
 	public iSenseSerialPortConnection() {
-		setNormalBaudrate(NORMAL_BAUDRATE);
-		setProgramBaudrate(PROGRAM_BAUDRATE);
+		setNormalBaudRate(NORMAL_BAUD_RATE);
+		setProgramBaudRate(PROGRAM_BAUD_RATE);
 	}
 	
 	@Override

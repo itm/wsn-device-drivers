@@ -8,6 +8,6 @@ import de.uniluebeck.itm.wsn.drivers.core.ChipType;
  * 
  * @author Malte Legenhausen
  */
-public interface GetChipTypeOperation extends OperationRunnable<ChipType> {
+public interface GetChipTypeOperation extends Operation<ChipType> {
 
 }

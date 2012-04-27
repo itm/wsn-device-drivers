@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 import de.uniluebeck.itm.tr.util.StringUtils;
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
@@ -24,7 +25,7 @@ public class PacemateHelper {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(PacemateHelper.class);
 	
-	private static final int TIMEOUT = 2000;
+	private static final int TIMEOUT_WAIT_DATA_AVAILABLE = 2000;
 	
 	private boolean echo = true;
 	
@@ -39,7 +40,8 @@ public class PacemateHelper {
 		return echo;
 	}
 
-	public void setEcho(boolean echo) {
+	@Inject(optional=true)
+	public void setEcho(@Named("pacemate.echo") boolean echo) {
 		this.echo = echo;
 	}
 
@@ -74,7 +76,7 @@ public class PacemateHelper {
 
 		// Read the data
 		boolean a = true;
-		while ((inStream.available() > 0) && (a == true) && (index < 255)) {
+		while ((inStream.available() > 0) && (a) && (index < 255)) {
 			try {
 				//System.out.println("************ Reading from stream");
 				message[index] = (byte) inStream.read();
@@ -138,28 +140,12 @@ public class PacemateHelper {
 
 	/**
 	 * Receive the bsl reply message to all request messages with a success answer
-	 *
-	 * @param type
-	 *
-	 * @return
-	 *
-	 * @throws TimeoutException
-	 * @throws UnexpectedResponseException
-	 * @throws InvalidChecksumException
-	 * @throws IOException
-	 * @throws NullPointerException
 	 */
 	protected String receiveBootLoaderReplySuccess(String type)
 			throws TimeoutException, UnexpectedResponseException, InvalidChecksumException, IOException,
 			NullPointerException {
 
-		byte[] reply;
-
-		if (this.echo == true) {
-			reply = readInputStream(3);
-		} else {
-			reply = readInputStream(2);
-		}
+		byte[] reply = echo ? readInputStream(3) : readInputStream(2);
 
 		String replyStr = StringUtils.toASCIIString(reply);
 
@@ -171,7 +157,7 @@ public class PacemateHelper {
 		}
 
 		// does the node echo all messages or not
-		if (echo == true) {
+		if (echo) {
 			if (parts.length >= 2) {
 				if (parts[1].compareTo("0") == 0) // 0 = everything is OK
 				{
@@ -201,22 +187,12 @@ public class PacemateHelper {
 
 	/**
 	 * Receive the BSL reply message for the autobaud / synchronize request
-	 *
-	 * @param type
-	 *
-	 * @return
-	 *
-	 * @throws TimeoutException
-	 * @throws UnexpectedResponseException
-	 * @throws InvalidChecksumException
-	 * @throws IOException
-	 * @throws NullPointerException
 	 */
 	protected byte[] receiveBootLoaderReplySynchronized(String type)
 			throws TimeoutException, UnexpectedResponseException, InvalidChecksumException, IOException,
 			NullPointerException {
 
-		byte[] reply = null;
+		byte[] reply;
 		if (type.compareTo(Messages.SYNCHRONIZED) == 0) {
 			reply = readInputStream(1);
 		} else {
@@ -238,13 +214,6 @@ public class PacemateHelper {
 
 	/**
 	 * Read the echo for a line of data
-	 *
-	 * @return
-	 * @throws TimeoutException
-	 * @throws UnexpectedResponseException
-	 * @throws InvalidChecksumException
-	 * @throws IOException
-	 * @throws NullPointerException
 	 */
 	protected String receiveBootLoaderReplySendDataEcho()
 			throws TimeoutException, UnexpectedResponseException, InvalidChecksumException, IOException,
@@ -254,26 +223,17 @@ public class PacemateHelper {
 
 		reply = readInputStream(1);
 
-		String replyStr = StringUtils.toASCIIString(reply);
-
-		return replyStr;
+		return StringUtils.toASCIIString(reply);
 	}
 
 	/**
 	 * Read the requested line from the Flash
-	 *
-	 * @return
-	 * @throws TimeoutException
-	 * @throws UnexpectedResponseException
-	 * @throws InvalidChecksumException
-	 * @throws IOException
-	 * @throws NullPointerException
 	 */
 	protected byte[] receiveBootLoaderReplyReadData()
 			throws TimeoutException, UnexpectedResponseException, InvalidChecksumException, IOException,
 			NullPointerException {
 
-		byte[] reply = null;
+		byte[] reply;
 		if (this.echo) {
 			reply = readInputStream(4);
 		} else {
@@ -304,20 +264,12 @@ public class PacemateHelper {
 
 	/**
 	 * Read the response to the CRC message
-	 *
-	 * @return
-	 *
-	 * @throws TimeoutException
-	 * @throws UnexpectedResponseException
-	 * @throws InvalidChecksumException
-	 * @throws IOException
-	 * @throws NullPointerException
 	 */
 	protected byte[] receiveBootLoaderReplyReadCRCOK()
 			throws TimeoutException, UnexpectedResponseException, InvalidChecksumException, IOException,
 			NullPointerException {
 
-		byte[] reply = null;
+		byte[] reply;
 		if (this.echo) {
 			reply = readInputStream(2);
 		} else {
@@ -349,13 +301,6 @@ public class PacemateHelper {
 	/**
 	 * Read from the Input stream from the Pacemate. The length of the expected pacemate reply message is given with the
 	 * expected number of  cr lf chars
-	 *
-	 * @param CRLFcount
-	 *
-	 * @return
-	 *
-	 * @throws TimeoutException
-	 * @throws IOException
 	 */
 	private byte[] readInputStream(int CRLFcount) throws TimeoutException, IOException {
 		final byte[] message = new byte[255];
@@ -363,7 +308,7 @@ public class PacemateHelper {
 		int index = 0;
 		int counter = 0;
 		int wait = 5;
-		connection.waitDataAvailable(TIMEOUT);
+		connection.waitDataAvailable(TIMEOUT_WAIT_DATA_AVAILABLE);
 
 		// Read the message - read CRLFcount lines of response
 		final InputStream inStream = connection.getInputStream();
@@ -409,21 +354,14 @@ public class PacemateHelper {
 
 	/**
 	 * Check if the last received bytes were cr lf 0 cr lf == Success message without more infos
-	 *
-	 * @param message
-	 * @param index
 	 */
 	private boolean checkResponseMessage(byte[] message, int index) {
 		//LOG.info("Check Response "+message[index-5]+" "+message[index-4]+" "+message[index-3]+" "+message[index-2]+" "+message[index-1]);
-		if ((message[index - 5] == 13)		 // cr
+		return (message[index - 5] == 13)      // cr
 				&& (message[index - 4] == 10)  // lf
 				&& (message[index - 3] == 48)  // 0
 				&& (message[index - 2] == 13)  // cr
-				&& (message[index - 1] == 10)) // lf
-		{
-			return true;
-		}
-		return false;
+				&& (message[index - 1] == 10);
 	}
 
 	protected void waitForBootLoader() throws IOException {
@@ -525,12 +463,6 @@ public class PacemateHelper {
 	
 	/**
 	 * Writes the CRC to the last two bytes of the Flash pacemate style
-	 *
-	 * @param crc
-	 *
-	 * @return everything OK
-	 *
-	 * @throws Exception
 	 */
 	public boolean writeCRCtoFlash(int crc) throws Exception {
 		byte crc_bytes[] = new byte[256];
@@ -567,15 +499,15 @@ public class PacemateHelper {
 
 		int crc_checksum = 0;
 
-		byte[] line = null;
+		byte[] line;
 
 		// each block is sent in parts of 20 lines a 45 bytes
 		while (counter < crc_bytes.length) {
 			int offset = 0;
 			if (counter + 45 < crc_bytes.length) {
-				line = new byte[PacemateBinData.LINESIZE]; // a line with 45 bytes
-				System.arraycopy(crc_bytes, counter, line, 0, PacemateBinData.LINESIZE);
-				counter = counter + PacemateBinData.LINESIZE;
+				line = new byte[PacemateBinaryImage.LINESIZE]; // a line with 45 bytes
+				System.arraycopy(crc_bytes, counter, line, 0, PacemateBinaryImage.LINESIZE);
+				counter = counter + PacemateBinaryImage.LINESIZE;
 			} else {
 				if (((crc_bytes.length - counter) % 3) == 1) {
 					offset = 2;
@@ -590,14 +522,14 @@ public class PacemateHelper {
 			}
 
 			for (int i = 0; i < line.length; i++) {
-				crc_checksum = PacemateBinData.calcCRCChecksum(crc_checksum, line[i]);
+				crc_checksum = PacemateBinaryImage.calcCRCChecksum(crc_checksum, line[i]);
 			}
 
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("Sending data msg: " + StringUtils.toHexString(line));
 			}
 
-			sendDataMessage(PacemateBinData.encodeCRCData(line, line.length - offset));
+			sendDataMessage(PacemateBinaryImage.encodeCRCData(line, line.length - offset));
 		}
 
 		try {

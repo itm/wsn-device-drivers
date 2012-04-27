@@ -32,35 +32,35 @@ public enum Sector {
 	 * First Sector
 	 */
 	FIRST(0x00000, 0x07fff),
-	
+
 	/**
 	 * Second Sector
 	 */
 	SECOND(0x08000, 0x0ffff),
-	
+
 	/**
 	 * Third Sector
 	 */
 	THIRD(0x10000, 0x17fff),
-	
+
 	/**
 	 * Fourth Sector
 	 */
 	FOURTH(0x18000, 0x1ffff);
-	
+
 	private final int start;
-	
+
 	private final int end;
-	
+
 	private Sector(int start, int end) {
 		this.start = start;
 		this.end = end;
 	}
-	
+
 	public int getStart() {
 		return start;
 	}
-	
+
 	public int getEnd() {
 		return end;
 	}

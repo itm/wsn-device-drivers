@@ -24,7 +24,7 @@
 package de.uniluebeck.itm.wsn.drivers.jennic;
 
 /**
- *Enumeration defining the flashType
+ * Enumeration defining the flashType
  */
 public enum FlashType {
 
@@ -48,16 +48,16 @@ public enum FlashType {
 	 * unknown flash chip
 	 */
 	Unknown(126);
-	
+
 	private final byte id;
-	
+
 	private FlashType(int id) {
 		this.id = (byte) id;
 	}
 
 	/**
 	 * Returns the specific Jennic Id for a specific flashType
-	 * 
+	 *
 	 * @return
 	 */
 	public byte getId() {

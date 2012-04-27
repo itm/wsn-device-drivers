@@ -5,6 +5,6 @@ package de.uniluebeck.itm.wsn.drivers.core.operation;
  * 
  * @author Malte Legenhausen
  */
-public interface ResetOperation extends OperationRunnable<Void> {
+public interface ResetOperation extends Operation<Void> {
 
 }

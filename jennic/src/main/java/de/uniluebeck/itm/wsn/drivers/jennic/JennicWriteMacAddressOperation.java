@@ -1,131 +1,118 @@
 package de.uniluebeck.itm.wsn.drivers.jennic;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.google.common.util.concurrent.TimeLimiter;
 import com.google.inject.Inject;
-
+import com.google.inject.assistedinject.Assisted;
 import de.uniluebeck.itm.tr.util.StringUtils;
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractWriteMacAddressOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationFactory;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgrammingMode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOperation {
 
-	/**
-	 * Logger for this class.
-	 */
 	private static final Logger log = LoggerFactory.getLogger(JennicWriteMacAddressOperation.class);
-	
-	private static final int BLOCKSIZE = 128;
-	
+
+	private static final int BLOCK_SIZE = 128;
+
+	private static final float FRACTION_READ_FIRST_SECTOR = 0.49f;
+
+	private static final float FRACTION_WRITE_FIRST_SECTOR = 0.49f;
+
+	private static final float FRACTION_GET_CHIP_TYPE = 0.02f;
+
 	private final JennicHelper helper;
-	
-	private final GetChipTypeOperation getChipTypeOperation;
-	
-	private final EnterProgramModeOperation enterProgramModeOperation;
-	
-	private final LeaveProgramModeOperation leaveProgramModeOperation;
-	
+
+	private final OperationFactory operationFactory;
+
 	@Inject
-	public JennicWriteMacAddressOperation(JennicHelper helper,
-			GetChipTypeOperation getChipTypeOperation,
-			EnterProgramModeOperation enterProgramModeOperation,
-			LeaveProgramModeOperation leaveProgramModeOperation) {
+	public JennicWriteMacAddressOperation(final TimeLimiter timeLimiter,
+										  final JennicHelper helper,
+										  final OperationFactory operationFactory,
+										  @Assisted final MacAddress macAddress,
+										  @Assisted final long timeoutMillis,
+										  @Assisted final OperationListener<Void> operationCallback) {
+		super(timeLimiter, macAddress, timeoutMillis, operationCallback);
 		this.helper = helper;
-		this.getChipTypeOperation = getChipTypeOperation;
-		this.enterProgramModeOperation = enterProgramModeOperation;
-		this.leaveProgramModeOperation = leaveProgramModeOperation;
+		this.operationFactory = operationFactory;
 	}
-	
-	private void writeMacAddress(ChipType chipType, ProgressManager progressManager, OperationContext context) throws Exception {
-		final MacAddress macAddress = getMacAddress();
-		
-		
+
+	private void writeMacAddress(ChipType chipType) throws Exception {
+
 		// Wait for a helper
-		while (!context.isCanceled() && !helper.waitForConnection()) {
-			log.debug("Still waiting for a helper");
+		while (!isCanceled() && !helper.waitForConnection()) {
+			log.debug("Still waiting for a connection");
 		}
 
 		// Return with success if the user has requested to cancel this
 		// operation
-		if (context.isCanceled()) {
+		if (isCanceled()) {
 			return;
 		}
-		
+
 		// Read the first sector
-		byte[][] sector = readSector(progressManager.createSub(0.875f), context, Sector.FIRST);
+		byte[][] blocksFirstSector = readSector(Sector.FIRST);
+		progress(FRACTION_GET_CHIP_TYPE + FRACTION_READ_FIRST_SECTOR);
 
 		// Check if this operation has been cancelled
-		if (context.isCanceled()) {
+		if (isCanceled()) {
 			return;
 		}
 
 		// Copy address into the header of the first sector
-		log.trace("Copy " + StringUtils.toHexString(macAddress.toByteArray()) + " to address " + chipType.getHeaderStart() + ", length: "
-				+ macAddress.toByteArray().length);
-		// System.arraycopy(mac.toByteArray(), 0, sector[0][0], ChipType.
-		// getHeaderStart(chipType),
-		// mac.toByteArray().length);
-		System.arraycopy(macAddress.toByteArray(), 0, sector[0], chipType.getHeaderStart(), macAddress.toByteArray().length);
+		byte[] macAddressBytes = macAddress.toByteArray();
 
-		// Configure flash
+		if (log.isTraceEnabled()) {
+			log.trace("Copy MAC address bytes ({}) to address {}, length: {}", new Object[]{
+					StringUtils.toHexString(macAddressBytes),
+					chipType.getHeaderStart(),
+					macAddressBytes.length
+			}
+			);
+		}
+
+		System.arraycopy(macAddressBytes, 0, blocksFirstSector[0], chipType.getHeaderStart(), macAddressBytes.length);
+
 		helper.configureFlash(chipType);
-
-		// Erase flash sector 0
 		helper.eraseFlash(Sector.FIRST);
 
-		// Write sector 0 with the new MAC
-		writeSector(progressManager.createSub(0.125f), Sector.FIRST, sector);
+		writeSector(Sector.FIRST, blocksFirstSector);
+		progress(
+				FRACTION_GET_CHIP_TYPE + FRACTION_READ_FIRST_SECTOR + FRACTION_WRITE_FIRST_SECTOR
+		);
 	}
-	
-	@Override
-	public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
-		log.trace("Writing mac address...");
-		final ChipType chipType = context.run(getChipTypeOperation, progressManager, 0.0625f);
-		// Check if the user has cancelled the operation
-		if (context.isCanceled()) {
-			return null;
-		}
-		context.run(enterProgramModeOperation, progressManager, 0.0625f);
-		try {
-			writeMacAddress(chipType, progressManager.createSub(0.8125f), context);
-		} finally {
-			context.run(leaveProgramModeOperation, progressManager, 0.0625f);
-		}
-		log.trace("Done, written MAC Address: " + getMacAddress());
-		return null;
-	}
-	
-	protected byte[][] readSector(final ProgressManager progressManager, OperationContext context, final Sector index) throws Exception {
+
+	protected byte[][] readSector(final Sector index) throws Exception {
+
 		final int start = index.getStart();
 		final int length = index.getEnd() - start;
 
 		// Calculate number of blocks to read
-		final int totalBlocks = length / BLOCKSIZE;
-		final int residue = length - totalBlocks * BLOCKSIZE;
+		final int totalBlocks = length / BLOCK_SIZE;
+		final int residue = length - totalBlocks * BLOCK_SIZE;
 
 		log.trace(String.format("length = %d, totalBlocks = %d, residue = %d", length, totalBlocks, residue));
 
 		// Prepare byte array
-		final byte[][] sector = new byte[totalBlocks + (residue > 0 ? 1 : 0)][BLOCKSIZE];
+		final byte[][] sector = new byte[totalBlocks + (residue > 0 ? 1 : 0)][BLOCK_SIZE];
 
 		// Read block after block
-		final float worked = 1.0f / totalBlocks;
 		int address = start;
 		for (int readBlocks = 0; readBlocks < totalBlocks; readBlocks++) {
-			sector[readBlocks] = helper.readFlash(address, BLOCKSIZE);
-			address += BLOCKSIZE;
 
-			progressManager.worked(worked);
+			sector[readBlocks] = helper.readFlash(address, BLOCK_SIZE);
+			address += BLOCK_SIZE;
+
+			progress(
+					FRACTION_GET_CHIP_TYPE + (FRACTION_READ_FIRST_SECTOR * ((float) readBlocks / (float) totalBlocks))
+			);
 
 			// Check if the user has cancelled the operation
-			if (context.isCanceled()) {
+			if (isCanceled()) {
 				log.debug("Sector read has been cancelled");
 				return null;
 			}
@@ -135,19 +122,39 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 		if (residue > 0) {
 			sector[sector.length - 1] = helper.readFlash(address, residue);
 		}
+
 		return sector;
 	}
-	
-	private void writeSector(final ProgressManager progressManager, final Sector index, final byte[][] sector) throws Exception {
-		final float worked = 1.0f / sector.length;
-		int address = index.getStart();
-		for (int i = 0; i < sector.length; ++i) {
-			log.trace("Writing sector " + index + ", block " + i + ": " + StringUtils.toHexString(sector[i]));
-			
-			helper.writeFlash(address, sector[i]);
-			
-			address += sector[i].length;
-			progressManager.worked(worked);
+
+	private void writeSector(final Sector sector, final byte[][] blocks) throws Exception {
+
+		int address = sector.getStart();
+
+		for (int block = 0; block < blocks.length; ++block) {
+
+			log.trace("Writing {} sector, block {}", sector, block);
+
+			helper.writeFlash(address, blocks[block]);
+
+			address += blocks[block].length;
+
+			progress(
+					FRACTION_GET_CHIP_TYPE + FRACTION_READ_FIRST_SECTOR + (FRACTION_WRITE_FIRST_SECTOR * ((float) block / (float) blocks.length))
+			);
 		}
+	}
+
+	@Override
+	@SerialPortProgrammingMode
+	protected Void callInternal() throws Exception {
+
+		log.trace("Writing mac address...");
+		ChipType chipType = runSubOperation(
+				operationFactory.createGetChipTypeOperation(1000, null),
+				FRACTION_GET_CHIP_TYPE
+		);
+		writeMacAddress(chipType);
+		log.trace("Done, written MAC Address: " + getMacAddress());
+		return null;
 	}
 }

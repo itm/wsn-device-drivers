@@ -4,7 +4,8 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import de.uniluebeck.itm.tr.util.Logging;
 import de.uniluebeck.itm.wsn.drivers.core.DeviceModule;
-import de.uniluebeck.itm.wsn.drivers.core.operation.OperationCallback;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
+import de.uniluebeck.itm.wsn.drivers.core.operation.StateChangedEvent;
 
 import java.io.*;
 import java.util.HashMap;
@@ -45,7 +46,7 @@ public class SunspotDeviceExample {
 
         System.out.println("0-------------------------------------------------------");
 
-        sd1.isConnected(100000, new OperationCallback<Void>() {
+        sd1.isConnected(100000, new OperationListener<Void>() {
             @Override
             public void onExecute() {
 
@@ -76,7 +77,7 @@ public class SunspotDeviceExample {
 
 
 
-        sd1.send(intToByte(1821), 100000, new OperationCallback<Void>() {
+        sd1.send(intToByte(1821), 100000, new OperationListener<Void>() {
             @Override
             public void onExecute() {
 
@@ -109,7 +110,7 @@ public class SunspotDeviceExample {
 
         for (int i = 0; i < 10; i++) {
             System.out.println("1-------------------------------------------------------");
-            sd1.program(sunspotImage, 100000, new OperationCallback<Void>() {
+            sd1.program(sunspotImage, 100000, new OperationListener<Void>() {
                 @Override
                 public void onExecute() {
                 }
@@ -136,8 +137,18 @@ public class SunspotDeviceExample {
             });
 
             System.out.println("2-------------------------------------------------------");
-            sd1.reset(100000, new OperationCallback<Void>() {
-                @Override
+            sd1.reset(100000, new OperationListener<Void>() {
+				@Override
+				public void beforeStateChanged(final StateChangedEvent<Void> voidStateChangedEvent) {
+					// nothing to do
+				}
+
+				@Override
+				public void afterStateChanged(final StateChangedEvent<Void> voidStateChangedEvent) {
+					// nothing to do
+				}
+
+				@Override
                 public void onExecute() {
                 }
 
@@ -165,7 +176,7 @@ public class SunspotDeviceExample {
 
         }
 
-        sd1.send(intToByte(0), 100000, new OperationCallback<Void>() {
+        sd1.send(intToByte(0), 100000, new OperationListener<Void>() {
             @Override
             public void onExecute() {
 

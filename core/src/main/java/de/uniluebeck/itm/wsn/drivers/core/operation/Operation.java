@@ -3,51 +3,47 @@ package de.uniluebeck.itm.wsn.drivers.core.operation;
 import java.util.concurrent.Callable;
 
 /**
- * Container interface for a <code>OperationRunnable</code>.
- * 
+ * An operation that is executed on a device.
+ *
+ * @param <ResultType>
+ *
  * @author Malte Legenhausen
- * 
- * @param <T>
+ * @author Daniel Bimschas
  */
-public interface Operation<T> extends Callable<T> {
+public interface Operation<ResultType> extends Callable<ResultType> {
 
 	/**
-	 * Cancel the operation.
+	 * Request to cancel the operation.
 	 */
 	void cancel();
-	
-	/**
-	 * Returns if the operation will be canceled.
-	 * 
-	 * @return true if the operation will be canceled else false.
-	 */
-	boolean isCanceled();
-	
+
 	/**
 	 * Returns the state of the operation.
-	 * 
+	 *
 	 * @return The operation state.
 	 */
 	State getState();
-	
+
 	/**
-	 * Returns the timeout for this operation.
-	 * 
-	 * @return The timeout of the operation.
+	 * Returns the timeout in milliseconds for this operation.
+	 *
+	 * @return The timeout in milliseconds for this operation.
 	 */
-	long getTimeout();
-	
+	long getTimeoutMillis();
+
 	/**
-	 * Adds an <code>OperationListener</code> to the listener list.
-	 * 
-	 * @param listener The <code>OperationListener</code> that has to be added.
+	 * Adds an <code>OperationListener</code> to the stateListener list.
+	 *
+	 * @param listener
+	 * 		The <code>OperationListener</code> that has to be added.
 	 */
-	void addListener(OperationListener<T> listener);
-	
+	void addListener(OperationListener<ResultType> listener);
+
 	/**
-	 * Removes the given <code>OperationListener</code> from the listener list.
-	 * 
-	 * @param listener The <code>OperationListener</code> that has to be removed.
+	 * Removes the given <code>OperationListener</code> from the stateListener list.
+	 *
+	 * @param listener
+	 * 		The <code>OperationListener</code> that has to be removed.
 	 */
-	void removeListener(OperationListener<T> listener);
+	void removeListener(OperationListener<ResultType> listener);
 }

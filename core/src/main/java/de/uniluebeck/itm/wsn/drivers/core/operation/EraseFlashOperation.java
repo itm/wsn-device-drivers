@@ -6,6 +6,6 @@ package de.uniluebeck.itm.wsn.drivers.core.operation;
  * 
  * @author Malte Legenhausen
  */
-public interface EraseFlashOperation extends OperationRunnable<Void> {
+public interface EraseFlashOperation extends Operation<Void> {
 	
 }

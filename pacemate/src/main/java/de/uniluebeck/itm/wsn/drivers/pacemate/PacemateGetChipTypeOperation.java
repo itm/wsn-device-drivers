@@ -1,51 +1,37 @@
 package de.uniluebeck.itm.wsn.drivers.pacemate;
 
+import com.google.common.util.concurrent.TimeLimiter;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import de.uniluebeck.itm.wsn.drivers.core.ChipType;
+import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
+import de.uniluebeck.itm.wsn.drivers.core.operation.TimeLimitedOperation;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgrammingMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Inject;
+import javax.annotation.Nullable;
 
-import de.uniluebeck.itm.wsn.drivers.core.ChipType;
-import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
+public class PacemateGetChipTypeOperation extends TimeLimitedOperation<ChipType> implements GetChipTypeOperation {
 
-public class PacemateGetChipTypeOperation implements GetChipTypeOperation {
-
-	/**
-	 * Logger for this class.
-	 */
 	private static final Logger log = LoggerFactory.getLogger(PacemateGetChipTypeOperation.class);
-	
+
 	private final PacemateHelper helper;
-	
-	private final EnterProgramModeOperation enterProgramModeOperation;
-	
-	private final LeaveProgramModeOperation leaveProgramModeOperation;
-	
+
 	@Inject
-	public PacemateGetChipTypeOperation(PacemateHelper helper,
-			EnterProgramModeOperation enterProgramModeOperation,
-			LeaveProgramModeOperation leaveProgramModeOperation) {
+	public PacemateGetChipTypeOperation(final TimeLimiter timeLimiter,
+										final PacemateHelper helper,
+										@Assisted final long timeoutMillis,
+										@Assisted @Nullable final OperationListener<ChipType> operationCallback) {
+		super(timeLimiter, timeoutMillis, operationCallback);
 		this.helper = helper;
-		this.enterProgramModeOperation = enterProgramModeOperation;
-		this.leaveProgramModeOperation = leaveProgramModeOperation;
 	}
-	
-	private ChipType getChipType(final ProgressManager progressManager, OperationContext context) throws Exception {
-		helper.clearStreamData();
-		helper.autobaud();
 
-		helper.waitForBootLoader();
+	@Override
+	@SerialPortProgrammingMode
+	protected ChipType callInternal() throws Exception {
 
-		// Return with success if the user has requested to cancel this
-		// operation
-		if (context.isCanceled()) {
-			return null;
-		}
-		
 		// Send chip type read request
 		helper.sendBootLoaderMessage(Messages.ReadPartIDRequestMessage());
 
@@ -54,24 +40,12 @@ public class PacemateGetChipTypeOperation implements GetChipTypeOperation {
 		final ChipType chipType = ChipType.LPC2136;
 
 		if (response.compareTo("196387") != 0) {
-			log.error("Defaulted to chip type LPC2136 (Pacemate). Identification may be wrong." + response);
+			throw new RuntimeException(
+					"Defaulted to chip type LPC2136 (Pacemate). Identification may be wrong: " + response
+			);
 		}
 
 		log.debug("Chip identified as " + chipType + " (received " + response + ")");
-		progressManager.done();
 		return chipType;
 	}
-	
-	@Override
-	public ChipType run(ProgressManager progressManager, OperationContext context) throws Exception {
-		context.run(enterProgramModeOperation, progressManager.createSub(0.25f));
-		ChipType chipType = ChipType.UNKNOWN;
-		try {
-			chipType = getChipType(progressManager.createSub(0.25f), context);
-		} finally {
-			context.run(leaveProgramModeOperation, progressManager.createSub(0.5f));
-		}
-		return chipType;
-	}
-
 }

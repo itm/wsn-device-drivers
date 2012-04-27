@@ -33,9 +33,10 @@ import org.slf4j.LoggerFactory;
  * @author Friedemann Wesner
  */
 public class TelosI2CCom {
+	
 	private static final Logger log = LoggerFactory.getLogger(TelosI2CCom.class);
 
-	private SerialPort serialPort = null;
+	private final SerialPort serialPort;
 
 	/**
 	 * Constructor
@@ -48,19 +49,11 @@ public class TelosI2CCom {
 	}
 
 	private void setSDA(boolean value) {
-		if (serialPort != null) {
-			serialPort.setDTR(!value);
-		} else {
-			log.error("can not set SDA, serialPort is null");
-		}
+		serialPort.setDTR(!value);
 	}
 
 	private void setSCL(boolean value) {
-		if (serialPort != null) {
-			serialPort.setRTS(!value);
-		} else {
-			log.error("can not set SCL, serialPort is null");
-		}
+		serialPort.setRTS(!value);
 	}
 
 	private void I2CStart() {

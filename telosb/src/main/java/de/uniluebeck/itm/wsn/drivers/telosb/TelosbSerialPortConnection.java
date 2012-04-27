@@ -1,5 +1,7 @@
 package de.uniluebeck.itm.wsn.drivers.telosb;
 
+import com.google.inject.Inject;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.AbstractSerialPortConnection;
 import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
 import gnu.io.UnsupportedCommOperationException;
@@ -7,33 +9,25 @@ import gnu.io.UnsupportedCommOperationException;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 
-import com.google.inject.Inject;
-
-import de.uniluebeck.itm.wsn.drivers.core.serialport.SimpleSerialPortConnection;
-
 
 /**
  * TelosB connection.
  *
  * @author Malte Legenhausen
+ * @author Daniel Bimschas
  */
-public class TelosbSerialPortConnection extends SimpleSerialPortConnection {
+public class TelosbSerialPortConnection extends AbstractSerialPortConnection {
 
-	private static final int NORMAL_BAUDRATE = 115200;
+	private static final int NORMAL_BAUD_RATE = 115200;
 
-	private static final int PROGRAM_BAUDRATE = 9600;
+	private static final int PROGRAM_BAUD_RATE = 9600;
 
 	@Inject
 	public TelosbSerialPortConnection() {
-		setProgramBaudrate(PROGRAM_BAUDRATE);
-		setNormalBaudrate(NORMAL_BAUDRATE);
+		setProgramBaudRate(PROGRAM_BAUD_RATE);
+		setNormalBaudRate(NORMAL_BAUD_RATE);
 		setNormalParityBit(SerialPort.PARITY_NONE);
-		setProgramParitiyBit(SerialPort.PARITY_EVEN);
-	}
-	
-	@Override
-	public int[] getChannels() {
-		return null;
+		setProgramParityBit(SerialPort.PARITY_EVEN);
 	}
 
 	@Override
@@ -41,7 +35,7 @@ public class TelosbSerialPortConnection extends SimpleSerialPortConnection {
 		super.connectSerialPort(port);
 		try {
 			getSerialPort().setSerialPortParams(
-					NORMAL_BAUDRATE,
+					NORMAL_BAUD_RATE,
 					SerialPort.DATABITS_8,
 					SerialPort.STOPBITS_1,
 					SerialPort.PARITY_EVEN

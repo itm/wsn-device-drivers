@@ -20,4 +20,29 @@ public class OperationAdapter<T> implements OperationListener<T> {
 	public void afterStateChanged(StateChangedEvent<T> event) {
 		
 	}
+
+	@Override
+	public void onExecute() {
+
+	}
+
+	@Override
+	public void onSuccess(final T result) {
+
+	}
+
+	@Override
+	public void onCancel() {
+
+	}
+
+	@Override
+	public void onFailure(final Throwable throwable) {
+
+	}
+
+	@Override
+	public void onProgressChange(final float fraction) {
+
+	}
 }

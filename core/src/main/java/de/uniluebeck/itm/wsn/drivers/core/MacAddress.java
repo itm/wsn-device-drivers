@@ -32,7 +32,11 @@ import java.util.Arrays;
  * @author Daniel Bimschas
  */
 public class MacAddress {
-
+	
+	public static final MacAddress HIGHEST_MAC_ADDRESS = new MacAddress(Long.MAX_VALUE);
+	
+	public static final MacAddress LOWEST_MAC_ADDRESS = new MacAddress(0);
+	
 	/**
 	 * The length of a mac address.
 	 */
@@ -105,8 +109,8 @@ public class MacAddress {
 	 */
 	public long toLong() {
 		long result = 0L;
-		for (int i = 0; i < array.length; i++) {
-			result |= (array[LENGTH - 1 - i] & FULL_BYTE_MASK) << (i * FULL_BYTE_SHIFT);
+		for (int i = 0; i < array.length; ++i) {
+			result = (result << FULL_BYTE_SHIFT) + (array[i] & FULL_BYTE_MASK);
 		}
 		return result;
 	}

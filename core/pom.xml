@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>de.uniluebeck.itm</groupId>
 		<artifactId>wsn-device-drivers</artifactId>
-		<version>0.4-SNAPSHOT</version>
+		<version>1.1-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 
@@ -31,10 +31,16 @@
 			<groupId>org.rxtx</groupId>
 			<artifactId>rxtx</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>com.google.inject</groupId>
 			<artifactId>guice</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.google.inject.extensions</groupId>
+			<artifactId>guice-assistedinject</artifactId>
+		</dependency>
+
 		<dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>

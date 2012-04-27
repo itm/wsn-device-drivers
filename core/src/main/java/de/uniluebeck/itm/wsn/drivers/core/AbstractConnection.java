@@ -25,6 +25,7 @@ import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
  * Class that implement the common functionality of a connection class.
  * 
  * @author Malte Legenhausen
+ * @author Daniel Bimschas
  */
 public abstract class AbstractConnection implements Connection {
 	
@@ -34,7 +35,7 @@ public abstract class AbstractConnection implements Connection {
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractConnection.class);
 	
 	/**
-	 * The timeout that will be waited for available data.
+	 * The timeout in milliseconds that will be waited for available data.
 	 */
 	private static final int DATA_AVAILABLE_TIMEOUT = 50;
 	
@@ -57,12 +58,12 @@ public abstract class AbstractConnection implements Connection {
 	/**
 	 * Input stream of the connection.
 	 */
-	private InputStream inputStream;
+	private InputStream rxtxInputStream;
 	
 	/**
 	 * Output stream of the connection.
 	 */
-	private OutputStream outputStream;
+	private OutputStream rxtxOutputStream;
 	
 	/**
 	 * The uri of the connected resource.
@@ -91,45 +92,46 @@ public abstract class AbstractConnection implements Connection {
 	}
 	
 	@Override
-	public int waitDataAvailable(final int timeout) throws TimeoutException, IOException {
-		LOG.trace("Waiting for data...");
-		
-		final TimeDiff timeDiff = new TimeDiff();
-		int available = inputStream.available();
+	public int waitDataAvailable(final int timeoutMillis) throws TimeoutException, IOException {
 
-		while (available == 0) {
-			if (timeout > 0 && timeDiff.ms() >= timeout) {
-				LOG.warn("Timeout waiting for data (waited: " + timeDiff.ms() + ", timeoutMs:" + timeout + ")");
+		if (rxtxInputStream.available() > 0) {
+			return rxtxInputStream.available();
+		}
+
+		dataAvailableLock.lock();
+		try {
+
+			if (!isDataAvailable.await(timeoutMillis, TimeUnit.MILLISECONDS)) {
 				throw new TimeoutException();
 			}
 
-			dataAvailableLock.lock();
-			try {
-				isDataAvailable.await(DATA_AVAILABLE_TIMEOUT, TimeUnit.MILLISECONDS);
-			} catch (final InterruptedException e) {
-				LOG.error("Interrupted: " + e, e);
-			} finally {
-				dataAvailableLock.unlock();
-			}
-			available = inputStream.available();
+			return rxtxInputStream.available();
+
+		} catch (final InterruptedException e) {
+
+			LOG.error("Interrupted: " + e, e);
+			throw new RuntimeException(e);
+
+		} finally {
+			dataAvailableLock.unlock();
 		}
-		return available;
 	}
 	
 	protected void signalDataAvailable() {
+
 		dataAvailableLock.lock();
+
 		try {
 			isDataAvailable.signal();
 		} finally {
 			dataAvailableLock.unlock();
 		}
+
 		listeners.fire().onDataAvailable(new ConnectionEvent(this, uri, connected));
 	}
 	
 	/**
 	 * Setter for the connection that will fire a connection change event.
-	 * 
-	 * @param connected True when connected else false.
 	 */
 	protected void setConnected() {
 		connected = true;
@@ -141,7 +143,7 @@ public abstract class AbstractConnection implements Connection {
 	 * @param inputStream The input stream object.
 	 */
 	protected void setInputStream(final InputStream inputStream) {
-		this.inputStream = inputStream;
+		this.rxtxInputStream = inputStream;
 	}
 	
 	/**
@@ -150,7 +152,7 @@ public abstract class AbstractConnection implements Connection {
 	 * @param outputStream The output stream object.
 	 */
 	protected void setOutputStream(final OutputStream outputStream) {
-		this.outputStream = outputStream;
+		this.rxtxOutputStream = outputStream;
 	}
 	
 	/**
@@ -168,12 +170,12 @@ public abstract class AbstractConnection implements Connection {
 	
 	@Override
 	public InputStream getInputStream() {
-		return inputStream;
+		return rxtxInputStream;
 	}
 	
 	@Override
 	public OutputStream getOutputStream() {
-		return outputStream;
+		return rxtxOutputStream;
 	}
 	
 	@Override
@@ -199,8 +201,8 @@ public abstract class AbstractConnection implements Connection {
 	@Override
 	public void close() throws IOException {
 		if (!isClosed()) {
-			Closeables.close(inputStream, true);
-			Closeables.close(outputStream, true);
+			Closeables.close(rxtxInputStream, true);
+			Closeables.close(rxtxOutputStream, true);
 			closed = true;
 		}
 	}
@@ -208,6 +210,6 @@ public abstract class AbstractConnection implements Connection {
 	@Override
 	public void clear() throws IOException {
 		LOG.trace("Cleaning input stream.");
-		ByteStreams.skipFully(inputStream, inputStream.available());
+		ByteStreams.skipFully(rxtxInputStream, rxtxInputStream.available());
 	}
 }

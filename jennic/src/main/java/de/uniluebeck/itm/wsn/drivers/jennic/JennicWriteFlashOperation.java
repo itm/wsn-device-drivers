@@ -1,50 +1,40 @@
 package de.uniluebeck.itm.wsn.drivers.jennic;
 
+import com.google.common.util.concurrent.TimeLimiter;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractWriteFlashOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgrammingMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Inject;
-
-import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractWriteFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
+import javax.annotation.Nullable;
 
 public class JennicWriteFlashOperation extends AbstractWriteFlashOperation {
 
-	/**
-	 * Logger for this class.
-	 */
 	private static final Logger log = LoggerFactory.getLogger(JennicWriteFlashOperation.class);
-	
+
 	private final JennicHelper helper;
-	
-	private final EnterProgramModeOperation enterProgramModeOperation;
-	
-	private final LeaveProgramModeOperation leaveProgramModeOperation;
-	
+
 	@Inject
-	public JennicWriteFlashOperation(JennicHelper helper,
-			EnterProgramModeOperation enterProgramModeOperation,
-			LeaveProgramModeOperation leaveProgramModeOperation) {
+	public JennicWriteFlashOperation(final TimeLimiter timeLimiter,
+									 final JennicHelper helper,
+									 @Assisted("address") int address,
+									 @Assisted byte[] data,
+									 @Assisted("length") int length,
+									 @Assisted final long timeoutMillis,
+									 @Assisted @Nullable final OperationListener<Void> operationCallback) {
+		super(timeLimiter, address, data, length, timeoutMillis, operationCallback);
 		this.helper = helper;
-		this.enterProgramModeOperation = enterProgramModeOperation;
-		this.leaveProgramModeOperation = leaveProgramModeOperation;
 	}
-	
+
 	@Override
-	public Void run(ProgressManager progressManager, OperationContext context) throws Exception {
+	@SerialPortProgrammingMode
+	protected Void callInternal() throws Exception {
 		log.trace("Writing to flash...");
-		context.run(enterProgramModeOperation, progressManager, 0.5f);
-		try {
-			helper.writeFlash(getAddress(), getData());
-		} finally {
-			context.run(leaveProgramModeOperation, progressManager, 0.5f);
-		}
+		helper.writeFlash(getAddress(), getData());
 		log.trace("Flash written");
 		return null;
 	}
-
-	
 }

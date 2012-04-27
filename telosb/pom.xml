@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>de.uniluebeck.itm</groupId>
 		<artifactId>wsn-device-drivers</artifactId>
-		<version>0.4-SNAPSHOT</version>
+		<version>1.1-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 
 	<artifactId>wsn-device-drivers-telosb</artifactId>
-	<name>WSN Device Drivers Telosb</name>
+	<name>WSN Device Drivers TelosB</name>
 
 	<dependencies>
 

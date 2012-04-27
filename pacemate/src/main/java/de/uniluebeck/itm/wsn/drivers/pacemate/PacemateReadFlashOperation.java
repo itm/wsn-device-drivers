@@ -1,63 +1,35 @@
 package de.uniluebeck.itm.wsn.drivers.pacemate;
 
+import com.google.common.util.concurrent.TimeLimiter;
 import com.google.inject.Inject;
-
+import com.google.inject.assistedinject.Assisted;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractReadFlashOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.EnterProgramModeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.LeaveProgramModeOperation;
-import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgrammingMode;
+
+import javax.annotation.Nullable;
 
 public class PacemateReadFlashOperation extends AbstractReadFlashOperation {
-	
+
 	private final PacemateHelper helper;
-	
-	private final EnterProgramModeOperation enterProgramModeOperation;
-	
-	private final LeaveProgramModeOperation leaveProgramModeOperation;
-	
+
 	@Inject
-	public PacemateReadFlashOperation(PacemateHelper helper,
-			EnterProgramModeOperation enterProgramModeOperation,
-			LeaveProgramModeOperation leaveProgramModeOperation) {
+	public PacemateReadFlashOperation(final TimeLimiter timeLimiter,
+									  final PacemateHelper helper,
+									  @Assisted("address") int address,
+									  @Assisted("length") int length,
+									  @Assisted final long timeoutMillis,
+									  @Assisted @Nullable final OperationListener<byte[]> operationCallback) {
+		super(timeLimiter, address, length, timeoutMillis, operationCallback);
 		this.helper = helper;
-		this.enterProgramModeOperation = enterProgramModeOperation;
-		this.leaveProgramModeOperation = leaveProgramModeOperation;
 	}
-	
-	private byte[] readFlash(ProgressManager progressManager, OperationContext context) throws Exception {
-		helper.clearStreamData();
-		helper.autobaud();
 
-		helper.waitForBootLoader();
-
-		// Return with success if the user has requested to cancel this
-		// operation
-		if (context.isCanceled()) {
-			return null;
-		}
-		
+	@Override
+	@SerialPortProgrammingMode
+	protected byte[] callInternal() throws Exception {
 		// Send flash program request
 		helper.sendBootLoaderMessage(Messages.flashReadRequestMessage(getAddress(), getLength()));
-		progressManager.worked(0.5f);
-		
-		// Read flash program response
-		byte[] response = helper.receiveBootLoaderReplyReadData();
-		progressManager.done();
-		
-		// Return data
-		return response;
-	}
-	
-	@Override
-	public byte[] run(ProgressManager progressManager, OperationContext context) throws Exception {
-		context.run(enterProgramModeOperation, progressManager.createSub(0.25f));
-		byte[] result = null;
-		try {
-			result = readFlash(progressManager.createSub(0.5f), context);
-		} finally {
-			context.run(leaveProgramModeOperation, progressManager.createSub(0.25f));
-		}
-		return result;
+		progress(0.5f);
+		return helper.receiveBootLoaderReplyReadData();
 	}
 }

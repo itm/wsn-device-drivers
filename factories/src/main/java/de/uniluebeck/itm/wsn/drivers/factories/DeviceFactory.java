@@ -26,17 +26,19 @@ package de.uniluebeck.itm.wsn.drivers.factories;
 import com.google.inject.ImplementedBy;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 
+import javax.annotation.Nullable;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ExecutorService;
 
 @ImplementedBy(DeviceFactoryImpl.class)
+@SuppressWarnings("unused")
 public interface DeviceFactory {
 
-	Device create(ScheduledExecutorService executorService, DeviceType deviceType);
+	Device create(ExecutorService executorService, DeviceType deviceType);
 
-	Device create(ScheduledExecutorService executorService, String deviceType);
+	Device create(ExecutorService executorService, String deviceType);
 
-	Device create(ScheduledExecutorService executorService, DeviceType deviceType, Map<String, String> configuration);
+	Device create(ExecutorService executorService, DeviceType deviceType, @Nullable Map<String, String> configuration);
 
-	Device create(ScheduledExecutorService executorService, String deviceType, Map<String, String> configuration);
+	Device create(ExecutorService executorService, String deviceType, @Nullable Map<String, String> configuration);
 }

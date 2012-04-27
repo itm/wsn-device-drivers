@@ -1,53 +1,43 @@
 package de.uniluebeck.itm.wsn.drivers.mock;
 
+import com.google.common.util.concurrent.TimeLimiter;
 import com.google.inject.Inject;
-
-import de.uniluebeck.itm.wsn.drivers.core.operation.OperationContext;
-import de.uniluebeck.itm.wsn.drivers.core.operation.ProgressManager;
+import com.google.inject.assistedinject.Assisted;
+import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.TimeLimitedOperation;
+
+import javax.annotation.Nullable;
 
 
 /**
- * Mock operation for reseting the connection.
- * Internal the periodically send of messages is reseted.
- * 
+ * Mock operation for resetting the connection.
+ * Internal the periodical sending of messages is reset.
+ *
  * @author Malte Legenhausen
+ * @author Daniel Bimschas
  */
-public class MockResetOperation implements ResetOperation {
+public class MockResetOperation extends TimeLimitedOperation<Void> implements ResetOperation {
 
-	/**
-	 * A default sleep time before and after the reset.
-	 */
-	private static final int SLEEP_TIME = 200;
-	
-	/**
-	 * The time that is used for the reset.
-	 */
-	private static final int RESET_TIME = 1000;
-	
-	/**
-	 * The <code>MockConnection</code> that is used for the reset.
-	 */
 	private final MockConnection connection;
-	
-	/**
-	 * Constructor.
-	 * 
-	 * @param connection The <code>MockConnection</code> that is used for the reset.
-	 */
+
 	@Inject
-	public MockResetOperation(MockConnection connection) {
+	public MockResetOperation(final TimeLimiter timeLimiter,
+							  final MockConnection connection,
+							  @Assisted final long timeoutMillis,
+							  @Assisted @Nullable final OperationListener<Void> operationCallback) {
+		super(timeLimiter, timeoutMillis, operationCallback);
 		this.connection = connection;
 	}
-	
+
 	@Override
-	public Void run(final ProgressManager progressManager, OperationContext context) throws Exception {
-		Thread.sleep(SLEEP_TIME);
-		connection.stopAliveRunnable();
-		Thread.sleep(RESET_TIME);
-		connection.sendMessage("Booting MockDevice...");
-		Thread.sleep(SLEEP_TIME);
-		connection.scheduleAliveRunnable();
+	protected Void callInternal() throws Exception {
+		Thread.sleep(100);
+		progress(.3f);
+		Thread.sleep(100);
+		progress(.6f);
+		connection.reset();
+		progress(1f);
 		return null;
 	}
 }
