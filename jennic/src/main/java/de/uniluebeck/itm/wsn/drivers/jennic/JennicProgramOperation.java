@@ -28,7 +28,7 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 
 	private static final float FRACTION_PROGRAM_WRITE_IMAGE = 0.92f;
 
-	private static final float FRACTION_RESET = 0.05f;
+	private static final float FRACTION_RESET = 0.03f;
 
 	private final JennicHelper helper;
 
