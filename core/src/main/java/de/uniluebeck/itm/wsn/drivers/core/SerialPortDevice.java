@@ -308,7 +308,9 @@ public class SerialPortDevice implements Device {
 			connection.removeListener(deviceToDriverStreamDataCopyListener);
 			deviceToDriverStreamDataCopyRunning = false;
 
-			driverToDeviceStreamDataCopyFuture.cancel(true);
+			if (driverToDeviceStreamDataCopyFuture != null) {
+				driverToDeviceStreamDataCopyFuture.cancel(true);
+			}
 
 			try {
 				// wait for thread to stop execution
