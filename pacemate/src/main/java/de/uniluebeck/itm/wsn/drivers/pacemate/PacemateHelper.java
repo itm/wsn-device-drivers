@@ -153,7 +153,7 @@ public class PacemateHelper {
 		String[] parts = replyStr.split("<CR><LF>");
 
 		for (final String part : parts) {
-			LOG.debug("BL parts " + part);
+			LOG.trace("BL parts " + part);
 		}
 
 		// does the node echo all messages or not
@@ -348,7 +348,7 @@ public class PacemateHelper {
 		// copy to real length
 		byte[] fullMessage = new byte[index];
 		System.arraycopy(message, 0, fullMessage, 0, index);
-		LOG.debug("read lines " + StringUtils.toASCIIString(fullMessage));
+		LOG.trace("read lines " + StringUtils.toASCIIString(fullMessage));
 		return fullMessage;
 	}
 
@@ -472,7 +472,7 @@ public class PacemateHelper {
 		crc_bytes[254] = (byte) ((crc & 0xff00) >> 8);
 		crc_bytes[255] = (byte) (crc & 0xff);
 
-		LOG.debug("CRC = " + crc + " " + crc_bytes[254] + " " + crc_bytes[255]);
+		LOG.trace("CRC = " + crc + " " + crc_bytes[254] + " " + crc_bytes[255]);
 
 		try {
 			configureFlash(14, 14);
@@ -542,7 +542,7 @@ public class PacemateHelper {
 		// if block is completed copy data from RAM to Flash
 		int crc_block_start = 0x3ff00;
 
-		LOG.debug("Prepare Flash and Copy Ram to Flash 14 14 " + crc_block_start);
+		LOG.trace("Prepare Flash and Copy Ram to Flash 14 14 " + crc_block_start);
 
 		try {
 			configureFlash(14, 14);
