@@ -43,7 +43,7 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 
 		log.trace("Starting to write program into flash memory...");
 
-		final float workedFraction = 1.0f / binData.getBlockCount();
+		final float workedFraction = 0.95f / binData.getBlockCount();
 		int bytesProgrammed = 0;
 		int blocksWritten = 0;
 
