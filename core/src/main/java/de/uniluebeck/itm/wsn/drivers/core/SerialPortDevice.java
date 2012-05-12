@@ -315,7 +315,7 @@ public class SerialPortDevice implements Device {
 			try {
 				// wait for thread to stop execution
 				while (!deviceMonitor.waitFor(streamDataCopyStopped, 10, TimeUnit.MILLISECONDS)) {
-					deviceMonitor.reevaluateGuards();
+					// nothing to do
 				}
 			} catch (InterruptedException e) {
 				throw new RuntimeException(e);
