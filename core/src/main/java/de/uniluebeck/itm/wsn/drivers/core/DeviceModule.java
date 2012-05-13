@@ -16,6 +16,8 @@ import com.google.inject.Inject;
 
 import com.google.inject.name.Names;
 import de.uniluebeck.itm.wsn.drivers.core.io.SendOutputStreamWrapper;
+import de.uniluebeck.itm.wsn.drivers.core.operation.DefaultIsNodeAliveOperation;
+import de.uniluebeck.itm.wsn.drivers.core.operation.IsNodeAliveOperation;
 
 
 /**

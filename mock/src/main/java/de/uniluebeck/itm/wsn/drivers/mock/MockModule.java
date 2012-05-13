@@ -48,6 +48,7 @@ public class MockModule extends AbstractModule {
 		install(new FactoryModuleBuilder()
 				.implement(EraseFlashOperation.class, MockEraseFlashOperation.class)
 				.implement(GetChipTypeOperation.class, MockGetChipTypeOperation.class)
+				.implement(IsNodeAliveOperation.class, DefaultIsNodeAliveOperation.class)
 				.implement(ProgramOperation.class, MockProgramOperation.class)
 				.implement(ReadFlashOperation.class, MockReadFlashOperation.class)
 				.implement(ReadMacAddressOperation.class, MockReadMacAddressOperation.class)

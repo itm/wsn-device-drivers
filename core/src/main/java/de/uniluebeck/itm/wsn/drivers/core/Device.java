@@ -1,6 +1,5 @@
 package de.uniluebeck.itm.wsn.drivers.core;
 
-import com.google.inject.ImplementedBy;
 import de.uniluebeck.itm.wsn.drivers.core.io.HasInputStream;
 import de.uniluebeck.itm.wsn.drivers.core.io.HasOutputStream;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationFuture;
@@ -30,6 +29,22 @@ public interface Device extends HasInputStream, HasOutputStream, Connectable {
 	 * @return Returns a <code>OperationFuture</code> for controlling the async operation.
 	 */
 	OperationFuture<ChipType> getChipType(long timeoutMillis, @Nullable OperationListener<ChipType> listener);
+
+	/**
+	 * Checks if the node is alive.
+	 * <p/>
+	 * For wired devices this operation call defaults to calling {@link de.uniluebeck.itm.wsn.drivers.core.Device#isConnected()}.
+	 * For wireless devices however, this operation call may result in messages being sent and received over the wireless
+	 * connection. Please note that this communication may take a while, hence the timeout parameter.
+	 *
+	 * @param timeoutMillis
+	 * 		Maximum operation time before the method will be canceled in milliseconds.
+	 * @param listener
+	 * 		Interface that is called on successfully or failed method execution.
+	 *
+	 * @return Returns a <code>OperationFuture</code> for controlling the async operation.
+	 */
+	OperationFuture<Boolean> isNodeAlive(long timeoutMillis, @Nullable OperationListener<Boolean> listener);
 
 	/**
 	 * Programs a iSense device with the given binaryImage without removing the current MAC address.

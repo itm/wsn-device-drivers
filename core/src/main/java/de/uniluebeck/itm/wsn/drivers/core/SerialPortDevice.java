@@ -167,6 +167,13 @@ public class SerialPortDevice implements Device {
 	}
 
 	@Override
+	public OperationFuture<Boolean> isNodeAlive(final long timeoutMillis,
+												@Nullable final OperationListener<Boolean> listener) {
+		log.trace("Checking if node is alive (timeout: {}ms)", timeoutMillis);
+		return prepareOperation(operationFactory.createIsNodeAliveOperation(timeoutMillis, listener));
+	}
+
+	@Override
 	public OperationFuture<Void> program(byte[] data, long timeoutMillis, @Nullable OperationListener<Void> listener) {
 		log.trace("Programming (timeout: " + timeoutMillis + "ms)");
 		return prepareOperation(operationFactory.createProgramOperation(data, timeoutMillis, listener));

@@ -129,4 +129,15 @@ public interface OperationFactory {
 	WriteMacAddressOperation createWriteMacAddressOperation(MacAddress macAddress, long timeoutMillis,
 															@Nullable OperationListener<Void> listener);
 
+	/**
+	 * Creates a new {@link IsNodeAliveOperation} instance
+	 *
+	 * @param timeoutMillis
+	 * 		the number of milliseconds the operation is allowed to run before a timeout is assumed
+	 * @param listener
+	 * 		an {@link OperationListener} instance to indicate operation progress
+	 *
+	 * @return a newly created {@link IsNodeAliveOperation} instance
+	 */
+	IsNodeAliveOperation createIsNodeAliveOperation(long timeoutMillis, OperationListener<Boolean> listener);
 }
