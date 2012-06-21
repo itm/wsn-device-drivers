@@ -48,6 +48,7 @@ public class TriSOSModule extends AbstractModule {
 		install(new FactoryModuleBuilder()
 				.implement(EraseFlashOperation.class, TriSOSEraseFlashOperation.class)
 				.implement(GetChipTypeOperation.class, TriSOSGetChipTypeOperation.class)
+				.implement(IsNodeAliveOperation.class, DefaultIsNodeAliveOperation.class)
 				.implement(ProgramOperation.class, TriSOSProgramOperation.class)
 				.implement(ReadFlashOperation.class, TriSOSReadFlashOperation.class)
 				.implement(ReadMacAddressOperation.class, TriSOSReadMacAddressOperation.class)

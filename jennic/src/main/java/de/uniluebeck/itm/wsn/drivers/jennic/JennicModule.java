@@ -56,6 +56,7 @@ public class JennicModule extends AbstractModule {
 		install(new FactoryModuleBuilder()
 				.implement(EraseFlashOperation.class, JennicEraseFlashOperation.class)
 				.implement(GetChipTypeOperation.class, JennicGetChipTypeOperation.class)
+				.implement(IsNodeAliveOperation.class, DefaultIsNodeAliveOperation.class)
 				.implement(ProgramOperation.class, JennicProgramOperation.class)
 				.implement(ReadFlashOperation.class, JennicReadFlashOperation.class)
 				.implement(ReadMacAddressOperation.class, JennicReadMacAddressOperation.class)

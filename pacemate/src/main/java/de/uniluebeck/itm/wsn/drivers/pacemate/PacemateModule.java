@@ -51,6 +51,7 @@ public class PacemateModule extends AbstractModule {
 		install(new FactoryModuleBuilder()
 				.implement(EraseFlashOperation.class, PacemateEraseFlashOperation.class)
 				.implement(GetChipTypeOperation.class, PacemateGetChipTypeOperation.class)
+				.implement(IsNodeAliveOperation.class, DefaultIsNodeAliveOperation.class)
 				.implement(ProgramOperation.class, PacemateProgramOperation.class)
 				.implement(ReadFlashOperation.class, PacemateReadFlashOperation.class)
 				.implement(ReadMacAddressOperation.class, PacemateReadMacAddressOperation.class)

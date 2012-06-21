@@ -49,6 +49,7 @@ public class TelosbModule extends AbstractModule {
 		install(new FactoryModuleBuilder()
 				.implement(EraseFlashOperation.class, TelosbEraseFlashOperation.class)
 				.implement(GetChipTypeOperation.class, TelosbGetChipTypeOperation.class)
+				.implement(IsNodeAliveOperation.class, DefaultIsNodeAliveOperation.class)
 				.implement(ProgramOperation.class, TelosbProgramOperation.class)
 				.implement(ReadFlashOperation.class, TelosbReadFlashOperation.class)
 				.implement(ReadMacAddressOperation.class, TelosbReadMacAddressOperation.class)
