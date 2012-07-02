@@ -40,7 +40,7 @@ public class TelosbSerialPortConnection extends SimpleSerialPortConnection {
 					NORMAL_BAUDRATE,
 					SerialPort.DATABITS_8,
 					SerialPort.STOPBITS_1,
-					SerialPort.PARITY_EVEN
+					SerialPort.PARITY_NONE
 			);
 
 		} catch (UnsupportedCommOperationException e) {
