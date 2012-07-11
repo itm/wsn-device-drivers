@@ -28,13 +28,21 @@ public class MockDevice extends SerialPortDevice {
 
 	@Override
 	public void releaseLockOnDeviceStreams() {
+
 		super.releaseLockOnDeviceStreams();
-		mockConnection.startAliveRunnable();
+
+		if (MockConnection.START_ALIVE_RUNNABLE) {
+			mockConnection.startAliveRunnable();
+		}
 	}
 
 	@Override
 	public void acquireLockOnDevice() throws InterruptedException {
-		mockConnection.stopAliveRunnable();
+
+		if (MockConnection.START_ALIVE_RUNNABLE) {
+			mockConnection.stopAliveRunnable();
+		}
+
 		super.acquireLockOnDevice();
 	}
 }

@@ -32,8 +32,6 @@ import de.uniluebeck.itm.wsn.drivers.core.Device;
 
 import javax.annotation.Nullable;
 
-@ImplementedBy(DeviceFactoryImpl.class)
-@SuppressWarnings("unused")
 public interface DeviceFactory {
 
 	Device create(ExecutorService executorService, DeviceType deviceType);

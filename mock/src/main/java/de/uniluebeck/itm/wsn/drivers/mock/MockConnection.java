@@ -72,9 +72,12 @@ public class MockConnection extends AbstractConnection {
 		}
 	}
 
+	public static final boolean START_ALIVE_RUNNABLE = false;
+
 	private static final byte DLE = 0x10;
 
 	private static final byte STX = 0x02;
+
 	private static final byte ETX = 0x03;
 
 	private static final Logger log = LoggerFactory.getLogger(MockConnection.class);
@@ -126,6 +129,9 @@ public class MockConnection extends AbstractConnection {
 	private final Runnable echoRunnable = new Runnable() {
 		@Override
 		public void run() {
+
+			log.trace("MockConnection.echoRunnable started!");
+
 			try {
 				byte[] b = new byte[1024];
 				int read;
@@ -164,9 +170,13 @@ public class MockConnection extends AbstractConnection {
 	}
 
 	public void reset() {
+
 		sleep(200);
-		stopAliveRunnable();
-		startAliveRunnable();
+
+		if (START_ALIVE_RUNNABLE) {
+			stopAliveRunnable();
+			startAliveRunnable();
+		}
 	}
 
 	private void sleep(final long millis) {
@@ -184,22 +194,7 @@ public class MockConnection extends AbstractConnection {
 	 * 		The message as string.
 	 */
 	public void sendMessage(final String message) {
-		sendMessage(encapsulateWithDleStxEtx(message.getBytes()));
-	}
-
-	private byte[] encapsulateWithDleStxEtx(byte[] src) {
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(src.length + 4);
-		outputStream.write(DLE);
-		outputStream.write(STX);
-		for (byte b : src) {
-			if (b == DLE) {
-				outputStream.write(DLE);
-			}
-			outputStream.write(b);
-		}
-		outputStream.write(DLE);
-		outputStream.write(ETX);
-		return outputStream.toByteArray();
+		sendMessage(message.getBytes());
 	}
 
 	/**
@@ -246,7 +241,9 @@ public class MockConnection extends AbstractConnection {
 		setOutputStream(outputStream);
 		setInputStream(inputStream);
 
-		startAliveRunnable();
+		if (START_ALIVE_RUNNABLE) {
+			startAliveRunnable();
+		}
 		startEchoRunnable();
 
 		setConnected();
@@ -257,7 +254,11 @@ public class MockConnection extends AbstractConnection {
 
 		log.trace("Closing MockDevice");
 
-		stopAliveRunnable();
+		stopEchoRunnable();
+
+		if (START_ALIVE_RUNNABLE) {
+			stopAliveRunnable();
+		}
 
 		outputStreamPipedInputStream.close();
 		inputStreamPipedOutputStream.close();
