@@ -19,15 +19,15 @@ import javax.annotation.Nullable;
  */
 public class MockResetOperation extends TimeLimitedOperation<Void> implements ResetOperation {
 
-	private final MockConnection connection;
+	private final MockDevice device;
 
 	@Inject
 	public MockResetOperation(final TimeLimiter timeLimiter,
-							  final MockConnection connection,
+							  final MockDevice device,
 							  @Assisted final long timeoutMillis,
 							  @Assisted @Nullable final OperationListener<Void> operationCallback) {
 		super(timeLimiter, timeoutMillis, operationCallback);
-		this.connection = connection;
+		this.device = device;
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class MockResetOperation extends TimeLimitedOperation<Void> implements Re
 		progress(.3f);
 		Thread.sleep(100);
 		progress(.6f);
-		connection.reset();
+		device.reset();
 		progress(1f);
 		return null;
 	}

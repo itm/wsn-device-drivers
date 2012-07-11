@@ -19,7 +19,7 @@ import java.util.Arrays;
  */
 public class MockProgramOperation extends TimeLimitedOperation<Void> implements ProgramOperation {
 
-	private final MockConnection connection;
+	private final MockDevice device;
 
 	/**
 	 * The binary image that has to be written to the device.
@@ -34,13 +34,15 @@ public class MockProgramOperation extends TimeLimitedOperation<Void> implements 
 	@Inject
 	public MockProgramOperation(final TimeLimiter timeLimiter,
 								final MockConfiguration configuration,
-								final MockConnection connection,
+								final MockDevice device,
 								@Assisted byte[] binaryImage,
 								@Assisted final long timeoutMillis,
 								@Assisted @Nullable final OperationListener<Void> operationCallback) {
+
 		super(timeLimiter, timeoutMillis, operationCallback);
+
 		this.configuration = configuration;
-		this.connection = connection;
+		this.device = device;
 		this.binaryImage = binaryImage;
 	}
 
@@ -53,7 +55,7 @@ public class MockProgramOperation extends TimeLimitedOperation<Void> implements 
 		}
 
 		configuration.setFlashRom(Arrays.copyOf(binaryImage, binaryImage.length));
-		connection.reset();
+		device.reset();
 
 		return null;
 	}

@@ -35,32 +35,32 @@ public class SerialPortDevice implements Device {
 
 	private static final Logger log = LoggerFactory.getLogger(SerialPortDevice.class);
 
-	private final OutputStream pipeOutputStreamToDriverInputStream;
+	protected final OutputStream pipeOutputStreamToDriverInputStream;
 
-	private final InputStream pipeInputStreamFromDriverOutputStream;
+	protected final InputStream pipeInputStreamFromDriverOutputStream;
 
-	private final Connection connection;
+	protected final Connection connection;
 
-	private final InputStream driverInputStream;
+	protected final InputStream driverInputStream;
 
-	private final OutputStream driverOutputStream;
+	protected final OutputStream driverOutputStream;
 
-	private final OperationFactory operationFactory;
+	protected final OperationFactory operationFactory;
 
-	private ExecutorService operationExecutor;
+	protected ExecutorService operationExecutor;
 
-	private final Monitor deviceMonitor = new Monitor();
+	protected final Monitor deviceMonitor = new Monitor();
 
-	private final Monitor.Guard streamDataCopyStopped = new Monitor.Guard(deviceMonitor) {
+	protected final Monitor.Guard streamDataCopyStopped = new Monitor.Guard(deviceMonitor) {
 		@Override
 		public boolean isSatisfied() {
 			return !deviceToDriverStreamDataCopyRunning && !driverToDeviceStreamDataCopyRunning;
 		}
 	};
 
-	private volatile boolean deviceToDriverStreamDataCopyRunning = false;
+	protected volatile boolean deviceToDriverStreamDataCopyRunning = false;
 
-	private final ConnectionListener deviceToDriverStreamDataCopyListener = new ConnectionListener() {
+	protected final ConnectionListener deviceToDriverStreamDataCopyListener = new ConnectionListener() {
 
 		private byte[] buffer = new byte[1024];
 
@@ -88,13 +88,13 @@ public class SerialPortDevice implements Device {
 		}
 	};
 
-	private ExecutorService driverToDeviceStreamDataCopyExecutor;
+	protected ExecutorService driverToDeviceStreamDataCopyExecutor;
 
-	private Future<?> driverToDeviceStreamDataCopyFuture;
+	protected Future<?> driverToDeviceStreamDataCopyFuture;
 
-	private volatile boolean driverToDeviceStreamDataCopyRunning = false;
+	protected volatile boolean driverToDeviceStreamDataCopyRunning = false;
 
-	private final Runnable driverToDeviceStreamDataCopyRunnable = new Runnable() {
+	protected final Runnable driverToDeviceStreamDataCopyRunnable = new Runnable() {
 
 		private byte[] buffer = new byte[1024];
 

@@ -1,21 +1,13 @@
 package de.uniluebeck.itm.wsn.drivers.mock;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import de.uniluebeck.itm.tr.util.ExecutorUtils;
 import de.uniluebeck.itm.tr.util.StringUtils;
-import de.uniluebeck.itm.tr.util.TimeDiff;
 import de.uniluebeck.itm.wsn.drivers.core.AbstractConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -26,59 +18,6 @@ import java.util.concurrent.TimeUnit;
  */
 @Singleton
 public class MockConnection extends AbstractConnection {
-
-	/**
-	 * Internal runnable that sends continuously messages.
-	 *
-	 * @author Malte Legenhausen
-	 * @author Daniel Bimschas
-	 */
-	private class AliveRunnable implements Runnable {
-
-		private TimeDiff startTime = new TimeDiff();
-
-		private int messageCount = 0;
-
-		private volatile boolean shutdown = false;
-
-		@Override
-		public void run() {
-
-			sendMessage("Booting MockDevice...");
-
-			try {
-				Thread.sleep(new Random().nextInt((int) aliveTimeUnit.toMillis(aliveTimeout)));
-			} catch (InterruptedException e) {
-				if (!shutdown) {
-					throw new RuntimeException(e);
-				}
-			}
-
-			while (!shutdown) {
-
-				final String message =
-						"MockDevice alive since " + startTime.s() + " seconds (update #" + (++messageCount) + ")";
-				sendMessage(message);
-
-				try {
-					Thread.sleep(aliveTimeUnit.toMillis(aliveTimeout));
-				} catch (InterruptedException e) {
-					//noinspection ConstantConditions
-					if (!shutdown) {
-						throw new RuntimeException(e);
-					}
-				}
-			}
-		}
-	}
-
-	public static final boolean START_ALIVE_RUNNABLE = false;
-
-	private static final byte DLE = 0x10;
-
-	private static final byte STX = 0x02;
-
-	private static final byte ETX = 0x03;
 
 	private static final Logger log = LoggerFactory.getLogger(MockConnection.class);
 
@@ -109,118 +48,9 @@ public class MockConnection extends AbstractConnection {
 	 */
 	private final MockConfiguration configuration;
 
-	/**
-	 * Executor for periodically execute a given runnable.
-	 */
-	private final ExecutorService executorService;
-
-	/**
-	 * The frequency with which a message has to be send.
-	 */
-	private final long aliveTimeout = 10;
-
-	/**
-	 * The frequency time units.
-	 */
-	private final TimeUnit aliveTimeUnit = TimeUnit.SECONDS;
-
-	private AliveRunnable aliveRunnable;
-
-	private final Runnable echoRunnable = new Runnable() {
-		@Override
-		public void run() {
-
-			log.trace("MockConnection.echoRunnable started!");
-
-			try {
-				byte[] b = new byte[1024];
-				int read;
-				synchronized (outputStreamPipedInputStream) {
-
-					while ((read = outputStreamPipedInputStream.read(b)) != -1) {
-
-						log.trace("MockConnection.echoRunnable echoing {} bytes", read);
-
-						synchronized (inputStreamPipedOutputStream) {
-							inputStreamPipedOutputStream.write(b, 0, read);
-							inputStreamPipedOutputStream.flush();
-							signalDataAvailable();
-						}
-					}
-				}
-			} catch (Exception e) {
-				if (e instanceof InterruptedIOException) {
-					// expected when shutting down
-				} else {
-					log.error("Exception in MockConnection.echoRunnable: {}", e);
-					throw new RuntimeException(e);
-				}
-			}
-		}
-	};
-
-	private Future<?> echoRunnableFuture;
-
 	@Inject
 	public MockConnection(MockConfiguration configuration) {
 		this.configuration = configuration;
-		this.executorService = Executors.newCachedThreadPool(
-				new ThreadFactoryBuilder().setNameFormat("MockConnection-Thread %d").build()
-		);
-	}
-
-	public void reset() {
-
-		sleep(200);
-
-		if (START_ALIVE_RUNNABLE) {
-			stopAliveRunnable();
-			startAliveRunnable();
-		}
-	}
-
-	private void sleep(final long millis) {
-		try {
-			Thread.sleep(millis);
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	/**
-	 * Writing a message to the output stream.
-	 *
-	 * @param message
-	 * 		The message as string.
-	 */
-	public void sendMessage(final String message) {
-		sendMessage(message.getBytes());
-	}
-
-	/**
-	 * Writing a message to the output stream.
-	 *
-	 * @param message
-	 * 		The message as byte array.
-	 */
-	public void sendMessage(final byte[] message) {
-
-		if (log.isTraceEnabled()) {
-			log.trace("Sending message {}", StringUtils.toHexString(message));
-		}
-
-		try {
-
-			synchronized (inputStreamPipedOutputStream) {
-				inputStreamPipedOutputStream.write(message);
-				inputStreamPipedOutputStream.flush();
-				signalDataAvailable();
-			}
-
-		} catch (IOException e) {
-			log.error("IOException while writing to MockConnection.inputStreamPipedOutputStream: {}", e);
-			throw new RuntimeException(e);
-		}
 	}
 
 	@Override
@@ -240,12 +70,6 @@ public class MockConnection extends AbstractConnection {
 
 		setOutputStream(outputStream);
 		setInputStream(inputStream);
-
-		if (START_ALIVE_RUNNABLE) {
-			startAliveRunnable();
-		}
-		startEchoRunnable();
-
 		setConnected();
 	}
 
@@ -254,18 +78,10 @@ public class MockConnection extends AbstractConnection {
 
 		log.trace("Closing MockDevice");
 
-		stopEchoRunnable();
-
-		if (START_ALIVE_RUNNABLE) {
-			stopAliveRunnable();
-		}
-
 		outputStreamPipedInputStream.close();
 		inputStreamPipedOutputStream.close();
 		inputStream.close();
 		outputStream.close();
-
-		ExecutorUtils.shutdown(executorService, 100, TimeUnit.MILLISECONDS);
 
 		super.close();
 	}
@@ -275,26 +91,27 @@ public class MockConnection extends AbstractConnection {
 		return configuration.getChannels();
 	}
 
-	public void startAliveRunnable() {
-		aliveRunnable = new AliveRunnable();
-		executorService.execute(aliveRunnable);
-	}
+	void writeUpstreamBytes(final byte[] message, final int offset, final int length) {
 
-	private void startEchoRunnable() {
-		echoRunnableFuture = executorService.submit(echoRunnable);
-	}
+		if (log.isTraceEnabled()) {
+			log.trace("Sending message {}", StringUtils.toHexString(message));
+		}
 
-	public void stopAliveRunnable() {
-		if (aliveRunnable != null) {
-			aliveRunnable.shutdown = true;
-			aliveRunnable = null;
+		try {
+
+			synchronized (inputStreamPipedOutputStream) {
+				inputStreamPipedOutputStream.write(message, offset, length);
+				inputStreamPipedOutputStream.flush();
+				signalDataAvailable();
+			}
+
+		} catch (IOException e) {
+			log.error("IOException while writing to MockConnection.inputStreamPipedOutputStream: {}", e);
+			throw new RuntimeException(e);
 		}
 	}
 
-	private void stopEchoRunnable() {
-		if (echoRunnableFuture != null && !(echoRunnableFuture.isDone() || echoRunnableFuture.isCancelled())) {
-			echoRunnableFuture.cancel(true);
-			echoRunnableFuture = null;
-		}
+	void writeUpstreamBytes(final byte[] message) {
+		writeUpstreamBytes(message, 0, message.length);
 	}
 }

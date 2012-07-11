@@ -116,7 +116,7 @@ public abstract class AbstractConnection implements Connection {
 			dataAvailableLock.unlock();
 		}
 	}
-	
+
 	protected void signalDataAvailable() {
 
 		dataAvailableLock.lock();
