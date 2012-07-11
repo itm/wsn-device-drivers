@@ -29,7 +29,7 @@ public enum DeviceType {
 	TELOSB("telosb"),
 	PACEMATE("pacemate"),
 	MOCK("mock"),
-        TRISOS("trisos");
+	TRISOS("trisos");
 
 	private final String[] synonyms;
 

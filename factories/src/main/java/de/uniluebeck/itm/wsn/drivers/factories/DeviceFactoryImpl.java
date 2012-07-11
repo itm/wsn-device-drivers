@@ -40,7 +40,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 @Singleton
-public class DeviceFactoryImpl implements DeviceFactory {
+class DeviceFactoryImpl implements DeviceFactory {
 
 	@Override
 	public Device create(ExecutorService executorService, DeviceType deviceType) {
@@ -71,19 +71,16 @@ public class DeviceFactoryImpl implements DeviceFactory {
 			case MOCK:
 				deviceModule = new MockModule(configuration);
 				break;
-                        case TRISOS:
-                                deviceModule = new TriSOSModule(configuration);
-                                break;
+			case TRISOS:
+				deviceModule = new TriSOSModule(configuration);
+				break;
 			default:
 				throw new RuntimeException("Unknown device type \"" + deviceType + "\". Maybe someone forgot to add"
 						+ "this (new) device type to " + DeviceFactoryImpl.class.getName() + "?"
 				);
 		}
 
-                Injector injector = Guice.createInjector(new DeviceModule(executorService), deviceModule);
-                Device device = injector.getInstance(Device.class);
-                return device;
-		//return Guice.createInjector(new DeviceModule(executorService), deviceModule).getInstance(Device.class);
+		return Guice.createInjector(new DeviceModule(executorService), deviceModule).getInstance(Device.class);
 	}
 
 	@Override
