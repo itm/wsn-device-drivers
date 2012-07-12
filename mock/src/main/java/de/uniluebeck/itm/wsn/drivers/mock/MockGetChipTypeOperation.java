@@ -7,6 +7,7 @@ import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.operation.GetChipTypeOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
 import de.uniluebeck.itm.wsn.drivers.core.operation.TimeLimitedOperation;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgrammingMode;
 
 import javax.annotation.Nullable;
 
@@ -34,8 +35,9 @@ public class MockGetChipTypeOperation extends TimeLimitedOperation<ChipType> imp
 	}
 
 	@Override
+	@SerialPortProgrammingMode
 	protected ChipType callInternal() throws Exception {
-		Thread.sleep(10);
+		Thread.sleep(100);
 		progress(1f);
 		return configuration.getChipType();
 	}

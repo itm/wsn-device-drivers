@@ -4,6 +4,7 @@ import com.google.common.util.concurrent.TimeLimiter;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import de.uniluebeck.itm.wsn.drivers.core.operation.*;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgrammingMode;
 
 import javax.annotation.Nullable;
 
@@ -31,6 +32,7 @@ public class MockEraseFlashOperation extends TimeLimitedOperation<Void> implemen
 	}
 
 	@Override
+	@SerialPortProgrammingMode
 	protected Void callInternal() throws Exception {
 		final byte[] flashRom = configuration.getFlashRom();
 		final float worked = 1.0f / flashRom.length;

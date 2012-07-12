@@ -7,6 +7,7 @@ import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadMacAddressOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.TimeLimitedOperation;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgrammingMode;
 
 import javax.annotation.Nullable;
 
@@ -31,6 +32,7 @@ public class MockReadMacAddressOperation extends TimeLimitedOperation<MacAddress
 	}
 
 	@Override
+	@SerialPortProgrammingMode
 	protected MacAddress callInternal() throws Exception {
 
 		for (int i = 0; i < 10; i++) {

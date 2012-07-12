@@ -7,6 +7,7 @@ import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
 import de.uniluebeck.itm.wsn.drivers.core.operation.TimeLimitedOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.WriteMacAddressOperation;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgrammingMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +44,7 @@ public class MockWriteMacAddressOperation extends TimeLimitedOperation<Void> imp
 	}
 
 	@Override
+	@SerialPortProgrammingMode
 	protected Void callInternal() throws Exception {
 
 		for (int i = 1; i <= 10 && !isCanceled(); ++i) {

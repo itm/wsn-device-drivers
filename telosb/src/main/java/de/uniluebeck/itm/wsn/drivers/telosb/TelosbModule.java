@@ -31,9 +31,10 @@ public class TelosbModule extends AbstractModule {
 	@Override
 	protected void configure() {
 
-		bind(new TypeLiteral<Map<String, String>>() {
-		}
-		)
+		final TypeLiteral<Map<String, String>> mapLiteral = new TypeLiteral<Map<String, String>>() {
+		};
+
+		bind(mapLiteral)
 				.annotatedWith(Names.named("configuration"))
 				.toInstance(configuration != null ? configuration : Maps.<String, String>newHashMap());
 

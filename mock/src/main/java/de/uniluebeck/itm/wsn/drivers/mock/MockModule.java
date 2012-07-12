@@ -5,11 +5,14 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
+import com.google.inject.matcher.Matchers;
 import com.google.inject.name.Names;
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.Device;
-import de.uniluebeck.itm.wsn.drivers.core.SerialPortDevice;
 import de.uniluebeck.itm.wsn.drivers.core.operation.*;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgrammingMode;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgrammingModeInterceptor;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -31,14 +34,17 @@ public class MockModule extends AbstractModule {
 	@Override
 	protected void configure() {
 
-		bind(new TypeLiteral<Map<String, String>>() {
-		}
-		)
-				.annotatedWith(Names.named("configuration"))
+		MockOperationInterceptor interceptor = new MockOperationInterceptor();
+		requestInjection(interceptor);
+		bindInterceptor(Matchers.any(), Matchers.annotatedWith(SerialPortProgrammingMode.class), interceptor);
+
+		final TypeLiteral<Map<String, String>> mapLiteral = new TypeLiteral<Map<String, String>>() {
+		};
+
+		bind(mapLiteral).annotatedWith(Names.named("configuration"))
 				.toInstance(configuration != null ? configuration : Maps.<String, String>newHashMap());
 
 		bind(Device.class).to(MockDevice.class);
-		bind(Connection.class).to(MockConnection.class);
 		bind(MockConfiguration.class).in(Singleton.class);
 
 		install(new FactoryModuleBuilder()

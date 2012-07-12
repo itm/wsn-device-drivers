@@ -2,25 +2,29 @@ package de.uniluebeck.itm.wsn.drivers.mock;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import de.uniluebeck.itm.tr.util.ExecutorUtils;
 import de.uniluebeck.itm.tr.util.StringUtils;
-import de.uniluebeck.itm.wsn.drivers.core.Connection;
-import de.uniluebeck.itm.wsn.drivers.core.SerialPortDevice;
-import de.uniluebeck.itm.wsn.drivers.core.operation.OperationFactory;
+import de.uniluebeck.itm.wsn.drivers.core.ChipType;
+import de.uniluebeck.itm.wsn.drivers.core.Device;
+import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
+import de.uniluebeck.itm.wsn.drivers.core.operation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InterruptedIOException;
-import java.io.OutputStream;
+import javax.annotation.Nullable;
+import java.io.*;
 import java.util.Map;
 import java.util.concurrent.*;
 
-public class MockDevice extends SerialPortDevice {
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-	private static class MessageRunnable implements Runnable {
+@Singleton
+public class MockDevice implements Device {
+
+	private class MessageRunnable implements Runnable {
 
 		private final OutputStream outputStream;
 
@@ -36,6 +40,12 @@ public class MockDevice extends SerialPortDevice {
 
 			try {
 
+				if (log.isTraceEnabled()) {
+					log.trace("Writing message bytes {}", StringUtils.toHexString(messageBytes));
+				}
+
+				sleepIfUartLatencyConfigured();
+
 				synchronized (outputStream) {
 					outputStream.write(messageBytes);
 					outputStream.flush();
@@ -49,7 +59,7 @@ public class MockDevice extends SerialPortDevice {
 
 	}
 
-	private static class EchoRunnable implements Runnable {
+	private class EchoRunnable implements Runnable {
 
 		private final InputStream inputStream;
 
@@ -78,6 +88,8 @@ public class MockDevice extends SerialPortDevice {
 							log.trace("MockDevice.echoRunnable echoing {} bytes: {}", read, new String(b, 0, read));
 						}
 
+						sleepIfUartLatencyConfigured();
+
 						try {
 
 							synchronized (outputStream) {
@@ -104,6 +116,8 @@ public class MockDevice extends SerialPortDevice {
 
 	}
 
+	private static final String OPTION_UART_LATENCY = "UART_LATENCY";
+
 	private static final String OPTION_BOOT_MESSAGE = "BOOT_MESSAGE";
 
 	private static final String OPTION_BOOT_MESSAGE_TYPE = "BOOT_MESSAGE_TYPE";
@@ -118,11 +132,19 @@ public class MockDevice extends SerialPortDevice {
 
 	private static final Logger log = LoggerFactory.getLogger(MockDevice.class);
 
-	private final MockConnection mockConnection;
+	private final PipedInputStream driverInputStream;
+
+	private final PipedOutputStream driverOutputStream;
+
+	private final PipedOutputStream pipedOutputStreamToDriverInputStream;
+
+	private final PipedInputStream pipedInputStreamFromDriverOutputStream;
+
+	private final OperationFactory operationFactory;
 
 	private final Map<String, String> configuration;
 
-	private ScheduledExecutorService heartbeatScheduler;
+	private ScheduledExecutorService scheduler;
 
 	private ScheduledFuture<?> heartbeatSchedule;
 
@@ -130,87 +152,212 @@ public class MockDevice extends SerialPortDevice {
 
 	private Future<?> echoFuture;
 
+	private volatile boolean connected;
+
 	@Inject
-	public MockDevice(@Named("driverInputStream") final InputStream driverInputStream,
-					  @Named("driverOutputStream") final OutputStream driverOutputStream,
-					  @Named("pipeOutputStreamToDriverInputStream")
-					  final OutputStream pipeOutputStreamToDriverInputStream,
-					  @Named("pipeInputStreamFromDriverOutputStream")
-					  final InputStream pipeInputStreamFromDriverOutputStream,
-					  final Connection deviceConnection,
+	public MockDevice(@Named("driverInputStream") final PipedInputStream driverInputStream,
+					  @Named("driverOutputStream") final PipedOutputStream driverOutputStream,
+					  @Named("pipedOutputStreamToDriverInputStream")
+					  final PipedOutputStream pipedOutputStreamToDriverInputStream,
+					  @Named("pipedInputStreamFromDriverOutputStream")
+					  final PipedInputStream pipedInputStreamFromDriverOutputStream,
 					  final OperationFactory operationFactory,
-					  final MockConnection mockConnection,
 					  @Named("configuration") final Map<String, String> configuration) {
 
-		super(driverInputStream, driverOutputStream, pipeOutputStreamToDriverInputStream,
-				pipeInputStreamFromDriverOutputStream, deviceConnection, operationFactory
-		);
-
-		this.mockConnection = mockConnection;
+		this.driverInputStream = driverInputStream;
+		this.driverOutputStream = driverOutputStream;
+		this.pipedOutputStreamToDriverInputStream = pipedOutputStreamToDriverInputStream;
+		this.pipedInputStreamFromDriverOutputStream = pipedInputStreamFromDriverOutputStream;
+		this.operationFactory = operationFactory;
 		this.configuration = configuration;
 	}
 
 	@Override
-	public void close() throws IOException {
+	public OperationFuture<Void> eraseFlash(long timeoutMillis, @Nullable OperationListener<Void> listener) {
+		log.trace("Erasing flash (timeout: " + timeoutMillis + "ms)");
+		return executeOperation(operationFactory.createEraseFlashOperation(timeoutMillis, listener));
+	}
 
-		super.close();
+	@Override
+	public OperationFuture<ChipType> getChipType(long timeoutMillis, @Nullable OperationListener<ChipType> listener) {
+		log.trace("Reading Chip Type (timeout: " + timeoutMillis + "ms)");
+		return executeOperation(operationFactory.createGetChipTypeOperation(timeoutMillis, listener));
+	}
 
-		if (isClosed()) {
+	@Override
+	public OperationFuture<Boolean> isNodeAlive(final long timeoutMillis,
+												@Nullable final OperationListener<Boolean> listener) {
+		log.trace("Checking if node is alive (timeout: {}ms)", timeoutMillis);
+		return executeOperation(operationFactory.createIsNodeAliveOperation(timeoutMillis, listener));
+	}
 
-			stopHeartBeatIfRunning();
-			stopEchoIfRunning();
+	@Override
+	public OperationFuture<Void> program(byte[] data, long timeoutMillis, @Nullable OperationListener<Void> listener) {
+		log.trace("Programming (timeout: " + timeoutMillis + "ms)");
+		return executeOperation(operationFactory.createProgramOperation(data, timeoutMillis, listener));
+	}
 
-			if (heartbeatScheduler != null) {
-				ExecutorUtils.shutdown(heartbeatScheduler, 10, TimeUnit.SECONDS);
-			}
+	@Override
+	public OperationFuture<byte[]> readFlash(int address, int length, long timeoutMillis,
+											 @Nullable OperationListener<byte[]> listener) {
+		log.trace("Reading flash (address: " + address + ", length: " + length + ", timeout: " + timeoutMillis + "ms)");
+		checkArgument(address >= 0, "Negative length is not allowed.");
+		checkArgument(length >= 0, "Negative address is not allowed.");
+		return executeOperation(operationFactory.createReadFlashOperation(address, length, timeoutMillis, listener));
+	}
 
-			if (echoExecutor != null) {
-				ExecutorUtils.shutdown(echoExecutor, 10, TimeUnit.SECONDS);
-			}
-		}
+	@Override
+	public OperationFuture<MacAddress> readMac(long timeoutMillis, @Nullable OperationListener<MacAddress> listener) {
+		log.trace("Reading MAC address (timeout: " + timeoutMillis + "ms)");
+		return executeOperation(operationFactory.createReadMacAddressOperation(timeoutMillis, listener));
+	}
+
+	@Override
+	public OperationFuture<Void> reset(long timeoutMillis, @Nullable OperationListener<Void> listener) {
+		log.trace("Resetting (timeout: " + timeoutMillis + "ms)");
+		return executeOperation(operationFactory.createResetOperation(timeoutMillis, listener));
+	}
+
+	@Override
+	public OperationFuture<Void> writeFlash(int address, byte[] data, int length, long timeoutMillis,
+											@Nullable OperationListener<Void> listener) {
+		log.trace("Writing flash (address: " + address + ", length: " + length + ", timeout: " + timeoutMillis + "ms)");
+		checkArgument(address >= 0, "Negative length is not allowed.");
+		checkNotNull(data, "Null data is not allowed.");
+		checkArgument(length >= 0, "Negative address is not allowed.");
+		return executeOperation(
+				operationFactory.createWriteFlashOperation(address, data, length, timeoutMillis, listener)
+		);
+	}
+
+	@Override
+	public OperationFuture<Void> writeMac(MacAddress macAddress, long timeoutMillis,
+										  @Nullable OperationListener<Void> listener) {
+		log.trace("Writing MAC address (mac address: " + macAddress + ", timeout: " + timeoutMillis + "ms)");
+		checkNotNull(macAddress, "Null MAC address is not allowed.");
+		return executeOperation(operationFactory.createWriteMacAddressOperation(macAddress, timeoutMillis, listener));
+	}
+
+	@Override
+	public InputStream getInputStream() {
+		return driverInputStream;
+	}
+
+	@Override
+	public OutputStream getOutputStream() {
+		return driverOutputStream;
 	}
 
 	@Override
 	public void connect(final String uri) throws IOException {
 
-		super.connect(uri);
-
-		if (isConnected()) {
+		try {
 
 			final ThreadFactory threadFactory = new ThreadFactoryBuilder()
 					.setNameFormat("MockDevice-Thread %d")
 					.build();
 
-			heartbeatScheduler = Executors.newScheduledThreadPool(1, threadFactory);
+			scheduler = Executors.newScheduledThreadPool(1, threadFactory);
 			echoExecutor = Executors.newSingleThreadExecutor(threadFactory);
 
 			startHeartBeatIfConfigured();
 			startEchoIfConfigured();
+
+			sendBootMessageIfConfigured();
+
+		} finally {
+			connected = true;
 		}
 	}
 
 	@Override
-	public void releaseLockOnDeviceStreams() {
-		super.releaseLockOnDeviceStreams();
-		startHeartBeatIfConfigured();
+	public void close() throws IOException {
+
+		try {
+
+			stopHeartBeatIfRunning();
+			stopEchoIfRunning();
+
+			if (scheduler != null) {
+				ExecutorUtils.shutdown(scheduler, 10, TimeUnit.SECONDS);
+			}
+
+			if (echoExecutor != null) {
+				ExecutorUtils.shutdown(echoExecutor, 10, TimeUnit.SECONDS);
+			}
+
+			synchronized (driverInputStream) {
+				synchronized (pipedOutputStreamToDriverInputStream) {
+					driverInputStream.close();
+					pipedOutputStreamToDriverInputStream.close();
+				}
+			}
+
+			synchronized (driverOutputStream) {
+				synchronized (pipedInputStreamFromDriverOutputStream) {
+					driverOutputStream.close();
+					pipedInputStreamFromDriverOutputStream.close();
+				}
+			}
+
+		} finally {
+			connected = false;
+		}
 	}
 
 	@Override
-	public void acquireLockOnDevice() throws InterruptedException {
+	public boolean isConnected() {
+		return connected;
+	}
+
+	@Override
+	public boolean isClosed() {
+		return !isConnected();
+	}
+
+	void acquireLockOnDevice() {
 		stopHeartBeatIfRunning();
-		super.acquireLockOnDevice();
+		stopEchoIfRunning();
+	}
+
+	void releaseLockOnDevice() {
+		startEchoIfConfigured();
+		startHeartBeatIfConfigured();
 	}
 
 	void reset() {
-
-		stopHeartBeatIfRunning();
-		stopEchoIfRunning();
-
 		sleep(500);
-
 		sendBootMessageIfConfigured();
-		startEchoIfConfigured();
-		startHeartBeatIfConfigured();
+	}
+
+	private void sleepIfUartLatencyConfigured() {
+
+		final String uartLatencyString = configuration.get(OPTION_UART_LATENCY);
+		final Integer uartLatency = uartLatencyString == null ? null : Integer.parseInt(uartLatencyString);
+
+		if (uartLatency != null) {
+			sleep(uartLatency);
+		}
+	}
+
+	private <T> OperationFuture<T> executeOperation(final Operation<T> operation) {
+		final OperationFutureImpl<T> operationFuture = new OperationFutureImpl<T>(operation);
+		operation.addListener(
+				new OperationAdapter<T>() {
+
+					@Override
+					public void onFailure(final Throwable throwable) {
+						operationFuture.setException(throwable);
+					}
+
+					@Override
+					public void onSuccess(final T result) {
+						operationFuture.set(result);
+					}
+				}
+		);
+		scheduler.submit(operation);
+		return operationFuture;
 	}
 
 	private void sleep(final long millis) {
@@ -234,7 +381,7 @@ public class MockDevice extends SerialPortDevice {
 
 			final byte[] bootMessageBytes = parseMessageBytes(bootMessage, bootMessageType);
 
-			new MessageRunnable(mockConnection.getInputStreamPipedOutputStream(), bootMessageBytes).run();
+			new MessageRunnable(pipedOutputStreamToDriverInputStream, bootMessageBytes).run();
 		}
 	}
 
@@ -267,8 +414,8 @@ public class MockDevice extends SerialPortDevice {
 
 			byte[] heartbeatMessageBytes = parseMessageBytes(heartbeatMessage, heartbeatMessageType);
 
-			heartbeatSchedule = heartbeatScheduler.scheduleAtFixedRate(
-					new MessageRunnable(mockConnection.getInputStreamPipedOutputStream(), heartbeatMessageBytes),
+			heartbeatSchedule = scheduler.scheduleAtFixedRate(
+					new MessageRunnable(pipedOutputStreamToDriverInputStream, heartbeatMessageBytes),
 					heartbeatMessageRateMillis,
 					heartbeatMessageRateMillis,
 					TimeUnit.MILLISECONDS
@@ -305,9 +452,10 @@ public class MockDevice extends SerialPortDevice {
 		if (echo) {
 			log.debug("Starting echo runnable");
 			echoFuture = echoExecutor.submit(new EchoRunnable(
-					mockConnection.getOutputStreamPipedInputStream(),
-					mockConnection.getInputStreamPipedOutputStream()
-			));
+					pipedInputStreamFromDriverOutputStream,
+					pipedOutputStreamToDriverInputStream
+			)
+			);
 		}
 	}
 

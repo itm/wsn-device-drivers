@@ -6,6 +6,7 @@ import com.google.inject.assistedinject.Assisted;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.TimeLimitedOperation;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgrammingMode;
 
 import javax.annotation.Nullable;
 
@@ -31,6 +32,7 @@ public class MockResetOperation extends TimeLimitedOperation<Void> implements Re
 	}
 
 	@Override
+	@SerialPortProgrammingMode
 	protected Void callInternal() throws Exception {
 		Thread.sleep(100);
 		progress(.3f);

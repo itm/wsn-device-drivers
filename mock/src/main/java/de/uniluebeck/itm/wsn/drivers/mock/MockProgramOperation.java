@@ -6,6 +6,7 @@ import com.google.inject.assistedinject.Assisted;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ProgramOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.TimeLimitedOperation;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgrammingMode;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -47,6 +48,7 @@ public class MockProgramOperation extends TimeLimitedOperation<Void> implements 
 	}
 
 	@Override
+	@SerialPortProgrammingMode
 	protected Void callInternal() throws Exception {
 
 		for (int i = 0; i < 10; i++) {

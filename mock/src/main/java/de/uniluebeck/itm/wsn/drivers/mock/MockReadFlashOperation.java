@@ -6,6 +6,7 @@ import com.google.inject.assistedinject.Assisted;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ReadFlashOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.TimeLimitedOperation;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgrammingMode;
 
 import javax.annotation.Nullable;
 
@@ -47,6 +48,7 @@ public class MockReadFlashOperation extends TimeLimitedOperation<byte[]> impleme
 	}
 
 	@Override
+	@SerialPortProgrammingMode
 	protected byte[] callInternal() throws Exception {
 
 		for (int i = 1; i <= 10 && !isCanceled(); ++i) {

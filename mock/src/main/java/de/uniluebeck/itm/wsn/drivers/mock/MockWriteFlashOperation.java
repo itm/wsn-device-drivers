@@ -6,6 +6,7 @@ import com.google.inject.assistedinject.Assisted;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
 import de.uniluebeck.itm.wsn.drivers.core.operation.TimeLimitedOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.WriteFlashOperation;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgrammingMode;
 
 import javax.annotation.Nullable;
 
@@ -54,6 +55,7 @@ public class MockWriteFlashOperation extends TimeLimitedOperation<Void> implemen
 	}
 
 	@Override
+	@SerialPortProgrammingMode
 	protected Void callInternal() throws Exception {
 
 		for (int i = 0; i < 10; ++i) {

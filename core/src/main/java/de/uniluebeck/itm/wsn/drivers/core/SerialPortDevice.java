@@ -11,10 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InterruptedIOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -35,9 +32,9 @@ public class SerialPortDevice implements Device {
 
 	private static final Logger log = LoggerFactory.getLogger(SerialPortDevice.class);
 
-	protected final OutputStream pipeOutputStreamToDriverInputStream;
+	protected final OutputStream pipedOutputStreamToDriverInputStream;
 
-	protected final InputStream pipeInputStreamFromDriverOutputStream;
+	protected final InputStream pipedInputStreamFromDriverOutputStream;
 
 	protected final Connection connection;
 
@@ -78,8 +75,8 @@ public class SerialPortDevice implements Device {
 					);
 				}
 
-				pipeOutputStreamToDriverInputStream.write(buffer, 0, bytesRead);
-				pipeOutputStreamToDriverInputStream.flush();
+				pipedOutputStreamToDriverInputStream.write(buffer, 0, bytesRead);
+				pipedOutputStreamToDriverInputStream.flush();
 
 			} catch (IOException e) {
 				log.error("IOException while reading from device stream: {}", e);
@@ -108,12 +105,13 @@ public class SerialPortDevice implements Device {
 
 				try {
 
-					while ((bytesRead = pipeInputStreamFromDriverOutputStream.read(buffer)) != -1) {
+					while ((bytesRead = pipedInputStreamFromDriverOutputStream.read(buffer)) != -1) {
 
 						if (log.isTraceEnabled()) {
 							log.trace("Writing {} bytes to device stream: {}",
 									bytesRead,
-									StringUtils.toHexString(buffer, 0, bytesRead));
+									StringUtils.toHexString(buffer, 0, bytesRead)
+							);
 						}
 
 						connection.getOutputStream().write(buffer, 0, bytesRead);
@@ -137,19 +135,19 @@ public class SerialPortDevice implements Device {
 	};
 
 	@Inject
-	public SerialPortDevice(@Named("driverInputStream") final InputStream driverInputStream,
-							@Named("driverOutputStream") final OutputStream driverOutputStream,
-							@Named("pipeOutputStreamToDriverInputStream")
-							final OutputStream pipeOutputStreamToDriverInputStream,
-							@Named("pipeInputStreamFromDriverOutputStream")
-							final InputStream pipeInputStreamFromDriverOutputStream,
+	public SerialPortDevice(@Named("driverInputStream") final PipedInputStream driverInputStream,
+							@Named("driverOutputStream") final PipedOutputStream driverOutputStream,
+							@Named("pipedOutputStreamToDriverInputStream")
+							final PipedOutputStream pipedOutputStreamToDriverInputStream,
+							@Named("pipedInputStreamFromDriverOutputStream")
+							final PipedInputStream pipedInputStreamFromDriverOutputStream,
 							final Connection deviceConnection,
 							final OperationFactory operationFactory) {
 
 		this.driverInputStream = driverInputStream;
 		this.driverOutputStream = driverOutputStream;
-		this.pipeOutputStreamToDriverInputStream = pipeOutputStreamToDriverInputStream;
-		this.pipeInputStreamFromDriverOutputStream = pipeInputStreamFromDriverOutputStream;
+		this.pipedOutputStreamToDriverInputStream = pipedOutputStreamToDriverInputStream;
+		this.pipedInputStreamFromDriverOutputStream = pipedInputStreamFromDriverOutputStream;
 		this.connection = deviceConnection;
 		this.operationFactory = operationFactory;
 	}
@@ -157,26 +155,26 @@ public class SerialPortDevice implements Device {
 	@Override
 	public OperationFuture<Void> eraseFlash(long timeoutMillis, @Nullable OperationListener<Void> listener) {
 		log.trace("Erasing flash (timeout: " + timeoutMillis + "ms)");
-		return prepareOperation(operationFactory.createEraseFlashOperation(timeoutMillis, listener));
+		return executeOperation(operationFactory.createEraseFlashOperation(timeoutMillis, listener));
 	}
 
 	@Override
 	public OperationFuture<ChipType> getChipType(long timeoutMillis, @Nullable OperationListener<ChipType> listener) {
 		log.trace("Reading Chip Type (timeout: " + timeoutMillis + "ms)");
-		return prepareOperation(operationFactory.createGetChipTypeOperation(timeoutMillis, listener));
+		return executeOperation(operationFactory.createGetChipTypeOperation(timeoutMillis, listener));
 	}
 
 	@Override
 	public OperationFuture<Boolean> isNodeAlive(final long timeoutMillis,
 												@Nullable final OperationListener<Boolean> listener) {
 		log.trace("Checking if node is alive (timeout: {}ms)", timeoutMillis);
-		return prepareOperation(operationFactory.createIsNodeAliveOperation(timeoutMillis, listener));
+		return executeOperation(operationFactory.createIsNodeAliveOperation(timeoutMillis, listener));
 	}
 
 	@Override
 	public OperationFuture<Void> program(byte[] data, long timeoutMillis, @Nullable OperationListener<Void> listener) {
 		log.trace("Programming (timeout: " + timeoutMillis + "ms)");
-		return prepareOperation(operationFactory.createProgramOperation(data, timeoutMillis, listener));
+		return executeOperation(operationFactory.createProgramOperation(data, timeoutMillis, listener));
 	}
 
 	@Override
@@ -185,19 +183,19 @@ public class SerialPortDevice implements Device {
 		log.trace("Reading flash (address: " + address + ", length: " + length + ", timeout: " + timeoutMillis + "ms)");
 		checkArgument(address >= 0, "Negative length is not allowed.");
 		checkArgument(length >= 0, "Negative address is not allowed.");
-		return prepareOperation(operationFactory.createReadFlashOperation(address, length, timeoutMillis, listener));
+		return executeOperation(operationFactory.createReadFlashOperation(address, length, timeoutMillis, listener));
 	}
 
 	@Override
 	public OperationFuture<MacAddress> readMac(long timeoutMillis, @Nullable OperationListener<MacAddress> listener) {
 		log.trace("Reading MAC address (timeout: " + timeoutMillis + "ms)");
-		return prepareOperation(operationFactory.createReadMacAddressOperation(timeoutMillis, listener));
+		return executeOperation(operationFactory.createReadMacAddressOperation(timeoutMillis, listener));
 	}
 
 	@Override
 	public OperationFuture<Void> reset(long timeoutMillis, @Nullable OperationListener<Void> listener) {
 		log.trace("Resetting (timeout: " + timeoutMillis + "ms)");
-		return prepareOperation(operationFactory.createResetOperation(timeoutMillis, listener));
+		return executeOperation(operationFactory.createResetOperation(timeoutMillis, listener));
 	}
 
 	@Override
@@ -207,7 +205,7 @@ public class SerialPortDevice implements Device {
 		checkArgument(address >= 0, "Negative length is not allowed.");
 		checkNotNull(data, "Null data is not allowed.");
 		checkArgument(length >= 0, "Negative address is not allowed.");
-		return prepareOperation(
+		return executeOperation(
 				operationFactory.createWriteFlashOperation(address, data, length, timeoutMillis, listener)
 		);
 	}
@@ -217,7 +215,7 @@ public class SerialPortDevice implements Device {
 										  @Nullable OperationListener<Void> listener) {
 		log.trace("Writing MAC address (mac address: " + macAddress + ", timeout: " + timeoutMillis + "ms)");
 		checkNotNull(macAddress, "Null MAC address is not allowed.");
-		return prepareOperation(operationFactory.createWriteMacAddressOperation(macAddress, timeoutMillis, listener));
+		return executeOperation(operationFactory.createWriteMacAddressOperation(macAddress, timeoutMillis, listener));
 	}
 
 	@Override
@@ -236,8 +234,8 @@ public class SerialPortDevice implements Device {
 		stopStreamDataCopy();
 
 		connection.close();
-		pipeInputStreamFromDriverOutputStream.close();
-		pipeOutputStreamToDriverInputStream.close();
+		pipedInputStreamFromDriverOutputStream.close();
+		pipedOutputStreamToDriverInputStream.close();
 		driverInputStream.close();
 		driverOutputStream.close();
 
@@ -287,7 +285,8 @@ public class SerialPortDevice implements Device {
 	private void startStreamDataCopy() {
 
 		try {
-			log.trace("SerialPortDevice.startStreamDataCopy()");
+
+			log.debug("Starting to copy between device streams and driver streams");
 
 			deviceMonitor.enter();
 
@@ -335,22 +334,21 @@ public class SerialPortDevice implements Device {
 		}
 	}
 
-	private <T> OperationFuture<T> prepareOperation(final Operation<T> operation) {
+	private <T> OperationFuture<T> executeOperation(final Operation<T> operation) {
 		final OperationFutureImpl<T> operationFuture = new OperationFutureImpl<T>(operation);
-		operation.addListener(new OperationAdapter<T>() {
+		operation.addListener(
+				new OperationAdapter<T>() {
 
-			@Override
-			public void onFailure(final Throwable throwable) {
-				operationFuture.setException(throwable);
-			}
+					@Override
+					public void onFailure(final Throwable throwable) {
+						operationFuture.setException(throwable);
+					}
 
-			@Override
-			public void onSuccess(final T result) {
-				operationFuture.set(result);
-			}
-
-
-		}
+					@Override
+					public void onSuccess(final T result) {
+						operationFuture.set(result);
+					}
+				}
 		);
 		operationExecutor.submit(operation);
 		return operationFuture;
