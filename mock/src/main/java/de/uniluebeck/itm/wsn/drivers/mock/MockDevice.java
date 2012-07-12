@@ -22,31 +22,42 @@ public class MockDevice extends SerialPortDevice {
 
 	private static class MessageRunnable implements Runnable {
 
-		private final MockConnection connection;
+		private final OutputStream outputStream;
 
 		private final byte[] messageBytes;
 
-		private MessageRunnable(final MockConnection connection, final byte[] messageBytes) {
-			this.connection = connection;
+		private MessageRunnable(final OutputStream outputStream, final byte[] messageBytes) {
+			this.outputStream = outputStream;
 			this.messageBytes = messageBytes;
 		}
 
 		@Override
 		public void run() {
-			connection.writeUpstreamBytes(messageBytes);
+
+			try {
+
+				synchronized (outputStream) {
+					outputStream.write(messageBytes);
+					outputStream.flush();
+				}
+
+			} catch (IOException e) {
+				log.error("IOException while writing to MockConnection.inputStreamPipedOutputStream: {}", e);
+				throw new RuntimeException(e);
+			}
 		}
 
 	}
 
 	private static class EchoRunnable implements Runnable {
 
-		private final MockConnection connection;
-
 		private final InputStream inputStream;
 
-		private EchoRunnable(final MockConnection connection, final InputStream inputStream) {
-			this.connection = connection;
+		private final OutputStream outputStream;
+
+		private EchoRunnable(final InputStream inputStream, final OutputStream outputStream) {
 			this.inputStream = inputStream;
+			this.outputStream = outputStream;
 		}
 
 		@Override
@@ -62,8 +73,22 @@ public class MockDevice extends SerialPortDevice {
 				synchronized (inputStream) {
 
 					while ((read = inputStream.read(b)) != -1) {
-						log.trace("MockDevice.echoRunnable echoing {} bytes", read);
-						connection.writeUpstreamBytes(b, 0, read);
+
+						if (log.isTraceEnabled()) {
+							log.trace("MockDevice.echoRunnable echoing {} bytes: {}", read, new String(b, 0, read));
+						}
+
+						try {
+
+							synchronized (outputStream) {
+								outputStream.write(b, 0, read);
+								outputStream.flush();
+							}
+
+						} catch (IOException e) {
+							log.error("IOException while writing to outputStream: {}", e);
+							throw new RuntimeException(e);
+						}
 					}
 				}
 
@@ -79,17 +104,17 @@ public class MockDevice extends SerialPortDevice {
 
 	}
 
-	private static final String OPTION_BOOT_MESSAGE = MockDevice.class.getName() + "/bootMessage";
+	private static final String OPTION_BOOT_MESSAGE = "BOOT_MESSAGE";
 
-	private static final String OPTION_BOOT_MESSAGE_TYPE = MockDevice.class.getName() + "/bootMessageType";
+	private static final String OPTION_BOOT_MESSAGE_TYPE = "BOOT_MESSAGE_TYPE";
 
-	private static final String OPTION_HEARTBEAT_MESSAGE = MockDevice.class.getName() + "/heartbeatMessage";
+	private static final String OPTION_HEARTBEAT_MESSAGE = "HEARTBEAT_MESSAGE";
 
-	private static final String OPTION_HEARTBEAT_MESSAGE_TYPE = MockDevice.class.getName() + "/heartbeatMessageType";
+	private static final String OPTION_HEARTBEAT_MESSAGE_TYPE = "HEARTBEAT_MESSAGE_TYPE";
 
-	private static final String OPTION_HEARTBEAT_MESSAGE_RATE = MockDevice.class.getName() + "/heartbeatMessageType";
+	private static final String OPTION_HEARTBEAT_MESSAGE_RATE = "HEARTBEAT_MESSAGE_RATE";
 
-	private static final String OPTION_ECHO = MockDevice.class.getName() + "/echo";
+	private static final String OPTION_ECHO = "ECHO";
 
 	private static final Logger log = LoggerFactory.getLogger(MockDevice.class);
 
@@ -209,7 +234,7 @@ public class MockDevice extends SerialPortDevice {
 
 			final byte[] bootMessageBytes = parseMessageBytes(bootMessage, bootMessageType);
 
-			new MessageRunnable(mockConnection, bootMessageBytes).run();
+			new MessageRunnable(mockConnection.getInputStreamPipedOutputStream(), bootMessageBytes).run();
 		}
 	}
 
@@ -220,6 +245,8 @@ public class MockDevice extends SerialPortDevice {
 		String heartbeatMessageRate = configuration.get(OPTION_HEARTBEAT_MESSAGE_RATE);
 
 		if (heartbeatMessage != null) {
+
+			log.debug("Starting heartbeat");
 
 			if (heartbeatMessageType == null) {
 				heartbeatMessageType = "ascii";
@@ -241,7 +268,7 @@ public class MockDevice extends SerialPortDevice {
 			byte[] heartbeatMessageBytes = parseMessageBytes(heartbeatMessage, heartbeatMessageType);
 
 			heartbeatSchedule = heartbeatScheduler.scheduleAtFixedRate(
-					new MessageRunnable(mockConnection, heartbeatMessageBytes),
+					new MessageRunnable(mockConnection.getInputStreamPipedOutputStream(), heartbeatMessageBytes),
 					heartbeatMessageRateMillis,
 					heartbeatMessageRateMillis,
 					TimeUnit.MILLISECONDS
@@ -264,6 +291,7 @@ public class MockDevice extends SerialPortDevice {
 	private void stopHeartBeatIfRunning() {
 
 		if (heartbeatSchedule != null) {
+			log.debug("Stopping heartbeat");
 			heartbeatSchedule.cancel(true);
 			heartbeatSchedule = null;
 		}
@@ -275,13 +303,18 @@ public class MockDevice extends SerialPortDevice {
 		final boolean echo = echoString == null || Boolean.parseBoolean(echoString);
 
 		if (echo) {
-			echoFuture = echoExecutor.submit(new EchoRunnable(mockConnection, pipeInputStreamFromDriverOutputStream));
+			log.debug("Starting echo runnable");
+			echoFuture = echoExecutor.submit(new EchoRunnable(
+					mockConnection.getOutputStreamPipedInputStream(),
+					mockConnection.getInputStreamPipedOutputStream()
+			));
 		}
 	}
 
 	private void stopEchoIfRunning() {
 
 		if (echoFuture != null) {
+			log.debug("Stopping echo runnable");
 			echoFuture.cancel(true);
 			echoFuture = null;
 		}

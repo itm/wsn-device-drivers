@@ -24,10 +24,6 @@ public class MockModule extends AbstractModule {
 
 	private final Map<String, String> configuration;
 
-	public MockModule() {
-		this(null);
-	}
-
 	public MockModule(@Nullable final Map<String, String> configuration) {
 		this.configuration = configuration;
 	}
@@ -41,7 +37,7 @@ public class MockModule extends AbstractModule {
 				.annotatedWith(Names.named("configuration"))
 				.toInstance(configuration != null ? configuration : Maps.<String, String>newHashMap());
 
-		bind(Device.class).to(SerialPortDevice.class);
+		bind(Device.class).to(MockDevice.class);
 		bind(Connection.class).to(MockConnection.class);
 		bind(MockConfiguration.class).in(Singleton.class);
 

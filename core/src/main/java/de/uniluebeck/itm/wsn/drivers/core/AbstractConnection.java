@@ -35,11 +35,6 @@ public abstract class AbstractConnection implements Connection {
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractConnection.class);
 	
 	/**
-	 * The timeout in milliseconds that will be waited for available data.
-	 */
-	private static final int DATA_AVAILABLE_TIMEOUT = 50;
-	
-	/**
 	 * List for connectionListeners that want to be notified when data is available.
 	 */
 	private final EventListenerSupport<ConnectionListener> listeners = 

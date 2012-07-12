@@ -70,6 +70,7 @@ public class MockConnection extends AbstractConnection {
 
 		setOutputStream(outputStream);
 		setInputStream(inputStream);
+
 		setConnected();
 	}
 
@@ -80,6 +81,7 @@ public class MockConnection extends AbstractConnection {
 
 		outputStreamPipedInputStream.close();
 		inputStreamPipedOutputStream.close();
+
 		inputStream.close();
 		outputStream.close();
 
@@ -91,27 +93,19 @@ public class MockConnection extends AbstractConnection {
 		return configuration.getChannels();
 	}
 
-	void writeUpstreamBytes(final byte[] message, final int offset, final int length) {
-
-		if (log.isTraceEnabled()) {
-			log.trace("Sending message {}", StringUtils.toHexString(message));
-		}
-
-		try {
-
-			synchronized (inputStreamPipedOutputStream) {
-				inputStreamPipedOutputStream.write(message, offset, length);
-				inputStreamPipedOutputStream.flush();
-				signalDataAvailable();
-			}
-
-		} catch (IOException e) {
-			log.error("IOException while writing to MockConnection.inputStreamPipedOutputStream: {}", e);
-			throw new RuntimeException(e);
-		}
+	public PipedInputStream getInputStream() {
+		return inputStream;
 	}
 
-	void writeUpstreamBytes(final byte[] message) {
-		writeUpstreamBytes(message, 0, message.length);
+	public PipedOutputStream getInputStreamPipedOutputStream() {
+		return inputStreamPipedOutputStream;
+	}
+
+	public PipedOutputStream getOutputStream() {
+		return outputStream;
+	}
+
+	public PipedInputStream getOutputStreamPipedInputStream() {
+		return outputStreamPipedInputStream;
 	}
 }
