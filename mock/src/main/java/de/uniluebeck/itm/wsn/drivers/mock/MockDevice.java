@@ -279,11 +279,11 @@ public class MockDevice implements Device {
 			stopEchoIfRunning();
 
 			if (scheduler != null) {
-				ExecutorUtils.shutdown(scheduler, 10, TimeUnit.SECONDS);
+				ExecutorUtils.shutdown(scheduler, 1, TimeUnit.SECONDS);
 			}
 
 			if (echoExecutor != null) {
-				ExecutorUtils.shutdown(echoExecutor, 10, TimeUnit.SECONDS);
+				ExecutorUtils.shutdown(echoExecutor, 1, TimeUnit.SECONDS);
 			}
 
 			synchronized (driverInputStream) {
