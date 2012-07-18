@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import de.uniluebeck.itm.wsn.drivers.core.operation.*;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgrammingMode;
 import gnu.io.SerialPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,7 @@ public class iSenseResetOperation extends TimeLimitedOperation<Void> implements 
 	}
 
 	@Override
+	@SerialPortProgrammingMode
 	protected Void callInternal() throws Exception {
 		log.debug("Resetting device...");
 		SerialPort serialPort = connection.getSerialPort();
