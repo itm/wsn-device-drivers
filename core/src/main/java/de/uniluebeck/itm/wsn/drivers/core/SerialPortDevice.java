@@ -286,7 +286,7 @@ public class SerialPortDevice implements Device {
 
 		try {
 
-			log.debug("Starting to copy between device streams and driver streams");
+			log.trace("Starting to copy between device streams and driver streams");
 
 			deviceMonitor.enter();
 
@@ -296,18 +296,21 @@ public class SerialPortDevice implements Device {
 			driverToDeviceStreamDataCopyFuture =
 					driverToDeviceStreamDataCopyExecutor.submit(driverToDeviceStreamDataCopyRunnable);
 
-			deviceMonitor.leave();
-
 		} catch (Exception e) {
+
 			log.error("Error while starting stream data copy: {}", e);
 			throw new RuntimeException(e);
+
+		} finally {
+			deviceMonitor.leave();
 		}
 	}
 
 	private void stopStreamDataCopy() {
 
 		try {
-			log.trace("SerialPortDevice.stopStreamDataCopy()");
+
+			log.trace("Stopping copying between device streams and driver streams");
 
 			deviceMonitor.enter();
 
@@ -327,10 +330,13 @@ public class SerialPortDevice implements Device {
 				throw new RuntimeException(e);
 			}
 
-			deviceMonitor.leave();
 		} catch (RuntimeException e) {
+
 			log.error("Exception while stopping stream data copy: {}", e);
 			throw new RuntimeException(e);
+
+		} finally {
+			deviceMonitor.leave();
 		}
 	}
 
