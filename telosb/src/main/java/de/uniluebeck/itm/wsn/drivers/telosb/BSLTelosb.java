@@ -701,7 +701,7 @@ public class BSLTelosb {
 			log.error("Failed to change baud rate, received NACK.");
 			return false;
 		} else if ((0xFF & reply[0]) == DATA_ACK) {
-			log.info("Changing baud rate to " + newBaudRate + "...");
+			log.debug("Changing baud rate to " + newBaudRate + "...");
 		} else if (reply.length != 1) {
 			log.error("Failed to change baud rate, received unexpected reply of length " + reply.length);
 			return false;
