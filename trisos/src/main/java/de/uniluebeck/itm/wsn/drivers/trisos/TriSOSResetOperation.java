@@ -2,6 +2,7 @@ package de.uniluebeck.itm.wsn.drivers.trisos;
 
 import com.google.common.util.concurrent.TimeLimiter;
 import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.TimeLimitedOperation;
@@ -21,9 +22,10 @@ public class TriSOSResetOperation extends TimeLimitedOperation<Void> implements 
 	private final TriSOSConfiguration configuration;
 
 	@Inject
-	public TriSOSResetOperation(final TimeLimiter timeLimiter, final long timeoutMillis,
-								@Nullable final OperationListener<Void> voidOperationListener,
-								final TriSOSConfiguration configuration) {
+	public TriSOSResetOperation(final TimeLimiter timeLimiter,
+                                    @Assisted final long timeoutMillis,
+                                    @Assisted @Nullable final OperationListener<Void> voidOperationListener,
+                                    final TriSOSConfiguration configuration) {
 		super(timeLimiter, timeoutMillis, voidOperationListener);
 		this.configuration = configuration;
 	}
