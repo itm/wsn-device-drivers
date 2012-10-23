@@ -2,6 +2,7 @@ package de.uniluebeck.itm.wsn.drivers.trisos;
 
 import com.google.common.util.concurrent.TimeLimiter;
 import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractProgramOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgrammingMode;
@@ -27,9 +28,11 @@ public class TriSOSProgramOperation extends AbstractProgramOperation {
 	private final TriSOSConfiguration configuration;
 
 	@Inject
-	public TriSOSProgramOperation(final TimeLimiter timeLimiter, final byte[] binaryImage, final long timeoutMillis,
-								  @Nullable final OperationListener<Void> operationCallback,
-								  final TriSOSConfiguration configuration) {
+	public TriSOSProgramOperation(final TimeLimiter timeLimiter, 
+                                        @Assisted final byte[] binaryImage,
+                                        @Assisted final long timeoutMillis,
+					@Assisted @Nullable final OperationListener<Void> operationCallback,
+					final TriSOSConfiguration configuration) {
 		super(timeLimiter, binaryImage, timeoutMillis, operationCallback);
 		this.configuration = configuration;
 	}
@@ -73,9 +76,12 @@ public class TriSOSProgramOperation extends AbstractProgramOperation {
 		float lastProgress = 0;
 		// Handle output from programmer device executable
 		while ((line = readerStdIn.readLine()) != null) {
-			log.trace(line);
+			log.trace(configuration.getProgramExe() + ": " + line);
 			// Parsing progress output from the programmer device executable
-			// and put it into the progress manager
+			// and put it into the progress manager.
+                        // (NOTICE: Parsing progress is tested and works with jtagiceii.exe
+                        // and AVRDragon.exe. Programming with atprogram.exe (for jtagice3)
+                        // is tested and works but it does not print progress output.)
 			if (line.contains("Programming FLASH: ")) {
 
 				progressString = line.replace("Programming FLASH: ", "");
@@ -93,7 +99,7 @@ public class TriSOSProgramOperation extends AbstractProgramOperation {
 
 		// Error output from programmer device executable
 		while ((line = readerStdErr.readLine()) != null) {
-			log.error(line);
+			log.error(configuration.getProgramExe() + ": " + line);
 		}
 		readerStdErr.close();
 
