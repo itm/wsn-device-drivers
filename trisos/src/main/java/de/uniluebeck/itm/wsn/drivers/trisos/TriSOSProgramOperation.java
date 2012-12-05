@@ -62,38 +62,17 @@ public class TriSOSProgramOperation extends AbstractProgramOperation {
 		String programmingCommand = configuration.getProgramCommandString();
 		log.info("Execute: " + programmingCommand);
 
+                progress(0f);
 		// Execute programmer device executable ...
 		Process p = Runtime.getRuntime().exec(programmingCommand);
 
 		BufferedReader readerStdIn = new BufferedReader(new InputStreamReader(p.getInputStream()));
 		BufferedReader readerStdErr = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 		String line;
-		String progressString;
 
-		// Overall progress
-		float progress;
-		// Progress of the last step
-		float lastProgress = 0;
 		// Handle output from programmer device executable
 		while ((line = readerStdIn.readLine()) != null) {
 			log.trace(configuration.getProgramExe() + ": " + line);
-			// Parsing progress output from the programmer device executable
-			// and put it into the progress manager.
-                        // (NOTICE: Parsing progress is tested and works with jtagiceii.exe
-                        // and AVRDragon.exe. Programming with atprogram.exe (for jtagice3)
-                        // is tested and works but it does not print progress output.)
-			if (line.contains("Programming FLASH: ")) {
-
-				progressString = line.replace("Programming FLASH: ", "");
-				progressString = progressString.replace("%", "");
-
-				progress = Float.parseFloat(progressString);
-				progress = progress / 100f;
-
-				progress(progress - lastProgress);
-
-				lastProgress = progress;
-			}
 		}
 		readerStdIn.close();
 

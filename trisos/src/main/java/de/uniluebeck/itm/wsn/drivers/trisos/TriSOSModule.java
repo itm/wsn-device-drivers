@@ -52,7 +52,7 @@ public class TriSOSModule extends AbstractModule {
 				.implement(ProgramOperation.class, TriSOSProgramOperation.class)
 				.implement(ReadFlashOperation.class, TriSOSReadFlashOperation.class)
 				.implement(ReadMacAddressOperation.class, TriSOSReadMacAddressOperation.class)
-				.implement(ResetOperation.class, iSenseResetOperation.class)
+				.implement(ResetOperation.class, TriSOSResetOperation.class)
 				.implement(WriteFlashOperation.class, TriSOSWriteFlashOperation.class)
 				.implement(WriteMacAddressOperation.class, TriSOSWriteMacAddressOperation.class)
 				.build(OperationFactory.class)
