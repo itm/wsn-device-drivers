@@ -13,7 +13,6 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.*;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgrammingMode;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgrammingModeInterceptor;
-import de.uniluebeck.itm.wsn.drivers.isense.iSenseResetOperation;
 
 import javax.annotation.Nullable;
 import java.util.Map;
