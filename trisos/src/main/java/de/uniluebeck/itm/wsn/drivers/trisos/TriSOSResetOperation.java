@@ -2,13 +2,17 @@ package de.uniluebeck.itm.wsn.drivers.trisos;
 
 import com.google.common.util.concurrent.TimeLimiter;
 import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
 import de.uniluebeck.itm.wsn.drivers.core.operation.ResetOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.TimeLimitedOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+
 
 
 /**
@@ -20,10 +24,13 @@ public class TriSOSResetOperation extends TimeLimitedOperation<Void> implements 
 
 	private final TriSOSConfiguration configuration;
 
+        private static final Logger log = LoggerFactory.getLogger(TriSOSProgramOperation.class);
+
 	@Inject
-	public TriSOSResetOperation(final TimeLimiter timeLimiter, final long timeoutMillis,
-								@Nullable final OperationListener<Void> voidOperationListener,
-								final TriSOSConfiguration configuration) {
+	public TriSOSResetOperation(final TimeLimiter timeLimiter,
+                                    @Assisted final long timeoutMillis,
+                                    @Assisted @Nullable final OperationListener<Void> voidOperationListener,
+                                    final TriSOSConfiguration configuration) {
 		super(timeLimiter, timeoutMillis, voidOperationListener);
 		this.configuration = configuration;
 	}
@@ -41,20 +48,22 @@ public class TriSOSResetOperation extends TimeLimitedOperation<Void> implements 
 
 		String line;
 
+                progress(0f);
+
 		while ((line = readerInputStream.readLine()) != null) {
-			System.out.println(line);
+			log.trace(configuration.getProgramExe() + ": " + line);
 		}
 		readerInputStream.close();
 
 		while ((line = readerOutputStream.readLine()) != null) {
-			System.err.println(line);
+			log.trace(configuration.getProgramExe() + ": " + line);
 		}
 		readerOutputStream.close();
 
 		// wait for process to finish ...
 		p.waitFor();
 		p.destroy();
-		progress(1.0f);
+		progress(1f);
 
 		return null;
 	}

@@ -26,7 +26,7 @@ package de.uniluebeck.itm.wsn.drivers.factories;
 public enum DeviceType {
 
 	ISENSE("isense", "isense39", "isense48"),
-	TELOSB("telosb","tmote sky","MTM-CM5000MSP"),
+	TELOSB("telosb", "tmote sky", "MTM-CM5000MSP"),
 	PACEMATE("pacemate"),
 	MOCK("mock"),
 	TRISOS("trisos");

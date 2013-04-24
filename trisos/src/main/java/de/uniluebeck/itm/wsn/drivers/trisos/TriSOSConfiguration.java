@@ -115,11 +115,20 @@ public class TriSOSConfiguration {
 	}
 
 	/**
-	 * The complete path to the binary file.
+	 * The complete path to the binary file
 	 *
-	 * @return
+	 * @return Complete path to the binary file
 	 */
 	public String getBinFileCompletePath() {
 		return binFileCompletePath;
 	}
+
+        /**
+         * The current programming tool executable
+         *
+         * @return Current programming tool executable
+         */
+        public String getProgramExe() {
+            return programExe;
+        }
 }

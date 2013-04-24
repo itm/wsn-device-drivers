@@ -2,6 +2,7 @@ package de.uniluebeck.itm.wsn.drivers.trisos;
 
 import com.google.common.util.concurrent.TimeLimiter;
 import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractProgramOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgrammingMode;
@@ -27,9 +28,11 @@ public class TriSOSProgramOperation extends AbstractProgramOperation {
 	private final TriSOSConfiguration configuration;
 
 	@Inject
-	public TriSOSProgramOperation(final TimeLimiter timeLimiter, final byte[] binaryImage, final long timeoutMillis,
-								  @Nullable final OperationListener<Void> operationCallback,
-								  final TriSOSConfiguration configuration) {
+	public TriSOSProgramOperation(final TimeLimiter timeLimiter, 
+                                        @Assisted final byte[] binaryImage,
+                                        @Assisted final long timeoutMillis,
+					@Assisted @Nullable final OperationListener<Void> operationCallback,
+					final TriSOSConfiguration configuration) {
 		super(timeLimiter, binaryImage, timeoutMillis, operationCallback);
 		this.configuration = configuration;
 	}
@@ -59,41 +62,23 @@ public class TriSOSProgramOperation extends AbstractProgramOperation {
 		String programmingCommand = configuration.getProgramCommandString();
 		log.info("Execute: " + programmingCommand);
 
+                progress(0f);
 		// Execute programmer device executable ...
 		Process p = Runtime.getRuntime().exec(programmingCommand);
 
 		BufferedReader readerStdIn = new BufferedReader(new InputStreamReader(p.getInputStream()));
 		BufferedReader readerStdErr = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 		String line;
-		String progressString;
 
-		// Overall progress
-		float progress;
-		// Progress of the last step
-		float lastProgress = 0;
 		// Handle output from programmer device executable
 		while ((line = readerStdIn.readLine()) != null) {
-			log.trace(line);
-			// Parsing progress output from the programmer device executable
-			// and put it into the progress manager
-			if (line.contains("Programming FLASH: ")) {
-
-				progressString = line.replace("Programming FLASH: ", "");
-				progressString = progressString.replace("%", "");
-
-				progress = Float.parseFloat(progressString);
-				progress = progress / 100f;
-
-				progress(progress - lastProgress);
-
-				lastProgress = progress;
-			}
+			log.trace(configuration.getProgramExe() + ": " + line);
 		}
 		readerStdIn.close();
 
 		// Error output from programmer device executable
 		while ((line = readerStdErr.readLine()) != null) {
-			log.error(line);
+			log.error(configuration.getProgramExe() + ": " + line);
 		}
 		readerStdErr.close();
 
