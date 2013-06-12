@@ -60,7 +60,7 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 		final MacAddress macAddressBefore = readMacAddress(chipType);
 
 		if (isBrokenMacAddress(macAddressBefore)) {
-			throw new FlashProgramFailedException("Device MAC address (" + macAddressBefore + ") is broken!");
+			throw new MacAddressBrokenException("Device MAC address (" + macAddressBefore + ") is broken!");
 		}
 
 		writeMacAddressToImage(macAddressBefore, binaryImage);
@@ -86,7 +86,7 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 
 			// if MAC address is still broken, abort
 			if (isBrokenMacAddress(readMacAddress(chipType))) {
-				throw new FlashProgramFailedException(
+				throw new MacAddressBrokenException(
 						"After flashing the MAC address seems to be " + macAddressAfter + " which may result in unexpected behavior!"
 				);
 			}
