@@ -57,10 +57,16 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 		JennicBinaryImage binaryImage = new JennicBinaryImage(getBinaryImage());
 		assertImageCompatible(binaryImage, chipType);
 
-		readMacAddressFromDeviceAndWriteToImage(chipType, binaryImage);
+		final MacAddress macAddressBefore = readMacAddress(chipType);
+
+		if (isBrokenMacAddress(macAddressBefore)) {
+			throw new FlashProgramFailedException("Device MAC address (" + macAddressBefore + ") is broken!");
+		}
+
+		writeMacAddressToImage(macAddressBefore, binaryImage);
 
 		while (!isCanceled() && !helper.waitForConnection()) {
-			log.debug("Still waiting for a connection");
+			log.debug("Waiting for a connection...");
 		}
 
 		if (isCanceled()) {
@@ -70,21 +76,29 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 		eraseSectors(chipType);
 		writeBinaryImage(binaryImage);
 
-		boolean brokenMac = false;
-		final byte[] deviceFlashHeader = readDeviceFlashHeader(chipType.getHeaderStart(), chipType.getHeaderLength());
-		if (MacAddress.HIGHEST_MAC_ADDRESS.equals(new MacAddress(deviceFlashHeader))) {
-			brokenMac = true;
+		final MacAddress macAddressAfter = readMacAddress(chipType);
+
+		// if MAC address is broken after flashing try to rewrite the old MAC address that was there before
+		if (isBrokenMacAddress(macAddressAfter)) {
+
+			// write old MAC address
+			runSubOperation(operationFactory.createWriteMacAddressOperation(macAddressBefore, 2000, null), 0f);
+
+			// if MAC address is still broken, abort
+			if (isBrokenMacAddress(readMacAddress(chipType))) {
+				throw new FlashProgramFailedException(
+						"After flashing the MAC address seems to be " + macAddressAfter + " which may result in unexpected behavior!"
+				);
+			}
 		}
 
 		runSubOperation(operationFactory.createResetOperation(1000, null), FRACTION_RESET);
 
-		if (brokenMac) {
-			throw new FlashProgramFailedException(
-					"After flashing the MAC address seems to be 0xFF...FF which may result in unexpected behavior!"
-			);
-		}
-
 		return null;
+	}
+
+	private boolean isBrokenMacAddress(final MacAddress macAddress) throws Exception {
+		return MacAddress.HIGHEST_MAC_ADDRESS.equals(macAddress);
 	}
 
 	private void writeBinaryImage(final JennicBinaryImage binaryImage)
@@ -118,16 +132,17 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 		helper.eraseFlash(Sector.THIRD);
 	}
 
-	private void readMacAddressFromDeviceAndWriteToImage(ChipType chipType, JennicBinaryImage binaryImage)
-			throws Exception {
+	private void writeMacAddressToImage(final MacAddress macAddress, final JennicBinaryImage binaryImage)
+			throws ProgramChipMismatchException {
+		binaryImage.insertHeader(macAddress.toByteArray());
+	}
 
-		byte[] deviceFlashHeader = readDeviceFlashHeader(chipType.getHeaderStart(), chipType.getHeaderLength());
+	private MacAddress readMacAddress(final ChipType chipType) throws Exception {
+		return new MacAddress(readMacAddressBytes(chipType));
+	}
 
-		if (MacAddress.HIGHEST_MAC_ADDRESS.equals(new MacAddress(deviceFlashHeader))) {
-			throw new FlashProgramFailedException("Device MAC address (0xFF...FF) seems broken!");
-		}
-
-		binaryImage.insertHeader(deviceFlashHeader);
+	private byte[] readMacAddressBytes(final ChipType chipType) throws Exception {
+		return readDeviceFlashHeader(chipType.getHeaderStart(), chipType.getHeaderLength());
 	}
 
 	private byte[] readDeviceFlashHeader(final int address, final int length) throws Exception {
