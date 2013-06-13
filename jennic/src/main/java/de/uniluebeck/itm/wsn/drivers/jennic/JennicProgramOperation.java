@@ -57,13 +57,14 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 		JennicBinaryImage binaryImage = new JennicBinaryImage(getBinaryImage());
 		assertImageCompatible(binaryImage, chipType);
 
-		final MacAddress macAddressBefore = readMacAddress(chipType);
+		final byte[] macAddressBeforeBytes = readMacAddressBytes(chipType);
+		final MacAddress macAddressBefore = new MacAddress(macAddressBeforeBytes);
 
 		if (isBrokenMacAddress(macAddressBefore)) {
 			throw new MacAddressBrokenException("Device MAC address (" + macAddressBefore + ") is broken!");
 		}
 
-		writeMacAddressToImage(macAddressBefore, binaryImage);
+		writeMacAddressToImage(macAddressBeforeBytes, binaryImage);
 
 		while (!isCanceled() && !helper.waitForConnection()) {
 			log.debug("Waiting for a connection...");
@@ -132,9 +133,9 @@ public class JennicProgramOperation extends AbstractProgramOperation {
 		helper.eraseFlash(Sector.THIRD);
 	}
 
-	private void writeMacAddressToImage(final MacAddress macAddress, final JennicBinaryImage binaryImage)
+	private void writeMacAddressToImage(final byte[] macAddressBytes, final JennicBinaryImage binaryImage)
 			throws ProgramChipMismatchException {
-		binaryImage.insertHeader(macAddress.toByteArray());
+		binaryImage.insertHeader(macAddressBytes);
 	}
 
 	private MacAddress readMacAddress(final ChipType chipType) throws Exception {
