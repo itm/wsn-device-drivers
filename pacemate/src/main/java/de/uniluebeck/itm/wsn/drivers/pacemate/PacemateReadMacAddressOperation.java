@@ -3,7 +3,7 @@ package de.uniluebeck.itm.wsn.drivers.pacemate;
 import com.google.common.util.concurrent.TimeLimiter;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import de.uniluebeck.itm.tr.util.StringUtils;
+import de.uniluebeck.itm.util.StringUtils;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationFactory;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;

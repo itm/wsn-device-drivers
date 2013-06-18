@@ -1,7 +1,6 @@
 package de.uniluebeck.itm.wsn.drivers.jennic;
 
 import com.google.inject.Inject;
-import de.uniluebeck.itm.tr.util.StringUtils;
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.Connection;
 import de.uniluebeck.itm.wsn.drivers.core.exception.*;
@@ -14,7 +13,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static de.uniluebeck.itm.tr.util.StringUtils.toHexString;
+import static de.uniluebeck.itm.util.StringUtils.toHexString;
+
 
 public class JennicHelper {
 
@@ -107,9 +107,7 @@ public class JennicHelper {
 			// throw error if configuration failed
 			if (response[1] != 0x00) {
 				if (log.isErrorEnabled()) {
-					log.error("Failed to configure flash ROM: response should be 0x00, yet it is: ",
-							toHexString(response[1])
-					);
+					log.error("Failed to configure flash ROM: response should be 0x00, is: ", toHexString(response[1]));
 				}
 				throw new FlashConfigurationFailedException();
 			}
@@ -121,7 +119,7 @@ public class JennicHelper {
 	public void sendBootloaderMessage(byte[] message) throws IOException {
 
 		if (log.isTraceEnabled()) {
-			log.trace("Sending bootloader request: {}", StringUtils.toHexString(message));
+			log.trace("Sending bootloader request: {}", toHexString(message));
 		}
 
 		// allocate buffer for length + message + checksum
@@ -160,7 +158,7 @@ public class JennicHelper {
 		}
 
 		if (log.isTraceEnabled()) {
-			log.trace("Received bootloader reply: {}", StringUtils.toHexString(bootLoaderReply));
+			log.trace("Received bootloader reply: {}", toHexString(bootLoaderReply));
 		}
 
 		// read checksum

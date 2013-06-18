@@ -3,7 +3,6 @@ package de.uniluebeck.itm.wsn.drivers.jennic;
 import com.google.common.util.concurrent.TimeLimiter;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import de.uniluebeck.itm.tr.util.StringUtils;
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.MacAddress;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractWriteMacAddressOperation;
@@ -12,6 +11,8 @@ import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgrammingMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static de.uniluebeck.itm.util.StringUtils.toHexString;
 
 public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOperation {
 
@@ -67,11 +68,10 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 		byte[] macAddressBytes = macAddress.toByteArray();
 
 		if (log.isTraceEnabled()) {
-			log.trace("Copy MAC address bytes ({}) to address {}, length: {}", new Object[]{
-					StringUtils.toHexString(macAddressBytes),
+			log.trace("Copy MAC address bytes ({}) to address {}, length: {}",
+					toHexString(macAddressBytes),
 					chipType.getHeaderStart(),
 					macAddressBytes.length
-			}
 			);
 		}
 

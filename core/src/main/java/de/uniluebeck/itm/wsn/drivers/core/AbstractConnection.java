@@ -1,6 +1,11 @@
 package de.uniluebeck.itm.wsn.drivers.core;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Closeables;
+import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
+import org.apache.commons.lang3.event.EventListenerSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,15 +15,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.apache.commons.lang3.event.EventListenerSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.io.ByteStreams;
-import com.google.common.io.Closeables;
-
-import de.uniluebeck.itm.tr.util.TimeDiff;
-import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 
 /**

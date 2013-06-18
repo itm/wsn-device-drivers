@@ -195,12 +195,10 @@ public abstract class TimeLimitedOperation<ResultType> implements Operation<Resu
 			@Override
 			public void onProgressChange(final float fraction) {
 				log.trace("Operation {}, progress: {}, suboperation {}, suboperation progress: {}",
-						new Object[]{
-								TimeLimitedOperation.this.getClass().getSimpleName(),
-								TimeLimitedOperation.this.progress,
-								subOperation.getClass().getSimpleName(),
-								fraction
-						}
+						TimeLimitedOperation.this.getClass().getSimpleName(),
+						TimeLimitedOperation.this.progress,
+						subOperation.getClass().getSimpleName(),
+						fraction
 				);
 				progress(initialParentOperationProgress + subFraction * fraction);
 			}
@@ -219,7 +217,7 @@ public abstract class TimeLimitedOperation<ResultType> implements Operation<Resu
 	protected void progress(float progress) {
 
 		log.trace("{} progress (old={}, new={})",
-				new Object[]{this.getClass().getSimpleName(), this.progress, progress}
+				this.getClass().getSimpleName(), this.progress, progress
 		);
 
 		checkArgument(progress >= this.progress,
@@ -255,7 +253,7 @@ public abstract class TimeLimitedOperation<ResultType> implements Operation<Resu
 
 	private void fireBeforeStateChangedEvent(StateChangedEvent<ResultType> event) {
 		String msg = "{} state changing from {} to {}";
-		log.trace(msg, new Object[]{this.getClass().getSimpleName(), event.getOldState(), event.getNewState()});
+		log.trace(msg, this.getClass().getSimpleName(), event.getOldState(), event.getNewState());
 		listeners.fire().beforeStateChanged(event);
 	}
 
@@ -267,7 +265,7 @@ public abstract class TimeLimitedOperation<ResultType> implements Operation<Resu
 	 */
 	private void fireAfterStateChangedEvent(StateChangedEvent<ResultType> event) {
 		String msg = "{} state changed from {} to {}";
-		log.trace(msg, new Object[]{this.getClass().getSimpleName(), event.getOldState(), event.getNewState()});
+		log.trace(msg, this.getClass().getSimpleName(), event.getOldState(), event.getNewState());
 		listeners.fire().afterStateChanged(event);
 	}
 }

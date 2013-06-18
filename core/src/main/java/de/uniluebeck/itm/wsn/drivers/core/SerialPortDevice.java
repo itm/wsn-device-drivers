@@ -4,8 +4,7 @@ import com.google.common.util.concurrent.Monitor;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import de.uniluebeck.itm.tr.util.ExecutorUtils;
-import de.uniluebeck.itm.tr.util.StringUtils;
+import de.uniluebeck.itm.util.concurrent.ExecutorUtils;
 import de.uniluebeck.itm.wsn.drivers.core.operation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static de.uniluebeck.itm.util.StringUtils.toHexString;
 
 
 /**
@@ -69,10 +69,7 @@ public class SerialPortDevice implements Device {
 				int bytesRead = inputStream.read(buffer);
 
 				if (log.isTraceEnabled()) {
-					log.trace("Reading {} bytes from device stream: {}",
-							bytesRead,
-							StringUtils.toHexString(buffer, 0, bytesRead)
-					);
+					log.trace("Reading {} bytes from device stream: {}", bytesRead, toHexString(buffer, 0, bytesRead));
 				}
 
 				pipedOutputStreamToDriverInputStream.write(buffer, 0, bytesRead);
@@ -110,7 +107,7 @@ public class SerialPortDevice implements Device {
 						if (log.isTraceEnabled()) {
 							log.trace("Writing {} bytes to device stream: {}",
 									bytesRead,
-									StringUtils.toHexString(buffer, 0, bytesRead)
+									toHexString(buffer, 0, bytesRead)
 							);
 						}
 

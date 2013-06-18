@@ -2,8 +2,8 @@ package de.uniluebeck.itm.wsn.drivers.telosb;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import de.uniluebeck.itm.tr.util.StringUtils;
-import de.uniluebeck.itm.tr.util.TimeDiff;
+import de.uniluebeck.itm.util.StringUtils;
+import de.uniluebeck.itm.util.TimeDiff;
 import de.uniluebeck.itm.wsn.drivers.core.exception.*;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 import gnu.io.SerialPort;

@@ -3,7 +3,7 @@ package de.uniluebeck.itm.wsn.drivers.jennic;
 import com.google.common.util.concurrent.TimeLimiter;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import de.uniluebeck.itm.tr.util.StringUtils;
+import de.uniluebeck.itm.util.StringUtils;
 import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.exception.RamReadFailedException;
 import de.uniluebeck.itm.wsn.drivers.core.exception.UnexpectedResponseException;
@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 
-import static de.uniluebeck.itm.tr.util.StringUtils.toHexString;
+import static de.uniluebeck.itm.util.StringUtils.toHexString;
 
 public class JennicGetChipTypeOperation extends TimeLimitedOperation<ChipType> implements GetChipTypeOperation {
 
