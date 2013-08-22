@@ -73,8 +73,8 @@ public abstract class AbstractConnection implements Connection {
 	private final Condition isDataAvailable = dataAvailableLock.newCondition();
 	
 	@Override
-	public void connect(String aUri) throws IOException {
-		checkNotNull(aUri, "Null argument is not allowed.");
+	public void connect(String port) throws IOException {
+		checkNotNull(port, "Port argument for connecting to device is null");
 		if (isConnected()) {
 			throw new IOException("Already connected.");
 		}
