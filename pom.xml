@@ -2,11 +2,11 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>de.uniluebeck.itm</groupId>
-	<artifactId>wsn-device-drivers</artifactId>
+	<groupId>de.uniluebeck.itm.wsn-device-drivers</groupId>
+	<artifactId>parent</artifactId>
 	<version>1.1.3-SNAPSHOT</version>
 
-	<name>WSN Device Drivers</name>
+	<name>WSN Device Drivers :: Parent</name>
 	<url>https://github.com/itm/wsn-device-drivers</url>
 
 	<packaging>pom</packaging>
@@ -26,43 +26,43 @@
 		<dependencies>
 
 			<dependency>
-				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>wsn-device-drivers-core</artifactId>
+				<groupId>de.uniluebeck.itm.wsn-device-drivers</groupId>
+				<artifactId>core</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>wsn-device-drivers-common</artifactId>
+				<groupId>de.uniluebeck.itm.wsn-device-drivers</groupId>
+				<artifactId>common</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>wsn-device-drivers-jennic</artifactId>
+				<groupId>de.uniluebeck.itm.wsn-device-drivers</groupId>
+				<artifactId>jennic</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>wsn-device-drivers-pacemate</artifactId>
+				<groupId>de.uniluebeck.itm.wsn-device-drivers</groupId>
+				<artifactId>pacemate</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>wsn-device-drivers-telosb</artifactId>
+				<groupId>de.uniluebeck.itm.wsn-device-drivers</groupId>
+				<artifactId>telosb</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>wsn-device-drivers-mock</artifactId>
+				<groupId>de.uniluebeck.itm.wsn-device-drivers</groupId>
+				<artifactId>mock</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>wsn-device-drivers-trisos</artifactId>
+				<groupId>de.uniluebeck.itm.wsn-device-drivers</groupId>
+				<artifactId>trisos</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>de.uniluebeck.itm</groupId>
-				<artifactId>wsn-device-drivers-factories</artifactId>
+				<groupId>de.uniluebeck.itm.wsn-device-drivers</groupId>
+				<artifactId>factories</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
