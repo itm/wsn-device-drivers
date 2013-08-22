@@ -69,12 +69,12 @@
 			<dependency>
 				<groupId>de.uniluebeck.itm.util</groupId>
 				<artifactId>concurrent</artifactId>
-				<version>0.5-SNAPSHOT</version>
+				<version>0.5</version>
 			</dependency>
 			<dependency>
 				<groupId>de.uniluebeck.itm.util</groupId>
 				<artifactId>util</artifactId>
-				<version>0.5-SNAPSHOT</version>
+				<version>0.5</version>
 			</dependency>
 
 			<dependency>
