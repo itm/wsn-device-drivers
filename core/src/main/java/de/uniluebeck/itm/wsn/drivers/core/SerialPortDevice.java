@@ -68,6 +68,10 @@ public class SerialPortDevice implements Device {
 				InputStream inputStream = connection.getInputStream();
 				int bytesRead = inputStream.read(buffer);
 
+				if (bytesRead == -1) {
+					return;
+				}
+
 				if (log.isTraceEnabled()) {
 					log.trace("Reading {} bytes from device stream: {}", bytesRead, toHexString(buffer, 0, bytesRead));
 				}
