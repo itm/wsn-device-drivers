@@ -5,7 +5,6 @@ import com.google.common.collect.Iterators;
 import de.uniluebeck.itm.wsn.drivers.core.AbstractConnection;
 import de.uniluebeck.itm.wsn.drivers.core.exception.PortNotFoundException;
 import de.uniluebeck.itm.wsn.drivers.core.util.JarUtil;
-import de.uniluebeck.itm.wsn.drivers.core.util.SysOutUtil;
 import gnu.io.*;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
@@ -132,14 +131,8 @@ public abstract class AbstractSerialPortConnection extends AbstractConnection
 	}
 
 	protected void connectSerialPort(final String port) throws PortInUseException, IOException {
-		SysOutUtil.mute();
-		Enumeration<?> identifiers;
-		try {
-			identifiers = CommPortIdentifier.getPortIdentifiers();
-		} finally {
-			SysOutUtil.restore();
-		}
 
+		Enumeration<?> identifiers = CommPortIdentifier.getPortIdentifiers();
 		Iterator<?> iterator = Iterators.forEnumeration(identifiers);
 		CommPortIdentifier commPortIdentifier = (CommPortIdentifier) Iterators.find(iterator, new Predicate<Object>() {
 			@Override
