@@ -1,7 +1,5 @@
 package de.uniluebeck.itm.wsn.drivers.core.serialport;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterators;
 import de.uniluebeck.itm.wsn.drivers.core.AbstractConnection;
 import de.uniluebeck.itm.wsn.drivers.core.exception.PortNotFoundException;
 import de.uniluebeck.itm.wsn.drivers.core.util.JarUtil;
@@ -12,9 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
 import java.util.TooManyListenersException;
 
 import static com.google.common.base.Preconditions.checkState;
@@ -112,39 +107,31 @@ public abstract class AbstractSerialPortConnection extends AbstractConnection
 
 	@Override
 	public void connect(final String port) throws IOException {
+
 		super.connect(port);
+
 		checkState(serialPort == null, "Serial port is already set. Disconnect first before retry.");
 
 		try {
 			connectSerialPort(port);
 			setConnected();
-		} catch (final NoSuchElementException e) {
-			LOG.warn("Port {} not found.", port);
-			throw new PortNotFoundException(e);
 		} catch (final PortInUseException e) {
 			LOG.error("Port {} already in use.", port);
 			throw new IOException(e);
 		} catch (final ClassCastException e) {
 			LOG.error("Port {} is not a serial port.", port);
 			throw new IOException(e);
+		} catch (NoSuchPortException e) {
+			LOG.warn("Port {} not found.", port);
+			throw new PortNotFoundException(e);
 		}
 	}
 
-	protected void connectSerialPort(final String port) throws PortInUseException, IOException {
+	protected void connectSerialPort(final String port) throws PortInUseException, IOException, NoSuchPortException {
 
-		Enumeration<?> identifiers = CommPortIdentifier.getPortIdentifiers();
-		Iterator<?> iterator = Iterators.forEnumeration(identifiers);
-		CommPortIdentifier commPortIdentifier = (CommPortIdentifier) Iterators.find(iterator, new Predicate<Object>() {
-			@Override
-			public boolean apply(final Object input) {
-				final CommPortIdentifier commPortIdentifier = (CommPortIdentifier) input;
-				return commPortIdentifier.getName().equals(port);
-			}
-		}
-		);
-
-		serialPort = (SerialPort) commPortIdentifier.open(getClass().getName(), MAX_CONNECTION_TIMEOUT);
+		serialPort = (SerialPort) CommPortIdentifier.getPortIdentifier(port).open("tr-gateway", MAX_CONNECTION_TIMEOUT);
 		serialPort.notifyOnDataAvailable(true);
+
 		try {
 			serialPort.addEventListener(this);
 		} catch (TooManyListenersException e) {

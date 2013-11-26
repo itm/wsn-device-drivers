@@ -1,11 +1,11 @@
 package de.uniluebeck.itm.wsn.drivers.isense;
 
 import de.uniluebeck.itm.wsn.drivers.core.serialport.AbstractSerialPortConnection;
+import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import gnu.io.SerialPortEventListener;
 
 import java.io.IOException;
-import java.util.NoSuchElementException;
 
 
 /**
@@ -25,7 +25,8 @@ public class iSenseSerialPortConnection extends AbstractSerialPortConnection imp
 	}
 	
 	@Override
-	protected void connectSerialPort(String port) throws NoSuchElementException, PortInUseException, IOException {
+	protected void connectSerialPort(String port)
+			throws PortInUseException, IOException, NoSuchPortException {
 		super.connectSerialPort(port);
 		setSerialPortMode(SerialPortMode.NORMAL);
 	}

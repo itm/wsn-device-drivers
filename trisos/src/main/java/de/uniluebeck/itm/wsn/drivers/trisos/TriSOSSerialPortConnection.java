@@ -2,11 +2,11 @@ package de.uniluebeck.itm.wsn.drivers.trisos;
 
 import com.google.inject.Inject;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.AbstractSerialPortConnection;
+import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 
 public class TriSOSSerialPortConnection extends AbstractSerialPortConnection {
@@ -33,7 +33,8 @@ public class TriSOSSerialPortConnection extends AbstractSerialPortConnection {
 	}
 
 	@Override
-	protected void connectSerialPort(String port) throws NoSuchElementException, PortInUseException, IOException {
+	protected void connectSerialPort(String port)
+			throws PortInUseException, IOException, NoSuchPortException {
 		super.connectSerialPort(port);
 		setSerialPortMode(SerialPortMode.NORMAL);
 	}

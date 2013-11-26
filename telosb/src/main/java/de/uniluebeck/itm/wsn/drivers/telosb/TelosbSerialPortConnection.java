@@ -2,12 +2,12 @@ package de.uniluebeck.itm.wsn.drivers.telosb;
 
 import com.google.inject.Inject;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.AbstractSerialPortConnection;
+import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
 import gnu.io.UnsupportedCommOperationException;
 
 import java.io.IOException;
-import java.util.NoSuchElementException;
 
 
 /**
@@ -31,8 +31,11 @@ public class TelosbSerialPortConnection extends AbstractSerialPortConnection {
 	}
 
 	@Override
-	protected void connectSerialPort(String port) throws NoSuchElementException, PortInUseException, IOException {
+	protected void connectSerialPort(String port)
+			throws PortInUseException, IOException, NoSuchPortException {
+
 		super.connectSerialPort(port);
+
 		try {
 			getSerialPort().setSerialPortParams(
 					NORMAL_BAUD_RATE,
