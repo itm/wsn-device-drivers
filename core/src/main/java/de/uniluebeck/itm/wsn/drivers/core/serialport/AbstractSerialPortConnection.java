@@ -2,7 +2,6 @@ package de.uniluebeck.itm.wsn.drivers.core.serialport;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
-import com.google.common.util.concurrent.Monitor;
 import de.uniluebeck.itm.wsn.drivers.core.AbstractConnection;
 import de.uniluebeck.itm.wsn.drivers.core.exception.PortNotFoundException;
 import de.uniluebeck.itm.wsn.drivers.core.util.JarUtil;
@@ -90,8 +89,11 @@ public abstract class AbstractSerialPortConnection extends AbstractConnection
 	private SerialPort serialPort;
 
 	static {
-		LOG.trace("Loading rxtxSerial from jar file");
-		JarUtil.loadLibrary("rxtxSerial");
+
+		if (System.getProperty("disableEmbeddedRXTX") == null) {
+			LOG.trace("Loading rxtxSerial from jar file");
+			JarUtil.loadLibrary("rxtxSerial");
+		}
 
 		if (SystemUtils.IS_OS_MAC || SystemUtils.IS_OS_MAC_OSX) {
 			File lockDir = new File("/var/lock");
