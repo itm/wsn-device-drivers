@@ -240,8 +240,13 @@ public class SerialPortDevice implements Device {
 		driverInputStream.close();
 		driverOutputStream.close();
 
-		ExecutorUtils.shutdown(driverToDeviceStreamDataCopyExecutor, 1, TimeUnit.SECONDS);
-		ExecutorUtils.shutdown(operationExecutor, 1, TimeUnit.SECONDS);
+		if (driverToDeviceStreamDataCopyExecutor != null) {
+			ExecutorUtils.shutdown(driverToDeviceStreamDataCopyExecutor, 1, TimeUnit.SECONDS);
+		}
+
+		if (operationExecutor != null) {
+			ExecutorUtils.shutdown(operationExecutor, 1, TimeUnit.SECONDS);
+		}
 	}
 
 	@Override
