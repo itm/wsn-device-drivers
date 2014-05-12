@@ -12,6 +12,8 @@ import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgrammingMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
+
 import static de.uniluebeck.itm.util.StringUtils.toHexString;
 
 public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOperation {
@@ -36,7 +38,7 @@ public class JennicWriteMacAddressOperation extends AbstractWriteMacAddressOpera
 										  final OperationFactory operationFactory,
 										  @Assisted final MacAddress macAddress,
 										  @Assisted final long timeoutMillis,
-										  @Assisted final OperationListener<Void> operationCallback) {
+										  @Nullable @Assisted final OperationListener<Void> operationCallback) {
 		super(timeLimiter, macAddress, timeoutMillis, operationCallback);
 		this.helper = helper;
 		this.operationFactory = operationFactory;
