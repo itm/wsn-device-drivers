@@ -110,11 +110,11 @@ public abstract class TimeLimitedOperation<ResultType> implements Operation<Resu
 				progress(0f);
 				log.trace("Running {} operation with {} ms timeout", this.getClass().getSimpleName(), timeoutMillis);
 				result = timeLimiter.callWithTimeout(new Callable<ResultType>() {
-					@Override
-					public ResultType call() throws Exception {
-						return callInternal();
-					}
-				}, timeoutMillis, TimeUnit.MILLISECONDS, false
+														 @Override
+														 public ResultType call() throws Exception {
+															 return callInternal();
+														 }
+													 }, timeoutMillis, TimeUnit.MILLISECONDS, false
 				);
 				progress(1f);
 			}
@@ -122,7 +122,6 @@ public abstract class TimeLimitedOperation<ResultType> implements Operation<Resu
 		} catch (UncheckedTimeoutException e) {
 
 			setState(State.TIMEOUT);
-			log.error("Timeout reached during operation execution", e);
 			TimeoutException timeoutException =
 					new TimeoutException("Operation timed out after " + timeoutMillis + " ms");
 			listeners.fire().onFailure(timeoutException);
@@ -131,7 +130,6 @@ public abstract class TimeLimitedOperation<ResultType> implements Operation<Resu
 		} catch (Exception e) {
 
 			setState(State.FAILED);
-			log.error("Exception during operation execution", e);
 			listeners.fire().onFailure(e);
 			throw e;
 		}
@@ -190,19 +188,21 @@ public abstract class TimeLimitedOperation<ResultType> implements Operation<Resu
 		checkNotNull(subOperation, "Null operations are not allowed");
 		subOperation.addListener(new OperationAdapter<R>() {
 
-			private final float initialParentOperationProgress = TimeLimitedOperation.this.progress;
+									 private final float initialParentOperationProgress =
+											 TimeLimitedOperation.this.progress;
 
-			@Override
-			public void onProgressChange(final float fraction) {
-				log.trace("Operation {}, progress: {}, suboperation {}, suboperation progress: {}",
-						TimeLimitedOperation.this.getClass().getSimpleName(),
-						TimeLimitedOperation.this.progress,
-						subOperation.getClass().getSimpleName(),
-						fraction
-				);
-				progress(initialParentOperationProgress + subFraction * fraction);
-			}
-		}
+									 @Override
+									 public void onProgressChange(final float fraction) {
+										 log.trace(
+												 "Operation {}, progress: {}, suboperation {}, suboperation progress: {}",
+												 TimeLimitedOperation.this.getClass().getSimpleName(),
+												 TimeLimitedOperation.this.progress,
+												 subOperation.getClass().getSimpleName(),
+												 fraction
+										 );
+										 progress(initialParentOperationProgress + subFraction * fraction);
+									 }
+								 }
 		);
 		return subOperation.call();
 	}
