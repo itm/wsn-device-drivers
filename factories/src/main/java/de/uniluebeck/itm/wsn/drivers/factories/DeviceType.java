@@ -26,7 +26,7 @@ package de.uniluebeck.itm.wsn.drivers.factories;
 public enum DeviceType {
 
 	ISENSE("isense", "isense39", "isense48"),
-	TELOSB("telosb", "tmote sky", "MTM-CM5000MSP"),
+	TELOSB("telosb", "tmote sky", "MTM-CM5000MSP", "MTM-XM1000MSP"),
 	PACEMATE("pacemate"),
 	MOCK("mock"),
 	TRISOS("trisos");
@@ -46,6 +46,17 @@ public enum DeviceType {
 			}
 		}
 		throw new RuntimeException("Unknown device type \"" + deviceTypeString + "\"");
+	}
+
+	public static boolean isKnown(String deviceTypeString) {
+		for (DeviceType deviceType : DeviceType.values()) {
+			for (String synonym : deviceType.synonyms) {
+				if (synonym.equalsIgnoreCase(deviceTypeString)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 }
