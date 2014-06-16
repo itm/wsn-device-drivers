@@ -20,32 +20,35 @@ public class PacemateHelper {
 	 * This is the Start Address in the RAM to write data
 	 */
 	public static final long START_ADDRESS_IN_RAM = 1073742336;
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(PacemateHelper.class);
-	
+
 	private static final int TIMEOUT_WAIT_DATA_AVAILABLE = 2000;
-	
+
+	private static final int ASCII_CR = 13;
+
+	private static final int ASCII_LF = 10;
+
+	private static final int ASCII_ZERO = 48;
+
 	private boolean echo = true;
-	
+
 	private final Connection connection;
-	
+
 	@Inject
 	public PacemateHelper(Connection connection) {
 		this.connection = connection;
 	}
-	
+
 	public boolean isEcho() {
 		return echo;
 	}
 
-	@Inject(optional=true)
+	@Inject(optional = true)
 	public void setEcho(@Named("pacemate.echo") boolean echo) {
 		this.echo = echo;
 	}
 
-	/**
-	 * pacemate style
-	 */
 	public void sendBootLoaderMessage(byte[] message) throws IOException {
 		// Allocate buffer for message + CR and LF
 		byte[] data = new byte[message.length + 2];
@@ -62,11 +65,11 @@ public class PacemateHelper {
 		outputStream.write(data);
 		outputStream.flush();
 	}
-	
+
 	public void clearStreamData() throws IOException {
 
 		final InputStream inStream = connection.getInputStream();
-		
+
 		// Allocate message buffer max 255 bytes to read
 		byte[] message = new byte[255];
 
@@ -89,7 +92,7 @@ public class PacemateHelper {
 			}
 		}
 	}
-	
+
 	public void configureFlash(int start, int end) throws Exception {
 		LOG.debug("Configuring flash from " + start + " to " + end + "...");
 
@@ -103,10 +106,7 @@ public class PacemateHelper {
 
 		LOG.debug("Flash is configured");
 	}
-	
-	/**
-	 * Pacemate style
-	 */
+
 	public void copyRAMToFlash(long flashAddress, long ramAddress, int length) throws Exception {
 		// Send flash program request
 		LOG.debug("Sending program request for address " + ramAddress + " with " + length + " bytes");
@@ -117,7 +117,7 @@ public class PacemateHelper {
 
 		LOG.debug("Copy Ram to Flash ok");
 	}
-	
+
 	public void eraseFlash(int start, int end) throws Exception {
 		LOG.debug("Erasing sector from " + start + " to " + end + "...");
 		sendBootLoaderMessage(Messages.flashEraseRequestMessage(start, end));
@@ -129,7 +129,7 @@ public class PacemateHelper {
 		}
 		LOG.debug("Flash erased");
 	}
-	
+
 	public void enableFlashErase() throws Exception {
 		LOG.debug("Enabling Erase Flash...");
 		sendBootLoaderMessage(Messages.Unlock_RequestMessage());
@@ -138,6 +138,22 @@ public class PacemateHelper {
 
 	/**
 	 * Receive the bsl reply message to all request messages with a success answer
+	 *
+	 * @param type
+	 * 		type of operation
+	 *
+	 * @return the response code as String
+	 *
+	 * @throws de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException
+	 * 		if a timeout occurs
+	 * @throws de.uniluebeck.itm.wsn.drivers.core.exception.UnexpectedResponseException
+	 * 		if an error occurs
+	 * @throws de.uniluebeck.itm.wsn.drivers.core.exception.InvalidChecksumException
+	 * 		if an error occurs
+	 * @throws java.io.IOException
+	 * 		if an error occurs
+	 * @throws java.lang.NullPointerException
+	 * 		if an error occurs
 	 */
 	protected String receiveBootLoaderReplySuccess(String type)
 			throws TimeoutException, UnexpectedResponseException, InvalidChecksumException, IOException,
@@ -185,6 +201,22 @@ public class PacemateHelper {
 
 	/**
 	 * Receive the BSL reply message for the autobaud / synchronize request
+	 *
+	 * @param type
+	 * 		type of operation
+	 *
+	 * @return the BSL reply message
+	 *
+	 * @throws de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException
+	 * 		if a timeout occurs
+	 * @throws de.uniluebeck.itm.wsn.drivers.core.exception.UnexpectedResponseException
+	 * 		if an error occurs
+	 * @throws de.uniluebeck.itm.wsn.drivers.core.exception.InvalidChecksumException
+	 * 		if an error occurs
+	 * @throws java.io.IOException
+	 * 		if an error occurs
+	 * @throws java.lang.NullPointerException
+	 * 		if an error occurs
 	 */
 	protected byte[] receiveBootLoaderReplySynchronized(String type)
 			throws TimeoutException, UnexpectedResponseException, InvalidChecksumException, IOException,
@@ -212,6 +244,19 @@ public class PacemateHelper {
 
 	/**
 	 * Read the echo for a line of data
+	 *
+	 * @return the echo
+	 *
+	 * @throws de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException
+	 * 		if a timeout occurs
+	 * @throws de.uniluebeck.itm.wsn.drivers.core.exception.UnexpectedResponseException
+	 * 		if an error occurs
+	 * @throws de.uniluebeck.itm.wsn.drivers.core.exception.InvalidChecksumException
+	 * 		if an error occurs
+	 * @throws java.io.IOException
+	 * 		if an error occurs
+	 * @throws java.lang.NullPointerException
+	 * 		if an error occurs
 	 */
 	protected String receiveBootLoaderReplySendDataEcho()
 			throws TimeoutException, UnexpectedResponseException, InvalidChecksumException, IOException,
@@ -226,6 +271,19 @@ public class PacemateHelper {
 
 	/**
 	 * Read the requested line from the Flash
+	 *
+	 * @return requested line from the Flash
+	 *
+	 * @throws de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException
+	 * 		if a timeout occurs
+	 * @throws de.uniluebeck.itm.wsn.drivers.core.exception.UnexpectedResponseException
+	 * 		if an error occurs
+	 * @throws de.uniluebeck.itm.wsn.drivers.core.exception.InvalidChecksumException
+	 * 		if an error occurs
+	 * @throws java.io.IOException
+	 * 		if an error occurs
+	 * @throws java.lang.NullPointerException
+	 * 		if an error occurs
 	 */
 	protected byte[] receiveBootLoaderReplyReadData()
 			throws TimeoutException, UnexpectedResponseException, InvalidChecksumException, IOException,
@@ -262,6 +320,19 @@ public class PacemateHelper {
 
 	/**
 	 * Read the response to the CRC message
+	 *
+	 * @return the response
+	 *
+	 * @throws de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException
+	 * 		if a timeout occurs
+	 * @throws de.uniluebeck.itm.wsn.drivers.core.exception.UnexpectedResponseException
+	 * 		if an error occurs
+	 * @throws de.uniluebeck.itm.wsn.drivers.core.exception.InvalidChecksumException
+	 * 		if an error occurs
+	 * @throws java.io.IOException
+	 * 		if an error occurs
+	 * @throws java.lang.NullPointerException
+	 * 		if an error occurs
 	 */
 	protected byte[] receiveBootLoaderReplyReadCRCOK()
 			throws TimeoutException, UnexpectedResponseException, InvalidChecksumException, IOException,
@@ -297,10 +368,20 @@ public class PacemateHelper {
 	}
 
 	/**
-	 * Read from the Input stream from the Pacemate. The length of the expected pacemate reply message is given with the
-	 * expected number of  cr lf chars
+	 * Read from the Input stream from the Pacemate. The length of the expected pacemate reply message is given with
+	 * the expected number of &lt;cr&gt;&lt;lf&gt; chars.
+	 *
+	 * @param CRLFCount
+	 * 		expected number of lines
+	 *
+	 * @return lines from the input stream
+	 *
+	 * @throws de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException
+	 * 		if a timeout occurs
+	 * @throws java.io.IOException
+	 * 		if an error occurs
 	 */
-	private byte[] readInputStream(int CRLFcount) throws TimeoutException, IOException {
+	private byte[] readInputStream(int CRLFCount) throws TimeoutException, IOException {
 		final byte[] message = new byte[255];
 
 		int index = 0;
@@ -308,9 +389,9 @@ public class PacemateHelper {
 		int wait = 5;
 		connection.waitDataAvailable(TIMEOUT_WAIT_DATA_AVAILABLE);
 
-		// Read the message - read CRLFcount lines of response
+		// Read the message - read CRLFCount lines of response
 		final InputStream inStream = connection.getInputStream();
-		while ((index < 255) && (counter < CRLFcount)) {
+		while ((index < 255) && (counter < CRLFCount)) {
 			if (inStream.available() > 0) {
 				message[index] = (byte) inStream.read();
 				if (message[index] == 0x0a) {
@@ -325,13 +406,13 @@ public class PacemateHelper {
 				if (index >= 5 && checkResponseMessage(message, index)) {
 					break;
 				}
-				
+
 				try {
 					connection.waitDataAvailable(1000);
 				} catch (final TimeoutException e) {
 					// Do nothing
 				}
-				
+
 				wait--;
 				if (wait == 0) {
 					final byte[] fullMessage = new byte[index];
@@ -351,15 +432,22 @@ public class PacemateHelper {
 	}
 
 	/**
-	 * Check if the last received bytes were cr lf 0 cr lf == Success message without more infos
+	 * Check if the last received bytes were &lt;cr&gt;&lt;lf&gt;0&lt;cr&gt;&lt;lf&gt; == Success message without more
+	 * infos.
+	 *
+	 * @param message
+	 * 		the received message
+	 * @param index
+	 * 		the position in the message to check
+	 *
+	 * @return {@code true} if success, {@code false} otherwise
 	 */
 	private boolean checkResponseMessage(byte[] message, int index) {
-		//LOG.info("Check Response "+message[index-5]+" "+message[index-4]+" "+message[index-3]+" "+message[index-2]+" "+message[index-1]);
-		return (message[index - 5] == 13)      // cr
-				&& (message[index - 4] == 10)  // lf
-				&& (message[index - 3] == 48)  // 0
-				&& (message[index - 2] == 13)  // cr
-				&& (message[index - 1] == 10);
+		return (message[index - 5] == ASCII_CR)
+				&& (message[index - 4] == ASCII_LF)
+				&& (message[index - 3] == ASCII_ZERO)
+				&& (message[index - 2] == ASCII_CR)
+				&& (message[index - 1] == ASCII_LF);
 	}
 
 	protected void waitForBootLoader() throws IOException {
@@ -395,10 +483,7 @@ public class PacemateHelper {
 		}
 		return true;
 	}
-	
-	/**
-	 * Pacemate style
-	 */
+
 	public void writeToRAM(long address, int len) throws Exception {
 		// Send flash program request
 		// LOG.debug("Sending program request for address " + address + " with " + data.length + " bytes");
@@ -409,17 +494,25 @@ public class PacemateHelper {
 
 		// LOG.debug("write to RAM ok");
 	}
-	
+
 	/**
-	 * writes the byte array to the out stream pacemate style
+	 * Writes the byte array to the out stream
+	 *
+	 * @param dataMessage
+	 * 		the message to write
 	 *
 	 * @throws NullPointerException
+	 * 		if an error occurs
 	 * @throws InvalidChecksumException
+	 * 		if an error occurs
 	 * @throws UnexpectedResponseException
+	 * 		if an error occurs
 	 * @throws TimeoutException
+	 * 		if an error occurs
 	 */
 	public void sendDataMessage(byte[] dataMessage) throws IOException, TimeoutException, UnexpectedResponseException,
 			InvalidChecksumException, NullPointerException {
+
 		// Allocate buffer for message + CR and LF
 		int array_length = dataMessage.length + 2;
 
@@ -442,25 +535,27 @@ public class PacemateHelper {
 
 		receiveBootLoaderReplySendDataEcho();
 	}
-	
-	/**
-	 * writes the byte array to the out stream pacemate style
-	 *
-	 * @throws NullPointerException
-	 * @throws InvalidChecksumException
-	 * @throws UnexpectedResponseException
-	 * @throws TimeoutException
-	 */
-	public void sendChecksum(long CRC) throws IOException, TimeoutException, UnexpectedResponseException, InvalidChecksumException, NullPointerException {
+
+	public void sendChecksum(long CRC)
+			throws IOException, TimeoutException, UnexpectedResponseException, InvalidChecksumException,
+			NullPointerException {
 
 		// LOG.debug("Send CRC after 20 Lines or end of Block");
 		sendBootLoaderMessage(Messages.writeCRCRequestMessage(CRC));
 
 		receiveBootLoaderReplyReadCRCOK();
 	}
-	
+
 	/**
-	 * Writes the CRC to the last two bytes of the Flash pacemate style
+	 * Writes the CRC to the last two bytes of the flash
+	 *
+	 * @param crc
+	 * 		CRC value to write
+	 *
+	 * @return {@code true} if succeeded, {@code false} otherwise
+	 *
+	 * @throws java.lang.Exception
+	 * 		if an error occurs
 	 */
 	public boolean writeCRCtoFlash(int crc) throws Exception {
 		byte crc_bytes[] = new byte[256];

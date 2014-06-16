@@ -30,153 +30,103 @@ import java.nio.ByteBuffer;
  */
 public class Messages {
 	
-	/**	Pacemate Style */
 	public static final int AUTO_BAUD_REQUEST = 0x3F;
 	
-	/**	Pacemate Style */
 	public static final int READ_ID_REQUEST = 0x4A;
 	
-	/**	Pacemate Style */
 	public static final int UNLOCK_REQUEST = 0x55;
 	
-	/**	Pacemate Style */
 	public static final int SET_ECHO_REQUEST = 0x41;
 
-	/**	Pacemate Style */
 	public static final int FLASH_ERASE_REQUEST = 0x45;
 
-	/**	Pacemate Style */
 	public static final int FLASH_CONFIGURE_REQUEST = 0x50;
 	
-	/**	Pacemate Style */
 	public static final int WRITE_TO_RAM_REQUEST = 0x57;
 	
-	/**	Pacemate Style */
 	public static final int COPY_RAM_TO_FLASH_REQUEST = 0x43;
 
-	/**	Pacemate Style */
 	public static final int FLASH_READ_REQUEST = 0x52;
 
-	/**	 */
 	public static final int FLASH_PROGRAM_REQUEST = 0x09;
 
-	/**	 */
 	public static final int FLASH_PROGRAM_RESPONSE = 0x0a;
 
-	/**	 */
 	public static final int FLASH_READ_RESPONSE = 0x0c;
 
-	/**	 */
 	public static final int WRITE_SR_REQUEST = 0x0f;
 
-	/**	 */
 	public static final int WRITE_SR_RESPONSE = 0x10;
 
-	/**	 */
 	public static final int RAM_WRITE_REQUEST = 0x1d;
 
-	/**	 */
 	public static final int RAM_WRITE_RESPONSE = 0x1e;
 
-	/**	 */
 	public static final int RAM_READ_REQUEST = 0x1f;
 
-	/**	 */
 	public static final int RAM_READ_RESPONSE = 0x20;
 
-	/**	 */
 	public static final int RUN_REQUEST = 0x21;
 
-	/**	 */
 	public static final int RUN_RESPONSE = 0x22;
 
-	/**	
+	/**
 	public static final int FLASH_TYPE_READ_REQUEST = 0x25;
+	public static final int FLASH_TYPE_READ_RESPONSE = 0x26;
+	*/
 
-	/**	 
-	public static final int FLASH_TYPE_READ_RESPONSE = 0x26;*/
-	
-	
-	
-	/**	Pacemate Style */
 	public static final String CMD_SUCCESS = "0";
 	
-	/**	Pacemate Style */
 	public static final String SYNCHRONIZED = "SYNCHRONIZED";
 	
-	/**	Pacemate Style */
 	public static final String SYNCHRONIZED_OK = "OK";
 	
-	/**	Pacemate Style */
 	public static final String OK = "OK";
 	
-	/**	Pacemate Style */
 	public static final String DATA_ECHO = "DATA_ECHO";
 	
-	/**	Pacemate Style */
 	public static final String DATA = "DATA";
 	
-	/**	Pacemate Style */
 	public static final String ECHO_RESPONSE = "A ";
 	
-	/**	Pacemate Style */
 	public static final String INVALID_COMMAND = "1";
 	
-	/**	Pacemate Style */
 	public static final String SRC_ADDR_ERROR = "2";
 
-	/**	Pacemate Style */
 	public static final String DST_ADDR_ERROR = "3";
 	
-	/**	Pacemate Style */
-	public static final String SRC_ADDR_NOT_MAPPED = "4"; 
+	public static final String SRC_ADDR_NOT_MAPPED = "4";
 
-	/**	Pacemate Style */
 	public static final String DST_ADDR_NOT_MAPPED = "5";
 
-	/**	Pacemate Style */
 	public static final String COUNT_ERROR = "6";
 
-	/**	Pacemate Style */
 	public static final String INVALID_SECTOR = "7";
 
-	/**	Pacemate Style */
 	public static final String SECTOR_NOT_BLANK = "8";
 
-	/**	Pacemate Style */
 	public static final String SECTOR_NOT_PREPARED_FOR_WRITE_OPERATION = "9";
 
-	/**	Pacemate Style */
 	public static final String COMPARE_ERROR = "10";
 
-	/**	Pacemate Style */
 	public static final String BUSY = "11";
 	
-	/**	Pacemate Style */
 	public static final String PARAM_ERROR = "12";
 	
-	/**	Pacemate Style */
 	public static final String ADDR_ERROR = "13";
 	
-	/**	Pacemate Style */
 	public static final String ADDR_NOT_MAPPED = "14";
 	
-	/**	Pacemate Style */
 	public static final String CMD_LOCKED = "15";
 	
-	/**	Pacemate Style */
 	public static final String INVALID_CODE = "16";
 	
-	/**	Pacemate Style */
 	public static final String INVALID_BAUD_RATE = "17";
 	
-	/**	Pacemate Style */
 	public static final String INVALID_STOP_BIT = "18";
 	
-	/**	Pacemate Style */
 	public static final String CODE_READ_PROTECTION_ENABLED = "19";
 
-	/** Pacemate Style */
 	public static String getErrorMessage(int returnCodeInt)
 	{
 		switch(returnCodeInt){
@@ -205,7 +155,6 @@ public class Messages {
 		}
 	}
 	
-	/**	 */
 	public static byte[] addressToBytes(int value) {
 		byte[] array = ByteBuffer.allocate(4).putInt(value).array();
 		byte[] result = new byte[array.length];
@@ -215,14 +164,12 @@ public class Messages {
 		return result;
 	}
 	
-	/**	Pacemate style */
 	public static byte[] AutoBaudRequestMessage() {
 		byte[] message = new byte[1];
 		message[0] = AUTO_BAUD_REQUEST;
 		return message;
 	}
 	
-	/**	Pacemate style */
 	public static byte[] AutoBaudRequest2Message() {
 		byte[] message = new byte[12];
 		message[0] = 0x53;
@@ -240,7 +187,6 @@ public class Messages {
 		return message;
 	}
 	
-	/**	Pacemate style */
 	public static byte[] AutoBaudRequest3Message() {
 		byte[] message = new byte[5];
 		message[0] = 0x31;
@@ -251,7 +197,6 @@ public class Messages {
 		return message;
 	}
 	
-	/**	Pacemate style */
 	public static byte[] SetEchoOffMessage() {
 		byte[] message = new byte[3];
 		message[0] = SET_ECHO_REQUEST;
@@ -260,7 +205,6 @@ public class Messages {
 		return message;
 	}
 	
-	/**	Pacemate style */
 	public static byte[] SetEchoOnMessage() {
 		byte[] message = new byte[2];
 		message[0] = SET_ECHO_REQUEST;
@@ -269,14 +213,12 @@ public class Messages {
 		return message;
 	}
 	
-	/**	Pacemate style */
 	public static byte[] ReadPartIDRequestMessage() {
 		byte[] message = new byte[1];
 		message[0] = READ_ID_REQUEST;
 		return message;
 	}
 	
-	/**	Pacemate style */
 	public static byte[] Unlock_RequestMessage() {
 		byte[] message = new byte[7];
 		message[0] = UNLOCK_REQUEST;
@@ -289,7 +231,6 @@ public class Messages {
 		return message;
 	}
 
-	/**	Pacemate Style */
 	public static byte[] flashConfigureRequestMessage(int startSektor, int endSektor) {
 		int array_size = 5;
 		int iterator = 0;
@@ -318,7 +259,6 @@ public class Messages {
 		return message;
 	}
 
-	/**	Pacemate Style */
 	public static byte[] flashEraseRequestMessage(int startSektor, int endSektor) {
 		int array_size = 5;
 		int iterator = 0;
@@ -354,7 +294,6 @@ public class Messages {
 		return message;
 	}
 	
-	/**	Pacemate Style */
 	public static byte[] writeToRAMRequestMessage(long address, int numberOfBytes) {
 		byte[] start = Long.toString(address).getBytes();
 		byte[] number = Integer.toString(numberOfBytes).getBytes();
@@ -380,7 +319,6 @@ public class Messages {
 		return message;
 	}
 	
-	/**	Pacemate Style */
 	public static byte[] writeCRCRequestMessage(long CRC) {
 		byte[] crc = Long.toString(CRC).getBytes();
 		
@@ -394,7 +332,6 @@ public class Messages {
 		return message;
 	}
 	
-	/**	Pacemate Style */
 	public static byte[] copyRAMToFlashRequestMessage(long flashAddress, long ramAddress, int numberOfBytes) {
 		byte[] startFlash = Long.toString(flashAddress).getBytes();
 		byte[] startRAM = Long.toString(ramAddress).getBytes();
@@ -426,7 +363,6 @@ public class Messages {
 		return message;
 	}
 
-	/**	Pacemate Style */
 	public static byte[] flashReadRequestMessage(long flashAddress, int numberOfBytes) {
 		byte[] startFlash = Long.toString(flashAddress).getBytes();
 		byte[] number = Integer.toString(numberOfBytes).getBytes();
@@ -450,7 +386,6 @@ public class Messages {
 		return message;
 	}
 	
-	/**	*/
 	public static byte[] flashProgramRequestMessage(int address, byte[] data) {
 
 		byte[] message = new byte[1 + 4 + data.length];
@@ -460,12 +395,10 @@ public class Messages {
 		return message;
 	}
 
-	/**	 */
 	public static byte calculateChecksum(byte[] message) {
 		return calculateChecksum(message, 0, message.length);
 	}
 
-	/**	 */
 	public static byte calculateChecksum(byte[] message, int start, int length) {
 		byte checksum = 0;
 		for (int i = start; i < length; ++i) {
@@ -474,12 +407,6 @@ public class Messages {
 		return checksum;
 	}
 
-	/**	 
-	public static byte[] flashTypeReadRequestMessage() {
-		return new byte[] { FLASH_TYPE_READ_REQUEST };
-	}*/
-
-	/**	 */
 	public static byte[] ramReadRequestMessage(int address, int length) {
 		byte[] message = new byte[1 + 4 + 2];
 		message[0] = RAM_READ_REQUEST;
@@ -488,7 +415,6 @@ public class Messages {
 		return message;
 	}
 
-	/**	 */
 	public static byte[] statusRegisterWriteMessage(byte status) {
 		byte[] message = new byte[2];
 		message[0] = WRITE_SR_REQUEST;

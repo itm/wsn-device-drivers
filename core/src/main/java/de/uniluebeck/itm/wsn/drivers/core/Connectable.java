@@ -12,9 +12,11 @@ import java.io.IOException;
 public interface Connectable extends Closeable {
 
 	/**
-	 * Establish the connection with the device and return a useable device instance.
+	 * Establish the connection with the device and return a usable device instance.
 	 * 
 	 * @param uri URI that identifies the resource to which a connection has to be established.
+	 *
+	 * @throws java.io.IOException if connecting fails
 	 */
 	void connect(String uri) throws IOException;
 	

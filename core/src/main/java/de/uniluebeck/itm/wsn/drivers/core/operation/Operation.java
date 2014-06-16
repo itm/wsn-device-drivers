@@ -5,7 +5,7 @@ import java.util.concurrent.Callable;
 /**
  * An operation that is executed on a device.
  *
- * @param <ResultType>
+ * @param <ResultType> the return type of the operation
  *
  * @author Malte Legenhausen
  * @author Daniel Bimschas

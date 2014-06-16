@@ -1,10 +1,10 @@
 package de.uniluebeck.itm.wsn.drivers.core;
 
-import java.io.IOException;
-
 import de.uniluebeck.itm.wsn.drivers.core.exception.TimeoutException;
 import de.uniluebeck.itm.wsn.drivers.core.io.HasInputStream;
 import de.uniluebeck.itm.wsn.drivers.core.io.HasOutputStream;
+
+import java.io.IOException;
 
 
 /**
@@ -49,7 +49,7 @@ public interface Connection extends HasInputStream, HasOutputStream, Connectable
 	/**
 	 * Skip all bytes left on the input stream.
 	 * 
-	 * @throws IOException
+	 * @throws IOException if an I/O error occurs, or the stream does not support skipping
 	 */
 	void clear() throws IOException;
 }

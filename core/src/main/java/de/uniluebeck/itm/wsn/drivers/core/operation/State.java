@@ -66,7 +66,8 @@ public enum State {
 	
 	/**
 	 * Returns true when this state is equals to DONE, FAILED or CANCELED else false.
-	 * 
+	 *
+	 * @param state the state to check
 	 * @return A boolean for representing a finished state.
 	 */
 	public static boolean isFinishState(final State state) {

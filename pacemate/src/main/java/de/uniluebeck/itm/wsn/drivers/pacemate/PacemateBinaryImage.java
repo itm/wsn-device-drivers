@@ -23,13 +23,12 @@
 
 package de.uniluebeck.itm.wsn.drivers.pacemate;
 
-import java.io.IOException;
-
+import de.uniluebeck.itm.wsn.drivers.core.ChipType;
 import de.uniluebeck.itm.wsn.drivers.core.util.BinaryImageBlock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniluebeck.itm.wsn.drivers.core.ChipType;
+import java.io.IOException;
 
 /**
  * @author Maick Danckwardt
@@ -39,16 +38,13 @@ import de.uniluebeck.itm.wsn.drivers.core.ChipType;
  */
 public class PacemateBinaryImage {
 
-	/**
-	 * 
-	 */
 	private static final Logger log = LoggerFactory.getLogger(PacemateBinaryImage.class);
 
 	/**
 	 * Max bytes per line in a data packet
 	 */
 	public final static int LINESIZE = 45;
-	
+
 	private final int blockSize = 4096;
 
 	/**
@@ -66,20 +62,23 @@ public class PacemateBinaryImage {
 	private byte[] bytes = null;
 
 	private int length = -1;
-	
+
 	/**
 	 * Constructor.
-	 * 
-	 * @param address The startaddress at which the data has to be written.
+	 *
+	 * @param address
+	 * 		The start address at which the data has to be written.
 	 * @param data
-	 * @param description
+	 * 		the data
+	 *
 	 * @throws IOException
+	 * 		if an error occurs
 	 */
 	public PacemateBinaryImage(int address, byte[] data) throws IOException {
 		this.address = address;
 		load(data);
 	}
-	
+
 	public PacemateBinaryImage(byte[] data) throws IOException {
 		this(0x3000, data);
 	}
@@ -88,7 +87,10 @@ public class PacemateBinaryImage {
 	 * Loads {@code data} into {@code bytes} and fills up the last block with 0xff's.
 	 *
 	 * @param data
+	 * 		the data to load
+	 *
 	 * @throws IOException
+	 * 		if an error occurs
 	 */
 	private void load(byte[] data) throws IOException {
 
@@ -114,11 +116,11 @@ public class PacemateBinaryImage {
 	/**
 	 * Calculate the CRC over the complete flash ignoring the first three sectors of the bootloader 0x3000
 	 *
-	 * @return crc
+	 * @return crc the computed CRC value
 	 */
 	public int calcCRC() {
 		int crc = 0;
-		
+
 		for (int i = 0; i < bytes.length; i++) {
 			crc = SYS_Crc(crc, bytes[i]);
 		}
@@ -142,6 +144,8 @@ public class PacemateBinaryImage {
 
 	/**
 	 * Calculate number of blocks to write
+	 *
+	 * @return the number of blocks to write
 	 */
 	private int getFullBlocksCount() {
 		return (int) (length / blockSize);
@@ -149,6 +153,8 @@ public class PacemateBinaryImage {
 
 	/**
 	 * Calculate residue after last block
+	 *
+	 * @return the residue after the last block
 	 */
 	private int getResidue() {
 		return (int) (length % blockSize == 0 ? 0 : length - (getFullBlocksCount() * blockSize));
@@ -188,28 +194,17 @@ public class PacemateBinaryImage {
 		return b;
 	}
 
-	/**
-	 * @param b
-	 */
 	public void calcChecksum(byte b) {
 		crc = crc + ((int) b & 0xFF);
 		// System.out.print(((int) b & 0xFF) +" crc "+crc+" I ");
 	}
 
-	/**
-	 * @param b
-	 */
 	public static int calcCRCChecksum(int crc, byte b) {
 		crc = crc + ((int) b & 0xFF);
 		// System.out.print(((int) b & 0xFF) +" crc "+crc+" I ");
 		return crc;
 	}
 
-	/**
-	 * @param b
-	 *
-	 * @return
-	 */
 	public static byte encodeByte(byte b) {
 		if (b == 0) {
 			return 0x60;
@@ -222,9 +217,11 @@ public class PacemateBinaryImage {
 	 * encodes the bytes to be send to the lpc2136 from bin to uucode
 	 *
 	 * @param data
+	 * 		the data to send
 	 * @param realDataLength
+	 * 		the actual length
 	 *
-	 * @return
+	 * @return the encoded buffer
 	 */
 	public byte[] encode(byte[] data, int realDataLength) {
 		// length of the uu encoded stream 3 bytes hex => 4 bytes uucode + 1 byte legth real length
@@ -259,14 +256,6 @@ public class PacemateBinaryImage {
 		return outbuf;
 	}
 
-	/**
-	 * encodes the bytes to be send to the lpc2136 from bin to uucode
-	 *
-	 * @param data
-	 * @param realDataLength
-	 *
-	 * @return
-	 */
 	public static byte[] encodeCRCData(byte[] data, int realDataLength) {
 		// length of the uu encoded stream 3 bytes hex => 4 bytes uucode + 1 byte legth real length
 		int array_length = ((data.length / 3) * 4) + 1;
@@ -293,28 +282,6 @@ public class PacemateBinaryImage {
 		// System.out.println("");
 
 		return outbuf;
-	}
-
-	/**
-	 * Insert flash header of a jennic device into bin file.
-	 *
-	 * @param b
-	 *
-	 * @return
-	 */
-	public boolean insertHeader(byte[] b) {
-		ChipType chipType = getChipType();
-		int headerStart = chipType.getHeaderStart();
-		int headerLength = chipType.getHeaderLength();
-
-		if (headerStart >= 0 && headerLength > 0) {
-			log.debug("Writing header for chip type " + chipType + ": " + headerLength + "bytes @ " + headerStart);
-			insertAt(headerStart, headerLength, b);
-			return true;
-		}
-
-		log.error("Unknown chip type");
-		return false;
 	}
 
 	private void insertAt(int address, int len, byte[] b) {
@@ -347,11 +314,7 @@ public class PacemateBinaryImage {
 	}
 
 	public boolean hasNextBlock() {
-		if (blockIterator < getBlockCount()) {
-			return true;
-		} else {
-			return false;
-		}
+		return blockIterator < getBlockCount();
 	}
 
 	@Override
@@ -379,5 +342,4 @@ public class PacemateBinaryImage {
 
 		return b;
 	}
-
 }
