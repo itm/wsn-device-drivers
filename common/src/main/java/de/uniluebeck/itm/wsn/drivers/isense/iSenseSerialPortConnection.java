@@ -23,11 +23,4 @@ public class iSenseSerialPortConnection extends AbstractSerialPortConnection imp
 		setNormalBaudRate(NORMAL_BAUD_RATE);
 		setProgramBaudRate(PROGRAM_BAUD_RATE);
 	}
-	
-	@Override
-	protected void connectSerialPort(String port)
-			throws PortInUseException, IOException, NoSuchPortException {
-		super.connectSerialPort(port);
-		setSerialPortMode(SerialPortMode.NORMAL);
-	}
 }

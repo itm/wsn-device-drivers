@@ -7,6 +7,7 @@ import de.uniluebeck.itm.wsn.drivers.core.exception.FlashProgramFailedException;
 import de.uniluebeck.itm.wsn.drivers.core.operation.AbstractProgramOperation;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationFactory;
 import de.uniluebeck.itm.wsn.drivers.core.operation.OperationListener;
+import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortConnection;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.SerialPortProgrammingMode;
 import de.uniluebeck.itm.wsn.drivers.core.util.BinaryImageBlock;
 import org.slf4j.Logger;
@@ -23,16 +24,20 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 
 	private final OperationFactory operationFactory;
 
+	private final SerialPortConnection connection;
+
 	@Inject
 	public TelosbProgramOperation(final TimeLimiter timeLimiter,
 								  final BSLTelosb bsl,
 								  final OperationFactory operationFactory,
+								  final SerialPortConnection connection,
 								  @Assisted byte[] binaryImage,
 								  @Assisted final long timeoutMillis,
 								  @Assisted @Nullable final OperationListener<Void> operationCallback) {
 		super(timeLimiter, binaryImage, timeoutMillis, operationCallback);
 		this.bsl = bsl;
 		this.operationFactory = operationFactory;
+		this.connection = connection;
 	}
 
 	@Override
@@ -43,7 +48,7 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 
 		log.trace("Starting to write program into flash memory...");
 
-		final float workedFraction = 0.95f / binData.getBlockCount();
+		final float workedFraction = 1f / binData.getBlockCount();
 		int bytesProgrammed = 0;
 		int blocksWritten = 0;
 
@@ -56,11 +61,12 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 			try {
 				bsl.writeFlash(address, data, data.length);
 			} catch (FlashProgramFailedException e) {
-				log.error(String.format("Error writing %d bytes into flash " +
-						"at address 0x%02x: " + e + ". Programmed " + bytesProgrammed + " bytes so far. " +
-						". OperationRunnable will be canceled.", data.length, address
-				), e
+				final String msg = String.format(
+						"Error writing %d bytes into flash at address 0x%02x: %s. Programmed %d bytes so far. ",
+						data.length, address,
+						e.getMessage(), bytesProgrammed
 				);
+				log.error(msg, e);
 				throw e;
 			} catch (final IOException e) {
 				log.error("I/O error while writing flash. Programmed " + bytesProgrammed + " bytes so far.", e);
@@ -70,12 +76,10 @@ public class TelosbProgramOperation extends AbstractProgramOperation {
 			bytesProgrammed += data.length;
 			blocksWritten++;
 
+			log.trace("Programmed {}/{} blocks", blocksWritten, binData.getBlockCount());
+
 			progress(workedFraction * blocksWritten);
 		}
-
-		log.trace("Programmed {} bytes", bytesProgrammed);
-
-		runSubOperation(operationFactory.createResetOperation(1000, null), 0.05f);
 
 		return null;
 	}

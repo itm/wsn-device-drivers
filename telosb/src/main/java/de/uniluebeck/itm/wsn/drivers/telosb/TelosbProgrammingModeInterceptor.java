@@ -43,6 +43,13 @@ public class TelosbProgrammingModeInterceptor extends SerialPortProgrammingModeI
 		}
 	}
 
+	@Override
+	public void leaveProgrammingMode() throws Exception {
+		LOG.trace("Leaving programming mode...");
+		connection.setSerialPortMode(SerialPortMode.NORMAL);
+		LOG.trace("Programming mode left");
+	}
+
 	private void startBootLoader(BSLTelosb bsl) throws FlashProgramFailedException {
 		LOG.trace("Starting boot loader...");
 		if (!bsl.invokeBSL()) {
@@ -51,8 +58,11 @@ public class TelosbProgrammingModeInterceptor extends SerialPortProgrammingModeI
 	}
 
 	private void resetPassword(BSLTelosb bsl) throws Exception {
+
 		LOG.trace("Erasing flash memory...");
-		bsl.sendBSLCommand(BSLTelosb.CMD_MASSERASE, 0xFFFF, 0xA506, null, false);
+
+		bsl.sendBSLCommand(BSLTelosb.CMD_MASSERASE, 0xFF00, 0xA506, null, false);
+
 		final byte[] reply = bsl.receiveBSLReply();
 		if ((reply[0] & 0xff) == BSLTelosb.DATA_NACK) {
 			throw new FlashEraseFailedException("Failed to perform mass erase, NACK received.");

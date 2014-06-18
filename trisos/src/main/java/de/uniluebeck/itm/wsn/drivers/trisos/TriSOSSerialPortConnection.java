@@ -31,11 +31,4 @@ public class TriSOSSerialPortConnection extends AbstractSerialPortConnection {
 		setNormalBaudRate(baudrate);
 		setProgramBaudRate(PROGRAM_BAUD_RATE);
 	}
-
-	@Override
-	protected void connectSerialPort(String port)
-			throws PortInUseException, IOException, NoSuchPortException {
-		super.connectSerialPort(port);
-		setSerialPortMode(SerialPortMode.NORMAL);
-	}
 }

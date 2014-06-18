@@ -11,9 +11,12 @@ import gnu.io.UnsupportedCommOperationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 @Singleton
 public class BSLTelosb {
@@ -182,7 +185,8 @@ public class BSLTelosb {
 	 *
 	 * @return true if reset successfully
 	 */
-	public boolean reset() {
+	public boolean reset() throws IOException {
+
 		TelosI2CCom i2cCom = new TelosI2CCom(connection.getSerialPort());
 
 		log.debug("reset()");
@@ -193,6 +197,8 @@ public class BSLTelosb {
 		i2cCom.writeCommand(0, 0);
 
 		waitForMpOscillatorToStabilize();
+
+		connection.clear();
 
 		// set baud rate back to standard when initializing bsl communication the next time
 		currentBaudRate = BaudRate.Baud9600;
@@ -209,8 +215,8 @@ public class BSLTelosb {
 	 * 		command byte (CMD)
 	 * @param address
 	 * 		high and low address bytes (AL and AH)
-	 * @param pureDataLength
-	 * 		number of pure data bytes or possibly other info (LL and LH)
+	 * @param length
+	 * 		number of data bytes or other info (LL and LH)
 	 * @param data
 	 * 		array of data bytes (D1...Dn), may be null
 	 * @param wait
@@ -218,56 +224,66 @@ public class BSLTelosb {
 	 *
 	 * @throws UnexpectedResponseException
 	 */
-	public void sendBSLCommand(int cmd, int address, int pureDataLength, byte data[], boolean wait)
+	public void sendBSLCommand(int cmd, int address, int length, @Nullable byte data[], boolean wait)
 			throws TimeoutException, IOException, UnexpectedResponseException {
-		byte[] dataFrame;
-		int extendedLength;
+
+		checkArgument(data == null || data.length <= 250, "Number of bytes in data must not exceed 250 bytes!");
+
+		byte[] frame;
+
+		int frameLength;
+		int l1l2;
 		int checksum;
-		int numDataBytes;
-		@SuppressWarnings("unused")
-		String frameString = "";
-
-		if (data == null) {
-			numDataBytes = 0;
-		} else {
-			// number of data bytes is restricted to 250 max
-			if (data.length > 250) {
-				log.warn("Warning: number of pure data bytes of bsl command exceeds maximum of 250. " +
-						(data.length - 250) + " bytes will be truncated."
-				);
-				pureDataLength = 250;
-			}
-			numDataBytes = Math.min(250, data.length);
-		}
-
-		// compute extended data length including LL,LH,AL,AH 
-		extendedLength = 4 + numDataBytes + (numDataBytes % 2);
-
-		// create data frame to send
-		dataFrame = new byte[4 + extendedLength + 2];
-		dataFrame[0] = (byte) BSL_HDR;    // HDR
-		dataFrame[1] = (byte) cmd;    //CMD
-		dataFrame[2] = (byte) extendedLength;    // L1
-		dataFrame[3] = (byte) extendedLength;    // L2
-		dataFrame[4] = (byte) (address & 0xFF);    // AL
-		dataFrame[5] = (byte) ((address >> 8) & 0xFF);    // AH
-		dataFrame[6] = (byte) (pureDataLength & 0xFF);        // LL
-		dataFrame[7] = (byte) ((pureDataLength >> 8) & 0xFF);        // LH
-
-		if (data != null) {
-			// copy data bytes to frame
-			System.arraycopy(data, 0, dataFrame, 8, numDataBytes);
-		}
+		int lllh;
 
 		// in case of uneven data length, append one byte to make it even
-		if (numDataBytes % 2 != 0) {
-			dataFrame[4 + extendedLength - 1] = (byte) 0xFF;
+		if (data != null) {
+			if (data.length % 2 == 0) {
+				// HDR + CMD + L1|L2 + AL|AH + LL|LH + DATA + CHK
+				frameLength = 1 + 1 + 2 + 2 + 2 + data.length + 2;
+				// L1|L2 + AL|AH + DATA
+				l1l2 = 2 + 2 + data.length;
+				lllh = data.length;
+			} else {
+				// HDR + CMD + L1|L2 + AL|AH + LL|LH + DATA + PADDING + CHK
+				frameLength = 1 + 1 + 2 + 2 + 2 + data.length + 1 + 2;
+				// L1|L2 + AL|AH + DATA + PADDING
+				l1l2 = 2 + 2 + data.length + 1;
+				lllh = data.length + 1;
+			}
+		} else {
+			// HDR + CMD + L1|L2 + AL|AH + LL|LH + CHK
+			frameLength = 1 + 1 + 2 + 2 + 2 + 2;
+			// L1|L2 + AL|AH
+			l1l2 = 2 + 2;
+			lllh = length;
+		}
+
+		// create data frame to send
+		frame = new byte[frameLength];
+		frame[0] = (byte) BSL_HDR;                 // HDR
+		frame[1] = (byte) cmd;                     // CMD
+		frame[2] = (byte) l1l2;                    // L1
+		frame[3] = (byte) l1l2;                    // L2
+		frame[4] = (byte) ((address) & 0xFF);      // AL
+		frame[5] = (byte) ((address >> 8) & 0xFF); // AH
+		frame[6] = (byte) ((lllh) & 0xFF);         // LL
+		frame[7] = (byte) ((lllh >> 8) & 0xFF);    // LH
+
+		if (data != null) {
+
+			// copy data bytes to frame
+			System.arraycopy(data, 0, frame, 8, data.length);
+
+			if (data.length % 2 != 0) {
+				frame[8 + data.length] = (byte) 0xFF; // fill up with padding for even number of bytes
+			}
 		}
 
 		// calculate and add checksum
-		checksum = calcChecksum(dataFrame);
-		dataFrame[4 + extendedLength] = (byte) (checksum & 0xFF);    // CKL
-		dataFrame[4 + extendedLength + 1] = (byte) ((checksum >> 8) & 0xFF);     // CKH
+		checksum = calcChecksum(frame, frameLength - 2); // without CKL|CKH
+		frame[frameLength - 2] = (byte) (checksum & 0xFF);        // CKL
+		frame[frameLength - 1] = (byte) ((checksum >> 8) & 0xFF); // CKH
 
 		// synchronize BSL before sending a command
 		if (!bslSynchronize(wait)) {
@@ -276,17 +292,16 @@ public class BSLTelosb {
 
 		// send frame
 		OutputStream outputStream = connection.getOutputStream();
-		for (final byte aDataFrame : dataFrame) {
-			outputStream.write(aDataFrame);
-		}
+		outputStream.write(frame);
 		outputStream.flush();
 
-//		if (log.isDebugEnabled()) {
-//			for (int i=0; i < dataFrame.length; i++) {
-//				frameString += String.format(" 0x%02x ", dataFrame[i]);	
-//			}
-//			log.debug("Transmitted data frame to bsl: " + frameString);
-//		}
+		if (log.isDebugEnabled()) {
+			String frameString = "";
+			for (final byte b : frame) {
+				frameString += String.format("%02x ", b);
+			}
+			log.debug("txFrame: " + frameString);
+		}
 	}
 
 	/**
@@ -328,8 +343,8 @@ public class BSLTelosb {
 			result = (new byte[]{(byte) reply});
 		} else if (reply == DATA_NACK) {
 			// no acknowledge received
-			if (log.isDebugEnabled()) {
-				log.debug("Received bsl NACK");
+			if (log.isWarnEnabled()) {
+				log.warn("Received BSL NACK");
 			}
 			result = (new byte[]{(byte) reply});
 		} else if (reply == BSL_HDR) {
@@ -425,12 +440,12 @@ public class BSLTelosb {
 //				}
 //				log.debug("Received bsl reply:"+frameString);
 //			}
-			checksum = calcChecksum(dataFrame);
+			checksum = calcChecksum(dataFrame, dataFrame.length);
 
 			if ((receivedChecksumL != (checksum & 0xFF)) ||
 					(receivedChecksumH != ((checksum >> 8) & 0xFF))) {
 				throw new InvalidChecksumException(String.format("Wrong checksum receiving BSL reply: " +
-						"was: 0x%02x 0x%02x but should be: 0x%02x 0x%02x", receivedChecksumL, receivedChecksumH,
+								"was: 0x%02x 0x%02x but should be: 0x%02x 0x%02x", receivedChecksumL, receivedChecksumH,
 						checksum & 0xFF, (checksum >> 8) & 0xFF
 				)
 				);
@@ -501,8 +516,8 @@ public class BSLTelosb {
 		}
 
 		sendBSLCommand(CMD_TXPASSWORD,
-				0,    // start address is always 0xFFE0
-				0,     // password length is always 32 bytes
+				0xFFE0, // start address is always 0xFFE0
+				0x20,   // password length is always 32 (=0x20) bytes
 				pwData,
 				wait
 		);
@@ -627,8 +642,8 @@ public class BSLTelosb {
 				if ((reply[i] & 0xFF) != 0xFF) {
 					if (log.isDebugEnabled()) {
 						log.debug(String.format("Error validating block at 0x%02x, byte %d. " +
-								"Was: 0x%02x, but should be: 0xFF", address, i + 1, reply[i]
-						)
+												"Was: 0x%02x, but should be: 0xFF", address, i + 1, reply[i]
+								)
 						);
 					}
 					return false;
@@ -638,8 +653,8 @@ public class BSLTelosb {
 				if (reply[i] != data[i]) {
 					if (log.isDebugEnabled()) {
 						log.debug(String.format("Error validating block at 0x%02x, byte %d. " +
-								"Was: 0x%02x, but should be: 0x%02x", address, i + 1, reply[i], data[i]
-						)
+												"Was: 0x%02x, but should be: 0x%02x", address, i + 1, reply[i], data[i]
+								)
 						);
 					}
 					return false;
@@ -807,15 +822,15 @@ public class BSLTelosb {
 	/*
 		 * Calculate checksum of a complete given bsl command message
 		 */
-	private int calcChecksum(byte dataFrame[]) {
+	private int calcChecksum(byte frame[], int length) {
+
 		int checksum = 0;
 
-		for (int i = 0; i < (dataFrame.length / 2); i++) {
-			checksum = checksum ^ ((0xFF & dataFrame[2 * i]) + 256 * (0xFF & dataFrame[2 * i + 1]));
+		for (int i = 0; i < (length / 2); i++) {
+			checksum = checksum ^ ((0xFF & frame[2 * i]) + ((0xFF & frame[2 * i + 1]) << 8));
 		}
-		checksum = ~checksum;
 
-		return checksum;
+		return 0xFFFF & (checksum ^ 0xFFFF);
 	}
 
 	/*
@@ -870,23 +885,28 @@ public class BSLTelosb {
 	 * @throws IOException
 	 */
 	public void setBslBaudRate() throws IOException {
+
 		if (bslBaudRateSet) {
 			return;
 		}
+
 		SerialPort serialPort = connection.getSerialPort();
 		oldBaudRate = serialPort.getBaudRate();
+
 		try {
+
 			serialPort.setSerialPortParams(currentBaudRate.toInt(),
 					serialPort.getDataBits(),
 					serialPort.getStopBits(),
 					serialPort.getParity()
 			);
-			log.debug("Baud rate changed for bsl communication from " + oldBaudRate + " to " + currentBaudRate
-					.toInt() + "."
-			);
+
+			log.debug("Baud rate changed for bsl communication from {} to {}", oldBaudRate, currentBaudRate.toInt());
+
 		} catch (UnsupportedCommOperationException e) {
 			throw new IOException(e.getMessage());
 		}
+
 		bslBaudRateSet = true;
 	}
 
@@ -918,10 +938,15 @@ public class BSLTelosb {
 	public void writeFlash(int address, byte[] bytes, int len)
 			throws IOException, FlashProgramFailedException, TimeoutException, InvalidChecksumException,
 			ReceivedIncorrectDataException, UnexpectedResponseException {
+
 		sendBSLCommand(BSLTelosb.CMD_TXDATABLOCK, address, len, bytes, false);
+
 		final byte[] reply = receiveBSLReply();
-		if ((reply[0] & 0xFF) != BSLTelosb.DATA_ACK) {
-			throw new FlashProgramFailedException("Failed to program flash: received no ACK");
+		final int responseCode = (reply[0] & 0xFF);
+		if (responseCode == BSLTelosb.DATA_NACK) {
+			throw new FlashProgramFailedException("Failed to program flash: received NACK from BSL!");
+		} else if (responseCode != BSLTelosb.DATA_ACK) {
+			throw new FlashProgramFailedException("Failed to program flash: received no ACK but: " + responseCode);
 		}
 	}
 }

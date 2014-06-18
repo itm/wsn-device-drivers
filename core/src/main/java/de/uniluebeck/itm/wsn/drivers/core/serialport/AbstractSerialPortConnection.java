@@ -45,42 +45,42 @@ public abstract class AbstractSerialPortConnection extends AbstractConnection
 	/**
 	 * The maximum timeout for a connection try.
 	 */
-	private static final int MAX_CONNECTION_TIMEOUT = 1000;
+	protected static final int MAX_CONNECTION_TIMEOUT = 1000;
 
 	/**
 	 * The baud rate that is used for normal operation.
 	 */
-	private int normalBaudRate = DEFAULT_NORMAL_BAUD_RATE;
+	protected int normalBaudRate = DEFAULT_NORMAL_BAUD_RATE;
 
 	/**
 	 * the baud rate that is used for programming the device.
 	 */
-	private int programBaudRate = DEFAULT_PROGRAM_BAUD_RATE;
+	protected int programBaudRate = DEFAULT_PROGRAM_BAUD_RATE;
 
 	/**
 	 * Serial port stop bits.
 	 */
-	private int stopBits = SerialPort.STOPBITS_1;
+	protected int stopBits = SerialPort.STOPBITS_1;
 
 	/**
 	 * Serial port data bits.
 	 */
-	private int dataBits = SerialPort.DATABITS_8;
+	protected int dataBits = SerialPort.DATABITS_8;
 
 	/**
 	 * Parity bit that is used for normal operations.
 	 */
-	private int normalParityBit = SerialPort.PARITY_NONE;
+	protected int normalParityBit = SerialPort.PARITY_NONE;
 
 	/**
 	 * Parity bit that is used for programing.
 	 */
-	private int programParityBit = SerialPort.PARITY_NONE;
+	protected int programParityBit = SerialPort.PARITY_NONE;
 
 	/**
 	 * The serial port instance.
 	 */
-	private SerialPort serialPort;
+	protected SerialPort serialPort;
 
 	static {
 
@@ -141,16 +141,15 @@ public abstract class AbstractSerialPortConnection extends AbstractConnection
 		setUri(port);
 		setOutputStream(serialPort.getOutputStream());
 		setInputStream(serialPort.getInputStream());
+
+		setSerialPortMode(SerialPortMode.NORMAL);
 	}
 
 	@Override
 	public void setSerialPortMode(final SerialPortMode mode) {
-		int baudRate = normalBaudRate;
-		int parityBit = normalParityBit;
-		if (SerialPortMode.PROGRAM.equals(mode)) {
-			baudRate = programBaudRate;
-			parityBit = programParityBit;
-		}
+
+		int baudRate = SerialPortMode.PROGRAM.equals(mode) ? programBaudRate : normalBaudRate;
+		int parityBit = SerialPortMode.PROGRAM.equals(mode) ? programParityBit : normalParityBit;
 
 		try {
 			serialPort.setSerialPortParams(baudRate, dataBits, stopBits, parityBit);

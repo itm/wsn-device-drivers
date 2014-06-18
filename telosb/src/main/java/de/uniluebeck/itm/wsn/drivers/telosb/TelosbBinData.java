@@ -123,19 +123,21 @@ public class TelosbBinData {
 	}
 
 	private void reload(BufferedReader reader) throws IOException {
+
 		String line;
 		StringTokenizer sTokenizer;
-		int lineAddress;
+
 		int currentAddress = 0;
-		int segmentStartAddress = 0;
-		int dataLength;
-		int dataType;
+		int startAddress = 0;
+
 		byte segmentData[] = new byte[0];
-		byte tempData[];
+		byte newSegmentData[];
 
 		segments.clear();
 
 		while ((line = reader.readLine()) != null) {
+
+			line = line.trim();
 
 			// check for correct ihex format
 			if (line.charAt(0) != ':') {
@@ -145,41 +147,35 @@ public class TelosbBinData {
 				);
 			}
 
-			// remove spaces
-			sTokenizer = new StringTokenizer(line, " ", false);
-			line = "";
-			while (sTokenizer.hasMoreElements()) {
-				line += sTokenizer.nextElement();
-			}
-
 			// read data segments
-			dataLength = Integer.parseInt(line.substring(1, 3), 16);
-			lineAddress = Integer.parseInt(line.substring(3, 7), 16);
-			dataType = Integer.parseInt(line.substring(7, 9), 16);
+			int length = Integer.parseInt(line.substring(1, 3), 16);
+			int address = Integer.parseInt(line.substring(3, 7), 16);
+			int type = Integer.parseInt(line.substring(7, 9), 16);
 
-			if (dataType == 0x00) {
-				if (currentAddress != lineAddress) {
+			if (type == 0x00) {
+
+				if (currentAddress != address) {
+
 					if (segmentData.length > 0) {
-						segments.add(new Segment(segmentStartAddress,
-								segmentData
-						)
-						);
+						segments.add(new Segment(startAddress, segmentData));
 					}
-					currentAddress = lineAddress;
-					segmentStartAddress = lineAddress;
+
+					currentAddress = address;
+					startAddress = address;
 					segmentData = new byte[0];
 				}
-				tempData = new byte[segmentData.length + dataLength];
-				System.arraycopy(segmentData, 0, tempData, 0, segmentData.length);
-				for (int i = 0; i < dataLength; i++) {
-					tempData[segmentData.length + i] = (byte) Integer.parseInt(line.substring(9 + 2 * i, 9 + 2 * i + 2), 16);
+
+				newSegmentData = new byte[segmentData.length + length];
+				System.arraycopy(segmentData, 0, newSegmentData, 0, segmentData.length);
+				for (int i = 0; i < length; i++) {
+					newSegmentData[segmentData.length + i] = (byte) Integer.parseInt(line.substring(9 + 2 * i, 9 + 2 * i + 2), 16);
 				}
-				segmentData = tempData;
-				currentAddress += tempData.length;
+				segmentData = newSegmentData;
+				currentAddress = length + currentAddress;
 			}
 		}
 		if (segmentData.length > 0) {
-			segments.add(new Segment(segmentStartAddress, segmentData));
+			segments.add(new Segment(startAddress, segmentData));
 		}
 	}
 

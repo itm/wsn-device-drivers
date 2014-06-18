@@ -2,12 +2,10 @@ package de.uniluebeck.itm.wsn.drivers.telosb;
 
 import com.google.inject.Inject;
 import de.uniluebeck.itm.wsn.drivers.core.serialport.AbstractSerialPortConnection;
-import gnu.io.NoSuchPortException;
-import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
 import gnu.io.UnsupportedCommOperationException;
-
-import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -18,35 +16,50 @@ import java.io.IOException;
  */
 public class TelosbSerialPortConnection extends AbstractSerialPortConnection {
 
-	private static final int NORMAL_BAUD_RATE = 115200;
+	private static final Logger log = LoggerFactory.getLogger(TelosbSerialPortConnection.class);
 
-	private static final int PROGRAM_BAUD_RATE = 9600;
+	public static final int NORMAL_BAUD_RATE = 115200;
+
+	public static final int PROGRAM_BAUD_RATE = 9600;
+
+	public static final int NORMAL_PARITY_BIT = SerialPort.PARITY_NONE;
+
+	public static final int PROGRAM_PARITY_BIT = SerialPort.PARITY_EVEN;
 
 	@Inject
 	public TelosbSerialPortConnection() {
 		setProgramBaudRate(PROGRAM_BAUD_RATE);
 		setNormalBaudRate(NORMAL_BAUD_RATE);
-		setNormalParityBit(SerialPort.PARITY_NONE);
-		setProgramParityBit(SerialPort.PARITY_EVEN);
+		setNormalParityBit(NORMAL_PARITY_BIT);
+		setProgramParityBit(PROGRAM_PARITY_BIT);
 	}
 
 	@Override
-	protected void connectSerialPort(String port)
-			throws PortInUseException, IOException, NoSuchPortException {
+	public void setSerialPortMode(final SerialPortMode mode) {
 
-		super.connectSerialPort(port);
+		log.trace("TelosbSerialPortConnection.setSerialPortMode(mode={})", mode);
 
 		try {
-			getSerialPort().setSerialPortParams(
-					NORMAL_BAUD_RATE,
-					SerialPort.DATABITS_8,
-					SerialPort.STOPBITS_1,
-					SerialPort.PARITY_NONE
+
+			final int baudrate = mode == SerialPortMode.PROGRAM ? programBaudRate : normalBaudRate;
+			final int parityBit = mode == SerialPortMode.PROGRAM ? programParityBit : normalParityBit;
+
+			serialPort.setSerialPortParams(baudrate, dataBits, stopBits, parityBit);
+
+			log.trace("baudrate={},dataBits={},stopBits={},parityBit={}",
+					serialPort.getBaudRate(),
+					serialPort.getDataBits(),
+					serialPort.getStopBits(),
+					serialPort.getParity()
 			);
-		} catch (UnsupportedCommOperationException e) {
-			throw new IOException(e);
+
+		} catch (final UnsupportedCommOperationException e) {
+			log.warn("Problem while setting serial port params.", e);
 		}
-		getSerialPort().setRTS(true);
-		getSerialPort().setDTR(true);
+
+		serialPort.setDTR(true);
+		serialPort.setRTS(true);
+
+		log.debug("COM-Port parameters set to baud rate: " + serialPort.getBaudRate());
 	}
 }

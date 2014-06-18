@@ -47,12 +47,11 @@ public class TelosbEraseFlashOperation extends TimeLimitedOperation<Void> implem
 
 		try {
 			// send bsl command 'mass erase'
-			bsl.sendBSLCommand(BSLTelosb.CMD_MASSERASE, 0xFFFF, 0xA506, null,
-					false
-			);
+			bsl.sendBSLCommand(BSLTelosb.CMD_MASSERASE, 0xFF00, 0xA506, null, false);
 
 			// receive bsl reply
 			reply = bsl.receiveBSLReply();
+
 		} catch (Exception e) {
 			throw new FlashEraseFailedException("Mass erase failed: " + e);
 		}

@@ -71,10 +71,13 @@ public abstract class AbstractConnection implements Connection {
 	 * Condition that indicates when data is available.
 	 */
 	private final Condition isDataAvailable = dataAvailableLock.newCondition();
-	
+
+	private String lastPort = null;
+
 	@Override
 	public void connect(String port) throws IOException {
 		checkNotNull(port, "Port argument for connecting to device is null");
+		lastPort = port;
 		if (isConnected()) {
 			throw new IOException("Already connected.");
 		}
