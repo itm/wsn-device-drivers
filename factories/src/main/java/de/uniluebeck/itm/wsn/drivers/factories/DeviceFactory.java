@@ -23,14 +23,11 @@
 
 package de.uniluebeck.itm.wsn.drivers.factories;
 
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-
-import com.google.inject.ImplementedBy;
-
 import de.uniluebeck.itm.wsn.drivers.core.Device;
 
 import javax.annotation.Nullable;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 public interface DeviceFactory {
 
