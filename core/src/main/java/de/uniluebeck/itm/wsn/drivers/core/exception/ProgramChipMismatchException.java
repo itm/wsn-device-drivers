@@ -31,7 +31,7 @@ import de.uniluebeck.itm.wsn.drivers.core.ChipType;
  * @author dp
  * @author Malte Legenhausen
  */
-public class ProgramChipMismatchException extends Exception {
+public class ProgramChipMismatchException extends RuntimeException {
 
 	/**
 	 * Serial UID.
